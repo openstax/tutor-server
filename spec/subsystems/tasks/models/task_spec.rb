@@ -1,9 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
-  subject(:task) do
+  subject(:task)         do
     FactoryBot.create :tasks_task, opens_at: Time.current - 1.week, due_at: Time.current - 1.day
   end
+
+  let(:task_plan)        { task.task_plan }
+  let(:grading_template) { task_plan.grading_template }
 
   it { is_expected.to belong_to(:task_plan).optional }
 
@@ -204,27 +207,55 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     end
   end
 
+  it 'reads completion_weight from the grading_template with fallbacks if absent' do
+    expect(task.completion_weight).to eq grading_template.completion_weight
+
+    task_plan.grading_template = nil
+    expect(task.completion_weight).to eq task.reading? ? 0.9 : 0
+  end
+
+  it 'reads correctness_weight from the grading_template with fallbacks if absent' do
+    expect(task.correctness_weight).to eq grading_template.correctness_weight
+
+    task_plan.grading_template = nil
+    expect(task.correctness_weight).to eq task.reading? ? 0.1 : 1
+  end
+
+  it 'reads auto_grading_feedback_on from the grading_template with fallbacks if absent' do
+    expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
+
+    task_plan.grading_template = nil
+    expect(task.auto_grading_feedback_on).to eq 'answer'
+  end
+
   it 'knows when auto grading feedback should be available' do
     task.due_at = nil
-    task.task_plan.grading_template.auto_grading_feedback_on = :answer
+    grading_template.auto_grading_feedback_on = :answer
     expect(task.auto_grading_feedback_available?).to eq true
 
-    task.task_plan.grading_template.auto_grading_feedback_on = :due
+    grading_template.auto_grading_feedback_on = :due
     expect(task.auto_grading_feedback_available?).to eq false
 
     task.due_at = task.time_zone.to_tz.now
     expect(task.auto_grading_feedback_available?).to eq true
 
-    task.task_plan.grading_template.auto_grading_feedback_on = :publish
+    grading_template.auto_grading_feedback_on = :publish
     expect(task.auto_grading_feedback_available?).to eq false
   end
 
   it 'knows when manual grading feedback should be available' do
-    task.task_plan.grading_template.manual_grading_feedback_on = :grade
+    grading_template.manual_grading_feedback_on = :grade
     expect(task.manual_grading_feedback_available?).to eq false
 
-    task.task_plan.grading_template.manual_grading_feedback_on = :publish
+    grading_template.manual_grading_feedback_on = :publish
     expect(task.manual_grading_feedback_available?).to eq false
+  end
+
+  it 'reads manual_grading_feedback_on from the grading_template with fallbacks if absent' do
+    expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
+
+    task_plan.grading_template = nil
+    expect(task.manual_grading_feedback_on).to eq 'grade'
   end
 
   it 'counts exercise steps' do
@@ -661,10 +692,10 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
 
     it 'holds on to accepted late stats regardless of future work' do
       task = FactoryBot.create(:tasks_task, opens_at: Time.current - 1.week,
-                                             due_at: Time.current,
-                                             step_types: [:tasks_tasked_exercise,
-                                                          :tasks_tasked_exercise,
-                                                          :tasks_tasked_exercise])
+                                            due_at: Time.current,
+                                            step_types: [:tasks_tasked_exercise,
+                                                         :tasks_tasked_exercise,
+                                                         :tasks_tasked_exercise])
 
       Timecop.freeze(Time.current - 1.day) do
         Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
@@ -677,6 +708,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.completed_accepted_late_exercise_count).to eq 0
       expect(task.correct_accepted_late_exercise_count).to eq 0
+      expect(task.completion).to eq 1/3.0
+      expect(task.correctness).to eq 1/3.0
       expect(task.score).to eq 1/3.0
 
       Timecop.freeze(Time.current + 1.day) do
@@ -690,6 +723,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.completed_accepted_late_exercise_count).to eq 0
       expect(task.correct_accepted_late_exercise_count).to eq 0
+      expect(task.completion).to eq 1/3.0
+      expect(task.correctness).to eq 1/3.0
       expect(task.score).to eq 1/3.0
 
       task.accept_late_work
@@ -701,6 +736,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.completed_accepted_late_exercise_count).to eq 2
       expect(task.correct_accepted_late_exercise_count).to eq 2
+      expect(task.completion).to eq 2/3.0
+      expect(task.correctness).to eq 2/3.0
       expect(task.score).to eq 2/3.0
       expect(task.accepted_late_at).not_to be_nil
 
@@ -715,6 +752,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.completed_accepted_late_exercise_count).to eq 2
       expect(task.correct_accepted_late_exercise_count).to eq 2
+      expect(task.completion).to eq 2/3.0
+      expect(task.correctness).to eq 2/3.0
       expect(task.score).to eq 2/3.0
 
       task.accept_late_work
@@ -726,6 +765,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.completed_accepted_late_exercise_count).to eq 3
       expect(task.correct_accepted_late_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
       expect(task.score).to eq 1.0
 
       task.reject_late_work
@@ -735,6 +776,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.completed_exercise_count).to eq 3
       expect(task.correct_accepted_late_exercise_count).to eq 0
       expect(task.completed_accepted_late_exercise_count).to eq 0
+      expect(task.completion).to eq 1/3.0
+      expect(task.correctness).to eq 1/3.0
       expect(task.score).to eq 1/3.0
       expect(task.accepted_late_at).to be_nil
     end
@@ -759,6 +802,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.correct_accepted_late_exercise_count).to eq 0
       expect(task.completed_accepted_late_exercise_count).to eq 0
+      expect(task.completion).to eq 1/3.0
+      expect(task.correctness).to eq 1/3.0
       expect(task.score).to eq 1/3.0
 
       Timecop.freeze(Time.current + 1.day) do
@@ -772,6 +817,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.correct_accepted_late_exercise_count).to eq 0
       expect(task.completed_accepted_late_exercise_count).to eq 0
+      expect(task.completion).to eq 1/3.0
+      expect(task.correctness).to eq 1/3.0
       expect(task.score).to eq 1/3.0
 
       task.accept_late_work
@@ -783,6 +830,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.correct_accepted_late_exercise_count).to eq 2
       expect(task.completed_accepted_late_exercise_count).to eq 2
+      expect(task.completion).to eq 2/3.0
+      expect(task.correctness).to eq 2/3.0
       expect(task.score).to eq 2/3.0
       expect(task.accepted_late_at).not_to be_nil
 
@@ -797,6 +846,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.correct_accepted_late_exercise_count).to eq 2
       expect(task.completed_accepted_late_exercise_count).to eq 2
+      expect(task.completion).to eq 2/3.0
+      expect(task.correctness).to eq 2/3.0
       expect(task.score).to eq 2/3.0
 
       task.accept_late_work
@@ -808,6 +859,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.correct_accepted_late_exercise_count).to eq 3
       expect(task.completed_accepted_late_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
       expect(task.score).to eq 1.0
 
       task.due_at = Time.current + 2.days
@@ -819,6 +872,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 3
       expect(task.completed_accepted_late_exercise_count).to eq 3
       expect(task.correct_accepted_late_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
       expect(task.score).to eq 1.0
 
       task.due_at = Time.current
@@ -830,6 +885,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.completed_accepted_late_exercise_count).to eq 3
       expect(task.correct_accepted_late_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
       expect(task.score).to eq 1.0
 
       task.reject_late_work
@@ -841,9 +898,10 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_on_time_exercise_count).to eq 1
       expect(task.correct_accepted_late_exercise_count).to eq 0
       expect(task.completed_accepted_late_exercise_count).to eq 0
+      expect(task.completion).to eq 1/3.0
+      expect(task.correctness).to eq 1/3.0
       expect(task.score).to eq 1/3.0
       expect(task.accepted_late_at).to be_nil
     end
-
   end
 end

@@ -74,12 +74,24 @@ class Tasks::Models::Task < ApplicationRecord
   after_create :update_caches_now
   after_touch :update_caches_later
 
+  def grading_template
+    task_plan&.grading_template
+  end
+
+  def completion_weight
+    grading_template&.completion_weight || (reading? ? 0.9 : 0.0)
+  end
+
+  def correctness_weight
+    grading_template&.correctness_weight || (reading? ? 0.1 : 1.0)
+  end
+
   def auto_grading_feedback_on
-    task_plan.nil? ? 'answer' : task_plan.auto_grading_feedback_on
+    grading_template&.auto_grading_feedback_on || 'answer'
   end
 
   def manual_grading_feedback_on
-    task_plan.nil? ? 'grade' : task_plan.manual_grading_feedback_on
+    grading_template&.manual_grading_feedback_on || 'grade'
   end
 
   def is_preview
@@ -319,13 +331,31 @@ class Tasks::Models::Task < ApplicationRecord
     [ completed_on_time_steps_count, completed_accepted_late_steps_count ].max
   end
 
-  def score
+  def completion
+    steps_count == 0 ? nil : effective_completed_steps_count / steps_count.to_f
+  end
+
+  def correctness
     actual_and_placeholder_exercise_count == 0 ?
       nil : effective_correct_exercise_count / actual_and_placeholder_exercise_count.to_f
   end
 
-  def progress
-    steps_count == 0 ? nil : effective_completed_steps_count / steps_count.to_f
+  def score
+    result = 0
+
+    if completion_weight > 0
+      return if completion.nil?
+
+      result += completion * completion_weight
+    end
+
+    if correctness_weight > 0
+      return if correctness.nil?
+
+      result += correctness * correctness_weight
+    end
+
+    result
   end
 
   def accept_late_work

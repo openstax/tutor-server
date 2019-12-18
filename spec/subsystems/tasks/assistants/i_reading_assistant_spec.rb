@@ -127,11 +127,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
+      grading_template = task_plan.grading_template
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
 
-        expect(task.auto_grading_feedback_on).to eq task_plan.auto_grading_feedback_on
-        expect(task.manual_grading_feedback_on).to eq task_plan.manual_grading_feedback_on
+        expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
+        expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
 
         # Preview tasks don't receive Biglearn PEs yet
         next unless task.taskings.first.role.try!(:student).present?
@@ -191,11 +192,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
+      grading_template = task_plan.grading_template
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
 
-        expect(task.auto_grading_feedback_on).to eq task_plan.auto_grading_feedback_on
-        expect(task.manual_grading_feedback_on).to eq task_plan.manual_grading_feedback_on
+        expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
+        expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
 
         # Preview tasks don't receive Biglearn PEs yet
         next unless task.taskings.first.role.try!(:student).present?
@@ -325,10 +327,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
 
     it 'is split into different task steps' do
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
+      grading_template = task_plan.grading_template
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
-        expect(task.auto_grading_feedback_on).to eq task_plan.auto_grading_feedback_on
-        expect(task.manual_grading_feedback_on).to eq task_plan.manual_grading_feedback_on
+        expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
+        expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
 
         # Preview tasks don't receive Biglearn PEs yet
         next unless task.taskings.first.role.try!(:student).present?
@@ -469,10 +472,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
 
     it 'is split into different task steps with a "try another" exercise' do
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
+      grading_template = task_plan.grading_template
       tasks.each do |task|
         expect(task.taskings.length).to eq 1
-        expect(task.auto_grading_feedback_on).to eq task_plan.auto_grading_feedback_on
-        expect(task.manual_grading_feedback_on).to eq task_plan.manual_grading_feedback_on
+        expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
+        expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
 
         # Preview tasks don't receive Biglearn PEs yet
         next unless task.taskings.first.role.try!(:student).present?

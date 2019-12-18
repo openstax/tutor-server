@@ -246,20 +246,4 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       expect(task_plan).not_to be_valid
     end
   end
-
-  it 'reads auto_grading_feedback_on from the grading_template with fallbacks if absent' do
-    grading_template = task_plan.grading_template
-    expect(task_plan.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
-
-    task_plan.grading_template = nil
-    expect(task_plan.auto_grading_feedback_on).to eq 'answer'
-  end
-
-  it 'reads manual_grading_feedback_on from the grading_template with fallbacks if absent' do
-    grading_template = task_plan.grading_template
-    expect(task_plan.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
-
-    task_plan.grading_template = nil
-    expect(task_plan.manual_grading_feedback_on).to eq 'grade'
-  end
 end
