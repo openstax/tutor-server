@@ -94,6 +94,14 @@ class Tasks::Models::Task < ApplicationRecord
     grading_template&.manual_grading_feedback_on || 'grade'
   end
 
+  def late_work_immediate_penalty
+    grading_template&.late_work_immediate_penalty || 0.0
+  end
+
+  def late_work_per_day_penalty
+    grading_template&.late_work_per_day_penalty || 0.0
+  end
+
   def is_preview
     task_plan.present? && task_plan.is_preview
   end
@@ -322,39 +330,46 @@ class Tasks::Models::Task < ApplicationRecord
     task_steps.preload(:tasked).select(&:exercise?)
   end
 
-  def effective_correct_exercise_count
-    [ correct_on_time_exercise_count, correct_accepted_late_exercise_count ].max
-  end
-
-  def effective_completed_steps_count
-    [ completed_on_time_steps_count, completed_accepted_late_steps_count ].max
-  end
-
   def completion
-    steps_count == 0 ? nil : effective_completed_steps_count / steps_count.to_f
+    steps_count == 0 ? nil : completed_steps_count / steps_count.to_f
   end
 
   def correctness
     actual_and_placeholder_exercise_count == 0 ?
-      nil : effective_correct_exercise_count / actual_and_placeholder_exercise_count.to_f
+      nil : correct_exercise_count / actual_and_placeholder_exercise_count.to_f
+  end
+
+  def lateness
+    return 0 if due_at.blank?
+
+    worked_at = completed? ? last_worked_at : Time.current
+    late_at = [ due_at, accepted_late_at ].compact.max
+
+    worked_at - late_at
   end
 
   def score
-    result = 0
+    result_without_lateness = 0
 
     if completion_weight > 0
       return if completion.nil?
 
-      result += completion * completion_weight
+      result_without_lateness += completion * completion_weight
     end
 
     if correctness_weight > 0
       return if correctness.nil?
 
-      result += correctness * correctness_weight
+      result_without_lateness += correctness * correctness_weight
     end
 
-    result
+    return result_without_lateness if lateness <= 0
+
+    penalty = late_work_immediate_penalty + (lateness/1.day).floor * late_work_per_day_penalty
+
+    return 0.0 if penalty >= 1.0
+
+    (1.0 - penalty) * result_without_lateness
   end
 
   def accept_late_work

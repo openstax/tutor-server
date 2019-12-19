@@ -674,218 +674,129 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task).to be_hidden
     end
 
-    it 'holds on to accepted late stats regardless of future work' do
-      task = FactoryBot.create(:tasks_task, opens_at: Time.current - 1.week,
-                                            due_at: Time.current,
-                                            step_types: [:tasks_tasked_exercise,
-                                                         :tasks_tasked_exercise,
-                                                         :tasks_tasked_exercise])
-
-      Timecop.freeze(Time.current - 1.day) do
-        Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
-        task.reload
-      end
-
-      expect(task.correct_exercise_count).to eq 1
-      expect(task.completed_exercise_count).to eq 1
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.completed_accepted_late_exercise_count).to eq 0
-      expect(task.correct_accepted_late_exercise_count).to eq 0
-      expect(task.completion).to eq 1/3.0
-      expect(task.correctness).to eq 1/3.0
-      expect(task.score).to eq 1/3.0
-
-      Timecop.freeze(Time.current + 1.day) do
-        Preview::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
-        task.reload
-      end
-
-      expect(task.correct_exercise_count).to eq 2
-      expect(task.completed_exercise_count).to eq 2
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.completed_accepted_late_exercise_count).to eq 0
-      expect(task.correct_accepted_late_exercise_count).to eq 0
-      expect(task.completion).to eq 1/3.0
-      expect(task.correctness).to eq 1/3.0
-      expect(task.score).to eq 1/3.0
-
-      task.accept_late_work
-      task.save!
-
-      expect(task.correct_exercise_count).to eq 2
-      expect(task.completed_exercise_count).to eq 2
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.completed_accepted_late_exercise_count).to eq 2
-      expect(task.correct_accepted_late_exercise_count).to eq 2
-      expect(task.completion).to eq 2/3.0
-      expect(task.correctness).to eq 2/3.0
-      expect(task.score).to eq 2/3.0
-      expect(task.accepted_late_at).not_to be_nil
-
-      Timecop.freeze(Time.current + 1.day) do
-        Preview::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
-        task.reload
-      end
-
-      expect(task.correct_exercise_count).to eq 3
-      expect(task.completed_exercise_count).to eq 3
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.completed_accepted_late_exercise_count).to eq 2
-      expect(task.correct_accepted_late_exercise_count).to eq 2
-      expect(task.completion).to eq 2/3.0
-      expect(task.correctness).to eq 2/3.0
-      expect(task.score).to eq 2/3.0
-
-      task.accept_late_work
-      task.save!
-
-      expect(task.correct_exercise_count).to eq 3
-      expect(task.completed_exercise_count).to eq 3
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.completed_accepted_late_exercise_count).to eq 3
-      expect(task.correct_accepted_late_exercise_count).to eq 3
-      expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
-      expect(task.score).to eq 1.0
-
-      task.reject_late_work
-      task.save!
-
-      expect(task.correct_exercise_count).to eq 3
-      expect(task.completed_exercise_count).to eq 3
-      expect(task.correct_accepted_late_exercise_count).to eq 0
-      expect(task.completed_accepted_late_exercise_count).to eq 0
-      expect(task.completion).to eq 1/3.0
-      expect(task.correctness).to eq 1/3.0
-      expect(task.score).to eq 1/3.0
-      expect(task.accepted_late_at).to be_nil
-    end
-
-    it 'holds on to accepted late stats regardless of future work and due date changes' do
+    it 'calculates the score with lateness penalties' do
       task = FactoryBot.create(
-        :tasks_task, opens_at: Time.current - 1.week,
-                     due_at: Time.current,
-                     step_types: [ :tasks_tasked_exercise,
-                                   :tasks_tasked_exercise,
-                                   :tasks_tasked_exercise ]
+        :tasks_task, step_types: [
+          :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_exercise
+        ]
       )
+      task.grading_template.late_work_immediate_penalty = 0.4
+      task.grading_template.late_work_per_day_penalty = 0.1
+      task.grading_template.save!
 
-      Timecop.freeze(Time.current - 1.day) do
+      due_at = task.due_at
+
+      Timecop.freeze(due_at - 1.day) do
         Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
         task.reload
+
+        expect(task.correct_exercise_count).to eq 1
+        expect(task.completed_exercise_count).to eq 1
+        expect(task.completed_on_time_exercise_count).to eq 1
+        expect(task.correct_on_time_exercise_count).to eq 1
+        expect(task.correct_accepted_late_exercise_count).to eq 0
+        expect(task.completed_accepted_late_exercise_count).to eq 0
+        expect(task.completion).to eq 1/3.0
+        expect(task.correctness).to eq 1/3.0
+        expect(task.score).to eq 1/3.0
       end
 
-      expect(task.correct_exercise_count).to eq 1
-      expect(task.completed_exercise_count).to eq 1
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.correct_accepted_late_exercise_count).to eq 0
-      expect(task.completed_accepted_late_exercise_count).to eq 0
-      expect(task.completion).to eq 1/3.0
-      expect(task.correctness).to eq 1/3.0
-      expect(task.score).to eq 1/3.0
-
-      Timecop.freeze(Time.current + 1.day) do
+      Timecop.freeze(due_at + 25.hours) do
         Preview::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
+
+        expect(task.correct_exercise_count).to eq 2
+        expect(task.completed_exercise_count).to eq 2
+        expect(task.completed_on_time_exercise_count).to eq 1
+        expect(task.correct_on_time_exercise_count).to eq 1
+        expect(task.correct_accepted_late_exercise_count).to eq 0
+        expect(task.completed_accepted_late_exercise_count).to eq 0
+        expect(task.completion).to eq 2/3.0
+        expect(task.correctness).to eq 2/3.0
+        expect(task.score).to eq 1/3.0
+
+        task.accept_late_work
+        task.save!
+
+        expect(task.correct_exercise_count).to eq 2
+        expect(task.completed_exercise_count).to eq 2
+        expect(task.completed_on_time_exercise_count).to eq 1
+        expect(task.correct_on_time_exercise_count).to eq 1
+        expect(task.correct_accepted_late_exercise_count).to eq 2
+        expect(task.completed_accepted_late_exercise_count).to eq 2
+        expect(task.completion).to eq 2/3.0
+        expect(task.correctness).to eq 2/3.0
+        expect(task.score).to eq 2/3.0
+        expect(task.accepted_late_at).not_to be_nil
       end
 
-      expect(task.correct_exercise_count).to eq 2
-      expect(task.completed_exercise_count).to eq 2
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.correct_accepted_late_exercise_count).to eq 0
-      expect(task.completed_accepted_late_exercise_count).to eq 0
-      expect(task.completion).to eq 1/3.0
-      expect(task.correctness).to eq 1/3.0
-      expect(task.score).to eq 1/3.0
-
-      task.accept_late_work
-      task.save!
-
-      expect(task.correct_exercise_count).to eq 2
-      expect(task.completed_exercise_count).to eq 2
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.correct_accepted_late_exercise_count).to eq 2
-      expect(task.completed_accepted_late_exercise_count).to eq 2
-      expect(task.completion).to eq 2/3.0
-      expect(task.correctness).to eq 2/3.0
-      expect(task.score).to eq 2/3.0
-      expect(task.accepted_late_at).not_to be_nil
-
-      Timecop.freeze(Time.current + 1.day) do
+      Timecop.freeze(due_at + 49.hours) do
         Preview::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
+
+        expect(task.correct_exercise_count).to eq 3
+        expect(task.completed_exercise_count).to eq 3
+        expect(task.completed_on_time_exercise_count).to eq 1
+        expect(task.correct_on_time_exercise_count).to eq 1
+        expect(task.correct_accepted_late_exercise_count).to eq 2
+        expect(task.completed_accepted_late_exercise_count).to eq 2
+        expect(task.completion).to eq 1.0
+        expect(task.correctness).to eq 1.0
+        expect(task.score).to eq 0.5
+
+        task.accept_late_work
+        task.save!
+
+        expect(task.correct_exercise_count).to eq 3
+        expect(task.completed_exercise_count).to eq 3
+        expect(task.completed_on_time_exercise_count).to eq 1
+        expect(task.correct_on_time_exercise_count).to eq 1
+        expect(task.correct_accepted_late_exercise_count).to eq 3
+        expect(task.completed_accepted_late_exercise_count).to eq 3
+        expect(task.completion).to eq 1.0
+        expect(task.correctness).to eq 1.0
+        expect(task.score).to eq 1.0
+
+        task.due_at = due_at + 3.days
+        task.save!
+
+        expect(task.correct_exercise_count).to eq 3
+        expect(task.completed_exercise_count).to eq 3
+        expect(task.completed_on_time_exercise_count).to eq 3
+        expect(task.correct_on_time_exercise_count).to eq 3
+        expect(task.completed_accepted_late_exercise_count).to eq 3
+        expect(task.correct_accepted_late_exercise_count).to eq 3
+        expect(task.completion).to eq 1.0
+        expect(task.correctness).to eq 1.0
+        expect(task.score).to eq 1.0
+
+        task.due_at = due_at
+        task.save!
+
+        expect(task.correct_exercise_count).to eq 3
+        expect(task.completed_exercise_count).to eq 3
+        expect(task.completed_on_time_exercise_count).to eq 1
+        expect(task.correct_on_time_exercise_count).to eq 1
+        expect(task.completed_accepted_late_exercise_count).to eq 3
+        expect(task.correct_accepted_late_exercise_count).to eq 3
+        expect(task.completion).to eq 1.0
+        expect(task.correctness).to eq 1.0
+        expect(task.score).to eq 1.0
+
+        task.reject_late_work
+        task.save!
+
+        expect(task.correct_exercise_count).to eq 3
+        expect(task.completed_exercise_count).to eq 3
+        expect(task.completed_on_time_exercise_count).to eq 1
+        expect(task.correct_on_time_exercise_count).to eq 1
+        expect(task.correct_accepted_late_exercise_count).to eq 0
+        expect(task.completed_accepted_late_exercise_count).to eq 0
+        expect(task.completion).to eq 1.0
+        expect(task.correctness).to eq 1.0
+        expect(task.score).to be_within(1e-6).of(0.4)
+        expect(task.accepted_late_at).to be_nil
       end
-
-      expect(task.correct_exercise_count).to eq 3
-      expect(task.completed_exercise_count).to eq 3
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.correct_accepted_late_exercise_count).to eq 2
-      expect(task.completed_accepted_late_exercise_count).to eq 2
-      expect(task.completion).to eq 2/3.0
-      expect(task.correctness).to eq 2/3.0
-      expect(task.score).to eq 2/3.0
-
-      task.accept_late_work
-      task.save!
-
-      expect(task.correct_exercise_count).to eq 3
-      expect(task.completed_exercise_count).to eq 3
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.correct_accepted_late_exercise_count).to eq 3
-      expect(task.completed_accepted_late_exercise_count).to eq 3
-      expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
-      expect(task.score).to eq 1.0
-
-      task.due_at = Time.current + 2.days
-      task.save!
-
-      expect(task.correct_exercise_count).to eq 3
-      expect(task.completed_exercise_count).to eq 3
-      expect(task.completed_on_time_exercise_count).to eq 3
-      expect(task.correct_on_time_exercise_count).to eq 3
-      expect(task.completed_accepted_late_exercise_count).to eq 3
-      expect(task.correct_accepted_late_exercise_count).to eq 3
-      expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
-      expect(task.score).to eq 1.0
-
-      task.due_at = Time.current
-      task.save!
-
-      expect(task.correct_exercise_count).to eq 3
-      expect(task.completed_exercise_count).to eq 3
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.completed_accepted_late_exercise_count).to eq 3
-      expect(task.correct_accepted_late_exercise_count).to eq 3
-      expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
-      expect(task.score).to eq 1.0
-
-      task.reject_late_work
-      task.save!
-
-      expect(task.correct_exercise_count).to eq 3
-      expect(task.completed_exercise_count).to eq 3
-      expect(task.completed_on_time_exercise_count).to eq 1
-      expect(task.correct_on_time_exercise_count).to eq 1
-      expect(task.correct_accepted_late_exercise_count).to eq 0
-      expect(task.completed_accepted_late_exercise_count).to eq 0
-      expect(task.completion).to eq 1/3.0
-      expect(task.correctness).to eq 1/3.0
-      expect(task.score).to eq 1/3.0
-      expect(task.accepted_late_at).to be_nil
     end
   end
 end
