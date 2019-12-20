@@ -22,16 +22,15 @@ class Tasks::Models::TaskedReading < IndestructibleRecord
   private
 
   def class_title
-    text = content_dom.xpath("//*[contains(@class, 'os-title')]").first.try(:text).try(:strip)
-    text.try(:split, /\n+/).try(:first)
+    content_dom.xpath("//*[contains(@class, 'os-title')]").first&.inner_html&.strip
   end
 
   def document_title
-    content_dom.xpath("//*[@data-type='document-title']").first.try(:text).try(:strip)
+    content_dom.xpath("//*[@data-type='document-title']").first&.inner_html&.strip
   end
 
   def data_title
-    content_dom.xpath("//*[@data-type='title']").first.try(:text).try(:strip)
+    content_dom.xpath("//*[@data-type='title']").first&.inner_html&.strip
   end
 
   def content_dom

@@ -15,13 +15,13 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
     end
 
     context "When document title is present" do
-      let(:content_preview_doc_title) { "Introduction to Science Doc Title" }
+      let(:content_preview_doc_title) { "<i>Introduction to Science Doc Title</i>" }
 
       let(:content) do
         <<~HTML
         <body>
           <div data-type="document-title" id="35337">
-            <span class="os-text">#{content_preview_doc_title}</span>
+            #{content_preview_doc_title}
           </div>
         </body>
         HTML
@@ -33,13 +33,13 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
     end
 
     context "When document title is missing but contains a data-type title" do
-      let(:content_preview_title) { "Introduction to Science Title" }
+      let(:content_preview_title) { "<b>Introduction</b> to Science Title" }
 
       let(:content) do
         <<~HTML
         <body>
           <div data-type="title" id="35337">
-            <span class="os-text">#{content_preview_title}</span>
+            #{content_preview_title}
           </div>
         </body>
         HTML
@@ -51,13 +51,13 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
     end
 
     context "When data title is missing but contains a class title" do
-      let(:content_preview_class) { "Introduction to Science Class" }
+      let(:content_preview_class) { "Introduction to <strong>Science</strong> Class" }
 
       let(:content) do
         <<~HTML
         <body>
-          <div class="os-chapter-outline">
-            <h3 class="os-title">#{content_preview_class}</h3>
+          <div class="os-title">
+            #{content_preview_class}
           </div>
         </body>
         HTML
