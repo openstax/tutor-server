@@ -188,6 +188,18 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
     it "skips courses that have no teachers" do
       call_expecting_skips("No teachers")
     end
+
+    context 'when no teachers have a SF Contact ID' do
+      before(:each) { AddUserAsCourseTeacher[course: course, user: user_no_sf] }
+
+      it 'does not log the error to Sentry or send error emails' do
+        expect(Raven).not_to receive(:capture_message)
+        expect(Raven).not_to receive(:capture_exception)
+        expect do
+          call_expecting_skips(/No teachers have a SF contact ID/)
+        end.not_to change { ActionMailer::Base.deliveries.count }
+      end
+    end
   end
 
   context "errors happen" do
@@ -207,38 +219,25 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
       expect(outputs.num_skips).to eq 0
     end
 
-    it 'errors when no teacher SF contact' do
-      AddUserAsCourseTeacher[course: course, user: user_no_sf]
-      call_expecting_errors(/No teachers have a SF contact ID/)
-    end
-
-    context "when there is an error (no teacher with SF contact)" do
-      before(:each) { AddUserAsCourseTeacher[course: course, user: user_no_sf] }
-
-      it 'logs the error to Sentry and does not send error emails' do
-        expect(Raven).to receive(:capture_message) do |message, *|
-          expect(message).to eq 'No teachers have a SF contact ID'
-        end
-        expect do
-          call_expecting_errors(/No teachers have a SF contact ID/)
-        end.not_to change { ActionMailer::Base.deliveries.count }
-      end
-    end
-
     context "when there is an error in writing stats" do
-      it 'writes the error to the TCP' do
+      it 'writes the error to the TCP, logs the error to Sentry and does not send error emails' do
         allow_any_instance_of(OpenStax::Salesforce::Remote::TutorCoursePeriod).to(
           receive(:reset_stats) { raise "kaboom" }
         )
         AddUserAsCourseTeacher[course: course, user: user_sf_a]
-        call_expecting_errors(/Unable to update stats: kaboom/)
+        expect(Raven).to receive(:capture_exception).at_least(:once) do |exception, *|
+          expect(exception).to be_a RuntimeError
+          expect(exception.message).to eq 'kaboom'
+        end
+        expect do
+          call_expecting_errors(/Unable to update stats: kaboom/)
+        end.not_to change { ActionMailer::Base.deliveries.count }
 
         OpenStax::Salesforce::Remote::TutorCoursePeriod
           .where(period_uuid: period_uuids)
           .each { |tcp| expect(tcp.error).to match /Unable to update stats: kaboom/ }
       end
     end
-
   end
 
 

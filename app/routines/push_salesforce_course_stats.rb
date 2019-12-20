@@ -66,7 +66,7 @@ class PushSalesforceCourseStats
   def process_course(course, sf_tutor_course_periods_by_period_uuid)
     begin
       num_teachers = course.teachers.length
-      skip!(message: "No teachers", course: course) if num_teachers == 0
+      skip!(message: 'No teachers', course: course) if num_teachers == 0
 
       num_periods = course.periods.length
       course_wide_stats = {
@@ -133,7 +133,7 @@ class PushSalesforceCourseStats
           sf_tutor_course_period.num_students_with_work += 1 if num_steps_completed >= 10
         end
 
-        skip!(message: "No changes", course: course, period: period) \
+        skip!(message: 'No changes', course: course, period: period) \
           if !sf_tutor_course_period.changed?
       rescue Exception => ee
         # Add the error to the TCP and `error!`
@@ -169,7 +169,7 @@ class PushSalesforceCourseStats
     course.teachers.sort_by(&:created_at)
           .map{ |tt| tt.role.profile.account.salesforce_contact_id }
           .compact.first.tap do |contact_id|
-      error!(message: "No teachers have a SF contact ID", course: course) if contact_id.nil?
+      skip!(message: 'No teachers have a SF contact ID', course: course) if contact_id.nil?
     end
   end
 
