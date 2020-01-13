@@ -128,9 +128,6 @@ class Demo::Export < Demo::Base
                  ]
       )
 
-      teacher_profiles = teachers.map(&:role).map(&:profile)
-      student_profiles = students.map(&:role).map(&:profile)
-
       courses.map(&:offering).compact.uniq.each do |offering|
         write name, :import, "#{offering.title}.yml", Api::V1::Demo::Import::Representer.new(
           Demo::Mash.new(book: offering.ecosystem.books.first, catalog_offering: offering)
@@ -138,6 +135,12 @@ class Demo::Export < Demo::Base
       end
 
       courses.each do |course|
+        course_teachers = teachers.select { |teacher| teacher.course == course }
+        teacher_profiles = course_teachers.map(&:role).map(&:profile)
+
+        course_students = students.select { |student| student.course == course }
+        student_profiles = course_students.map(&:role).map(&:profile)
+
         write_with_course name, :users, course, starts_at, Api::V1::Demo::Users::Representer,
                                 teachers: teacher_profiles, students: student_profiles
         write_with_course name, :course, course, starts_at, Api::V1::Demo::Course::Representer,
