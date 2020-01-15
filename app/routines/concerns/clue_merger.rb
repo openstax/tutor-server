@@ -2,7 +2,9 @@ module ClueMerger
   def merge_clues(book_containers, clue_by_book_container_uuid)
     weights_by_book_container_uuids = Hash.new { |hash, key| hash[key] = 0 }
     book_containers.each do |bc|
-      weights_by_book_container_uuids[bc[:tutor_uuid]] += bc[:num_completed_exercises]
+      bc.fetch(:unmapped_tutor_uuids, [ bc[:tutor_uuid] ]).each do |book_container_uuid|
+        weights_by_book_container_uuids[book_container_uuid] += bc[:num_completed_exercises]
+      end
     end
     is_real = false
     weights_by_clues = {}

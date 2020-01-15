@@ -56,7 +56,9 @@ class GetStudentGuide
     end
 
     # Get mapped page and chapter UUIDs
-    page_ids = chs.flat_map { |ch| ch[:pages].map { |pg| pg[:id] } }
+    page_ids = chs.flat_map do |ch|
+      ch[:pages].flat_map { |page| page.fetch(:unmapped_ids, [ page[:id] ]) }
+    end
     pages = Content::Models::Page
       .select(:tutor_uuid, :content_chapter_id)
       .where(id: page_ids)
