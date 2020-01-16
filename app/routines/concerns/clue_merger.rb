@@ -15,9 +15,11 @@ module ClueMerger
     end
     weights_by_clues = weights_by_clues.select { |clue, weight| clue[:is_real] } if is_real
     total_weight = weights_by_clues.values.sum
-    most_likely = total_weight == 0 ? 0.5 : weights_by_clues.map do |clue, weight|
-      clue[:most_likely] * weight
-    end.sum/total_weight
+    most_likely = if total_weight == 0
+      0.5
+    else
+      weights_by_clues.map { |clue, weight| clue[:most_likely] * weight }.sum/total_weight
+    end
 
     # We could probably do something fancier to combine the confidence intervals,
     # but we do not currently use them anywhere
