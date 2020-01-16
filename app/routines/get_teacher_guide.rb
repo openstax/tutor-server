@@ -1,6 +1,7 @@
 class GetTeacherGuide
-
   lev_routine express_output: :teacher_guide
+
+  include ClueMerger
 
   protected
 
@@ -64,7 +65,7 @@ class GetTeacherGuide
 
     # Get mapped page and chapter UUIDs
     page_ids = chs_by_period_id.values.flatten.flat_map do |ch|
-      ch[:pages].map { |page| page[:id] }
+      ch[:pages].flat_map { |page| page.fetch(:unmapped_ids, [ page[:id] ]) }
     end
     pages = Content::Models::Page
       .select([:tutor_uuid, :content_chapter_id])
@@ -101,36 +102,29 @@ class GetTeacherGuide
 
         page_guides = pgs.group_by { |pg| pg[:book_location] }.sort.map do |book_location, pgs|
           preferred_pg = pgs.first
-          student_count = pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
-          questions_answered_count = pgs.map { |pg| pg[:num_completed_exercises] }.reduce(0, :+)
-          clue = biglearn_clue_by_book_container_uuid[preferred_pg[:tutor_uuid]]
 
           {
             title: preferred_pg[:title],
             book_location: book_location,
             baked_book_location: preferred_pg[:baked_book_location],
-            student_count: student_count,
-            questions_answered_count: questions_answered_count,
-            clue: clue,
+            student_count: pgs.flat_map { |pg| pg[:student_ids] }.uniq.size,
+            questions_answered_count: pgs.map { |pg| pg[:num_completed_exercises] }.sum,
+            clue: merge_clues(pgs, biglearn_clue_by_book_container_uuid),
             page_ids: [ preferred_pg[:id] ]
           }
         end
 
         preferred_ch = chs.first
-        student_count = chs.flat_map { |ch| ch[:student_ids] }.uniq.size
-        questions_answered_count = page_guides.map { |guide| guide[:questions_answered_count] }
-                                              .reduce(0, :+)
-        clue = biglearn_clue_by_book_container_uuid[preferred_ch[:tutor_uuid]]
-        page_ids = page_guides.map { |guide| guide[:page_ids] }.reduce([], :+)
+        questions_answered_count = page_guides.map { |guide| guide[:questions_answered_count] }.sum
 
         {
           title: preferred_ch[:title],
           book_location: book_location,
           baked_book_location: preferred_ch[:baked_book_location],
-          student_count: student_count,
+          student_count: chs.flat_map { |ch| ch[:student_ids] }.uniq.size,
           questions_answered_count: questions_answered_count,
-          clue: clue,
-          page_ids: page_ids,
+          clue: merge_clues(chs, biglearn_clue_by_book_container_uuid),
+          page_ids: page_guides.map { |guide| guide[:page_ids] }.reduce([], :+),
           children: page_guides
         }
       end
@@ -144,5 +138,4 @@ class GetTeacherGuide
       }
     end
   end
-
 end

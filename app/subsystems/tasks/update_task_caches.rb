@@ -305,7 +305,9 @@ class Tasks::UpdateTaskCaches
           end
           {
             id: mapped_page.id,
+            unmapped_ids: page_ids,
             tutor_uuid: mapped_page.tutor_uuid,
+            unmapped_tutor_uuids: pages.map(&:tutor_uuid),
             title: mapped_page.title,
             book_location: mapped_page.book_location,
             baked_book_location: mapped_page.baked_book_location,
@@ -323,9 +325,12 @@ class Tasks::UpdateTaskCaches
           }
         end.sort_by { |page| page[:book_location] }
 
+        chapters = pages_by_mapped_page.values.flatten.map(&:chapter).uniq
         {
           id: mapped_chapter.id,
+          unmapped_ids: chapters.map(&:id),
           tutor_uuid: mapped_chapter.tutor_uuid,
+          unmapped_tutor_uuids: chapters.map(&:tutor_uuid),
           title: mapped_chapter.title,
           book_location: mapped_chapter.book_location,
           baked_book_location: mapped_chapter.baked_book_location,
@@ -343,9 +348,13 @@ class Tasks::UpdateTaskCaches
         }
       end.sort_by { |chapter| chapter[:book_location] }
 
+      pages = pages_by_mapped_chapter_and_page.values.map(&:values).flatten
+      books = pages.map(&:chapter).uniq.map(&:book).uniq
       {
         id: mapped_book.id,
+        unmapped_ids: books.map(&:id),
         tutor_uuid: mapped_book.tutor_uuid,
+        unmapped_tutor_uuids: books.map(&:tutor_uuid),
         title: mapped_book.title,
         has_exercises: chapters_array.any? { |ch| ch[:has_exercises] },
         num_assigned_steps: chapters_array.sum { |ch| ch[:num_assigned_steps] },

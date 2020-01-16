@@ -124,7 +124,9 @@ class Tasks::UpdatePeriodCaches
           preferred_pg = pgs.first
           {
             id: preferred_pg[:id],
+            unmapped_ids: pgs.flat_map { |pg| pg[:unmapped_ids] }.compact.uniq,
             tutor_uuid: preferred_pg[:tutor_uuid],
+            unmapped_tutor_uuids: pgs.flat_map { |pg| pg[:unmapped_tutor_uuids] }.compact.uniq,
             title: preferred_pg[:title],
             book_location: book_location,
             baked_book_location: preferred_pg[:baked_book_location],
@@ -144,7 +146,9 @@ class Tasks::UpdatePeriodCaches
         preferred_ch = chs.first
         {
           id: preferred_ch[:id],
+          unmapped_ids: chs.flat_map { |ch| ch[:unmapped_ids] }.compact.uniq,
           tutor_uuid: preferred_ch[:tutor_uuid],
+          unmapped_tutor_uuids: chs.flat_map { |ch| ch[:unmapped_tutor_uuids] }.compact.uniq,
           title: preferred_ch[:title],
           book_location: book_location,
           baked_book_location: preferred_ch[:baked_book_location],
@@ -165,7 +169,9 @@ class Tasks::UpdatePeriodCaches
       preferred_bk = bks.first
       {
         id: preferred_bk[:id],
+        unmapped_ids: bks.flat_map { |bk| bk[:unmapped_ids] }.compact.uniq,
         tutor_uuid: preferred_bk[:tutor_uuid],
+        unmapped_tutor_uuids: bks.flat_map { |bk| bk[:unmapped_tutor_uuids] }.compact.uniq,
         title: title,
         has_exercises: bks.any? { |bk| bk[:has_exercises] },
         num_assigned_steps: bks.sum { |bk| bk[:num_assigned_steps] },
