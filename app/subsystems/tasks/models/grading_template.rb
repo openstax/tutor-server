@@ -8,6 +8,7 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
   enum task_plan_type:             [ :reading, :homework ]
   enum auto_grading_feedback_on:   [ :answer, :due, :publish ], _prefix: true
   enum manual_grading_feedback_on: [ :grade, :publish ], _prefix: true
+  enum late_work_penalty_applied:  [ :never, :immediately, :daily ]
 
   validates :task_plan_type,
             :name,
@@ -17,12 +18,12 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
             :default_due_time,
             :default_due_date_offset_days,
             :default_close_date_offset_days,
+            :late_work_penalty_applied,
             presence: true
 
   validates :completion_weight,
             :correctness_weight,
-            :late_work_immediate_penalty,
-            :late_work_per_day_penalty,
+            :late_work_penalty,
             presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
 
   validate :weights_add_up, :default_times_have_good_values
@@ -38,8 +39,8 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
       correctness_weight: 1,
       auto_grading_feedback_on: :answer,
       manual_grading_feedback_on: :publish,
-      late_work_immediate_penalty: 0,
-      late_work_per_day_penalty: 0.1,
+      late_work_penalty_applied: :daily,
+      late_work_penalty: 0.1,
       default_open_time: '00:01',
       default_due_time: '07:00',
       default_due_date_offset_days: 7,
@@ -52,8 +53,8 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
       correctness_weight: 0.1,
       auto_grading_feedback_on: :answer,
       manual_grading_feedback_on: :grade,
-      late_work_immediate_penalty: 0,
-      late_work_per_day_penalty: 0.1,
+      late_work_penalty_applied: :daily,
+      late_work_penalty: 0.1,
       default_open_time: '00:01',
       default_due_time: '07:00',
       default_due_date_offset_days: 7,

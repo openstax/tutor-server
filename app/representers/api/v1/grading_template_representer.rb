@@ -65,13 +65,13 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
              DESCRIPTION
            }
 
-  property :late_work_immediate_penalty,
-           type: Float,
+  property :late_work_penalty_applied,
+           type: String,
            readable: true,
            writeable: true,
            schema_info: { required: true }
 
-  property :late_work_per_day_penalty,
+  property :late_work_penalty,
            type: Float,
            readable: true,
            writeable: true,

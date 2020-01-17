@@ -8,8 +8,8 @@ FactoryBot.define do
     correctness_weight             { (1 - completion_weight).round(1) }
     auto_grading_feedback_on       { [ :answer, :due, :publish ].sample }
     manual_grading_feedback_on     { [ :grade, :publish ].sample }
-    late_work_immediate_penalty    { rand.round(1) }
-    late_work_per_day_penalty      { (1 - late_work_immediate_penalty).round(1) }
+    late_work_penalty_applied      { [ :never, :immediately, :daily ].sample }
+    late_work_penalty              { rand.round(1) }
     default_open_time              { '07:00:00' }
     default_due_time               { '21:00:00' }
     default_due_date_offset_days   { 7 }
