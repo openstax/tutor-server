@@ -1,4 +1,4 @@
-class Lms::UnpairCourse
+class Lms::RemoveLastCoursePairing
 
   lev_routine
 
@@ -7,7 +7,7 @@ class Lms::UnpairCourse
       fatal_error(code: :course_access_is_locked, message: "Course access is locked")
     end
     if course.lms_contexts.any?
-      course.lms_contexts.destroy_all
+      course.lms_contexts.order(:created_at).last.destroy
     end
     transfer_errors_from(course, {type: :verbatim})
   end

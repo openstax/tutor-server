@@ -155,7 +155,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
   context 'DELETE #unpair_lms' do
     let(:course) { FactoryBot.create :course_profile_course }
     it 'calls unpair routine' do
-      expect_any_instance_of(Lms::UnpairCourse).to(
+      expect_any_instance_of(Lms::RemoveLastCoursePairing).to(
         receive(:call).with(course: course)
       )
       delete :unpair_lms, params: { id: course.id }
