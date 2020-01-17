@@ -120,7 +120,7 @@
                 enabled
                 <% if course_info.is_access_switchable? %>
                   <% if course_info.lms_contexts.any? %>
-                    &amp; paired (<%= link_to('unpair', unpair_lms_admin_course_path(course_info),
+                    &amp; paired to <%= course_info.lms_contexts.count %> LMS (<%= link_to('unpair last', unpair_lms_admin_course_path(course_info),
                                 method: :delete, data: { confirm: 'Are you sure?' })%>)
                   <% end %>
                 <% else %>

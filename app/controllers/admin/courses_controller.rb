@@ -34,7 +34,7 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def unpair_lms
-    Lms::UnpairCourse.call(course: CourseProfile::Models::Course.find(params[:id]))
+    Lms::RemoveLastCoursePairing.call(course: CourseProfile::Models::Course.find(params[:id]))
     redirect_to admin_courses_path
   end
 
