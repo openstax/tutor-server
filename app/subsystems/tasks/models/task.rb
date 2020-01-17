@@ -94,12 +94,12 @@ class Tasks::Models::Task < ApplicationRecord
     grading_template&.manual_grading_feedback_on || 'grade'
   end
 
-  def late_work_immediate_penalty
-    grading_template&.late_work_immediate_penalty || 0.0
+  def late_work_penalty_applied
+    grading_template&.late_work_penalty_applied || 'never'
   end
 
-  def late_work_per_day_penalty
-    grading_template&.late_work_per_day_penalty || 0.0
+  def late_work_penalty
+    grading_template&.late_work_penalty || 0.0
   end
 
   def is_preview
@@ -340,12 +340,9 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def lateness
-    return 0 if due_at.blank?
+    return 0 if last_worked_at.blank? || due_at.blank?
 
-    worked_at = completed? ? last_worked_at : Time.current
-    late_at = [ due_at, accepted_late_at ].compact.max
-
-    worked_at - late_at
+    last_worked_at - [ due_at, accepted_late_at ].compact.max
   end
 
   def score
@@ -365,7 +362,14 @@ class Tasks::Models::Task < ApplicationRecord
 
     return result_without_lateness if lateness <= 0
 
-    penalty = late_work_immediate_penalty + (lateness/1.day).floor * late_work_per_day_penalty
+    penalty = case late_work_penalty_applied
+    when 'immediately'
+      late_work_penalty
+    when 'daily'
+      (lateness/1.day).ceil * late_work_penalty
+    else
+      0.0
+    end
 
     return 0.0 if penalty >= 1.0
 

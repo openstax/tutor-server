@@ -680,8 +680,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
           :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_exercise
         ]
       )
-      task.grading_template.late_work_immediate_penalty = 0.4
-      task.grading_template.late_work_per_day_penalty = 0.1
+      task.grading_template.late_work_penalty_applied = :immediately
+      task.grading_template.late_work_penalty = 0.5
       task.grading_template.save!
 
       due_at = task.due_at
@@ -701,7 +701,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         expect(task.score).to eq 1/3.0
       end
 
-      Timecop.freeze(due_at + 25.hours) do
+      Timecop.freeze(due_at + 1.hour) do
         Preview::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
         task.reload
 
@@ -730,7 +730,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         expect(task.accepted_late_at).not_to be_nil
       end
 
-      Timecop.freeze(due_at + 49.hours) do
+      Timecop.freeze(due_at + 25.hours) do
         Preview::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
         task.reload
 
@@ -743,6 +743,20 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         expect(task.completion).to eq 1.0
         expect(task.correctness).to eq 1.0
         expect(task.score).to eq 0.5
+
+        task.grading_template.late_work_penalty_applied = :daily
+        task.grading_template.late_work_penalty = 0.3
+        task.grading_template.save!
+
+        expect(task.correct_exercise_count).to eq 3
+        expect(task.completed_exercise_count).to eq 3
+        expect(task.completed_on_time_exercise_count).to eq 1
+        expect(task.correct_on_time_exercise_count).to eq 1
+        expect(task.correct_accepted_late_exercise_count).to eq 2
+        expect(task.completed_accepted_late_exercise_count).to eq 2
+        expect(task.completion).to eq 1.0
+        expect(task.correctness).to eq 1.0
+        expect(task.score).to eq 0.7
 
         task.accept_late_work
         task.save!
@@ -794,7 +808,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         expect(task.completed_accepted_late_exercise_count).to eq 0
         expect(task.completion).to eq 1.0
         expect(task.correctness).to eq 1.0
-        expect(task.score).to be_within(1e-6).of(0.4)
+        expect(task.score).to eq 0.4
         expect(task.accepted_late_at).to be_nil
       end
     end
