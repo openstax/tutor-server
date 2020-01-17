@@ -10,7 +10,7 @@ end
 def demo_routine_perform_later(routine_class, type_string, args)
   type_string = type_string.to_s
   options = args.to_h.deep_symbolize_keys
-  types = type_string == 'all' ? [ 'users', 'import', 'course', 'assign', 'work' ] : [ type_string ]
+  types = type_string == 'all' ? [ 'import', 'users', 'course', 'assign', 'work' ] : [ type_string ]
   filter = (options.delete(:config) || Demo::DEFAULT_CONFIG).to_s
 
   configs = Hash.new { |hash, key| hash[key] = options.dup }.tap do |options_by_basename|
@@ -24,7 +24,7 @@ def demo_routine_perform_later(routine_class, type_string, args)
           erb.filename = path
           string = erb.result
         end
-        options_by_basename[path.sub(type, '').chomp('.erb')][type] = YAML.load(string)
+        options_by_basename[path.sub("/#{type}/", '/').chomp('.erb')][type] = YAML.load(string)
       end
     end
   end.values
