@@ -9,17 +9,12 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
 
   [
     :task_plan_type, :name, :completion_weight, :correctness_weight, :auto_grading_feedback_on,
-    :manual_grading_feedback_on, :late_work_immediate_penalty, :late_work_per_day_penalty,
+    :manual_grading_feedback_on, :late_work_penalty_applied, :late_work_penalty,
     :default_open_time, :default_due_time, :default_due_date_offset_days,
     :default_close_date_offset_days
   ].each { |field| it { is_expected.to validate_presence_of(field) } }
 
-  [
-    :completion_weight,
-    :correctness_weight,
-    :late_work_immediate_penalty,
-    :late_work_per_day_penalty
-  ].each do |field|
+  [ :completion_weight, :correctness_weight, :late_work_penalty ].each do |field|
     it do
       is_expected.to(
         validate_numericality_of(field).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(1)

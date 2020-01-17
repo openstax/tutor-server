@@ -740,8 +740,7 @@ ActiveRecord::Schema.define(version: 2020_02_04_234650) do
     t.float "correctness_weight", null: false
     t.integer "auto_grading_feedback_on", null: false
     t.integer "manual_grading_feedback_on", null: false
-    t.float "late_work_immediate_penalty", null: false
-    t.float "late_work_per_day_penalty", null: false
+    t.float "late_work_penalty", null: false
     t.string "default_open_time", null: false
     t.string "default_due_time", null: false
     t.integer "default_due_date_offset_days", null: false
@@ -749,6 +748,7 @@ ActiveRecord::Schema.define(version: 2020_02_04_234650) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "late_work_penalty_applied", null: false
     t.index ["course_profile_course_id", "task_plan_type", "deleted_at"], name: "index_tasks_grading_templates_on_course_type_and_deleted"
   end
 
