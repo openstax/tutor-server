@@ -1,0 +1,372 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://archive-content05.cnx.org/contents/482ba886-c771-4533-96a6-ac6bf1c6889d
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 302
+      message: Found
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - max-age=60, public
+      Content-Length:
+      - '128'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Tue, 10 Dec 2019 18:03:49 GMT
+      Etag:
+      - '"1B2M2Y8AsgTpgAmY7PhCfg"'
+      Location:
+      - https://archive-content05.cnx.org/contents/482ba886-c771-4533-96a6-ac6bf1c6889d@3
+      Server:
+      - waitress
+      X-Varnish-Status:
+      - cacheable - Cache-Control in backend response
+      X-Varnish-Backend:
+      - content05_archive0
+      X-Varnish-Ttl:
+      - '60.000'
+      X-Varnish:
+      - '1708764'
+      Age:
+      - '0'
+      Via:
+      - 1.1 varnish-v4
+      X-Varnish-Cache:
+      - MISS
+      Strict-Transport-Security:
+      - max-age=16000000
+    body:
+      encoding: UTF-8
+      string: |+
+        302 Found
+
+        The resource was found at /contents/482ba886-c771-4533-96a6-ac6bf1c6889d@3; you should be redirected automatically.
+
+    http_version: 
+  recorded_at: Tue, 10 Dec 2019 18:03:49 GMT
+- request:
+    method: get
+    uri: https://archive-content05.cnx.org/contents/482ba886-c771-4533-96a6-ac6bf1c6889d@3
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - max-age=31536000, public
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 22 Oct 2019 15:56:55 GMT
+      Etag:
+      - '"v+a2Wz7cE+R2cBz8pkpXaA"'
+      Expires:
+      - Wed, 21 Oct 2020 15:56:55 GMT
+      Link:
+      - <https://content05.cnx.org/contents/669e9ebd-1046-41ed-8296-f64db92fbbed:482ba886-c771-4533-96a6-ac6bf1c6889d/%F0%9F%94%8E-Fort-McHenry-and-the-War-of-1812>
+        ;rel="Canonical"
+      Server:
+      - waitress
+      X-Varnish-Status:
+      - cacheable - Cache-Control in backend response
+      X-Varnish-Backend:
+      - content05_archive0
+      X-Varnish-Ttl:
+      - '31536000.000'
+      X-Varnish:
+      - 1496631 1070321
+      Age:
+      - '4241214'
+      Via:
+      - 1.1 varnish-v4
+      X-Varnish-Cache:
+      - HIT
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=16000000
+    body:
+      encoding: ASCII-8BIT
+      string: '{"googleAnalytics": null, "version": "3", "submitlog": "--", "abstract":
+        "<div xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\" xmlns:qml=\"http://cnx.rice.edu/qml/1.0\"
+        xmlns:mod=\"http://cnx.rice.edu/#moduleIds\" xmlns:bib=\"http://bibtexml.sf.net/\"
+        xmlns:data=\"http://www.w3.org/TR/html5/dom.html#custom-data-attribute\" data-cnxml-to-html-ver=\"1.7.3\">By
+        the end of this section, you will:\n<ul>\n<li>Explain the causes and effects
+        of policy debates in the early republic</li>\n</ul></div>", "revised": "2019-10-19T13:30:38Z",
+        "printStyle": null, "roles": null, "keywords": [], "id": "482ba886-c771-4533-96a6-ac6bf1c6889d",
+        "canonical": "669e9ebd-1046-41ed-8296-f64db92fbbed", "title": "\ud83d\udd0e
+        Fort McHenry and the War of 1812", "mediaType": "application/vnd.org.cnx.module",
+        "canon_url": "https://content05.cnx.org/contents/669e9ebd-1046-41ed-8296-f64db92fbbed:482ba886-c771-4533-96a6-ac6bf1c6889d/%F0%9F%94%8E-Fort-McHenry-and-the-War-of-1812",
+        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\"><title>&#128270; Fort McHenry and the
+        War of 1812</title><meta name=\"created-time\" content=\"2019/09/19 07:21:53
+        -0500\"/><meta name=\"revised-time\" content=\"2019/10/19 08:30:38.290 GMT-5\"/><meta
+        name=\"author\" content=\"xml_apush\"/><meta name=\"acl-list\" content=\"xml_apush\"/><meta
+        name=\"licensor\" content=\"xml_apush\"/><meta name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
+        name=\"subject\" content=\"Social Sciences\"/></head>\n\n<body xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://www.w3.org/TR/html5/dom.html#custom-data-attribute\"
+        data-cnxml-to-html-ver=\"1.7.3\"><div data-type=\"document-title\">&#128270;
+        Fort McHenry and the War of 1812</div><div data-type=\"abstract\">By the end
+        of this section, you will:\n<ul>\n<li>Explain the causes and effects of policy
+        debates in the early republic</li>\n</ul></div>\n<table id=\"fs-idm174057600\"
+        summary=\"No Summary\" class=\"unnumbered unstyled\" data-label=\"\"><tbody>\n<tr>\n<td>Written
+        by: Bill of Rights Institute</td>\n</tr>\n</tbody></table>\n<div data-type=\"note\"
+        id=\"fs-idm207485408\" class=\"os-teacher\"><div data-type=\"title\">Standards</div>\n<p
+        id=\"fs-idm195721024\"><strong data-effect=\"bold\">Topic</strong>: 4.2 The
+        Rise of Political Parties and the Era of Jefferson</p>\n<p id=\"fs-idm214217584\"><strong
+        data-effect=\"bold\">Theme</strong>: PCE Politics and Power</p>\n<p id=\"fs-idm226640864\"><strong
+        data-effect=\"bold\">Learning Objective</strong>: Unit 4B Explain the causes
+        and effects of policy debates in the early republic</p>\n<p id=\"fs-idm192342224\"><strong
+        data-effect=\"bold\">Historical Development</strong>: 4.1.I.A</p>\n<p id=\"fs-idm202506160\"><strong
+        data-effect=\"bold\">Historical Reasoning Skills</strong>: HTS-2 Sourcing
+        and Situation, HTS-3 Source Claims and Evidence, HTS-4 Contextualization,
+        HTS-5 Making Connections, HTS-6 Argumentation</p>\n<p id=\"fs-idm222601968\"><strong
+        data-effect=\"bold\">Reasoning Processes</strong>: RP-1 Comparison, RP-2 Causation</p>\n</div>\n<div
+        data-type=\"note\" id=\"fs-idm207726976\" class=\"os-teacher\"><div data-type=\"title\">Suggested
+        Sequencing</div>\n<p id=\"fs-idm221660016\">This Narrative should follow the
+        <a href=\"/m78848\" class=\"target-chapter\">Tecumseh and the Prophet</a>
+        Narrative and be assigned to students along with the <a href=\"/m78872\" class=\"target-chapter\">Old
+        Hickory: Andrew Jackson and the Battle of New Orleans</a> Narrative to paint
+        a picture of the War of 1812.</p>\n</div>\n<p id=\"fs-idm195863168\">The War
+        of 1812 was begun when Congress declared war on Great Britain for repeatedly
+        violating U.S. <span data-type=\"term\">sovereignty</span>. American ships
+        were being stopped and their sailors were being impressed into British naval
+        service. The war was primarily fought at sea and in Canadian and American
+        territory around the Great Lakes.</p>\n<p id=\"fs-idm221259040\">In August
+        1814, however, a British fleet sailed up the Chesapeake Bay and unloaded more
+        than four thousand British redcoats and marines, who routed American troops
+        in an embarrassing defeat at Bladensburg, Maryland. The British entered Washington,
+        DC, and burned the U.S. Capitol and White House in retaliation for the American
+        burning of York (modern-day Toronto) in Canada. Admiral Alexander Cochrane
+        and his officers then decided to assault Baltimore and moved on the port city
+        a few weeks later. Major General Samuel Smith of the Maryland <span data-type=\"term\">militia</span>
+        prepared the city&#8217;s defenses for an assault.</p>\n<p id=\"fs-idm230463744\">On
+        September 12, 1814, in the predawn hours, 4,700 British troops disembarked
+        at North Point on the Patapsco River for a fifteen-mile march on Baltimore
+        led by General Robert Ross. The Royal Navy detachment, meanwhile, prepared
+        to sail up the river, level Fort McHenry in Baltimore Harbor, and contribute
+        to the <span data-type=\"term\">bombardment</span> and burning of Baltimore.
+        With a great deal of bluster, General Ross reportedly claimed he would &#8220;sup
+        in Baltimore tonight, or in hell.&#8221;<sup data-type=\"footnote-number\"
+        id=\"footnote-ref1\"><a data-type=\"footnote-link\" href=\"#footnote1\">1</a></sup>
+        As he was urging his men forward against the first American lines, however,
+        he was shot dead by an American rifleman.</p>\n<p id=\"fs-idm187897360\">Some
+        five thousand American militia were deployed along a narrow part of the peninsula
+        to block the British path. The two sides exchanged sharp artillery fire before
+        the British attacked. In several bloody encounters, the British twice forced
+        the Americans to retreat to their main battle line. The attack continued the
+        next day, but the British suffered more than 350 casualties in their attacks
+        on the fortified positions and were forced to withdraw. The infantry attack
+        on Baltimore had failed.</p>\n<p id=\"fs-idm233819408\">Meanwhile, at 6:30
+        in the morning of Tuesday, September 13, 1814, as the sun was rising over
+        Baltimore Harbor, Major George Armistead and Captain Joseph Nicholson peered
+        through their spyglasses at five British bomb ships swinging into position
+        one and a half miles from star-shaped Fort McHenry. Armistead was the commander
+        of the fort and Nicholson was the commander of the Baltimore Fencibles, a
+        volunteer artillery company that joined in the defense.</p>\n<p id=\"fs-idm218058048\">The
+        one-thousand&#8211;man garrison of army regulars and volunteer troops was
+        up and preparing the thirty-six guns for the defense of the fort and of Baltimore.
+        They sweated because of the heat of the late summer day and their nerves,
+        which were stretched to the limit.</p>\n<p id=\"fs-idm217034608\">Suddenly,
+        the ship <em data-effect=\"italics\">Volcano</em> fired its massive mortars,
+        lobbing two-hundred&#8211;pound explosive shells into the fort (<a href=\"#BRI_APUSH_05_03_FtMcHenry\"
+        class=\"autogenerated-content\">[link]</a>). The four other bomb ships joined
+        in, as did the rest of the fleet. Houses in the vicinity began to shake as
+        the ground rumbled. Inaccurate but terrifying screaming rockets were launched
+        from the <em data-effect=\"italics\">Erebus,</em> adding to the deafening
+        sound.</p>\n<figure id=\"BRI_APUSH_05_03_FtMcHenry\" class=\"full-width\"><figcaption>An
+        1816 depiction of the British bombardment of Fort McHenry. One of the soldiers
+        who was in the fort during the twenty-five&#8211;hour attack wrote, &#8220;We
+        were like pigeons tied by the legs to be shot at.&#8221;</figcaption>\n<span
+        data-type=\"media\" id=\"fs-idm227671504\" data-alt=\"A painting of ships
+        off a coast shooting cannons at a fort, which has an American flag flying
+        from it.\">\n<img src=\"/resources/85bdd4e2c8a6c6dabe99fce149dfa232d921c05e/BRI_APUSH_05_03_FtMcHenry.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"A painting of ships off a coast shooting
+        cannons at a fort, which has an American flag flying from it.\"/>\n</span>\n\n</figure>\n<p
+        id=\"fs-idm224328880\">The Americans were not shaken for long. Major Armistead
+        mounted a parapet and ordered the soldiers to return fire. Several cannonballs
+        scored direct hits on British ships. The Americans gave a celebratory cheer
+        when the British withdrew because of the unexpected severity of their returned
+        fire.</p>\n<p id=\"fs-idm185065920\">But the British had simply moved out
+        of range of the American guns, and their bomb ships could still hit the fort.
+        Armistead thought this was a distressing disadvantage for the men in Fort
+        McHenry. Still, they kept at their posts until he ordered them to take cover
+        in a moat because of the rain of shells.</p>\n<p id=\"fs-idm223600384\">The
+        Americans were frustrated that they were being bombarded and suffering casualties
+        but were unable to return fire. An escaped slave in the army had his leg blown
+        off, and another soldier was killed by a direct hit while shaking uncontrollably
+        from shell shock. Everyone was terrified and waiting to be blown to smithereens
+        when a shell crashed through the roof of the magazine where three hundred
+        barrels of gunpowder were stored, but miraculously the gunpowder did not explode.</p>\n<p
+        id=\"fs-idm221969440\">In the early afternoon, the sun disappeared behind
+        a large bank of clouds. Suddenly, a deluge of rain from a <span data-type=\"term\">nor&#8217;easter</span>
+        pummeled both sides, ruining gunpowder and fuses and giving the Americans
+        in the fort a brief respite. The British compensated by moving the fleet closer
+        to fire broadsides from several other warships. The Americans, who had lowered
+        their flag and raised a storm flag, because of the rain, quickly fired their
+        own guns. The <em data-effect=\"italics\">Volcano</em> immediately suffered
+        five hits that caused casualties and started to withdraw. The <em data-effect=\"italics\">Devastation</em>
+        suffered a staggering blow to her port bow that caused her to take on water.
+        As the British fleet again retreated out of range, the <em data-effect=\"italics\">Erebus</em>
+        was damaged and had to be towed back. However, the British onslaught from
+        the bomb ships continued even more furiously.</p>\n<p id=\"fs-idm185161568\">As
+        darkness arrived, Admiral Cochrane had to admit things were not going according
+        to plan. He had boasted to his men that the fleet would reduce the walls of
+        the fort and force a surrender in less than two hours, leaving Baltimore vulnerable
+        to a coordinated land-sea assault. But the walls stood firm, and the inhabitants
+        of the fort clearly had no intention of surrendering.</p>\n<p id=\"fs-idm185011536\">The
+        shelling continued through the night, and at approximately 2 a.m., the earth
+        shuddered from a concerted bombardment of the fort as the fleet opened up
+        with a terrible roar. The barrage was actually cover for a raid, with troops
+        from several barges preparing to slip past the fort and outflank the American
+        infantry. The barges were sighted, however, and the fort aimed its fire at
+        them, scoring direct hits and sinking a couple as the others retreated back
+        to the fleet.</p>\n<p id=\"fs-idm227586176\">The British fleet and Fort McHenry
+        exchanged intermittent fire as dawn approached, and the exhausted men on both
+        sides struggled to stay awake. The British had failed to destroy the fort,
+        however, and finally sailed off. The American defenders for their part were
+        relieved to have survived the British onslaught and were exultant, despite
+        their fatigue.</p>\n<p id=\"fs-idm196061824\">The rising sun was hidden for
+        a while in a cloudy, misty morning. Francis Scott Key was observing from a
+        ship in the harbor when rays of sunlight illuminated the storm flag waving
+        in a slight breeze. A morning shot pierced the air, and the immense 30-by-42-foot
+        star-spangled banner was raised as the men stood at attention. Key pulled
+        a letter from his pocket and started to jot words and notes on it for a song
+        that came to mind. &#8220;O say can you see by the dawn&#8217;s early light
+        . . .&#8221; it began, and it ended with &#8220;O&#8217;er the land of the
+        free, and the home of the brave.&#8221; The song later became the United States&#8217;
+        national anthem in 1931.</p>\n<p id=\"fs-idm217270368\">The American forces
+        had redeemed themselves at Baltimore after the national humiliation in Washington,
+        DC. Only a few months later, on December 24, U.S. commissioners including
+        John Quincy Adams, Henry Clay, and Albert Gallatin signed the Treaty of Ghent,
+        officially ending the War of 1812 (<a href=\"#BRI_APUSH_05_03_TreatGhent\"
+        class=\"autogenerated-content\">[link]</a>).</p>\n<figure id=\"BRI_APUSH_05_03_TreatGhent\"
+        class=\"full-width\"><figcaption>In this depiction of the signing of the Treaty
+        of Ghent, all the American delegates (shown on the right side of the picture)
+        are dressed in plain clothes symbolic of a republic. The British negotiators
+        wear formal court dress, which was the standard in nineteenth-century diplomacy.</figcaption>\n<span
+        data-type=\"media\" id=\"fs-idm184782544\" data-alt=\"Painting of American
+        men on the right dressed in everyday clothing with British men on the left
+        in formal dress. One British man is shaking hands with one American.\">\n<img
+        src=\"/resources/884c328ed463e6e038ff3baf998cc3eb0d07f6ae/BRI_APUSH_05_03_TreatGhent.jpg\"
+        data-media-type=\"image/jpeg\" alt=\"Painting of American men on the right
+        dressed in everyday clothing with British men on the left in formal dress.
+        One British man is shaking hands with one American.\"/>\n</span>\n\n</figure>\n<section
+        data-depth=\"1\" id=\"fs-idm232366352\">\n<section data-depth=\"2\" id=\"fs-idm227010000\"
+        class=\"review-questions\"><h4 data-type=\"title\">Review Questions</h4>\n<div
+        data-type=\"exercise\" id=\"fs-idm211485552\">\n<div data-type=\"problem\"
+        id=\"fs-idm192359872\">\n<p id=\"fs-idm186154304\"><a href=\"#exercise/Ch05-N-McHenryWar-RQ01\"
+        class=\"autogenerated-content\">[link]</a></p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idm203731888\">\n<div data-type=\"problem\" id=\"fs-idm233854288\">\n<p
+        id=\"fs-idm195841856\"><a href=\"#exercise/Ch05-N-McHenryWar-RQ02\" class=\"autogenerated-content\">[link]</a></p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-idm192337472\">\n<div data-type=\"problem\"
+        id=\"fs-idm192382352\">\n<p id=\"fs-idm232001248\"><a href=\"#exercise/Ch05-N-McHenryWar-RQ03\"
+        class=\"autogenerated-content\">[link]</a></p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idm229354896\">\n<div data-type=\"problem\" id=\"fs-idm234237456\">\n<p
+        id=\"fs-idm199016688\"><a href=\"#exercise/Ch05-N-McHenryWar-RQ04\" class=\"autogenerated-content\">[link]</a></p>\n</div>\n</div>\n<div
+        data-type=\"exercise\" id=\"fs-idm224849536\">\n<div data-type=\"problem\"
+        id=\"fs-idm226789296\">\n<p id=\"fs-idm192324400\"><a href=\"#exercise/Ch05-N-McHenryWar-RQ05\"
+        class=\"autogenerated-content\">[link]</a></p>\n</div>\n</div>\n<div data-type=\"exercise\"
+        id=\"fs-idm229276672\">\n<div data-type=\"problem\" id=\"fs-idm186280304\">\n<p
+        id=\"fs-idm230523536\"><a href=\"#exercise/Ch05-N-McHenryWar-RQ06\" class=\"autogenerated-content\">[link]</a></p>\n</div>\n</div>\n</section>\n<section
+        data-depth=\"2\" id=\"fs-idm194630416\"><h4 data-type=\"title\">Free Response
+        Questions</h4>\n<div data-type=\"exercise\" id=\"fs-idm216888352\">\n<div
+        data-type=\"problem\" id=\"fs-idm222606704\">\n<p id=\"fs-idm227781296\">Compare
+        the defense of Washington, DC, with the defense of Baltimore in 1814 during
+        the War of 1812.</p>\n</div>\n</div>\n<div data-type=\"exercise\" id=\"fs-idm221239392\">\n<div
+        data-type=\"problem\" id=\"fs-idm230804528\">\n<p id=\"fs-idm226736704\">Why
+        was the battle for Fort McHenry significant?</p>\n</div>\n</div>\n</section>\n<section
+        data-depth=\"2\" id=\"fs-idm274190672\" class=\"ap-practice\"><h4 data-type=\"title\">AP
+        Practice Questions</h4>\n<div data-type=\"exercise\" id=\"fs-idm255818768\">\n<div
+        data-type=\"problem\" id=\"fs-idm266051744\">\n<p id=\"fs-idm249402192\"><a
+        href=\"#exercise/Ch05-N-McHenryWar-AP01\" class=\"autogenerated-content\">[link]</a></p>\n</div>\n</div>\n</section>\n<section
+        data-depth=\"2\" id=\"fs-idm186170928\"><h4 data-type=\"title\">Primary Sources</h4>\n<p
+        id=\"fs-idm233860464\">Smith, John Stafford and Francis Scott Key, &#8220;The
+        Star Spangled Banner,&#8221; Digital Public Library of America. <a href=\"http://dp.la/item/251c662952469252fa7fc7647c763c4e\">http://dp.la/item/251c662952469252fa7fc7647c763c4e</a></p>\n<p
+        id=\"fs-idm194540464\">Treaty of Ghent, 1814. <a href=\"https://avalon.law.yale.edu/19th_century/ghent.asp\">https://avalon.law.yale.edu/19th_century/ghent.asp</a></p>\n</section>\n<section
+        data-depth=\"2\" id=\"fs-idm195173616\"><h4 data-type=\"title\">Suggested
+        Resources</h4>\n<p id=\"fs-idm224940592\">Borneman, Walter R. <em data-effect=\"italics\">1812:
+        The War that Forged a Nation</em>. New York: Harper, 2004.</p>\n<p id=\"fs-idm218196320\">Hickey,
+        Donald R. <em data-effect=\"italics\">The War of 1812: A Forgotten Conflict</em>.
+        Urbana, IL: University of Illinois Press, 1989.</p>\n<p id=\"fs-idm214097136\">Taylor,
+        Alan. <em data-effect=\"italics\">The Civil War of 1812: American Citizens,
+        British Subjects, Irish Rebels, and Indian Allies</em>. New York: Vintage,
+        2011.</p>\n<p id=\"fs-idm210131728\">Vogel, Steve. <em data-effect=\"italics\">Through
+        the Perilous Fight: From the Burning of Washington to the Star-Spangled Banner:
+        The Six Weeks that Saved the Nation</em>. New York: Random House, 2013.</p>\n</section>\n</section>\n<div
+        data-type=\"footnote-refs\"><h3 data-type=\"footnote-refs-title\">Footnotes</h3><ul
+        data-list-type=\"bulleted\" data-bullet-style=\"none\"><li data-type=\"footnote-ref\"
+        id=\"footnote1\"><a data-type=\"footnote-ref-link\" href=\"#footnote-ref1\">1</a>
+        <span data-type=\"footnote-ref-content\">Quoted by Steve Vogel in <em data-effect=\"italics\">Through
+        the Perilous Fight: From the Burning of Washington to the Star-Spangled Banner&#8212;The
+        Six Weeks that Saved the Nation</em> (New York: Random House, 2013), 293.</span></li></ul></div></body>\n\n</html>",
+        "subjects": ["Social Sciences"], "legacy_id": "m10401", "parentId": null,
+        "resources": [{"media_type": "text/html", "id": "3ae4717ad2cffc1d21af86e91c33db914b592a89",
+        "filename": "index.cnxml.html"}, {"media_type": "application/octet-stream",
+        "id": "6879b02877824b59989f26c126af22980e4bcc74", "filename": "index.cnxml"},
+        {"media_type": "image/jpeg", "id": "85bdd4e2c8a6c6dabe99fce149dfa232d921c05e",
+        "filename": "BRI_APUSH_05_03_FtMcHenry.jpg"}, {"media_type": "image/jpeg",
+        "id": "884c328ed463e6e038ff3baf998cc3eb0d07f6ae", "filename": "BRI_APUSH_05_03_TreatGhent.jpg"}],
+        "publishers": [{"surname": "Last", "suffix": null, "firstname": "First", "title":
+        "", "fullname": "First Last", "id": "xml_apush"}], "parent": {"authors": [],
+        "shortId": null, "version": "", "id": null, "title": null}, "stateid": 1,
+        "parentTitle": null, "shortId": "SCuohsdx", "authors": [{"surname": "Last",
+        "suffix": null, "firstname": "First", "title": "", "fullname": "First Last",
+        "id": "xml_apush"}], "parentVersion": "", "legacy_version": "1.3", "licensors":
+        [{"surname": "Last", "suffix": null, "firstname": "First", "title": "", "fullname":
+        "First Last", "id": "xml_apush"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
+        "code": "by", "version": "4.0", "name": "Creative Commons Attribution License"},
+        "created": "2019-09-19T12:21:53Z", "doctype": "", "buyLink": null, "submitter":
+        {"surname": "Last", "suffix": null, "firstname": "First", "title": "", "fullname":
+        "First Last", "id": "xml_apush"}, "baked": null, "parentAuthors": [], "history":
+        [{"changes": "--", "version": "3", "revised": "2019-10-19T13:30:38Z", "publisher":
+        {"surname": "Last", "suffix": null, "firstname": "First", "title": "", "fullname":
+        "First Last", "id": "xml_apush"}}, {"changes": "--", "version": "2", "revised":
+        "2019-09-23T11:47:57Z", "publisher": {"surname": "Last", "suffix": null, "firstname":
+        "First", "title": "", "fullname": "First Last", "id": "xml_apush"}}, {"changes":
+        "--", "version": "1", "revised": "2019-09-19T12:26:21Z", "publisher": {"surname":
+        "Last", "suffix": null, "firstname": "First", "title": "", "fullname": "First
+        Last", "id": "xml_apush"}}]}'
+    http_version: 
+  recorded_at: Tue, 10 Dec 2019 18:03:49 GMT
+recorded_with: VCR 4.0.0

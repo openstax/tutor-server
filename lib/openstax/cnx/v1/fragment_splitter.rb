@@ -7,7 +7,7 @@ module OpenStax::Cnx::V1
     def initialize(processing_instructions, reference_view_url)
       @processing_instructions = processing_instructions.map do |processing_instruction|
         OpenStruct.new(processing_instruction.to_h).tap do |pi_struct|
-          pi_struct.fragments = [pi_struct.fragments].flatten.map(&:to_s).map(&:classify) \
+          pi_struct.fragments = [pi_struct.fragments].flatten.map(&:to_s).map(&:camelize) \
             unless pi_struct.fragments.nil?
           pi_struct.only = [pi_struct.only].flatten.map(&:to_s) unless pi_struct.only.nil?
           pi_struct.except = [pi_struct.except].flatten.map(&:to_s) unless pi_struct.except.nil?
@@ -22,25 +22,38 @@ module OpenStax::Cnx::V1
       result = [root.dup]
       type_string = type.to_s
 
-      processing_instructions.each do |processing_instruction|
-        next if processing_instruction.css.blank? ||
-                processing_instruction.fragments.nil? ||
-                processing_instruction.fragments == ['Node'] ||
-                (!processing_instruction.only.nil? &&
-                 !processing_instruction.only.include?(type_string)) ||
-                (!processing_instruction.except.nil? &&
-                 processing_instruction.except.include?(type_string))
-
-        result = process_array(result, processing_instruction)
+      pis = processing_instructions.reject do |processing_instruction|
+        processing_instruction.css.blank? ||
+        processing_instruction.fragments.nil? ||
+        processing_instruction.fragments == ['Node'] ||
+        (!processing_instruction.only.nil? && !processing_instruction.only.include?(type_string)) ||
+        (!processing_instruction.except.nil? && processing_instruction.except.include?(type_string))
       end
 
+      @media_nodes = []
+
+      pis.each { |processing_instruction| result = process_array(result, processing_instruction) }
+
       # Flatten, remove empty nodes and transform remaining nodes into reading fragments
-      result.flatten.map do |obj|
+      result.map do |obj|
         next obj unless obj.is_a?(Nokogiri::XML::Node)
         next if obj.content.blank?
 
         OpenStax::Cnx::V1::Fragment::Reading.new node: obj, reference_view_url: reference_view_url
-      end.compact
+      end.compact.tap do |result|
+        @media_nodes.each do |node|
+          # Media processing instructions
+          node.css('[id], [name]', custom_css).each do |linkable|
+            css_array = []
+            css_array << "[href$=\"##{linkable[:id]}\"]" unless linkable[:id].nil?
+            css_array << "[href$=\"##{linkable[:name]}\"]" unless linkable[:name].nil?
+            css = css_array.join(', ')
+
+            result.select { |fragment| fragment.has_css? css, custom_css }
+                  .each   { |fragment| fragment.append node.dup }
+          end
+        end
+      end
     end
 
     protected
@@ -65,7 +78,7 @@ module OpenStax::Cnx::V1
       node = root.at_css(processing_instruction.css, custom_css)
 
       # Base case
-      return root if node.nil?
+      return [ root ] if node.nil?
 
       num_fragments = processing_instruction.fragments.size
       if num_fragments == 0 # No splitting needed
@@ -79,16 +92,15 @@ module OpenStax::Cnx::V1
         compact_after = true
 
         # Check for special fragment cases (node)
-        fragments = processing_instruction.fragments.each_with_index.map do |fragment, index|
+        fragments = []
+        processing_instruction.fragments.each_with_index do |fragment, index|
           if fragment == 'Node'
             if index == 0
               # fragments: [node, anything] - Don't remove node from root before fragments
               compact_before = false
-              nil
             elsif index == num_fragments - 1
               # fragments: [anything, node] - Don't remove node from root after fragments
               compact_after = false
-              nil
             else
               # General case
               # Make a copy of the current node (up to the root), but remove all other nodes
@@ -98,12 +110,14 @@ module OpenStax::Cnx::V1
               remove_before(node_copy, root_copy)
               remove_after(node_copy, root_copy)
 
-              root_copy
+              fragments << root_copy
             end
+          elsif fragment == 'Media'
+            @media_nodes << node
           else
-            get_fragment_instance(fragment, node, processing_instruction.labels)
+            fragments << get_fragment_instance(fragment, node, processing_instruction.labels)
           end
-        end.compact
+        end
 
         # Need to split the node tree
         # Copy the node content and find the same match in the copy
@@ -120,13 +134,13 @@ module OpenStax::Cnx::V1
         recursive_compact(node_copy, root_copy) if compact_after
 
         # Repeat the processing until no more matches
-        [root, fragments, process_node(root_copy, processing_instruction)]
+        [ root ] + fragments + process_node(root_copy, processing_instruction)
       end
     end
 
     # Recursively process an array of Nodes and Fragments
     def process_array(array, processing_instruction)
-      array.map do |obj|
+      array.flat_map do |obj|
         case obj
         when Array
           process_array(obj, processing_instruction)

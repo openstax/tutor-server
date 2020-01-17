@@ -62,7 +62,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
       end
     end
 
-    it "splits the given pages into the expected fragments for HS" do
+    it 'splits the given pages into the expected fragments for HS' do
       hs_processing_instructions = FactoryBot.build(:content_book).reading_processing_instructions
       fragment_splitter = described_class.new hs_processing_instructions, reference_view_url
 
@@ -73,7 +73,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
       end
     end
 
-    it "does not split reading steps before a worked example" do
+    it 'does not split reading steps before a worked example' do
       worked_example_processing_instructions = [
         { css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]',
           fragments: [], except: 'snap-lab' },
@@ -98,4 +98,33 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
     end
   end
 
+  context 'with footnotes' do
+    before(:all) do
+      VCR.use_cassette('OpenStax_Cnx_V1_FragmentSplitter/with_footnotes', VCR_OPTS) do
+        OpenStax::Cnx::V1.with_archive_url('https://archive-content05.cnx.org/contents/') do
+          @page = OpenStax::Cnx::V1::Page.new(id: '482ba886-c771-4533-96a6-ac6bf1c6889d')
+          @page.convert_content!
+        end
+      end
+    end
+
+    let(:processing_instructions) do
+      [
+        { css: 'figure', fragments: ['reading'] },
+        { css: '[data-type="footnote-refs"]', fragments: ['media'] }
+      ]
+    end
+
+    let(:fragment_splitter) { described_class.new processing_instructions, reference_view_url }
+
+    let(:fragments)         { fragment_splitter.split_into_fragments(@page.root) }
+
+    it 'moves footnotes to the fragments that link to them' do
+      expect(fragments.map(&:class)).to eq [ OpenStax::Cnx::V1::Fragment::Reading ] * 5
+      expect(fragments.first.to_html.last(250)).to include('Quoted by Steve Vogel in')
+      fragments[1..-1].each do |fragment|
+        expect(fragment.to_html).not_to include('Quoted by Steve Vogel in')
+      end
+    end
+  end
 end
