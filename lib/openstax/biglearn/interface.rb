@@ -99,8 +99,10 @@ module OpenStax::Biglearn::Interface
       # regardless of what the original slot was
       return [] if task.nil? || max_num_exercises.nil?
 
-      course = task.taskings.first&.role&.student&.course
-      return [] if course.nil?
+      course_member = task.taskings.first&.role&.course_member
+      return [] if course_member.nil?
+
+      course = course_member.course
 
       core_page_ids = GetTaskCorePageIds[tasks: task][task.id]
       pages = ecosystem.pages.where(id: core_page_ids)
@@ -122,9 +124,13 @@ module OpenStax::Biglearn::Interface
 
       candidate_exercises.sample(max_num_exercises).tap do |chosen_exercises|
         WarningMailer.log_and_deliver(
-          "Assigned #{chosen_exercises.size} fallback personalized exercises for task with ID: #{
-          task.id}, UUID: #{task.uuid}, Type: #{task.task_type
-          } because Biglearn was not ready after the maximum number of attempts"
+          subject: 'Tutor assigned fallback exercises for Biglearn',
+          message: <<~WARNING
+            #{task.task_type.humanize} Task ID: #{task.id}, UUID: #{task.uuid}
+            #{course_member.class.name} ID: #{course_member.id}, UUID: #{course_member.uuid}
+            Course ID: #{course.id}, UUID: #{course.uuid}
+            Number of fallback exercises: #{chosen_exercises.size}
+          WARNING
         ) if enable_warnings && !chosen_exercises.empty?
       end
     end

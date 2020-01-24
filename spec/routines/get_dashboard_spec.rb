@@ -36,7 +36,11 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
             :tasks_tasked_exercise
           ],
           tasked_to: @role
-        ).tap { |task| task.destroy! }
+        ).tap do |task|
+          task.task_plan.destroy!
+          task.destroy!
+          task.update_attribute :hidden_at, nil
+        end
 
         @deleted_homework_task = FactoryBot.create(
           :tasks_task,
@@ -47,7 +51,11 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
             :tasks_tasked_exercise
           ],
           tasked_to: @role
-        ).tap { |task| task.destroy! }
+        ).tap do |task|
+          task.task_plan.destroy!
+          task.destroy!
+          task.update_attribute :hidden_at, nil
+        end
 
         @hidden_reading_task = FactoryBot.create(
           :tasks_task,
@@ -59,8 +67,8 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
           ],
           tasked_to: @role
         ).tap do |task|
+          task.task_plan.destroy!
           task.destroy!
-          task.hide.save!
         end
 
         @hidden_homework_task = FactoryBot.create(
@@ -73,8 +81,8 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
           ],
           tasked_to: @role
         ).tap do |task|
+          task.task_plan.destroy!
           task.destroy!
-          task.hide.save!
         end
 
         @future_reading_task = FactoryBot.create(
@@ -112,6 +120,29 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
           tasked_to: @role
         )
 
+        @unready_reading_task = FactoryBot.create(
+          :tasks_task,
+          task_type: :reading,
+          step_types: [
+            :tasks_tasked_reading,
+            :tasks_tasked_exercise,
+            :tasks_tasked_exercise
+          ],
+          tasked_to: @role
+        )
+
+        @old_unready_reading_task = FactoryBot.create(
+          :tasks_task,
+          task_type: :reading,
+          step_types: [
+            :tasks_tasked_reading,
+            :tasks_tasked_exercise,
+            :tasks_tasked_exercise
+          ],
+          tasked_to: @role,
+          created_at: Time.current - 601.seconds
+        )
+
         @homework_task = FactoryBot.create(
           :tasks_task,
           task_type: :homework,
@@ -135,10 +166,18 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
 
       context 'with no time period specified' do
         it "works for a #{role_type}" do
+          expect(Tasks::IsReady).to receive(:[]) do |tasks:|
+            tasks - [ @unready_reading_task, @old_unready_reading_task ]
+          end
+
           outputs = described_class.call(course: @course, role: @role).outputs
 
           expected_tasks = [
-            @deleted_reading_task, @deleted_homework_task, @reading_task, @homework_task
+            @deleted_reading_task,
+            @deleted_homework_task,
+            @reading_task,
+            @homework_task,
+            @old_unready_reading_task
           ]
           expected_tasks += [ @future_reading_task, @future_homework_task ] \
             if role_type == :teacher_student
@@ -162,7 +201,7 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
               type: role_type.to_s
             },
             tasks: a_collection_including(*expected_tasks),
-            all_tasks_are_ready: true
+            all_tasks_are_ready: false
           )
         end
 
