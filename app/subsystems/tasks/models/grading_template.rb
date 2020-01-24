@@ -3,6 +3,10 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
 
   belongs_to :course, subsystem: :course_profile, inverse_of: :grading_templates
 
+  belongs_to :cloned_from, foreign_key: 'cloned_from_id',
+                           class_name: 'Tasks::Models::GradingTemplate',
+                           optional: true
+
   has_many :task_plans, inverse_of: :grading_template
 
   enum task_plan_type:             [ :reading, :homework ]

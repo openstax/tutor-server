@@ -15,6 +15,12 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
            writeable: false,
            schema_info: { required: true }
 
+  property :cloned_from_id,
+           type: String,
+           readable: true,
+           writeable: false,
+           schema_info: { required: true }
+
   property :task_plan_type,
            type: String,
            readable: true,

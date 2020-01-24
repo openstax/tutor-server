@@ -34,7 +34,9 @@ class CloneCourse
       is_preview: false,
       reading_weight: course.reading_weight,
       homework_weight: course.homework_weight,
-      grading_templates: course.grading_templates.map(&:dup)
+      grading_templates: course.grading_templates.map do |grading_template|
+        grading_template.dup.tap { |clone| clone.cloned_from = grading_template }
+      end
     }
 
     run(:create_course, attrs)
