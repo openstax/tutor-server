@@ -1,4 +1,7 @@
 class Tasks::PopulatePlaceholderSteps
+  BIGLEARN_BACKGROUND_ATTEMPTS = 600
+  BIGLEARN_SLEEP_INTERVAL = 1.second
+
   lev_routine transaction: :read_committed, express_output: :task
 
   uses_routine GetTaskCorePageIds, as: :get_task_core_page_ids
@@ -84,8 +87,7 @@ class Tasks::PopulatePlaceholderSteps
     core_page_ids = run(:get_task_core_page_ids, tasks: task)
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
     biglearn_api_method = "fetch_assignment_#{exercise_type}s".to_sym
-    max_attempts = skip_unready ? 1 : background ? 600 : 30
-    sleep_interval = skip_unready ? 0 : 1.second
+    max_attempts = !skip_unready && background ? BIGLEARN_BACKGROUND_ATTEMPTS : 1
     boolean_attribute = "#{exercise_type}s_are_assigned"
 
     task_steps_to_upsert = []
@@ -99,7 +101,7 @@ class Tasks::PopulatePlaceholderSteps
       result = OpenStax::Biglearn::Api.public_send biglearn_api_method,
                                                    task: task,
                                                    inline_max_attempts: max_attempts,
-                                                   inline_sleep_interval: sleep_interval,
+                                                   inline_sleep_interval: BIGLEARN_SLEEP_INTERVAL,
                                                    enable_warnings: !skip_unready
       # Bail if we are supposed to retry this in the background
       return [ task, false ] if !result[:accepted] && skip_unready
@@ -202,7 +204,7 @@ class Tasks::PopulatePlaceholderSteps
         task: task,
         max_num_exercises: placeholder_steps.size,
         inline_max_attempts: max_attempts,
-        inline_sleep_interval: sleep_interval,
+        inline_sleep_interval: BIGLEARN_SLEEP_INTERVAL,
         enable_warnings: !skip_unready
       )
       # Bail if we are supposed to retry this in the background

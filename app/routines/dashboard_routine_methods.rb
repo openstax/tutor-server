@@ -1,4 +1,6 @@
 module DashboardRoutineMethods
+  BIGLEARN_TIMEOUT = 10.minutes
+
   def self.included(base)
     base.lev_routine
 
@@ -30,7 +32,13 @@ module DashboardRoutineMethods
     open_tasks = open_tasks.select { |task| task.past_open? current_time: current_time } \
       if role.student?
 
-    outputs.tasks = Tasks::IsReady[tasks: open_tasks]
+    ready_tasks = Tasks::IsReady[tasks: open_tasks]
+    unready_tasks = open_tasks - ready_tasks
+    timedout_tasks = unready_tasks.select do |task|
+      task.created_at < current_time - BIGLEARN_TIMEOUT
+    end
+
+    outputs.tasks = ready_tasks + timedout_tasks
 
     all_task_plans_are_ready = if role.teacher?
       # Teachers don't get tasks for course task_plans
