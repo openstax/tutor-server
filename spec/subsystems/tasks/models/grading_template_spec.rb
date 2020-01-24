@@ -5,6 +5,8 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
 
   it { is_expected.to belong_to(:course) }
 
+  it { is_expected.to belong_to(:cloned_from).optional }
+
   it { is_expected.to have_many(:task_plans) }
 
   [

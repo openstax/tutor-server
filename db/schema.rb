@@ -749,6 +749,8 @@ ActiveRecord::Schema.define(version: 2020_02_04_234650) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "late_work_penalty_applied", null: false
+    t.bigint "cloned_from_id"
+    t.index ["cloned_from_id"], name: "index_tasks_grading_templates_on_cloned_from_id"
     t.index ["course_profile_course_id", "task_plan_type", "deleted_at"], name: "index_tasks_grading_templates_on_course_type_and_deleted"
   end
 
@@ -1116,6 +1118,7 @@ ActiveRecord::Schema.define(version: 2020_02_04_234650) do
   add_foreign_key "tasks_concept_coach_tasks", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_grading_templates", "tasks_grading_templates", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_period_caches", "content_ecosystems", on_update: :cascade, on_delete: :cascade
