@@ -2,7 +2,7 @@ class Api::V1::Demo::CourseRepresenter < Api::V1::Demo::BaseRepresenter
   # One of either id or name is required
   property :id,
            type: String,
-           readable: true,
+           readable: false,
            writeable: true
 
   property :name,

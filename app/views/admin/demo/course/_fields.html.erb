@@ -5,7 +5,7 @@
 
 <h4>Catalog Offering</h4>
 
-<%= form.fields 'catalog_offering', model: form.object.catalog_offering do |fields| %>
+<%= form.fields 'catalog_offering', model: form.object.try(:catalog_offering) do |fields| %>
   <div class="form-group">
     <%= fields.label :id %>
     <%=
@@ -29,7 +29,7 @@
   </div>
 <% end %>
 
-<%= form.fields 'course', model: form.object.course do |fields| %>
+<%= form.fields 'course', model: form.object.try(:course) do |fields| %>
   <%= render partial: File.join('admin', 'demo', 'course'), locals: { form: fields } %>
 
   <div class="form-group">

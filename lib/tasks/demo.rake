@@ -10,22 +10,21 @@ end
 def demo_routine_perform_later(routine_class, type_string, args)
   type_string = type_string.to_s
   options = args.to_h.deep_symbolize_keys
-  types = type_string == 'all' ? [ 'users', 'import', 'course', 'assign', 'work' ] : [ type_string ]
+  types = type_string == 'all' ? [ 'import', 'users', 'course', 'assign', 'work' ] : [ type_string ]
   filter = (options.delete(:config) || Demo::DEFAULT_CONFIG).to_s
 
   configs = Hash.new { |hash, key| hash[key] = options.dup }.tap do |options_by_basename|
     types.each do |type|
-      base_dir = File.join Demo::CONFIG_BASE_DIR, type
-
-      Dir[File.join(base_dir, '**', '[^_]*.yml{.erb,}')].select { |path| path.include? filter }
-                                                        .each do |path|
+      Dir[File.join(Demo::CONFIG_BASE_DIR, '**', type, '**/[^_]*.yml{.erb,}')].select do |path|
+        path.include? filter
+      end.each do |path|
         string = File.read(path)
         if File.extname(path) == '.erb'
           erb = ERB.new(string)
           erb.filename = path
           string = erb.result
         end
-        options_by_basename[path.sub(base_dir, '').chomp('.erb')][type] = YAML.load(string)
+        options_by_basename[path.sub("/#{type}/", '/').chomp('.erb')][type] = YAML.load(string)
       end
     end
   end.values

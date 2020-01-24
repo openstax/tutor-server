@@ -23,11 +23,13 @@ class Api::V1::Demo::Course::CourseRepresenter < Api::V1::Demo::CourseRepresente
 
   property :starts_at,
            type: String,
+           getter: ->(*) { DateTimeUtilities.to_api_s starts_at },
            readable: true,
            writeable: true
 
   property :ends_at,
            type: String,
+           getter: ->(*) { DateTimeUtilities.to_api_s ends_at },
            readable: true,
            writeable: true
 

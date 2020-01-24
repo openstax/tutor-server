@@ -8,6 +8,8 @@ class Demo::Assign < Demo::Base
   protected
 
   def convert_book_locations(book_locations)
+    return [] if book_locations.nil?
+
     case book_locations.first
     when Hash
       book_locations.map { |book_location| [ book_location[:chapter], book_location[:section] ] }
@@ -30,7 +32,7 @@ class Demo::Assign < Demo::Base
 
     all_book_locations = task_plans.flat_map do |task_plan|
       convert_book_locations task_plan[:book_locations]
-    end.uniq
+    end.compact.uniq
     pages_by_book_location = ecosystem.pages.where(
       Content::Models::Page.arel_table[:book_location].in all_book_locations
     ).preload(:homework_core_pool).index_by(&:book_location)
@@ -65,6 +67,7 @@ class Demo::Assign < Demo::Base
 
       book_locations = convert_book_locations task_plan[:book_locations]
       pages = book_locations.map { |book_location| pages_by_book_location[book_location] }
+      page_ids = pages.map(&:id).map(&:to_s)
 
       attrs = {
         title: task_plan[:title],
@@ -72,11 +75,15 @@ class Demo::Assign < Demo::Base
         owner: course_model,
         content_ecosystem_id: ecosystem.id,
         assistant: assistants_by_task_plan_type[task_plan[:type]],
-        settings: { page_ids: pages.map(&:id).map(&:to_s) },
+        settings: {},
         is_preview: false
       }
 
-      if task_plan[:type] == 'homework'
+      # Type-specific task_plan settings
+      case task_plan[:type]
+      when 'reading'
+        attrs[:settings][:page_ids] = page_ids
+      when 'homework'
         task_plan[:exercises_count_core] ||= 3
         task_plan[:exercises_count_dynamic] ||= 3
 
@@ -86,12 +93,15 @@ class Demo::Assign < Demo::Base
           "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"
         ) if exercise_ids.size < task_plan[:exercises_count_core]
 
-        attrs[:settings].merge!(
-          exercise_ids: exercise_ids.shuffle
-                                    .take(task_plan[:exercises_count_core])
-                                    .map(&:to_s),
-          exercises_count_dynamic: task_plan[:exercises_count_dynamic]
-        )
+        attrs[:settings][:page_ids] = page_ids
+        attrs[:settings][:exercise_ids] = exercise_ids.shuffle
+                                                      .take(task_plan[:exercises_count_core])
+                                                      .map(&:to_s)
+        attrs[:settings][:exercises_count_dynamic] = task_plan[:exercises_count_dynamic]
+      when 'external'
+        task_plan[:external_url] ||= 'https://example.com'
+
+        attrs[:settings][:external_url] = task_plan[:external_url]
       end
 
       task_plan[:is_published] = true if task_plan[:is_published].nil?

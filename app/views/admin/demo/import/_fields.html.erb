@@ -3,7 +3,7 @@
   # form
 %>
 
-<%= form.fields 'book', model: form.object.book do |fields| %>
+<%= form.fields 'book', model: form.object.try(:book) do |fields| %>
   <h4>Book</h4>
 
   <div class="form-group">
@@ -38,7 +38,7 @@
   %>
 <% end %>
 
-<%= form.fields 'catalog_offering', model: form.object.catalog_offering do |fields| %>
+<%= form.fields 'catalog_offering', model: form.object.try(:catalog_offering) do |fields| %>
   <h4>Catalog Offering</h4>
 
   <div class="form-group">

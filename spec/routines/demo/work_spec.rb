@@ -55,12 +55,16 @@ RSpec.describe Demo::Work, type: :routine do
   it 'works demo assignments' do
     expect(result.errors).to be_empty
 
-    expect(task_plans.size).to eq 4
+    expect(task_plans.size).to eq 5
     task_plans.each do |task_plan|
       tasks = task_plan.tasks
       expect(tasks.size).to eq 6
       tasks.each do |task|
-        if task.title.include? 'Intro'
+        if task.title.include? 'External'
+          student_index = task.taskings.first.role.username.reverse.to_i - 1
+          expect(task.progress).to eq student_index < 3 ? 1 : 0
+          expect(task.score).to be_nil
+        elsif task.title.include? 'Intro'
           student_index = task.taskings.first.role.username.reverse.to_i - 1
           expect(task.progress).to(
             be_within(1.0/task.steps_count).of(EXPECTED_PROGRESS[student_index])

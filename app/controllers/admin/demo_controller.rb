@@ -41,7 +41,7 @@ class Admin::DemoController < Admin::BaseController
     config = {}
     (@type == :all ? [ :users, :import, :course, :assign, :work ] : [ @type ]).each do |type|
       Dir[
-        File.join Demo::CONFIG_BASE_DIR, type.to_s, @config, '**', "#{@book}.yml{,.erb}"
+        File.join Demo::CONFIG_BASE_DIR, @config, type.to_s, '**', "#{@book}.yml{,.erb}"
       ].each do |path|
         string = File.read(path)
         if File.extname(path) == '.erb'

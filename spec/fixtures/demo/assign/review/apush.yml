@@ -47,7 +47,8 @@ course:
           section: 1
         - chapter: 1
           section: 2
-      num_exercises: 3
+      exercises_count_core: 4
+      exercises_count_dynamic: 2
       assigned_to:
         - period:
             name: 1st
@@ -65,7 +66,21 @@ course:
           section: 3
         - chapter: 1
           section: 4
-      num_exercises: 3
+      exercises_count_core: 4
+      exercises_count_dynamic: 2
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: 2019-07-22 00:01:00 -0500
+          due_at: 2019-08-02 07:00:00 -0500
+        - period:
+            name: 2nd
+          opens_at: 2019-07-22 00:01:00 -0500
+          due_at: 2019-08-02 07:00:00 -0500
+
+    - title: External
+      type: external
+      external_url: 'https://example.com/External'
       assigned_to:
         - period:
             name: 1st

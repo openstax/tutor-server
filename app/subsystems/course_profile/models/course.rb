@@ -31,6 +31,8 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   has_many :course_assistants, subsystem: :tasks
 
+  has_many :task_plans, as: :owner, subsystem: :tasks
+
   has_many :taskings, through: :periods, subsystem: :tasks
 
   has_many :cloned_courses, foreign_key: 'cloned_from_id',

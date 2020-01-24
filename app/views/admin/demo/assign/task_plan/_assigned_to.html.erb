@@ -5,7 +5,7 @@
   options ||= {}
 %>
 
-<%= form.fields 'period', model: form.object.period do |fields| %>
+<%= form.fields 'period', model: form.object.try(:period) do |fields| %>
   <%=
     render partial: File.join('admin', 'demo', 'period'), locals: { form: fields, options: options }
   %>

@@ -46,22 +46,37 @@ RSpec.describe Demo::Assign, type: :routine do
     expect do
       expect(result.errors).to be_empty
       task_plans = result.outputs.task_plans
-    end.to  change { Tasks::Models::TaskPlan.count }.by(4)
-       .and change { Tasks::Models::Task.count }.by(24)
+    end.to  change { Tasks::Models::TaskPlan.count }.by(5)
+       .and change { Tasks::Models::Task.count }.by(30)
 
     task_plans.each do |task_plan|
-      matches = /(Read|HW) Chapter 1 (Intro and )?Sections \d and \d/.match task_plan.title
+      title_regex = case task_plan.type
+      when 'reading'
+        /Read Chapter 1 (Intro and )?Sections \d and \d/
+      when 'homework'
+        /HW Chapter 1 (Intro and )?Sections \d and \d/
+      when 'external'
+        /External/
+      end
+
+      matches = title_regex.match task_plan.title
       expect(matches).not_to be_nil
-      expect(task_plan.type).to eq matches[1] == 'Read' ? 'reading' : 'homework'
       expect(task_plan.owner).to eq course
       expect(task_plan.ecosystem).to eq course.ecosystems.first
       expect(task_plan.assistant).not_to be_blank
+
       settings = task_plan.settings
-      expect(settings['page_ids'].size).to eq matches[2].blank? ? 2 : 3
-      if task_plan.type == 'homework'
-        expect(settings['exercise_ids'].size).to eq 3
-        expect(settings['exercises_count_dynamic']).to eq 3
+      case task_plan.type
+      when 'reading'
+        expect(settings['page_ids'].size).to eq matches[1].blank? ? 2 : 3
+      when 'homework'
+        expect(settings['page_ids'].size).to eq matches[1].blank? ? 2 : 3
+        expect(settings['exercise_ids'].size).to eq 4
+        expect(settings['exercises_count_dynamic']).to eq 2
+      when 'external'
+        expect(settings['external_url']).to eq 'https://example.com/External'
       end
+
       expect(task_plan.is_preview).to eq false
 
       expect(task_plan.tasking_plans.size).to eq 2
@@ -76,6 +91,15 @@ RSpec.describe Demo::Assign, type: :routine do
         expect(tasking_plan.time_zone).to eq course.time_zone
       end
 
+      expected_num_steps = case task_plan.type
+      when 'reading'
+        [ 14, 15 ]
+      when 'homework'
+        [ 6 ]
+      when 'external'
+        [ 1 ]
+      end
+
       tasks = task_plan.tasks
       expect(tasks.size).to eq 6
       tasks.each do |task|
@@ -83,7 +107,7 @@ RSpec.describe Demo::Assign, type: :routine do
         expect(task.taskings.first.role.username).to match /reviewstudent\d/
 
         expect(task.task_type).to eq task_plan.type
-        expect(task.task_steps.size).to be_in task.homework? ? [ 6 ] : [ 14, 15 ]
+        expect(task.task_steps.size).to be_in expected_num_steps
       end
     end
   end

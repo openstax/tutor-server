@@ -3,7 +3,7 @@
   form
 %>
 
-<%= form.fields 'course', model: form.object.course do |fields| %>
+<%= form.fields 'course', model: form.object.try(:course) do |fields| %>
   <%= render partial: File.join('admin', 'demo', 'course'), locals: { form: fields } %>
 
   <%=

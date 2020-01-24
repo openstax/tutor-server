@@ -15,15 +15,26 @@ class Demo::Course < Demo::Base
 
   protected
 
+  # This exception exists to let background jobs retry instead of
+  # failing instantly with ActiveRecord::RecordNotFound
+  class Demo::CatalogOfferingNotFound < StandardError
+  end
+
   # Either course id or (course name and (catalog_offering id or catalog_offering title))
   # must be provided
   def exec(course:)
     catalog_offering = course[:catalog_offering]
     unless catalog_offering.blank?
-      offering_model = if catalog_offering[:id].present?
-        Catalog::Models::Offering.find catalog_offering[:id]
-      elsif catalog_offering[:title].present?
-        Catalog::Models::Offering.order(created_at: :desc).find_by! title: catalog_offering[:title]
+      begin
+        offering_model = if catalog_offering[:id].present?
+          Catalog::Models::Offering.find catalog_offering[:id]
+        elsif catalog_offering[:title].present?
+          Catalog::Models::Offering.order(created_at: :desc).find_by!(
+            title: catalog_offering[:title]
+          )
+        end
+      rescue ActiveRecord::RecordNotFound
+        raise Demo::CatalogOfferingNotFound
       end
     end
 
