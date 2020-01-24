@@ -64,7 +64,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 9.0.1'
+gem 'openstax_accounts', '~> 9.0.2'
 gem 'action_interceptor'
 
 # Datetime parsing
