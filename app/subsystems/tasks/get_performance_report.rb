@@ -171,13 +171,8 @@ module Tasks
             ac[:last_name]
           ]
         )
-        .joins(
-          task_plan: :tasking_plans,
-        )
-        .where(
-          task_type: task_types,
-          task_plan: { withdrawn_at: nil },
-        )
+        .joins(task_plan: :tasking_plans)
+        .where(task_type: task_types,task_plan: { withdrawn_at: nil })
         .where(tt[:opens_at_ntz].eq(nil).or tt[:opens_at_ntz].lteq(current_time_ntz))
         .preload(task_plan: :tasking_plans)
         .reorder(nil).distinct
@@ -191,15 +186,11 @@ module Tasks
       elsif is_teacher_student
         rel = rel.joins(
           taskings: { role: [ :teacher_student, profile: :account ] }
-          ).where(
-            taskings: { role: role }
-          )
+          ).where(taskings: { role: role })
       else # treat as student and load only that roles tasks
         rel = rel.joins(
           taskings: { role: [ :student, profile: :account ] }
-        ).where(
-          taskings: { role: role }
-        )
+        ).where(taskings: { role: role })
       end
 
       rel.to_a
@@ -215,7 +206,7 @@ module Tasks
             tp.target_id == period.id
           end
         end
-      end.uniq.sort_by { |tp| [ tp.due_at_ntz, tp.created_at ] }.reverse
+      end.uniq.sort_by { |tp| [ tp.due_at_ntz, tp.closes_at_ntz, tp.created_at ] }.reverse
     end
 
     def get_data_headings(tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz, is_teacher)

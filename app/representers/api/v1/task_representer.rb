@@ -32,6 +32,13 @@ module Api::V1
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
              schema_info: { description: "When the task is due (nil means never due)" }
 
+    property :closes_at,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) },
+             schema_info: { description: "When the task closes (nil means never closes)" }
+
     property :auto_grading_feedback_on,
              type: String,
              writeable: false,

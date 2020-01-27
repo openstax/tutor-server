@@ -30,7 +30,7 @@ class Tasks::Models::Task < ApplicationRecord
 
   json_serialize :spy, Hash
 
-  belongs_to_time_zone :opens_at, :due_at, suffix: :ntz, optional: true
+  belongs_to_time_zone :opens_at, :due_at, :closes_at, suffix: :ntz, optional: true
 
   belongs_to :task_plan, inverse_of: :tasks, optional: true
 
@@ -64,11 +64,11 @@ class Tasks::Models::Task < ApplicationRecord
 
   validates :title, presence: true
 
-  # Concept Coach and Practice Widget tasks have no open or due dates
+  # Concept Coach and Practice Widget tasks have no open, due or close dates
   # We already validate dates for teacher-created assignments in the TaskingPlan
-  validates :opens_at_ntz, :due_at_ntz, timeliness: { type: :date }, allow_nil: true
+  validates :opens_at_ntz, :due_at_ntz, :closes_at_ntz, timeliness: { type: :date }, allow_nil: true
 
-  validate :due_at_on_or_after_opens_at
+  validate :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at
 
   before_validation :update_step_counts
   after_create :update_caches_now
@@ -396,6 +396,13 @@ class Tasks::Models::Task < ApplicationRecord
     return if due_at.nil? || opens_at.nil? || due_at >= opens_at
 
     errors.add(:due_at, 'must be on or after opens_at')
+    throw :abort
+  end
+
+  def closes_at_on_or_after_due_at
+    return if closes_at.nil? || due_at.nil? || closes_at >= due_at
+
+    errors.add(:closes_at, 'must be on or after due_at')
     throw :abort
   end
 

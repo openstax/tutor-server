@@ -28,3 +28,12 @@
     )
   %>
 </div>
+
+<div class="form-group">
+  <%= form.label :closes_at %>
+  <%=
+    form.text_field :closes_at, options.merge(
+      class: 'form-control', required: true, placeholder: "Required (unless Period is removed)"
+    )
+  %>
+</div>

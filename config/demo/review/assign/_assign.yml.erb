@@ -20,6 +20,10 @@
     time.midnight + 7.hours
   end
 
+  def standard_closes_at(time)
+    standard_due_at time
+  end
+
   def open_last_monday
     standard_opens_at last_monday
   end
@@ -34,6 +38,14 @@
 
   def due_next_monday
     standard_due_at next_monday
+  end
+
+  def closes_last_monday
+    standard_closes_at last_monday
+  end
+
+  def closes_next_monday
+    standard_closes_at next_monday
   end
 %>
 
@@ -50,10 +62,12 @@
             name: 1st
           opens_at: <%= open_last_monday - 2.weeks %>
           due_at: <%= due_last_monday - 5.days %>
+          closes_at: <%= closes_last_monday + 2.days %>
         - period:
             name: 2nd
           opens_at: <%= open_last_monday - 2.weeks %>
           due_at: <%= due_last_monday - 5.days %>
+          closes_at: <%= closes_last_monday + 2.days %>
 
     - title: Read Chapter 2
       type: reading
@@ -69,10 +83,12 @@
             name: 1st
           opens_at: <%= open_last_monday - 1.week %>
           due_at: <%= due_last_monday + 2.days %>
+          closes_at: <%= closes_next_monday + 2.days %>
         - period:
             name: 2nd
           opens_at: <%= open_last_monday - 1.week %>
           due_at: <%= due_last_monday + 2.days %>
+          closes_at: <%= closes_next_monday + 2.days %>
 
     - title: Read Chapter 3
       type: reading
@@ -90,10 +106,12 @@
             name: 1st
           opens_at: <%= open_last_monday %>
           due_at: <%= due_next_monday + 2.days %>
+          closes_at: <%= closes_next_monday + 9.days %>
         - period:
             name: 2nd
           opens_at: <%= open_last_monday %>
           due_at: <%= due_next_monday + 2.days %>
+          closes_at: <%= closes_next_monday + 9.days %>
 
     - title: Read Chapter 4
       type: reading
@@ -109,10 +127,12 @@
             name: 1st
           opens_at: <%= open_next_monday %>
           due_at: <%= due_next_monday + 9.days %>
+          closes_at: <%= closes_next_monday + 16.days %>
         - period:
             name: 2nd
           opens_at: <%= open_next_monday %>
           due_at: <%= due_next_monday + 9.days %>
+          closes_at: <%= closes_next_monday + 16.days %>
 
     - title: HW Chapter 1
       type: homework
@@ -126,10 +146,12 @@
             name: 1st
           opens_at: <%= open_last_monday - 2.weeks %>
           due_at: <%= due_last_monday - 3.days %>
+          closes_at: <%= closes_last_monday + 4.days %>
         - period:
             name: 2nd
           opens_at: <%= open_last_monday - 2.weeks %>
           due_at: <%= due_last_monday - 3.days %>
+          closes_at: <%= closes_last_monday + 4.days %>
 
     - title: HW Chapter 2
       type: homework
@@ -145,10 +167,12 @@
             name: 1st
           opens_at: <%= open_last_monday - 1.week %>
           due_at: <%= due_last_monday + 4.days %>
+          closes_at: <%= closes_next_monday + 4.days %>
         - period:
             name: 2nd
           opens_at: <%= open_last_monday - 1.week %>
           due_at: <%= due_last_monday + 4.days %>
+          closes_at: <%= closes_next_monday + 4.days %>
 
     - title: HW Chapter 3
       type: homework
@@ -166,10 +190,12 @@
             name: 1st
           opens_at: <%= open_last_monday %>
           due_at: <%= due_next_monday + 4.days %>
+          closes_at: <%= closes_next_monday + 11.days %>
         - period:
             name: 2nd
           opens_at: <%= open_last_monday %>
           due_at: <%= due_next_monday + 4.days %>
+          closes_at: <%= closes_next_monday + 11.days %>
 
     - title: HW Chapter 4
       type: homework
@@ -185,7 +211,9 @@
             name: 1st
           opens_at: <%= open_next_monday %>
           due_at: <%= due_next_monday + 11.days %>
+          closes_at: <%= closes_next_monday + 18.days %>
         - period:
             name: 2nd
           opens_at: <%= open_next_monday %>
           due_at: <%= due_next_monday + 11.days %>
+          closes_at: <%= closes_next_monday + 18.days %>
