@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe Tasks::Models::TaskingPlan, type: :model do
   subject(:tasking_plan) { FactoryBot.create :tasks_tasking_plan }
 
-  let(:task_plan)       { tasking_plan.task_plan }
-  let(:target)          { tasking_plan.target }
-  let(:course)          { task_plan.owner }
+  let(:task_plan)        { tasking_plan.task_plan }
+  let(:target)           { tasking_plan.target }
+  let(:course)           { task_plan.owner }
 
   it { is_expected.to belong_to(:target) }
   it { is_expected.to belong_to(:task_plan) }
@@ -38,11 +38,23 @@ RSpec.describe Tasks::Models::TaskingPlan, type: :model do
     expect(tasking_plan).to be_valid
   end
 
-  it "requires due_at to be before the course's ends_at, if the owner is a course" do
+  it "requires due_at to be before closes_at" do
     expect(tasking_plan).to be_valid
-    tasking_plan.due_at = course.ends_at + 1.day
+
+    tasking_plan.due_at = tasking_plan.closes_at + 1.hour
     expect(tasking_plan).not_to be_valid
-    tasking_plan.due_at = course.ends_at - 1.day
+
+    tasking_plan.due_at = tasking_plan.closes_at - 1.hour
+    expect(tasking_plan).to be_valid
+  end
+
+  it "requires closes_at to be before the course's ends_at, if the owner is a course" do
+    expect(tasking_plan).to be_valid
+
+    tasking_plan.closes_at = course.ends_at + 1.day
+    expect(tasking_plan).not_to be_valid
+
+    tasking_plan.closes_at = course.ends_at - 1.day
     expect(tasking_plan).to be_valid
   end
 

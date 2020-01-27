@@ -278,8 +278,8 @@ RSpec.describe GetDashboard, type: :routine do
 
       context 'with a time period specified' do
         before(:all) do
-          @start_at_ntz = DateTimeUtilities.remove_tz @current_time + 1.hour
-          @end_at_ntz = DateTimeUtilities.remove_tz @current_time + 2.days
+          @start_at_ntz = DateTimeUtilities.remove_tz @current_time - 1.week
+          @end_at_ntz = DateTimeUtilities.remove_tz @current_time + 1.week + 1.day
         end
 
         it "works for a #{role_type}" do

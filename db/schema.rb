@@ -777,6 +777,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.text "as_toc", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "closes_at"
     t.index ["content_ecosystem_id"], name: "index_tasks_period_caches_on_content_ecosystem_id"
     t.index ["course_membership_period_id", "content_ecosystem_id", "tasks_task_plan_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id_and_t_t_p_id", unique: true
     t.index ["course_membership_period_id", "content_ecosystem_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id", unique: true, where: "(tasks_task_plan_id IS NULL)"
@@ -804,6 +805,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.datetime "withdrawn_at"
     t.integer "auto_grading_feedback_on", null: false
     t.integer "manual_grading_feedback_on", null: false
+    t.datetime "closes_at"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id"
     t.index ["due_at"], name: "index_tasks_task_caches_on_due_at"
     t.index ["is_cached_for_period"], name: "index_tasks_task_caches_on_is_cached_for_period"
@@ -934,6 +936,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "time_zone_id", null: false
+    t.datetime "closes_at_ntz", null: false
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasking_plans_on_due_at_ntz_and_opens_at_ntz"
     t.index ["opens_at_ntz"], name: "index_tasks_tasking_plans_on_opens_at_ntz"
     t.index ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true
@@ -991,6 +994,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.uuid "pe_ecosystem_matrix_uuid"
     t.uuid "spe_calculation_uuid"
     t.uuid "spe_ecosystem_matrix_uuid"
+    t.datetime "closes_at_ntz"
     t.integer "core_page_ids", default: [], null: false, array: true
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
