@@ -4,13 +4,12 @@ class CourseProfile::ClaimPreviewCourse
   protected
 
   def exec(catalog_offering:, name:, current_time: Time.current)
-    course = CourseProfile::Models::Course
-               .where(is_preview: true,
-                      is_preview_ready: true,
-                      preview_claimed_at: nil,
-                      catalog_offering_id: catalog_offering.id)
-               .lock
-               .first
+    course = CourseProfile::Models::Course.lock.find_by(
+      is_preview: true,
+      is_preview_ready: true,
+      preview_claimed_at: nil,
+      catalog_offering_id: catalog_offering.id
+    )
     if course.nil?
       WarningMailer.log_and_deliver(
         "Failed to claim preview course for offering id #{catalog_offering.id}"
@@ -36,11 +35,11 @@ class CourseProfile::ClaimPreviewCourse
     end
 
     tasking_plans = Tasks::Models::TaskingPlan.joins(:task_plan).where(task_plan: { owner: course })
-    tasking_plans.update_all( update[%w{opens_at_ntz due_at_ntz}] )
-    tasks = Tasks::Models::Task
-              .joins(taskings: :period )
-              .where(taskings: { period: { course_profile_course_id: course.id } })
-    tasks.update_all( update[%w{opens_at_ntz due_at_ntz last_worked_at}] )
+    tasking_plans.update_all update[%w{opens_at_ntz due_at_ntz closes_at_ntz}]
+    tasks = Tasks::Models::Task.joins(taskings: :period ).where(
+      taskings: { period: { course_profile_course_id: course.id } }
+    )
+    tasks.update_all update[%w{opens_at_ntz due_at_ntz closes_at_ntz last_worked_at}]
 
     course.taskings.reset
 

@@ -1,6 +1,5 @@
 module Api::V1
   class TaskingPlanRepresenter < Roar::Decorator
-
     include Roar::JSON
     include Representable::Coercion
 
@@ -13,9 +12,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: true,
-             schema_info: {
-               required: true
-             }
+             schema_info: { required: true }
 
     property :target_type,
              type: String,
@@ -25,28 +22,27 @@ module Api::V1
              setter: ->(input:, represented:, **) do
                represented.target_type = TARGET_TYPE_TO_CLASS_MAP[input]
              end,
-             schema_info: {
-               required: true
-             }
+             schema_info: { required: true }
 
     property :opens_at,
              type: String,
              readable: true,
              writeable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) },
-             schema_info: {
-               required: true
-             }
+             schema_info: { required: true }
 
     property :due_at,
              type: String,
              readable: true,
              writeable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
-             schema_info: {
-               required: true
-             }
+             schema_info: { required: true }
 
+    property :closes_at,
+             type: String,
+             readable: true,
+             writeable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) },
+             schema_info: { required: true }
   end
-
 end

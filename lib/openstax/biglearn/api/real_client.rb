@@ -369,10 +369,12 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
 
       opens_at = task.opens_at
       due_at = task.due_at
+      closes_at = task.closes_at
 
       exclusion_info = {}
       exclusion_info[:opens_at] = opens_at.utc.iso8601(6) if opens_at.present?
       exclusion_info[:due_at] = due_at.utc.iso8601(6) if due_at.present?
+      exclusion_info[:closes_at] = closes_at.utc.iso8601(6) if closes_at.present?
 
       pe_calculation_uuid = task.pe_calculation_uuid
       pe_ecosystem_matrix_uuid = task.pe_ecosystem_matrix_uuid

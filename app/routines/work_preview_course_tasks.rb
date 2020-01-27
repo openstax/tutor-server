@@ -1,5 +1,4 @@
 class WorkPreviewCourseTasks
-
   GREAT_STUDENT_CORRECT_PROBABILITY = 0.95
   AVERAGE_STUDENT_CORRECT_PROBABILITY = 0.8
   STRUGGLING_STUDENT_CORRECT_PROBABILITY = 0.5
@@ -119,12 +118,14 @@ class WorkPreviewCourseTasks
       is_correct   = ->(task_step, index) { SecureRandom.random_number < correct_probability }
       is_completed = ->(task_step, index) { !incomplete || index < task.task_steps.size/2    }
       completed_at = [late ? task.due_at + 1.day : task.due_at - 1.day, current_time].min
-      run(:work_task, task: task,
-                      free_response: FREE_RESPONSE,
-                      is_correct: is_correct,
-                      is_completed: is_completed,
-                      completed_at: completed_at)
+      run(
+        :work_task,
+        task: task,
+        free_response: FREE_RESPONSE,
+        is_correct: is_correct,
+        is_completed: is_completed,
+        completed_at: completed_at
+      )
     end
   end
-
 end

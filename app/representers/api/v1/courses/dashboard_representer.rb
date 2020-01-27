@@ -1,7 +1,5 @@
 module Api::V1::Courses
-
   class DashboardRepresenter < ::Roar::Decorator
-
     include ::Roar::JSON
 
     class TaskBase < Roar::Decorator
@@ -29,6 +27,12 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
+
+      property :closes_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) }
 
       property :last_worked_at,
                type: String,
@@ -232,7 +236,5 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                extend: ::Api::V1::ResearchSurveyRepresenter
-
   end
-
 end

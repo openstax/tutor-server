@@ -93,11 +93,11 @@ class Demo::Assign < Demo::Base
           "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"
         ) if exercise_ids.size < task_plan[:exercises_count_core]
 
-        attrs[:settings][:page_ids] = page_ids
-        attrs[:settings][:exercise_ids] = exercise_ids.shuffle
-                                                      .take(task_plan[:exercises_count_core])
-                                                      .map(&:to_s)
-        attrs[:settings][:exercises_count_dynamic] = task_plan[:exercises_count_dynamic]
+        attrs[:settings].merge!(
+          page_ids: page_ids,
+          exercise_ids: exercise_ids.shuffle.take(task_plan[:exercises_count_core]).map(&:to_s),
+          exercises_count_dynamic: task_plan[:exercises_count_dynamic]
+        )
       when 'external'
         task_plan[:external_url] ||= 'https://example.com'
 
@@ -127,6 +127,7 @@ class Demo::Assign < Demo::Base
           target: period,
           opens_at: assigned_to[:opens_at],
           due_at: assigned_to[:due_at],
+          closes_at: assigned_to[:closes_at],
           time_zone: course_model.time_zone
         )
       end

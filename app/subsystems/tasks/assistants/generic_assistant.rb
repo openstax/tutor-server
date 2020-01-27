@@ -110,11 +110,11 @@ class Tasks::Assistants::GenericAssistant
   def history_for_task(task:, core_page_ids:, history:)
     history = history.dup
 
-    task_sort_array = [task.due_at, task.opens_at, task.created_at, task.id]
+    task_sort_array = [task.due_at, task.opens_at, task.closes_at, task.created_at, task.id]
 
     history_indices = 0.upto(history.total_count)
     history_indices_to_keep = history_indices.select do |index|
-      ([history.due_ats[index], history.opens_ats[index],
+      ([history.due_ats[index], history.opens_ats[index], history.closes_ats[index],
         history.created_ats[index], history.task_ids[index]] <=> task_sort_array) == -1
     end
 
@@ -128,6 +128,7 @@ class Tasks::Assistants::GenericAssistant
     history.created_ats = history.created_ats.values_at(*history_indices_to_keep)
     history.opens_ats = history.opens_ats.values_at(*history_indices_to_keep)
     history.due_ats = history.due_ats.values_at(*history_indices_to_keep)
+    history.closes_ats = history.closes_ats.values_at(*history_indices_to_keep)
 
     # Add the given task to the history
     tasked_exercises = task.task_steps.select(&:exercise?).map(&:tasked)
@@ -142,6 +143,7 @@ class Tasks::Assistants::GenericAssistant
     history.created_ats.unshift task.created_at
     history.opens_ats.unshift task.opens_at
     history.due_ats.unshift task.due_at
+    history.closes_ats.unshift task.closes_at
 
     history
   end
@@ -171,6 +173,7 @@ class Tasks::Assistants::GenericAssistant
       time_zone: individualized_tasking_plan.time_zone,
       opens_at: individualized_tasking_plan.opens_at,
       due_at: individualized_tasking_plan.due_at,
+      closes_at: individualized_tasking_plan.closes_at,
       ecosystem: task_plan.ecosystem
     ].tap do |task|
       task.taskings << Tasks::Models::Tasking.new(
@@ -191,9 +194,7 @@ class Tasks::Assistants::GenericAssistant
 
   def add_placeholder_steps!(task:, group_type:, is_core:, count:, labels: [], page: nil)
     count.times do
-      task_step = Tasks::Models::TaskStep.new(
-        task: task, labels: labels, page: page.try!(:to_model)
-      )
+      task_step = Tasks::Models::TaskStep.new(task: task, labels: labels, page: page&.to_model)
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
       tasked_placeholder.placeholder_type = :exercise_type
       task_step.tasked = tasked_placeholder

@@ -82,10 +82,12 @@ class PopulatePreviewCourseContent
     time_zone = course.time_zone
     preview_chapters.each_with_index do |chapter, index|
       reading_due_at = [opens_at + index.weeks + 1.day, course.ends_at].min
+      reading_closes_at = reading_due_at + 7.days
       homework_due_at = [reading_due_at + 3.days, course.ends_at].min
+      homework_closes_at = homework_due_at + 7.days
 
       pages = chapter.pages
-      page_ids = pages.map{ |page| page.id.to_s }
+      page_ids = pages.map { |page| page.id.to_s }
       exercise_ids = pages.flat_map do |page|
         page.homework_core_pool.content_exercise_ids.sample.try!(:to_s)
       end.compact
@@ -99,12 +101,17 @@ class PopulatePreviewCourseContent
         settings: { 'page_ids' => page_ids },
         grading_template: course.grading_templates.detect { |gt| gt.task_plan_type == 'reading' }
       )
-      reading_tp.assistant = run(:get_assistant, course: course, task_plan: reading_tp)
-                               .outputs.assistant
+      reading_tp.assistant = run(
+        :get_assistant, course: course, task_plan: reading_tp
+      ).outputs.assistant
       reading_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
-          task_plan: reading_tp, target: period,
-          time_zone: time_zone, opens_at: opens_at, due_at: reading_due_at
+          task_plan: reading_tp,
+          target: period,
+          time_zone: time_zone,
+          opens_at: opens_at,
+          due_at: reading_due_at,
+          closes_at: reading_closes_at
         )
       end
       reading_tp.save!
@@ -124,12 +131,17 @@ class PopulatePreviewCourseContent
                     'exercises_count_dynamic' => exercises_count_dynamic },
         grading_template: course.grading_templates.detect { |gt| gt.task_plan_type == 'homework' }
       )
-      homework_tp.assistant = run(:get_assistant, course: course, task_plan: homework_tp)
-                                .outputs.assistant
+      homework_tp.assistant = run(
+        :get_assistant, course: course, task_plan: homework_tp
+      ).outputs.assistant
       homework_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
-          task_plan: homework_tp, target: period,
-          time_zone: time_zone, opens_at: opens_at, due_at: homework_due_at
+          task_plan: homework_tp,
+          target: period,
+          time_zone: time_zone,
+          opens_at: opens_at,
+          due_at: homework_due_at,
+          closes_at: homework_closes_at
         )
       end
       homework_tp.save!
