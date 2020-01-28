@@ -55,9 +55,9 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
   let(:date_str) { "#{year_str}-#{month_str}-#{day_str}" }
   let(:date_time_str) { "#date_str}T14:32:34" }
 
-  context "opens_at & due_at" do
+  context "opens_at, due_at and closes_at" do
 
-    %w(opens_at due_at).each do |field|
+    %w(opens_at due_at closes_at).each do |field|
       context field do
         it "can be read (date coerced to String)" do
           datetime = Time.zone.now
@@ -66,7 +66,7 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
         end
 
         it "can be written" do
-          consume(input: {field => date_time_str}, to: tasking_plan)
+          consume(input: { field => date_time_str }, to: tasking_plan)
           expect(tasking_plan).to have_received("#{field}=").with(date_time_str)
         end
       end

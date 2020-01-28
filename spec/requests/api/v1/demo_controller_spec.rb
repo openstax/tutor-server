@@ -58,7 +58,8 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
               {
                 period: { name: '1st' },
                 opens_at: (current_time - 1.day).iso8601,
-                due_at: (current_time + 1.day).iso8601
+                due_at: (current_time + 1.day).iso8601,
+                closes_at: (current_time + 2.days).iso8601
               }
             ]
           }
@@ -187,7 +188,11 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
       time = Time.current
       task_plan.tasking_plans += [
         FactoryBot.build(
-          :tasks_tasking_plan, task_plan: task_plan, opens_at: time, due_at: time - 1.day
+          :tasks_tasking_plan,
+          task_plan: task_plan,
+          opens_at: time,
+          due_at: time - 1.day,
+          closes_at: time - 2.days
         )
       ]
       expect(task_plan).not_to be_valid

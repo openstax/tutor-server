@@ -94,6 +94,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             expect(data['Task Type']).to eq(task.task_type)
             expect(data['Task Opens At']).to eq(format_time(task.opens_at))
             expect(data['Task Due At']).to eq(format_time(task.due_at))
+            expect(data['Task Closes At']).to eq(format_time(task.closes_at))
             expect(data['Step Type']).to eq(step.tasked_type.match(/Tasked(.+)\z/).try!(:[], 1))
             expect(data['Step Group']).to eq(step.group_name)
             expect(data['Step Labels']).to eq(step.labels.join(','))

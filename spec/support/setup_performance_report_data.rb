@@ -1,5 +1,4 @@
 class SetupPerformanceReportData
-
   lev_routine
 
   protected
@@ -85,6 +84,7 @@ class SetupPerformanceReportData
       task_plan: reading_taskplan,
       opens_at: time_zone.now,
       due_at: time_zone.now + 1.week,
+      closes_at: time_zone.now + 2.weeks,
       time_zone: course.time_zone
     )
 
@@ -109,7 +109,9 @@ class SetupPerformanceReportData
     homework_taskplan.tasking_plans << FactoryBot.build(
       :tasks_tasking_plan,
       target: course, task_plan: homework_taskplan,
-      opens_at: time_zone.now, due_at: time_zone.now.tomorrow,
+      opens_at: time_zone.now,
+      due_at: time_zone.now.tomorrow,
+      closes_at: time_zone.now.tomorrow + 1.day,
       time_zone: course.time_zone
     )
 
@@ -134,7 +136,9 @@ class SetupPerformanceReportData
     homework2_taskplan.tasking_plans << FactoryBot.build(
       :tasks_tasking_plan,
       target: course, task_plan: homework2_taskplan,
-      opens_at: time_zone.now, due_at: time_zone.now + 2.weeks,
+      opens_at: time_zone.now,
+      due_at: time_zone.now + 2.weeks,
+      closes_at: time_zone.now + 4.weeks,
       time_zone: course.time_zone
     )
 
@@ -162,6 +166,7 @@ class SetupPerformanceReportData
       task_plan: future_homework_taskplan,
       opens_at: time_zone.now + 1.5.days,
       due_at: time_zone.now + 2.days,
+      closes_at: time_zone.now + 2.5.days,
       time_zone: course.time_zone
     )
 
@@ -202,5 +207,4 @@ class SetupPerformanceReportData
     student_3_tasks = student_tasks[2]
     Preview::WorkTask[task: student_3_tasks[0], is_correct: true]
   end
-
 end

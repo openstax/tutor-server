@@ -20,14 +20,16 @@ RSpec.describe CreatePeriod, type: :routine do
       expected = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: expected,
-                                              opens_at: time_zone.now,
-                                              due_at: time_zone.now.tomorrow,
-                                              target: period.to_model)
+                                             opens_at: time_zone.now.yesterday,
+                                             due_at: time_zone.now,
+                                             closes_at: time_zone.now.tomorrow,
+                                             target: period.to_model)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: expected,
-                                              opens_at: time_zone.now,
-                                              due_at: time_zone.now.tomorrow,
-                                              target: other_period.to_model)
+                                             opens_at: time_zone.now.yesterday,
+                                             due_at: time_zone.now,
+                                             closes_at: time_zone.now.tomorrow,
+                                             target: other_period.to_model)
 
       expect(task_plan_ids).to include(expected.id)
     end
@@ -43,39 +45,69 @@ RSpec.describe CreatePeriod, type: :routine do
     end
   end
 
-  it 'does not copy task plans across all periods with mismatching due dates' do
+  it 'does not copy task plans across all periods with mismatched open dates' do
+    Timecop.freeze do
+      diff_open_dates = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+
+      now = time_zone.now
+
+      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_open_dates,
+                                              opens_at: now,
+                                              due_at: now + 2.minutes,
+                                              closes_at: now + 3.minutes,
+                                              target: period.to_model)
+
+      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_open_dates,
+                                              opens_at: now + 1.minute,
+                                              due_at: now + 2.minutes,
+                                              closes_at: now + 3.minutes,
+                                              target: other_period.to_model)
+
+      expect(task_plan_ids).not_to include(diff_open_dates.id)
+    end
+  end
+
+  it 'does not copy task plans across all periods with mismatched due dates' do
     Timecop.freeze do
       diff_due_dates = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
 
+      now = time_zone.now
+
       FactoryBot.create(:tasks_tasking_plan, task_plan: diff_due_dates,
-                                              opens_at: time_zone.now,
-                                              due_at: time_zone.now.tomorrow,
+                                              opens_at: now,
+                                              due_at: now.tomorrow,
+                                              closes_at: now.tomorrow + 1.minute,
                                               target: period.to_model)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: diff_due_dates,
-                                              opens_at: time_zone.now,
-                                              due_at: time_zone.now + 1.minute,
+                                              opens_at: now,
+                                              due_at: now + 1.minute,
+                                              closes_at: now.tomorrow + 1.minute,
                                               target: other_period.to_model)
 
       expect(task_plan_ids).not_to include(diff_due_dates.id)
     end
   end
 
-  it 'does not copy task plans across all periods with mismatching open dates' do
+  it 'does not copy task plans across all periods with mismatched close dates' do
     Timecop.freeze do
-      diff_open_dates = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+      diff_due_dates = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
 
-      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_open_dates,
-                                              opens_at: time_zone.now,
-                                              due_at: time_zone.now + 2.minutes,
+      now = time_zone.now
+
+      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_due_dates,
+                                              opens_at: now,
+                                              due_at: now + 1.minute,
+                                              closes_at: now + 2.minutes,
                                               target: period.to_model)
 
-      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_open_dates,
-                                              opens_at: time_zone.now + 1.minute,
-                                              due_at: time_zone.now + 2.minutes,
+      FactoryBot.create(:tasks_tasking_plan, task_plan: diff_due_dates,
+                                              opens_at: now,
+                                              due_at: now + 1.minute,
+                                              closes_at: now.tomorrow + 2.minutes,
                                               target: other_period.to_model)
 
-      expect(task_plan_ids).not_to include(diff_open_dates.id)
+      expect(task_plan_ids).not_to include(diff_due_dates.id)
     end
   end
 end

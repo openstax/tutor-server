@@ -169,6 +169,10 @@ class Tasks::Models::Task < ApplicationRecord
     !due_at.nil? && current_time > due_at
   end
 
+  def past_close?(current_time: Time.current)
+    !closes_at.nil? && current_time > closes_at
+  end
+
   def auto_grading_feedback_available?(current_time: Time.current, current_time_ntz: nil)
     case auto_grading_feedback_on
     when 'answer'

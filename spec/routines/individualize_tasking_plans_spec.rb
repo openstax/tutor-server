@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe IndividualizeTaskingPlans, type: :routine do
-
   let(:task_plan)    { FactoryBot.create :tasks_task_plan }
   let(:tasking_plan) { task_plan.tasking_plans.first }
 
@@ -22,6 +21,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       expect(new_tasking_plan.target).to eq tasking_plan.target
       expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
       expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
+      expect(new_tasking_plan.closes_at).to be_within(1e-6).of tasking_plan.closes_at
     end
   end
 
@@ -43,6 +43,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       expect(new_tasking_plan.target).to eq default_role
       expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
       expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
+      expect(new_tasking_plan.closes_at).to be_within(1e-6).of tasking_plan.closes_at
     end
   end
 
@@ -74,6 +75,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
         expect(new_tasking_plan.target).to be_in acceptable_roles
         expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
         expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
+        expect(new_tasking_plan.closes_at).to be_within(1e-6).of tasking_plan.closes_at
       end
     end
 
@@ -86,6 +88,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
         expect(new_tasking_plan.target).to be_in acceptable_roles
         expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
         expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
+        expect(new_tasking_plan.closes_at).to be_within(1e-6).of tasking_plan.closes_at
       end
     end
 
@@ -102,6 +105,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       expect(new_tasking_plan.target).to eq student_role_3
       expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
       expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
+      expect(new_tasking_plan.closes_at).to be_within(1e-6).of tasking_plan.closes_at
     end
   end
 
@@ -133,6 +137,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
         expect(new_tasking_plan.target).to be_in acceptable_roles
         expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
         expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
+        expect(new_tasking_plan.closes_at).to be_within(1e-6).of tasking_plan.closes_at
       end
     end
 
@@ -145,6 +150,7 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
         expect(new_tasking_plan.target).to be_in acceptable_roles
         expect(new_tasking_plan.opens_at).to be_within(1e-6).of tasking_plan.opens_at
         expect(new_tasking_plan.due_at).to be_within(1e-6).of tasking_plan.due_at
+        expect(new_tasking_plan.closes_at).to be_within(1e-6).of tasking_plan.closes_at
       end
     end
 
@@ -160,5 +166,4 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       expect(result.first.target_id).to eq student_role_1.id
     end
   end
-
 end

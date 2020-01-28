@@ -1,5 +1,4 @@
 class Tasks::Models::TaskedExercise < IndestructibleRecord
-
   acts_as_tasked
 
   auto_uuid
@@ -142,5 +141,4 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
     throw(:abort) if errors.any?
   end
-
 end

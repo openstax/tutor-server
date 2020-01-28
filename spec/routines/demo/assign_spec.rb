@@ -88,6 +88,9 @@ RSpec.describe Demo::Assign, type: :routine do
         expect(tasking_plan.due_at).to be_within(4.5.days).of(
           DateTime.parse('2019-07-28 19:00:00 -0500')
         )
+        expect(tasking_plan.closes_at).to be_within(4.5.days).of(
+          DateTime.parse('2019-08-04 19:00:00 -0500')
+        )
         expect(tasking_plan.time_zone).to eq course.time_zone
       end
 
