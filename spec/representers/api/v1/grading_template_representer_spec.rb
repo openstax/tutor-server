@@ -197,4 +197,16 @@ RSpec.describe Api::V1::GradingTemplateRepresenter, type: :representer do
       end.not_to change { represented.created_at }
     end
   end
+
+  context 'has_task_plans' do
+    it 'can be read' do
+      expect(representation['has_task_plans']).to eq false
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect do
+        representer.from_hash('has_task_plans' => true)
+      end.not_to change { represented.has_task_plans? }
+    end
+  end
 end

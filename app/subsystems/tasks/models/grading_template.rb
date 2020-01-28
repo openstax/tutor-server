@@ -70,6 +70,10 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
     DEFAULT_ATTRIBUTES.map { |attributes| new(attributes) }
   end
 
+  def has_task_plans?
+    !task_plans.reject(&:withdrawn?).empty?
+  end
+
   protected
 
   def weights_add_up
@@ -99,10 +103,6 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
     end
 
     throw(:abort) if errors.any?
-  end
-
-  def has_task_plans?
-    !task_plans.reject(&:withdrawn?).empty?
   end
 
   def no_task_plans_when_changing_task_plan_type
