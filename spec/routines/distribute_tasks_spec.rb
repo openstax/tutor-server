@@ -269,6 +269,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         let(:new_description) { 'New Description' }
         let(:new_opens_at)    { tasking_plan.time_zone.to_tz.now.yesterday }
         let(:new_due_at)      { tasking_plan.time_zone.to_tz.now.tomorrow }
+        let(:new_closes_at)   { tasking_plan.time_zone.to_tz.now.tomorrow + 1.week }
 
         before do
           task_plan.title = new_title
@@ -277,6 +278,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
           tasking_plan.opens_at = new_opens_at
           tasking_plan.due_at = new_due_at
+          tasking_plan.closes_at = new_closes_at
           tasking_plan.save!
         end
 
@@ -295,6 +297,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
               expect(task.description).to              eq new_description
               expect(task.opens_at).to                 be_within(1e-6).of(new_opens_at)
               expect(task.due_at).to                   be_within(1e-6).of(new_due_at)
+              expect(task.closes_at).to                be_within(1e-6).of(new_closes_at)
               expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
               expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
             end
@@ -316,6 +319,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
               expect(task.description).to eq new_description
               expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
               expect(task.due_at).to      be_within(1e-6).of(new_due_at)
+              expect(task.closes_at).to   be_within(1e-6).of(new_closes_at)
               expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
               expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
             end

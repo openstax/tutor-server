@@ -7,6 +7,7 @@ FactoryBot.define do
       time_zone                 { owner.try(:time_zone)&.to_tz || Time.zone }
       opens_at                  { time_zone.now }
       due_at                    { opens_at + duration }
+      closes_at                 { owner.try(:ends_at) - 1.day }
       num_tasking_plans         { 1 }
       assistant_code_class_name { 'DummyAssistant' }
       published_at              { nil }
@@ -40,6 +41,7 @@ FactoryBot.define do
           task_plan: task_plan,
           opens_at: evaluator.opens_at,
           due_at: evaluator.due_at,
+          closes_at: evaluator.closes_at,
           time_zone: task_plan.owner.try(:time_zone)
         }
         args[:target] = evaluator.target unless evaluator.target.nil?

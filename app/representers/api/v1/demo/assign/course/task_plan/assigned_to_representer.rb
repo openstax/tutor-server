@@ -23,6 +23,5 @@ class Api::V1::Demo::Assign::Course::TaskPlan::AssignedToRepresenter < Api::V1::
   property :closes_at,
            type: String,
            readable: true,
-           writeable: true,
-           schema_info: { required: true }
+           writeable: true
 end

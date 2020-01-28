@@ -27,16 +27,20 @@ RSpec.describe BelongsToTimeZone, type: :lib do
     it 'adds accessor methods for the listed fields' do
       expect(tasking_plan).to respond_to(:opens_at)
       expect(tasking_plan).to respond_to(:due_at)
+      expect(tasking_plan).to respond_to(:closes_at)
       expect(tasking_plan).to respond_to(:opens_at=)
       expect(tasking_plan).to respond_to(:due_at=)
+      expect(tasking_plan).to respond_to(:closes_at=)
 
       expect(task).to respond_to(:opens_at)
       expect(task).to respond_to(:due_at)
+      expect(task).to respond_to(:closes_at)
       expect(task).to respond_to(:opens_at=)
       expect(task).to respond_to(:due_at=)
+      expect(task).to respond_to(:closes_at=)
     end
 
-    it 'replaces input time_zones with the record\'s time_zone, ignoring offsets' do
+    it "replaces input time_zones with the record's time_zone, ignoring offsets" do
       task.due_at = nil
       expect(task.due_at).to be_nil
 
