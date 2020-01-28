@@ -60,6 +60,15 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
     expect(grading_template).not_to be_valid
   end
 
+  it 'knows if it has task_plans' do
+    task_plan = FactoryBot.create :tasks_task_plan, owner: course,
+                                                    grading_template: grading_template
+    expect(grading_template.has_task_plans?).to eq true
+
+    task_plan.destroy
+    expect(grading_template.reload.has_task_plans?).to eq false
+  end
+
   it 'cannot change its type if it has task_plans' do
     task_plan = FactoryBot.create :tasks_task_plan, owner: course,
                                                     grading_template: grading_template
