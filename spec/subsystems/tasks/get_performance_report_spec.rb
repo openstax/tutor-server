@@ -52,6 +52,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       task_plan: external_task_plan,
       opens_at: @course.time_zone.to_tz.now - 4.weeks,
       due_at: @course.time_zone.to_tz.now - 3.weeks,
+      closes_at: @course.time_zone.to_tz.now - 2.weeks,
       time_zone: @course.time_zone
     )
 
@@ -80,6 +81,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       task_plan: event_task_plan,
       opens_at: @course.time_zone.to_tz.now - 1.week,
       due_at: @course.time_zone.to_tz.now,
+      closes_at: @course.time_zone.to_tz.now + 1.week,
       time_zone: @course.time_zone
     )
 
@@ -109,6 +111,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       task_plan: draft_task_plan,
       opens_at: @course.time_zone.to_tz.now,
       due_at: @course.time_zone.to_tz.now + 1.week,
+      closes_at: @course.time_zone.to_tz.now + 2.weeks,
       time_zone: @course.time_zone
     )
 

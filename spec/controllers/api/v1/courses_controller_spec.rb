@@ -461,25 +461,29 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         time_zone = @course.time_zone.to_tz
         opens_at = time_zone.now - 2.months
         due_at = time_zone.now + 2.months
+        closes_at = time_zone.now + 3.months
 
         # User time-zone-less strings to update the open/due dates
         opens_at_str = opens_at.strftime "%Y-%m-%d %H:%M:%S"
         due_at_str = due_at.strftime "%Y-%m-%d %H:%M:%S"
+        closes_at_str = closes_at.strftime "%Y-%m-%d %H:%M:%S"
 
         task_plan = FactoryBot.build :tasks_task_plan, owner: @course, num_tasking_plans: 0
         tasking_plan = FactoryBot.create :tasks_tasking_plan, task_plan: task_plan,
                                                                opens_at: opens_at_str,
-                                                               due_at: due_at_str
+                                                               due_at: due_at_str,
+                                                               closes_at: closes_at_str
 
         # The time zone is inferred from the course's TimeZone
         expect(tasking_plan.opens_at).to be_within(1).of(opens_at)
         expect(tasking_plan.due_at).to be_within(1).of(due_at)
+        expect(tasking_plan.closes_at).to be_within(1).of(closes_at)
 
         # Change course TimeZone to Edinburgh
         course_name = @course.name
-        api_patch :update, @user_1_token, params: { id: @course.id },
-                                          body: { name: course_name,
-                                                           time_zone: 'Edinburgh' }.to_json
+        api_patch :update, @user_1_token, params: { id: @course.id }, body: {
+          name: course_name, time_zone: 'Edinburgh'
+        }.to_json
 
         expect(response.body_as_hash[:name]).to eq course_name
         expect(response.body_as_hash[:time_zone]).to eq 'Edinburgh'
@@ -491,14 +495,17 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         # Reinterpret the time-zone-less strings as being in the Edingburgh time zone
         new_opens_at = edinburgh_tz.parse(opens_at_str)
         new_due_at = edinburgh_tz.parse(due_at_str)
+        new_closes_at = edinburgh_tz.parse(closes_at_str)
 
-        # The open/due dates changed
+        # The open/due/close dates changed
         expect(tasking_plan.reload.opens_at).not_to be_within(1).of(opens_at)
         expect(tasking_plan.due_at).not_to be_within(1).of(due_at)
+        expect(tasking_plan.closes_at).not_to be_within(1).of(closes_at)
 
         # They now act as if they were specified in the Edinburgh time zone
         expect(tasking_plan.opens_at).to be_within(1).of(new_opens_at)
         expect(tasking_plan.due_at).to be_within(1).of(new_due_at)
+        expect(tasking_plan.closes_at).to be_within(1).of(new_closes_at)
       end
 
       it 'updates is_college' do

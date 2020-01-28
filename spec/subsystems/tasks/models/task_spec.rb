@@ -2,7 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   subject(:task)         do
-    FactoryBot.create :tasks_task, opens_at: Time.current - 1.week, due_at: Time.current - 1.day
+    FactoryBot.create(
+      :tasks_task,
+      opens_at: Time.current - 1.week,
+      due_at: Time.current - 2.days,
+      closes_at: Time.current - 1.day
+    )
   end
 
   let(:task_plan)        { task.task_plan }
@@ -45,6 +50,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     expect(task).not_to be_late
   end
 
+  it 'is never closed if closes_at is nil' do
+    task.update_attribute :closes_at, nil
+
+    expect(task).not_to be_past_close
+  end
+
   context '#handle_task_step_completion!' do
     it 'sets #last_worked_at to completed_at' do
       time = Time.current
@@ -59,6 +70,13 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     expect(task).to be_valid
 
     task.due_at = Time.current - 1.week - 1.hour
+    expect(task).to_not be_valid
+  end
+
+  it "requires non-nil closes_at to be after due_at" do
+    expect(task).to be_valid
+
+    task.closes_at = Time.current - 2.days - 1.hour
     expect(task).to_not be_valid
   end
 

@@ -189,6 +189,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -213,6 +214,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -248,6 +250,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -524,6 +527,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -548,6 +552,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -583,6 +588,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(

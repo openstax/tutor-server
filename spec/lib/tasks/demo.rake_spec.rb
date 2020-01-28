@@ -78,6 +78,7 @@ RSpec.describe 'demo', type: :rake do
         expect(assigned_to[:period][:name]).to be_in ['1st', '2nd']
         expect(Time.parse(assigned_to[:opens_at].to_s)).to be_within(3.weeks).of(Time.now)
         expect(Time.parse(assigned_to[:due_at].to_s)).to be_within(3.weeks).of(Time.now)
+        expect(Time.parse(assigned_to[:closes_at].to_s)).to be_within(4.weeks).of(Time.now)
       end
     end
   end
