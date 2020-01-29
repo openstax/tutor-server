@@ -167,47 +167,4 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
       end
     end
   end
-
-  context 'GET #show' do
-    it 'returns nothing when practice widget not yet set' do
-      api_get :show, user_1_token, params: { course_id: course.id }
-
-      expect(response).to have_http_status(:not_found)
-    end
-
-    it 'returns a practice widget' do
-      CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
-      CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: [page.id]]
-
-      api_get :show, user_1_token, params: { course_id: course.id, role_id: role.id }
-
-      expect(response).to have_http_status(:success)
-
-      expect(response.body_as_hash).to(
-        include(id: be_kind_of(String), title: 'Practice', steps: have(5).items)
-      )
-    end
-
-    it "422's if needs to pay" do
-      make_payment_required_and_expect_422(course: course, user: user_1) do
-        api_get :show, user_1_token, params: { course_id: course.id }
-      end
-    end
-
-    it 'raises SecurityTransgression if user is anonymous or not in the course as a student' do
-      expect do
-        api_get :show, nil, params: { course_id: course.id }
-      end.to raise_error(SecurityTransgression)
-
-      expect do
-        api_get :show, user_1_token, params: { course_id: course.id }
-      end.to raise_error(SecurityTransgression)
-
-      AddUserAsCourseTeacher.call(course: course, user: user_1)
-
-      expect do
-        api_get :show, user_1_token, params: { course_id: course.id }
-      end.to raise_error(SecurityTransgression)
-    end
-  end
 end
