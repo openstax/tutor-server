@@ -1,5 +1,4 @@
 class Research::StudiesController < Research::BaseController
-
   before_action :get_study, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
 
   def index
@@ -96,5 +95,4 @@ class Research::StudiesController < Research::BaseController
   def get_study
     @study = Research::Models::Study.find(params[:id])
   end
-
 end

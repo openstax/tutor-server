@@ -1,5 +1,4 @@
 class CreatePracticeSpecificTopicsTask
-
   include CreatePracticeTaskRoutine
 
   uses_routine GetEcosystemFromIds, as: :get_ecosystem
@@ -42,23 +41,17 @@ class CreatePracticeSpecificTopicsTask
     after_transaction do
       # This needs to happen after the transaction where the task is created
       # so it can be sent to Biglearn in the background
-      outs = Tasks::PopulatePlaceholderSteps.call(task: @task).outputs
+      outs = Tasks::PopulatePlaceholderSteps.call(task: @task, skip_unready: true).outputs
       outputs.task = outs.task
 
-      next unless outs.task.task_steps.reject(&:placeholder?).empty?
+      next unless outs.accepted && outs.task.task_steps.reject(&:placeholder?).empty?
 
-      outs.accepted ? nonfatal_error(
+      nonfatal_error(
         code: :no_exercises,
         message: "No exercises were returned from Biglearn to build the Practice Widget." +
-                 " [Course: #{@course.id} - Role: #{@role.id}" +
-                 " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
-      ) : nonfatal_error(
-        code: :biglearn_not_ready,
-        message: "Biglearn failed to provide practice exercises in the maximum number of retries." +
                  " [Course: #{@course.id} - Role: #{@role.id}" +
                  " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
       )
     end
   end
-
 end

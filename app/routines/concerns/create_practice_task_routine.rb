@@ -1,5 +1,4 @@
 module CreatePracticeTaskRoutine
-
   NUM_BIGLEARN_EXERCISES = 5
 
   extend ActiveSupport::Concern
@@ -69,5 +68,4 @@ module CreatePracticeTaskRoutine
 
     send_task_to_biglearn
   end
-
 end
