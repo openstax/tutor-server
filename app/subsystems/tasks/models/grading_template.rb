@@ -46,7 +46,7 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
       late_work_penalty_applied: :daily,
       late_work_penalty: 0.1,
       default_open_time: '00:01',
-      default_due_time: '07:00',
+      default_due_time: '21:00',
       default_due_date_offset_days: 7,
       default_close_date_offset_days: 7
     },

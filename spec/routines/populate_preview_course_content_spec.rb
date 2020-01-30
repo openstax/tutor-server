@@ -13,10 +13,6 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
                                                         offering: offering, is_preview: true
   end
 
-  let(:expected_opens_at) do
-    [ @course.time_zone.to_tz.now.monday - 2.weeks, @course.starts_at ].max
-  end
-
   before do
     expect(WorkPreviewCourseTasks).to receive(:perform_later).with(course: @course).once
 
@@ -44,7 +40,16 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
           role.taskings.each do |tasking|
             task = tasking.task
 
-            expect(task.opens_at).to be_within(1.hour).of expected_opens_at
+            expect(task.opens_at).to be_within(1).of task.due_at - 7.days
+            expect(task.closes_at).to be_within(1.day).of @course.ends_at - 1.day
+
+            task.task_steps.each do |task_step|
+              expect(task_step).not_to be_completed
+
+              next unless task_step.exercise?
+
+              expect(task_step.tasked.free_response).to be_nil
+            end
           end
         end
       end
@@ -78,7 +83,16 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
           role.taskings.each do |tasking|
             task = tasking.task
 
-            expect(task.opens_at).to be_within(1.hour).of expected_opens_at
+            expect(task.opens_at).to be_within(1).of task.due_at - 7.days
+            expect(task.closes_at).to be_within(1.day).of @course.ends_at - 1.day
+
+            task.task_steps.each do |task_step|
+              expect(task_step).not_to be_completed
+
+              next unless task_step.exercise?
+
+              expect(task_step.tasked.free_response).to be_nil
+            end
           end
         end
       end
