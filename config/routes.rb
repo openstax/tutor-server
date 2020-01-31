@@ -109,7 +109,7 @@ Rails.application.routes.draw do
         get :'performance/exports(/role/:role_id)', action: :exports
       end
 
-      resource :practices, path: :'practice/(/role/:role_id)', only: [ :show, :create ]
+      resource :practices, path: :'practice/(/role/:role_id)', only: [ :create ]
       post :'practice/worst(/role/:role_id)', controller: :practices, action: :create_worst
 
       scope controller: :guides do

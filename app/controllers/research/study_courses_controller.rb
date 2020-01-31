@@ -1,7 +1,6 @@
 class Research::StudyCoursesController < Research::BaseController
-
   def create
-    @study = Research::Models::Study.find(params[:study_id])
+    @study = ::Research::Models::Study.find(params[:study_id])
 
     course_ids = SharedCourseSearchHelper.get_course_ids(params)
 
@@ -40,5 +39,4 @@ class Research::StudyCoursesController < Research::BaseController
       redirect_to research_study_path(study)
     end
   end
-
 end

@@ -39,15 +39,6 @@ module Api::V1
       )
     end
 
-    api :GET, '/courses/:course_id/practice', 'Gets the most recent practice widget'
-    def show
-      task = ::Tasks::GetPracticeTask[role: @role]
-
-      return head(:not_found) if task.nil?
-
-      respond_with task, represent_with: Api::V1::TaskRepresenter
-    end
-
     protected
 
     def get_course_and_practice_role

@@ -14,13 +14,12 @@ RSpec.describe CreatePracticeSpecificTopicsTask, type: :routine, speed: :medium 
         spy_info: {}
       }
     )
-    expect { result }
+    expect { expect(result.errors.first.code).to eq :no_exercises }
       .to  change { Tasks::Models::Task.count }.by(1)
       .and change { Tasks::Models::Tasking.count }.by(1)
       .and not_change { Tasks::Models::TaskStep.count }
-      .and not_change { Tasks::Models::TaskedExercise.count }
+      .and not_change { Tasks::Models::TaskedPlaceholder.count }
       .and change { course.reload.sequence_number }.by(2)
-    expect(result.errors.first.code).to eq :no_exercises
   end
 
   it 'non-fatal errors when Biglearn does not return an accepted response after max attempts' do
@@ -31,13 +30,12 @@ RSpec.describe CreatePracticeSpecificTopicsTask, type: :routine, speed: :medium 
         spy_info: {}
       }
     )
-    expect { result }
+    expect { expect(result.errors).to be_empty }
       .to  change { Tasks::Models::Task.count }.by(1)
       .and change { Tasks::Models::Tasking.count }.by(1)
-      .and not_change { Tasks::Models::TaskStep.count }
-      .and not_change { Tasks::Models::TaskedExercise.count }
+      .and change { Tasks::Models::TaskStep.count }.by(1)
+      .and change { Tasks::Models::TaskedPlaceholder.count }.by(1)
       .and change { course.reload.sequence_number }.by(2)
-    expect(result.errors.first.code).to eq :biglearn_not_ready
   end
 
 end

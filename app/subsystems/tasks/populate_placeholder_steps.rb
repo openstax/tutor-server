@@ -1,5 +1,4 @@
 class Tasks::PopulatePlaceholderSteps
-  BIGLEARN_PRACTICE_ATTEMPTS = 30
   BIGLEARN_BACKGROUND_ATTEMPTS = 600
   BIGLEARN_SLEEP_INTERVAL = 1.second
 
@@ -88,13 +87,7 @@ class Tasks::PopulatePlaceholderSteps
     core_page_ids = run(:get_task_core_page_ids, tasks: task)
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
     biglearn_api_method = "fetch_assignment_#{exercise_type}s".to_sym
-    max_attempts = if !skip_unready && background
-      BIGLEARN_BACKGROUND_ATTEMPTS
-    elsif !skip_unready && task.practice?
-      BIGLEARN_PRACTICE_ATTEMPTS
-    else
-      1
-    end
+    max_attempts = !skip_unready && background ? BIGLEARN_BACKGROUND_ATTEMPTS : 1
     boolean_attribute = "#{exercise_type}s_are_assigned"
 
     task_steps_to_upsert = []

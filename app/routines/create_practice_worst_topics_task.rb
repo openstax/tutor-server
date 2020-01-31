@@ -1,5 +1,4 @@
 class CreatePracticeWorstTopicsTask
-
   include CreatePracticeTaskRoutine
 
   uses_routine GetCourseEcosystem, as: :get_course_ecosystem
@@ -41,5 +40,4 @@ class CreatePracticeWorstTopicsTask
                               spy: @task.spy.merge(spy_info.except('exercises'))
     end
   end
-
 end

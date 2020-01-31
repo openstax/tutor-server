@@ -1,5 +1,4 @@
 class Research::ModifiedTask
-
   lev_routine express_output: :task
 
   def exec(task:)
@@ -13,5 +12,4 @@ class Research::ModifiedTask
       end
     end
   end
-
 end

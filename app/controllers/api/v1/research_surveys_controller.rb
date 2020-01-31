@@ -6,7 +6,7 @@ class Api::V1::ResearchSurveysController < Api::V1::ApiController
   EOS
   def update
     OSU::AccessPolicy.require_action_allowed!(:complete, current_api_user, survey)
-    result = Research::CompleteSurvey.call(
+    result = ::Research::CompleteSurvey.call(
       survey: survey, **consumed(Api::V1::ResearchSurveyRepresenter)
     )
     if result.errors.any?
@@ -20,7 +20,7 @@ class Api::V1::ResearchSurveysController < Api::V1::ApiController
   protected
 
   def survey
-    @survey ||= Research::Models::Survey.find(params[:id])
+    @survey ||= ::Research::Models::Survey.find(params[:id])
   end
 
 end
