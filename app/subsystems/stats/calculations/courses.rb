@@ -6,6 +6,12 @@ class Stats::Calculations::Courses
   def exec(interval:)
     co = CourseProfile::Models::Course.arel_table
 
+    interval.courses.created = CourseProfile::Models::Course
+      .where(is_test: false, is_preview: false)
+      .where(:created_at => interval.range)
+
+    interval.stats['new_courses'] = interval.courses.created.dup.count
+
     interval.courses.active = CourseProfile::Models::Course
       .where(is_test: false, is_preview: false)
       .where(
