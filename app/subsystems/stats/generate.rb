@@ -15,7 +15,7 @@ module Stats
       Stats::Models::Interval.transaction do
         st = Stats::Models::Interval.arel_table
         Stats::Models::Interval.where(st[:starts_at].gt(start_at)).delete_all
-        while end_at < Date.today
+        while end_at < Date.tomorrow
           date_range = (start_at...end_at)
           stats = Calculate[date_range: date_range]
           stats.save! unless stats.empty?

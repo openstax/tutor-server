@@ -38,8 +38,10 @@ RSpec.describe Stats::Calculate, type: :routine do
     expect(interval.courses.active).to include task_plan.owner
     expect(interval.courses.active).not_to include past_course
     expect(interval.stats).to eq({
+      new_courses: 4,
       active_courses: 4,
-      new_enrollments: 9,
+      new_students: 9,
+      new_instructors: 0,
       active_students: 9,
       active_instructors: 0,
       active_populated_courses: 3,
