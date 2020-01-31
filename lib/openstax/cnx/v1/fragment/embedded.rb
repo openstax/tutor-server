@@ -1,5 +1,5 @@
 module OpenStax::Cnx::V1
-  class Fragment::Embedded < Fragment
+  class Fragment::Embedded < Fragment::Html
     # Used to get the title
     TITLE_CSS = '[data-type="title"]'
 
@@ -15,11 +15,9 @@ module OpenStax::Cnx::V1
     self.iframe_classes = ['os-embed']
     self.iframe_title = ''
 
-    attr_reader :url, :width, :height, :to_html
+    attr_reader :url, :width, :height
 
     def initialize(node:, title: nil, labels: nil)
-      super
-
       @title ||= begin
         title_nodes = node.css(TITLE_CSS)
         title_nodes.empty? ? node.attr(LABEL_ATTRIBUTE) :
@@ -41,7 +39,7 @@ module OpenStax::Cnx::V1
         url_node['height'] ||= default_height
       end
 
-      @to_html = node.to_html
+      super
     end
 
     def blank?
