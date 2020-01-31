@@ -27,7 +27,8 @@ class OpenStax::Cnx::V1::Fragment
 
   def append(new_node)
     content_node = node
-    content_node.root << new_node
+    parent = content_node.at_css('body') || content_node.root
+    parent << new_node
     @to_html = content_node.to_html
   end
 end

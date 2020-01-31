@@ -121,7 +121,9 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
 
     it 'moves footnotes to the fragments that link to them' do
       expect(fragments.map(&:class)).to eq [ OpenStax::Cnx::V1::Fragment::Reading ] * 5
-      expect(fragments.first.to_html.last(250)).to include('Quoted by Steve Vogel in')
+      expect(Nokogiri::HTML(fragments.first.to_html).at_css('body').text).to(
+        include('Quoted by Steve Vogel in')
+      )
       fragments[1..-1].each do |fragment|
         expect(fragment.to_html).not_to include('Quoted by Steve Vogel in')
       end
