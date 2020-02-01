@@ -119,7 +119,7 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :mediu
         end
 
         page.fragments.each do |fragment|
-          Nokogiri::HTML(fragment.to_html).css('[href]').each do |link|
+          Nokogiri::HTML.fragment(fragment.to_html).css('[href]').each do |link|
             expect(link.attr('href')).not_to include 'cnx.org'
           end
         end

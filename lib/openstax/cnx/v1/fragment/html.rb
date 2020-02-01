@@ -4,7 +4,8 @@ class OpenStax::Cnx::V1::Fragment::Html < OpenStax::Cnx::V1::Fragment
   def initialize(node:, title: nil, labels: nil)
     super
 
-    @to_html = node.to_html
+    @node = Nokogiri::HTML.fragment node.to_html
+    @to_html = @node.to_html
   end
 
   def as_json(*args)
@@ -21,7 +22,7 @@ class OpenStax::Cnx::V1::Fragment::Html < OpenStax::Cnx::V1::Fragment
   end
 
   def node
-    @node ||= Nokogiri::HTML to_html
+    @node ||= Nokogiri::HTML.fragment to_html
   end
 
   def has_css?(css, custom_css)
