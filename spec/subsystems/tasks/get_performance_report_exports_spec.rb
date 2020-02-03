@@ -4,9 +4,7 @@ RSpec.describe Tasks::GetPerformanceReportExports, type: :routine do
   it 'returns the export info related to courses' do
     course = FactoryBot.create :course_profile_course
 
-    profile = FactoryBot.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    user = User::User.new(strategy: strategy)
+    user = FactoryBot.create(:user_profile)
 
     role = AddUserAsCourseTeacher[course: course, user: user]
 

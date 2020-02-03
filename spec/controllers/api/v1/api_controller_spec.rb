@@ -22,7 +22,7 @@ RSpec.describe Api::V1::ApiController, type: :controller, api: true, version: :v
   let(:course)            { FactoryBot.create :course_profile_course }
   let(:period)            { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_user)      { FactoryBot.create(:user) }
+  let(:student_user)      { FactoryBot.create(:user_profile) }
   let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)          { student_role.student }
   let(:student_token)     { FactoryBot.create :doorkeeper_access_token,
@@ -30,7 +30,7 @@ RSpec.describe Api::V1::ApiController, type: :controller, api: true, version: :v
                                                resource_owner_id: student_user.id }
 
 
-  let(:non_student_user)      { FactoryBot.create(:user) }
+  let(:non_student_user)      { FactoryBot.create(:user_profile) }
   let(:non_student_token)     { FactoryBot.create :doorkeeper_access_token,
                                                    application: application,
                                                    resource_owner_id: non_student_user.id }

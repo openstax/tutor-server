@@ -12,7 +12,7 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
 
   before do
     num_taskees.times do
-      user = FactoryBot.create(:user)
+      user = FactoryBot.create(:user_profile)
       AddUserAsPeriodStudent[user: user, period: period]
     end
   end

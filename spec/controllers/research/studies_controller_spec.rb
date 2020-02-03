@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Research::StudiesController, type: :controller do
   let(:study) { FactoryBot.create :research_study }
-  let(:researcher) { FactoryBot.create :user, :researcher }
+  let(:researcher) { FactoryBot.create :user_profile, :researcher }
 
   before { controller.sign_in(researcher) }
 

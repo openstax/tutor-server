@@ -51,7 +51,7 @@ RSpec.describe Api::V1::LogController, type: :controller, api: true, version: :v
 
 
   context '#track' do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { FactoryBot.create(:user_profile) }
     let(:user_token)   { FactoryBot.create :doorkeeper_access_token,
                                             resource_owner_id: user.id }
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::PeriodsController, type: :controller do
-  let(:admin)  { FactoryBot.create(:user, :administrator) }
+  let(:admin)  { FactoryBot.create(:user_profile, :administrator) }
 
   let(:course) { FactoryBot.create :course_profile_course }
   let(:period) { FactoryBot.create :course_membership_period, course: course }
@@ -9,7 +9,7 @@ RSpec.describe Admin::PeriodsController, type: :controller do
   before       { controller.sign_in(admin) }
 
   context 'DELETE #destroy' do
-    let(:student)       { FactoryBot.create(:user) }
+    let(:student)       { FactoryBot.create(:user_profile) }
     let!(:student_role) { AddUserAsPeriodStudent.call(user: student, period: period) }
 
     it 'archives the period' do
@@ -21,11 +21,11 @@ RSpec.describe Admin::PeriodsController, type: :controller do
   end
 
   context 'PUT #restore' do
-    let(:student)       { FactoryBot.create(:user) }
+    let(:student)       { FactoryBot.create(:user_profile) }
     let!(:student_role) { AddUserAsPeriodStudent.call(user: student, period: period) }
 
     it 'restores the period' do
-      period.to_model.destroy!
+      period.destroy!
 
       expect do
         put :restore, params: { course_id: course.id, id: period.id }

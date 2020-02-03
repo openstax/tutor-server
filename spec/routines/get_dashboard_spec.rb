@@ -6,11 +6,11 @@ RSpec.describe GetDashboard, type: :routine, speed: :slow do
     @course = FactoryBot.create :course_profile_course, name: 'Physics 101'
     period = FactoryBot.create :course_membership_period, course: @course
 
-    student_user = FactoryBot.create :user
+    student_user = FactoryBot.create :user_profile
     @student_role = AddUserAsPeriodStudent.call(user: student_user, period: period).outputs.role
 
     teacher_user = FactoryBot.create(
-      :user, first_name: 'Bob', last_name: 'Newhart', full_name: 'Bob Newhart'
+      :user_profile, first_name: 'Bob', last_name: 'Newhart', full_name: 'Bob Newhart'
     )
     @teacher_role = AddUserAsCourseTeacher.call(user: teacher_user, course: @course).outputs.role
     @teacher_student_role = CreateOrResetTeacherStudent.call(

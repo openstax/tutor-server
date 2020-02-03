@@ -7,7 +7,7 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
       FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
     end
 
-    offering = FactoryBot.create :catalog_offering, ecosystem: ecosystem.to_model
+    offering = FactoryBot.create :catalog_offering, ecosystem: ecosystem
 
     @course = FactoryBot.create :course_profile_course, offering: offering, is_preview: true
   end

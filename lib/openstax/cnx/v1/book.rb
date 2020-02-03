@@ -15,7 +15,7 @@ module OpenStax::Cnx::V1
     end
 
     def baked
-      @baked ||= hash.fetch('baked', nil)
+      @baked ||= hash['baked']
     end
 
     def collated
@@ -27,15 +27,15 @@ module OpenStax::Cnx::V1
     end
 
     def uuid
-      @uuid ||= hash.fetch('id') { |key| raise "Book id=#{@id} is missing #{key}" }
+      @uuid ||= hash.fetch('id')
     end
 
     def short_id
-      @short_id ||= hash.fetch('shortId', nil)
+      @short_id ||= hash['shortId']
     end
 
     def version
-      @version ||= hash.fetch('version') { |key| raise "Book id=#{@id} is missing #{key}" }
+      @version ||= hash.fetch('version')
     end
 
     def canonical_url
@@ -43,11 +43,11 @@ module OpenStax::Cnx::V1
     end
 
     def title
-      @title ||= hash.fetch('title') { |key| raise "Book id=#{@id} is missing #{key}" }
+      @title ||= hash.fetch('title')
     end
 
     def tree
-      @tree ||= hash.fetch('tree') { |key| raise "Book id=#{@id} is missing #{key}" }
+      @tree ||= hash.fetch('tree')
     end
 
     def root_book_part

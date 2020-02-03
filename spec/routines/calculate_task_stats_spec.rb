@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow do
-
   before(:all) do
     @number_of_students = 8
 
@@ -25,11 +24,10 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
     @task_plan.tasks.joins(taskings: { role: :student }).preload(taskings: { role: :profile }).to_a
   end
 
-  context "with an unworked plan" do
-
+  context 'with an unworked plan' do
     let(:stats) { described_class.call(tasks: @task_plan.tasks).outputs.stats }
 
-    it "is all nil or zero for an unworked task_plan" do
+    it 'is all nil or zero for an unworked task_plan' do
       expect(stats.first.mean_grade_percent).to be_nil
       expect(stats.first.total_count).to eq student_tasks.length
       expect(stats.first.complete_count).to eq 0
@@ -46,30 +44,55 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
     end
 
     it 'does not break if an exercise has more than one tag' do
-      cnx_page = OpenStax::Cnx::V1::Page.new(hash: {
-        'id' => 'e26d1433-f8e4-41db-a757-0e061d6d2737',
-        'title' => 'Prokaryotic Cells'
-      })
-      page = Content::Routines::ImportPage.call(
-        cnx_page: cnx_page,
-        chapter: FactoryBot.create(:content_chapter),
-        book_location: [1, 1]
-      ).outputs.page
+      cnx_page_hashes = [
+        { id: 'e26d1433-f8e4-41db-a757-0e061d6d2737', title: 'Prokaryotic Cells' }
+      ]
 
-      Content::Routines::PopulateExercisePools[book: page.chapter.book]
+      cnx_chapter_hashes = [
+        { title: 'Prokaryotic Cells', contents: cnx_page_hashes }
+      ]
+
+      cnx_unit_hashes = [
+        { title: 'Unit 2', contents: cnx_chapter_hashes }
+      ]
+
+      cnx_book_hash = {
+        id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2',
+        version: '22.1',
+        title: 'Biology for AP® Courses',
+        tree: {
+          id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2@22.1',
+          title: 'Biology for AP® Courses',
+          contents: cnx_chapter_hashes
+        }
+      }
+
+      cnx_book = OpenStax::Cnx::V1::Book.new hash: cnx_book_hash.deep_stringify_keys
+
+      @ecosystem = FactoryBot.create :content_ecosystem
+
+      reading_processing_instructions = FactoryBot.build(
+        :content_book
+      ).reading_processing_instructions
+
+      @book = Content::ImportBook.call(
+        cnx_book: cnx_book,
+        ecosystem: @ecosystem,
+        reading_processing_instructions: reading_processing_instructions
+      ).outputs.book
 
       course = FactoryBot.create :course_profile_course, :with_assistants
-      AddEcosystemToCourse[course: course, ecosystem: page.ecosystem]
+      AddEcosystemToCourse[course: course, ecosystem: @ecosystem]
 
       period = FactoryBot.create :course_membership_period, course: course
-      student = FactoryBot.create(:user)
+      student = FactoryBot.create(:user_profile)
       AddUserAsPeriodStudent.call(user: student, period: period)
 
       task_plan = FactoryBot.create(
         :tasks_task_plan,
         owner: course,
-        ecosystem: page.ecosystem,
-        settings: { 'page_ids' => [page.id.to_s] },
+        ecosystem: @ecosystem,
+        settings: { 'page_ids' => [ @book.pages.first.id.to_s ] },
         assistant: get_assistant(course: course, task_plan_type: 'reading')
       )
 
@@ -77,14 +100,12 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
 
       expect(stats.first.complete_count).to eq 0
     end
-
   end
 
-  context "after task steps are marked as completed" do
-
-    it "records partial/complete status" do
+  context 'after task steps are marked as completed' do
+    it 'records partial/complete status' do
       first_task = student_tasks.first
-      step = first_task.task_steps.find_by(tasked_type: "Tasks::Models::TaskedReading")
+      step = first_task.task_steps.find_by(tasked_type: 'Tasks::Models::TaskedReading')
       MarkTaskStepCompleted[task_step: step]
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
@@ -112,9 +133,8 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
 
   end
 
-  context "after task steps are marked as correct or incorrect" do
-
-    it "records them" do
+  context 'after task steps are marked as correct or incorrect' do
+    it 'records them' do
       work_task(task: student_tasks[0], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
@@ -193,7 +213,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
 
     # This test assumes that all of these tasks have the same numbers of steps,
     # which is true at least for now
-    it "sets trouble to true if >=50% completed and <50% correct" do
+    it 'sets trouble to true if >=50% completed and <50% correct' do
       stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
       expect(stats.first.trouble).to eq false
 
@@ -243,7 +263,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       expect(stats.first.spaced_pages).to be_empty
     end
 
-    it "returns detailed stats if :details is true" do
+    it 'returns detailed stats if :details is true' do
       tasks = student_tasks[0..2]
 
       student_names_map = Hash.new { |hash, key| hash[key] = [] }
@@ -304,11 +324,10 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
           expect(question_stats.answer_stats).to match_array expected_answer_stats
         end
       end
-
     end
   end
 
-  context "with multiple course periods" do
+  context 'with multiple course periods' do
     let(:course)   { @task_plan.owner }
     let(:period_2) { FactoryBot.create :course_membership_period, course: course }
     let(:stats)    { described_class.call(tasks: @task_plan.tasks).outputs.stats }
@@ -321,17 +340,17 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       end
     end
 
-    context "if the students were already in the periods before the assignment" do
+    context 'if the students were already in the periods before the assignment' do
       before do
         student_tasks.last(@number_of_students/2).each do |task|
           task.taskings.each do |tasking|
-            tasking.period = period_2.to_model
+            tasking.period = period_2
             tasking.save!
           end
         end
       end
 
-      it "splits the students into their periods" do
+      it 'splits the students into their periods' do
         expect(stats.first.mean_grade_percent).to be_nil
         expect(stats.first.total_count).to eq student_tasks.length/2
         expect(stats.first.complete_count).to eq 0
@@ -362,7 +381,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       end
 
       context 'if a period was archived after the assignment was distributed' do
-        before { period_2.to_model.destroy }
+        before { period_2.destroy }
 
         it 'does not show the archived period' do
           expect(stats.first.mean_grade_percent).to be_nil
@@ -384,8 +403,8 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       end
     end
 
-    context "if the students changed periods after the assignment was distributed" do
-      it "shows students that changed periods in their original period" do
+    context 'if the students changed periods after the assignment was distributed' do
+      it 'shows students that changed periods in their original period' do
         expect(stats.first.mean_grade_percent).to be_nil
         expect(stats.first.total_count).to eq student_tasks.length
         expect(stats.first.complete_count).to eq 0
@@ -406,15 +425,15 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       context 'if the old period was archived after the assignment was distributed' do
         before { @period.destroy }
 
-        it "shows no stats" do
+        it 'shows no stats' do
           expect(stats.first).to be_nil
         end
       end
 
       context 'if the new period was archived after the assignment was distributed' do
-        before { period_2.to_model.destroy }
+        before { period_2.destroy }
 
-        it "shows students that changed periods in their original period" do
+        it 'shows students that changed periods in their original period' do
           expect(stats.first.mean_grade_percent).to be_nil
           expect(stats.first.total_count).to eq student_tasks.length
           expect(stats.first.complete_count).to eq 0
@@ -434,8 +453,8 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       end
     end
 
-    context "if the students were dropped after working the assignment" do
-      it "does not show dropped students" do
+    context 'if the students were dropped after working the assignment' do
+      it 'does not show dropped students' do
         first_task = student_tasks.first
         work_task(task: first_task, is_correct: true)
 
@@ -492,5 +511,4 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
   def answer_ids(exercise_content, question_index)
     JSON.parse(exercise_content)['questions'][question_index]['answers'].map{|aa| aa['id'].to_s}
   end
-
 end

@@ -26,13 +26,10 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
   end
 
   context 'user_profile' do
-    let(:profile)      { FactoryBot.create :user_profile }
-    let(:user)         { ::User::User.new(strategy: profile.wrap) }
+    let(:user)         { FactoryBot.create :user_profile }
     let(:default_role) { Role::GetDefaultUserRole[user] }
 
-    before do
-      tasking_plan.update_attribute(:target, profile)
-    end
+    before { tasking_plan.update_attribute(:target, user) }
 
     it 'returns a tasking plan pointing to the user\'s default role' do
       expect(result.size).to eq 1
@@ -55,9 +52,9 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       FactoryBot.create(:course_membership_teacher_student, period: period_1).role
     end
 
-    let(:user_1)                { FactoryBot.create :user }
-    let(:user_2)                { FactoryBot.create :user }
-    let(:user_3)                { FactoryBot.create :user }
+    let(:user_1)                { FactoryBot.create :user_profile }
+    let(:user_2)                { FactoryBot.create :user_profile }
+    let(:user_3)                { FactoryBot.create :user_profile }
 
     let!(:student_role_1)       { AddUserAsPeriodStudent[user: user_1, period: period_1] }
     let!(:student_role_2)       { AddUserAsPeriodStudent[user: user_2, period: period_1] }
@@ -114,9 +111,9 @@ RSpec.describe IndividualizeTaskingPlans, type: :routine do
       FactoryBot.create(:course_membership_teacher_student, period: period_1).role
     end
 
-    let(:user_1)                 { FactoryBot.create :user }
-    let(:user_2)                 { FactoryBot.create :user }
-    let(:user_3)                 { FactoryBot.create :user }
+    let(:user_1)                 { FactoryBot.create :user_profile }
+    let(:user_2)                 { FactoryBot.create :user_profile }
+    let(:user_3)                 { FactoryBot.create :user_profile }
 
     let!(:student_role_1)        { AddUserAsPeriodStudent[user: user_1, period: period_1] }
     let!(:student_role_2)        { AddUserAsPeriodStudent[user: user_2, period: period_1] }

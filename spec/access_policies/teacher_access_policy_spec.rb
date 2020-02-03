@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe TeacherAccessPolicy, type: :access_policy do
-  let(:requestor)    { FactoryBot.create(:user) }
+  let(:requestor)    { FactoryBot.create(:user_profile) }
   let(:course)       { FactoryBot.create :course_profile_course }
-  let(:teacher_user) { FactoryBot.create(:user) }
+  let(:teacher_user) { FactoryBot.create(:user_profile) }
   let(:teacher)      { AddUserAsCourseTeacher[user: teacher_user, course: course].teacher }
 
   subject(:action_allowed) { described_class.action_allowed?(action, requestor, teacher) }

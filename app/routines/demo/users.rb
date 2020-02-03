@@ -15,7 +15,7 @@ class Demo::Users < Demo::Base
     string_name = name.to_s
     return unless FinePrint::Contract.where(name: string_name).exists?
 
-    FinePrint.sign_contract(user.to_model, string_name)
+    FinePrint.sign_contract(user, string_name)
   end
 
   def create_or_update_users(users, type, attributes = {})

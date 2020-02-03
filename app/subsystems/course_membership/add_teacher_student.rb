@@ -16,10 +16,10 @@ class CourseMembership::AddTeacherStudent
 
     teacher_student = CourseMembership::Models::TeacherStudent.create(role: role,
                                                                       course: course,
-                                                                      period: period.to_model)
-    transfer_errors_from(teacher_student, {type: :verbatim}, true)
+                                                                      period: period)
+    transfer_errors_from(teacher_student, { type: :verbatim }, true)
 
-    ReassignPublishedPeriodTaskPlans.perform_later(period: period.to_model) \
+    ReassignPublishedPeriodTaskPlans.perform_later(period: period) \
       if reassign_published_period_task_plans
 
     OpenStax::Biglearn::Api.update_rosters(course: period.course) if send_to_biglearn

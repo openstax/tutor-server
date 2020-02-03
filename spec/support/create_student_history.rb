@@ -33,7 +33,7 @@ class CreateStudentHistory
       answer_correctly(practice_task, 5) # 5 out of 5
 
       create_practice_widget(
-        course: course, role: role, chapter_ids: ecosystem.chapters[3].id
+        course: course, role: role, page_ids: ecosystem.chapters[3].pages.map(&:id)
       ) # Not started
     end
   end
@@ -43,7 +43,7 @@ class CreateStudentHistory
     outputs.period = FactoryBot.create :course_membership_period, course: course
 
     puts "=== Creating a student ==="
-    student = FactoryBot.create(:user)
+    student = FactoryBot.create(:user_profile)
 
     puts "=== Add student to course ==="
     run(:add_user_as_period_student, period: outputs.period, user: student).outputs.role
@@ -72,10 +72,8 @@ class CreateStudentHistory
     tasks.each { |task| answer_correctly(task, 2) }
   end
 
-  def create_practice_widget(course:, role:, chapter_ids: nil, page_ids: nil)
-    CreatePracticeSpecificTopicsTask[
-      course: course, role: role, chapter_ids: chapter_ids, page_ids: page_ids
-    ]
+  def create_practice_widget(course:, role:, page_ids:)
+    CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: page_ids]
   end
 
   def answer_correctly(task, num)
@@ -128,7 +126,9 @@ class CreateStudentHistory
   end
 
   def create_homework_task_plan(ecosystem, course, periods, chapter, page, exercise)
-    exercise_ids = [ecosystem.chapters[chapter].pages[page].exercises[exercise].id.to_s]
+    exercise_ids = [
+      ecosystem.chapters[chapter].pages[page].homework_core_exercise_ids[exercise].to_s
+    ]
 
     task_plan = FactoryBot.build(
       :tasks_task_plan,

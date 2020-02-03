@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Login with explicit return_to", type: :request do
-  let(:user)        { FactoryBot.create(:user) }
+  let(:user)        { FactoryBot.create(:user_profile) }
 
   good_return_tos = %w(http://www.cnx.org?blah http://localhost:3001 http://openstax.org)
 

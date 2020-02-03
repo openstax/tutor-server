@@ -47,8 +47,7 @@ class Admin::UsersCreate
       message: "A user with username \"#{user_params.username}\" already exists."
     ) if ::User::Models::Profile.where(account_id: account.id).exists?
 
-    profile = ::User::Models::Profile.create(account_id: account.id)
-    outputs.user = ::User::User.new strategy: profile.wrap
+    outputs.user = ::User::Models::Profile.create(account_id: account.id)
 
     run(:set_administrator, user: outputs.user, administrator: user_params.administrator)
     run(:set_customer_support, user: outputs.user, customer_support: user_params.customer_support)

@@ -1,14 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe RoleAccessPolicy, type: :access_policy do
-  let(:anon)       do
-    profile = User::Models::AnonymousProfile.instance
-    strategy = User::Strategies::Direct::AnonymousUser.new(profile)
-    User::User.new(strategy: strategy)
-  end
-  let(:other_user) { FactoryBot.create(:user) }
-  let(:user)       { FactoryBot.create(:user) }
-  let(:role)       { FactoryBot.create(:entity_role, profile: user.to_model) }
+  let(:anon)       { User::Models::AnonymousProfile.instance }
+  let(:other_user) { FactoryBot.create(:user_profile) }
+  let(:user)       { FactoryBot.create(:user_profile) }
+  let(:role)       { FactoryBot.create(:entity_role, profile: user) }
 
   # action, requestor are set in contexts
   subject(:allowed) { described_class.action_allowed?(action, requestor, role) }

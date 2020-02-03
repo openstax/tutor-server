@@ -1,22 +1,13 @@
 FactoryBot.define do
   factory :content_page, class: '::Content::Models::Page' do
-    association :chapter, factory: :content_chapter
-    url                 { Faker::Internet.url }
+    association :book, factory: :content_book
     title               { Faker::Lorem.words(3).join(' ') }
     content             { Faker::Lorem.paragraphs(2).join("\n") }
     uuid                { SecureRandom.uuid }
     version             { Random.rand(1..10) }
-    book_location       { [1, 1] }
-    baked_book_location { [ book_location, [] ].sample }
+    url                 { OpenStax::Cnx::V1.archive_url_for "#{uuid}@#{version}" }
+    book_location       { [ [1, 1], [] ].sample }
     fragments           { [] }
     snap_labs           { [] }
-
-    association :reading_dynamic_pool, factory: :content_pool
-    association :reading_context_pool, factory: :content_pool
-    association :homework_core_pool, factory: :content_pool
-    association :homework_dynamic_pool, factory: :content_pool
-    association :practice_widget_pool, factory: :content_pool
-    association :concept_coach_pool, factory: :content_pool
-    association :all_exercises_pool, factory: :content_pool
   end
 end

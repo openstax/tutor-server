@@ -28,7 +28,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     core_step_gold_data + personalized_step_gold_data + spaced_practice_step_gold_data
   end
 
-  context "for Introduction and Force" do
+  context 'for Introduction and Force' do
     before(:all) do
       cnx_page_hashes = [
         { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
@@ -37,10 +37,9 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
       cnx_pages = cnx_page_hashes.map{ |hash| OpenStax::Cnx::V1::Page.new(hash: hash) }
 
-      chapter = FactoryBot.create :content_chapter, title: "Forces and Newton's Laws of Motion"
+      book = FactoryBot.create :content_book, title: 'College Physics with Courseware'
 
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
-      @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+      @ecosystem = book.ecosystem
 
       @content_pages = VCR.use_cassette(
         'Tasks_Assistants_IReadingAssistant/for_Introduction_and_Force/with_pages', VCR_OPTS
@@ -48,13 +47,13 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         cnx_pages.map.with_index do |cnx_page, ii|
           Content::Routines::ImportPage.call(
             cnx_page:  cnx_page,
-            chapter: chapter,
+            book: book,
             book_location: [8, ii+1]
           ).outputs.page.reload
         end
       end
 
-      Content::Routines::PopulateExercisePools[book: chapter.book]
+      Content::Routines::PopulateExercisePools[book: book]
     end
 
     let(:intro_step_gold_data) do
@@ -64,11 +63,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         is_core: true,
         title: "Forces and Newton's Laws of Motion",
         related_content: [
-          {
-            'title' => "Forces and Newton's Laws of Motion",
-            'book_location' => [8, 1],
-            'baked_book_location' => []
-          }
+          { 'title' => "Forces and Newton's Laws of Motion", 'book_location' => [] }
         ],
         fragment_index: 0
       }
@@ -82,9 +77,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
           group_type: 'fixed_group',
           is_core: true,
           title: "Force",
-          related_content: [
-            { 'title' => "Force", 'book_location' => [8, 2], 'baked_book_location' => [] }
-          ],
+          related_content: [ { 'title' => "Force", 'book_location' => [] } ],
           fragment_index: 0
         }
       ]
@@ -112,7 +105,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let(:taskee_users) do
       num_taskees.times.map do
-        FactoryBot.create(:user).tap do |user|
+        FactoryBot.create(:user_profile).tap do |user|
           AddUserAsPeriodStudent.call(user: user, period: period)
         end
       end
@@ -123,7 +116,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
         task_plan.tasking_plans << FactoryBot.build(
           :tasks_tasking_plan,
           task_plan: task_plan,
-          target:    taskee.to_model
+          target:    taskee
         )
       end
 
@@ -174,7 +167,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
           if task_step.tasked_type.demodulize == 'TaskedReading'
             expect(task_step.tasked.book_location).to eq(page.book_location)
-            expect(task_step.tasked.baked_book_location).to eq(page.baked_book_location)
           end
 
           other_task_steps = core_task_steps.reject{|ts| ts == task_step}
@@ -280,21 +272,16 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       ]
     end
 
-    let(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
-    let(:chapter) do
-      FactoryBot.create :content_chapter, title: "Forces and Newton's Laws of Motion"
-    end
+    let(:book)      { FactoryBot.create :content_book, title: 'College Physics with Courseware' }
 
-    let(:ecosystem) do
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
-      ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-    end
+    let(:ecosystem) { book.ecosystem }
 
     let(:page) do
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
-        chapter: chapter,
+        book: book,
         book_location: [1, 1]
       ).outputs.page.reload
     end
@@ -320,26 +307,20 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let(:num_taskees) { 3 }
 
-    let(:taskee_users) {
+    let(:taskee_users) do
       num_taskees.times.map do
         FactoryBot.create(:user_profile).tap do |profile|
-          strategy = User::Strategies::Direct::User.new(profile)
-          user = User::User.new(strategy: strategy)
-          AddUserAsPeriodStudent.call(user: user, period: period)
-          user
+          AddUserAsPeriodStudent.call(user: profile, period: period)
         end
       end
-    }
+    end
 
     let!(:tasking_plans) do
-      tps = taskee_users.map do |taskee|
+      taskee_users.map do |taskee|
         task_plan.tasking_plans << FactoryBot.build(
           :tasks_tasking_plan, task_plan: task_plan, target: taskee
         )
-      end
-
-      task_plan.save!
-      tps
+      end.tap { task_plan.save! }
     end
 
     it 'is split into different task steps with immediate feedback' do
@@ -378,21 +359,16 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
       }
     end
 
-    let(:cnx_page) { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
 
-    let(:chapter) do
-      FactoryBot.create :content_chapter, title: "Forces and Newton's Laws of Motion"
-    end
+    let(:book)      { FactoryBot.create :content_book, title: 'College Physics with Courseware' }
 
-    let(:ecosystem) do
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(chapter.book.ecosystem)
-      ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-    end
+    let(:ecosystem) { book.ecosystem }
 
     let(:page) do
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
-        chapter: chapter,
+        book: book,
         book_location: [1, 1]
       ).outputs.page.reload
     end
@@ -422,10 +398,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let(:taskee_users) do
       num_taskees.times.map do
         FactoryBot.create(:user_profile).tap do |profile|
-          strategy = User::Strategies::Direct::User.new(profile)
-          user = User::User.new(strategy: strategy)
-          AddUserAsPeriodStudent.call(user: user, period: period)
-          user
+          AddUserAsPeriodStudent.call(user: profile, period: period)
         end
       end
     end
@@ -442,6 +415,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     end
 
     let(:core_step_gold_data) do
+      reading_context_exercise_ids = page.reload.reading_context_exercise_ids
+      reading_context_exercises = page.exercises.where(
+        id: reading_context_exercise_ids
+      ).preload(:tags)
+
       [
         {
           klass: Tasks::Models::TaskedReading,
@@ -480,7 +458,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
           group_type: 'fixed_group',
           is_core: true,
           title: nil,
-          related_exercise_ids: page.reload.reading_context_pool.exercises.filter do |exercise|
+          related_exercise_ids: reading_context_exercises.filter do |exercise|
             exercise.tags.map(&:value).include?('k12phys-ch04-s03-lo02')
           end.map(&:id),
           fragment_index: 3
@@ -539,31 +517,30 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
     let(:page) do
       FactoryBot.create :content_page, title: "Newton's Flaming Laser Sword"
     end
-    let(:book)            { page.book }
-    let(:ecosystem_model) { book.ecosystem }
-    let(:ecosystem)       { Content::Ecosystem.new(strategy: ecosystem_model.wrap) }
+    let(:book)       { page.book }
+    let(:ecosystem)  { book.ecosystem }
 
     let(:cnxmod_tag) do
       FactoryBot.create(:content_tag, value: "context-cnxmod:#{page.uuid}",
                                        tag_type: :cnxmod,
-                                       ecosystem: ecosystem_model).tap do |tag|
+                                       ecosystem: ecosystem).tap do |tag|
         page.tags << tag
       end
     end
     let!(:video_exercise_id_tag) do
       FactoryBot.create :content_tag, value: 'k12phys-ch99-ex01',
                                        tag_type: :id,
-                                       ecosystem: ecosystem_model
+                                       ecosystem: ecosystem
     end
     let!(:video_cnxfeature_tag) do
       FactoryBot.create :content_tag, value: "context-cnxfeature:fs-video",
                                        tag_type: :cnxfeature,
-                                       ecosystem: ecosystem_model
+                                       ecosystem: ecosystem
     end
     let!(:interactive_cnxfeature_tag) do
       FactoryBot.create :content_tag, value: "context-cnxfeature:fs-interactive",
                                        tag_type: :cnxfeature,
-                                       ecosystem: ecosystem_model
+                                       ecosystem: ecosystem
     end
 
     let!(:video_exercise) do
@@ -599,10 +576,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
 
     let(:taskee_user) do
       FactoryBot.create(:user_profile).tap do |profile|
-        strategy = User::Strategies::Direct::User.new(profile)
-        User::User.new(strategy: strategy).tap do |user|
-          AddUserAsPeriodStudent.call(user: user, period: period)
-        end
+        AddUserAsPeriodStudent.call(user: profile, period: period)
       end
     end
 

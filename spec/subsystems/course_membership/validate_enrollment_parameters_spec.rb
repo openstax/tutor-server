@@ -6,16 +6,12 @@ RSpec.describe CourseMembership::ValidateEnrollmentParameters, type: :routine do
   let(:period)     { FactoryBot.create :course_membership_period, course: course }
   let(:book)       { FactoryBot.create :content_book }
   let!(:ecosystem) do
-    ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
-    AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-    ecosystem
+    book.ecosystem.tap do |ecosystem|
+      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
+    end
   end
 
-  let(:user)       do
-    profile = FactoryBot.create :user_profile
-    strategy = ::User::Strategies::Direct::User.new(profile)
-    ::User::User.new(strategy: strategy)
-  end
+  let(:user)       { FactoryBot.create :user_profile }
 
   it "returns the period if both book_uuid and enrollment_code are valid" do
     expect( described_class[book_uuid: book.uuid, enrollment_code: period.enrollment_code] ).to(

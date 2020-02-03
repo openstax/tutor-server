@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer do
-
   let(:number_of_students) { 2 }
 
   let(:task_plan)          do
@@ -58,5 +57,4 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
       ]
     )
   end
-
 end

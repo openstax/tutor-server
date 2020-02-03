@@ -2,16 +2,22 @@ require 'rails_helper'
 
 RSpec.describe User::SearchUsers, type: :routine do
   before(:all) do
-    @user_1 = FactoryBot.create :user,  first_name: 'John',
-                                        last_name: 'Stravinsky',
-                                        username: 'jstrav'
+    @user_1 = FactoryBot.create :user_profile,  first_name: 'John',
+                                                last_name: 'Stravinsky',
+                                                username: 'jstrav'
 
-    @user_2 = FactoryBot.create :user, first_name: 'Mary', last_name: 'Mighty',
-                                       full_name: 'Mary Mighty', username: 'mary'
+    @user_2 = FactoryBot.create :user_profile, first_name: 'Mary',
+                                               last_name: 'Mighty',
+                                               full_name: 'Mary Mighty',
+                                               username: 'mary'
 
-    @user_3 = FactoryBot.create :user, first_name: 'John', last_name: 'Stead', username: 'jstead'
+    @user_3 = FactoryBot.create :user_profile, first_name: 'John',
+                                               last_name: 'Stead',
+                                               username: 'jstead'
 
-    @user_4 = FactoryBot.create :user, first_name: 'Bob', last_name: 'JST', username: 'bigbear'
+    @user_4 = FactoryBot.create :user_profile, first_name: 'Bob',
+                                               last_name: 'JST',
+                                               username: 'bigbear'
   end
 
   it 'should match based on username' do
@@ -82,7 +88,7 @@ RSpec.describe User::SearchUsers, type: :routine do
   context 'pagination and sorting' do
     let!(:billy_users) do
       (0..45).to_a.map do |ii|
-        FactoryBot.create :user, first_name: "Billy#{(45-ii).to_s.rjust(2, '0')}",
+        FactoryBot.create :user_profile, first_name: "Billy#{(45-ii).to_s.rjust(2, '0')}",
                                  last_name: "Bob_#{ii.to_s.rjust(2, '0')}",
                                  username: "billy_#{ii.to_s.rjust(2, '0')}"
       end
@@ -91,33 +97,43 @@ RSpec.describe User::SearchUsers, type: :routine do
     it 'should return the first page of values by default when requested' do
       users = described_class.call(query: 'username:billy', per_page: 20).outputs.items
       expect(users.length).to eq 20
-      expect(users[0]).to eq ::User::User.find_by_username('billy_00')
-      expect(users[19]).to eq ::User::User.find_by_username('billy_19')
+      expect(users[0]).to eq(
+        User::Models::Profile.joins(:account).find_by(account: { username: 'billy_00' })
+      )
+      expect(users[19]).to eq(
+        User::Models::Profile.joins(:account).find_by(account: { username: 'billy_19' })
+      )
     end
 
     it 'should return the second page when requested' do
       users = described_class.call(query: 'username:billy', page: 2, per_page: 20).outputs.items
       expect(users.length).to eq 20
-      expect(users[0]).to eq ::User::User.find_by_username('billy_20')
-      expect(users[19]).to eq ::User::User.find_by_username('billy_39')
+      expect(users[0]).to eq(
+        User::Models::Profile.joins(:account).find_by(account: { username: 'billy_20' })
+      )
+      expect(users[19]).to eq(
+        User::Models::Profile.joins(:account).find_by(account: { username: 'billy_39' })
+      )
     end
 
     it 'should return the incomplete 3rd page when requested' do
       users = described_class.call(query: 'username:billy', page: 3, per_page: 20).outputs.items
       expect(users.length).to eq 6
-      expect(users[5]).to eq ::User::User.find_by_username('billy_45')
+      expect(users[5]).to eq(
+        User::Models::Profile.joins(:account).find_by(account: { username: 'billy_45' })
+      )
     end
   end
 
   context 'sorting' do
     let!(:bob_brown) do
-      FactoryBot.create :user, first_name: 'Bob', last_name: 'Brown', username: 'foo_bb'
+      FactoryBot.create :user_profile, first_name: 'Bob', last_name: 'Brown', username: 'foo_bb'
     end
     let!(:bob_jones) do
-      FactoryBot.create :user, first_name: 'Bob', last_name: 'Jones', username: 'foo_bj'
+      FactoryBot.create :user_profile, first_name: 'Bob', last_name: 'Jones', username: 'foo_bj'
     end
     let!(:tim_jones) do
-      FactoryBot.create :user, first_name: 'Tim', last_name: 'Jones', username: 'foo_tj'
+      FactoryBot.create :user_profile, first_name: 'Tim', last_name: 'Jones', username: 'foo_tj'
     end
 
     it 'should allow sort by multiple fields DESC' do

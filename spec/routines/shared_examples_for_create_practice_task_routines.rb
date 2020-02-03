@@ -8,13 +8,13 @@ RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc|
 
   let(:page)          { FactoryBot.create :content_page }
 
-  let(:ecosystem)     { Content::Ecosystem.new strategy: page.ecosystem.wrap }
+  let(:ecosystem)     { page.ecosystem }
 
   (1..5).each do |n|
     let!("exercise_#{n}".to_sym) do
       FactoryBot.create(:content_exercise, page: page).tap do |exercise|
-        new_exercise_ids = page.practice_widget_pool.content_exercise_ids + [exercise.id]
-        page.practice_widget_pool.update_attribute :content_exercise_ids, new_exercise_ids
+        new_exercise_ids = page.practice_widget_exercise_ids + [exercise.id]
+        page.update_attribute :practice_widget_exercise_ids, new_exercise_ids
       end
     end
   end

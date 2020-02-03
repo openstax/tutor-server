@@ -41,7 +41,7 @@ class Demo::Import < Demo::Base
         book_cnx_id: book_cnx_id,
         archive_url: book[:archive_url_base],
         reading_processing_instructions: book[:reading_processing_instructions]
-      ).outputs.ecosystem.to_model
+      ).outputs.ecosystem
     end
 
     attrs = catalog_offering.slice(
@@ -77,7 +77,7 @@ class Demo::Import < Demo::Base
           attrs[:pdf_url] = "#{attrs.delete(:pdf_url_base)}#{book_cnx_id}"
 
           # Create the catalog offering
-          Catalog::CreateOffering[attrs].to_model
+          Catalog::CreateOffering[attrs]
         else
           attrs[:webview_url] = "#{attrs.delete(:webview_url_base)}#{book_cnx_id}" \
             unless attrs[:webview_url_base].blank?

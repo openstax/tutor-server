@@ -13,11 +13,12 @@ class TaskPlanAccessPolicy
     owner = task_plan.owner
 
     if owner.is_a?(CourseProfile::Models::Course)
-      UserIsCourseTeacher[user: requestor, course: owner] ||
-      ( action == :read &&
-        owner.cloned_courses.any?{ |clone| UserIsCourseTeacher[user: requestor, course: clone] } )
+      UserIsCourseTeacher[user: requestor, course: owner] || (
+        action == :read &&
+        owner.cloned_courses.any? { |clone| UserIsCourseTeacher[user: requestor, course: clone] }
+      )
     else
-      requestor == owner || requestor.to_model == owner
+      requestor == owner
     end
   end
 end

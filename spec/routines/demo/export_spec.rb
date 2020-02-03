@@ -53,7 +53,7 @@ RSpec.describe Demo::Export, type: :routine do
       when "config/demo/spec/import/#{offering.title}.yml"
         expect(YAML.load(data).deep_symbolize_keys).to eq(
           book: {
-            archive_url_base: 'https://archive.cnx.org/contents/',
+            archive_url_base: 'https://archive-staging-tutor.cnx.org/contents/',
             uuid: book.uuid,
             version: book.version.to_s,
             reading_processing_instructions: [

@@ -54,7 +54,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def destroy
-    OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @period_model)
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @period)
     result = CourseMembership::ArchivePeriod.call(period: @period)
 
     render_api_errors(result.errors) || respond_with(
@@ -75,8 +75,8 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     #{json_schema(Api::V1::PeriodRepresenter, include: :readable)}
   EOS
   def restore
-    OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @period_model)
-    return render_api_errors(@period_model.errors) unless @period_model.valid?
+    OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @period)
+    return render_api_errors(@period.errors) unless @period.valid?
 
     result = CourseMembership::UnarchivePeriod.call(period: @period)
 
@@ -93,7 +93,7 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     Enrolls a teacher as a student in a period or resets their assignments
   EOS
   def teacher_student
-    OSU::AccessPolicy.require_action_allowed!(:teacher_student, current_api_user, @period_model)
+    OSU::AccessPolicy.require_action_allowed!(:teacher_student, current_api_user, @period)
 
     result = CreateOrResetTeacherStudent.call(user: current_human_user, period: @period)
 
@@ -112,7 +112,6 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     elsif params[:id]
       @period = CourseMembership::GetPeriod[id: params[:id]]
       @course = @period.course
-      @period_model = @period.to_model
     end
   end
 end

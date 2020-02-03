@@ -10,7 +10,7 @@ module Tasks
       task_plans_with_matching_tasking_plans_across_periods.each do |task_plan|
         base_tasking_plan = task_plan.tasking_plans.first
 
-        Models::TaskingPlan.create(target: period.to_model,
+        Models::TaskingPlan.create(target: period,
                                    opens_at: base_tasking_plan.opens_at,
                                    due_at: base_tasking_plan.due_at,
                                    time_zone: base_tasking_plan.time_zone,

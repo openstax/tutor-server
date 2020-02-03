@@ -29,7 +29,7 @@ class Api::V1::TasksController < Api::V1::ApiController
     ScoutHelper.ignore!(0.8)
 
     @task.task_steps.tap do |task_steps|
-      ActiveRecord::Associations::Preloader.new.preload task_steps, [ :tasked, page: :chapter ]
+      ActiveRecord::Associations::Preloader.new.preload task_steps, [ :tasked, :page ]
     end
 
     standard_read ::Research::ModifiedTask[task: @task], Api::V1::TaskRepresenter

@@ -1,8 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe GetUserTermsInfos, type: :routine do
-
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { FactoryBot.create(:user_profile) }
 
   it 'does not explode if standard terms are absent' do
     expect{described_class[user]}.not_to raise_error
@@ -25,11 +24,11 @@ RSpec.describe GetUserTermsInfos, type: :routine do
     it 'signs proxy signed contracts' do
       expect do
         described_class[user]
-      end.to change { FinePrint.signed_contract?(user.to_model, 'implicit') }.from(false).to(true)
+      end.to change { FinePrint.signed_contract?(user, 'implicit') }.from(false).to(true)
     end
 
     it 'indicates if terms signed before' do
-      version_1 = FinePrint.sign_contract(user.to_model, 'privacy_policy').contract
+      version_1 = FinePrint.sign_contract(user, 'privacy_policy').contract
       version_2 = version_1.new_version
       version_2.content = 'howdy'
       version_2.publish
@@ -78,7 +77,5 @@ RSpec.describe GetUserTermsInfos, type: :routine do
         )
       )
     end
-
   end
-
 end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe TaskAccessPolicy, type: :access_policy do
-  let(:requestor)          { FactoryBot.create(:user) }
+  let(:requestor)          { FactoryBot.create(:user_profile) }
   let(:task)               { FactoryBot.create(:tasks_task) }
 
   subject(:action_allowed) { TaskAccessPolicy.action_allowed?(action, requestor, task) }

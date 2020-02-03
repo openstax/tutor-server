@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CreateOrResetTeacherStudent, type: :routine do
-  let(:user)   { FactoryBot.create :user }
+  let(:user)   { FactoryBot.create :user_profile }
   let(:course) { FactoryBot.create :course_profile_course }
   let(:period) { FactoryBot.create :course_membership_period, course: course }
 

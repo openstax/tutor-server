@@ -109,8 +109,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
     end
 
     before(:all) do
-      chapter = FactoryBot.create :content_chapter
-      book = chapter.book
+      book = FactoryBot.create :content_book
 
       @ecosystem = book.ecosystem
 
@@ -119,12 +118,10 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
-        Content::Routines::ImportPage[
-          cnx_page: cnx_page, chapter: chapter, number: 2, book_location: [3, 1]
-        ]
+        Content::Routines::ImportPage[cnx_page: cnx_page, book: book, book_location: [3, 1]]
       end
 
-      Content::Routines::TransformAndCachePageContent.call book: book, pages: [ @page ]
+      Content::Routines::TransformAndCachePageContent.call book: book
     end
 
     before do
@@ -163,15 +160,15 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
 
   context 'incoming free response exercises' do
     before(:all) do
-      chapter = FactoryBot.create :content_chapter
-      @ecosystem = chapter.book.ecosystem
+      book = FactoryBot.create :content_book
+      @ecosystem = book.ecosystem
 
-      cnx_page = OpenStax::Cnx::V1::Page.new(id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509',
-                                             title: 'Acceleration')
+      cnx_page = OpenStax::Cnx::V1::Page.new(
+        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration'
+      )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
-        Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter,
-                                      number: 2, book_location: [3, 1]]
+        Content::Routines::ImportPage[cnx_page: cnx_page, book: book, book_location: [3, 1]]
       end
     end
 

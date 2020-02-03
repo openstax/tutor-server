@@ -3,7 +3,6 @@ require 'vcr_helper'
 
 RSpec.describe Api::V1::PagesController, type: :controller, api: true,
                                          version: :v1, vcr: VCR_OPTS do
-
   context 'with book' do
     before(:all) do
       VCR.use_cassette("Api_V1_PagesController/with_book", VCR_OPTS) do
@@ -50,12 +49,12 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
         before(:all) do
           page_hash = { id: "#{@page_uuid}@2", title: 'Force' }
 
-          chapter = FactoryBot.create :content_chapter
-          @old_ecosystem = chapter.ecosystem
+          book = FactoryBot.create :content_book
+          @old_ecosystem = book.ecosystem
           cnx_page = OpenStax::Cnx::V1::Page.new(page_hash)
           VCR.use_cassette("Api_V1_PagesController/with_an_old_version_of_force", VCR_OPTS) do
             @old_page = Content::Routines::ImportPage.call(
-              cnx_page: cnx_page, chapter: chapter, book_location: [1, 1]
+              cnx_page: cnx_page, book: book, book_location: [1, 1]
             ).outputs.page
           end
         end
@@ -86,5 +85,4 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
       end
     end
   end
-
 end

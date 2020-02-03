@@ -9,9 +9,9 @@ RSpec.describe GetStudentGuide, type: :routine do
     @period = FactoryBot.create :course_membership_period, course: @course
     @second_period = FactoryBot.create :course_membership_period, course: @course
 
-    @teacher = FactoryBot.create(:user)
-    @student = FactoryBot.create(:user)
-    @second_student = FactoryBot.create(:user)
+    @teacher = FactoryBot.create(:user_profile)
+    @student = FactoryBot.create(:user_profile)
+    @second_student = FactoryBot.create(:user_profile)
 
     @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher]
   end
@@ -48,8 +48,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           @teacher_role.reload
 
           book = FactoryBot.create :content_book, title: 'Physics (Demo)'
-          ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
-          AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
+          AddEcosystemToCourse[course: @course, ecosystem: book.ecosystem]
         end
 
         after(:all) { DatabaseCleaner.clean }
@@ -76,7 +75,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           @second_role.reload
           @teacher_role.reload
 
-          VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
+          VCR.use_cassette('GetCourseGuide/setup_course_guide', VCR_OPTS) do
             capture_stdout { CreateStudentHistory[course: @course, roles: [@role, @second_role]] }
           end
         end
@@ -108,14 +107,13 @@ RSpec.describe GetStudentGuide, type: :routine do
           )
         end
 
-        it "includes chapter stats for the student only" do
+        it 'includes chapter stats for the student only' do
           guide = described_class[role: @role]
 
           chapter_1 = guide['children'].first
           expect(chapter_1).to match(
-            title: "Acceleration",
-            book_location: [3],
-            baked_book_location: [],
+            title: 'Acceleration',
+            book_location: [],
             student_count: 1,
             questions_answered_count: 2,
             clue: clue_matcher,
@@ -128,8 +126,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           chapter_2 = guide['children'].second
           expect(chapter_2).to match(
             title: "Force and Newton's Laws of Motion",
-            book_location: [4],
-            baked_book_location: [],
+            book_location: [],
             student_count: 1,
             questions_answered_count: 7,
             clue: clue_matcher,
@@ -140,15 +137,14 @@ RSpec.describe GetStudentGuide, type: :routine do
           )
         end
 
-        it "includes page stats for the student only" do
+        it 'includes page stats for the student only' do
           guide = described_class[role: @role]
 
           chapter_1_pages = guide['children'].first['children']
           expect(chapter_1_pages).to match [
             {
-              title: "Acceleration",
-              book_location: [3, 1],
-              baked_book_location: [],
+              title: 'Acceleration',
+              book_location: [],
               student_count: 1,
               questions_answered_count: 2,
               clue: clue_matcher,
@@ -157,9 +153,8 @@ RSpec.describe GetStudentGuide, type: :routine do
               last_worked_at: kind_of(String)
             },
             {
-              title: "Representing Acceleration with Equations and Graphs",
-              book_location: [3, 2],
-              baked_book_location: [],
+              title: 'Representing Acceleration with Equations and Graphs',
+              book_location: [],
               student_count: 1,
               questions_answered_count: 0,
               clue: clue_matcher,
@@ -172,9 +167,8 @@ RSpec.describe GetStudentGuide, type: :routine do
           chapter_2_pages = guide['children'].second['children']
           expect(chapter_2_pages).to match [
             {
-              title: "Force",
-              book_location: [4, 1],
-              baked_book_location: [],
+              title: 'Force',
+              book_location: [],
               student_count: 1,
               questions_answered_count: 2,
               clue: clue_matcher,
@@ -184,8 +178,7 @@ RSpec.describe GetStudentGuide, type: :routine do
             },
             {
               title: "Newton's First Law of Motion: Inertia",
-              book_location: [4, 2],
-              baked_book_location: [],
+              book_location: [],
               student_count: 1,
               questions_answered_count: 5,
               clue: clue_matcher,
@@ -195,8 +188,7 @@ RSpec.describe GetStudentGuide, type: :routine do
             },
             {
               title: "Newton's Second Law of Motion",
-              book_location: [4, 3],
-              baked_book_location: [],
+              book_location: [],
               student_count: 1,
               questions_answered_count: 0,
               clue: clue_matcher,
@@ -206,8 +198,7 @@ RSpec.describe GetStudentGuide, type: :routine do
             },
             {
               title: "Newton's Third Law of Motion",
-              book_location: [4, 4],
-              baked_book_location: [],
+              book_location: [],
               student_count: 1,
               questions_answered_count: 0,
               clue: clue_matcher,

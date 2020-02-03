@@ -2,12 +2,12 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, speed: :medium do
-  let(:admin)        { FactoryBot.create(:user, :administrator) }
+  let(:admin)        { FactoryBot.create(:user_profile, :administrator) }
 
   let(:book_1)       { FactoryBot.create :content_book, title: 'Physics', version: '1' }
-  let!(:ecosystem_1) { Content::Ecosystem.find(book_1.ecosystem.id) }
+  let!(:ecosystem_1) { Content::Models::Ecosystem.find(book_1.ecosystem.id) }
   let(:book_2)       { FactoryBot.create :content_book, title: 'AP Biology', version: '2' }
-  let!(:ecosystem_2) { Content::Ecosystem.find(book_2.ecosystem.id) }
+  let!(:ecosystem_2) { Content::Models::Ecosystem.find(book_2.ecosystem.id) }
 
   let(:course)       { FactoryBot.create :course_profile_course }
 
@@ -17,10 +17,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
     it 'lists ecosystems' do
       get :index
 
-      expected_ecosystems = [book_2.ecosystem, book_1.ecosystem].map do |content_ecosystem|
-        strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
-        ::Content::Ecosystem.new(strategy: strategy)
-      end
+      expected_ecosystems = [book_2.ecosystem, book_1.ecosystem]
       expect(assigns[:ecosystems]).to eq expected_ecosystems
     end
   end
@@ -121,7 +118,7 @@ RSpec.describe Admin::EcosystemsController, type: :controller, vcr: VCR_OPTS, sp
     it 'deletes an ecosystem' do
       expect do
         delete :destroy, params: { id: ecosystem_1.id }
-      end.to change { ecosystem_1.to_model.reload.deleted? }.from(false).to(true)
+      end.to change { ecosystem_1.reload.deleted? }.from(false).to(true)
       expect(flash[:notice]).to eq('Ecosystem deleted.')
       expect(flash[:error]).to be_nil
     end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CoursesTeach, type: :handler do
-  let(:user)       { FactoryBot.create :user }
+  let(:user)       { FactoryBot.create :user_profile }
   let(:course)     { FactoryBot.create :course_profile_course }
   subject(:result) { described_class.handle(caller: user, params: { teach_token: teach_token }) }
 
@@ -15,7 +15,7 @@ RSpec.describe CoursesTeach, type: :handler do
 
         role = result.outputs.role
         teacher = result.outputs.teacher
-        expect(role.profile).to eq user.to_model
+        expect(role.profile).to eq user
         expect(role.teacher).to eq teacher
         expect(teacher.course).to eq course
       end

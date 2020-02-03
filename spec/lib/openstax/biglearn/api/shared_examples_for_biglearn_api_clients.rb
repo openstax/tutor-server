@@ -19,14 +19,14 @@ RSpec.shared_examples 'a biglearn api client' do
     @book_1 = @ecosystem_1.books.first
     @chapter_1 = @book_1.chapters.first
     @page_1 = @chapter_1.pages.first
-    @exercise_1 = @page_1.exercises.first
+    @exercise_1 = Content::Models::Exercise.joins(:page).find_by(page: { id: @page_1.id })
 
     task_plan_2 = FactoryBot.create(:tasked_task_plan)
     @ecosystem_2 = task_plan_2.ecosystem
     @book_2 = @ecosystem_2.books.first
     @chapter_2 = @book_2.chapters.first
     @page_2 = @chapter_2.pages.first
-    @exercise_2 = @page_2.exercises.first
+    @exercise_2 = Content::Models::Exercise.joins(:page).find_by(page: { id: @page_2.id })
 
     @task = task_plan_1.tasks.first
     @tasked_exercise = @task.tasked_exercises.first
@@ -121,10 +121,10 @@ RSpec.shared_examples 'a biglearn api client' do
                student_status: kind_of(String),
                spy_info: {} } } ] ],
     [ :fetch_student_clues,
-      [ -> { { book_container: @page_1, student: @student } } ],
+      [ -> { { book_container_uuid: @page_1.tutor_uuid, student: @student } } ],
       [ -> { { clue_data: clue_matcher, clue_status: kind_of(String) } } ] ],
     [ :fetch_teacher_clues,
-      [ -> { { book_container: @chapter_1, course_container: @period } } ],
+      [ -> { { book_container_uuid: @chapter_1.tutor_uuid, course_container: @period } } ],
       [ -> { { clue_data: clue_matcher, clue_status: kind_of(String) } } ] ]
   ].group_by(&:first).each do |method, examples|
     context "##{method}" do

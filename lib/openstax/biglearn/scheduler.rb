@@ -18,8 +18,8 @@ module OpenStax::Biglearn::Scheduler
 
       ecosystem_by_request = {}
       scheduler_requests = requests.map do |request|
-        student = request[:student]&.to_model
-        task = request[:task]&.to_model
+        student = request[:student]
+        task = request[:task]
         raise OpenStax::Biglearn::MalformedRequest if student.nil? && task.nil?
 
         request.slice(:algorithm_name).tap do |scheduler_request|

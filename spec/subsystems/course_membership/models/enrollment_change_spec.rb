@@ -1,35 +1,27 @@
 require 'rails_helper'
 
 RSpec.describe CourseMembership::Models::EnrollmentChange, type: :model, speed: :medium do
-  let(:course_1)  { FactoryBot.create :course_profile_course }
-  let(:course_2)  { FactoryBot.create :course_profile_course }
+  let(:course_1)   { FactoryBot.create :course_profile_course }
+  let(:course_2)   { FactoryBot.create :course_profile_course }
 
-  let(:period_1)  { FactoryBot.create :course_membership_period, course: course_1 }
-  let(:period_2)  { FactoryBot.create :course_membership_period, course: course_1 }
-  let(:period_3)  { FactoryBot.create :course_membership_period, course: course_2 }
+  let(:period_1)   { FactoryBot.create :course_membership_period, course: course_1 }
+  let(:period_2)   { FactoryBot.create :course_membership_period, course: course_1 }
+  let(:period_3)   { FactoryBot.create :course_membership_period, course: course_2 }
 
-  let(:book)      { FactoryBot.create :content_book }
+  let(:book)       { FactoryBot.create :content_book }
 
-  let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
+  let(:ecosystem)  { book.ecosystem }
 
-  let(:user)                  do
-    profile = FactoryBot.create :user_profile
-    strategy = ::User::Strategies::Direct::User.new(profile)
-    ::User::User.new(strategy: strategy)
-  end
+  let(:user)       { FactoryBot.create :user_profile }
 
-  let!(:role)                 do
-    AddUserAsPeriodStudent[user: user, period: period_1]
-  end
+  let!(:role)      { AddUserAsPeriodStudent[user: user, period: period_1] }
 
-  let(:enrollment)            { role.student.latest_enrollment }
+  let(:enrollment) { role.student.latest_enrollment }
 
-  before                      { AddEcosystemToCourse[course: course_1, ecosystem: ecosystem] }
+  before           { AddEcosystemToCourse[course: course_1, ecosystem: ecosystem] }
 
   subject(:enrollment_change) do
-    CourseMembership::CreateEnrollmentChange[
-      user: user, enrollment_code: period_2.enrollment_code
-    ].to_model
+    CourseMembership::CreateEnrollmentChange[user: user, enrollment_code: period_2.enrollment_code]
   end
 
   it { is_expected.to belong_to(:profile) }

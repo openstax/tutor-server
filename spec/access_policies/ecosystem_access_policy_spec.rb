@@ -4,17 +4,13 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy, speed: :medium do
   let(:course)          { FactoryBot.create :course_profile_course }
   let(:period)          { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student)         { FactoryBot.create(:user) }
-  let(:teacher)         { FactoryBot.create(:user) }
+  let(:student)         { FactoryBot.create(:user_profile) }
+  let(:teacher)         { FactoryBot.create(:user_profile) }
 
-  let(:content_analyst) { FactoryBot.create(:user, :content_analyst) }
-  let(:admin)           { FactoryBot.create(:user, :administrator) }
+  let(:content_analyst) { FactoryBot.create(:user_profile, :content_analyst) }
+  let(:admin)           { FactoryBot.create(:user_profile, :administrator) }
 
-  let(:ecosystem)       do
-    content_ecosystem = FactoryBot.create(:content_ecosystem)
-    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(content_ecosystem)
-    ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-  end
+  let(:ecosystem)       { FactoryBot.create(:content_ecosystem) }
 
   before(:each) do
     AddUserAsCourseTeacher[course: course, user: teacher]
@@ -26,7 +22,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy, speed: :medium do
   subject(:allowed) { described_class.action_allowed?(action, requestor, ecosystem) }
 
   context 'anonymous users' do
-    let(:requestor) { User::User.anonymous }
+    let(:requestor) { User::Models::Profile.anonymous }
 
     [:index, :readings, :exercises].each do |test_action|
       context "#{test_action}" do
@@ -37,7 +33,7 @@ RSpec.describe EcosystemAccessPolicy, type: :access_policy, speed: :medium do
   end
 
   context 'regular users' do
-    let(:requestor) { FactoryBot.create(:user) }
+    let(:requestor) { FactoryBot.create(:user_profile) }
 
     [:index, :readings, :exercises].each do |test_action|
       context "#{test_action}" do

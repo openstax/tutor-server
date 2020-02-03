@@ -3,17 +3,17 @@ require 'rails_helper'
 RSpec.describe Content::DeleteEcosystem, type: :routine do
   let(:course)      { FactoryBot.create :course_profile_course }
   let(:ecosystem_1) {
-    Content::Ecosystem.find(FactoryBot.create(:content_ecosystem).id)
+    Content::Models::Ecosystem.find(FactoryBot.create(:content_ecosystem).id)
   }
   let(:ecosystem_2) {
-    Content::Ecosystem.find(FactoryBot.create(:content_ecosystem).id)
+    Content::Models::Ecosystem.find(FactoryBot.create(:content_ecosystem).id)
   }
 
   it 'deletes the ecosystem' do
     output = nil
     expect do
       output = Content::DeleteEcosystem.call(id: ecosystem_1.id)
-    end.to change { ecosystem_1.to_model.reload.deleted? }.from(false).to(true)
+    end.to change { ecosystem_1.reload.deleted? }.from(false).to(true)
     expect(output.errors).to be_empty
   end
 
@@ -23,7 +23,7 @@ RSpec.describe Content::DeleteEcosystem, type: :routine do
     expect(output.errors.first.code).to eq(:ecosystem_cannot_be_deleted)
     expect(output.errors.first.message).to eq(
       'The ecosystem cannot be deleted because it is linked to a course')
-    expect(ecosystem_1.to_model.reload.deleted?).to eq false
+    expect(ecosystem_1.reload.deleted?).to eq false
   end
 
   it 'raises an error if the ecosystem was linked to a course in the past' do
@@ -38,6 +38,6 @@ RSpec.describe Content::DeleteEcosystem, type: :routine do
     expect(output.errors.first.code).to eq(:ecosystem_cannot_be_deleted)
     expect(output.errors.first.message).to eq(
       'The ecosystem cannot be deleted because it is linked to a course')
-    expect(ecosystem_1.to_model.reload.deleted?).to eq false
+    expect(ecosystem_1.reload.deleted?).to eq false
   end
 end

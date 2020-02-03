@@ -51,7 +51,7 @@ module CreatePracticeTaskRoutine
       task_type: @task_type,
       time_zone: time_zone,
       title: 'Practice',
-      ecosystem: @ecosystem.to_model
+      ecosystem: @ecosystem
     ).outputs.task
 
     run(:add_spy_info, to: @task, from: @ecosystem)

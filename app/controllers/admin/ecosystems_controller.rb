@@ -1,15 +1,14 @@
 class Admin::EcosystemsController < Admin::BaseController
-
   include Manager::EcosystemsActions
 
   before_action :get_ecosystem, only: [ :manifest, :update, :destroy ]
 
   def new
-    OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Ecosystem)
+    OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Models::Ecosystem)
   end
 
   def create
-    OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Ecosystem)
+    OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Models::Ecosystem)
     ecosystem_params = params[:ecosystem] || {}
     manifest_content = ecosystem_params[:manifest].respond_to?(:read) ? \
                          ecosystem_params[:manifest].read : ecosystem_params[:manifest].to_s
@@ -42,7 +41,7 @@ class Admin::EcosystemsController < Admin::BaseController
 
   def update
     OSU::AccessPolicy.require_action_allowed!(:update, current_user, @ecosystem)
-    @ecosystem.to_model.update_attributes(comments: params[:ecosystem][:comments])
+    @ecosystem.update_attributes(comments: params[:ecosystem][:comments])
     redirect_to ecosystems_path
   end
 
@@ -72,5 +71,4 @@ class Admin::EcosystemsController < Admin::BaseController
     job.save(ecosystem_import_url: import_url)
     job
   end
-
 end

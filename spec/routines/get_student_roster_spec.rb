@@ -8,22 +8,22 @@ RSpec.describe GetCourseRoster, type: :routine do
   let(:other_course) { FactoryBot.create :course_profile_course }
   let(:other_period) { FactoryBot.create :course_membership_period, course: other_course }
 
-  let(:student_1) { FactoryBot.create(:user) }
+  let(:student_1) { FactoryBot.create(:user_profile) }
   let!(:student_1_role) {
     AddUserAsPeriodStudent.call(period: period_1, user: student_1).outputs[:role]
   }
 
-  let(:student_2) { FactoryBot.create(:user) }
+  let(:student_2) { FactoryBot.create(:user_profile) }
   let!(:student_2_role) {
     AddUserAsPeriodStudent.call(period: period_1, user: student_2).outputs[:role]
   }
 
-  let(:student_3) { FactoryBot.create(:user) }
+  let(:student_3) { FactoryBot.create(:user_profile) }
   let!(:student_3_role) {
     AddUserAsPeriodStudent.call(period: period_2, user: student_3).outputs[:role]
   }
 
-  let(:student_4) { FactoryBot.create(:user) }
+  let(:student_4) { FactoryBot.create(:user_profile) }
   let!(:student_4_role) {
     AddUserAsPeriodStudent.call(period: other_period, user: student_4).outputs[:role]
   }
@@ -69,10 +69,8 @@ RSpec.describe GetCourseRoster, type: :routine do
   end
 
   it 'does not blow up when a period has been deleted' do
-    period_2.to_model.enrollments.each { |en| en.student.destroy }
-    expect { period_2.to_model.destroy }.to(
-      change{ period_2.to_model.archived? }.from(false).to(true)
-    )
+    period_2.enrollments.each { |en| en.student.destroy }
+    expect { period_2.destroy }.to change{ period_2.archived? }.from(false).to(true)
 
     students = GetCourseRoster.call(course: course).outputs.roster[:students]
     students.sort! { |a, b| a.id <=> b.id }

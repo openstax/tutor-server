@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe TranslateBiglearnSpyInfo, type: :routine do
-
   before(:all) do
     @current_task = FactoryBot.create :tasks_task
     @spaced_task = FactoryBot.create :tasks_task
 
-    @page_1 = FactoryBot.create :content_page
-    @chapter = @page_1.chapter
-    @page_2 = FactoryBot.create :content_page, chapter: @chapter
+    @book = FactoryBot.create :content_book, :standard_contents_1
+    @chapter = @book.chapters.first
+    @page_1 = @chapter.pages.first
+    @page_2 = @chapter.pages.second
   end
 
   let(:given_exercise_uuid_1) { SecureRandom.uuid }
@@ -64,5 +64,4 @@ RSpec.describe TranslateBiglearnSpyInfo, type: :routine do
   it 'translates spy info coming from Biglearn' do
     expect(translated_spy_info).to eq expected_translated_spy_info
   end
-
 end

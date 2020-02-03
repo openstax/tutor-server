@@ -9,13 +9,13 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
 
   let(:task) { FactoryBot.create(:tasks_task, task_plan: task_plan) }
 
-  let(:student)       { FactoryBot.create(:user) }
+  let(:student)       { FactoryBot.create(:user_profile) }
   let!(:student_role) { AddUserAsPeriodStudent[period: period, user: student] }
 
-  let(:teacher)       { FactoryBot.create(:user) }
+  let(:teacher)       { FactoryBot.create(:user_profile) }
   let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: teacher] }
 
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { FactoryBot.create(:user_profile) }
 
   let!(:tasking) { FactoryBot.create(:tasks_tasking, role: student_role, task: task) }
 
@@ -34,7 +34,7 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
 
   it 'returns :authentication_required for anonomouse users' do
     expect(
-      described_class.call(gid: task_plan_gid, user: User::User.anonymous)
+      described_class.call(gid: task_plan_gid, user: User::Models::Profile.anonymous)
     ).to have_routine_error(:authentication_required)
   end
 

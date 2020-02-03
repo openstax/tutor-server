@@ -2,13 +2,13 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, speed: :medium do
-
-  let(:chapter) { FactoryBot.create :content_chapter }
+  let(:book) { FactoryBot.create :content_book }
 
   context 'tutor page' do
-    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(
-      id: '95e61258-2faf-41d4-af92-f62e1414175a', title: 'Force'
-    ) }
+    let(:cnx_page)  do
+      OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a', title: 'Force')
+    end
+    let(:archive_url)   { OpenStax::Cnx::V1.archive_url_base }
     let(:book_location) { [4, 1] }
 
     it 'creates a new Page' do
@@ -18,18 +18,17 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
       end.to change { Content::Models::Page.count }.by(1)
       expect(result.errors).to be_empty
 
-      expect(result.outputs[:page]).to be_persisted
+      expect(result.outputs.page).to be_persisted
 
       uuid = cnx_page.uuid
       version = cnx_page.version
-      expect(result.outputs[:page].uuid).to eq uuid
-      expect(result.outputs[:page].version).to eq version
-      expect(result.outputs[:page].book_location).to eq book_location
-      expect(result.outputs[:page].baked_book_location).to eq []
+      expect(result.outputs.page.uuid).to eq uuid
+      expect(result.outputs.page.version).to eq version
+      expect(result.outputs.page.book_location).to eq book_location
     end
 
     it 'converts relative links into absolute links' do
-      page = import_page.outputs[:page]
+      page = import_page.outputs.page
       doc = Nokogiri::HTML(page.content)
 
       doc.css('[src]').each do |tag|
@@ -51,7 +50,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
       los_set = Set.new Content::Models::Tag.lo.order(:created_at).last(4).map(&:value)
       expect(los_set).to eq(expected_page_los_set + expected_exercise_los_set)
 
-      routine_tags_set = Set.new result.outputs[:tags].map(&:value)
+      routine_tags_set = Set.new result.outputs.tags.map(&:value)
       expect(routine_tags_set).to eq expected_routine_tags_set
 
       page_tags_set = Set.new Content::Models::Page.last.page_tags.map{ |pt| pt.tag.value }
@@ -79,27 +78,27 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
         id: '6a0568d8-23d7-439b-9a01-16e4e73886b3', title: 'The Science of Biology'
       )
     end
+    let(:archive_url)   { 'https://archive.cnx.org/contents/' }
     let(:book_location) { [1, 1] }
 
     it 'creates a new Page' do
       result = nil
       expect do
-        result = import_page(archive_url: 'https://archive.cnx.org/contents/')
+        result = import_page
       end.to change { Content::Models::Page.count }.by(1)
       expect(result.errors).to be_empty
 
-      expect(result.outputs[:page]).to be_persisted
+      expect(result.outputs.page).to be_persisted
 
       uuid = cnx_page.uuid
       version = cnx_page.version
-      expect(result.outputs[:page].uuid).to eq uuid
-      expect(result.outputs[:page].version).to eq version
-      expect(result.outputs[:page].book_location).to eq book_location
-      expect(result.outputs[:page].baked_book_location).to eq []
+      expect(result.outputs.page.uuid).to eq uuid
+      expect(result.outputs.page.version).to eq version
+      expect(result.outputs.page.book_location).to eq book_location
     end
 
     it 'converts relative links into absolute links' do
-      page = import_page(archive_url: 'https://archive.cnx.org/contents/').outputs[:page]
+      page = import_page.outputs.page
       doc = Nokogiri::HTML(page.content)
 
       doc.css('[src]').each do |tag|
@@ -113,13 +112,13 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
 
       result = nil
       expect do
-        result = import_page(archive_url: 'https://archive.cnx.org/contents/')
+        result = import_page
       end.to change { Content::Models::Tag.cnxmod.count }.by(1)
 
       tag = Content::Models::Tag.cnxmod.order(:created_at).last
       expect(tag.value).to eq expected_page_tag
 
-      routine_tags = result.outputs[:tags]
+      routine_tags = result.outputs.tags
       expect(routine_tags.map(&:value)).to eq [expected_page_tag]
 
       page_tag_values = Content::Models::Page.order(:created_at).last.page_tags
@@ -130,7 +129,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
     it 'gets exercises with the page\'s cnxmod tag' do
       result = nil
       expect do
-        result = import_page(archive_url: 'https://archive.cnx.org/contents/')
+        result = import_page
       end.to change { Content::Models::Exercise.count }.by(26)
 
       exercises = Content::Models::Exercise.order(:created_at).last(26)
@@ -144,12 +143,11 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
     end
   end
 
-  def import_page(archive_url: OpenStax::Cnx::V1.archive_url_base)
+  def import_page
     OpenStax::Cnx::V1.with_archive_url(archive_url) do
-      Content::Routines::ImportPage.call(cnx_page: cnx_page,
-                                         chapter: chapter,
-                                         book_location: book_location)
+      Content::Routines::ImportPage.call(
+        cnx_page: cnx_page, book: book, book_location: book_location
+      )
     end
   end
-
 end

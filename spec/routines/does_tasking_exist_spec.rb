@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe DoesTaskingExist, type: :routine do
-  let(:nontaskee) { FactoryBot.create(:user) }
-  let(:taskee)    { FactoryBot.create(:user) }
+  let(:nontaskee) { FactoryBot.create(:user_profile) }
+  let(:taskee)    { FactoryBot.create(:user_profile) }
   let(:tasked)    { FactoryBot.create(:tasks_tasked_exercise) }
   let!(:tasking)  { FactoryBot.create(:tasks_tasking,
                                        role: Role::GetDefaultUserRole[taskee],

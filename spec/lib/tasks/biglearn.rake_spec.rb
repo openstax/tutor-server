@@ -17,8 +17,8 @@ RSpec.describe 'biglearn:initialize', type: :rake do
 
     ReassignPublishedPeriodTaskPlans[period: period_1]
 
-    ecosystem_1 = Content::Ecosystem.new strategy: task_plan_1.ecosystem.wrap
-    ecosystem_2 = Content::Ecosystem.new strategy: task_plan_2.ecosystem.wrap
+    ecosystem_1 = task_plan_1.ecosystem
+    ecosystem_2 = task_plan_2.ecosystem
 
     # Other courses using the same ecosystem as the task_plans above including updates
     course_1 = FactoryBot.create :course_profile_course, offering: nil

@@ -31,53 +31,6 @@ class Tasks::UpdateTaskCaches
     # Stop if we couldn't lock any tasks at all
     return if task_ids.empty?
 
-    # Get TaskSteps for each given task
-    task_steps = Tasks::Models::TaskStep
-      .select(
-        :tasks_task_id,
-        :number,
-        :first_completed_at,
-        :last_completed_at,
-        :content_page_id,
-        :group_type,
-        :is_core,
-        :tasked_type,
-        :tasked_id
-      )
-      .where(tasks_task_id: task_ids)
-      .order(:number)
-      .to_a
-
-    # Preload all TaskedExercises
-    exercise_steps = task_steps.select(&:exercise?)
-    ActiveRecord::Associations::Preloader.new.preload exercise_steps, :tasked
-
-    # Preload all TaskedPlaceholders
-    placeholder_steps = task_steps.select(&:placeholder?)
-    ActiveRecord::Associations::Preloader.new.preload placeholder_steps, :tasked
-
-    # Group TaskSteps by task_id and page_id
-    task_steps_by_task_id_and_page_id = Hash.new do |hash, key|
-      hash[key] = Hash.new { |hash, key| hash[key] = [] }
-    end
-    task_steps.each do |task_step|
-      task_id = task_step.tasks_task_id
-      page_id = task_step.content_page_id
-      task_steps_by_task_id_and_page_id[task_id][page_id] << task_step
-    end
-
-    if update_step_counts
-      tasks = tasks.map do |task|
-        task_steps = task_steps_by_task_id_and_page_id[task.id].values.flatten
-        task.update_step_counts steps: task_steps
-      end
-
-      # Update the Task cache columns (scores cache)
-      Tasks::Models::Task.import tasks, validate: false, on_duplicate_key_update: {
-        conflict_target: [ :id ], columns: Tasks::Models::Task::CACHE_COLUMNS
-      }
-    end
-
     # Get student and course IDs
     students = CourseMembership::Models::Student
       .select(
@@ -103,7 +56,57 @@ class Tasks::UpdateTaskCaches
         .where(role: { taskings: { tasks_task_id: task_ids } })
         .to_a
 
-    return if students.empty? && teacher_students.empty?
+    # Get TaskSteps for each given task
+    task_steps = Tasks::Models::TaskStep
+      .select(
+        :tasks_task_id,
+        :number,
+        :first_completed_at,
+        :last_completed_at,
+        :content_page_id,
+        :group_type,
+        :is_core,
+        :tasked_type,
+        :tasked_id
+      )
+      .where(tasks_task_id: task_ids)
+      .order(:number)
+      .to_a
+
+    # Preload all TaskedExercises
+    exercise_steps = task_steps.select(&:exercise?)
+    ActiveRecord::Associations::Preloader.new.preload exercise_steps, :tasked
+
+    exercise_ids = exercise_steps.map(&:tasked).map(&:content_exercise_id)
+    exercise_uuid_by_id = Content::Models::Exercise.where(id: exercise_ids).pluck(:id, :uuid).to_h
+
+    # Preload all TaskedPlaceholders
+    placeholder_steps = task_steps.select(&:placeholder?)
+    ActiveRecord::Associations::Preloader.new.preload placeholder_steps, :tasked
+
+    # Group TaskSteps by task_id
+    task_steps_by_task_id = task_steps.group_by(&:tasks_task_id)
+
+    # Update step counts for each task
+    if update_step_counts
+      tasks = tasks.map do |task|
+        task_steps = task_steps_by_task_id.fetch(task.id, [])
+        task.update_step_counts steps: task_steps
+      end
+
+      # Update the Task cache columns (scores cache)
+      Tasks::Models::Task.import tasks, validate: false, on_duplicate_key_update: {
+        conflict_target: [ :id ], columns: Tasks::Models::Task::CACHE_COLUMNS
+      }
+    end
+
+    # Get all page_ids
+    page_ids = task_steps.map(&:content_page_id).uniq
+
+    # Get Page uuids
+    unmapped_page_tutor_uuid_by_id = Content::Models::Page.where(id: page_ids).pluck(
+      :id, :tutor_uuid
+    ).to_h
 
     account_ids = students.map(&:account_id)
 
@@ -133,27 +136,6 @@ class Tasks::UpdateTaskCaches
       period_ids << teacher_student.course_membership_period_id
     end
 
-    # Get all relevant pages
-    page_ids = task_steps_by_task_id_and_page_id.values.flat_map(&:keys).compact.uniq
-    pages_by_id = Content::Models::Page
-      .select(
-        :id,
-        :uuid,
-        :tutor_uuid,
-        :title,
-        :book_location,
-        :baked_book_location,
-        :content_chapter_id,
-        :content_all_exercises_pool_id
-      )
-      .where(id: page_ids)
-      .map { |page| Content::Page.new strategy: page.wrap }
-      .index_by(&:id)
-
-    # Get all relevant exercise UUIDs
-    exercise_ids = exercise_steps.map { |ts| ts.tasked.content_exercise_id }.uniq
-    exercise_uuid_by_id = Content::Models::Exercise.where(id: exercise_ids).pluck(:id, :uuid).to_h
-
     # Get all relevant courses
     course_ids = task_ids_by_course_id.keys
     courses = CourseProfile::Models::Course.select(:id)
@@ -166,36 +148,25 @@ class Tasks::UpdateTaskCaches
       task_ids = task_ids_by_course_id[course.id]
       ecosystem_map = run(:get_course_ecosystems_map, course: course).outputs.ecosystems_map
       course_ecosystem = ecosystem_map.to_ecosystem
-      page_ids = task_steps_by_task_id_and_page_id.values_at(*task_ids)
-                                                  .flat_map(&:keys)
-                                                  .compact
-                                                  .uniq
-      pages = pages_by_id.values_at(*page_ids)
-      page_to_page_map = ecosystem_map.map_pages_to_pages pages: pages
-
-      pages_by_mapped_book_chapter_and_page = Hash.new do |hash, key|
-        hash[key] = Hash.new { |hash, key| hash[key] = Hash.new { |hash, key| hash[key] = [] } }
-      end
-      pages_by_book_chapter_and_page = Hash.new do |hash, key|
-        hash[key] = Hash.new { |hash, key| hash[key] = Hash.new { |hash, key| hash[key] = [] } }
-      end
-      mapped_pages = page_to_page_map.values.compact
-      pages_to_preload = (pages + mapped_pages).map(&:to_model)
-      ActiveRecord::Associations::Preloader.new.preload(
-        pages_to_preload, [ :all_exercises_pool, chapter: :book ]
-      )
-      page_to_page_map.each do |page, mapped_page|
-        mapped_page ||= page
-        chapter = mapped_page.chapter
-        book = chapter.book
-        pages_by_mapped_book_chapter_and_page[book][chapter][mapped_page] << page
-        pages_by_book_chapter_and_page[book][chapter][page] << page
-      end
+      page_ids = task_steps_by_task_id.values_at(
+        *task_ids
+      ).compact.flatten.map(&:content_page_id).uniq
+      page_id_to_page_id_map = ecosystem_map.map_page_ids page_ids: page_ids
 
       task_ids.flat_map do |task_id|
         task = tasks_by_id[task_id]
-        task_steps_by_page_id = task_steps_by_task_id_and_page_id[task_id]
-        task_steps = task_steps_by_page_id.values.flatten
+        task_steps = task_steps_by_task_id.fetch(task_id, [])
+
+        task_steps_by_page_id = Hash.new { |hash, key| hash[key] = [] }
+        task_steps.each do |task_step|
+          page_id = task_step.content_page_id
+          task_steps_by_page_id[page_id] << task_step
+
+          mapped_page_id = page_id_to_page_id_map[page_id]
+          next if mapped_page_id.nil? || mapped_page_id == page_id
+
+          task_steps_by_page_id[mapped_page_id] << task_step
+        end
 
         num_assigned_steps = task_steps.size
         num_completed_steps = task_steps.count(&:completed?)
@@ -205,11 +176,11 @@ class Tasks::UpdateTaskCaches
 
         [
           build_task_cache(
-            pages_by_mapped_book_chapter_and_page: pages_by_mapped_book_chapter_and_page,
             num_assigned_steps: num_assigned_steps,
             num_completed_steps: num_completed_steps,
             task_steps_by_page_id: task_steps_by_page_id,
             exercise_uuid_by_id: exercise_uuid_by_id,
+            unmapped_page_tutor_uuid_by_id: unmapped_page_tutor_uuid_by_id,
             ecosystem: course_ecosystem,
             task: task,
             student_ids: student_ids,
@@ -218,11 +189,11 @@ class Tasks::UpdateTaskCaches
           )
         ].tap do |task_caches|
           task_caches << build_task_cache(
-            pages_by_mapped_book_chapter_and_page: pages_by_book_chapter_and_page,
             num_assigned_steps: num_assigned_steps,
             num_completed_steps: num_completed_steps,
             task_steps_by_page_id: task_steps_by_page_id,
             exercise_uuid_by_id: exercise_uuid_by_id,
+            unmapped_page_tutor_uuid_by_id: unmapped_page_tutor_uuid_by_id,
             ecosystem: task.ecosystem,
             task: task,
             student_ids: student_ids,
@@ -255,11 +226,11 @@ class Tasks::UpdateTaskCaches
   end
 
   def build_task_cache(
-    pages_by_mapped_book_chapter_and_page:,
     num_assigned_steps:,
     num_completed_steps:,
     task_steps_by_page_id:,
     exercise_uuid_by_id:,
+    unmapped_page_tutor_uuid_by_id:,
     ecosystem:,
     task:,
     student_ids:,
@@ -268,24 +239,27 @@ class Tasks::UpdateTaskCaches
   )
     task_plan = task.task_plan
 
-    books_array = pages_by_mapped_book_chapter_and_page
-      .map do |mapped_book, pages_by_mapped_chapter_and_page|
-      chapters_array = pages_by_mapped_chapter_and_page
-        .map do |mapped_chapter, pages_by_mapped_page|
-        pages_array = pages_by_mapped_page.map do |mapped_page, pages|
-          page_ids = pages.map(&:id)
-          task_steps = task_steps_by_page_id.values_at(*page_ids).flatten
+    books_array = ecosystem.books.map do |book|
+      chapters_array = book.chapters.map do |chapter|
+        pages_array = chapter.pages.map do |page|
+          task_steps = task_steps_by_page_id[page.id]
+          next if task_steps.empty?
+
+          unmapped_page_ids = task_steps.map(&:content_page_id).uniq
+          unmapped_page_tutor_uuids = unmapped_page_tutor_uuid_by_id.values_at(*unmapped_page_ids)
+          unmapped_page_tutor_uuids = (
+            unmapped_page_tutor_uuids + [ page.tutor_uuid ]
+          ).uniq if unmapped_page_ids.include? page.id
           tasked_exercises = task_steps.select(&:exercise?).map(&:tasked)
           num_tasked_placeholders = task_steps.count(&:placeholder?)
 
           exercises_array = tasked_exercises.map do |tasked_exercise|
             task_step = tasked_exercise.task_step
             id = tasked_exercise.content_exercise_id
-            uuid = exercise_uuid_by_id[id]
 
             {
               id: id,
-              uuid: uuid,
+              uuid: exercise_uuid_by_id[id],
               question_id: tasked_exercise.question_id,
               answer_ids: tasked_exercise.answer_ids,
               step_number: task_step.number,
@@ -304,14 +278,13 @@ class Tasks::UpdateTaskCaches
             ex[:group_type] == 'spaced_practice_group'
           end
           {
-            id: mapped_page.id,
-            unmapped_ids: page_ids,
-            tutor_uuid: mapped_page.tutor_uuid,
-            unmapped_tutor_uuids: pages.map(&:tutor_uuid),
-            title: mapped_page.title,
-            book_location: mapped_page.book_location,
-            baked_book_location: mapped_page.baked_book_location,
-            has_exercises: !mapped_page.all_exercises_pool.empty?,
+            id: page.id,
+            unmapped_ids: unmapped_page_ids,
+            tutor_uuid: page.tutor_uuid,
+            unmapped_tutor_uuids: unmapped_page_tutor_uuids,
+            title: page.title,
+            book_location: page.book_location,
+            has_exercises: !page.all_exercise_ids.empty?,
             is_spaced_practice: is_spaced_practice,
             num_assigned_steps: task_steps.size,
             num_completed_steps: task_steps.count(&:completed?),
@@ -323,17 +296,13 @@ class Tasks::UpdateTaskCaches
             last_worked_at: completed_ex_array.map { |ex| ex[:last_completed_at] }.compact.max,
             exercises: exercises_array
           }
-        end.sort_by { |page| page[:book_location] }
+        end.compact.sort_by { |page| page[:book_location] }
+        next if pages_array.empty?
 
-        chapters = pages_by_mapped_page.values.flatten.map(&:chapter).uniq
         {
-          id: mapped_chapter.id,
-          unmapped_ids: chapters.map(&:id),
-          tutor_uuid: mapped_chapter.tutor_uuid,
-          unmapped_tutor_uuids: chapters.map(&:tutor_uuid),
-          title: mapped_chapter.title,
-          book_location: mapped_chapter.book_location,
-          baked_book_location: mapped_chapter.baked_book_location,
+          tutor_uuid: chapter.tutor_uuid,
+          title: chapter.title,
+          book_location: chapter.book_location,
           has_exercises: pages_array.any? { |pg| pg[:has_exercises] },
           is_spaced_practice: pages_array.all? { |pg| pg[:is_spaced_practice] },
           num_assigned_steps: pages_array.sum { |pg| pg[:num_assigned_steps] },
@@ -346,16 +315,13 @@ class Tasks::UpdateTaskCaches
           last_worked_at: pages_array.map { |pg| pg[:last_worked_at] }.compact.max,
           pages: pages_array
         }
-      end.sort_by { |chapter| chapter[:book_location] }
+      end.compact.sort_by { |chapter| chapter[:book_location] }
+      next if chapters_array.empty?
 
-      pages = pages_by_mapped_chapter_and_page.values.map(&:values).flatten
-      books = pages.map(&:chapter).uniq.map(&:book).uniq
       {
-        id: mapped_book.id,
-        unmapped_ids: books.map(&:id),
-        tutor_uuid: mapped_book.tutor_uuid,
-        unmapped_tutor_uuids: books.map(&:tutor_uuid),
-        title: mapped_book.title,
+        id: book.id,
+        tutor_uuid: book.tutor_uuid,
+        title: book.title,
         has_exercises: chapters_array.any? { |ch| ch[:has_exercises] },
         num_assigned_steps: chapters_array.sum { |ch| ch[:num_assigned_steps] },
         num_completed_steps: chapters_array.sum { |ch| ch[:num_completed_steps] },
@@ -367,7 +333,7 @@ class Tasks::UpdateTaskCaches
         last_worked_at: chapters_array.map { |ch| ch[:last_worked_at] }.compact.max,
         chapters: chapters_array
       }
-    end.sort_by { |book| book[:title] }
+    end.compact.sort_by { |book| book[:title] }
 
     toc = {
       id: ecosystem.id,
@@ -388,7 +354,7 @@ class Tasks::UpdateTaskCaches
     Tasks::Models::TaskCache.new(
       task: task,
       task_plan: task_plan,
-      ecosystem: ecosystem.to_model,
+      ecosystem: ecosystem,
       task_type: task.task_type,
       opens_at: task.opens_at,
       due_at: task.due_at,

@@ -92,7 +92,7 @@ module OpenStax::Biglearn::Interface
         ordered_exercises = ordered_exercises.first(max_num_exercises)
       end
 
-      ordered_exercises.map { |exercise| Content::Exercise.new strategy: exercise.wrap }
+      ordered_exercises
     else
       # Fallback in case Biglearn fails to respond in a timely manner
       # We just assign personalized exercises for the current assignment
@@ -107,16 +107,16 @@ module OpenStax::Biglearn::Interface
       core_page_ids = GetTaskCorePageIds[tasks: task][task.id]
       pages = ecosystem.pages.where(id: core_page_ids)
       if task.reading?
-        pool_method = :reading_dynamic_pool
+        pool_method = :reading_dynamic_exercise_ids
       elsif task.homework?
-        pool_method = :homework_dynamic_pool
+        pool_method = :homework_dynamic_exercise_ids
       else
         return []
       end
-      pools = pages.map { |page| page.public_send(pool_method) }
+      exercise_ids = pages.flat_map { |page| page.public_send(pool_method) }
 
       task_exercise_ids = Set.new task.tasked_exercises.pluck(:content_exercise_id)
-      pool_exercises = pools.flat_map(&:exercises).uniq
+      pool_exercises = Content::Models::Exercise.where(id: exercise_ids)
       filtered_exercises = FilterExcludedExercises[exercises: pool_exercises, course: course]
       candidate_exercises = filtered_exercises.reject do |exercise|
         task_exercise_ids.include?(exercise.id)

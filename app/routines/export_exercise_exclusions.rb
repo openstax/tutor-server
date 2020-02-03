@@ -101,8 +101,7 @@ class ExportExerciseExclusions
           {
             page_uuid: page.uuid,
             page_url: page_urls_by_pages[page],
-            book_location: page.book_location.join('.'),
-            baked_book_location: page.baked_book_location.join('.'),
+            book_location: page.book_location.join('.')
           }
         end
       end
@@ -110,8 +109,7 @@ class ExportExerciseExclusions
       hashes.empty? ? [{
         page_uuid: 'null',
         page_url: 'null',
-        book_location: 'null',
-        baked_book_location: 'null'
+        book_location: 'null'
       }] : hashes
     end
   end
@@ -173,7 +171,6 @@ class ExportExerciseExclusions
         "CNX Book Title",
         "CNX Book UUID",
         "CNX Book Locations",
-        "CNX Baked Book Locations",
         "CNX Page UUIDs",
         "CNX Page URLs"
       ])
@@ -191,7 +188,6 @@ class ExportExerciseExclusions
           mash.book_hash[:book_title],
           mash.book_hash[:book_uuid],
           mash.page_hashes.map(&:book_location).join(", "),
-          mash.page_hashes.map(&:baked_book_location).join(", "),
           mash.page_hashes.map(&:page_uuid).join(", "),
           mash.page_hashes.map(&:page_url).join(", ")
         ])

@@ -4,7 +4,7 @@ require 'feature_js_helper'
 
 RSpec.feature 'Admin editing a course', speed: :slow do
   background do
-    admin = FactoryBot.create(:user, :administrator)
+    admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)
 
     @catalog_offering = FactoryBot.create :catalog_offering
@@ -220,8 +220,8 @@ RSpec.feature 'Admin editing a course', speed: :slow do
   end
 
   scenario 'Check payment fields on student roster', js: true do
-    user_1 = FactoryBot.create(:user, last_name: "AAAA")
-    user_2 = FactoryBot.create(:user, last_name: "BBBB")
+    user_1 = FactoryBot.create(:user_profile, last_name: "AAAA")
+    user_2 = FactoryBot.create(:user_profile, last_name: "BBBB")
 
     student_1 = AddUserAsPeriodStudent[user: user_1, period: @course.periods.first].student
     student_2 = AddUserAsPeriodStudent[user: user_2, period: @course.periods.first].student
@@ -252,7 +252,7 @@ RSpec.feature 'Admin editing a course', speed: :slow do
   end
 
   scenario 'refunding student payment', js: true do
-    user = FactoryBot.create(:user, last_name: "AAAA")
+    user = FactoryBot.create(:user_profile, last_name: "AAAA")
     student = AddUserAsPeriodStudent[user: user, period: @course.periods.first].student
 
     OpenStax::Payments::Api.client.fake_pay(product_instance_uuid: student.uuid)

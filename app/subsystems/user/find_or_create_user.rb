@@ -14,7 +14,7 @@ module User
 
       retry_count = 0
       begin
-        profile = ::User::Models::Profile.transaction(requires_new: true) do
+        outputs.user = ::User::Models::Profile.transaction(requires_new: true) do
           if account_id.present?
             ::User::Models::Profile.find_or_create_by account_id: account_id
           else
@@ -44,9 +44,7 @@ module User
         retry
       end
 
-      outputs.user = ::User::User.new strategy: profile.wrap
-
-      transfer_errors_from outputs.user.to_model, type: :verbatim
+      transfer_errors_from outputs.user, type: :verbatim
     end
   end
 end

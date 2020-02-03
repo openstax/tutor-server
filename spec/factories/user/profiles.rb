@@ -40,6 +40,12 @@ FactoryBot.define do
       end
     end
 
+    trait :researcher do
+      after(:build) do |profile|
+        profile.researcher = FactoryBot.build(:user_researcher, profile: profile)
+      end
+    end
+
     after(:create) do |profile, evaluator|
       unless evaluator.skip_terms_agreement
         FinePrint::Contract.all.each do |contract|

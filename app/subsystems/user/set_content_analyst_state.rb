@@ -8,8 +8,7 @@ module User
       return if (content_analyst && user.is_content_analyst?) || \
                 (!content_analyst && !user.is_content_analyst?)
 
-      profile = user.to_model
-      content_analyst ? profile.create_content_analyst! : profile.content_analyst.destroy
+      content_analyst ? user.create_content_analyst! : user.content_analyst.destroy
     end
   end
 end

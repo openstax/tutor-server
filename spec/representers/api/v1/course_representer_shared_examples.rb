@@ -101,8 +101,8 @@ module Api::V1
 
     it 'shows students' do
       period = FactoryBot.create :course_membership_period, course: course
-      student_1_user = FactoryBot.create :user
-      student_2_user = FactoryBot.create :user
+      student_1_user = FactoryBot.create :user_profile
+      student_2_user = FactoryBot.create :user_profile
       student_1 = AddUserAsPeriodStudent[user: student_1_user, period: period].student
       student_2 = AddUserAsPeriodStudent[user: student_2_user, period: period].student
 

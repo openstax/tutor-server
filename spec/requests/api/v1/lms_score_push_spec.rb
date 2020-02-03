@@ -5,7 +5,7 @@ RSpec.describe 'LMS Score Push', type: :request, api: true, version: :v1 do
   let(:course) { FactoryBot.create(:course_profile_course, is_lms_enabled: true) }
   let(:period) { FactoryBot.create :course_membership_period, course: course }
   let(:lms_app) { FactoryBot.create(:lms_app, owner: course) }
-  let(:teacher_user) { FactoryBot.create(:user) }
+  let(:teacher_user) { FactoryBot.create(:user_profile) }
   let(:teacher_token) do
     FactoryBot.create :doorkeeper_access_token, resource_owner_id: teacher_user.id
   end
@@ -68,7 +68,7 @@ RSpec.describe 'LMS Score Push', type: :request, api: true, version: :v1 do
     launch_helper.complete_the_launch_locally
 
     bob_user = launch_helper.get_user("bob")
-    stub_perf_report([{period: "1st", user: FactoryBot.create(:user), score: 0}])
+    stub_perf_report([{period: "1st", user: FactoryBot.create(:user_profile), score: 0}])
 
     simulator.expect_not_to_receive_score(user: "bob", assignment: "tutor")
 

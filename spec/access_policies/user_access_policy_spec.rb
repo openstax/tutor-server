@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe UserAccessPolicy, type: :access_policy do
-  let(:anon)        { User::User.anonymous }
-  let(:user)        { FactoryBot.create(:user) }
+  let(:anon)        { User::Models::Profile.anonymous }
+  let(:user)        { FactoryBot.create(:user_profile) }
   let(:application) { FactoryBot.create(:doorkeeper_application) }
 
   context 'index' do

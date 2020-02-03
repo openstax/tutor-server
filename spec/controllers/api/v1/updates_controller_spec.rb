@@ -4,7 +4,7 @@ RSpec.describe Api::V1::UpdatesController, type: :controller, api: true, version
 
   let(:course)           { FactoryBot.create :course_profile_course }
 
-  let(:instructor_user)  { FactoryBot.create(:user) }
+  let(:instructor_user)  { FactoryBot.create(:user_profile) }
   let!(:instructor_role) { AddUserAsCourseTeacher[user: instructor_user, course: course] }
   let(:instructor_token) do
     FactoryBot.create :doorkeeper_access_token, resource_owner_id: instructor_user.id

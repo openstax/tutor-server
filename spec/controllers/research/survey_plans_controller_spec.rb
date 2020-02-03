@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Research::SurveyPlansController, type: :controller do
   before(:all) do
-    @researcher = FactoryBot.create :user, :researcher
+    @researcher = FactoryBot.create :user_profile, :researcher
     @survey_plan = FactoryBot.create :research_survey_plan
   end
 

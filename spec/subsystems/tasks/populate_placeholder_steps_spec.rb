@@ -6,7 +6,7 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine, speed: :medium d
     task_plan = FactoryBot.create(:tasked_task_plan, number_of_students: 1)
 
     page = Content::Models::Page.find_by(id: task_plan.settings['page_ids'])
-    @spaced_page = FactoryBot.create :content_page, chapter: page.chapter
+    @spaced_page = FactoryBot.create :content_page, book: page.book
     page.exercises.each do |exercise|
       FactoryBot.create :content_exercise, page: @spaced_page, group_uuid: exercise.group_uuid
     end

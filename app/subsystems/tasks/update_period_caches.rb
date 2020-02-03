@@ -52,7 +52,9 @@ class Tasks::UpdatePeriodCaches
 
         task_caches_by_ecosystem_id = task_caches.group_by(&:content_ecosystem_id)
         ecosystem_ids = task_caches_by_ecosystem_id.keys
-        ecosystems = Content::Models::Ecosystem.select(:id).where(id: ecosystem_ids)
+        ecosystems = Content::Models::Ecosystem.select(
+          :id, :tutor_uuid, :title
+        ).where(id: ecosystem_ids)
 
         # Cache results per ecosystem for Teacher dashboard Trouble Flag and Performance Forecast
         period_caches = ecosystems.map do |ecosystem|
@@ -115,21 +117,31 @@ class Tasks::UpdatePeriodCaches
       )
     end
 
-    period_bks = tocs.flat_map { |toc| toc[:books] }.group_by { |bk| bk[:title] }
-                     .sort.map do |title, bks|
-      period_chs = bks.flat_map { |bk| bk[:chapters] }.group_by { |ch| ch[:book_location] }
-                      .sort.map do |book_location, chs|
-        period_pgs = chs.flat_map { |ch| ch[:pages] }.group_by { |pg| pg[:book_location] }
-                        .sort.map do |book_location, pgs|
-          preferred_pg = pgs.first
+    bks_by_tutor_uuid = tocs.flat_map { |toc| toc[:books] }.group_by { |ch| ch[:tutor_uuid] }
+
+    period_bks = ecosystem.books.map do |book|
+      bks = bks_by_tutor_uuid[book.tutor_uuid]
+      next if bks.nil?
+
+      chs_by_tutor_uuid = bks.flat_map { |bk| bk[:chapters] }.group_by { |ch| ch[:tutor_uuid] }
+
+      period_chs = book.chapters.map do |chapter|
+        chs = chs_by_tutor_uuid[chapter.tutor_uuid]
+        next if chs.nil?
+
+        pgs_by_tutor_uuid = chs.flat_map { |ch| ch[:pages] }.group_by { |ch| ch[:tutor_uuid] }
+
+        period_pgs = chapter.pages.map do |page|
+          pgs = pgs_by_tutor_uuid[page.tutor_uuid]
+          next if pgs.nil?
+
           {
-            id: preferred_pg[:id],
+            id: page.id,
             unmapped_ids: pgs.flat_map { |pg| pg[:unmapped_ids] }.compact.uniq,
-            tutor_uuid: preferred_pg[:tutor_uuid],
+            tutor_uuid: page.tutor_uuid,
             unmapped_tutor_uuids: pgs.flat_map { |pg| pg[:unmapped_tutor_uuids] }.compact.uniq,
-            title: preferred_pg[:title],
-            book_location: book_location,
-            baked_book_location: preferred_pg[:baked_book_location],
+            title: page.title,
+            book_location: page.book_location,
             has_exercises: pgs.any? { |pg| pg[:has_exercises] },
             is_spaced_practice: pgs.all? { |pg| pg[:is_spaced_practice] },
             num_assigned_steps: pgs.sum { |pg| pg[:num_assigned_steps] },
@@ -141,17 +153,12 @@ class Tasks::UpdatePeriodCaches
             student_ids: pgs.flat_map { |pg| pg[:student_ids] }.uniq,
             student_names: pgs.flat_map { |pg| pg[:student_names] }.uniq
           }
-        end
+        end.compact
 
-        preferred_ch = chs.first
         {
-          id: preferred_ch[:id],
-          unmapped_ids: chs.flat_map { |ch| ch[:unmapped_ids] }.compact.uniq,
-          tutor_uuid: preferred_ch[:tutor_uuid],
-          unmapped_tutor_uuids: chs.flat_map { |ch| ch[:unmapped_tutor_uuids] }.compact.uniq,
-          title: preferred_ch[:title],
-          book_location: book_location,
-          baked_book_location: preferred_ch[:baked_book_location],
+          tutor_uuid: chapter.tutor_uuid,
+          title: chapter.title,
+          book_location: chapter.book_location,
           has_exercises: chs.any? { |ch| ch[:has_exercises] },
           is_spaced_practice: chs.all? { |ch| ch[:is_spaced_practice] },
           num_assigned_steps: chs.sum { |ch| ch[:num_assigned_steps] },
@@ -164,15 +171,12 @@ class Tasks::UpdatePeriodCaches
           student_names: chs.flat_map { |ch| ch[:student_names] }.uniq,
           pages: period_pgs
         }
-      end
+      end.compact
 
-      preferred_bk = bks.first
       {
-        id: preferred_bk[:id],
-        unmapped_ids: bks.flat_map { |bk| bk[:unmapped_ids] }.compact.uniq,
-        tutor_uuid: preferred_bk[:tutor_uuid],
-        unmapped_tutor_uuids: bks.flat_map { |bk| bk[:unmapped_tutor_uuids] }.compact.uniq,
-        title: title,
+        id: book.id,
+        tutor_uuid: book.tutor_uuid,
+        title: book.title,
         has_exercises: bks.any? { |bk| bk[:has_exercises] },
         num_assigned_steps: bks.sum { |bk| bk[:num_assigned_steps] },
         num_completed_steps: bks.sum { |bk| bk[:num_completed_steps] },
@@ -184,13 +188,12 @@ class Tasks::UpdatePeriodCaches
         student_names: bks.flat_map { |bk| bk[:student_names] }.uniq,
         chapters: period_chs
       }
-    end
+    end.compact
 
-    preferred_toc = tocs.first
     period_toc = {
-      id: preferred_toc[:id],
-      tutor_uuid: preferred_toc[:tutor_uuid],
-      title: preferred_toc[:title],
+      id: ecosystem.id,
+      tutor_uuid: ecosystem.tutor_uuid,
+      title: ecosystem.title,
       has_exercises: tocs.any? { |toc| toc[:has_exercises] },
       num_assigned_steps: tocs.sum { |toc| toc[:num_assigned_steps] },
       num_assigned_known_location_steps: tocs.sum do |toc|

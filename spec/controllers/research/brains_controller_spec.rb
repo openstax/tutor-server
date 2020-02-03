@@ -5,7 +5,7 @@ RSpec.describe Research::BrainsController, type: :controller do
 
   let(:brain) { FactoryBot.create :research_modified_task }
   let(:study) { brain.study }
-  let(:researcher) { FactoryBot.create :user, :researcher }
+  let(:researcher) { FactoryBot.create :user_profile, :researcher }
 
   before { controller.sign_in(researcher) }
 
@@ -35,5 +35,4 @@ RSpec.describe Research::BrainsController, type: :controller do
     put :destroy, params: { id: brain.id }
     expect { brain.reload }.to raise_error ActiveRecord::RecordNotFound
   end
-
 end

@@ -81,9 +81,8 @@ RSpec.describe CourseMembership::IsCourseStudent, type: :routine do
       end
     end
     context "when period is archived" do
-      before(:each) do
-        target_period.to_model.destroy
-      end
+      before(:each) { target_period.destroy }
+
       it "returns is_archived" do
         result = CourseMembership::IsCourseStudent.call(
           course: target_course, roles: target_student_role, include_archived_periods: true

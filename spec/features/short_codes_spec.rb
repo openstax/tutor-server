@@ -18,7 +18,7 @@ RSpec.describe "short codes", type: :feature do
     let(:task_plan_2_code) { FactoryBot.create(:short_code_short_code,
                                                  uri: task_plan_2.to_global_id.to_s).code }
 
-    let(:student_user)     { FactoryBot.create(:user) }
+    let(:student_user)     { FactoryBot.create(:user_profile) }
     let!(:student_role)    { AddUserAsPeriodStudent[period: period, user: student_user] }
 
     before { stub_current_user(student_user) }

@@ -5,9 +5,8 @@ class CourseMembership::ProcessEnrollmentChange
   uses_routine CourseMembership::AddEnrollment, as: :add_enrollment
 
   def exec(enrollment_change:, student_identifier: nil)
-    enrollment_change_model = enrollment_change.to_model
-    transfer_errors_from(enrollment_change_model, {type: :verbatim}, true) \
-      unless enrollment_change_model.valid?
+    transfer_errors_from(enrollment_change, { type: :verbatim }, true) \
+      unless enrollment_change.valid?
 
     fatal_error(code: :already_processed,
                 message: 'The given enrollment change request has already been processed') \
@@ -19,13 +18,11 @@ class CourseMembership::ProcessEnrollmentChange
                 message: 'The given enrollment change request has not yet been approved') \
       if !enrollment_change.approved?
 
-    enrollment_change_model = enrollment_change.to_model
-
-    enrollment = enrollment_change_model.enrollment
+    enrollment = enrollment_change.enrollment
 
     if enrollment.nil? || enrollment.period.archived?
       # New student or student in archived period re-taking the course
-      run(:add_student, user: enrollment_change.user,
+      run(:add_student, user: enrollment_change.profile,
                         period: enrollment_change.to_period,
                         student_identifier: student_identifier)
     else
@@ -40,15 +37,15 @@ class CourseMembership::ProcessEnrollmentChange
     end
 
     # Mark the enrollment_change as processed
-    enrollment_change_model.process.save!
+    enrollment_change.process.save!
 
     # Mark other pending EnrollmentChange records for the same user as rejected
     # (Only 1 enrollment change at a time)
     CourseMembership::Models::EnrollmentChange.where(
-      user_profile_id: enrollment_change_model.user_profile_id,
+      user_profile_id: enrollment_change.user_profile_id,
       status: CourseMembership::Models::EnrollmentChange.statuses[:pending]
     ).update_all(status: CourseMembership::Models::EnrollmentChange.statuses[:rejected])
 
-    outputs[:enrollment_change] = enrollment_change
+    outputs.enrollment_change = enrollment_change
   end
 end

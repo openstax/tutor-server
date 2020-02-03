@@ -2,14 +2,13 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
                                             version: :v1, speed: :medium do
-
   let(:application)       { FactoryBot.create :doorkeeper_application }
 
   let(:course)            { FactoryBot.create :course_profile_course }
   let(:period)            { FactoryBot.create :course_membership_period, course: course }
   let(:period_2)          { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_user)      { FactoryBot.create(:user) }
+  let(:student_user)      { FactoryBot.create(:user_profile) }
   let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)          { student_role.student }
   let!(:student_original_payment_due_at) { student.payment_due_at }
@@ -18,18 +17,18 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
                                                 resource_owner_id: student_user.id
   end
 
-  let(:teacher_user)      { FactoryBot.create(:user) }
+  let(:teacher_user)      { FactoryBot.create(:user_profile) }
   let!(:teacher)          { AddUserAsCourseTeacher[user: teacher_user, course: course] }
   let(:teacher_token)     do
     FactoryBot.create :doorkeeper_access_token, application: application,
                                                 resource_owner_id: teacher_user.id
   end
 
-  let(:student_user_2)    { FactoryBot.create(:user) }
+  let(:student_user_2)    { FactoryBot.create(:user_profile) }
   let(:student_role_2)    { AddUserAsPeriodStudent[user: student_user_2, period: period] }
   let!(:student_2)        { student_role_2.student }
 
-  let(:student_user_3)    { FactoryBot.create(:user) }
+  let(:student_user_3)    { FactoryBot.create(:user_profile) }
   let(:student_role_3)    { AddUserAsPeriodStudent[user: student_user_3, period: period_2] }
   let!(:student_3)        { student_role_3.student }
 
@@ -112,7 +111,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
               role_id: student.entity_role_id.to_s,
               is_active: true
             })
-            expect(student.reload.period).to eq period_2.to_model
+            expect(student.reload.period).to eq period_2
           end
 
           it "does not 422 if needs to pay" do
@@ -132,7 +131,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
               expect(response).to have_http_status(:ok)
               expect(response.body_as_hash[:student_identifier]).to eq(new_id)
               expect(student.reload.student_identifier).to eq(new_id)
-              expect(student.reload.period).to eq period_2.to_model
+              expect(student.reload.period).to eq period_2
             end
           end
         end
@@ -143,7 +142,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
           expect do
             api_patch :update, student_token, params: valid_params, body: valid_body
           end.to raise_error(SecurityTransgression)
-          expect(student.reload.period).to eq period.to_model
+          expect(student.reload.period).to eq period
         end
       end
     end
@@ -153,7 +152,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
         expect do
           api_patch :update, userless_token, params: valid_params, body: valid_body
         end.to raise_error(SecurityTransgression)
-        expect(student.reload.period).to eq period.to_model
+        expect(student.reload.period).to eq period
       end
     end
 
@@ -162,7 +161,7 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
         expect do
           api_patch :update, nil, params: valid_params, body: valid_body
         end.to raise_error(SecurityTransgression)
-        expect(student.reload.period).to eq period.to_model
+        expect(student.reload.period).to eq period
       end
     end
   end
@@ -306,5 +305,4 @@ RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
       end
     end
   end
-
 end

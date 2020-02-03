@@ -3,7 +3,7 @@ require 'feature_js_helper'
 
 RSpec.feature 'Bulk set course flag', js: true do
   before do
-    admin = FactoryBot.create(:user, :administrator)
+    admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)
 
     @course_1 = FactoryBot.create :course_profile_course, year: 2016

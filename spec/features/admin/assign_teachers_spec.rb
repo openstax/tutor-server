@@ -5,7 +5,7 @@ RSpec.feature 'Administration', js: true do
 
   before do
     # Log in as admin
-    admin = FactoryBot.create(:user, :administrator)
+    admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)
 
     # Create a user to add as a teacher

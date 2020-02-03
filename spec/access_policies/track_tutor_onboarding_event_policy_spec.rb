@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe TrackTutorOnboardingEventPolicy, type: :access_policy do
 
-  let(:anon) { User::User.anonymous }
-  let(:user) { FactoryBot.create(:user) }
+  let(:anon) { User::Models::Profile.anonymous }
+  let(:user) { FactoryBot.create(:user_profile) }
 
 
   it 'cannot be accessed by anonymous users' do

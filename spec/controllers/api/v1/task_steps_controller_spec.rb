@@ -8,14 +8,14 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
     application = FactoryBot.create :doorkeeper_application
 
-    @user_1 = FactoryBot.create :user
+    @user_1 = FactoryBot.create :user_profile
     @user_1_role = AddUserAsPeriodStudent[user: @user_1, period: period]
     expires_in = @user_1_role.student.payment_due_at + 1.day + 1.hour - Time.current
     @user_1_token = FactoryBot.create :doorkeeper_access_token, application: application,
                                                                 resource_owner_id: @user_1.id,
                                                                 expires_in: expires_in
 
-    user_2 = FactoryBot.create :user
+    user_2 = FactoryBot.create :user_profile
     @user_2_token = FactoryBot.create :doorkeeper_access_token, application: application,
                                                                 resource_owner_id: user_2.id
 
@@ -44,7 +44,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
       te.save!
     end
 
-    teacher_user = FactoryBot.create(:user)
+    teacher_user = FactoryBot.create(:user_profile)
     AddUserAsCourseTeacher[course: @course, user: teacher_user]
     @teacher_user_token = FactoryBot.create(
       :doorkeeper_access_token, application: application, resource_owner_id: teacher_user.id
@@ -235,12 +235,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
 
       Content::Routines::PopulateExercisePools[book: page.book]
 
-      page.practice_widget_pool.update_attribute :content_exercise_ids,
-                                                 [@tasked_exercise.content_exercise_id]
+      page.update_attribute :practice_widget_exercise_ids, [@tasked_exercise.content_exercise_id]
 
-      ecosystem = Content::Ecosystem.new strategy: page.ecosystem.wrap
-
-      AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
+      AddEcosystemToCourse[course: @course, ecosystem: page.ecosystem]
 
       CreatePracticeSpecificTopicsTask[
         course: @course, role: @user_1_role, page_ids: [page.id]

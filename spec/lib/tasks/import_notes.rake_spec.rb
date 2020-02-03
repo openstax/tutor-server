@@ -4,7 +4,7 @@ RSpec.describe 'import_notes', type: :rake do
   include_context 'rake'
 
   let(:page)       { FactoryBot.create :content_page }
-  let(:user)       { FactoryBot.create :user }
+  let(:user)       { FactoryBot.create :user_profile }
   let(:course)     { FactoryBot.create :course_profile_course }
   let(:period)     { FactoryBot.create :course_membership_period, course: course }
   let(:role)       { AddUserAsPeriodStudent.call(user: user, period: period).outputs.role }

@@ -17,8 +17,8 @@ class Content::Routines::TransformAndCachePageContent
 
   protected
 
-  def exec(book:, pages:, save: true)
-    pages = pages.to_a
+  def exec(book:, save: true)
+    pages = book.pages.to_a
 
     # Get all page uuids and cnx_ids given
     pages_by_uuid = pages.index_by(&:uuid)
@@ -64,7 +64,7 @@ class Content::Routines::TransformAndCachePageContent
           next if target_page_version.present? && target_page.version != target_page_version
 
           # Change the link's path to the page's book_location
-          target_page.reference_view_url book
+          target_page.reference_view_url book: book
         end
 
         href_attr.value = uri.to_s

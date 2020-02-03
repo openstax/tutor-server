@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::Lms::CoursesController, type: :controller, api: true, version: :v1 do
   let(:course)  { FactoryBot.create :course_profile_course }
   let!(:lms_app) { FactoryBot.create(:lms_app, owner: course) }
-  let(:user)    { FactoryBot.create(:user) }
+  let(:user)    { FactoryBot.create(:user_profile) }
   let(:token)   { FactoryBot.create(:doorkeeper_access_token, resource_owner_id: user.id) }
 
   let(:app) { Lms::WilloLabs.new }

@@ -19,7 +19,6 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
       catalog_offering = result.outputs.catalog_offering
     end.to  change { Content::Models::Ecosystem.count }.by(1)
        .and change { Content::Models::Book.count }.by(1)
-       .and change { Content::Models::Chapter.count }.by(1)
        .and change { Content::Models::Page.count }.by(5)
        .and change { Content::Models::Exercise.count }.by(30)
        .and change { Catalog::Models::Offering.count }.by(1)

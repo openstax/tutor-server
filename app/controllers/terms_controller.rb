@@ -16,7 +16,7 @@ class TermsController < ApplicationController
   end
 
   def agree
-    signature = FinePrint.sign_contract(current_user.to_model, params[:contract_id]) if params[:i_agree]
+    signature = FinePrint.sign_contract(current_user, params[:contract_id]) if params[:i_agree]
 
     if signature && signature.errors.none?
       fine_print_return
@@ -30,5 +30,4 @@ class TermsController < ApplicationController
   def use_openstax_logo
     @use_openstax_logo = true
   end
-
 end

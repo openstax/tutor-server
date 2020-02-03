@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CustomerService::JobsController, type: :controller do
 
-  let(:customer_service) { FactoryBot.create(:user, :customer_service) }
+  let(:customer_service) { FactoryBot.create(:user_profile, :customer_service) }
 
   context "GET #index" do
     it "returns http success" do

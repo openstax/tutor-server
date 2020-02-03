@@ -68,7 +68,7 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
   it 'knows if it is deletable' do
     expect(course).to be_deletable
 
-    user = FactoryBot.create :user
+    user = FactoryBot.create :user_profile
     period = FactoryBot.create(:course_membership_period, course: course)
 
     expect(course.reload).not_to be_deletable

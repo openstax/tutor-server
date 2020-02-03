@@ -11,7 +11,7 @@ RSpec.describe Api::V1::Research::RootController, type: :controller, api: true, 
 
   let!(:course_2)     { FactoryBot.create :course_profile_course }
 
-  let(:research_user) { FactoryBot.create :user, :researcher }
+  let(:research_user) { FactoryBot.create :user_profile, :researcher }
   let(:research_token) do
     FactoryBot.create :doorkeeper_access_token, resource_owner_id: research_user.id
   end

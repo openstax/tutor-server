@@ -92,7 +92,7 @@ class CalculateTaskStats
           task_cache.as_toc[:num_correct_exercises].to_f /
           task_cache.as_toc[:num_completed_exercises]
         end
-        (grades_array.reduce(:+) * 100.0 / num_started_exercise_task_caches).round
+        (grades_array.sum * 100.0 / num_started_exercise_task_caches).round
       end
 
       pgs = pgs_by_task_id.values_at(*task_ids)
@@ -155,9 +155,9 @@ class CalculateTaskStats
     student_count = started_pgs.flat_map { |pg| pg[:student_ids] }.uniq.size
     assigned_count = pgs.map do |pg|
       pg[:num_assigned_exercises] + pg[:num_assigned_placeholders]
-    end.reduce(0, :+)
-    completed_count = pgs.map { |pg| pg[:num_completed_exercises] }.reduce(0, :+)
-    correct_count = pgs.map { |pg| pg[:num_correct_exercises] }.reduce(0, :+)
+    end.sum
+    completed_count = pgs.map { |pg| pg[:num_completed_exercises] }.sum
+    correct_count = pgs.map { |pg| pg[:num_correct_exercises] }.sum
     incorrect_count = completed_count - correct_count
 
     # A cnx page-module gets the trouble flag if at least 50% of the total assigned questions for
@@ -173,7 +173,6 @@ class CalculateTaskStats
       id: preferred_pg[:id],
       title: preferred_pg[:title],
       chapter_section: preferred_pg[:book_location],
-      baked_chapter_section: preferred_pg[:baked_book_location],
       student_count: student_count,
       correct_count: correct_count,
       incorrect_count: incorrect_count,
@@ -211,7 +210,7 @@ class CalculateTaskStats
                 answers: answers
               }
             end,
-            average_step_number: exs.map { |ex| ex[:step_number] }.reduce(:+) / exs.size
+            average_step_number: exs.map { |ex| ex[:step_number] }.sum / exs.size
           }
         end.sort_by { |exercise_stats| exercise_stats[:average_step_number] }
       end

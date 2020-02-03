@@ -11,7 +11,7 @@
     raise "Need 'id' or 'openstax_uid' parameter"
   end
 
-  user = User::User.find(profile.id)
+  user = User::Models::Profile.find(profile.id)
 %>
 
 <h3>Name</h3>

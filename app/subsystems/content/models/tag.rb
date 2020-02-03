@@ -1,7 +1,4 @@
 class Content::Models::Tag < IndestructibleRecord
-
-  wrapped_by ::Content::Strategies::Direct::Tag
-
   belongs_to :ecosystem, inverse_of: :tags
 
   has_many :page_tags, dependent: :destroy, inverse_of: :tag
@@ -51,5 +48,4 @@ class Content::Models::Tag < IndestructibleRecord
     self.data = Tagger.get_data(tag_type, value) if data.nil?
     self.visible = VISIBLE_TAG_TYPES.include?(tag_type.to_sym) if visible.nil?
   end
-
 end

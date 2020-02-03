@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe TeacherStudentAccessPolicy, type: :access_policy, speed: :medium do
   let(:course)          { FactoryBot.create :course_profile_course }
   let(:period)          { FactoryBot.create :course_membership_period, course: course }
-  let(:user)            { FactoryBot.create :user }
+  let(:user)            { FactoryBot.create :user_profile }
   let!(:teacher)        { AddUserAsCourseTeacher[user: user, course: course].teacher }
   let(:teacher_student) { CreateOrResetTeacherStudent[user: user, period: period].teacher_student }
 
@@ -45,7 +45,7 @@ RSpec.describe TeacherStudentAccessPolicy, type: :access_policy, speed: :medium 
     end
 
     context 'and the requestor is someone else' do
-      let(:requestor) { FactoryBot.create :user }
+      let(:requestor) { FactoryBot.create :user_profile }
 
       it { should eq false }
     end

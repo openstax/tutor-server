@@ -12,9 +12,9 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
              getter: ->(*) do
                next unless settings.has_key? 'page_ids'
 
-               Content::Models::Page.where(id: settings['page_ids'])
-                                    .map(&:book_location).sort.map do |book_location|
-                 Demo::Mash.new(chapter: book_location.first, section: book_location.last)
+               Content::Models::Page.where(id: settings['page_ids']).map(&:book_location)
+                                    .reject(&:blank?).sort.map do |book_location|
+                 Demo::Mash.new(chapter: book_location[-2], section: book_location.last)
                end
              end,
              readable: true,

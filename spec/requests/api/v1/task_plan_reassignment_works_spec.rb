@@ -4,8 +4,8 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
   let(:course) { FactoryBot.create :course_profile_course }
   let(:period) { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_user) { FactoryBot.create(:user) }
-  let(:teacher_user) { FactoryBot.create(:user) }
+  let(:student_user) { FactoryBot.create(:user_profile) }
+  let(:teacher_user) { FactoryBot.create(:user_profile) }
 
   let(:teacher_role)    { AddUserAsCourseTeacher[user: teacher_user, course: course] }
   let!(:teacher)        { teacher_role.teacher }
@@ -24,7 +24,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
   let(:task_plan_1) do
     FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
-      task_plan.tasking_plans.first.target = period.to_model
+      task_plan.tasking_plans.first.target = period
       task_plan.save!
     end
   end
@@ -43,7 +43,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
       # ... and they have the assignment
       expect(Tasks::Models::Tasking.count).to eq 1
-      expect(student_user.to_model.roles.first.taskings.count).to eq 1
+      expect(student_user.roles.first.taskings.count).to eq 1
     end
 
     scenario 'restored student gets assignments published while dropped' do
@@ -68,7 +68,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
       # ... and the student has the missing task
       expect(Tasks::Models::Tasking.count).to eq 1
-      expect(student_user.to_model.roles.first.taskings.count).to eq 1
+      expect(student_user.roles.first.taskings.count).to eq 1
     end
   end
 
@@ -89,7 +89,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
       # ... and they have the assignment
       expect(Tasks::Models::Tasking.count).to eq 2
-      expect(student_user.to_model.roles.first.taskings.count).to eq 1
+      expect(student_user.roles.first.taskings.count).to eq 1
     end
 
     scenario 'restored student gets assignments published while dropped' do
@@ -115,7 +115,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
 
       # ... and the student has the missing task
       expect(Tasks::Models::Tasking.count).to eq 2
-      expect(student_user.to_model.roles.first.taskings.count).to eq 1
+      expect(student_user.roles.first.taskings.count).to eq 1
     end
   end
 end

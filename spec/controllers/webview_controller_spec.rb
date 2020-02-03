@@ -8,8 +8,8 @@ RSpec.describe WebviewController, type: :controller do
                                 content: Faker::Lorem.paragraphs,
                                 version: 10)
   end
-  let(:new_user)        { FactoryBot.create(:user, skip_terms_agreement: true) }
-  let(:registered_user) { FactoryBot.create(:user) }
+  let(:new_user)        { FactoryBot.create(:user_profile, skip_terms_agreement: true) }
+  let(:registered_user) { FactoryBot.create(:user_profile) }
 
   before(:each) { request.headers.merge! 'User-Agent': chrome_ua }
 

@@ -3,12 +3,12 @@ require "rails_helper"
 RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: :v1 do
 
   let(:application)    { FactoryBot.create :doorkeeper_application }
-  let(:user_1)         { FactoryBot.create(:user) }
+  let(:user_1)         { FactoryBot.create(:user_profile) }
   let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token,
                                             application: application,
                                             resource_owner_id: user_1.id }
 
-  let(:admin)          { FactoryBot.create(:user, :administrator) }
+  let(:admin)          { FactoryBot.create(:user_profile, :administrator) }
   let(:admin_token)    do
     FactoryBot.create :doorkeeper_access_token,
                        application: application,
@@ -54,7 +54,7 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
                 ui_settings: {is_open: false, answer: 42}
               }.to_json
       expect(response.code).to eq('200')
-      expect(user_1.to_model.reload.ui_settings).to eq({'is_open' => false, 'answer' => 42})
+      expect(user_1.reload.ui_settings).to eq({'is_open' => false, 'answer' => 42})
     end
   end
 

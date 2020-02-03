@@ -4,8 +4,8 @@ RSpec.describe ExportUsersInfoToMatchWithConsentForms, type: :routine do
 
   context "as a Lev output with student information" do
     let!(:course){ FactoryBot.create :course_profile_course }
-    let!(:user_1){ FactoryBot.create :user, username: "TonyStark", first_name: "Tony", last_name: "Stark" }
-    let!(:some_other_user){ FactoryBot.create :user }
+    let!(:user_1){ FactoryBot.create :user_profile, username: "TonyStark", first_name: "Tony", last_name: "Stark" }
+    let!(:some_other_user){ FactoryBot.create :user_profile }
     let!(:period){ FactoryBot.create :course_membership_period, course: course }
 
     before(:each) do
@@ -17,7 +17,7 @@ RSpec.describe ExportUsersInfoToMatchWithConsentForms, type: :routine do
     let!(:first_output){ outputs.info[0] }
 
     it "includes the user id from Accounts" do
-      expect(first_output.user_id).to eq user_1.to_model.account.openstax_uid
+      expect(first_output.user_id).to eq user_1.account.openstax_uid
     end
 
     it 'includes student\'s school id ("student identifier")' do
@@ -40,7 +40,7 @@ RSpec.describe ExportUsersInfoToMatchWithConsentForms, type: :routine do
           data = Hash[headers.zip(values)]
 
           expect(rows.count).to eq 3
-          expect(data["User ID"]).to eq user_1.to_model.account.openstax_uid.to_s
+          expect(data["User ID"]).to eq user_1.account.openstax_uid.to_s
           expect(data["Student Identifiers"]).to eq "333999"
           expect(data["Name"]).to eq "Tony Stark"
           expect(data["Username"]).to eq "TonyStark"

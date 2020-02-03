@@ -10,13 +10,9 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
 
   let(:book)      { FactoryBot.create :content_book }
 
-  let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
+  let(:ecosystem) { book.ecosystem }
 
-  let(:user)      do
-    profile = FactoryBot.create :user_profile
-    strategy = ::User::Strategies::Direct::User.new(profile)
-    ::User::User.new(strategy: strategy)
-  end
+  let(:user)      { FactoryBot.create :user_profile }
 
   let(:args)      { { user: user, enrollment_code: period_1.enrollment_code } }
 
@@ -44,7 +40,7 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
     course_1.update_attribute :ends_at, Time.current
     result = nil
     expect{ result = described_class.call(args) }
-      .not_to change{ CourseMembership::Models::EnrollmentChange.count }
+      .not_to change { CourseMembership::Models::EnrollmentChange.count }
     expect(result.errors.first.code).to eq :course_ended
   end
 
@@ -52,10 +48,10 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
     it 'creates an EnrollmentChange with a nil from_period' do
       result = nil
       expect{ result = described_class.call(args) }
-        .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+        .to change { CourseMembership::Models::EnrollmentChange.count }.by(1)
       expect(result.errors).to be_empty
       expect(result.outputs.enrollment_change.from_period).to be_nil
-      expect(result.outputs.enrollment_change.status).to eq :pending
+      expect(result.outputs.enrollment_change.pending?).to eq true
       expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
     end
   end
@@ -69,15 +65,15 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
       let(:enrollment) { role.student.latest_enrollment }
 
       context 'when other period is archived' do
-          before{ period_2.to_model.destroy }
+          before{ period_2.destroy }
 
           it 'does not mention previous period' do
               result = nil
               expect{ result = described_class.call(args) }
-                  .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+                  .to change { CourseMembership::Models::EnrollmentChange.count }.by(1)
               expect(result.errors).to be_empty
               expect(result.outputs.enrollment_change.from_period).to be_nil
-              expect(result.outputs.enrollment_change.status).to eq :pending
+              expect(result.outputs.enrollment_change.pending?).to eq true
               expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
           end
       end
@@ -85,19 +81,19 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
       it 'creates an EnrollmentChange with a from_period' do
         result = nil
         expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+          .to change { CourseMembership::Models::EnrollmentChange.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.from_period.to_model).to eq period_2
-        expect(result.outputs.enrollment_change.status).to eq :pending
+        expect(result.outputs.enrollment_change.from_period).to eq period_2
+        expect(result.outputs.enrollment_change.pending?).to eq true
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
       end
 
       it 'returns an error if the user has been dropped from the course' do
-        user.to_model.roles.first.student.destroy
+        user.roles.first.student.destroy
 
         result = nil
         expect{ result = described_class.call(args) }
-          .not_to change{ CourseMembership::Models::EnrollmentChange.count }
+          .not_to change { CourseMembership::Models::EnrollmentChange.count }
         expect(result.errors).to be_present
         expect(result.errors.first.code).to eq :dropped_student
       end
@@ -111,10 +107,10 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
       it 'creates an EnrollmentChange' do
         result = nil
         expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+          .to change { CourseMembership::Models::EnrollmentChange.count }.by(1)
         expect(result.errors).to be_empty
         expect(result.outputs.enrollment_change.from_period).to be_nil
-        expect(result.outputs.enrollment_change.status).to eq :pending
+        expect(result.outputs.enrollment_change.pending?).to eq true
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
       end
     end
@@ -132,10 +128,10 @@ RSpec.describe CourseMembership::CreateEnrollmentChange, type: :routine, speed: 
       it 'creates an EnrollmentChange' do
         result = nil
         expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::EnrollmentChange.count }.by(1)
+          .to change { CourseMembership::Models::EnrollmentChange.count }.by(1)
         expect(result.errors).to be_empty
         expect(result.outputs.enrollment_change.from_period).to be_nil
-        expect(result.outputs.enrollment_change.status).to eq :pending
+        expect(result.outputs.enrollment_change.pending?).to eq true
         expect(result.outputs.enrollment_change.enrollee_approved_at).to be_nil
       end
     end

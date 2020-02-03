@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_OPTS do
-
   before(:all) do
     @assistant = \
       FactoryBot.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
@@ -14,18 +13,13 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
 
       generate_homework_test_exercise_content
 
-      core_pools = @ecosystem.homework_core_pools(pages: @pages)
-      core_exercises = core_pools.flat_map(&:exercises).sort_by(&:uid)
+      core_exercise_ids = @pages.flat_map(&:homework_core_exercise_ids).sort
 
-      dynamic_pools = @ecosystem.homework_dynamic_pools(pages: @pages)
-      dynamic_exercises = dynamic_pools.flat_map(&:exercises).sort_by(&:uid)
-
-      @teacher_selected_exercises = core_exercises[1..5]
-      teacher_selected_exercise_ids = @teacher_selected_exercises.map { |e| e.id.to_s }
+      @teacher_selected_exercise_ids = core_exercise_ids[1..5].map(&:to_s)
 
       @tutor_selected_exercise_count = 4
 
-      @assignment_exercise_count = teacher_selected_exercise_ids.count +
+      @assignment_exercise_count = @teacher_selected_exercise_ids.count +
                                    @tutor_selected_exercise_count
 
       @task_plan = FactoryBot.build(
@@ -35,7 +29,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         description: "Hello!",
         is_feedback_immediate: true,
         settings: {
-          exercise_ids: teacher_selected_exercise_ids,
+          exercise_ids: @teacher_selected_exercise_ids,
           exercises_count_dynamic: @tutor_selected_exercise_count
         },
         num_tasking_plans: 0
@@ -50,16 +44,16 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
       num_taskees = 3
 
       @taskee_users = num_taskees.times.map do
-        FactoryBot.create(:user).tap do |user|
+        FactoryBot.create(:user_profile).tap do |user|
           AddUserAsPeriodStudent.call(user: user, period: period)
         end
       end
 
       @taskee_users.each do |taskee|
-        @task_plan.tasking_plans << FactoryBot.create(
+        @task_plan.tasking_plans << FactoryBot.build(
           :tasks_tasking_plan,
           task_plan: @task_plan,
-          target:    taskee.to_model
+          target:    taskee
         )
       end
 
@@ -99,12 +93,12 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
     it "assigns the teacher-selected exercises as the task's core exercises" do
       @tasks.each do |task|
         core_task_steps = task.core_task_steps
-        expect(core_task_steps.count).to eq(@teacher_selected_exercises.count)
+        expect(core_task_steps.count).to eq(@teacher_selected_exercise_ids.count)
 
         core_task_steps.each_with_index do |task_step, ii|
           tasked_exercise = task_step.tasked
 
-          exercise = @teacher_selected_exercises[ii]
+          exercise = Content::Models::Exercise.find @teacher_selected_exercise_ids[ii]
 
           expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
           expect(tasked_exercise.url).to eq(exercise.url)
@@ -140,5 +134,4 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
       expect { @task_plan.save! }.to raise_error ActiveRecord::RecordInvalid
     end
   end
-
 end

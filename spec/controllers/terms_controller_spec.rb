@@ -1,12 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe TermsController, type: :controller do
-
-  let(:contract) { FinePrint::Contract.create!(name: 'general_terms_of_use',
-                                               title: 'General Terms of Use',
-                                               content: Faker::Lorem.paragraphs,
-                                               version: 10) }
-  let(:new_user) { FactoryBot.create(:user, skip_terms_agreement: true) }
+  let(:contract) do
+    FinePrint::Contract.create!(
+      name: 'general_terms_of_use',
+      title: 'General Terms of Use',
+      content: Faker::Lorem.paragraphs,
+      version: 10
+    )
+  end
+  let(:new_user) { FactoryBot.create(:user_profile, skip_terms_agreement: true) }
 
   context 'terms of service' do
 
@@ -18,11 +21,9 @@ RSpec.describe TermsController, type: :controller do
         post :agree, params: { i_agree: '1', contract_id: contract.id }
         expect(response).to have_http_status(:redirect)
         expect(
-          FinePrint.signed_contract?(new_user.to_model, contract)
-        ).to be_truthy
+          FinePrint.signed_contract?(new_user, contract)
+        ).to eq true
       end
     end
-
   end
-
 end

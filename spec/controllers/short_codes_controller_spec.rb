@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ShortCodesController, type: :controller do
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { FactoryBot.create(:user_profile) }
 
   let(:absolute_url) { FactoryBot.create(:short_code_short_code, uri: 'https://cnx.org') }
   let(:relative_url) { FactoryBot.create(:short_code_short_code, uri: 'dashboard') }
@@ -14,10 +14,10 @@ RSpec.describe ShortCodesController, type: :controller do
 
   let(:task) { FactoryBot.create(:tasks_task, task_plan: task_plan) }
 
-  let(:teacher) { FactoryBot.create(:user) }
+  let(:teacher) { FactoryBot.create(:user_profile) }
   let!(:teacher_role) { AddUserAsCourseTeacher[course: course, user: teacher] }
 
-  let(:student) { FactoryBot.create(:user) }
+  let(:student) { FactoryBot.create(:user_profile) }
   let(:student_role) { AddUserAsPeriodStudent[period: period, user: student] }
 
   let(:tasking) { FactoryBot.create(:tasks_tasking, role: student_role, task: task) }

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::TagsController, type: :controller do
-  let(:admin)  { FactoryBot.create(:user, :administrator) }
+  let(:admin)  { FactoryBot.create(:user_profile, :administrator) }
 
   let!(:tag_1) { FactoryBot.create :content_tag, value: 'k12phys-ch04-ex003' }
   let!(:tag_2) { FactoryBot.create :content_tag, value: 'k12phys-ch04-s03-lo01' }
@@ -66,7 +66,7 @@ RSpec.describe Admin::TagsController, type: :controller do
     end
 
     it 'disallows non-admin authenticated visitors' do
-      controller.sign_in(FactoryBot.create(:user))
+      controller.sign_in(FactoryBot.create(:user_profile))
 
       expect { get :index }.to raise_error(SecurityTransgression)
       expect { put :update, params: { id: tag_1.id } }.to raise_error(SecurityTransgression)

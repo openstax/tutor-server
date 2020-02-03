@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe StudentAccessPolicy, type: :access_policy, speed: :medium do
-  let(:requestor)    { FactoryBot.create(:user) }
+  let(:requestor)    { FactoryBot.create(:user_profile) }
   let(:course)       { FactoryBot.create :course_profile_course }
   let(:period)       { FactoryBot.create :course_membership_period, course: course }
-  let(:student_user) { FactoryBot.create(:user) }
+  let(:student_user) { FactoryBot.create(:user_profile) }
   let(:student)      { AddUserAsPeriodStudent[user: student_user, period: period].student }
 
   subject(:action_allowed) { described_class.action_allowed?(action, requestor, student) }

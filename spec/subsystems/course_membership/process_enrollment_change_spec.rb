@@ -12,13 +12,9 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
 
   let(:book)      { FactoryBot.create :content_book }
 
-  let(:ecosystem) { Content::Ecosystem.new(strategy: book.ecosystem.wrap) }
+  let(:ecosystem) { book.ecosystem }
 
-  let(:user)      do
-    profile = FactoryBot.create :user_profile
-    strategy = ::User::Strategies::Direct::User.new(profile)
-    ::User::User.new(strategy: strategy)
-  end
+  let(:user)      { FactoryBot.create :user_profile }
 
   let(:args)      { { enrollment_change: enrollment_change } }
 
@@ -35,14 +31,14 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         ]
       end
 
-      before(:each)           { enrollment_change.to_model.approve_by(user).save! }
+      before(:each)           { enrollment_change.approve_by(user).save! }
 
       it 'processes an approved EnrollmentChange' do
         result = nil
         expect{ result = described_class.call(args) }
           .to change{ CourseMembership::Models::Enrollment.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
       end
 
       it 'sets the student_identifier if given' do
@@ -51,7 +47,7 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         expect{ result = described_class.call(args.merge(student_identifier: sid)) }
           .to change{ CourseMembership::Models::Enrollment.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
 
         student = CourseMembership::Models::Enrollment.order(:created_at).last.student
         expect(student.student_identifier).to eq sid
@@ -75,17 +71,17 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         expect{ result = described_class.call(args) }
           .to change{ CourseMembership::Models::Enrollment.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
 
-        enrollment_change_2.to_model.reload
-        enrollment_change_3.to_model.reload
-        enrollment_change_4.to_model.reload
-        enrollment_change_5.to_model.reload
+        enrollment_change_2.reload
+        enrollment_change_3.reload
+        enrollment_change_4.reload
+        enrollment_change_5.reload
 
-        expect(enrollment_change_2.status).to eq :rejected
-        expect(enrollment_change_3.status).to eq :rejected
-        expect(enrollment_change_4.status).to eq :rejected
-        expect(enrollment_change_5.status).to eq :rejected
+        expect(enrollment_change_2.rejected?).to eq true
+        expect(enrollment_change_3.rejected?).to eq true
+        expect(enrollment_change_4.rejected?).to eq true
+        expect(enrollment_change_5.rejected?).to eq true
       end
     end
 
@@ -99,9 +95,9 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
       before(:each)           do
         AddUserAsPeriodStudent[user: user, period: period_1]
 
-        enrollment_change.to_model.approve_by(user).save!
+        enrollment_change.approve_by(user).save!
 
-        expect(enrollment_change.to_model.enrollment).not_to be_nil
+        expect(enrollment_change.enrollment).not_to be_nil
       end
 
       it 'processes an approved EnrollmentChange' do
@@ -109,7 +105,7 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         expect{ result = described_class.call(args) }
           .to change{ CourseMembership::Models::Enrollment.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
       end
 
       it 'sets the student_identifier if given' do
@@ -118,7 +114,7 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         expect{ result = described_class.call(args.merge(student_identifier: sid)) }
           .to change{ CourseMembership::Models::Enrollment.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
 
         student = CourseMembership::Models::Enrollment.order(:created_at).last.student
         expect(student.student_identifier).to eq sid
@@ -133,11 +129,11 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         expect{ result = described_class.call(args) }
           .to change{ CourseMembership::Models::Enrollment.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
 
-        enrollment_change_2.to_model.reload
+        enrollment_change_2.reload
 
-        expect(enrollment_change_2.status).to eq :rejected
+        expect(enrollment_change_2.rejected?).to eq true
       end
 
       it 'returns an error if the target course has already ended' do
@@ -145,17 +141,17 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         course_1.starts_at = current_time.last_month
         course_1.ends_at = current_time.yesterday
         course_1.save!
-        enrollment_change.to_model.reload
+        enrollment_change.reload
 
         result = nil
         expect do
           result = described_class.call(args)
         end.not_to change{ CourseMembership::Models::Enrollment.count }
-        expect(enrollment_change.to_model.errors.full_messages).to(
+        expect(enrollment_change.errors.full_messages).to(
           include('Period belongs to a course that has already ended')
         )
-        enrollment_change.to_model.reload
-        expect(enrollment_change.status).to eq :approved
+        enrollment_change.reload
+        expect(enrollment_change.approved?).to eq true
       end
     end
 
@@ -168,23 +164,23 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         ]
       end
 
-      before(:each)            { enrollment_change.to_model.approve_by(user).save! }
+      before(:each)            { enrollment_change.approve_by(user).save! }
 
       it 'processes an approved EnrollmentChange' do
         result = nil
-        expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect { result = described_class.call(args) }
+          .to change { CourseMembership::Models::Enrollment.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
       end
 
       it 'sets the student_identifier if given' do
         sid = 'N0B0DY'
         result = nil
-        expect{ result = described_class.call(args.merge(student_identifier: sid)) }
-          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect { result = described_class.call(args.merge(student_identifier: sid)) }
+          .to change { CourseMembership::Models::Enrollment.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
 
         student = CourseMembership::Models::Enrollment.order(:created_at).last.student
         expect(student.student_identifier).to eq sid
@@ -196,25 +192,25 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         ]
 
         result = nil
-        expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::Enrollment.count }.by(1)
+        expect { result = described_class.call(args) }
+          .to change { CourseMembership::Models::Enrollment.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
 
-        enrollment_change_2.to_model.reload
+        enrollment_change_2.reload
 
-        expect(enrollment_change_2.status).to eq :rejected
+        expect(enrollment_change_2.rejected?).to eq true
       end
 
       it 'creates new role and student objects for the new course' do
-        old_roles = user.to_model.roles.to_a
+        old_roles = user.roles.to_a
         result = nil
-        expect{ result = described_class.call(args) }
-          .to change{ CourseMembership::Models::Student.count }.by(1)
+        expect { result = described_class.call(args) }
+          .to change { CourseMembership::Models::Student.count }.by(1)
         expect(result.errors).to be_empty
-        expect(result.outputs.enrollment_change.status).to eq :processed
+        expect(result.outputs.enrollment_change.processed?).to eq true
         expect(student.reload.course).to eq course_1
-        new_role = (user.to_model.reload.roles - old_roles).first
+        new_role = (user.reload.roles - old_roles).first
         expect(new_role.student.course).to eq course_2
       end
 
@@ -223,16 +219,16 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
         course_2.starts_at = current_time.last_month
         course_2.ends_at = current_time.yesterday
         course_2.save!
-        enrollment_change.to_model.reload
+        enrollment_change.reload
 
         result = nil
-        expect{ result = described_class.call(args) }
-          .not_to change{ CourseMembership::Models::Enrollment.count }
-        expect(enrollment_change.to_model.errors.full_messages).to(
+        expect { result = described_class.call(args) }
+          .not_to change { CourseMembership::Models::Enrollment.count }
+        expect(enrollment_change.errors.full_messages).to(
           include('Period belongs to a course that has already ended')
         )
-        enrollment_change.to_model.reload
-        expect(enrollment_change.status).to eq :approved
+        enrollment_change.reload
+        expect(enrollment_change.approved?).to eq true
       end
     end
   end
@@ -246,23 +242,23 @@ RSpec.describe CourseMembership::ProcessEnrollmentChange, type: :routine, speed:
 
     it 'returns an error if the EnrollmentChange is pending' do
       result = nil
-      expect{ result = described_class.call(args) }
-        .not_to change{ CourseMembership::Models::Enrollment.count }
-      enrollment_change.to_model.reload
-      expect(enrollment_change.status).to eq :pending
+      expect { result = described_class.call(args) }
+        .not_to change { CourseMembership::Models::Enrollment.count }
+      enrollment_change.reload
+      expect(enrollment_change.pending?).to eq true
     end
 
     it 'returns an error if the EnrollmentChange has been rejected' do
-      enrollment_change.to_model.update_attribute(
+      enrollment_change.update_attribute(
         :status, CourseMembership::Models::EnrollmentChange.statuses[:rejected]
       )
 
       result = nil
-      expect{ result = described_class.call(args) }
-        .not_to change{ CourseMembership::Models::Enrollment.count }
+      expect { result = described_class.call(args) }
+        .not_to change { CourseMembership::Models::Enrollment.count }
       expect(result.errors).not_to be_empty
-      enrollment_change.to_model.reload
-      expect(enrollment_change.status).to eq :rejected
+      enrollment_change.reload
+      expect(enrollment_change.rejected?).to eq true
     end
   end
 end

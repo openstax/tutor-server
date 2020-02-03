@@ -1,6 +1,5 @@
 # An abstract assistant that builds tasks from fragments
 class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
-
   protected
 
   def build_task_step(task, page, fragment, fragment_index)
@@ -8,7 +7,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       task: task,
       group_type: :fixed_group,
       is_core: true,
-      page: page.to_model,
+      page: page,
       labels: fragment.labels,
       fragment_index: fragment_index
     ).tap { |step| task.task_steps << step }
@@ -18,7 +17,6 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     title = page_title
 
     fragments.each_with_index do |fragment, index|
-
       title ||= fragment.title
 
       # For Exercise and OptionalExercise (subclass of Exercise)
@@ -53,7 +51,6 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
 
       # The page title applies only to the first step in the set of fragments given
       title = nil
-
     end
   end
 
@@ -61,7 +58,6 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     Tasks::Models::TaskedReading.new(task_step: step,
                                      url: page.url,
                                      book_location: page.book_location,
-                                     baked_book_location: page.baked_book_location,
                                      title: title,
                                      content: reading_fragment.to_html)
   end
@@ -121,7 +117,8 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     @related_exercise_ids ||= {}
 
     unless @related_exercise_ids.has_key?(exercise_fragment)
-      pool_exercises = page.reading_context_pool.exercises(preload: :tags).to_a
+      pool_exercise_ids = page.reading_context_exercises_ids
+      pool_exercises = page.exercises.where(id: pool_exercise_ids).preload(:tags).to_a
       tasked = previous_step.tasked
 
       related_exercises = \
@@ -164,5 +161,4 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
                                          title: title,
                                          content: interactive_fragment.to_html)
   end
-
 end

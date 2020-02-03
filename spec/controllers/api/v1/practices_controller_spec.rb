@@ -4,10 +4,10 @@ require 'database_cleaner'
 
 RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
                                              version: :v1, speed: :slow do
-  let(:user_1)         { FactoryBot.create(:user) }
+  let(:user_1)         { FactoryBot.create(:user_profile) }
   let(:user_1_token)   { FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_1.id }
 
-  let(:user_2)         { FactoryBot.create(:user) }
+  let(:user_2)         { FactoryBot.create(:user_profile) }
   let(:user_2_token)   { FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_2.id }
 
   let(:userless_token) { FactoryBot.create :doorkeeper_access_token }
@@ -24,10 +24,7 @@ RSpec.describe Api::V1::PracticesController, type: :controller, api: true,
   let!(:exercise_5)    { FactoryBot.create :content_exercise, page: page }
 
   let!(:ecosystem)     do
-    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(page.ecosystem)
-    ::Content::Ecosystem.new(strategy: ecosystem_strategy).tap do |ecosystem|
-      AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-    end
+    page.ecosystem.tap { |ecosystem| AddEcosystemToCourse[course: course, ecosystem: ecosystem] }
   end
 
   let!(:role)          { AddUserAsPeriodStudent[period: period, user: user_1] }

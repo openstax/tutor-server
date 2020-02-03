@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Teachers' do
   let(:course) { FactoryBot.create :course_profile_course }
-  let(:user)   { FactoryBot.create(:user) }
+  let(:user)   { FactoryBot.create(:user_profile) }
 
   before(:each) { page.driver.header('User-Agent', chrome_ua) }
 

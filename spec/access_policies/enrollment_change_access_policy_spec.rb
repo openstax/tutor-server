@@ -4,32 +4,24 @@ RSpec.describe EnrollmentChangeAccessPolicy, type: :access_policy do
   let(:course)            { FactoryBot.create :course_profile_course }
   let(:period)            { FactoryBot.create :course_membership_period, course: course }
 
-  let(:user)              do
-    profile = FactoryBot.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  end
-  let(:another_user)      do
-    profile = FactoryBot.create(:user_profile)
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
-  end
+  let(:user)              { FactoryBot.create :user_profile }
+  let(:another_user)      { FactoryBot.create :user_profile }
 
   let(:enrollment_change) do
-    CourseMembership::CreateEnrollmentChange[
-      user: user, enrollment_code: period.enrollment_code
-    ]
+    CourseMembership::CreateEnrollmentChange[user: user, enrollment_code: period.enrollment_code]
   end
 
   # action, requestor are set in contexts
   subject(:allowed)       do
     described_class.action_allowed?(
-      action, requestor, action == :create ? CourseMembership::Models::EnrollmentChange : \
-                                             enrollment_change)
+      action,
+      requestor,
+      action == :create ? CourseMembership::Models::EnrollmentChange : enrollment_change
+    )
   end
 
   context 'anonymous users' do
-    let(:requestor) { User::User.anonymous }
+    let(:requestor) { User::Models::Profile.anonymous }
 
     [:create, :approve].each do |test_action|
       context test_action.to_s do

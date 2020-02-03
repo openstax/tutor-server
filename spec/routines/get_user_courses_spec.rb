@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe GetUserCourses, type: :routine do
 
   it 'gets courses, not duped' do
-    user = FactoryBot.create(:user)
+    user = FactoryBot.create(:user_profile)
 
     course = FactoryBot.create :course_profile_course
     period = FactoryBot.create :course_membership_period, course: course
@@ -17,7 +17,7 @@ RSpec.describe GetUserCourses, type: :routine do
   end
 
   it 'gets multiple courses for a user' do
-    user = FactoryBot.create(:user)
+    user = FactoryBot.create(:user_profile)
 
     course_1 = FactoryBot.create :course_profile_course
     course_1_period = FactoryBot.create :course_membership_period, course: course_1
@@ -35,7 +35,7 @@ RSpec.describe GetUserCourses, type: :routine do
   end
 
   it 'does not return courses where the user is an inactive student' do
-    user = FactoryBot.create(:user)
+    user = FactoryBot.create(:user_profile)
 
     course_1 = FactoryBot.create :course_profile_course
     course_1_period = FactoryBot.create :course_membership_period, course: course_1
@@ -55,7 +55,7 @@ RSpec.describe GetUserCourses, type: :routine do
   end
 
   it 'does not return courses where the user is a deleted teacher' do
-    user = FactoryBot.create(:user)
+    user = FactoryBot.create(:user_profile)
 
     course_1 = FactoryBot.create :course_profile_course
     course_1_period = FactoryBot.create :course_membership_period, course: course_1

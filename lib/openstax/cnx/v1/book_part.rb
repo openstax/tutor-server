@@ -9,23 +9,23 @@ module OpenStax::Cnx::V1
     attr_reader :hash, :is_root, :book
 
     def parsed_title
-      @parsed_title ||= OpenStax::Cnx::V1::Baked.parse_title(
-        hash.fetch('title') { |key| raise "#{self.class.name} id=#{@id} is missing #{key}" }
-      )
+      @parsed_title ||= OpenStax::Cnx::V1::BakedTitle.new hash.fetch('title')
     end
 
-    def baked_book_location
-      @baked_book_location ||= parsed_title[:book_location]
+    def book_location
+      @book_location ||= parsed_title.book_location
     end
 
     def title
-      @title ||= parsed_title[:text]
+      @title ||= parsed_title.text
+    end
+
+    def uuid
+      @uuid ||= hash.fetch('id')
     end
 
     def contents
-      @contents ||= hash.fetch('contents') do |key|
-        raise "#{self.class.name} id=#{@id} is missing #{key}"
-      end
+      @contents ||= hash.fetch('contents')
     end
 
     def parts

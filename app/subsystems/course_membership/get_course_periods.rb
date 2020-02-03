@@ -10,19 +10,14 @@ module CourseMembership
       roles = [roles].flatten
 
       all_periods = include_archived_periods ? course.periods : course.periods.without_deleted
-      models = roles.any? ? periods_for_roles(course, all_periods, roles) : all_periods
-
-      outputs[:periods] = models.map do |model|
-        strategy = CourseMembership::Strategies::Direct::Period.new(model)
-        CourseMembership::Period.new(strategy: strategy)
-      end
+      outputs.periods = roles.any? ? periods_for_roles(course, all_periods, roles) : all_periods
     end
 
     def periods_for_roles(course, all_periods, roles)
       is_teacher = run(:is_teacher, course: course, roles: roles).outputs.is_course_teacher
       return all_periods if is_teacher
 
-      role_periods = roles.map { |role| role.student.try!(:period) }
+      role_periods = roles.map { |role| role.student&.period }
       all_periods & role_periods
     end
   end

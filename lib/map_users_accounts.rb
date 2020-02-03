@@ -11,7 +11,7 @@ module MapUsersAccounts
     private
 
     def anonymous_user(account)
-      User::User.anonymous if account.is_anonymous?
+      User::Models::Profile.anonymous if account.is_anonymous?
     end
 
     def find_or_create_user(account)

@@ -46,8 +46,8 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
   let(:chemistry_offering) do
     FactoryBot.create(:catalog_offering, salesforce_book_name: "Chemistry")
   end
-  let(:user_sf_a) { FactoryBot.create(:user, salesforce_contact_id: sf_contact_a.id)}
-  let(:user_no_sf) { FactoryBot.create(:user)}
+  let(:user_sf_a) { FactoryBot.create(:user_profile, salesforce_contact_id: sf_contact_a.id)}
+  let(:user_no_sf) { FactoryBot.create(:user_profile)}
 
   let!(:course) do
     FactoryBot.create :course_profile_course,
@@ -67,7 +67,7 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
   before do
     @period1 = CreatePeriod[course: course, uuid: period_uuids.first]
     p1students = 4.times.map do
-      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: @period1]
+      AddUserAsPeriodStudent[user: FactoryBot.create(:user_profile), period: @period1]
     end
     p1students[0].student.update_attribute(:is_paid, true)
     p1students[1].student.update_attribute(:is_comped, true)
@@ -91,14 +91,14 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
 
     @period2 = CreatePeriod[course: course, uuid: period_uuids.second]
     p2students = 2.times.map do
-      AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: @period1]
+      AddUserAsPeriodStudent[user: FactoryBot.create(:user_profile), period: @period1]
     end
     p2students.each { |user| MoveStudent[student: user.student, period: @period2] }
     CourseMembership::InactivateStudent[student: p2students.first.student]
 
     @period3 = CreatePeriod[course: course, uuid: period_uuids.third]
-    6.times { AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: @period3] }
-    @period3.to_model.destroy
+    6.times { AddUserAsPeriodStudent[user: FactoryBot.create(:user_profile), period: @period3] }
+    @period3.destroy
   end
 
   context "when there is no existing TutorCoursePeriod" do
@@ -271,9 +271,7 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
   end
 
   def expect_tcp_stats(period, extras = {})
-    tcp = OpenStax::Salesforce::Remote::TutorCoursePeriod.where(
-      period_uuid: period.to_model.uuid
-    ).first
+    tcp = OpenStax::Salesforce::Remote::TutorCoursePeriod.where(period_uuid: period.uuid).first
     expect(tcp).not_to be_nil
 
     expect(tcp.base_year).to eq 2016

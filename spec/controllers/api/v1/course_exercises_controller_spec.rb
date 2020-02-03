@@ -4,12 +4,12 @@ require 'vcr_helper'
 RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
                                                    version: :v1, vcr: VCR_OPTS, speed: :slow do
 
-  let(:user_1)         { FactoryBot.create(:user) }
+  let(:user_1)         { FactoryBot.create(:user_profile) }
   let(:user_1_token)   do
     FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_1.id
   end
 
-  let(:user_2)         { FactoryBot.create(:user) }
+  let(:user_2)         { FactoryBot.create(:user_profile) }
   let(:user_2_token)   do
     FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_2.id
   end

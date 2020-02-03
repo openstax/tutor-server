@@ -1,22 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium do
-
   let(:course)    { FactoryBot.create :course_profile_course }
   let(:period)    { FactoryBot.create :course_membership_period, course: course }
   let!(:user)     do
-    FactoryBot.create(:user).tap do |user|
+    FactoryBot.create(:user_profile).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
   let!(:new_user) do
-    FactoryBot.create(:user).tap do |user|
+    FactoryBot.create(:user_profile).tap do |user|
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
   let(:task_plan) do
     FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
-      task_plan.tasking_plans.first.target = period.to_model
+      task_plan.tasking_plans.first.target = period
       task_plan.save!
     end
   end
@@ -33,15 +32,14 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       ),
       owner: course,
       type: 'homework',
-      ecosystem: @ecosystem.to_model,
+      ecosystem: @ecosystem,
       settings: { exercise_ids: exercise_ids[0..5], exercises_count_dynamic: 3}
     ).tap do |task_plan|
-      task_plan.tasking_plans.first.target = period.to_model
+      task_plan.tasking_plans.first.target = period
       task_plan.save!
     end
   end
-  let(:core_pools)   { @ecosystem.homework_core_pools(pages: @pages) }
-  let(:exercise_ids) { core_pools.flat_map(&:exercises).map { |ex| ex.id.to_s } }
+  let(:exercise_ids) { @pages.flat_map(&:homework_core_exercise_ids).map(&:to_s) }
 
   context 'with no teacher_student roles' do
     context 'homework' do
@@ -232,9 +230,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
     context 'published task_plan' do
       before do
         described_class.call(task_plan: task_plan)
-        new_user.to_model.roles.each do |role|
-          role.taskings.each { |tasking| tasking.task.really_destroy! }
-        end
+        new_user.roles.each { |role| role.taskings.each { |tasking| tasking.task.really_destroy! } }
         expect(task_plan.reload).to be_out_to_students
       end
 

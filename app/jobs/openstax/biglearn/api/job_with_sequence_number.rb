@@ -56,7 +56,7 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
       # If aborting a request after this point without rolling back the transaction is required
       # in the future, we will need to introduce NO-OP Events in biglearn-api
       requests_with_sequence_numbers = req.map do |request|
-        model = request[sequence_number_model_key].to_model
+        model = request[sequence_number_model_key]
 
         # Unsaved sequence_number_models are not supported (ActiveJob cannot serialize them)
         raise(

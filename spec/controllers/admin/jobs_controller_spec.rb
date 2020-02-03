@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Admin::JobsController, type: :controller do
 
-  let(:admin) { FactoryBot.create(:user, :administrator) }
+  let(:admin) { FactoryBot.create(:user_profile, :administrator) }
 
   context "GET #index" do
     it "returns http success" do

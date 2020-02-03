@@ -1,12 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
-
-  let(:exercise_model) { FactoryBot.create :content_exercise }
-  let(:exercise)       {
-    strategy = ::Content::Strategies::Direct::Exercise.new(exercise_model)
-    ::Content::Exercise.new(strategy: strategy)
-  }
+  let(:exercise)       { FactoryBot.create :content_exercise }
   let(:representation)  { Api::V1::ExerciseRepresenter.new(exercise).as_json }
 
   context 'with tags' do
@@ -30,9 +25,9 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
                                 description: 'calculate the effect of forces on objects'
 
       FactoryBot.create :content_lo_teks_tag, lo: lo, teks: teks
-      FactoryBot.create :content_exercise_tag, exercise: exercise_model, tag: lo
-      FactoryBot.create :content_exercise_tag, exercise: exercise_model, tag: lo2
-      FactoryBot.create :content_exercise_tag, exercise: exercise_model, tag: teks
+      FactoryBot.create :content_exercise_tag, exercise: exercise, tag: lo
+      FactoryBot.create :content_exercise_tag, exercise: exercise, tag: lo2
+      FactoryBot.create :content_exercise_tag, exercise: exercise, tag: teks
     end
 
     it 'represents an exercise' do
@@ -73,11 +68,11 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
 
   context 'with interactive and preview' do
     before do
-      exercise_model.update_attribute :preview, '<div class="preview interactive">Interactive</div>'
-      exercise_model.update_attribute :content, {
+      exercise.update_attribute :preview, '<div class="preview interactive">Interactive</div>'
+      exercise.update_attribute :content, {
         stimulus_html: '<iframe src="https://connexions.github.io/simulations/cool-sim/"></iframe>'
       }.to_json
-      exercise_model.update_attribute :has_interactive, true
+      exercise.update_attribute :has_interactive, true
     end
 
     it 'represents an exercise' do
@@ -96,11 +91,11 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
 
   context 'with video and preview' do
     before do
-      exercise_model.update_attribute :preview, '<div class="preview video">Video</div>'
-      exercise_model.update_attribute :content, {
+      exercise.update_attribute :preview, '<div class="preview video">Video</div>'
+      exercise.update_attribute :content, {
         stimulus_html: '<iframe src="https://www.youtube.com/embed/C00l_Vid/"></iframe>'
       }.to_json
-      exercise_model.update_attribute :has_video, true
+      exercise.update_attribute :has_video, true
     end
 
     it 'represents an exercise' do
@@ -119,7 +114,7 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
 
   context 'with context' do
     before do
-      exercise_model.update_attribute :context, '<p>Very important context</p>'
+      exercise.update_attribute :context, '<p>Very important context</p>'
     end
 
     it 'represents an exercise' do
@@ -135,5 +130,4 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
       )
     end
   end
-
 end

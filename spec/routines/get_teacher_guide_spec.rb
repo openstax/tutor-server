@@ -10,9 +10,9 @@ RSpec.describe GetTeacherGuide, type: :routine do
     @period = FactoryBot.create :course_membership_period, course: @course
     @second_period = FactoryBot.create :course_membership_period, course: @course
 
-    @teacher = FactoryBot.create(:user)
-    @student = FactoryBot.create(:user)
-    @second_student = FactoryBot.create(:user)
+    @teacher = FactoryBot.create(:user_profile)
+    @student = FactoryBot.create(:user_profile)
+    @second_student = FactoryBot.create(:user_profile)
 
     @role = AddUserAsPeriodStudent[period: @period, user: @student]
     @second_role = AddUserAsPeriodStudent[period: @second_period, user: @second_student]
@@ -37,8 +37,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
       DatabaseCleaner.start
       book = FactoryBot.create :content_book, title: 'Physics (Demo)'
-      ecosystem = Content::Ecosystem.new(strategy: book.ecosystem.wrap)
-      AddEcosystemToCourse[course: @course, ecosystem: ecosystem]
+      AddEcosystemToCourse[course: @course, ecosystem: book.ecosystem]
     end
 
     after(:all) { DatabaseCleaner.clean }
@@ -87,7 +86,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
       @second_role.reload
       @teacher_role.reload
 
-      VCR.use_cassette("GetCourseGuide/setup_course_guide", VCR_OPTS) do
+      VCR.use_cassette('GetCourseGuide/setup_course_guide', VCR_OPTS) do
         capture_stdout do
           CreateStudentHistory[course: @course, roles: [@role, @second_role]]
         end
@@ -118,9 +117,8 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
       period_1_chapter_1 = guide.first['children'].first
       expect(period_1_chapter_1).to match(
-        title: "Acceleration",
-        book_location: [3],
-        baked_book_location: [],
+        title: 'Acceleration',
+        book_location: [],
         student_count: 1,
         questions_answered_count: 2,
         clue: clue_matcher,
@@ -131,8 +129,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
       period_1_chapter_2 = guide.first['children'].second
       expect(period_1_chapter_2).to match(
         title: "Force and Newton's Laws of Motion",
-        book_location: [4],
-        baked_book_location: [],
+        book_location: [],
         student_count: 1,
         questions_answered_count: 7,
         clue: clue_matcher,
@@ -142,9 +139,8 @@ RSpec.describe GetTeacherGuide, type: :routine do
 
       period_2_chapter_1 = guide.second['children'].first
       expect(period_2_chapter_1).to match(
-        title: "Acceleration",
-        book_location: [3],
-        baked_book_location: [],
+        title: 'Acceleration',
+        book_location: [],
         student_count: 1,
         questions_answered_count: 5,
         clue: clue_matcher,
@@ -155,8 +151,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
       period_2_chapter_2 = guide.second['children'].second
       expect(period_2_chapter_2).to match(
         title: "Force and Newton's Laws of Motion",
-        book_location: [4],
-        baked_book_location: [],
+        book_location: [],
         student_count: 1,
         questions_answered_count: 5,
         clue: clue_matcher,
@@ -171,18 +166,16 @@ RSpec.describe GetTeacherGuide, type: :routine do
       period_1_chapter_1_pages = guide.first['children'].first['children']
       expect(period_1_chapter_1_pages).to match [
         {
-          title: "Acceleration",
-          book_location: [3, 1],
-          baked_book_location: [],
+          title: 'Acceleration',
+          book_location: [],
           student_count: 1,
           questions_answered_count: 2,
           clue: clue_matcher,
           page_ids: [kind_of(Integer)]
         },
         {
-          title: "Representing Acceleration with Equations and Graphs",
-          book_location: [3, 2],
-          baked_book_location: [],
+          title: 'Representing Acceleration with Equations and Graphs',
+          book_location: [],
           student_count: 1,
           questions_answered_count: 0,
           clue: clue_matcher,
@@ -193,9 +186,8 @@ RSpec.describe GetTeacherGuide, type: :routine do
       period_1_chapter_2_pages = guide.first['children'].second['children']
       expect(period_1_chapter_2_pages).to match [
         {
-          title: "Force",
-          book_location: [4, 1],
-          baked_book_location: [],
+          title: 'Force',
+          book_location: [],
           student_count: 1,
           questions_answered_count: 2,
           clue: clue_matcher,
@@ -203,8 +195,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         },
         {
           title: "Newton's First Law of Motion: Inertia",
-          book_location: [4, 2],
-          baked_book_location: [],
+          book_location: [],
           student_count: 1,
           questions_answered_count: 5,
           clue: clue_matcher,
@@ -212,8 +203,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         },
         {
           title: "Newton's Second Law of Motion",
-          book_location: [4, 3],
-          baked_book_location: [],
+          book_location: [],
           student_count: 1,
           questions_answered_count: 0,
           clue: clue_matcher,
@@ -221,8 +211,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         },
         {
           title: "Newton's Third Law of Motion",
-          book_location: [4, 4],
-          baked_book_location: [],
+          book_location: [],
           student_count: 1,
           questions_answered_count: 0,
           clue: clue_matcher,
@@ -233,18 +222,16 @@ RSpec.describe GetTeacherGuide, type: :routine do
       period_2_chapter_1_pages = guide.second['children'].first['children']
       expect(period_2_chapter_1_pages).to match [
         {
-          title: "Acceleration",
-          book_location: [3, 1],
-          baked_book_location: [],
+          title: 'Acceleration',
+          book_location: [],
           student_count: 1,
           questions_answered_count: 5,
           clue: clue_matcher,
           page_ids: [kind_of(Integer)]
         },
         {
-          title: "Representing Acceleration with Equations and Graphs",
-          book_location: [3, 2],
-          baked_book_location: [],
+          title: 'Representing Acceleration with Equations and Graphs',
+          book_location: [],
           student_count: 1,
           questions_answered_count: 0,
           clue: clue_matcher,
@@ -255,9 +242,8 @@ RSpec.describe GetTeacherGuide, type: :routine do
       period_2_chapter_2_pages = guide.second['children'].second['children']
       expect(period_2_chapter_2_pages).to match [
         {
-          title: "Force",
-          book_location: [4, 1],
-          baked_book_location: [],
+          title: 'Force',
+          book_location: [],
           student_count: 1,
           questions_answered_count: 0,
           clue: clue_matcher,
@@ -265,8 +251,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         },
         {
           title: "Newton's First Law of Motion: Inertia",
-          book_location: [4, 2],
-          baked_book_location: [],
+          book_location: [],
           student_count: 1,
           questions_answered_count: 5,
           clue: clue_matcher,
@@ -274,8 +259,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         },
         {
           title: "Newton's Second Law of Motion",
-          book_location: [4, 3],
-          baked_book_location: [],
+          book_location: [],
           student_count: 1,
           questions_answered_count: 0,
           clue: clue_matcher,
@@ -283,8 +267,7 @@ RSpec.describe GetTeacherGuide, type: :routine do
         },
         {
           title: "Newton's Third Law of Motion",
-          book_location: [4, 4],
-          baked_book_location: [],
+          book_location: [],
           student_count: 1,
           questions_answered_count: 0,
           clue: clue_matcher,

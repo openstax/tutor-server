@@ -19,7 +19,7 @@ module Manager::EcosystemsActions
   protected
 
   def get_ecosystem
-    @ecosystem = Content::Ecosystem.find(params[:id])
+    @ecosystem = Content::Models::Ecosystem.find(params[:id])
   end
 
 end

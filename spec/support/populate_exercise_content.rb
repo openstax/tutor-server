@@ -3,27 +3,61 @@ require 'vcr_helper'
 module PopulateExerciseContent
   def generate_homework_test_exercise_content
     cnx_page_hashes = [
-      { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
-      { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }
+      { id: '1bb611e9-0ded-48d6-a107-fbb9bd900851', title: 'Introduction' },
+      { id: '95e61258-2faf-41d4-af92-f62e1414175a', title: 'Force' }
     ]
+
+    cnx_chapter_hashes = [
+      { title: "Dynamics: Force and Newton's Laws of Motion", contents: cnx_page_hashes }
+    ]
+
+    cnx_book_hash = {
+      id: '93e2b09d-261c-4007-a987-0b3062fe154b',
+      version: '4.4',
+      title: 'College Physics with Courseware',
+      tree: {
+        id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4',
+        title: 'College Physics with Courseware',
+        contents: cnx_chapter_hashes
+      }
+    }
+
+    cnx_book = OpenStax::Cnx::V1::Book.new hash: cnx_book_hash.deep_stringify_keys
+
+    @book = FactoryBot.create :content_book, title: 'College Physics with Courseware'
+
+    @ecosystem = FactoryBot.create :content_ecosystem
+
+    reading_processing_instructions = FactoryBot.build(
+      :content_book
+    ).reading_processing_instructions
+
+    @book = VCR.use_cassette(
+      'Tasks_Assistants_HomeworkAssistant/for_Introduction_and_Force/with_pages', VCR_OPTS
+    ) do
+      Content::ImportBook.call(
+        cnx_book: cnx_book,
+        ecosystem: @ecosystem,
+        reading_processing_instructions: reading_processing_instructions
+      ).outputs.book
+    end
+
+    @pages = @book.pages
 
     @intro_step_gold_data = {
       klass: Tasks::Models::TaskedReading,
       title: "Forces and Newton's Laws of Motion",
       related_content: [
-        {
-          title: "Forces and Newton's Laws of Motion",
-          book_location: [8, 1],
-          baked_book_location: []
-        }
+        { title: "Forces and Newton's Laws of Motion", book_location: [8, 1] }
       ]
     }
 
     @core_step_gold_data = [
-      @intro_step_gold_data,
-      { klass: Tasks::Models::TaskedReading,
-        title: "Force",
-        related_content: [{title: "Force", book_location: [8, 2], baked_book_location: []}] }
+      @intro_step_gold_data, {
+        klass: Tasks::Models::TaskedReading,
+        title: 'Force',
+        related_content: [ { title: 'Force', book_location: [] } ]
+      }
     ]
 
     @personalized_step_gold_data = []
@@ -34,28 +68,5 @@ module PopulateExerciseContent
 
     @task_step_gold_data = \
       @core_step_gold_data + @personalized_step_gold_data + @spaced_practice_step_gold_data
-
-    cnx_pages = cnx_page_hashes.map { |hash| OpenStax::Cnx::V1::Page.new(hash: hash) }
-
-    @chapter = FactoryBot.create :content_chapter, title: "Forces and Newton's Laws of Motion"
-
-    @ecosystem = ::Content::Ecosystem.new(strategy: ::Content::Strategies::Direct::Ecosystem.new(@chapter.book.ecosystem))
-
-    @content_pages = VCR.use_cassette(
-      'Tasks_Assistants_HomeworkAssistant/for_Introduction_and_Force/with_pages',
-      VCR_OPTS
-    ) do
-      cnx_pages.map.with_index do |cnx_page, ii|
-        Content::Routines::ImportPage.call(
-          cnx_page:  cnx_page,
-          chapter: @chapter,
-          book_location: [8, ii+1]
-        ).outputs.page.reload
-      end
-    end
-
-    @pages = @content_pages.map{ |content_page| Content::Page.new(strategy: content_page.wrap) }
-
-    Content::Routines::PopulateExercisePools[book: @chapter.book]
   end
 end

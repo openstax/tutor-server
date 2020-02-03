@@ -109,7 +109,7 @@ class Tasks::PopulatePlaceholderSteps
       # Bail if we are supposed to retry this in the background
       return if !result[:accepted] && skip_unready
 
-      chosen_exercises = result[:exercises].map(&:to_model)
+      chosen_exercises = result[:exercises]
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       exercise_spy_info = spy_info.fetch('exercises', {})
 
@@ -213,7 +213,7 @@ class Tasks::PopulatePlaceholderSteps
       # Bail if we are supposed to retry this in the background
       return if !result[:accepted] && skip_unready
 
-      chosen_exercises = result[:exercises].map(&:to_model)
+      chosen_exercises = result[:exercises]
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
       exercise_spy_info = spy_info.fetch('exercises', {})
 

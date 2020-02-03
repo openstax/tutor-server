@@ -22,10 +22,8 @@ RSpec.describe Content::Models::Ecosystem, type: :model do
   it { is_expected.to have_many(:courses) }
 
   it { is_expected.to have_many(:books) }
-  it { is_expected.to have_many(:chapters) }
   it { is_expected.to have_many(:pages) }
   it { is_expected.to have_many(:exercises) }
-  it { is_expected.to have_many(:pools) }
 
   it { is_expected.to have_many(:to_maps) }
   it { is_expected.to have_many(:from_maps) }

@@ -50,6 +50,6 @@ class Admin::UsersController < Admin::BaseController
   private
 
   def get_user
-    @user = User::User.find(params[:id])
+    @user = User::Models::Profile.find(params[:id])
   end
 end

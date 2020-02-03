@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::DistrictsController, type: :controller do
-  let(:admin)    { FactoryBot.create(:user, :administrator) }
+  let(:admin)    { FactoryBot.create(:user_profile, :administrator) }
   let(:district) { FactoryBot.build :school_district_district, name: 'Hello World' }
 
   before { controller.sign_in(admin) }

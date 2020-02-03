@@ -6,17 +6,17 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, vcr: VCR_OPTS, speed: :medium do
 
   before(:all) do
-    @user_1 = FactoryBot.create :user
+    @user_1 = FactoryBot.create :user_profile
     @user_1_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: @user_1.id
 
-    @user_2 = FactoryBot.create :user
+    @user_2 = FactoryBot.create :user_profile
     FactoryBot.create :doorkeeper_access_token, resource_owner_id: @user_2.id
 
     @userless_token = FactoryBot.create :doorkeeper_access_token
 
     @book = FactoryBot.create :content_book, :standard_contents_1
-    @ecosystem = Content::Ecosystem.new strategy: @book.ecosystem.wrap
-    @offering = FactoryBot.create :catalog_offering, ecosystem: @ecosystem.to_model
+    @ecosystem = @book.ecosystem
+    @offering = FactoryBot.create :catalog_offering, ecosystem: @ecosystem
 
     @course = FactoryBot.create :course_profile_course,
                                 offering: @offering, name: 'Physics 101', is_college: true
@@ -545,13 +545,13 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
     before(:all) do
       DatabaseCleaner.start
 
-      student_user = FactoryBot.create :user
+      student_user = FactoryBot.create :user_profile
       @student_role = AddUserAsPeriodStudent[user: student_user, period: @period]
       @student_token = FactoryBot.create :doorkeeper_access_token,
                                          resource_owner_id: student_user.id,
                                          expires_in: 1.year
 
-      teacher_user = FactoryBot.create :user, first_name: 'Bob',
+      teacher_user = FactoryBot.create :user_profile, first_name: 'Bob',
                                               last_name: 'Newhart',
                                               full_name: 'Bob Newhart'
       @teacher_role = AddUserAsCourseTeacher[user: teacher_user, course: @course]
@@ -819,21 +819,21 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       @course.update_attribute :does_cost, true
       @period_2 = FactoryBot.create :course_membership_period, course: @course
 
-      @student_user = FactoryBot.create :user
+      @student_user = FactoryBot.create :user_profile
       @student_role = AddUserAsPeriodStudent[user: @student_user, period: @period]
       @student = @student_role.student
       @student_token = FactoryBot.create :doorkeeper_access_token,
                                          resource_owner_id: @student_user.id
 
-      @student_user_2 = FactoryBot.create :user
+      @student_user_2 = FactoryBot.create :user_profile
       @student_role_2 = AddUserAsPeriodStudent[user: @student_user_2, period: @period]
       @student_2 = @student_role_2.student
 
-      @student_user_3 = FactoryBot.create :user
+      @student_user_3 = FactoryBot.create :user_profile
       @student_role_3 = AddUserAsPeriodStudent[user: @student_user_3, period: @period_2]
       @student_3 = @student_role_3.student
 
-      @teacher_user = FactoryBot.create :user, first_name: 'Bob',
+      @teacher_user = FactoryBot.create :user_profile, first_name: 'Bob',
                                                last_name: 'Newhart',
                                                full_name: 'Bob Newhart'
       @teacher_role = AddUserAsCourseTeacher[user: @teacher_user, course: @course]

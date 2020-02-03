@@ -12,7 +12,7 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
     @course = FactoryBot.create :course_profile_course, :with_assistants
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
-    @teacher = FactoryBot.create(:user)
+    @teacher = FactoryBot.create(:user_profile)
     SetupPerformanceReportData[course: @course, teacher: @teacher, ecosystem: @ecosystem]
 
     reading_assistant = @course.course_assistants
