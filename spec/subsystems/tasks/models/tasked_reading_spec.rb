@@ -19,11 +19,9 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
 
       let(:content) do
         <<~HTML
-        <body>
           <div data-type="document-title" id="35337">
             #{content_preview_doc_title}
           </div>
-        </body>
         HTML
       end
 
@@ -37,11 +35,9 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
 
       let(:content) do
         <<~HTML
-        <body>
           <div data-type="title" id="35337">
             #{content_preview_title}
           </div>
-        </body>
         HTML
       end
 
@@ -55,11 +51,9 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
 
       let(:content) do
         <<~HTML
-        <body>
           <div class="os-title">
             #{content_preview_class}
           </div>
-        </body>
         HTML
       end
 
@@ -69,12 +63,7 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
     end
 
     context "When there is no markup with title content" do
-      let(:content) do
-        <<~HTML
-        <body>
-        </body>
-        HTML
-      end
+      let(:content) { '' }
 
       it "defaults to page title" do
         expect(tasked_reading.content_preview).to eq(tasked_reading.task_step.page.title)

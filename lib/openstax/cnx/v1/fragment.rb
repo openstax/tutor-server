@@ -13,21 +13,7 @@ class OpenStax::Cnx::V1::Fragment
     false
   end
 
-  def node
-    raise "#{self.class.name} has no content" unless respond_to?(:to_html)
-
-    Nokogiri::HTML to_html
-  end
-
-  def has_css?(css, custom_css)
-    return false unless respond_to?(:to_html)
-
-    !node.at_css(css, custom_css).nil?
-  end
-
-  def append(new_node)
-    content_node = node
-    content_node.root << new_node
-    @to_html = content_node.to_html
+  def html?
+    false
   end
 end

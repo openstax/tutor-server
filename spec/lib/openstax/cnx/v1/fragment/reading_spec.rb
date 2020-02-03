@@ -44,7 +44,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Reading, type: :external, vcr: VCR_O
     expect(reading_fragments.size).to eq 1
     reading_fragment = reading_fragments.first
 
-    doc = Nokogiri::HTML(reading_fragment.to_html)
+    doc = Nokogiri::HTML.fragment(reading_fragment.to_html)
     body = doc.at_css('body')
     expect(body.at_css('[href="#"]')).not_to be_nil
     expect(body.at_css('[href="#content"]')).not_to be_nil

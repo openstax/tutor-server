@@ -6,6 +6,7 @@ require_relative './v1/configuration'
 require_relative './v1/custom_css'
 
 require_relative './v1/fragment'
+require_relative './v1/fragment/html'
 require_relative './v1/fragment/embedded'
 require_relative './v1/fragment/video'
 require_relative './v1/fragment/interactive'

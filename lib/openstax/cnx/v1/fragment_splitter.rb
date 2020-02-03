@@ -49,10 +49,13 @@ module OpenStax::Cnx::V1
             css_array << "[href$=\"##{linkable[:name]}\"]" unless linkable[:name].nil?
             css = css_array.join(', ')
 
-            result.select { |fragment| fragment.has_css? css, custom_css }
+            result.select(&:html?)
+                  .select { |fragment| fragment.has_css? css, custom_css }
                   .each   { |fragment| fragment.append node.dup }
           end
         end
+
+        result.select(&:html?).each(&:transform_links!)
       end
     end
 

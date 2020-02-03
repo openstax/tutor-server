@@ -119,9 +119,10 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
 
     let(:fragments)         { fragment_splitter.split_into_fragments(@page.root) }
 
-    it 'moves footnotes to the fragments that link to them' do
+    it 'moves footnotes to the fragments that link to them and changes links to be relative' do
       expect(fragments.map(&:class)).to eq [ OpenStax::Cnx::V1::Fragment::Reading ] * 5
-      expect(fragments.first.to_html.last(250)).to include('Quoted by Steve Vogel in')
+      expect(fragments.first.node.at_css('[href="#footnote1"]')).not_to be_nil
+      expect(fragments.first.node.at_css('body').text).to include('Quoted by Steve Vogel in')
       fragments[1..-1].each do |fragment|
         expect(fragment.to_html).not_to include('Quoted by Steve Vogel in')
       end

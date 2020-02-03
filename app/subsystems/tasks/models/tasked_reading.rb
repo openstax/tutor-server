@@ -22,18 +22,18 @@ class Tasks::Models::TaskedReading < IndestructibleRecord
   private
 
   def class_title
-    content_dom.xpath("//*[contains(@class, 'os-title')]").first&.inner_html&.strip
+    content_dom.css('.os-title').first&.inner_html&.strip
   end
 
   def document_title
-    content_dom.xpath("//*[@data-type='document-title']").first&.inner_html&.strip
+    content_dom.css('[data-type="document-title"]').first&.inner_html&.strip
   end
 
   def data_title
-    content_dom.xpath("//*[@data-type='title']").first&.inner_html&.strip
+    content_dom.css('[data-type="title"]').first&.inner_html&.strip
   end
 
   def content_dom
-    @content_dom ||= Nokogiri::HTML(content)
+    @content_dom ||= Nokogiri::HTML.fragment(content)
   end
 end
