@@ -2,7 +2,11 @@ class Api::V1::Demo::Work::Course::Representer < Api::V1::Demo::CourseRepresente
   collection :task_plans,
              extend: Api::V1::Demo::Work::Course::TaskPlan::Representer,
              class: Demo::Mash,
-             getter: ->(*) { Tasks::Models::TaskPlan.where(owner: self).preload(:tasking_plans) },
+             getter: ->(*) do
+               Tasks::Models::TaskPlan.where(owner: self).where.not(
+                 type: 'event'
+               ).preload(:tasking_plans)
+             end,
              readable: true,
              writeable: true,
              schema_info: { required: true }
