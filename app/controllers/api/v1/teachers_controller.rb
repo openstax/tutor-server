@@ -17,7 +17,12 @@ class Api::V1::TeachersController < Api::V1::ApiController
   EOS
   def destroy
     OSU::AccessPolicy.require_action_allowed!(:destroy, current_api_user, @teacher)
-    standard_destroy(@teacher, Api::V1::TeacherRepresenter)
+
+    standard_destroy(@teacher, Api::V1::TeacherRepresenter) do
+      @teacher.role.profile.roles.teacher_student.map(&:teacher_student).compact.select do |ts|
+        ts.course_profile_course_id == @teacher.course_profile_course_id
+      end.reject(&:deleted?).each(&:destroy!)
+    end
   end
 
   protected
@@ -25,5 +30,4 @@ class Api::V1::TeachersController < Api::V1::ApiController
   def get_teacher
     @teacher = CourseMembership::Models::Teacher.find(params[:id])
   end
-
 end
