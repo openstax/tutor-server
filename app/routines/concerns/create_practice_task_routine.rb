@@ -26,11 +26,7 @@ module CreatePracticeTaskRoutine
   end
 
   def send_task_to_biglearn
-    OpenStax::Biglearn::Api.create_update_assignments(
-      course: @course,
-      task: @task,
-      goal_num_tutor_assigned_pes: NUM_BIGLEARN_EXERCISES
-    )
+    OpenStax::Biglearn::Api.create_update_assignments course: @course, task: @task
   end
 
   def exec(course:, role:, **args)

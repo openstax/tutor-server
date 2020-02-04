@@ -2,7 +2,6 @@ require 'rails_helper'
 require_relative 'shared_examples_for_create_practice_task_routines'
 
 RSpec.describe CreatePracticeSpecificTopicsTask, type: :routine, speed: :medium do
-
   include_examples 'a routine that creates practice tasks',
                    -> { described_class.call course: course, role: role, page_ids: [ page.id ] }
 
@@ -35,7 +34,6 @@ RSpec.describe CreatePracticeSpecificTopicsTask, type: :routine, speed: :medium 
       .and change { Tasks::Models::Tasking.count }.by(1)
       .and change { Tasks::Models::TaskStep.count }.by(1)
       .and change { Tasks::Models::TaskedPlaceholder.count }.by(1)
-      .and change { course.reload.sequence_number }.by(2)
+      .and change { course.reload.sequence_number }.by(1)
   end
-
 end
