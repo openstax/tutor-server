@@ -17,7 +17,7 @@ class CreatePracticeWorstTopicsTask
     result = OpenStax::Biglearn::Api.fetch_practice_worst_areas_exercises(
       student: @role.course_member
     )
-    exercises = result[:exercises].first(CreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES)
+    exercises = result[:exercises].first CreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES
     spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
 
     fatal_error(

@@ -25,7 +25,22 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine, speed: :medium d
     @task.reload
   end
 
-  subject { described_class.call(task: @task) }
+  let(:skip_unready) { false }
+
+  subject { described_class.call(task: @task, skip_unready: skip_unready) }
+
+  context 'with skip_unready and Biglearn not ready' do
+    let(:skip_unready) { true }
+
+    it 'does not send the task to Biglearn again' do
+      expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(accepted: false)
+      expect_any_instance_of(Tasks::Models::Task).not_to receive(:update_step_counts)
+      expect(OpenStax::Biglearn::Api).not_to receive(:create_update_assignments)
+
+      expect { subject }.to  not_change { @task.reload.pes_are_assigned }
+                        .and not_change { @task.reload.spes_are_assigned }
+    end
+  end
 
   context 'with not all core steps completed' do
     before { expect(@task).not_to be_core_task_steps_completed }

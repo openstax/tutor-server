@@ -41,17 +41,16 @@ class CreatePracticeSpecificTopicsTask
     after_transaction do
       # This needs to happen after the transaction where the task is created
       # so it can be sent to Biglearn in the background
-      outs = Tasks::PopulatePlaceholderSteps.call(task: @task, skip_unready: true).outputs
-      outputs.task = outs.task
-
-      next unless outs.accepted && outs.task.task_steps.reject(&:placeholder?).empty?
+      outputs.task = Tasks::PopulatePlaceholderSteps.call(
+        task: @task, skip_unready: true
+      ).outputs.task
 
       nonfatal_error(
         code: :no_exercises,
         message: "No exercises were returned from Biglearn to build the Practice Widget." +
                  " [Course: #{@course.id} - Role: #{@role.id}" +
                  " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
-      )
+      ) if outputs.task.pes_are_assigned && outputs.task.task_steps.empty?
     end
   end
 end

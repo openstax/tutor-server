@@ -13,7 +13,6 @@ class Tasks::PopulatePlaceholderSteps
   def exec(task:, force: false, lock_task: true, background: false,
            skip_unready: false, populate_spes: true)
     outputs.task = task
-    outputs.accepted = true
 
     return if already_populated?(task, populate_spes)
 
@@ -30,9 +29,10 @@ class Tasks::PopulatePlaceholderSteps
     biglearn_controls_pe_slots = task.practice?
     biglearn_controls_spe_slots = false
 
+    pes_populated = false
     unless task.pes_are_assigned
       # Populate PEs
-      task, accepted = populate_placeholder_steps(
+      populate_placeholder_steps(
         task: task,
         group_type: :personalized_group,
         exercise_type: :pe,
@@ -40,7 +40,7 @@ class Tasks::PopulatePlaceholderSteps
         background: background,
         skip_unready: skip_unready
       )
-      outputs.accepted = false unless accepted
+      pes_populated = task.pes_are_assigned
     end
 
     taskings = task.taskings
@@ -48,9 +48,10 @@ class Tasks::PopulatePlaceholderSteps
 
     # To prevent "skim-filling", skip populating
     # spaced practice if not all core problems have been completed
+    spes_populated = false
     if populate_spes && !task.spes_are_assigned && (force || task.core_task_steps_completed?)
       # Populate SPEs
-      task, accepted = populate_placeholder_steps(
+      populate_placeholder_steps(
         task: task,
         group_type: :spaced_practice_group,
         exercise_type: :spe,
@@ -58,8 +59,10 @@ class Tasks::PopulatePlaceholderSteps
         background: background,
         skip_unready: skip_unready
       )
-      outputs.accepted = false unless accepted
+      spes_populated = task.spes_are_assigned
     end
+
+    return unless pes_populated || spes_populated
 
     # Save pes_are_assigned/spes_are_assigned and step counts
     task.update_step_counts.save validate: false
@@ -104,7 +107,7 @@ class Tasks::PopulatePlaceholderSteps
                                                    inline_sleep_interval: BIGLEARN_SLEEP_INTERVAL,
                                                    enable_warnings: !skip_unready
       # Bail if we are supposed to retry this in the background
-      return [ task, false ] if !result[:accepted] && skip_unready
+      return if !result[:accepted] && skip_unready
 
       chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
@@ -193,7 +196,7 @@ class Tasks::PopulatePlaceholderSteps
       end
       if placeholder_steps.empty?
         task.update_attribute boolean_attribute, true
-        return [ task, true ]
+        return
       end
 
       ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
@@ -208,7 +211,7 @@ class Tasks::PopulatePlaceholderSteps
         enable_warnings: !skip_unready
       )
       # Bail if we are supposed to retry this in the background
-      return [ task, false ] if !result[:accepted] && skip_unready
+      return if !result[:accepted] && skip_unready
 
       chosen_exercises = result[:exercises].map(&:to_model)
       spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
@@ -311,7 +314,5 @@ class Tasks::PopulatePlaceholderSteps
     task.send "#{boolean_attribute}=", true
     task.send "#{exercise_type}_calculation_uuid=", result[:calculation_uuid]
     task.send "#{exercise_type}_ecosystem_matrix_uuid=", result[:ecosystem_matrix_uuid]
-
-    [ task, !!result[:accepted] ]
   end
 end
