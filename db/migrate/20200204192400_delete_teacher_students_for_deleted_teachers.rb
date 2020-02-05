@@ -1,6 +1,6 @@
 class DeleteTeacherStudentsForDeletedTeachers < ActiveRecord::Migration[5.2]
   def up
-    CourseMembership::Models::Teacher.where.not(deleted_at: nil).preload(
+    CourseMembership::Models::Teacher.only_deleted.preload(
       role: { profile: { roles: :teacher_student } }
     ).find_each do |teacher|
       teacher.role.profile.roles.map(&:teacher_student).compact.select do |teacher_student|
