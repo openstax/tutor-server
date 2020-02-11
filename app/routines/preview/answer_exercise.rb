@@ -1,6 +1,5 @@
 module Preview
   class AnswerExercise
-
     lev_routine
 
     uses_routine MarkTaskStepCompleted, as: :mark_completed
@@ -19,10 +18,10 @@ module Preview
       end
 
       if is_correct
-        free_response ||= 'A sentence explaining all the things!'
+        free_response = 'A sentence explaining all the things!' if free_response.blank?
         answer_id = tasked.correct_answer_id
       else
-        free_response ||= 'A sentence explaining all the wrong things...'
+        free_response = 'A sentence explaining all the wrong things...' if free_response.blank?
         wrong_answer_ids = tasked.answer_ids.reject { |id| id == tasked.correct_answer_id }
         raise "No incorrect answers to choose" if wrong_answer_ids.size == 0
         answer_id = wrong_answer_ids.shuffle.first
@@ -32,6 +31,5 @@ module Preview
 
       run(:mark_completed, task_step: task_step, completed_at: completed_at) if is_completed
     end
-
   end
 end
