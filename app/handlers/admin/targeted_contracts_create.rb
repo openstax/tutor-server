@@ -9,7 +9,7 @@ class Admin::TargetedContractsCreate
     attribute :masked_contract_names
   end
 
-  uses_routine Legal::CreateTargetedContract
+  uses_routine Legal::CreateTargetedContract, translations: { outputs: { type: :verbatim } }
 
   protected
 

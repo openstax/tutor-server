@@ -29,9 +29,9 @@ class Admin::UsersUpdate
   # The :profile option is required
   def handle
     user = options[:user]
-    outputs[:user] = user
+    outputs.user = user
     account = user.account
-    outputs[:account] = account
+    outputs.account = account
 
     # Validate the account but do not call save
     # Use update_columns to prevent save callbacks that would send updates to Accounts
