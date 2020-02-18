@@ -63,7 +63,6 @@ FactoryBot.define do
     content { tree.to_json }
 
     after(:build) do |book, evaluator|
-      evaluator.pages = []
       children = book.children.reverse
       while !children.empty? do
         child = children.pop
@@ -74,12 +73,11 @@ FactoryBot.define do
             attributes[attr] = val unless val.nil?
           end
 
-          evaluator.pages << build(:content_page, attributes)
+          book.pages << build(:content_page, attributes)
         else
           children.concat child.children.reverse
         end
       end
-      book.pages = evaluator.pages
     end
 
     after(:create) do |book, evaluator|
@@ -100,8 +98,8 @@ FactoryBot.define do
     transient do
       empty_exercise_pools do
         {}.tap do |pools|
-          Content::Models::Page.pool_types.each do |pool_type|
-            pools["#{pool_type}_exercise_ids".to_sym] = []
+          Content::Models::Page::EXERCISE_ID_FIELDS.each do |field|
+            pools[field] = []
           end
         end
       end

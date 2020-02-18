@@ -1,4 +1,13 @@
 class Content::Models::Page < IndestructibleRecord
+  POOL_TYPES = [
+    :all,
+    :reading_context,
+    :reading_dynamic,
+    :homework_core,
+    :homework_dynamic,
+    :practice_widget
+  ]
+  EXERCISE_ID_FIELDS = POOL_TYPES.map { |type| "#{type}_exercise_ids".to_sym }
   acts_as_resource
 
   auto_uuid :tutor_uuid

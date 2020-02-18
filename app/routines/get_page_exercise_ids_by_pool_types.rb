@@ -7,7 +7,7 @@ class GetPageExerciseIdsByPoolTypes
     pool_types = [ pool_types ].flatten.compact.uniq
 
     # Default to all types
-    pool_types = Content::Models::Page.pool_types if pool_types.empty?
+    pool_types = Content::Models::Page::POOL_TYPES if pool_types.empty?
 
     pool_method_name_by_pool_type = {}
     pool_types.each do |pool_type|

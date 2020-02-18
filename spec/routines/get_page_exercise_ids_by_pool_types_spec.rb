@@ -21,7 +21,7 @@ RSpec.describe GetPageExerciseIdsByPoolTypes, type: :routine do
           page.homework_dynamic_exercise_ids
         end
 
-        expect(Set.new pools_map.keys).to eq Set.new Content::Models::Page.pool_types.map(&:to_s)
+        expect(Set.new pools_map.keys).to eq Set.new Content::Models::Page::POOL_TYPES.map(&:to_s)
         expect(Set.new pools_map.values.flatten).to eq Set.new pools
       end
     end
@@ -58,7 +58,7 @@ RSpec.describe GetPageExerciseIdsByPoolTypes, type: :routine do
           page.homework_dynamic_exercise_ids
         end
 
-        expect(Set.new pools_map.keys).to eq Set.new Content::Models::Page.pool_types.map(&:to_s)
+        expect(Set.new pools_map.keys).to eq Set.new Content::Models::Page::POOL_TYPES.map(&:to_s)
         expect(Set.new pools_map.values.flatten).to eq Set.new pools
       end
     end

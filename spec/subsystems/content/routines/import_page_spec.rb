@@ -50,10 +50,10 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
       los_set = Set.new Content::Models::Tag.lo.order(:created_at).last(4).map(&:value)
       expect(los_set).to eq(expected_page_los_set + expected_exercise_los_set)
 
-      routine_tags_set = Set.new result.outputs.tags.map(&:value)
+      routine_tags_set = Set.new result.outputs.page.tags.map(&:value)
       expect(routine_tags_set).to eq expected_routine_tags_set
 
-      page_tags_set = Set.new Content::Models::Page.last.page_tags.map{ |pt| pt.tag.value }
+      page_tags_set = Set.new Content::Models::Page.last.page_tags.map { |pt| pt.tag.value }
       expect(page_tags_set).to eq expected_routine_tags_set + expected_page_los_set
     end
 
@@ -118,7 +118,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
       tag = Content::Models::Tag.cnxmod.order(:created_at).last
       expect(tag.value).to eq expected_page_tag
 
-      routine_tags = result.outputs.tags
+      routine_tags = result.outputs.page.tags
       expect(routine_tags.map(&:value)).to eq [expected_page_tag]
 
       page_tag_values = Content::Models::Page.order(:created_at).last.page_tags
@@ -139,7 +139,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS, spe
       page_cnxmods = page.cnxmods
       expect(page_cnxmods).not_to be_empty
 
-      exercises.each{ |exercise| expect(exercise.cnxmods & page_cnxmods).not_to be_empty }
+      exercises.each { |exercise| expect(exercise.cnxmods & page_cnxmods).not_to be_empty }
     end
   end
 

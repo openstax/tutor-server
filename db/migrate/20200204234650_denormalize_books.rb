@@ -115,25 +115,20 @@ class DenormalizeBooks < ActiveRecord::Migration[5.2]
                 short_id: page.short_id,
                 tutor_uuid: page.tutor_uuid
               }.tap do |pg|
-                Content::Models::Page.pool_types.each do |pool_type|
-                  pool_method_name = "#{pool_type}_exercise_ids".to_sym
-                  pg[pool_method_name] = page.public_send pool_method_name
+                Content::Models::Page::EXERCISE_ID_FIELDS.each do |field|
+                  pg[field] = page.public_send field
                 end
               end
             end
           }.tap do |ch|
-            Content::Models::Page.pool_types.each do |pool_type|
-              pool_method_name = "#{pool_type}_exercise_ids".to_sym
-              ch[pool_method_name] = ch[:children].flat_map { |child| child[pool_method_name] }.uniq
+            Content::Models::Page::EXERCISE_ID_FIELDS.each do |field|
+              ch[field] = ch[:children].flat_map { |child| child[field] }.uniq
             end
           end
         end
       }.deep_stringify_keys
-      Content::Models::Page.pool_types.each do |pool_type|
-        pool_method_name = "#{pool_type}_exercise_ids"
-        book.tree[pool_method_name] = book.tree['children'].flat_map do |child|
-          child[pool_method_name]
-        end.uniq
+      Content::Models::Page::EXERCISE_ID_FIELDS.map(&:to_s).each do |field|
+        book.tree[field] = book.tree['children'].flat_map { |child| child[field] }.uniq
       end
 
       book.save!

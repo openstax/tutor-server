@@ -8,16 +8,23 @@ class Content::ImportBook
 
   protected
 
-  def import_pages!(book, book_part)
-    book_part.parts.flat_map do |part|
+  def import_pages!(book, book_part, all_tags = nil)
+    pages = book_part.parts.flat_map do |part|
       if part.is_a?(OpenStax::Cnx::V1::Page)
-        outs = run(:import_page, book: book, cnx_page: part, save: false).outputs
-        outputs.page_taggings = (outputs.page_taggings || []) + outs.taggings
+        outs = run(
+          :import_page, book: book, cnx_page: part, save: false, all_tags: all_tags
+        ).outputs
+
+        all_tags = outs.all_tags
+
         outs.page
       else
-        import_pages! book, part
+        pages, all_tags = import_pages! book, part, all_tags
+        pages
       end
     end
+
+    [ pages, all_tags ]
   end
 
   def build_tree(book_part:, subtype:, ordered_pages:, page_index:)
@@ -32,9 +39,8 @@ class Content::ImportBook
         hash.merge!(
           page.attributes.symbolize_keys.slice :id, :uuid, :version, :short_id, :tutor_uuid
         )
-        Content::Models::Page.pool_types.each do |pool_type|
-          pool_method_name = "#{pool_type}_exercise_ids".to_sym
-          hash[pool_method_name] = page.public_send pool_method_name
+        Content::Models::Page::EXERCISE_ID_FIELDS.each do |field|
+          hash[field] = page.public_send field
         end
         page_index += 1
       else
@@ -46,9 +52,8 @@ class Content::ImportBook
           ordered_pages: ordered_pages,
           page_index: page_index
         )
-        Content::Models::Page.pool_types.each do |pool_type|
-          pool_method_name = "#{pool_type}_exercise_ids".to_sym
-          hash[pool_method_name] = hash[:children].flat_map { |child| child[pool_method_name] }.uniq
+        Content::Models::Page::EXERCISE_ID_FIELDS.each do |field|
+          hash[field] = hash[:children].flat_map { |child| child[field] }.uniq
         end
       end
 
@@ -77,43 +82,53 @@ class Content::ImportBook
     )
 
     # Populate book.pages based on the cnx_book
-    ordered_pages = import_pages! book, root_book_part
+    ordered_pages, all_tags = import_pages! book, root_book_part
+
+    changed_tags = all_tags.filter(&:changed?)
+    Content::Models::Tag.import changed_tags, validate: false, on_duplicate_key_update: {
+      conflict_target: [ :value, :content_ecosystem_id ],
+      columns: [ :name, :description, :tag_type ]
+    }
+
+    # To avoid weird behavior after import, we have to reset the imported association
+    ecosystem.tags.reset
 
     # The book's tree is currently empty, but we need page ids and exercise uuids
     # before we can store the book tree, and the pages can only be saved if the book has an id
     Content::Models::Book.import [book], recursive: true, validate: false
 
-    import_page_tags = outputs.page_taggings.filter { |pt| pt.tag.import? }
-
-    pages_by_id = ordered_pages.index_by(&:id)
+    # Reset ordered_pages also to avoid weird behavior
+    pages_by_id = book.pages.reset.preload(:tags).index_by(&:id)
+    ordered_pages = ordered_pages.map { |page| pages_by_id[page.id] }
 
     import_page_map = {}
-    import_page_tags.each do |page_tag|
-      import_page_map[page_tag.tag.value] = pages_by_id[page_tag.content_page_id]
+    ordered_pages.each do |page|
+      page.tags.select(&:import?).each { |tag| import_page_map[tag.value] = page }
     end
-
-    outputs.exercises = []
-    imported_exercise_numbers = Set.new
 
     # If an exercise could go into multiple pages,
     # we always break ties by putting it in the page that appears last in the book
     page_block = ->(exercise_wrapper) do
-      tags = exercise_wrapper.import_tags
-      pages = tags.map { |tag| import_page_map[tag] }.compact.uniq
+      pages = exercise_wrapper.import_tags.map { |tag| import_page_map[tag] }.compact.uniq
       pages.max_by(&:book_location)
     end
 
     query_hash = if exercise_uids.nil?
       # Exercises not in manifest
-      { tag: import_page_tags.map { |pt| pt.tag.value } }
+      { tag: import_page_map.keys }
     else
       # Exercises in manifest
       { uid: exercise_uids }
     end
 
-    run :import_exercises, ecosystem: ecosystem, page: page_block, query_hash: query_hash
+    run(
+      :import_exercises,
+      ecosystem: ecosystem, page: page_block, query_hash: query_hash, all_tags: all_tags
+    )
 
-    run :populate_exercise_pools, book: book, pages: ordered_pages
+    ordered_pages = run(
+      :populate_exercise_pools, book: book, pages: ordered_pages, save: false
+    ).outputs.pages
 
     # Now that we have page ids and exercise uuids, we can go back and store the book tree
     book.tree = {
@@ -134,16 +149,18 @@ class Content::ImportBook
     book.tree[:children], _ = build_tree(
       book_part: root_book_part, subtype: subtype, ordered_pages: ordered_pages, page_index: 0
     )
-    Content::Models::Page.pool_types.each do |pool_type|
-      pool_method_name = "#{pool_type}_exercise_ids".to_sym
-      book.tree[pool_method_name] = book.tree[:children].flat_map do |child|
-        child[pool_method_name]
-      end.uniq
+    Content::Models::Page::EXERCISE_ID_FIELDS.each do |field|
+      book.tree[field] = book.tree[:children].flat_map { |child| child[field] }.uniq
     end
     book.save!
 
     # Transform links to point to the Tutor book etc
-    run :transform_and_cache_content, book: book
+    ordered_pages = run(
+      :transform_and_cache_content, book: book, pages: ordered_pages, save: false
+    ).outputs.pages
+
+    # Pages are large enough that saving them individually seems faster than importing
+    ordered_pages.each(&:save!)
 
     outputs.book = book
     outputs.pages = ordered_pages

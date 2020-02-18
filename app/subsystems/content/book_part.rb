@@ -7,11 +7,9 @@ class Content::BookPart
     @tree = tree.deep_symbolize_keys
   end
 
-  pool_methods = Content::Models::Page.pool_types.map do |pool_type|
-    "#{pool_type}_exercise_ids".to_sym
-  end
   (
-    [ :id, :type, :uuid, :version, :short_id, :tutor_uuid, :title, :book_location ] + pool_methods
+    [ :id, :type, :uuid, :version, :short_id, :tutor_uuid, :title, :book_location ] +
+    Content::Models::Page::EXERCISE_ID_FIELDS
   ).each do |key|
     define_method(key) { tree[key] }
   end

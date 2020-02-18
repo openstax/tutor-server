@@ -1,20 +1,14 @@
 class Content::Routines::ImportPage
   lev_routine express_output: :page
 
-  uses_routine Content::Routines::FindOrCreateTags,
-               as: :find_or_create_tags, translations: { outputs: { type: :verbatim } }
-
-  uses_routine Content::Routines::TagResource,
-               as: :tag, translations: { outputs: { type: :verbatim } }
-
-  uses_routine Content::Routines::ImportExercises,
-               as: :import_exercises, translations: { outputs: { type: :verbatim } }
+  uses_routine Content::Routines::TagResource, as: :tag
+  uses_routine Content::Routines::ImportExercises, as: :import_exercises
 
   protected
 
   # Imports and saves a Cnx::Page as a Content::Models::Page into the given book's tree
   # Returns the Content::Models::Page object
-  def exec(cnx_page:, book:, book_location: nil, save: true)
+  def exec(cnx_page:, book:, book_location: nil, save: true, all_tags: nil)
     ecosystem = book.ecosystem
 
     cnx_page.convert_content!
@@ -33,18 +27,22 @@ class Content::Routines::ImportPage
     outputs.page.save if save
     transfer_errors_from(outputs.page, { type: :verbatim }, true)
 
-    tags = cnx_page.tags
-
     # Tag the Page
-    run(:find_or_create_tags, ecosystem: ecosystem, input: tags)
-    run(:tag, outputs.page, outputs.tags, tagging_class: Content::Models::PageTag, save: save)
-
-    outputs.exercises = []
+    outs = run(
+      :tag,
+      ecosystem: ecosystem,
+      resource: outputs.page,
+      tags: cnx_page.tags,
+      tagging_class: Content::Models::PageTag,
+      save_tags: save,
+      all_tags: all_tags
+    ).outputs
+    outputs.all_tags = outs.all_tags
 
     return unless save
 
     # Get Exercises from OpenStax Exercises that match the LO, AP LO or UUID tags
-    import_tags = outputs.tags.select(&:import?).map(&:value)
+    import_tags = outs.tags.select(&:import?).map(&:value)
 
     return if import_tags.empty?
 

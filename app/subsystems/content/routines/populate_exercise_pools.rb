@@ -12,8 +12,8 @@ class Content::Routines::PopulateExercisePools
 
   def exec(book:, pages: nil, save: true)
     ecosystem = book.ecosystem
-    # Use preload here instead of eager_load here to avoid a memory usage spike
-    pages ||= book.pages.preload(exercises: :tags)
+    pages ||= book.pages.to_a
+    ActiveRecord::Associations::Preloader.new.preload(pages, exercises: :tags)
 
     hs_logic = HS_UUIDS.include?(book.uuid)
     college_logic = !hs_logic
@@ -100,6 +100,6 @@ class Content::Routines::PopulateExercisePools
 
     return unless save
 
-    outputs.pages.each(&:save!)
+    pages.each(&:save!)
   end
 end

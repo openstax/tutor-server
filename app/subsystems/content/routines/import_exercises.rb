@@ -1,19 +1,14 @@
 class Content::Routines::ImportExercises
   lev_routine
 
-  uses_routine Content::Routines::FindOrCreateTags,
-               as: :find_or_create_tags,
-               translations: { outputs: { type: :verbatim } }
-  uses_routine Content::Routines::TagResource,
-               as: :tag,
-               translations: { outputs: { type: :verbatim } }
+  uses_routine Content::Routines::TagResource, as: :tag
 
   protected
 
   # page can be a Content::Models::Page or a block
   # that takes an OpenStax::Exercises::V1::Exercise
   # and returns a Content::Models::Page for that exercise
-  def exec(ecosystem:, page:, query_hash:, collaborators: [])
+  def exec(ecosystem:, page:, query_hash:, collaborators: [], all_tags: nil)
     # Query the exercises to get a list of OpenStax::Exercises::V1::Exercise
     if collaborators.any?
       query_hash = query_hash.merge collaborator: collaborators.join(',')
@@ -55,11 +50,6 @@ class Content::Routines::ImportExercises
         wrapper_to_exercise_page_map[wrapper] = exercise_page
       end
 
-      # Pre-build all tags we are going to need in one shot
-      wrapper_tag_hashes = wrappers.flat_map(&:tag_hashes).uniq { |hash| hash[:value] }
-      run(:find_or_create_tags, ecosystem: ecosystem, input: wrapper_tag_hashes)
-      tag_map = outputs.tags.index_by(&:value)
-
       exercises = wrapper_to_exercise_page_map.map do |wrapper, exercise_page|
         exercise = Content::Models::Exercise.new(page: exercise_page,
                                                  url: wrapper.url,
@@ -75,22 +65,34 @@ class Content::Routines::ImportExercises
                                                  has_interactive: wrapper.has_interactive?,
                                                  has_video: wrapper.has_video?)
 
-        relevant_tags = wrapper.tags.map { |tag| tag_map[tag] }.compact
-        run(:tag, exercise, relevant_tags, tagging_class: Content::Models::ExerciseTag, save: false)
-
-        # Clear the outputs to avoid memory bloat (by not keeping all the tags in memory)
-        @result = Lev::Routine::Result.new(Lev::Outputs.new, errors)
+        all_tags = run(
+          :tag,
+          ecosystem: ecosystem,
+          resource: exercise,
+          tags: wrapper.tag_hashes,
+          tagging_class: Content::Models::ExerciseTag,
+          save_tags: false,
+          all_tags: all_tags
+        ).outputs.all_tags
 
         exercise
       end
 
-      Content::Models::Exercise.import exercises, recursive: true, validate: false
+      changed_tags = (all_tags || []).filter(&:changed?)
+      Content::Models::Tag.import changed_tags, validate: false, on_duplicate_key_update: {
+        conflict_target: [ :value, :content_ecosystem_id ],
+        columns: [ :name, :description, :tag_type ]
+      } unless changed_tags.empty?
+
+      exercises.each_slice(15) do |exs|
+        Content::Models::Exercise.import exs, recursive: true, validate: false
+      end
 
       # Reset associations so they get reloaded the next time they are used
       page.exercises.reset if page.is_a?(Content::Models::Page)
 
       exercise_pages = wrapper_to_exercise_page_map.values.compact.uniq
-      exercise_pages.each{ |page| page.exercises.reset }
+      exercise_pages.each { |page| page.exercises.reset }
     end
   end
 end

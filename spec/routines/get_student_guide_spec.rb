@@ -88,11 +88,7 @@ RSpec.describe GetStudentGuide, type: :routine do
           DatabaseCleaner.start
 
           VCR.use_cassette('GetCourseGuide/setup_course_guide', VCR_OPTS) do
-            capture_stdout do
-              CreateStudentHistory[
-                course: @course.reload, roles: [@role.reload, @second_role.reload]
-              ]
-            end
+            CreateStudentHistory[course: @course.reload, roles: [@role.reload, @second_role.reload]]
           end
         end
 
@@ -224,13 +220,11 @@ RSpec.describe GetStudentGuide, type: :routine do
           VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
             OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents') do
               OpenStax::Exercises::V1.use_fake_client do
-                capture_stdout do
-                  CreateStudentHistory[
-                    course: @course.reload,
-                    roles: [@role.reload, @second_role.reload],
-                    book_id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2'
-                  ]
-                end
+                CreateStudentHistory[
+                  course: @course.reload,
+                  roles: [@role.reload, @second_role.reload],
+                  book_id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2'
+                ]
               end
             end
           end

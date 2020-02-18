@@ -21,9 +21,7 @@ class Content::Models::Book < IndestructibleRecord
 
   after_create :set_ecosystem_title
 
-  delegate :children, :units, :chapters,
-           *Content::Models::Page.pool_types.map { |pt| "#{pt}_exercise_ids".to_sym },
-           to: :as_toc
+  delegate :children, :units, :chapters, *Content::Models::Page::EXERCISE_ID_FIELDS, to: :as_toc
 
   def type
     'Book'

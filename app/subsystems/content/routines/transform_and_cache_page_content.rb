@@ -17,8 +17,8 @@ class Content::Routines::TransformAndCachePageContent
 
   protected
 
-  def exec(book:, save: true)
-    pages = book.pages.to_a
+  def exec(book:, pages: nil, save: true)
+    pages ||= book.pages.to_a
 
     # Get all page uuids and cnx_ids given
     pages_by_uuid = pages.index_by(&:uuid)
@@ -74,10 +74,10 @@ class Content::Routines::TransformAndCachePageContent
       page.cache_fragments_and_snap_labs
     end
 
-    Content::Models::Page.import pages, validate: false, on_duplicate_key_update: {
-      conflict_target: [ :id ], columns: [ :content, :fragments, :snap_labs ]
-    }
-
     outputs.pages = pages
+
+    return unless save
+
+    pages.each(&:save!)
   end
 end

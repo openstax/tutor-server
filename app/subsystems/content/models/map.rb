@@ -74,7 +74,7 @@ class Content::Models::Map < IndestructibleRecord
 
     create_page_id_to_page_id_map
 
-    pool_types = Content::Models::Page.pool_types
+    pool_types = Content::Models::Page::POOL_TYPES
     pool_method_to_pool_type_map = pool_types.index_by do |pool_type|
       "#{pool_type}_exercise_ids".to_sym
     end
@@ -198,7 +198,7 @@ class Content::Models::Map < IndestructibleRecord
 
     return true if pool_type_exercise_ids_maps_values_set.subset?(to_exercise_ids_set)
 
-    pool_types = Content::Models::Page.pool_types
+    pool_types = Content::Models::Page::POOL_TYPES
     from_pages_by_id = from_ecosystem.pages.index_by{ |ex| ex.id.to_s }
     to_exercises_by_id = from_ecosystem.exercises.index_by(&:id)
 
