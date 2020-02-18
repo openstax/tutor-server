@@ -1,5 +1,4 @@
 class CoursesTeach
-
   class InvalidTeachToken < StandardError
   end
 
@@ -30,5 +29,4 @@ class CoursesTeach
 
     run(:add_teacher, course: course, user: caller)
   end
-
 end

@@ -19,7 +19,7 @@ class Admin::CoursesCreate
     validates :is_test, :is_preview, :is_concept_coach, :is_college, inclusion: [true, false]
   end
 
-  uses_routine CreateCourse
+  uses_routine CreateCourse, translations: { outputs: { type: :verbatim } }
 
   protected
 
