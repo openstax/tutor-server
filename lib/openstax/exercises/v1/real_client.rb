@@ -1,7 +1,6 @@
 require 'oauth2'
 
 class OpenStax::Exercises::V1::RealClient
-
   NON_QUERY_PARAMS = ['order_by', 'page', 'per_page', 'ob', 'p', 'pp']
 
   attr_reader :server_url
@@ -63,5 +62,4 @@ class OpenStax::Exercises::V1::RealClient
     options[:headers].merge!('Accept' => 'application/vnd.openstax.v1')
     options
   end
-
 end

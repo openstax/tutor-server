@@ -14,8 +14,8 @@ env:
     - OXT_TEST_DB=travis_ci_test
     - PARALLEL_TEST_PROCESSORS=2
   matrix:
-    - TAG=~speed:fast
-    - TAG=speed:fast
+    - TAG=speed:slow
+    - TAG=~speed:slow
     - ASSETS=true
     - LINT=true
 rvm: 2.6.1

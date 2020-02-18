@@ -1,4 +1,8 @@
 class OpenStax::Exercises::V1::FakeClient
+  STANDARD_TAGS = [
+    [ 'type:practice', 'k12phys', 'apbio', 'os-practice-problems' ],
+    [ 'type:conceptual-or-recall', 'k12phys', 'apbio', 'os-practice-concepts' ]
+  ]
 
   attr_reader :store
 
@@ -17,59 +21,30 @@ class OpenStax::Exercises::V1::FakeClient
   #
   # Api wrappers
   #
-
   def exercises(params = {}, options={})
-    match_sets = params.map do |key, values|
-      next if values.nil?
+    tags = [params[:tag]].compact.flatten
+    return { total_count: 0, items: [] }.stringify_keys if tags.blank?
 
-      store_keys = [values].flatten.map{ |value| "exercises/#{key}/#{value}" }
-      match_json_array = store.read_multi(*store_keys).values
-      match_hash_array = match_json_array.map{ |value| JSON.parse(value || '[]') }
-      match_hash_array.flatten.uniq
-    end.compact
+    book_location_by_tag = Content::Models::Page.joins(
+      :tags
+    ).where(tags: { value: tags }).pluck(:value, :book_location).to_h
 
-    results = match_sets.reduce(:&) || []
+    results = tags.flat_map do |tag|
+      store.fetch("fake/exercises/tag/#{tag}") do
+        next [] if book_location_by_tag[tag].blank?
 
-    { 'total_count' => results.length, 'items' => results }
+        STANDARD_TAGS.each_with_index.map do |standard_tags, index|
+          self.class.new_exercise_hash number: -index-1, tags: standard_tags + [ tag ]
+        end
+      end
+    end
+
+    { total_count: results.size, items: results }.deep_stringify_keys
   end
 
   #
   # Methods to help fake the fake content
   #
-
-  def add_exercise(options = {})
-    options[:content] ||= self.class.new_exercise_hash(options)
-
-    uuid = options[:content][:uuid]
-    group_uuid = options[:content][:group_uuid]
-    number = options[:content][:number]
-    version = options[:content][:version]
-    tags = options[:content][:tags]
-    uid = options[:content][:uid]
-
-    options[:content].tap do |content|
-      store.write "exercises/uuid/#{uuid}", [content].to_json
-
-      same_group_uuid_exercises = JSON.parse(store.read("exercises/uuid/#{group_uuid}") || '[]')
-      store.write "exercises/uuid/#{group_uuid}",
-                  (same_group_uuid_exercises + [content]).uniq.to_json
-
-      same_number_exercises = JSON.parse(store.read("exercises/number/#{number}") || '[]')
-      store.write "exercises/number/#{number}", (same_number_exercises + [content]).uniq.to_json
-
-      same_version_exercises = JSON.parse(store.read("exercises/version/#{version}") || '[]')
-      store.write "exercises/version/#{version}", (same_version_exercises + [content]).uniq.to_json
-
-      store.write "exercises/id/#{uid}",  [content].to_json
-      store.write "exercises/uid/#{uid}", [content].to_json
-
-      tags.each do |tag|
-        same_tag_exercises = JSON.parse(store.read("exercises/tag/#{tag}") || '[]')
-        store.write "exercises/tag/#{tag}", (same_tag_exercises + [content]).uniq.to_json
-      end
-    end
-  end
-
   def self.new_exercise_hash(uuid: SecureRandom.uuid, group_uuid: SecureRandom.uuid,
                              number: -1, version: 1, uid: nil, tags: nil, num_parts: 1)
     {

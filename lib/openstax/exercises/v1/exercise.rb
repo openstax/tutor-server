@@ -1,5 +1,4 @@
 class OpenStax::Exercises::V1::Exercise
-
   VIDEO_CSS = 'iframe[src*="youtube"], iframe[src*="khanacademy"]'
   INTERACTIVE_CSS = 'iframe:not([src*="youtube"]):not([src*="khanacademy"])'
 
@@ -252,5 +251,4 @@ class OpenStax::Exercises::V1::Exercise
 
     @preview = preview_root.to_html
   end
-
 end

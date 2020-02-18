@@ -5,12 +5,10 @@ require_relative './v1/fake_client'
 require_relative './v1/real_client'
 
 module OpenStax::Exercises::V1
-
   extend Configurable
   extend Configurable::ClientMethods
 
   class << self
-
     #
     # API Wrappers
     #
@@ -100,7 +98,5 @@ module OpenStax::Exercises::V1
     rescue StandardError => error
       raise OpenStax::Exercises::ClientError.new("initialization failure", error)
     end
-
   end
-
 end

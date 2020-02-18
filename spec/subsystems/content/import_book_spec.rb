@@ -1,59 +1,47 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :medium do
-  let(:phys_cnx_book) { OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b') }
-  let(:bio_cc_book)   { OpenStax::Cnx::V1::Book.new(id: 'f10533ca-f803-490d-b935-88899941197f') }
+RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow do
+  let(:book) { @ecosystem.books.first }
 
-  let(:ecosystem)     { FactoryBot.create :content_ecosystem }
+  context 'with the phys book' do
+    before(:all) do
+      DatabaseCleaner.start
 
-  it 'creates a new Book structure and Pages and sets their attributes' do
-    expect_any_instance_of(Content::Routines::PopulateExercisePools).to(
-      receive(:call).and_wrap_original do |method, book:, pages:, save: true|
-        expect(save).to eq true
-
-        method.call book: book, pages: pages
+      @phys_cnx_book = OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b')
+      @ecosystem = FactoryBot.create :content_ecosystem
+      VCR.use_cassette('Content_ImportBook/with_the_phys_book', VCR_OPTS) do
+        described_class.call(ecosystem: @ecosystem, cnx_book: @phys_cnx_book)
       end
-    )
-    expect_any_instance_of(Content::Routines::TransformAndCachePageContent).to(
-      receive(:call).and_wrap_original do |method, book:, save: true|
-        expect(save).to eq true
-
-        method.call book: book
-      end
-    )
-    expect(OpenStax::Biglearn::Api).to receive(:create_ecosystem)
-
-    result = described_class.call(ecosystem: ecosystem, cnx_book: phys_cnx_book)
-    expect(result.errors).to be_empty
-
-    expect(ecosystem.id).not_to be_nil
-
-    book = ecosystem.books.first
-    expect(book.id).not_to be_nil
-    expect(book.url).to eq phys_cnx_book.canonical_url
-    expect(book.uuid).to eq phys_cnx_book.uuid
-    expect(book.version).to eq phys_cnx_book.version
-
-    book.chapters.each do |chapter|
-      expect(chapter.title).not_to be_blank
     end
 
-    book.pages.each do |page|
-      expect(page.id).not_to be_nil
-      expect(page.title).not_to be_blank
+    after(:all) { DatabaseCleaner.clean }
+
+    it 'creates a new Book structure and Pages and sets their attributes' do
+      expect(@ecosystem.id).not_to be_nil
+
+      expect(book.id).not_to be_nil
+      expect(book.url).to eq @phys_cnx_book.canonical_url
+      expect(book.uuid).to eq @phys_cnx_book.uuid
+      expect(book.version).to eq @phys_cnx_book.version
+
+      book.chapters.each do |chapter|
+        expect(chapter.title).not_to be_blank
+      end
+
+      book.pages.each do |page|
+        expect(page.id).not_to be_nil
+        expect(page.title).not_to be_blank
+      end
     end
-  end
 
-  it 'does not handle unbaked book_locations' do
-    book_import = described_class.call(ecosystem: ecosystem, cnx_book: phys_cnx_book)
-    book = ecosystem.books.first
+    it 'does not handle unbaked book_locations' do
+      book.chapters.each do |chapter|
+        expect(chapter.book_location).to eq []
 
-    book.chapters.each do |chapter|
-      expect(chapter.book_location).to eq []
-
-      chapter.pages.each do |page|
-        expect(page.book_location).to eq []
+        chapter.pages.each do |page|
+          expect(page.book_location).to eq []
+        end
       end
     end
   end
@@ -62,43 +50,50 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :mediu
     before(:all) do
       DatabaseCleaner.start
 
-      bio_cnx_book = OpenStax::Cnx::V1::Book.new(id: 'ccbc51fa-49f3-40bb-98d6-07a15a7ab6b7')
+      bio_cnx_book = OpenStax::Cnx::V1::Book.new(id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2')
       @ecosystem = FactoryBot.create :content_ecosystem
-      VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
-        described_class.call(ecosystem: @ecosystem, cnx_book: bio_cnx_book)
+      OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents') do
+        OpenStax::Exercises::V1.use_fake_client do
+          VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
+            described_class.call(ecosystem: @ecosystem, cnx_book: bio_cnx_book)
+          end
+        end
       end
     end
 
     after(:all)  { DatabaseCleaner.clean }
 
-    it 'does not handle unbaked book_locations' do
-      book = @ecosystem.books.first
+    it 'handles units and baked book_locations' do
+      book.units.each { |unit| expect(unit.book_location).to eq [] }
+      book.chapters.each_with_index do |chapter, index|
+        expect(chapter.book_location).to eq [index + 1]
+      end
 
-      part = book.chapters.first
-      expect(part.title).to eq 'The Study of Life'
-      expect(part.book_location).to eq []
+      chapter = book.chapters.first
+      expect(book.units.first.chapters.first).to eq chapter
+      expect(chapter.title).to eq 'The Study of Life'
+      expect(chapter.book_location).to eq [1]
 
       page = book.chapters.first.pages.first
       expect(page.title).to eq 'Introduction'
       expect(page.book_location).to eq []
 
       # Jump to 3rd chapter
-
-      part = book.chapters.third
-      expect(part.title).to eq 'Biological Macromolecules'
-      expect(part.book_location).to eq []
+      chapter = book.chapters.third
+      expect(book.units.first.chapters.third).to eq chapter
+      expect(chapter.title).to eq 'Biological Macromolecules'
+      expect(chapter.book_location).to eq [3]
 
       # The second page of that chapter
-
-      page = book.chapters.third.pages.second
-      expect(page.title).to eq 'Macromolecules'
-      expect(page.book_location).to eq []
+      page = chapter.pages.second
+      expect(page.title).to eq 'Synthesis of Biological Macromolecules'
+      expect(page.book_location).to eq [3, 1]
 
       # Jump to 6th chapter (getting us into 2nd unit)
-
-      part = book.chapters[5]
-      expect(part.title).to eq 'Metabolism'
-      expect(part.book_location).to eq []
+      chapter = book.chapters[5]
+      expect(book.units.second.chapters.third).to eq chapter
+      expect(chapter.title).to eq 'Metabolism'
+      expect(chapter.book_location).to eq [6]
     end
 
     it 'converts CNX links' do
@@ -130,8 +125,6 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :mediu
     after(:all)  { DatabaseCleaner.clean }
 
     it 'handles baked book_locations' do
-      book = @ecosystem.books.first
-
       expect(book.chapters.size).to eq 1
       expect(book.chapters.first.title).to eq 'Chapter 1'
 

@@ -15,7 +15,7 @@ class Content::Routines::TagResource
     # Avoid duplicate tags
     existing_taggings = resource.send(tagging_field)
     existing_tag_ids = existing_taggings.map(&:content_tag_id)
-    new_tags = tags.reject{ |tag| existing_tag_ids.include?(tag.id) }
+    new_tags = tags.reject { |tag| existing_tag_ids.include?(tag.id) }
 
     outputs.taggings = new_tags.map do |tag|
       tagging_class.new(tag: tag, resource_field => resource).tap do |tagging|
