@@ -28,6 +28,10 @@ FactoryBot.define do
         }
       end
 
+      unit_hash do
+        { title: 'Not a real Unit', contents: [ chapter_hash ] }
+      end
+
       book_hash do
         {
           id: '93e2b09d-261c-4007-a987-0b3062fe154b',
@@ -36,7 +40,7 @@ FactoryBot.define do
           tree: {
             id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4',
             title: 'College Physics with Courseware',
-            contents: [ chapter_hash ]
+            contents: [ unit_hash ]
           }
         }
       end

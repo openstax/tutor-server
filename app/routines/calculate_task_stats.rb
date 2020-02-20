@@ -1,5 +1,4 @@
 class CalculateTaskStats
-
   lev_routine express_output: :stats
 
   protected
@@ -216,5 +215,4 @@ class CalculateTaskStats
       end
     end
   end
-
 end

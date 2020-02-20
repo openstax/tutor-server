@@ -3,7 +3,6 @@ module Api::V1
     module Stats
       # Represents stats for course periods
       class StatRepresenter < Roar::Decorator
-
         include Roar::JSON
         include Representable::Coercion
 
@@ -56,7 +55,6 @@ module Api::V1
                  readable: true,
                  writeable: false,
                  schema_info: { type: 'boolean' }
-
       end
     end
   end
