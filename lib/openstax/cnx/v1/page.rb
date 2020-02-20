@@ -50,7 +50,7 @@ module OpenStax::Cnx::V1
     end
 
     def parsed_title
-      @parsed_title ||= OpenStax::Cnx::V1::BakedTitle.new @title
+      @parsed_title ||= OpenStax::Cnx::V1::Title.new @title
     end
 
     def book_location

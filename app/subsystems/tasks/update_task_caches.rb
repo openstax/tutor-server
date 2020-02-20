@@ -31,31 +31,6 @@ class Tasks::UpdateTaskCaches
     # Stop if we couldn't lock any tasks at all
     return if task_ids.empty?
 
-    # Get student and course IDs
-    students = CourseMembership::Models::Student
-      .select(
-        :id,
-        :course_profile_course_id,
-        :course_membership_period_id,
-        '"tasks_taskings"."tasks_task_id"',
-        '"user_profiles"."account_id"'
-      )
-      .joins(role: [ :taskings, profile: :account ])
-      .where(role: { taskings: { tasks_task_id: task_ids } })
-      .to_a
-
-      teacher_students = CourseMembership::Models::TeacherStudent
-        .select(
-          :id,
-          :course_profile_course_id,
-          :course_membership_period_id,
-          '"tasks_taskings"."tasks_task_id"',
-          '"user_profiles"."account_id"'
-        )
-        .joins(role: [ :taskings, profile: :account ])
-        .where(role: { taskings: { tasks_task_id: task_ids } })
-        .to_a
-
     # Get TaskSteps for each given task
     task_steps = Tasks::Models::TaskStep
       .select(
@@ -107,6 +82,31 @@ class Tasks::UpdateTaskCaches
     unmapped_page_tutor_uuid_by_id = Content::Models::Page.where(id: page_ids).pluck(
       :id, :tutor_uuid
     ).to_h
+
+    # Get student and course IDs
+    students = CourseMembership::Models::Student
+      .select(
+        :id,
+        :course_profile_course_id,
+        :course_membership_period_id,
+        '"tasks_taskings"."tasks_task_id"',
+        '"user_profiles"."account_id"'
+      )
+      .joins(role: [ :taskings, profile: :account ])
+      .where(role: { taskings: { tasks_task_id: task_ids } })
+      .to_a
+
+    teacher_students = CourseMembership::Models::TeacherStudent
+      .select(
+        :id,
+        :course_profile_course_id,
+        :course_membership_period_id,
+        '"tasks_taskings"."tasks_task_id"',
+        '"user_profiles"."account_id"'
+      )
+      .joins(role: [ :taskings, profile: :account ])
+      .where(role: { taskings: { tasks_task_id: task_ids } })
+      .to_a
 
     account_ids = students.map(&:account_id)
 

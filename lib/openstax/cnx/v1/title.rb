@@ -1,4 +1,4 @@
-class OpenStax::Cnx::V1::BakedTitle
+class OpenStax::Cnx::V1::Title
   attr_reader :book_location, :text
 
   def initialize(title)

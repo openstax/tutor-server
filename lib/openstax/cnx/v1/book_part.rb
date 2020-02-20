@@ -9,7 +9,7 @@ module OpenStax::Cnx::V1
     attr_reader :hash, :is_root, :book
 
     def parsed_title
-      @parsed_title ||= OpenStax::Cnx::V1::BakedTitle.new hash.fetch('title')
+      @parsed_title ||= OpenStax::Cnx::V1::Title.new hash.fetch('title')
     end
 
     def book_location

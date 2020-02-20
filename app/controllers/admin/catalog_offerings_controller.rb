@@ -66,7 +66,7 @@ module Admin
     protected
 
     def get_offerings_and_ecosystems
-      @offerings = Catalog::ListOfferings[]
+      @offerings = Catalog::Models::Offering.preload_deletable.to_a
       @offering = params[:id] ? @offerings.find { |offering| offering.id.to_s == params[:id] } :
                                 Catalog::Models::Offering.new
       @ecosystems = Content::ListEcosystems[]
