@@ -25,7 +25,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
   description <<-EOS
     Returns a hierarchical listing of an ecosystem's readings.
     An ecosystem is currently limited to only one book.
-    Inside each book there can be chapters and pages.
+    Inside each book there can be units, chapters and pages.
 
     #{json_schema(Api::V1::BookTocsRepresenter, include: :readable)}
   EOS

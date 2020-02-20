@@ -15,7 +15,13 @@ class Content::BookPart
   end
 
   def cnx_id
-    "#{uuid}@#{version}"
+    if uuid.nil?
+      nil
+    elsif version.nil?
+      uuid
+    else
+      "#{uuid}@#{version}"
+    end
   end
 
   def unmapped_ids
