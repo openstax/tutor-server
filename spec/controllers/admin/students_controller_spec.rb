@@ -15,25 +15,25 @@ RSpec.describe Admin::StudentsController, type: :controller do
         FactoryBot.create(:course_membership_period, course: course)
       ]
     end
-    let(:periods_2)  { [FactoryBot.create(:course_membership_period, course: course_2)] }
+    let(:periods_2)  { [ FactoryBot.create(:course_membership_period, course: course_2) ] }
 
     let(:user_1)     { FactoryBot.create(:user, first_name: 'Benjamin', last_name: 'Franklin') }
     let(:user_2)     { FactoryBot.create(:user, first_name: 'Nikola', last_name: 'Tesla') }
     let(:user_3)     { FactoryBot.create(:user, first_name: 'Freja', last_name: 'Asgard') }
     let(:user_4)     { FactoryBot.create(:user, first_name: 'Oliver', last_name: 'Wilde') }
 
-    let!(:student_1) {
+    let!(:student_1) do
       AddUserAsPeriodStudent.call(user: user_1, period: periods[0]).outputs.student
-    }
-    let!(:student_2) {
+    end
+    let!(:student_2) do
       AddUserAsPeriodStudent.call(user: user_2, period: periods[0]).outputs.student
-    }
-    let!(:student_3) {
+    end
+    let!(:student_3) do
       AddUserAsPeriodStudent.call(user: user_3, period: periods[1]).outputs.student
-    }
-    let!(:student_4) {
+    end
+    let!(:student_4) do
       AddUserAsPeriodStudent.call(user: user_4, period: periods_2[0]).outputs.student
-    }
+    end
 
     it 'returns all the students in a course' do
       get :index, params: { course_id: course.id }
@@ -116,30 +116,29 @@ RSpec.describe Admin::StudentsController, type: :controller do
         )
       )
     end
+  end
 
-    context 'student drop/restore' do
-      let(:course)       { FactoryBot.create :course_profile_course }
-      let(:period)       { FactoryBot.create :course_membership_period, course: course }
-      let(:student)      do
-        AddUserAsPeriodStudent.call(user: FactoryBot.create(:user), period: period).outputs.student
-      end
+  context '#drop/#restore' do
+    let(:user)    { FactoryBot.create :user }
+    let(:course)  { FactoryBot.create :course_profile_course }
+    let(:period)  { FactoryBot.create :course_membership_period, course: course }
+    let(:student) { AddUserAsPeriodStudent[user: user, period: period].student }
 
-      it 'drops a student' do
-        expect do
-          delete :destroy, params: { course_id: course.id, id: student.id }
-          expect(response).to redirect_to edit_admin_course_path(course) + '#roster'
-        end.to change { student.reload.deleted? }.from(false).to(true)
-      end
+    it 'drops a student' do
+      expect do
+        delete :destroy, params: { course_id: course.id, id: student.id }
+      end.to change { student.reload.deleted? }.from(false).to(true)
 
-      it 'restores a student' do
-        student.destroy
-        expect do
-          post :restore, params: { course_id: course.id, id: student.id }
-          expect(response).to redirect_to edit_admin_course_path(course) + '#roster'
-        end.to change { student.reload.deleted? }.from(true).to(false)
-      end
+      expect(response).to redirect_to edit_admin_course_path(course, anchor: 'roster')
     end
 
+    it 'restores a student' do
+      student.destroy
+      expect do
+        post :restore, params: { course_id: course.id, id: student.id }
+      end.to change { student.reload.deleted? }.from(true).to(false)
 
+      expect(response).to redirect_to edit_admin_course_path(course, anchor: 'roster')
+    end
   end
 end
