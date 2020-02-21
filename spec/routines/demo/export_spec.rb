@@ -197,6 +197,7 @@ RSpec.describe Demo::Export, type: :routine do
                   },
                   opens_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
                   due_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
+                  closes_at: /\A<%= Time\.current [+-] \d+\.days %>\z/
                 ],
                 is_published: true
               },
@@ -212,6 +213,7 @@ RSpec.describe Demo::Export, type: :routine do
                   },
                   opens_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
                   due_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
+                  closes_at: /\A<%= Time\.current [+-] \d+\.days %>\z/
                 ],
                 is_published: true
               },
@@ -225,6 +227,7 @@ RSpec.describe Demo::Export, type: :routine do
                   },
                   opens_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
                   due_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
+                  closes_at: /\A<%= Time\.current [+-] \d+\.days %>\z/
                 ],
                 is_published: true
               }

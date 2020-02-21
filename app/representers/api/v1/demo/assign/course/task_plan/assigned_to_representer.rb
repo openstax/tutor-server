@@ -22,6 +22,8 @@ class Api::V1::Demo::Assign::Course::TaskPlan::AssignedToRepresenter < Api::V1::
 
   property :closes_at,
            type: String,
+           getter: ->(*) { DateTimeUtilities.to_api_s due_at },
            readable: true,
-           writeable: true
+           writeable: true,
+           schema_info: { required: true }
 end
