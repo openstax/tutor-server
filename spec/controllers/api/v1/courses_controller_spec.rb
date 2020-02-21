@@ -3,7 +3,7 @@ require 'vcr_helper'
 require 'database_cleaner'
 
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
-                                           version: :v1, vcr: VCR_OPTS, speed: :medium do
+                                           version: :v1, vcr: VCR_OPTS do
 
   before(:all) do
     @user_1 = FactoryBot.create :user_profile

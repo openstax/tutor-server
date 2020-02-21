@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Content::Map, speed: :medium do
+RSpec.describe Content::Map do
   let!(:old_exercise)             do
     FactoryBot.create(:content_exercise).tap do |exercise|
       exercise.page.update_attribute(:homework_core_exercise_ids, [ exercise.id ])

@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :medium do
+RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :slow do
   before(:all) do
     ecosystem = VCR.use_cassette('PopulatePreviewCourseContent/with_book', VCR_OPTS) do
       FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']

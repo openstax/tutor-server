@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Demo::Work, type: :routine do
+RSpec.describe Demo::Work, type: :routine, speed: :medium do
   EXPECTED_PROGRESS = [ 1, 0.8, 0.6, 0.4, 0.2, 0 ]
   EXPECTED_SCORES   = [ 1, 0.8, 0.5, 0.3, 0  , 0 ]
 

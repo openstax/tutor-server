@@ -1,7 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true,
-                                             version: :v1, speed: :slow do
+RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v1 do
   before(:all) do
     @course = FactoryBot.create :course_profile_course
     period = FactoryBot.create :course_membership_period, course: @course

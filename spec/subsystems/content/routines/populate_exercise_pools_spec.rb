@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Content::Routines::PopulateExercisePools, type: :routine, speed: :medium do
+RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
   let(:page)                 { FactoryBot.create :content_page }
   let(:book)                 { page.book }
   let(:ecosystem)            { book.ecosystem }

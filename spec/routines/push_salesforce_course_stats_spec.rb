@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe PushSalesforceCourseStats, type: :routine, speed: :slow do
+RSpec.describe PushSalesforceCourseStats, type: :routine do
   subject(:instance) { described_class.new }
 
   context "#best_sf_contact_id_for_course" do

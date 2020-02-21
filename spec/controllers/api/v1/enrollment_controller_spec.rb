@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::EnrollmentController, type: :controller, api: true,
-                                              version: :v1, speed: :medium do
+RSpec.describe Api::V1::EnrollmentController, type: :controller, api: true, version: :v1 do
   let(:user)              { FactoryBot.create :user_profile }
 
   let(:user_2)            { FactoryBot.create :user_profile }

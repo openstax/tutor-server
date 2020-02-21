@@ -1,9 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant,
-                                                     vcr: VCR_OPTS,
-                                                     speed: :medium do
+RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_OPTS do
   before(:all) do
     @assistant = \
       FactoryBot.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant')

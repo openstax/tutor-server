@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::StudentsController, type: :controller, api: true,
-                                            version: :v1, speed: :medium do
+RSpec.describe Api::V1::StudentsController, type: :controller, api: true, version: :v1 do
   let(:application)       { FactoryBot.create :doorkeeper_application }
 
   let(:course)            { FactoryBot.create :course_profile_course }

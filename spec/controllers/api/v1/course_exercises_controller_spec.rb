@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Api::V1::CourseExercisesController, type: :controller, api: true,
-                                                   version: :v1, vcr: VCR_OPTS, speed: :slow do
+                                                   version: :v1, vcr: VCR_OPTS do
 
   let(:user_1)         { FactoryBot.create(:user_profile) }
   let(:user_1_token)   do

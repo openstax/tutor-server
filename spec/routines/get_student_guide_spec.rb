@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'database_cleaner'
 
-RSpec.describe GetStudentGuide, type: :routine do
+RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
   before(:all) do
     @course = FactoryBot.create :course_profile_course
 

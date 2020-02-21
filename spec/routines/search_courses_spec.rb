@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SearchCourses, type: :routine, speed: :medium do
+RSpec.describe SearchCourses, type: :routine do
 
   let(:tutor_school) { FactoryBot.create(:school_district_school, name: 'TTS') }
   let(:cc_school)    { FactoryBot.create(:school_district_school, name: 'CCS') }

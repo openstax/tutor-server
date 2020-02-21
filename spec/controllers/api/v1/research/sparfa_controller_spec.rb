@@ -1,7 +1,10 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Api::V1::Research::SparfaController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::Research::SparfaController, type: :controller,
+                                                    api: true,
+                                                    version: :v1,
+                                                    speed: :slow do
   let(:task_plan)        { FactoryBot.create :tasked_task_plan, number_of_students: 2 }
   let(:course_1)         { task_plan.owner }
   let(:period)           { task_plan.tasking_plans.first.target }
