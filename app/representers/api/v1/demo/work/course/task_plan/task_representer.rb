@@ -11,6 +11,7 @@ class Api::V1::Demo::Work::Course::TaskPlan::TaskRepresenter < Api::V1::Demo::Ba
   # Progress is the fraction of completed steps
   # Rounded to the nearest whole number of steps
   property :progress,
+           getter: ->(*) { completion },
            type: Float,
            readable: true,
            writeable: true,

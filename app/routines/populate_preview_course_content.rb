@@ -91,7 +91,7 @@ class PopulatePreviewCourseContent
       pages = chapter.pages
       page_ids = pages.map { |page| page.id.to_s }
       exercise_ids = pages.flat_map do |page|
-        page.homework_core_pool.content_exercise_ids.sample.try!(:to_s)
+        page.homework_core_pool.content_exercise_ids.sample&.to_s
       end.compact
 
       reading_tp = Tasks::Models::TaskPlan.new(

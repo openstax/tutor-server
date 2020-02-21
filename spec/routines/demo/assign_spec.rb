@@ -64,7 +64,8 @@ RSpec.describe Demo::Assign, type: :routine do
       expect(task_plan.owner).to eq course
       expect(task_plan.ecosystem).to eq course.ecosystems.first
       expect(task_plan.assistant).not_to be_blank
-      expect(task_plan.grading_template).to be_in course.grading_templates
+      expect(task_plan.grading_template).to(be_in course.grading_templates) \
+        unless task_plan.type == 'external'
       settings = task_plan.settings
       case task_plan.type
       when 'reading'

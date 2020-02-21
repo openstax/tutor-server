@@ -62,7 +62,7 @@ RSpec.describe Demo::Work, type: :routine do
       tasks.each do |task|
         if task.title.include? 'External'
           student_index = task.taskings.first.role.username.reverse.to_i - 1
-          expect(task.progress).to eq student_index < 3 ? 1 : 0
+          expect(task.completion).to eq student_index < 3 ? 1 : 0
           expect(task.score).to be_nil
         elsif task.title.include? 'Intro'
           student_index = task.taskings.first.role.username.reverse.to_i - 1
