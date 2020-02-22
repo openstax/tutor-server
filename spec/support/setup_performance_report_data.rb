@@ -63,7 +63,8 @@ class SetupPerformanceReportData
     page_ids = pages.map(&:id).map(&:to_s)
     exercise_ids = Content::Models::Page.where(
       id: page_ids
-    ).pluck(:homework_core_exercise_ids).flatten.map(&:to_s)
+    ).pluck(:homework_core_exercise_ids).flatten
+    exercises = Content::Models::Exercise.where(id: exercise_ids)
 
     time_zone = course.time_zone.to_tz
 
@@ -100,7 +101,9 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: exercise_ids.first(5),
+        exercises: exercises.first(5).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+        end,
         exercises_count_dynamic: 2
       },
       num_tasking_plans: 0
@@ -127,7 +130,9 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: exercise_ids.last(2),
+        exercises: exercises.last(2).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+        end,
         exercises_count_dynamic: 2
       },
       num_tasking_plans: 0
@@ -154,7 +159,9 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: exercise_ids.first(5),
+        exercises: exercises.first(5).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+        end,
         exercises_count_dynamic: 2
       },
       num_tasking_plans: 0

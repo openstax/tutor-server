@@ -362,7 +362,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
 
       it 'returns an error message if the task_plan settings are invalid' do
         invalid_json_hash = valid_json_hash
-        invalid_json_hash['settings']['exercise_ids'] = [1, 2, 3]
+        invalid_json_hash['settings']['exercises'] = []
         invalid_json_hash['settings']['exercises_count_dynamic'] = 3
 
         controller.sign_in @teacher
@@ -373,7 +373,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
           .not_to change{ Tasks::Models::TaskPlan.count }
         expect(response).to have_http_status(:unprocessable_entity)
         error = response.body_as_hash[:errors].first
-        expect(error[:message]).to include "Settings - The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema"
+        expect(error[:message]).to include "Settings - The property '#/' contains additional properties [\"exercises\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema"
       end
     end
 
@@ -609,7 +609,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
 
       it 'returns an error message if the task_plan settings are invalid' do
         invalid_json_hash = valid_json_hash
-        invalid_json_hash['settings']['exercise_ids'] = [1, 2, 3]
+        invalid_json_hash['settings']['exercises'] = []
         invalid_json_hash['settings']['exercises_count_dynamic'] = 3
 
         controller.sign_in @teacher
@@ -617,7 +617,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
                               body: invalid_json_hash.to_json
         expect(response).to have_http_status(:unprocessable_entity)
         error = response.body_as_hash[:errors].first
-        expect(error[:message]).to include "Settings - The property '#/' contains additional properties [\"exercise_ids\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema"
+        expect(error[:message]).to include "Settings - The property '#/' contains additional properties [\"exercises\", \"exercises_count_dynamic\"] outside of the schema when none are allowed in schema"
       end
 
       it 'returns an error message if the tasking_plans are invalid' do

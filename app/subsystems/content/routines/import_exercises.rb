@@ -51,19 +51,21 @@ class Content::Routines::ImportExercises
       end
 
       exercises = wrapper_to_exercise_page_map.map do |wrapper, exercise_page|
-        exercise = Content::Models::Exercise.new(page: exercise_page,
-                                                 url: wrapper.url,
-                                                 uuid: wrapper.uuid,
-                                                 group_uuid: wrapper.group_uuid,
-                                                 number: wrapper.number,
-                                                 version: wrapper.version,
-                                                 nickname: wrapper.nickname,
-                                                 title: wrapper.title,
-                                                 preview: wrapper.preview,
-                                                 context: wrapper.context,
-                                                 content: wrapper.content,
-                                                 has_interactive: wrapper.has_interactive?,
-                                                 has_video: wrapper.has_video?)
+        exercise = Content::Models::Exercise.new(
+          page: exercise_page,
+          url: wrapper.url,
+          uuid: wrapper.uuid,
+          group_uuid: wrapper.group_uuid,
+          number: wrapper.number,
+          version: wrapper.version,
+          nickname: wrapper.nickname,
+          title: wrapper.title,
+          preview: wrapper.preview,
+          context: wrapper.context,
+          content: wrapper.content,
+          has_interactive: wrapper.has_interactive?,
+          has_video: wrapper.has_video?
+        )
 
         all_tags = run(
           :tag,

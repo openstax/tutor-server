@@ -2,15 +2,28 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   def self.schema
     '{
       "type": "object",
-      "required": [
-        "exercise_ids",
-        "exercises_count_dynamic"
-      ],
       "properties": {
-        "exercise_ids": {
+        "exercises": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "points": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "id",
+              "points"
+            ],
+            "additionalProperties": false
           },
           "minItems": 1,
           "uniqueItems": true
@@ -27,6 +40,10 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
           }
         }
       },
+      "required": [
+        "exercises",
+        "exercises_count_dynamic"
+      ],
       "additionalProperties": false
     }'
   end
@@ -34,9 +51,10 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   def initialize(task_plan:, individualized_tasking_plans:)
     super
 
-    exercise_ids = task_plan.settings['exercise_ids'].map(&:to_i)
-    raise 'No exercises selected' if exercise_ids.blank?
+    @exercise_hashes = task_plan.settings['exercises']
+    raise "No exercises selected" if @exercise_hashes.blank?
 
+    exercise_ids = @exercise_hashes.map { |ex| ex['id'] }
     exercises_by_id = ecosystem.exercises.where(id: exercise_ids).index_by(&:id)
     @exercises = exercises_by_id.values_at(*exercise_ids).compact
 

@@ -15,7 +15,7 @@ FactoryBot.define do
     end
 
     association :exercise, factory: :content_exercise
-    question_id    { exercise.content_as_independent_questions.first[:id] }
+    question_id    { exercise.questions.first.id }
     question_index { 0 }
     content        { exercise.content }
     url            { exercise.url }

@@ -39,7 +39,8 @@ class Tasks::Models::TaskPlan < ApplicationRecord
            :grading_template_same_course,
            :grading_template_type_matches,
            :changes_allowed,
-           :not_past_due_when_publishing
+           :not_past_due_when_publishing,
+           :correct_num_points_for_homework
 
   scope :tasked_to_period_id, ->(period_id) do
     joins(:tasking_plans).where(
@@ -83,7 +84,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   def get_ecosystems_from_exercise_ids
     ecosystems = Content::Models::Ecosystem.distinct.joins(:exercises).where(
-      exercises: { id: settings['exercise_ids'] }
+      exercises: { id: settings['exercises'].map { |ex| ex['id'] } }
     ).to_a
   end
 
@@ -93,8 +94,8 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     ).to_a
   end
 
-  def get_ecosystems_from_settings
-    if settings['exercise_ids'].present?
+  def get_ecosystem_from_settings
+    if settings['exercises'].present?
       get_ecosystems_from_exercise_ids
     elsif settings['page_ids'].present?
       get_ecosystems_from_page_ids
@@ -121,12 +122,16 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   def same_ecosystem
     return if ecosystem.nil?
 
-    # Special checks for the page_ids and exercise_ids settings
-    errors.add(:settings, '- Invalid exercises selected') \
-      if settings['exercise_ids'].present? && get_ecosystems_from_exercise_ids != [ ecosystem ]
+    # Special checks for the page_ids and exercises settings
+    errors.add(
+      :settings,
+      "- Some of the given exercise IDs do not belong to the ecosystem with ID #{ecosystem.id}"
+    ) if settings['exercises'].present? && get_ecosystems_from_exercise_ids != [ ecosystem ]
 
-    errors.add(:settings, '- Invalid pages selected') \
-      if settings['page_ids'].present? && get_ecosystems_from_page_ids != [ ecosystem ]
+    errors.add(
+      :settings,
+      "- Some of the given page IDs do not belong to the ecosystem with ID #{ecosystem.id}"
+    ) if settings['page_ids'].present? && get_ecosystems_from_page_ids != [ ecosystem ]
 
     throw(:abort) if errors.any?
   end
@@ -168,6 +173,29 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
     errors.add :due_at, 'cannot be in the past when publishing'
     throw :abort
+  end
+
+  def correct_num_points_for_homework
+    return if type != 'homework' || settings.blank? || settings['exercises'].blank?
+
+    exercise_ids = settings['exercises'].map { |ex| ex['id'] }
+    num_questions_by_exercise_id = {}
+    Content::Models::Exercise.where(id: exercise_ids).select(:id, :content).each do |exercise|
+      num_questions_by_exercise_id[exercise.id.to_s] = exercise.num_questions
+    end
+
+    settings['exercises'].each do |exercise|
+      expected = num_questions_by_exercise_id[exercise['id']]
+      got = exercise['points'].size
+
+      errors.add(
+        :settings,
+        "- Expected the size of the points array for the Exercise with ID #{
+        exercise['id']} to be #{expected}, but was #{got}"
+      ) unless expected == got
+    end
+
+    throw(:abort) unless errors.empty?
   end
 
   def trim_text

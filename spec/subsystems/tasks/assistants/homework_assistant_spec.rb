@@ -15,12 +15,11 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
 
       core_exercise_ids = @pages.flat_map(&:homework_core_exercise_ids).sort
 
-      @teacher_selected_exercise_ids = core_exercise_ids[1..5].map(&:to_s)
+      @teacher_selected_exercises = core_exercises[1..5]
 
-      @tutor_selected_exercise_count = 4
+      @exercises_count_dynamic = 4
 
-      @assignment_exercise_count = @teacher_selected_exercise_ids.count +
-                                   @tutor_selected_exercise_count
+      @assignment_exercise_count = @teacher_selected_exercises.size + @exercises_count_dynamic
 
       @task_plan = FactoryBot.build(
         :tasks_task_plan,
@@ -28,8 +27,10 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         content_ecosystem_id: @ecosystem.id,
         description: "Hello!",
         settings: {
-          exercise_ids: @teacher_selected_exercise_ids,
-          exercises_count_dynamic: @tutor_selected_exercise_count
+          exercises: @teacher_selected_exercises.map do |exercise|
+            { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+          end,
+          exercises_count_dynamic: @exercises_count_dynamic
         },
         num_tasking_plans: 0
       )
@@ -52,7 +53,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         @task_plan.tasking_plans << FactoryBot.build(
           :tasks_tasking_plan,
           task_plan: @task_plan,
-          target:    taskee
+          target: taskee
         )
       end
 
@@ -82,7 +83,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
       @tasks.each { |task| expect(task.taskings.count).to eq(1) }
 
       expected_roles = @taskee_users.map{ |taskee| Role::GetDefaultUserRole[taskee] }
-      expect(@tasks.map{|t| t.taskings.first.role}).to match_array expected_roles
+      expect(@tasks.map {|t| t.taskings.first.role}).to match_array expected_roles
     end
 
     it "assigns the correct number of exercises" do
@@ -112,7 +113,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
     it "assigns all available tutor slots as spaced practice exercise placeholders" do
       @tasks.each do |task|
         spaced_practice_task_steps = task.spaced_practice_task_steps
-        expect(spaced_practice_task_steps.count).to eq @tutor_selected_exercise_count
+        expect(spaced_practice_task_steps.count).to eq @exercises_count_dynamic
 
         spaced_practice_task_steps.each do |task_step|
           expect(task_step.labels).to include 'review'
