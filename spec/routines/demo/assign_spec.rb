@@ -72,7 +72,7 @@ RSpec.describe Demo::Assign, type: :routine do
         expect(settings['page_ids'].size).to eq matches[1].blank? ? 2 : 3
       when 'homework'
         expect(settings['page_ids'].size).to eq matches[1].blank? ? 2 : 3
-        expect(settings['exercise_ids'].size).to eq 4
+        expect(settings['exercises'].size).to eq 4
         expect(settings['exercises_count_dynamic']).to eq 2
       when 'external'
         expect(settings['external_url']).to eq 'https://example.com/External'

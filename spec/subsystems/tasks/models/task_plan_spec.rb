@@ -38,7 +38,9 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     task_plan.assistant = FactoryBot.create(
       :tasks_assistant, code_class_name: '::Tasks::Assistants::IReadingAssistant'
     )
-    task_plan.settings = { exercise_ids: [exercise.id.to_s] }
+    task_plan.settings = {
+      exercises: [ { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions } ]
+    }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = { page_ids: [] }
@@ -59,7 +61,9 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil
 
-    task_plan.settings = { exercise_ids: [exercise.id.to_s] }
+    task_plan.settings = {
+      exercises: [ { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions } ]
+    }
     expect(task_plan).to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
 
@@ -82,7 +86,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan.ecosystem).to eq ecosystem
   end
 
-  it "requires that any exercise_ids or page_ids be in the task_plan's ecosystem" do
+  it "requires that any exercises or page_ids be in the task_plan's ecosystem" do
     book = FactoryBot.create :content_book, ecosystem: task_plan.ecosystem
     page = FactoryBot.create :content_page, book: book
     exercise = FactoryBot.create :content_exercise, page: page
@@ -92,22 +96,30 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       :tasks_assistant, code_class_name: '::Tasks::Assistants::HomeworkAssistant'
     )
     task_plan.settings = {
-      page_ids: ['1', '2'], exercise_ids: ['1', '2'], exercises_count_dynamic: 2
+      page_ids: ['1', '2'], exercises: [
+        { id: '1', points: [ 1 ] }, { id: '2', points: [ 1 ] }
+      ], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = {
-      page_ids: [page.id.to_s], exercise_ids: ['1', '2'], exercises_count_dynamic: 2
+      page_ids: [page.id.to_s], exercises: [
+        { id: '1', points: [ 1 ] }, { id: '2', points: [ 1 ] }
+      ], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = {
-      page_ids: ['1', '2'], exercise_ids: [exercise.id.to_s], exercises_count_dynamic: 2
+      page_ids: ['1', '2'], exercises: [
+        { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+      ], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = {
-      page_ids: [page.id.to_s], exercise_ids: [exercise.id.to_s], exercises_count_dynamic: 2
+      page_ids: [page.id.to_s], exercises: [
+        { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+      ], exercises_count_dynamic: 2
     }
     expect(task_plan).to be_valid
   end
@@ -119,7 +131,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
 
     task_plan.type = 'homework'
-    task_plan.settings['exercise_ids'] = ['1']
+    task_plan.settings['exercises'] = [ { 'id' => '1', 'points' => [ 1 ] } ]
     expect(task_plan).not_to be_valid
 
     task_plan.type = 'external'
@@ -237,12 +249,12 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     end
 
     it 'will not allow other fields to be updated after tasks are available to students' do
-      task_plan.reload.settings = { exercise_ids: [] }
+      task_plan.reload.settings = { exercises: [] }
       expect(task_plan).to be_valid
 
       student_task
 
-      task_plan.reload.settings = { exercise_ids: [] }
+      task_plan.reload.settings = { exercises: [] }
       expect(task_plan).not_to be_valid
     end
   end

@@ -609,8 +609,11 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
           :tasks_tasked_exercise,
           :tasks_tasked_placeholder
         ]
-        exercise_ids = [task.tasked_exercises.first.content_exercise_id]
-        task.task_plan.update_attribute :settings, { 'exercise_ids' => exercise_ids }
+        exercise = task.tasked_exercises.first.exercise
+        exercises = [
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        ]
+        task.task_plan.update_attribute :settings, exercises: exercises
         task.task_steps.first(4).each { |ts| ts.update_attribute :is_core, true }
         task.task_steps.last.update_attribute :is_core, false
 

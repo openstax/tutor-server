@@ -33,13 +33,19 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       owner: course,
       type: 'homework',
       ecosystem: @ecosystem,
-      settings: { exercise_ids: exercise_ids[0..5], exercises_count_dynamic: 3}
+      settings: {
+        exercises: exercises[0..5].map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        end,
+        exercises_count_dynamic: 3
+      }
     ).tap do |task_plan|
       task_plan.tasking_plans.first.target = period
       task_plan.save!
     end
   end
-  let(:exercise_ids) { @pages.flat_map(&:homework_core_exercise_ids).map(&:to_s) }
+  let(:exercise_ids) { @pages.flat_map(&:homework_core_exercise_ids) }
+  let(:exercises)    { Content::Models::Exercise.where(id: exercise_ids) }
 
   context 'with no teacher_student roles' do
     context 'homework' do

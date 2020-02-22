@@ -70,28 +70,26 @@ class Content::Models::Exercise < IndestructibleRecord
     @content_hash ||= JSON.parse(content)
   end
 
-  def content_as_independent_questions
-    @content_as_independent_questions ||= begin
-      exercise_hash = content_hash
-      questions = exercise_hash['questions']
-      questions.map do |question|
-        content = exercise_hash.merge('questions' => [question]).to_json
-
-        { id: question['id'], content: content }
-      end
-    end
-  end
-
   def questions_hash
     content_hash['questions']
   end
 
-  def number_of_parts
+  def questions
+    @questions ||= begin
+      questions_hash.map do |question|
+        Content::Question.new(
+          id: question['id'], content_hash: content_hash.merge('questions' => [question])
+        )
+      end
+    end
+  end
+
+  def num_questions
     questions_hash.size
   end
 
   def is_multipart?
-    number_of_parts > 1
+    num_questions > 1
   end
 
   def feature_ids
