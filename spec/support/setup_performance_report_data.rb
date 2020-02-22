@@ -63,7 +63,7 @@ class SetupPerformanceReportData
     homework_assistant = get_assistant(course: course, task_plan_type: 'homework')
 
     page_ids = pages.map { |page| page.id.to_s }
-    exercise_ids = pages.flat_map { |page| page.exercises.map { |ex| ex.id.to_s } }
+    exercises = pages.flat_map(&:exercises)
 
     time_zone = course.time_zone.to_tz
 
@@ -100,7 +100,9 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: exercise_ids.first(5),
+        exercises: exercises.first(5).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+        end,
         exercises_count_dynamic: 2
       },
       num_tasking_plans: 0
@@ -127,7 +129,9 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: exercise_ids.last(2),
+        exercises: exercises.last(2).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+        end,
         exercises_count_dynamic: 2
       },
       num_tasking_plans: 0
@@ -154,7 +158,9 @@ class SetupPerformanceReportData
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       settings: {
-        exercise_ids: exercise_ids.first(5),
+        exercises: exercises.first(5).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+        end,
         exercises_count_dynamic: 2
       },
       num_tasking_plans: 0

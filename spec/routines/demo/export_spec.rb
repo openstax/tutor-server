@@ -14,7 +14,9 @@ RSpec.describe Demo::Export, type: :routine do
       target: course.periods.first,
       settings: {
         page_ids: reading_pages.map(&:id).map(&:to_s),
-        exercise_ids: reading_pages.first.exercises.first(5).map(&:id).map(&:to_s),
+        exercises: reading_pages.first.exercises.first(5).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        end,
         exercises_count_dynamic: 4
       }
     ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }

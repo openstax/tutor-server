@@ -128,7 +128,8 @@ class CreateStudentHistory
   end
 
   def create_homework_task_plan(ecosystem, course, periods, chapter, page, exercise)
-    exercise_ids = [ecosystem.chapters[chapter].pages[page].exercises[exercise].id.to_s]
+    ex = ecosystem.chapters[chapter].pages[page].exercises[exercise]
+    exercises = [ { id: ex.id.to_s, points: [ 1 ] * ex.to_model.num_questions } ]
 
     task_plan = FactoryBot.build(
       :tasks_task_plan,
@@ -138,7 +139,7 @@ class CreateStudentHistory
       title: 'Homework',
       type: 'homework',
       settings: {
-        exercise_ids: exercise_ids,
+        exercises: exercises,
         exercises_count_dynamic: 2
       },
       num_tasking_plans: 0

@@ -25,7 +25,7 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
            type: Integer,
            readable: true,
            writeable: true,
-           getter: ->(*) { settings['exercise_ids']&.size }
+           getter: ->(*) { settings['exercises']&.size }
 
   property :exercises_count_dynamic,
            type: Integer,

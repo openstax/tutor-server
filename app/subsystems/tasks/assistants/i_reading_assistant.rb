@@ -6,9 +6,6 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
   def self.schema
     '{
       "type": "object",
-      "required": [
-        "page_ids"
-      ],
       "properties": {
         "page_ids": {
           "type": "array",
@@ -19,6 +16,9 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
           "uniqueItems": true
         }
       },
+      "required": [
+        "page_ids"
+      ],
       "additionalProperties": false
     }'
   end

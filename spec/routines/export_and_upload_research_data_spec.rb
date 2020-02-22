@@ -189,7 +189,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             expect(data['Exercise JSON']).to eq json
 
             question_index = data['Question Number'].to_i - 1
-            question = exercise.questions_hash[question_index]
+            question = exercise.questions[question_index]
 
             solution = (question['collaborator_solutions'] || []).first
 

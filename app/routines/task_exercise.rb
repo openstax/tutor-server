@@ -1,5 +1,4 @@
 class TaskExercise
-
   lev_routine transaction: :read_committed
 
   protected
@@ -28,7 +27,8 @@ class TaskExercise
     labels = current_step.labels
     spy = current_step.spy
 
-    questions = exercise.content_as_independent_questions
+    questions = exercise_model.questions
+    is_in_multipart = questions.size > 1
     outputs.task_steps = questions.each_with_index.map do |question, ii|
       # Make sure that all steps after the first exercise part get their own new step
       if ii > 0
@@ -53,10 +53,10 @@ class TaskExercise
         url: exercise.url,
         title: title || exercise.title,
         context: exercise.context,
-        question_id: question[:id],
+        question_id: question.id,
         question_index: ii,
-        content: question[:content],
-        is_in_multipart: questions.size > 1
+        content: question.content,
+        is_in_multipart: is_in_multipart
       )
 
       current_step.tasked.set_correct_answer_id
@@ -81,5 +81,4 @@ class TaskExercise
     # Task was already saved and we added more steps, so need to reload steps from DB
     task.task_steps.reset if task.persisted? && current_step != task_step
   end
-
 end

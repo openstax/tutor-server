@@ -359,7 +359,7 @@ class ExportAndUploadResearchData
             stimulus = exercise.content_hash['stimulus_html']
             json = exercise.content
 
-            exercise.questions_hash.each_with_index do |question, q_index|
+            exercise.to_model.questions.each_with_index do |question, q_index|
               begin
                 solution = (question['collaborator_solutions'] || []).first
                 correct_answers = []

@@ -91,8 +91,12 @@ class PopulatePreviewCourseContent
       pages = chapter.pages
       page_ids = pages.map { |page| page.id.to_s }
       exercise_ids = pages.flat_map do |page|
-        page.homework_core_pool.content_exercise_ids.sample&.to_s
+        page.homework_core_pool.content_exercise_ids.sample
       end.compact
+      ex = Content::Models::Exercise.where(id: exercise_ids).select(:id, :content)
+      exercises = ex.map do |exercise|
+        { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+      end
 
       reading_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.number} Reading (Sample)",
@@ -100,7 +104,7 @@ class PopulatePreviewCourseContent
         is_preview: true,
         ecosystem: ecosystem,
         type: 'reading',
-        settings: { 'page_ids' => page_ids },
+        settings: { page_ids: page_ids },
         grading_template: course.grading_templates.detect { |gt| gt.task_plan_type == 'reading' }
       )
       reading_tp.assistant = run(
@@ -128,9 +132,11 @@ class PopulatePreviewCourseContent
         is_preview: true,
         ecosystem: ecosystem,
         type: 'homework',
-        settings: { 'page_ids' => page_ids,
-                    'exercise_ids' => exercise_ids,
-                    'exercises_count_dynamic' => exercises_count_dynamic },
+        settings: {
+          page_ids: page_ids,
+          exercises: exercises,
+          exercises_count_dynamic: exercises_count_dynamic
+        },
         grading_template: course.grading_templates.detect { |gt| gt.task_plan_type == 'homework' }
       )
       homework_tp.assistant = run(

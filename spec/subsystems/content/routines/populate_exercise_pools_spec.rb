@@ -79,14 +79,26 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine, speed: 
 
   let(:concept_coach_exercise)    { FactoryBot.create :content_exercise, page: page }
 
-  let(:untagged_multi_exercise)   { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
+  let(:untagged_multi_exercise)   do
+    FactoryBot.create :content_exercise, page: page, num_questions: 2
+  end
 
-  let(:conc_multi_exercise)       { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
-  let(:recall_multi_exercise)     { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
-  let(:c_or_r_multi_exercise)     { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
-  let(:practice_multi_exercise)   { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
+  let(:conc_multi_exercise)       do
+    FactoryBot.create :content_exercise, page: page, num_questions: 2
+  end
+  let(:recall_multi_exercise)     do
+    FactoryBot.create :content_exercise, page: page, num_questions: 2
+  end
+  let(:c_or_r_multi_exercise)     do
+    FactoryBot.create :content_exercise, page: page, num_questions: 2
+  end
+  let(:practice_multi_exercise)   do
+    FactoryBot.create :content_exercise, page: page, num_questions: 2
+  end
 
-  let(:cc_multi_exercise)         { FactoryBot.create :content_exercise, page: page, num_parts: 2 }
+  let(:cc_multi_exercise)         do
+    FactoryBot.create :content_exercise, page: page, num_questions: 2
+  end
 
   let(:exercise_tags) do
     {

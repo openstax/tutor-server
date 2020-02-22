@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium do
-
   let(:course)    { FactoryBot.create :course_profile_course }
   let(:period)    { FactoryBot.create :course_membership_period, course: course }
   let!(:user)     do
@@ -34,14 +33,19 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       owner: course,
       type: 'homework',
       ecosystem: @ecosystem.to_model,
-      settings: { exercise_ids: exercise_ids[0..5], exercises_count_dynamic: 3}
+      settings: {
+        exercises: exercises[0..5].map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+        end,
+        exercises_count_dynamic: 3
+      }
     ).tap do |task_plan|
       task_plan.tasking_plans.first.target = period.to_model
       task_plan.save!
     end
   end
-  let(:core_pools)   { @ecosystem.homework_core_pools(pages: @pages) }
-  let(:exercise_ids) { core_pools.flat_map(&:exercises).map { |ex| ex.id.to_s } }
+  let(:core_pools) { @ecosystem.homework_core_pools(pages: @pages) }
+  let(:exercises)  { core_pools.flat_map(&:exercises) }
 
   context 'with no teacher_student roles' do
     context 'homework' do
