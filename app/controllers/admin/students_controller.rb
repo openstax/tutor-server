@@ -7,9 +7,9 @@ class Admin::StudentsController < Admin::BaseController
     local_params = params[:course_membership_models_student].permit(:is_comped, :payment_due_at)
 
     if local_params[:payment_due_at].present?
-      local_params[:payment_due_at] =
-        DateTimeUtilities.parse_in_zone(string: local_params[:payment_due_at],
-                                        zone: student.course.time_zone.name).midnight + 1.day - 1.second
+      local_params[:payment_due_at] = DateTimeUtilities.parse_in_zone(
+        string: local_params[:payment_due_at], zone: student.course.time_zone.name
+      ).midnight + 1.day - 1.second
     end
 
     respond_to do |format|
@@ -38,5 +38,4 @@ class Admin::StudentsController < Admin::BaseController
     CourseMembership::ActivateStudent[student: student]
     redirect_to edit_admin_course_path(student.course) + '#roster'
   end
-
 end
