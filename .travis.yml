@@ -1,14 +1,7 @@
 # Copyright 2011-2019 Rice University. Licensed under the Affero General Public
 # License version 3 or later.  See the COPYRIGHT file for details.
 
-branches:
-  only:
-    - master
-    - alpha
-    - beta
-    - lms
-    - /^int-.*$/
-    - /^release-.*$/
+if: type = pull_request OR branch = master
 dist: xenial
 language: ruby
 addons:
