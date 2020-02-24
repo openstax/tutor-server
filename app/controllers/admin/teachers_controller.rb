@@ -17,20 +17,24 @@ class Admin::TeachersController < Admin::BaseController
 
   def destroy
     teacher = CourseMembership::Models::Teacher.find params[:id]
-    teacher.destroy
-    teacher.role.profile.roles.teacher_student.map(&:teacher_student).compact.select do |ts|
-      ts.course_profile_course_id == teacher.course_profile_course_id
-    end.reject(&:deleted?).each(&:destroy!)
+    CourseMembership::Models::Teacher.transaction do
+      teacher.destroy!
+      teacher.role.profile.roles.teacher_student.map(&:teacher_student).compact.select do |ts|
+        ts.course_profile_course_id == teacher.course_profile_course_id
+      end.reject(&:deleted?).each(&:destroy!)
+    end
     flash[:notice] = "Teacher \"#{teacher.role.name}\" removed from course."
     redirect_to edit_admin_course_path(teacher.course, anchor: 'teachers')
   end
 
   def restore
     teacher = CourseMembership::Models::Teacher.find params[:id]
-    teacher.restore
-    teacher.role.profile.roles.teacher_student.map(&:teacher_student).compact.select do |ts|
-      ts.course_profile_course_id == teacher.course_profile_course_id
-    end.select(&:deleted?).each(&:restore!)
+    CourseMembership::Models::Teacher.transaction do
+      teacher.restore!
+      teacher.role.profile.roles.teacher_student.map(&:teacher_student).compact.select do |ts|
+        ts.course_profile_course_id == teacher.course_profile_course_id
+      end.select(&:deleted?).each(&:restore!)
+    end
     flash[:notice] = "Teacher \"#{teacher.role.name}\" readded to course."
     redirect_to edit_admin_course_path(teacher.course, anchor: 'teachers')
   end
