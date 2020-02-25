@@ -102,13 +102,13 @@ class DenormalizeBooks < ActiveRecord::Migration[5.2]
           {
             type: 'Chapter',
             title: chapter['title'],
-            book_location: chapter['baked_book_location'],
+            book_location: JSON.parse(chapter['baked_book_location']),
             tutor_uuid: chapter['tutor_uuid'],
             children: pages.map do |page|
               {
                 type: 'Page',
                 title: page.title,
-                book_location: page.baked_book_location || [],
+                book_location: JSON.parse(page.baked_book_location),
                 id: page.id,
                 uuid: page.uuid,
                 version: page.version,
