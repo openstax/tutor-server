@@ -343,41 +343,49 @@ class Tasks::Models::Task < ApplicationRecord
       nil : correct_exercise_count / actual_and_placeholder_exercise_count.to_f
   end
 
+  def score_without_lateness
+    result = 0
+
+    if completion_weight > 0
+      return if completion.nil?
+
+      result += completion * completion_weight
+    end
+
+    if correctness_weight > 0
+      return if correctness.nil?
+
+      result += correctness * correctness_weight
+    end
+
+    result
+  end
+
   def lateness
     return 0 if last_worked_at.blank? || due_at.blank?
 
     last_worked_at - [ due_at, accepted_late_at ].compact.max
   end
 
-  def score
-    result_without_lateness = 0
-
-    if completion_weight > 0
-      return if completion.nil?
-
-      result_without_lateness += completion * completion_weight
-    end
-
-    if correctness_weight > 0
-      return if correctness.nil?
-
-      result_without_lateness += correctness * correctness_weight
-    end
-
-    return result_without_lateness if lateness <= 0
+  def late_work_multiplier
+    return 1.0 if lateness <= 0
 
     penalty = case late_work_penalty_applied
     when 'immediately'
-      late_work_penalty
+      1.0 - late_work_penalty
     when 'daily'
-      (lateness/1.day).ceil * late_work_penalty
+      1.0 - ((lateness/1.day).ceil * late_work_penalty)
     else
-      0.0
+      1.0
     end
+  end
 
-    return 0.0 if penalty >= 1.0
+  def points
+    late_work_multiplier * correct_exercise_count
+  end
 
-    (1.0 - penalty) * result_without_lateness
+  def score
+    score_without_lateness.nil? ? nil : late_work_multiplier * score_without_lateness
   end
 
   def accept_late_work

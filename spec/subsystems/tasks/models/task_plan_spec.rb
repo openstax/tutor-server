@@ -22,7 +22,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it { is_expected.to validate_presence_of(:title) }
 
-  it "requires at least one tasking_plan" do
+  it 'requires at least one tasking_plan' do
     expect(task_plan).to be_valid
 
     task_plan.tasking_plans.destroy_all
@@ -51,7 +51,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to be_valid
   end
 
-  it "automatically infers the ecosystem from the settings or owner" do
+  it 'automatically infers the ecosystem from the settings or owner' do
     ecosystem = task_plan.ecosystem
     book = FactoryBot.create :content_book, ecosystem: ecosystem
     chapter = FactoryBot.create :content_chapter, book: book
@@ -74,7 +74,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil
 
-    task_plan.settings = { page_ids: [page.id.to_s] }
+    task_plan.settings = { page_ids: [ page.id.to_s ] }
     expect(task_plan).to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
 

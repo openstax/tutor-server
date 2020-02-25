@@ -1,5 +1,4 @@
 class OpenStax::Exercises::V1::FakeClient
-
   attr_reader :store
 
   def initialize(exercises_configuration)
