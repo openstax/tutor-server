@@ -72,7 +72,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   protected
 
   def num_spaced_practice_exercises
-    exercises_count_dynamic = task_plan[:settings]['exercises_count_dynamic'].to_i
+    exercises_count_dynamic = task_plan.settings['exercises_count_dynamic'].to_i
     num_spaced_practice_exercises = [0, exercises_count_dynamic].max
     num_spaced_practice_exercises
   end

@@ -66,21 +66,21 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     end
   end
 
-  it "requires non-nil due_at to be after opens_at" do
+  it 'requires non-nil due_at to be after opens_at' do
     expect(task).to be_valid
 
     task.due_at = Time.current - 1.week - 1.hour
     expect(task).to_not be_valid
   end
 
-  it "requires non-nil closes_at to be after due_at" do
+  it 'requires non-nil closes_at to be after due_at' do
     expect(task).to be_valid
 
     task.closes_at = Time.current - 2.days - 1.hour
     expect(task).to_not be_valid
   end
 
-  it "reports is_shared? correctly" do
+  it 'reports is_shared? correctly' do
     FactoryBot.create(:tasks_tasking, task: task)
     expect(task.is_shared?).to eq false
 
@@ -294,7 +294,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     expect(task.correct_exercise_count).to eq 1
   end
 
-  context "update step counts" do
+  context 'update step counts' do
     let(:core_step_1) do
       FactoryBot.build(:tasks_tasked_reading).task_step.tap { |step| step.is_core = true }
     end
@@ -406,13 +406,13 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       end.task_step.tap { |step| step.is_core = false }
     end
 
-    context "steps count" do
-      context "total" do
-        it "works with no steps" do
+    context 'steps count' do
+      context 'total' do
+        it 'works with no steps' do
           expect(task.steps_count).to eq(0)
         end
 
-        it "works with multiple steps" do
+        it 'works with multiple steps' do
           task.task_steps = [core_step_1, dynamic_step_1]
           task.save!
           task.reload
@@ -421,12 +421,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "completed steps count" do
-        it "works with no steps" do
+      context 'completed steps count' do
+        it 'works with no steps' do
           expect(task.completed_steps_count).to eq(0)
         end
 
-        it "works with multiple completed steps" do
+        it 'works with multiple completed steps' do
           task.task_steps = [completed_core_step_1, core_step_1, completed_dynamic_step_1]
           task.save!
           task.reload
@@ -435,12 +435,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "core steps count" do
-        it "works with no steps" do
+      context 'core steps count' do
+        it 'works with no steps' do
           expect(task.core_steps_count).to eq(0)
         end
 
-        it "works with multiple core steps" do
+        it 'works with multiple core steps' do
           task.task_steps = [core_step_1, dynamic_step_1, core_step_2]
           task.save!
           task.reload
@@ -449,12 +449,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "completed core steps count" do
-        it "works with no steps" do
+      context 'completed core steps count' do
+        it 'works with no steps' do
           expect(task.completed_core_steps_count).to eq(0)
         end
 
-        it "works with multiple completed core steps" do
+        it 'works with multiple completed core steps' do
           task.task_steps = [
             completed_core_step_1,
             dynamic_step_1,
@@ -468,12 +468,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "exercise steps count" do
-        it "works with no steps" do
+      context 'exercise steps count' do
+        it 'works with no steps' do
           expect(task.exercise_steps_count).to eq(0)
         end
 
-        it "works with multiple exercise steps" do
+        it 'works with multiple exercise steps' do
           task.task_steps = [exercise_step_1, core_step_1, exercise_step_2]
           task.save!
           task.reload
@@ -482,12 +482,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "completed exercise steps count" do
-        it "works with no steps" do
+      context 'completed exercise steps count' do
+        it 'works with no steps' do
           expect(task.completed_exercise_steps_count).to eq(0)
         end
 
-        it "works with multiple completed exercise steps" do
+        it 'works with multiple completed exercise steps' do
           task.task_steps = [
             completed_exercise_step_1, exercise_step_1, dynamic_step_1, completed_exercise_step_2
           ]
@@ -498,12 +498,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "correct exercise steps count" do
-        it "works with no steps" do
+      context 'correct exercise steps count' do
+        it 'works with no steps' do
           expect(task.correct_exercise_steps_count).to eq(0)
         end
 
-        it "works with multiple correct exercise steps" do
+        it 'works with multiple correct exercise steps' do
           task.task_steps = [
             correct_exercise_step_1, completed_exercise_step_1, correct_exercise_step_2
           ]
@@ -514,12 +514,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "placeholder steps count" do
-        it "works with no steps" do
+      context 'placeholder steps count' do
+        it 'works with no steps' do
           expect(task.placeholder_steps_count).to eq(0)
         end
 
-        it "works with multiple placeholder steps" do
+        it 'works with multiple placeholder steps' do
           task.task_steps = [core_placeholder_step, core_step_1, dynamic_placeholder_exercise_step]
           task.save!
           task.reload
@@ -528,12 +528,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "placeholder exercise steps count" do
-        it "works with no steps" do
+      context 'placeholder exercise steps count' do
+        it 'works with no steps' do
           expect(task.placeholder_exercise_steps_count).to eq(0)
         end
 
-        it "works with multiple placeholder exercise steps" do
+        it 'works with multiple placeholder exercise steps' do
           task.task_steps = [
             core_placeholder_exercise_step, core_placeholder_step, dynamic_placeholder_exercise_step
           ]
@@ -544,12 +544,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context "core placeholder exercise steps count" do
-        it "works with no steps" do
+      context 'core placeholder exercise steps count' do
+        it 'works with no steps' do
           expect(task.core_placeholder_exercise_steps_count).to eq(0)
         end
 
-        it "works with multiple placeholder exercise steps" do
+        it 'works with multiple placeholder exercise steps' do
           task.task_steps = [
             dynamic_placeholder_step,
             core_placeholder_exercise_step,
@@ -562,7 +562,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      it "updates on_time counts when the due date changes" do
+      it 'updates on_time counts when the due date changes' do
         task = FactoryBot.create(
           :tasks_task, opens_at: Time.current - 1.week,
                        due_at: Time.current - 1.day,
@@ -584,7 +584,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         expect(task.correct_on_time_exercise_steps_count).to eq 1
       end
 
-      it "updates counts after any change to the task" do
+      it 'updates counts after any change to the task' do
         tasked_to = [ FactoryBot.create(:entity_role) ]
         task = FactoryBot.create :tasks_task, tasked_to: tasked_to, step_types: [
           :tasks_tasked_exercise,
@@ -679,158 +679,204 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     it 'is hidden only if it has been hidden after being deleted for the last time' do
       expect(task).not_to be_hidden
 
-      task.task_plan.destroy!
+      task_plan.destroy!
       expect(task.reload).not_to be_hidden
 
       task.hide.save!
       expect(task).to be_hidden
 
-      task.task_plan.reload.restore!(recursive: true)
+      task_plan.reload.restore!(recursive: true)
       expect(task.reload).not_to be_hidden
 
-      task.task_plan.destroy!
+      task_plan.destroy!
       expect(task.reload).not_to be_hidden
 
       task.hide.save!
       expect(task).to be_hidden
     end
 
-    it 'calculates the score with lateness penalties' do
-      task = FactoryBot.create(
-        :tasks_task, step_types: [
-          :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_exercise
-        ]
-      )
-      task.grading_template.late_work_penalty_applied = :immediately
-      task.grading_template.late_work_penalty = 0.5
-      task.grading_template.save!
-
-      due_at = task.due_at
-
-      Timecop.freeze(due_at - 1.day) do
-        Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true]
-        task.reload
-
-        expect(task.correct_exercise_count).to eq 1
-        expect(task.completed_exercise_count).to eq 1
-        expect(task.completed_on_time_exercise_count).to eq 1
-        expect(task.correct_on_time_exercise_count).to eq 1
-        expect(task.correct_accepted_late_exercise_count).to eq 0
-        expect(task.completed_accepted_late_exercise_count).to eq 0
-        expect(task.completion).to eq 1/3.0
-        expect(task.correctness).to eq 1/3.0
-        expect(task.score).to eq 1/3.0
-      end
-
-      Timecop.freeze(due_at + 1.hour) do
-        Preview::AnswerExercise[task_step: task.task_steps[1], is_correct: true]
-        task.reload
-
-        expect(task.correct_exercise_count).to eq 2
-        expect(task.completed_exercise_count).to eq 2
-        expect(task.completed_on_time_exercise_count).to eq 1
-        expect(task.correct_on_time_exercise_count).to eq 1
-        expect(task.correct_accepted_late_exercise_count).to eq 0
-        expect(task.completed_accepted_late_exercise_count).to eq 0
-        expect(task.completion).to eq 2/3.0
-        expect(task.correctness).to eq 2/3.0
-        expect(task.score).to eq 1/3.0
-
-        task.accept_late_work
-        task.save!
-
-        expect(task.correct_exercise_count).to eq 2
-        expect(task.completed_exercise_count).to eq 2
-        expect(task.completed_on_time_exercise_count).to eq 1
-        expect(task.correct_on_time_exercise_count).to eq 1
-        expect(task.correct_accepted_late_exercise_count).to eq 2
-        expect(task.completed_accepted_late_exercise_count).to eq 2
-        expect(task.completion).to eq 2/3.0
-        expect(task.correctness).to eq 2/3.0
-        expect(task.score).to eq 2/3.0
-        expect(task.accepted_late_at).not_to be_nil
-      end
-
-      Timecop.freeze(due_at + 25.hours) do
-        Preview::AnswerExercise[task_step: task.task_steps[2], is_correct: true]
-        task.reload
-
-        expect(task.correct_exercise_count).to eq 3
-        expect(task.completed_exercise_count).to eq 3
-        expect(task.completed_on_time_exercise_count).to eq 1
-        expect(task.correct_on_time_exercise_count).to eq 1
-        expect(task.correct_accepted_late_exercise_count).to eq 2
-        expect(task.completed_accepted_late_exercise_count).to eq 2
-        expect(task.completion).to eq 1.0
-        expect(task.correctness).to eq 1.0
-        expect(task.score).to eq 0.5
-
-        task.grading_template.late_work_penalty_applied = :daily
-        task.grading_template.late_work_penalty = 0.3
+    context '#score' do
+      it 'calculates the score with lateness penalties' do
+        task = FactoryBot.create(
+          :tasks_task, step_types: [
+            :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_exercise
+          ]
+        )
+        task.grading_template.late_work_penalty_applied = :immediately
+        task.grading_template.late_work_penalty = 0.5
         task.grading_template.save!
 
-        expect(task.correct_exercise_count).to eq 3
-        expect(task.completed_exercise_count).to eq 3
-        expect(task.completed_on_time_exercise_count).to eq 1
-        expect(task.correct_on_time_exercise_count).to eq 1
-        expect(task.correct_accepted_late_exercise_count).to eq 2
-        expect(task.completed_accepted_late_exercise_count).to eq 2
-        expect(task.completion).to eq 1.0
-        expect(task.correctness).to eq 1.0
-        expect(task.score).to eq 0.7
+        due_at = task.due_at
 
-        task.accept_late_work
-        task.save!
+        Timecop.freeze(due_at - 1.day) do
+          Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
+          task.reload
 
-        expect(task.correct_exercise_count).to eq 3
-        expect(task.completed_exercise_count).to eq 3
-        expect(task.completed_on_time_exercise_count).to eq 1
-        expect(task.correct_on_time_exercise_count).to eq 1
-        expect(task.correct_accepted_late_exercise_count).to eq 3
-        expect(task.completed_accepted_late_exercise_count).to eq 3
-        expect(task.completion).to eq 1.0
-        expect(task.correctness).to eq 1.0
+          expect(task.correct_exercise_count).to eq 1
+          expect(task.completed_exercise_count).to eq 1
+          expect(task.completed_on_time_exercise_count).to eq 1
+          expect(task.correct_on_time_exercise_count).to eq 1
+          expect(task.correct_accepted_late_exercise_count).to eq 0
+          expect(task.completed_accepted_late_exercise_count).to eq 0
+          expect(task.completion).to eq 1/3.0
+          expect(task.correctness).to eq 1/3.0
+          expect(task.score).to eq 1/3.0
+        end
+
+        Timecop.freeze(due_at + 1.hour) do
+          Preview::AnswerExercise[task_step: task.task_steps.second, is_correct: true]
+          task.reload
+
+          expect(task.correct_exercise_count).to eq 2
+          expect(task.completed_exercise_count).to eq 2
+          expect(task.completed_on_time_exercise_count).to eq 1
+          expect(task.correct_on_time_exercise_count).to eq 1
+          expect(task.correct_accepted_late_exercise_count).to eq 0
+          expect(task.completed_accepted_late_exercise_count).to eq 0
+          expect(task.completion).to eq 2/3.0
+          expect(task.correctness).to eq 2/3.0
+          expect(task.score).to eq 1/3.0
+
+          task.accept_late_work
+          task.save!
+
+          expect(task.correct_exercise_count).to eq 2
+          expect(task.completed_exercise_count).to eq 2
+          expect(task.completed_on_time_exercise_count).to eq 1
+          expect(task.correct_on_time_exercise_count).to eq 1
+          expect(task.correct_accepted_late_exercise_count).to eq 2
+          expect(task.completed_accepted_late_exercise_count).to eq 2
+          expect(task.completion).to eq 2/3.0
+          expect(task.correctness).to eq 2/3.0
+          expect(task.score).to eq 2/3.0
+          expect(task.accepted_late_at).not_to be_nil
+        end
+
+        Timecop.freeze(due_at + 25.hours) do
+          Preview::AnswerExercise[task_step: task.task_steps.third, is_correct: true]
+          task.reload
+
+          expect(task.correct_exercise_count).to eq 3
+          expect(task.completed_exercise_count).to eq 3
+          expect(task.completed_on_time_exercise_count).to eq 1
+          expect(task.correct_on_time_exercise_count).to eq 1
+          expect(task.correct_accepted_late_exercise_count).to eq 2
+          expect(task.completed_accepted_late_exercise_count).to eq 2
+          expect(task.completion).to eq 1.0
+          expect(task.correctness).to eq 1.0
+          expect(task.score).to eq 0.5
+
+          task.grading_template.late_work_penalty_applied = :daily
+          task.grading_template.late_work_penalty = 0.3
+          task.grading_template.save!
+
+          expect(task.correct_exercise_count).to eq 3
+          expect(task.completed_exercise_count).to eq 3
+          expect(task.completed_on_time_exercise_count).to eq 1
+          expect(task.correct_on_time_exercise_count).to eq 1
+          expect(task.correct_accepted_late_exercise_count).to eq 2
+          expect(task.completed_accepted_late_exercise_count).to eq 2
+          expect(task.completion).to eq 1.0
+          expect(task.correctness).to eq 1.0
+          expect(task.score).to eq 0.7
+
+          task.accept_late_work
+          task.save!
+
+          expect(task.correct_exercise_count).to eq 3
+          expect(task.completed_exercise_count).to eq 3
+          expect(task.completed_on_time_exercise_count).to eq 1
+          expect(task.correct_on_time_exercise_count).to eq 1
+          expect(task.correct_accepted_late_exercise_count).to eq 3
+          expect(task.completed_accepted_late_exercise_count).to eq 3
+          expect(task.completion).to eq 1.0
+          expect(task.correctness).to eq 1.0
+          expect(task.score).to eq 1.0
+
+          task.due_at = due_at + 3.days
+          task.save!
+
+          expect(task.correct_exercise_count).to eq 3
+          expect(task.completed_exercise_count).to eq 3
+          expect(task.completed_on_time_exercise_count).to eq 3
+          expect(task.correct_on_time_exercise_count).to eq 3
+          expect(task.completed_accepted_late_exercise_count).to eq 3
+          expect(task.correct_accepted_late_exercise_count).to eq 3
+          expect(task.completion).to eq 1.0
+          expect(task.correctness).to eq 1.0
+          expect(task.score).to eq 1.0
+
+          task.due_at = due_at
+          task.save!
+
+          expect(task.correct_exercise_count).to eq 3
+          expect(task.completed_exercise_count).to eq 3
+          expect(task.completed_on_time_exercise_count).to eq 1
+          expect(task.correct_on_time_exercise_count).to eq 1
+          expect(task.completed_accepted_late_exercise_count).to eq 3
+          expect(task.correct_accepted_late_exercise_count).to eq 3
+          expect(task.completion).to eq 1.0
+          expect(task.correctness).to eq 1.0
+          expect(task.score).to eq 1.0
+
+          task.reject_late_work
+          task.save!
+
+          expect(task.correct_exercise_count).to eq 3
+          expect(task.completed_exercise_count).to eq 3
+          expect(task.completed_on_time_exercise_count).to eq 1
+          expect(task.correct_on_time_exercise_count).to eq 1
+          expect(task.correct_accepted_late_exercise_count).to eq 0
+          expect(task.completed_accepted_late_exercise_count).to eq 0
+          expect(task.completion).to eq 1.0
+          expect(task.correctness).to eq 1.0
+          expect(task.score).to eq 0.4
+          expect(task.accepted_late_at).to be_nil
+        end
+      end
+
+      it 'uses teacher-chosen points for homework assignments' do
+        course = task_plan.owner
+        period = FactoryBot.create :course_membership_period, course: course
+        FactoryBot.create :course_membership_student, period: period
+
+        simple_exercise = FactoryBot.create :content_exercise
+        page = simple_exercise.page
+        multipart_exercise = FactoryBot.create :content_exercise, page: page, num_questions: 3
+
+        task_plan.grading_template.update_attribute :task_plan_type, 'homework'
+        task_plan.update_attributes!(
+          ecosystem: page.ecosystem,
+          type: 'homework',
+          assistant: FactoryBot.create(
+            :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
+          ),
+          settings: {
+            page_ids: [ page.id.to_s ],
+            exercises: [
+              { id: simple_exercise.id.to_s, points: [ 1 ] },
+              { id: multipart_exercise.id.to_s, points: [ 2, 3, 4 ] }
+            ],
+            exercises_count_dynamic: 0
+          }
+        )
+        task_plan.tasks.delete_all
+        DistributeTasks[task_plan: task_plan]
+
+        task = task_plan.tasks.first
+        expect(task.score).to eq 0.0
+
+        Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
+        expect(task.score).to eq 0.1
+
+        Preview::AnswerExercise[task_step: task.task_steps.second, is_correct: true]
+        expect(task.score).to eq 0.3
+
+        Preview::AnswerExercise[task_step: task.task_steps.third, is_correct: true]
+        expect(task.score).to eq 0.6
+
+        Preview::AnswerExercise[task_step: task.task_steps.fourth, is_correct: true]
         expect(task.score).to eq 1.0
-
-        task.due_at = due_at + 3.days
-        task.save!
-
-        expect(task.correct_exercise_count).to eq 3
-        expect(task.completed_exercise_count).to eq 3
-        expect(task.completed_on_time_exercise_count).to eq 3
-        expect(task.correct_on_time_exercise_count).to eq 3
-        expect(task.completed_accepted_late_exercise_count).to eq 3
-        expect(task.correct_accepted_late_exercise_count).to eq 3
-        expect(task.completion).to eq 1.0
-        expect(task.correctness).to eq 1.0
-        expect(task.score).to eq 1.0
-
-        task.due_at = due_at
-        task.save!
-
-        expect(task.correct_exercise_count).to eq 3
-        expect(task.completed_exercise_count).to eq 3
-        expect(task.completed_on_time_exercise_count).to eq 1
-        expect(task.correct_on_time_exercise_count).to eq 1
-        expect(task.completed_accepted_late_exercise_count).to eq 3
-        expect(task.correct_accepted_late_exercise_count).to eq 3
-        expect(task.completion).to eq 1.0
-        expect(task.correctness).to eq 1.0
-        expect(task.score).to eq 1.0
-
-        task.reject_late_work
-        task.save!
-
-        expect(task.correct_exercise_count).to eq 3
-        expect(task.completed_exercise_count).to eq 3
-        expect(task.completed_on_time_exercise_count).to eq 1
-        expect(task.correct_on_time_exercise_count).to eq 1
-        expect(task.correct_accepted_late_exercise_count).to eq 0
-        expect(task.completed_accepted_late_exercise_count).to eq 0
-        expect(task.completion).to eq 1.0
-        expect(task.correctness).to eq 1.0
-        expect(task.score).to eq 0.4
-        expect(task.accepted_late_at).to be_nil
       end
     end
   end
