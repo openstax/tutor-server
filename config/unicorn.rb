@@ -15,9 +15,6 @@ unless ENV.fetch('UNICORN_LOG_TO_STDOUT', true)
 end
 
 before_fork do |server, worker|
-  # disconnect the unicorn master from the db before forking
-  ActiveRecord::Base.connection.disconnect! if defined?(ActiveRecord::Base)
-
   # when sent a USR2, unicorn will suffix its pidfile with .oldbin and load a new version of itself
   # as this new master process spawns workers, it will check if a .oldbin pidfile exists
   # if it does, it will send a QUIT signal to the old unicorn master
@@ -31,10 +28,4 @@ before_fork do |server, worker|
       # the old unicorn master process no longer exists
     end
   end
-end
-
-after_fork do |server, worker|
-  # unicorn master loads the app then forks off workers
-  # we need to make sure we aren't using any of the parent's sockets, e.g. db connection
-  ActiveRecord::Base.establish_connection if defined?(ActiveRecord::Base)
 end
