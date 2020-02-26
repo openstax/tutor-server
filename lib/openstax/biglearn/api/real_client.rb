@@ -173,7 +173,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
     end.compact
     prepared_at = request[:prepared_at] || course.course_ecosystems.find do |ce|
       ce.content_ecosystem_id == to_ecosystem.id
-    end.try!(:created_at) || Time.current
+    end&.created_at || Time.current
 
     biglearn_request = {
       preparation_uuid: request.fetch(:preparation_uuid),
@@ -198,7 +198,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
     biglearn_requests = requests.map do |request|
       course = request.fetch(:course)
       updated_at = request[:updated_at] ||
-                   course.course_ecosystems.first.try!(:created_at) ||
+                   course.course_ecosystems.first&.created_at ||
                    Time.current
 
       {
@@ -453,7 +453,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
     biglearn_requests = requests.map do |request|
       tasked_exercise = request.fetch(:tasked_exercise)
       task = tasked_exercise.task_step.task
-      role = task.taskings.first.try!(:role)
+      role = task.taskings.first&.role
       next if role.nil?
 
       student = role.course_member
@@ -489,7 +489,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
   def fetch_assignment_pes(requests)
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
-      course = task.taskings.first.try!(:role).try!(:course)
+      course = task.taskings.first&.role&.course
       next if course.nil?
 
       max_num_exercises = request[:max_num_exercises]
@@ -513,7 +513,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
   def fetch_assignment_spes(requests)
     biglearn_requests = requests.map do |request|
       task = request.fetch(:task)
-      course = task.taskings.first.try!(:role).try!(:course)
+      course = task.taskings.first&.role&.course
       next if course.nil?
 
       max_num_exercises = request[:max_num_exercises]

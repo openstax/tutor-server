@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe MarkTaskStepCompleted, type: :routine do
-
   let(:tasked_reading)  { FactoryBot.create(:tasks_tasked_reading) }
   let(:tasked_exercise) { FactoryBot.create(:tasks_tasked_exercise) }
 
@@ -26,7 +25,7 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
     task_step = tasked_reading.task_step
     task = task_step.task
 
-    expect(task_step).to receive(:complete!).and_call_original
+    expect(task_step).to receive(:complete).and_call_original
     expect(task_step).to receive(:save!)
     allow(task_step).to receive(:task).and_return(task)
 
@@ -45,5 +44,4 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
 
     expect(tasked_exercise.reload.task_step).not_to be_completed
   end
-
 end

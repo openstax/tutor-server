@@ -68,7 +68,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
     tasked.make_incorrect!
   end
 
-  def complete!(completed_at: Time.current)
+  def complete(completed_at: Time.current)
     valid?
     tasked.valid?
     catch(:abort) { tasked.before_completion }
@@ -77,9 +77,14 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
     self.first_completed_at ||= completed_at
     self.last_completed_at = completed_at
-    self.save!
 
-    task.handle_task_step_completion!(completed_at: completed_at)
+    task.handle_task_step_completion! completed_at: completed_at
+  end
+
+  def complete!(completed_at: Time.current)
+    complete completed_at: completed_at
+
+    save!
   end
 
   def completed?
