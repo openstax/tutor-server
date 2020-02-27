@@ -1,5 +1,5 @@
 module DashboardRoutineMethods
-  BIGLEARN_TIMEOUT = 10.minutes
+  BIGLEARN_TIMEOUT = 3.minutes
 
   def self.included(base)
     base.lev_routine
