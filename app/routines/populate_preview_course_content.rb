@@ -1,5 +1,4 @@
 class PopulatePreviewCourseContent
-
   STUDENT_INFO = [
     { username: 'previewstudent1', first_name: 'Esme',    last_name: 'Garcia'  },
     { username: 'previewstudent2', first_name: 'Eloise',  last_name: 'Potter'  },
@@ -140,5 +139,4 @@ class PopulatePreviewCourseContent
     # so Biglearn can receive the data from this course
     WorkPreviewCourseTasks.perform_later(course: course)
   end
-
 end

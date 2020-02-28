@@ -1,5 +1,4 @@
 class WorkPreviewCourseTasks
-
   GREAT_STUDENT_CORRECT_PROBABILITY = 0.95
   AVERAGE_STUDENT_CORRECT_PROBABILITY = 0.8
   STRUGGLING_STUDENT_CORRECT_PROBABILITY = 0.5
@@ -100,6 +99,10 @@ class WorkPreviewCourseTasks
       average_student_roles.each do |role|
         work_tasks(role: role, correct_probability: AVERAGE_STUDENT_CORRECT_PROBABILITY)
       end
+
+      Tasks::UpdateTaskCaches.call(
+        task_ids: all_tasks.map(&:id), update_step_counts: true, queue: 'preview'
+      )
     end
 
     # The course is now ready to be claimed
@@ -108,23 +111,25 @@ class WorkPreviewCourseTasks
 
   protected
 
-  def work_tasks(role:, correct_probability:, late: false, incomplete: false)
-    current_time = Time.current
+  def work_tasks(
+    role:, correct_probability:, late: false, incomplete: false, current_time: Time.current
+  )
+    tasks = role.taskings.map(&:task).reject { |task| task.opens_at > current_time }
 
-    role.taskings.each do |tasking|
-      task = tasking.task
-
-      next if task.opens_at > current_time
-
+    tasks.each do |task|
       is_correct   = ->(task_step, index) { SecureRandom.random_number < correct_probability }
       is_completed = ->(task_step, index) { !incomplete || index < task.task_steps.size/2    }
       completed_at = [late ? task.due_at + 1.day : task.due_at - 1.day, current_time].min
-      run(:work_task, task: task,
-                      free_response: FREE_RESPONSE,
-                      is_correct: is_correct,
-                      is_completed: is_completed,
-                      completed_at: completed_at)
+
+      run(
+        :work_task,
+        task: task,
+        free_response: FREE_RESPONSE,
+        is_correct: is_correct,
+        is_completed: is_completed,
+        completed_at: completed_at,
+        update_caches: false
+      )
     end
   end
-
 end

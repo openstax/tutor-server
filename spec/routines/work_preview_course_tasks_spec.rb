@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :medium do
-
   before(:all) do
     ecosystem = VCR.use_cassette('PopulatePreviewCourseContent/with_book', VCR_OPTS) do
       FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
@@ -44,13 +43,10 @@ RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :medium do
 
             next unless task_step.exercise?
 
-            expect(task_step.tasked.free_response).to(
-              eq (described_class::FREE_RESPONSE)
-            )
+            expect(task_step.tasked.free_response).to eq described_class::FREE_RESPONSE
           end
         end
       end
     end
   end
-
 end

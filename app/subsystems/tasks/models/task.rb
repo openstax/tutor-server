@@ -1,5 +1,4 @@
 class Tasks::Models::Task < ApplicationRecord
-
   attr_accessor :step_counts_updated
 
   CACHE_COLUMNS = [
@@ -323,5 +322,4 @@ class Tasks::Models::Task < ApplicationRecord
   def step_on_time?(step)
     due_at.nil? || (step.last_completed_at.present? && step.last_completed_at < due_at)
   end
-
 end

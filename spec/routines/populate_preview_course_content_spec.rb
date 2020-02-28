@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
-
   before(:all) do
     ecosystem = VCR.use_cassette('PopulatePreviewCourseContent/with_book', VCR_OPTS) do
       FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
@@ -40,20 +39,11 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
 
         expect(student_roles.size).to eq 6
 
-        # All roles except the third and sixth have completed everything
-        (student_roles[0..1] + student_roles[3..4]).each do |role|
+        student_roles.each do |role|
           role.taskings.each do |tasking|
             task = tasking.task
 
             expect(task.opens_at).to be_within(1.hour).of expected_opens_at
-
-            task.task_steps.each do |task_step|
-              expect(task_step).not_to be_completed
-
-              next unless task_step.exercise?
-
-              expect(task_step.tasked.free_response).to be_nil
-            end
           end
         end
       end
@@ -83,24 +73,14 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
 
         expect(student_roles.size).to eq 6
 
-        # All roles except the third and sixth have completed everything
-        (student_roles[0..1] + student_roles[3..4]).each do |role|
+        student_roles.each do |role|
           role.taskings.each do |tasking|
             task = tasking.task
 
             expect(task.opens_at).to be_within(1.hour).of expected_opens_at
-
-            task.task_steps.each do |task_step|
-              expect(task_step).not_to be_completed
-
-              next unless task_step.exercise?
-
-              expect(task_step.tasked.free_response).to be_nil
-            end
           end
         end
       end
     end
   end
-
 end
