@@ -42,11 +42,11 @@ gem 'turbolinks'
 # PostgreSQL database
 gem 'pg', '~> 1.1.4'
 
-# Run unicorn when using the `rails server` or `rails s` command
-gem 'unicorn-rails'
+# Use the puma webserver
+gem 'puma', '!= 4.3.2'
 
 # Prevent server memory from growing until OOM
-gem 'unicorn-worker-killer'
+gem 'puma_worker_killer'
 
 # Rails 5 HTML sanitizer
 gem 'rails-html-sanitizer', '~> 1.0'
