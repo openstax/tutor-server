@@ -43,7 +43,7 @@ gem 'turbolinks'
 gem 'pg', '~> 1.1.4'
 
 # Use the puma webserver
-gem 'puma', '!= 4.3.2'
+gem 'puma'
 
 # Prevent server memory from growing until OOM
 gem 'puma_worker_killer'
