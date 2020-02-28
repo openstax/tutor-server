@@ -70,8 +70,11 @@ RSpec.describe 'demo', type: :rake do
       chapter = match[2].to_i
       expect(match).not_to be_nil
       expect(task_plan[:type]).to eq type
+      expect(task_plan[:book_locations]).not_to be_empty
       expect(task_plan[:book_locations]).to eq(
-        [ 0, 1, 2 ].map { |section| { chapter: chapter, section: section } }
+        task_plan[:book_locations].size.times.map do |index|
+          { chapter: chapter, section: index + 1 }
+        end
       )
 
       assigned_to = task_plan[:assigned_to]
