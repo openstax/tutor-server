@@ -25,7 +25,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
             ],
             "additionalProperties": false
           },
-          "minItems": 1,
+          "minItems": 0,
           "uniqueItems": true
         },
         "exercises_count_dynamic": {
@@ -52,7 +52,6 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
     super
 
     @exercise_hashes = task_plan.settings['exercises']
-    raise "No exercises selected" if @exercise_hashes.blank?
 
     @exercises = ecosystem.exercises_by_ids(@exercise_hashes.map { |ex| ex['id'] })
 
