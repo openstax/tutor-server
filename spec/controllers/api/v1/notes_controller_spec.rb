@@ -6,15 +6,15 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
   let(:application)   { FactoryBot.create :doorkeeper_application }
   let(:course)        { FactoryBot.create :course_profile_course }
   let(:period)        { FactoryBot.create :course_membership_period, course: course }
-  let(:student_user)  { FactoryBot.create :user }
+  let(:student_user)  { FactoryBot.create :user_profile }
   let(:student_role)  { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)      { student_role.student }
 
   let!(:unassigned_role) do
-    FactoryBot.create :entity_role, profile: student_user.to_model, role_type: :unassigned
+    FactoryBot.create :entity_role, profile: student_user, role_type: :unassigned
   end
   let!(:default_role)    do
-    FactoryBot.create :entity_role, profile: student_user.to_model, role_type: :default
+    FactoryBot.create :entity_role, profile: student_user, role_type: :default
   end
 
   let(:student_token) do
@@ -22,7 +22,7 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
                                                 resource_owner_id: student_user.id
   end
 
-  let(:user_2)        { FactoryBot.create(:user) }
+  let(:user_2)        { FactoryBot.create(:user_profile) }
   let(:user_2_token)  { FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_2.id }
 
   let(:note)          { FactoryBot.create :content_note, role: student_role }
@@ -32,7 +32,7 @@ RSpec.describe Api::V1::NotesController, type: :controller, api: true, version: 
   let(:highlighted_sections_params) { { book_uuid: note.page.book.uuid } }
 
   # link page to same ecosystem as course
-  before(:each) { note.page.chapter.book.update_attributes(ecosystem: course.ecosystem) }
+  before(:each) { note.page.book.update_attributes(ecosystem: course.ecosystem) }
 
   context 'GET #index' do
     it "fetches the user's notes" do

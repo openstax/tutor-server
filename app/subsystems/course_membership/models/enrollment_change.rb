@@ -1,7 +1,4 @@
 class CourseMembership::Models::EnrollmentChange < IndestructibleRecord
-
-  wrapped_by CourseMembership::Strategies::Direct::EnrollmentChange
-
   belongs_to :profile, subsystem: :user
   belongs_to :period, inverse_of: :enrollment_changes                    # to
   belongs_to :enrollment, inverse_of: :enrollment_change, optional: true # from
@@ -72,5 +69,4 @@ class CourseMembership::Models::EnrollmentChange < IndestructibleRecord
     errors.add(:conflicting_enrollment, 'is invalid')
     throw :abort
   end
-
 end

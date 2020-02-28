@@ -1,16 +1,13 @@
 FactoryBot.define do
   factory :content_book, class: '::Content::Models::Book' do
-    transient do
-      contents {{}}
-    end
-
     association :ecosystem, factory: :content_ecosystem
 
-    title { contents[:title] || Faker::Lorem.words(3).join(' ') }
-    content { contents.to_json }
-    uuid { SecureRandom.uuid }
-    version { Random.rand(1..10) }
-    url { "https://archive.cnx.org/contents/#{uuid}@#{version}" }
+    title      { Faker::Lorem.words(3).join(' ') }
+    uuid       { SecureRandom.uuid }
+    version    { Random.rand(1..10) }
+    short_id   { SecureRandom.urlsafe_base64(8).first(8) }
+    tutor_uuid { SecureRandom.uuid }
+    url        { "https://archive.cnx.org/contents/#{uuid}@#{version}" }
     reading_processing_instructions {
       [
         {
@@ -51,98 +48,200 @@ FactoryBot.define do
         { css: '.ost-feature, .ost-assessed-feature', fragments: ['reading'] }
       ]
     }
+    tree do
+      {
+        type: 'Book',
+        title: title,
+        book_location: [],
+        uuid: uuid,
+        version: version,
+        short_id: short_id,
+        tutor_uuid: tutor_uuid,
+        children: []
+      }
+    end
+    content { tree.to_json }
+
+    after(:build) do |book, evaluator|
+      children = book.children.reverse
+      while !children.empty? do
+        child = children.pop
+        if child.is_a?(Content::Page)
+          attributes = { book: book, book_location: [] }
+          [ :id, :uuid, :version, :tutor_uuid, :title, :book_location ].each do |attr|
+            val = child.public_send(attr)
+            attributes[attr] = val unless val.nil?
+          end
+
+          book.pages << build(:content_page, attributes)
+        else
+          children.concat child.children.reverse
+        end
+      end
+    end
 
     after(:create) do |book, evaluator|
-      (evaluator.contents[:chapters] || {}).each do |chapter|
-        create(:content_chapter,
-               title: chapter[:title],
-               book_location: chapter[:book_location],
-               baked_book_location: chapter[:baked_book_location] || chapter[:book_location],
-               book: book,
-               contents: chapter)
+      index = 0
+      children = book.tree['children'].reverse
+      while !children.empty? do
+        child = children.pop
+        if child['type'].downcase == 'page'
+          child['id'] = evaluator.pages[index].id
+          index += 1
+        else
+          children.concat child['children'].reverse
+        end
+      end
+      book.save!
+    end
+
+    transient do
+      empty_exercise_pools do
+        {}.tap do |pools|
+          Content::Models::Page::EXERCISE_ID_FIELDS.each do |field|
+            pools[field] = []
+          end
+        end
       end
     end
 
     trait :standard_contents_1 do
-      contents {{
-        title: 'book title',
-        chapters: [
-          {
-            title: 'chapter 1',
-            book_location: [1],
-            pages: [
-              {
-                title: 'first page',
-                los: ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2'],
-                aplos: [],
-                book_location: [1, 1]
-              },
-              {
-                title: 'second page',
-                los: ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3'],
-                aplos: [],
-                book_location: [1, 2]
-              }
-            ]
-          },
-          {
-            title: 'chapter 2',
-            book_location: [2],
-            pages: [
-              {
-                title: 'third page',
-                los: ['ost-tag-lo-topic4-lo4'],
-                aplos: [],
-                book_location: [2, 1],
-              }
-            ]
-          }
-        ]
-      }}
+      tree do
+        {
+          type: 'Book',
+          title: title,
+          book_location: [],
+          uuid: uuid,
+          version: version,
+          short_id: short_id,
+          tutor_uuid: tutor_uuid,
+          children: [
+            {
+              type: 'Chapter',
+              title: 'chapter 1',
+              book_location: [1],
+              uuid: SecureRandom.uuid,
+              version: (rand(10) + 1).to_s,
+              short_id: SecureRandom.urlsafe_base64(8).first(8),
+              tutor_uuid: SecureRandom.uuid,
+              children: [
+                empty_exercise_pools.merge(
+                  type: 'Page',
+                  title: 'first page',
+                  book_location: [1, 1],
+                  uuid: SecureRandom.uuid,
+                  version: (rand(10) + 1).to_s,
+                  short_id: SecureRandom.urlsafe_base64(8).first(8),
+                  tutor_uuid: SecureRandom.uuid
+                ),
+                empty_exercise_pools.merge(
+                  type: 'Page',
+                  title: 'second page',
+                  book_location: [1, 2],
+                  uuid: SecureRandom.uuid,
+                  version: (rand(10) + 1).to_s,
+                  short_id: SecureRandom.urlsafe_base64(8).first(8),
+                  tutor_uuid: SecureRandom.uuid
+                )
+              ]
+            },
+            {
+              type: 'Chapter',
+              title: 'chapter 2',
+              book_location: [2],
+              uuid: SecureRandom.uuid,
+              version: (rand(10) + 1).to_s,
+              short_id: SecureRandom.urlsafe_base64(8).first(8),
+              tutor_uuid: SecureRandom.uuid,
+              children: [
+                empty_exercise_pools.merge(
+                  type: 'Page',
+                  title: 'third page',
+                  book_location: [2, 1],
+                  uuid: SecureRandom.uuid,
+                  version: (rand(10) + 1).to_s,
+                  short_id: SecureRandom.urlsafe_base64(8).first(8),
+                  tutor_uuid: SecureRandom.uuid
+                )
+              ]
+            }
+          ]
+        }
+      end
     end
 
     trait :standard_contents_2 do
-      contents {{
-        title: 'book title',
-        chapters: [
-          {
-            title: 'chapter 1',
-            book_location: [1],
-            pages: [
-              {
-                title: 'first page',
-                los: ['ost-tag-lo-topic1-lo1', 'ost-tag-lo-topic2-lo2'],
-                aplos: [],
-                book_location: [1, 1]
-              },
-              {
-                title: 'second page',
-                los: ['ost-tag-lo-topic2-lo2', 'ost-tag-lo-topic3-lo3'],
-                aplos: [],
-                book_location: [1, 2]
-              }
-            ]
-          },
-          {
-            title: 'chapter 2',
-            book_location: [2],
-            pages: [
-              {
-                title: 'third page',
-                los: ['ost-tag-lo-topic4-lo4'],
-                aplos: [],
-                book_location: [2, 1],
-              },
-              {
-                title: 'fourth page',
-                los: ['ost-tag-lo-topic5-lo4'],
-                aplos: [],
-                book_location: [2, 2],
-              }
-            ]
-          }
-        ]
-      }}
+      tree do
+        {
+          type: 'Book',
+          title: title,
+          book_location: [],
+          uuid: uuid,
+          version: version,
+          short_id: short_id,
+          tutor_uuid: tutor_uuid,
+          children: [
+            {
+              type: 'Chapter',
+              title: 'chapter 1',
+              book_location: [1],
+              uuid: SecureRandom.uuid,
+              version: (rand(10) + 1).to_s,
+              short_id: SecureRandom.urlsafe_base64(8).first(8),
+              tutor_uuid: SecureRandom.uuid,
+              children: [
+                empty_exercise_pools.merge(
+                  type: 'Page',
+                  title: 'first page',
+                  book_location: [1, 1],
+                  uuid: SecureRandom.uuid,
+                  version: (rand(10) + 1).to_s,
+                  short_id: SecureRandom.urlsafe_base64(8).first(8),
+                  tutor_uuid: SecureRandom.uuid
+                ),
+                empty_exercise_pools.merge(
+                  type: 'Page',
+                  title: 'second page',
+                  book_location: [1, 2],
+                  uuid: SecureRandom.uuid,
+                  version: (rand(10) + 1).to_s,
+                  short_id: SecureRandom.urlsafe_base64(8).first(8),
+                  tutor_uuid: SecureRandom.uuid
+                )
+              ]
+            },
+            {
+              type: 'Chapter',
+              title: 'chapter 2',
+              book_location: [2],
+              uuid: SecureRandom.uuid,
+              version: (rand(10) + 1).to_s,
+              short_id: SecureRandom.urlsafe_base64(8).first(8),
+              tutor_uuid: SecureRandom.uuid,
+              children: [
+                empty_exercise_pools.merge(
+                  type: 'Page',
+                  title: 'third page',
+                  book_location: [2, 1],
+                  uuid: SecureRandom.uuid,
+                  version: (rand(10) + 1).to_s,
+                  short_id: SecureRandom.urlsafe_base64(8).first(8),
+                  tutor_uuid: SecureRandom.uuid
+                ),
+                empty_exercise_pools.merge(
+                  type: 'Page',
+                  title: 'fourth page',
+                  book_location: [2, 2],
+                  uuid: SecureRandom.uuid,
+                  version: (rand(10) + 1).to_s,
+                  short_id: SecureRandom.urlsafe_base64(8).first(8),
+                  tutor_uuid: SecureRandom.uuid
+                )
+              ]
+            }
+          ]
+        }
+      end
     end
   end
 end

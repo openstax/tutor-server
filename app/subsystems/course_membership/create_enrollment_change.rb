@@ -63,16 +63,12 @@ class CourseMembership::CreateEnrollmentChange
       enrollment = nil
     end
 
-    enrollment_change_model = CourseMembership::Models::EnrollmentChange.create(
+    outputs.enrollment_change = CourseMembership::Models::EnrollmentChange.create(
       user_profile_id: user.id,
       enrollment: enrollment,
-      period: period.to_model,
+      period: period,
       requires_enrollee_approval: requires_enrollee_approval
     )
-    transfer_errors_from(enrollment_change_model, {type: :verbatim}, true)
-
-    outputs.enrollment_change = CourseMembership::EnrollmentChange.new(
-      strategy: enrollment_change_model.wrap
-    )
+    transfer_errors_from(outputs.enrollment_change, { type: :verbatim }, true)
   end
 end

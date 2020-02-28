@@ -1,5 +1,4 @@
 class AddUserAsPeriodStudent
-
   lev_routine express_output: :role
 
   uses_routine UserIsCourseTeacher
@@ -35,5 +34,4 @@ class AddUserAsPeriodStudent
       send_to_biglearn: send_to_biglearn
     )
   end
-
 end

@@ -3,17 +3,17 @@ require 'rails_helper'
 RSpec.describe OfferingAccessPolicy, type: :access_policy do
   let(:offering)    { FactoryBot.create :catalog_offering }
 
-  let(:anon)        { User::User.anonymous }
-  let(:user)        { FactoryBot.create(:user) }
+  let(:anon)        { User::Models::Profile.anonymous }
+  let(:user)        { FactoryBot.create(:user_profile) }
   let(:application) { FactoryBot.create(:doorkeeper_application) }
   let(:teacher)     do
-    FactoryBot.create(:user).tap do |user|
+    FactoryBot.create(:user_profile).tap do |user|
       user.account.confirmed_faculty!
       user.account.other_school_type!
     end
   end
   let(:faculty)     do
-    FactoryBot.create(:user).tap do |user|
+    FactoryBot.create(:user_profile).tap do |user|
       user.account.confirmed_faculty!
       user.account.college!
     end

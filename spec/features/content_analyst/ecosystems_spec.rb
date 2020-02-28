@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Content Analyst' do
   let!(:book) { FactoryBot.create(:content_book, title: 'Test book') }
-  let(:content_analyst) { FactoryBot.create(:user, :content_analyst) }
+  let(:content_analyst) { FactoryBot.create(:user_profile, :content_analyst) }
 
   before do
     # Log in as customer service

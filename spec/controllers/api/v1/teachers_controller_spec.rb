@@ -6,7 +6,7 @@ RSpec.describe Api::V1::TeachersController, type: :controller, api: true, versio
   let(:course)             { FactoryBot.create :course_profile_course }
   let(:period)             { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_user)       { FactoryBot.create(:user) }
+  let(:student_user)       { FactoryBot.create(:user_profile) }
   let(:student_role)       { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)           { student_role.student }
   let(:student_token)      do
@@ -14,7 +14,7 @@ RSpec.describe Api::V1::TeachersController, type: :controller, api: true, versio
                                                 resource_owner_id: student_user.id
   end
 
-  let(:teacher_user)       { FactoryBot.create(:user) }
+  let(:teacher_user)       { FactoryBot.create(:user_profile) }
   let!(:teacher)           { AddUserAsCourseTeacher[user: teacher_user, course: course].teacher }
   let!(:teacher_student_1) do
     CreateOrResetTeacherStudent[user: teacher_user, period: period].teacher_student

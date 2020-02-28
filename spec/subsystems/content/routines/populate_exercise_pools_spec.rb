@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Content::Routines::PopulateExercisePools, type: :routine, speed: :medium do
-
+RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
   let(:page)                 { FactoryBot.create :content_page }
   let(:book)                 { page.book }
   let(:ecosystem)            { book.ecosystem }
@@ -118,13 +117,14 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine, speed: 
     }
   end
 
-  let(:all_exercises_set)    { Set.new exercise_tags.keys }
-  let(:simple_exercises_set) { Set.new exercise_tags.keys.reject(&:is_multipart?) }
+  let(:all_exercises)           { exercise_tags.keys }
+  let(:all_exercise_ids_set)    { Set.new all_exercises.map(&:id) }
+  let(:simple_exercise_ids_set) { Set.new all_exercises.reject(&:is_multipart?).map(&:id) }
 
   before do
-    exercise_tags.each{ |exercise, tags| exercise.tags = tags }
+    exercise_tags.each { |exercise, tags| exercise.tags = tags }
 
-    page.exercises = all_exercises_set.to_a
+    page.exercises = all_exercises.to_a
   end
 
   context 'all books' do
@@ -134,17 +134,9 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine, speed: 
       page.reload
     end
 
-    it 'imports all exercises into the all exercises pool' do
-      expect(Set.new page.all_exercises_pool.exercises).to eq all_exercises_set
-    end
-
-    it 'imports simple cc exercises into the cc exercises pool' do
-      expect(page.concept_coach_pool.exercises).to eq [concept_coach_exercise]
-    end
-
-    it 'imports simple exercises that don\'t require context into the practice widget pool' do
-      expect(Set.new page.practice_widget_pool.exercises).to eq(
-        simple_exercises_set - [requires_context_exercise]
+    it "imports simple exercises that don't require context into the practice widget pool" do
+      expect(Set.new page.practice_widget_exercise_ids).to eq(
+        simple_exercise_ids_set - [requires_context_exercise.id]
       )
     end
   end
@@ -159,44 +151,48 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine, speed: 
     end
 
     it 'imports hs reading dynamic exercises into the reading dynamic pool' do
-      expect(Set.new page.reading_dynamic_pool.exercises).to eq Set[
-        k12phys_read_dyn_exercise,
-        apbio_read_dyn_exercise
+      expect(Set.new page.reading_dynamic_exercise_ids).to eq Set[
+        k12phys_read_dyn_exercise.id,
+        apbio_read_dyn_exercise.id
       ]
     end
 
     it 'imports practice problems exercises into the reading context pool' do
-      expect(Set.new page.reading_context_pool.exercises).to eq Set[
-        k12phys_hw_dyn_exercise_1,
-        prac_prob_exercise
+      expect(Set.new page.reading_context_exercise_ids).to eq Set[
+        k12phys_hw_dyn_exercise_1.id,
+        prac_prob_exercise.id
       ]
     end
 
     it 'imports chapter review exercises into the homework core pool' do
-      expect(Set.new page.homework_core_pool.exercises).to eq Set[
-        apbio_read_dyn_exercise,
-        k12phys_hw_dyn_exercise_2,
-        k12phys_hw_dyn_exercise_3,
-        k12phys_hw_dyn_exercise_4,
-        apbio_hw_dyn_exercise_1,
-        apbio_hw_dyn_exercise_2,
-        apbio_hw_dyn_exercise_3,
-        apbio_hw_dyn_exercise_4,
-        chapter_review_exercise
-      ]
+      expect(Set.new page.homework_core_exercise_ids).to eq Set.new(
+        [
+          apbio_read_dyn_exercise,
+          k12phys_hw_dyn_exercise_2,
+          k12phys_hw_dyn_exercise_3,
+          k12phys_hw_dyn_exercise_4,
+          apbio_hw_dyn_exercise_1,
+          apbio_hw_dyn_exercise_2,
+          apbio_hw_dyn_exercise_3,
+          apbio_hw_dyn_exercise_4,
+          chapter_review_exercise
+        ].map(&:id)
+      )
     end
 
     it 'imports hs homework dynamic exercises into the homework dynamic pool' do
-      expect(Set.new page.homework_dynamic_pool.exercises).to eq Set[
-        k12phys_hw_dyn_exercise_1,
-        k12phys_hw_dyn_exercise_2,
-        k12phys_hw_dyn_exercise_3,
-        k12phys_hw_dyn_exercise_4,
-        apbio_hw_dyn_exercise_1,
-        apbio_hw_dyn_exercise_2,
-        apbio_hw_dyn_exercise_3,
-        apbio_hw_dyn_exercise_4
-      ]
+      expect(Set.new page.homework_dynamic_exercise_ids).to eq Set.new(
+        [
+          k12phys_hw_dyn_exercise_1,
+          k12phys_hw_dyn_exercise_2,
+          k12phys_hw_dyn_exercise_3,
+          k12phys_hw_dyn_exercise_4,
+          apbio_hw_dyn_exercise_1,
+          apbio_hw_dyn_exercise_2,
+          apbio_hw_dyn_exercise_3,
+          apbio_hw_dyn_exercise_4
+        ].map(&:id)
+      )
     end
   end
 
@@ -208,27 +204,26 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine, speed: 
     end
 
     it 'imports simple recall, conceptual and c-or-r exercises into the reading dynamic pool' do
-      expect(Set.new page.reading_dynamic_pool.exercises).to eq Set[
-        conceptual_exercise,
-        recall_exercise,
-        conc_recall_exercise
+      expect(Set.new page.reading_dynamic_exercise_ids).to eq Set[
+        conceptual_exercise.id,
+        recall_exercise.id,
+        conc_recall_exercise.id
       ]
     end
 
     it 'imports all simple exercises into the reading context pool' do
-      expect(Set.new page.reading_context_pool.exercises).to eq simple_exercises_set
+      expect(Set.new page.reading_context_exercise_ids).to eq simple_exercise_ids_set
     end
 
     it 'imports practice exercises into the homework core pool' do
-      expect(Set.new page.homework_core_pool.exercises).to eq Set[
-        practice_exercise,
-        practice_multi_exercise
+      expect(Set.new page.homework_core_exercise_ids).to eq Set[
+        practice_exercise.id,
+        practice_multi_exercise.id
       ]
     end
 
     it 'imports simple practice exercises into the homework dynamic pool' do
-      expect(page.homework_dynamic_pool.exercises).to eq [practice_exercise]
+      expect(page.homework_dynamic_exercise_ids).to eq [practice_exercise.id]
     end
   end
-
 end

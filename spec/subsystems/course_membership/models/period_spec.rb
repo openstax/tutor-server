@@ -15,7 +15,7 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
   it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_profile_course_id) }
 
   it 'can be deleted and restored even if it has active students' do
-    student_user = FactoryBot.create(:user)
+    student_user = FactoryBot.create(:user_profile)
     AddUserAsPeriodStudent[period: period, user: student_user]
 
     expect(UserIsCourseStudent[user: student_user, course: period.course]).to eq true

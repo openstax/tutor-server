@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Research::CohortsController, type: :controller do
   let(:cohort) { FactoryBot.create :research_cohort }
 
-  let(:researcher) { FactoryBot.create :user, :researcher }
+  let(:researcher) { FactoryBot.create :user_profile, :researcher }
 
   before { controller.sign_in(researcher) }
 

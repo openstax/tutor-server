@@ -38,9 +38,9 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
         @campaign = @proxy.new_campaign
         @nomad_campaign = @proxy.new_campaign
 
-        @user_no_sf = FactoryBot.create(:user, is_test: false)
+        @user_no_sf = FactoryBot.create(:user_profile, is_test: false)
         @user_sf_a = FactoryBot.create(
-          :user, is_test: false, salesforce_contact_id: @sf_contact_a.id
+          :user_profile, is_test: false, salesforce_contact_id: @sf_contact_a.id
         )
 
         config.define_cassette_placeholder('<USER_NO_SF_UUID>') { @user_no_sf.uuid }
@@ -64,11 +64,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
   after(:each) { @delete_me.each(&:destroy) }
 
-  let(:anonymous_user) do
-    profile = User::Models::AnonymousProfile.instance
-    strategy = User::Strategies::Direct::AnonymousUser.new(profile)
-    User::User.new(strategy: strategy)
-  end
+  let(:anonymous_user) { User::Models::AnonymousProfile.instance }
 
   let(:data) { {} }
 
@@ -119,7 +115,7 @@ RSpec.describe TrackTutorOnboardingEvent, type: :routine, vcr: VCR_OPTS do
 
   context "when the user is a test user" do
     let(:event) { :booyah }
-    let(:user)  { FactoryBot.create :user, is_test: true }
+    let(:user)  { FactoryBot.create :user_profile, is_test: true }
 
     it "does not error for any reason" do
       stub_active_campaign_id(" ")

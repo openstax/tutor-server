@@ -1,6 +1,5 @@
 module OpenStax
   module Exercises
-
     class ClientError < StandardError
       def initialize(msg, original=$!)
         super(msg)
@@ -16,6 +15,5 @@ module OpenStax
         [super, "(#{@original.message})"].join(" ")
       end
     end
-
   end
 end

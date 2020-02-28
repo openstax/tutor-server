@@ -64,7 +64,7 @@ class CreateCourse
       year: year,
       starts_at: starts_at,
       ends_at: ends_at,
-      offering: catalog_offering.try!(:to_model),
+      offering: catalog_offering,
       appearance_code: appearance_code,
       school: school,
       time_zone: time_zone,
@@ -79,7 +79,7 @@ class CreateCourse
     )
 
     unless catalog_offering.blank?
-      ecosystem = Content::Ecosystem.new(strategy: catalog_offering.ecosystem.to_model.wrap)
+      ecosystem = catalog_offering.ecosystem
 
       run(:add_ecosystem, course: outputs.course, ecosystem: ecosystem)
     end
@@ -88,5 +88,4 @@ class CreateCourse
 
     run(:create_course_assistants, course: outputs.course)
   end
-
 end

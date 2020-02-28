@@ -9,7 +9,7 @@ RSpec.describe 'Task steps without free response field', type: :request,
     @course.ecosystem.books << FactoryBot.create(:content_book, :standard_contents_1 )
     page_ids = @course.ecosystem.books.last.pages.pluck(:id)
     period = FactoryBot.create :course_membership_period, course: @course
-    user = FactoryBot.create(:user)
+    user = FactoryBot.create(:user_profile)
     user_role = AddUserAsPeriodStudent[user: user, period: period]
     @study = FactoryBot.create :research_study
     FactoryBot.create :research_cohort, name: 'B', study: @study

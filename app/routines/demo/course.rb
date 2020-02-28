@@ -105,7 +105,7 @@ class Demo::Course < Demo::Base
     course_hash[:periods].each_with_index do |period, index|
       period_model = CourseMembership::Models::Period.find_by(
         course: course_model, name: period[:name]
-      ) || run(:create_period, course: course_model, name: period[:name]).outputs.period.to_model
+      ) || run(:create_period, course: course_model, name: period[:name]).outputs.period
 
       run(:update_period, period: period_model, enrollment_code: period[:enrollment_code]) \
         unless period[:enrollment_code].blank?

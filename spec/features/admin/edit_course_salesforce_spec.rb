@@ -6,7 +6,7 @@ RSpec.feature 'Admin changing course Salesforce settings' do
     @course = FactoryBot.create :course_profile_course
     @period_1 = FactoryBot.create :course_membership_period, course: @course
 
-    admin = FactoryBot.create(:user, :administrator)
+    admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)
   end
 

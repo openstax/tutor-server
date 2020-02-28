@@ -16,7 +16,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     #{json_schema(Api::V1::EcosystemsRepresenter, include: :readable)}
   EOS
   def index
-    OSU::AccessPolicy.require_action_allowed!(:index, current_human_user, Content::Ecosystem)
+    OSU::AccessPolicy.require_action_allowed!(:index, current_human_user, Content::Models::Ecosystem)
     ecosystems = Content::ListEcosystems[]
     respond_with ecosystems, represent_with: Api::V1::EcosystemsRepresenter
   end
@@ -25,25 +25,24 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
   description <<-EOS
     Returns a hierarchical listing of an ecosystem's readings.
     An ecosystem is currently limited to only one book.
-    Inside each book there can be chapters and pages.
+    Inside each book there can be units, chapters and pages.
 
     #{json_schema(Api::V1::BookTocsRepresenter, include: :readable)}
   EOS
   def readings
-    ecosystem = ::Content::Ecosystem.find(params[:id])
+    ecosystem = ::Content::Models::Ecosystem.find(params[:id])
 
     OSU::AccessPolicy.require_action_allowed!(:readings, current_api_user, ecosystem)
 
-    model = ecosystem.to_model
     render(
-      json: Rails.cache.fetch(model.cache_key, version: model.cache_version) do
+      json: Rails.cache.fetch(ecosystem.cache_key, version: ecosystem.cache_version) do
         # For the moment, we're assuming just one book per ecosystem
-        books = ecosystem.books(preload: true)
+        books = ecosystem.books
         raise NotYetImplemented if books.count > 1
 
         Api::V1::BookTocsRepresenter.new(books).to_json
       end
-    ) if stale?(ecosystem.to_model, template: false)
+    ) if stale?(ecosystem, template: false)
   end
 
   api :GET, '/ecosystems/:ecosystem_id/exercises(/:pool_types)',
@@ -58,7 +57,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
   EOS
   def exercises
-    ecosystem = ::Content::Ecosystem.find(params[:id])
+    ecosystem = ::Content::Models::Ecosystem.find(params[:id])
     course = CourseProfile::Models::Course.find(params[:course_id]) if params[:course_id].present?
 
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)

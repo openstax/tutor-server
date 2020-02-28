@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CourseMembership::Models::Student, type: :model do
   let(:course)     { FactoryBot.create :course_profile_course }
   let(:period)     { FactoryBot.create :course_membership_period, course: course }
-  let(:user)       { FactoryBot.create :user }
+  let(:user)       { FactoryBot.create :user_profile }
   subject(:student) do
     AddUserAsPeriodStudent[user: user, period: period, student_identifier: 'N0B0DY'].student
   end

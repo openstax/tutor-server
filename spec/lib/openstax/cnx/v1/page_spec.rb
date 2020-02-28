@@ -142,7 +142,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
       @hashes_with_pages.each do |hash, page|
         expect(page.id).to eq hash[:id]
         expect(page.url).to include(hash[:id])
-        expect(page.title).to eq page.parsed_title[:text]
+        expect(page.title).to eq page.parsed_title.text
         expect(page.full_hash).not_to be_empty
         expect(page.content).not_to be_blank
         expect(page.doc).not_to be_nil
@@ -177,12 +177,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
       end
     end
 
-    it 'can identify chapter introduction pages' do
-      @hashes_with_pages.each do |hash, page|
-        expect(page.is_intro?).to eq hash[:expected][:is_intro]
-      end
-    end
-
     it 'extracts tag names and descriptions from the page' do
       @hashes_with_pages.each do |hash, page|
         expect(Set.new page.tags).to eq Set.new(hash[:expected][:tags])
@@ -196,7 +190,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
         id: '123',
         hash: { 'title' => '<span class="os-number">2.1</span><span class="os-divider"> </span><span class="os-text">Atoms, Isotopes, Ions, and Molecules: The Building Blocks</span>' }
       )
-      expect(page.baked_book_location).to eq ['2', '1']
+      expect(page.book_location).to eq [ 2, 1 ]
       expect(page.title).to eq 'Atoms, Isotopes, Ions, and Molecules: The Building Blocks'
     end
 
@@ -204,25 +198,23 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
       page = OpenStax::Cnx::V1::Page.new(
         id: '123', hash: { 'title' => '<span class="os-text"><i>The Florentine Codex</i>, c. 1585</span>' }
       )
-      expect(page.baked_book_location).to eq []
+      expect(page.book_location).to eq []
       expect(page.title).to eq '<i>The Florentine Codex</i>, c. 1585'
     end
 
-    it 'leaves baked_book_location blank if not present' do
+    it 'leaves book_location blank if not present' do
       page = OpenStax::Cnx::V1::Page.new(
-        id: '123',
-        hash: { 'title' => '<span class="os-text">Review Questions</span>' }
+        id: '123', hash: { 'title' => '<span class="os-text">Review Questions</span>' }
       )
-      expect(page.baked_book_location).to eq []
+      expect(page.book_location).to eq []
       expect(page.title).to eq 'Review Questions'
     end
 
     it 'continues to function for plain text titles' do
       page = OpenStax::Cnx::V1::Page.new(
-        id: '123',
-        hash: { 'title' => 'Hello World!' }
+        id: '123', hash: { 'title' => 'Hello World!' }
       )
-      expect(page.baked_book_location).to be_empty
+      expect(page.book_location).to be_empty
       expect(page.title).to eq 'Hello World!'
     end
 

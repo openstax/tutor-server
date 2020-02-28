@@ -1,7 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Api::V1::TasksController, type: :controller, api: true,
-                                         version: :v1, speed: :medium do
+RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: :v1 do
 
   let(:course)             { FactoryBot.create :course_profile_course }
   let(:period)             { FactoryBot.create :course_membership_period, course: course }
@@ -14,7 +13,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
   end
 
   let(:application)        { FactoryBot.create :doorkeeper_application }
-  let(:user_1)             { FactoryBot.create(:user) }
+  let(:user_1)             { FactoryBot.create(:user_profile) }
   let(:user_1_token)       do
     FactoryBot.create :doorkeeper_access_token, application: application,
                                                 resource_owner_id: user_1.id
@@ -22,7 +21,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
 
   let!(:user_1_role)       { AddUserAsPeriodStudent[user: user_1, period: period] }
 
-  let(:user_2)             { FactoryBot.create(:user) }
+  let(:user_2)             { FactoryBot.create(:user_profile) }
   let(:user_2_token)       do
     FactoryBot.create :doorkeeper_access_token, application: application,
                                                 resource_owner_id: user_2.id
@@ -32,7 +31,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true,
 
   let!(:tasking_1)         { FactoryBot.create :tasks_tasking, role: user_1_role, task: task_1 }
 
-  let(:teacher_user)       { FactoryBot.create(:user) }
+  let(:teacher_user)       { FactoryBot.create(:user_profile) }
   let!(:teacher_role)      { AddUserAsCourseTeacher[course: course, user: teacher_user] }
   let(:teacher_user_token) do
     FactoryBot.create :doorkeeper_access_token, application: application,

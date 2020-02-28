@@ -22,12 +22,12 @@ RSpec.describe CreatePeriod, type: :routine do
       FactoryBot.create(:tasks_tasking_plan, task_plan: expected,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now.tomorrow,
-                                              target: period.to_model)
+                                              target: period)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: expected,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now.tomorrow,
-                                              target: other_period.to_model)
+                                              target: other_period)
 
       expect(task_plan_ids).to include(expected.id)
     end
@@ -37,7 +37,7 @@ RSpec.describe CreatePeriod, type: :routine do
     Timecop.freeze do
       single_period = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
 
-      FactoryBot.create(:tasks_tasking_plan, task_plan: single_period, target: period.to_model)
+      FactoryBot.create(:tasks_tasking_plan, task_plan: single_period, target: period)
 
       expect(task_plan_ids).not_to include(single_period.id)
     end
@@ -50,12 +50,12 @@ RSpec.describe CreatePeriod, type: :routine do
       FactoryBot.create(:tasks_tasking_plan, task_plan: diff_due_dates,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now.tomorrow,
-                                              target: period.to_model)
+                                              target: period)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: diff_due_dates,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now + 1.minute,
-                                              target: other_period.to_model)
+                                              target: other_period)
 
       expect(task_plan_ids).not_to include(diff_due_dates.id)
     end
@@ -68,12 +68,12 @@ RSpec.describe CreatePeriod, type: :routine do
       FactoryBot.create(:tasks_tasking_plan, task_plan: diff_open_dates,
                                               opens_at: time_zone.now,
                                               due_at: time_zone.now + 2.minutes,
-                                              target: period.to_model)
+                                              target: period)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: diff_open_dates,
                                               opens_at: time_zone.now + 1.minute,
                                               due_at: time_zone.now + 2.minutes,
-                                              target: other_period.to_model)
+                                              target: other_period)
 
       expect(task_plan_ids).not_to include(diff_open_dates.id)
     end

@@ -46,7 +46,6 @@ class PopulatePreviewCourseContent
 
     # Find preview student users
     preview_student_users = preview_student_accounts.map do |account|
-      User::User.find_by_account(account) ||
       run(:find_or_create_user, account_id: account.id).outputs.user
     end
 
@@ -70,7 +69,7 @@ class PopulatePreviewCourseContent
 
     # Use only chapters that have some homework exercises
     candidate_chapters = book.chapters.filter do |chapter|
-      chapter.pages.any? { |page| page.homework_core_pool.content_exercise_ids.any? }
+      chapter.pages.any? { |page| page.homework_core_exercise_ids.any? }
     end
     num_chapters =
       [MAX_NUM_ASSIGNED_CHAPTERS, ((course.ends_at - course.starts_at)/1.week).floor].min
@@ -86,12 +85,10 @@ class PopulatePreviewCourseContent
 
       pages = chapter.pages
       page_ids = pages.map{ |page| page.id.to_s }
-      exercise_ids = pages.flat_map do |page|
-        page.homework_core_pool.content_exercise_ids.sample.try!(:to_s)
-      end.compact
+      exercise_ids = pages.flat_map { |page| page.homework_core_exercise_ids.sample&.to_s }.compact
 
       reading_tp = Tasks::Models::TaskPlan.new(
-        title: "Chapter #{chapter.number} Reading (Sample)",
+        title: "Chapter #{chapter.book_location.join('.')} Reading (Sample)",
         owner: course,
         is_preview: true,
         ecosystem: ecosystem,
@@ -113,7 +110,7 @@ class PopulatePreviewCourseContent
       exercises_count_dynamic = [2 + index/2, 4].min
 
       homework_tp = Tasks::Models::TaskPlan.new(
-        title: "Chapter #{chapter.number} Homework (Sample)",
+        title: "Chapter #{chapter.book_location.join('.')} Homework (Sample)",
         owner: course,
         is_preview: true,
         ecosystem: ecosystem,

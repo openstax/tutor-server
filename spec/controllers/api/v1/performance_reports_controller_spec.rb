@@ -4,12 +4,11 @@ require 'database_cleaner'
 
 RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: true,
                                                       version: :v1, vcr: VCR_OPTS do
-
   before(:all) do
     @course = FactoryBot.create :course_profile_course, :with_assistants
     @period = FactoryBot.create :course_membership_period, course: @course
 
-    @teacher = FactoryBot.create(:user)
+    @teacher = FactoryBot.create(:user_profile)
     @teacher_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: @teacher.id
 
     @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher]
@@ -34,21 +33,21 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       before(:all) do
         DatabaseCleaner.start
 
-        @student_1 = FactoryBot.create(:user, first_name: 'Student',
+        @student_1 = FactoryBot.create(:user_profile, first_name: 'Student',
                                               last_name: 'One',
                                               full_name: 'Student One')
         @student_1_token = FactoryBot.create :doorkeeper_access_token,
                                              resource_owner_id: @student_1.id
 
-        student_2 = FactoryBot.create(:user, first_name: 'Student',
+        student_2 = FactoryBot.create(:user_profile, first_name: 'Student',
                                              last_name: 'Two',
                                              full_name: 'Student Two')
 
-        student_3 = FactoryBot.create(:user, first_name: 'Student',
+        student_3 = FactoryBot.create(:user_profile, first_name: 'Student',
                                              last_name: 'Three',
                                              full_name: 'Student Three')
 
-        student_4 = FactoryBot.create(:user, first_name: 'Student',
+        student_4 = FactoryBot.create(:user_profile, first_name: 'Student',
                                              last_name: 'Four',
                                              full_name: 'Student Four')
 
@@ -60,7 +59,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
       after(:all)  { DatabaseCleaner.clean }
 
-      let(:student_role) { @student_1.to_model.roles.first }
+      let(:student_role) { @student_1.roles.first }
 
       it 'works for teachers' do
         expect(Tasks::GetPerformanceReport).to receive(:[])
@@ -101,7 +100,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       end
 
       it 'returns 403 for users not in the course' do
-        unknown = FactoryBot.create(:user)
+        unknown = FactoryBot.create(:user_profile)
         unknown_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: unknown.id
 
         expect do
@@ -153,7 +152,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     context 'failure' do
       it 'returns 403 for students' do
-        student = FactoryBot.create(:user)
+        student = FactoryBot.create(:user_profile)
         student_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: student.id
         AddUserAsPeriodStudent[period: @period, user: student]
 
@@ -163,7 +162,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       end
 
       it 'returns 403 unauthorized users' do
-        unknown = FactoryBot.create(:user)
+        unknown = FactoryBot.create(:user_profile)
         unknown_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: unknown.id
 
         expect do
@@ -208,7 +207,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
 
     context 'failure' do
       it 'returns 403 for students' do
-        student = FactoryBot.create(:user)
+        student = FactoryBot.create(:user_profile)
         student_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: student.id
         AddUserAsPeriodStudent[period: @period, user: student]
 
@@ -218,7 +217,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :controller, api: tr
       end
 
       it 'returns 403 for users who are not teachers of the course' do
-        unknown = FactoryBot.create(:user)
+        unknown = FactoryBot.create(:user_profile)
         unknown_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: unknown.id
 
         expect do

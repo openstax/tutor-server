@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::StudentsController, type: :controller do
-  let(:customer_service) { FactoryBot.create(:user, :customer_service) }
+  let(:customer_service) { FactoryBot.create(:user_profile, :customer_service) }
 
   before                 { controller.sign_in(customer_service) }
 
@@ -17,10 +17,10 @@ RSpec.describe CustomerService::StudentsController, type: :controller do
     end
     let(:periods_2)  { [FactoryBot.create(:course_membership_period, course: course_2)] }
 
-    let(:user_1)     { FactoryBot.create(:user, first_name: 'Benjamin', last_name: 'Franklin') }
-    let(:user_2)     { FactoryBot.create(:user, first_name: 'Nikola', last_name: 'Tesla') }
-    let(:user_3)     { FactoryBot.create(:user, first_name: 'Freja', last_name: 'Asgard') }
-    let(:user_4)     { FactoryBot.create(:user, first_name: 'Oliver', last_name: 'Wilde') }
+    let(:user_1)     { FactoryBot.create(:user_profile, first_name: 'Benjamin', last_name: 'Franklin') }
+    let(:user_2)     { FactoryBot.create(:user_profile, first_name: 'Nikola', last_name: 'Tesla') }
+    let(:user_3)     { FactoryBot.create(:user_profile, first_name: 'Freja', last_name: 'Asgard') }
+    let(:user_4)     { FactoryBot.create(:user_profile, first_name: 'Oliver', last_name: 'Wilde') }
 
     let!(:student_1) {
       AddUserAsPeriodStudent.call(user: user_1, period: periods[0]).outputs.student

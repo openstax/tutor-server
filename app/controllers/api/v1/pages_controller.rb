@@ -9,8 +9,8 @@ class Api::V1::PagesController < Api::V1::ApiController
   def show
     uuid, version = params[:cnx_id].split('@', 2)
 
-    pages = Content::Models::Page.joins(chapter: :book).where(
-      uuid: uuid, chapter: { book: { content_ecosystem_id: params[:ecosystem_id] } }
+    pages = Content::Models::Page.joins(:book).where(
+      uuid: uuid, book: { content_ecosystem_id: params[:ecosystem_id] }
     )
     pages = pages.where(version: version) unless version.nil?
     page = pages.order(version: :desc, id: :desc).first

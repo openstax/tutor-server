@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ContentAnalyst::JobsController, type: :controller do
 
-  let(:content_analyst) { FactoryBot.create(:user, :content_analyst) }
+  let(:content_analyst) { FactoryBot.create(:user_profile, :content_analyst) }
 
   context "GET #show" do
     let(:job) { Jobba.create! }

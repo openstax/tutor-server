@@ -26,7 +26,7 @@ RSpec.feature 'Administration', vcr: VCR_OPTS do
   end
 
   before do
-    admin = FactoryBot.create(:user, :administrator)
+    admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)
 
     visit admin_root_path

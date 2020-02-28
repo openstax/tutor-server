@@ -228,8 +228,6 @@ class ExportAndUploadResearchData
           "CNX JSON URL",
           "CNX HTML URL",
           "CNX Book Name",
-          "CNX Chapter Number",
-          "CNX Chapter Name",
           "CNX Section Number",
           "CNX Section Name",
           "HTML Fragment Number",
@@ -242,14 +240,12 @@ class ExportAndUploadResearchData
             [
               'DISTINCT ON ("content_pages"."url", "content_books"."title") "content_pages"."url"',
               '"content_books"."title" AS "book_title"',
-              '"content_chapters"."number" AS "chapter_number"',
-              '"content_chapters"."title" AS "chapter_title"',
-              :number,
+              :book_location,
               :title,
               :fragments
             ]
           )
-          .joins(chapter: :book)
+          .joins(:book)
           .where(id: page_ids)
           .order(:url, Content::Models::Book.arel_table[:title])
 
@@ -289,9 +285,7 @@ class ExportAndUploadResearchData
                   "#{page.url}.json",
                   page.url,
                   page.book_title,
-                  page.chapter_number,
-                  page.chapter_title,
-                  page.number,
+                  page.book_location.join('.'),
                   page.title,
                   fragment_index + 1,
                   fragment.labels.join(','),

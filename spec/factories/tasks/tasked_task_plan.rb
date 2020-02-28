@@ -3,8 +3,7 @@ require_relative '../../support/fake_exercise_uuids'
 
 FactoryBot.define do
   factory :tasked_task_plan, parent: :tasks_task_plan do
-
-    type { 'reading' }
+    type      { 'reading' }
 
     assistant do
       Tasks::Models::Assistant.find_by(
@@ -15,56 +14,84 @@ FactoryBot.define do
     end
 
     transient do
+      page_hash do
+        {
+          id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+          title: "<span class=\"os-number\">1.1</span><span class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Newton's First Law of Motion: Inertia</span>"
+        }
+      end
+
+      chapter_hash do
+        {
+          title: "<span class=\"os-number\">1</span><span class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Dynamics: Force and Newton's Laws of Motion</span>",
+          contents: [ page_hash ]
+        }
+      end
+
+      unit_hash do
+        { title: 'Not a real Unit', contents: [ chapter_hash ] }
+      end
+
+      book_hash do
+        {
+          id: '93e2b09d-261c-4007-a987-0b3062fe154b',
+          version: '4.4',
+          title: 'College Physics with Courseware',
+          tree: {
+            id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4',
+            title: 'College Physics with Courseware',
+            contents: [ unit_hash ]
+          }
+        }
+      end
+
+      cnx_book { OpenStax::Cnx::V1::Book.new hash: book_hash.deep_stringify_keys }
+
+      reading_processing_instructions do
+        FactoryBot.build(:content_book).reading_processing_instructions
+      end
+
       number_of_students { 10 }
     end
 
-    owner     { FactoryBot.build :course_profile_course, offering: nil }
+    owner      { FactoryBot.build :course_profile_course, offering: nil }
 
     ecosystem do
-      cnx_page = OpenStax::Cnx::V1::Page.new(
-        hash: { 'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-                'title' => 'Newton\'s First Law of Motion: Inertia' }
-      )
+      FactoryBot.create(:content_ecosystem).tap do |ecosystem|
+        if Rails.env.test?
+          require File.expand_path('../../../vcr_helper', __FILE__)
 
-      chapter = FactoryBot.create :content_chapter
-
-      if Rails.env.test?
-        require File.expand_path('../../../vcr_helper', __FILE__)
-
-        VCR.use_cassette("TaskedTaskPlan/with_inertia", VCR_OPTS) do
+          VCR.use_cassette('TaskedTaskPlan/with_inertia', VCR_OPTS) do
+            OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
+              Content::ImportBook[
+                cnx_book: cnx_book,
+                ecosystem: ecosystem,
+                reading_processing_instructions: reading_processing_instructions
+              ]
+            end
+          end
+        else
           OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
-            Content::Routines::ImportPage[
-              cnx_page: cnx_page, chapter: chapter, book_location: [1, 1]
+            Content::ImportBook[
+              cnx_book: cnx_book,
+              ecosystem: ecosystem,
+              reading_processing_instructions: reading_processing_instructions
             ]
           end
         end
-      else
-        OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
-          Content::Routines::ImportPage[cnx_page: cnx_page, chapter: chapter, book_location: [1, 1]]
-        end
+
+        AddEcosystemToCourse[course: owner, ecosystem: ecosystem]
       end
-
-      book = chapter.book
-      Content::Routines::PopulateExercisePools.call book: book
-      Content::Routines::TransformAndCachePageContent.call book: book, pages: chapter.pages
-
-      ecosystem_model = chapter.book.ecosystem
-      ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
-      ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-
-      AddEcosystemToCourse[course: owner, ecosystem: ecosystem]
-
-      ecosystem_model
     end
 
-    settings  { { page_ids: [ecosystem.pages.last.id.to_s] } }
+    settings { { page_ids: [ ecosystem.pages.last.id.to_s ] } }
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.owner
       period = course.periods.first || FactoryBot.create(:course_membership_period, course: course)
 
       evaluator.number_of_students.times do
-        AddUserAsPeriodStudent.call(user: create(:user), period: period)
+        AddUserAsPeriodStudent.call(user: create(:user_profile), period: period)
       end
 
       task_plan.tasking_plans = [build(:tasks_tasking_plan, task_plan: task_plan, target: period)]

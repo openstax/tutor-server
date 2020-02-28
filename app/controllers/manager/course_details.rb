@@ -6,19 +6,14 @@ module Manager::CourseDetails
     @periods = @course.periods
     @teachers = @course.teachers
                        .preload(role: { profile: :account })
-                       .sort_by { |ss| ss.last_name || ss.name }
+                       .sort_by { |teacher| teacher.last_name || teacher.name }
     @students = @course.students
                        .preload(role: { profile: :account })
-                       .sort_by { |ss| ss.last_name || ss.name }
+                       .sort_by { |student| student.last_name || student.name }
     @ecosystems = Content::ListEcosystems[]
 
-    @course_ecosystem = nil
-    ecosystem_model = @course.ecosystem
-    return if ecosystem_model.nil?
+    @course_ecosystem = @course.ecosystem
 
-    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
-    @course_ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
-
-    @catalog_offerings = Catalog::ListOfferings[]
+    @catalog_offerings = Catalog::Models::Offering.all.to_a
   end
 end

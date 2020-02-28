@@ -1,76 +1,106 @@
 module Content
   class Map
-
-    include Wrapper
+    attr_accessor :is_valid, :validity_error_message
+    attr_reader :to_ecosystem
 
     class << self
-      # Find or create an ecosystem map
-      def find_or_create_by(from_ecosystems:, to_ecosystem:,
-                            strategy_class: ::Content::Strategies::Generated::Map)
-        from_arr = verify_and_return [from_ecosystems].flatten.compact, klass: ::Content::Ecosystem
-        to = verify_and_return to_ecosystem, klass: ::Content::Ecosystem
-        verify_and_return strategy_class.find_or_create_by(from_ecosystems: from_ecosystems,
-                                                           to_ecosystem: to_ecosystem),
-                          klass: ::Content::Map, allow_nil: true, error: StrategyError
+      def find_or_create_by(from_ecosystems:, to_ecosystem:)
+        new(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
       end
 
-      # Find or create an ecosystem map or error out if it is invalid
-      def find_or_create_by!(from_ecosystems:, to_ecosystem:,
-                             strategy_class: ::Content::Strategies::Generated::Map)
-        from_arr = verify_and_return [from_ecosystems].flatten.compact, klass: ::Content::Ecosystem
-        to = verify_and_return to_ecosystem, klass: ::Content::Ecosystem
-        verify_and_return strategy_class.find_or_create_by!(from_ecosystems: from_ecosystems,
-                                                            to_ecosystem: to_ecosystem),
-                          klass: ::Content::Map, error: StrategyError
+      def find_or_create_by!(from_ecosystems:, to_ecosystem:)
+        find_or_create_by(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem).tap do |map|
+          raise(::Content::MapInvalidError, map.validity_error_message) unless map.is_valid
+        end
       end
     end
 
-    def to_ecosystem
-      verify_and_return @strategy.to_ecosystem, klass: Content::Ecosystem, error: StrategyError
+    def initialize(from_ecosystems:, to_ecosystem:)
+      @to_ecosystem = to_ecosystem
+      maps = find_or_create_maps(from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem)
+      merge_maps(maps: maps)
     end
 
-    # Returns a hash that maps the given Content::Exercises
-    # to Content::Pages in the to_ecosystem
-    def map_exercises_to_pages(exercises:)
-      ex_arr = verify_and_return [exercises].flatten.compact, klass: ::Content::Exercise
-      map = verify_and_return @strategy.map_exercises_to_pages(exercises: ex_arr),
-                              klass: Hash, error: StrategyError
-      verify_and_return map.keys, klass: ::Content::Exercise, error: StrategyError
-      verify_and_return map.values.compact, klass: ::Content::Page, error: StrategyError
-      map
+    # Returns a hash that maps the given exercise_ids to a page_id in the to_ecosystem
+    # Unmapped exercise_ids map to nil
+    def map_exercise_ids_to_page_ids(exercise_ids:)
+      {}.tap do |result|
+        exercise_ids.each do |exercise_id|
+          result[exercise_id] = @exercise_id_to_page_id_map[exercise_id.to_s]
+        end
+      end
     end
 
-    # Returns a hash that maps the given Content::Pages
-    # to Content::Pages in the to_ecosystem
-    def map_pages_to_pages(pages:)
-      pg_arr = verify_and_return [pages].flatten.compact, klass: ::Content::Page
-      map = verify_and_return @strategy.map_pages_to_pages(pages: pg_arr),
-                              klass: Hash, error: StrategyError
-      verify_and_return map.keys, klass: ::Content::Page, error: StrategyError
-      verify_and_return map.values.compact, klass: ::Content::Page, error: StrategyError
-      map
+    # Returns a hash that maps the given page_ids to a page_id in the to_ecosystem
+    # Unmapped page_ids map to nil
+    def map_page_ids(page_ids:)
+      {}.tap do |result|
+        page_ids.each { |page_id| result[page_id] = @page_id_to_page_id_map[page_id.to_s] }
+      end
     end
 
     # Returns a hash that maps the given Content::Pages
     # to Content::Exercises in the to_ecosystem that are in a Content::Pool of the given type
-    def map_pages_to_exercises(pages:, pool_type: :all_exercises)
-      pg_arr = verify_and_return [pages].flatten.compact, klass: ::Content::Page
-      map = verify_and_return @strategy.map_pages_to_exercises(pages: pg_arr,
-                                                               pool_type: pool_type),
-                              klass: Hash, error: StrategyError
-      verify_and_return map.keys, klass: ::Content::Page, error: StrategyError
-      verify_and_return map.values, klass: ::Content::Exercise, error: StrategyError
-      map
+    def map_page_ids_to_exercise_ids(page_ids:, pool_type: :all)
+      {}.tap do |result|
+        page_ids.each do |page_id|
+          result[page_id] =
+            @page_id_to_pool_type_exercise_ids_map[page_id.to_s]&.[](pool_type.to_s) || []
+        end
+      end
     end
 
-    # Asserts that the Ecosystem mapping makes sense
-    def is_valid
-      !!@strategy.is_valid
+    protected
+
+    def find_or_create_maps(from_ecosystems:, to_ecosystem:)
+      existing_maps = Content::Models::Map.where(
+        content_from_ecosystem_id: from_ecosystems.map(&:id),
+        content_to_ecosystem_id: to_ecosystem.id
+      )
+
+      existing_from_ecosystems_ids = existing_maps.map(&:content_from_ecosystem_id)
+
+      missing_from_ecosystems = from_ecosystems.reject do |ecosystem|
+        existing_from_ecosystems_ids.include?(ecosystem.id)
+      end
+
+      new_maps = upsert_maps(
+        from_ecosystems: missing_from_ecosystems, to_ecosystem: to_ecosystem
+      )
+
+      existing_maps + new_maps
     end
 
-    # An error message to help debug mapping errors
-    def validity_error_message
-      verify_and_return @strategy.validity_error_message, klass: String, error: StrategyError
+    def upsert_maps(from_ecosystems:, to_ecosystem:)
+      from_ecosystems.uniq.map do |from_ecosystem|
+        Content::Models::Map.new(
+          from_ecosystem: from_ecosystem, to_ecosystem: to_ecosystem
+        ).tap { |map| map.before_save_callbacks }
+      end.tap do |new_maps|
+        Content::Models::Map.import new_maps, validate: false, on_duplicate_key_ignore: {
+          conflict_target: [ :content_from_ecosystem_id, :content_to_ecosystem_id ]
+        }
+      end
+    end
+
+    def merge_maps(maps:)
+      @page_id_to_page_id_map = maps.map(&:page_id_to_page_id_map).reduce({}, :merge)
+      @exercise_id_to_page_id_map = maps.map(&:exercise_id_to_page_id_map).reduce({}, :merge)
+      @page_id_to_pool_type_exercise_ids_map = maps.map(&:page_id_to_pool_type_exercise_ids_map)
+                                                   .reduce({}, :merge)
+      merge_map_validities(maps: maps)
+    end
+
+    def merge_map_validities(maps:)
+      invalid_maps = maps.reject(&:is_valid)
+
+      @is_valid = invalid_maps.none?
+
+      @validity_error_message = invalid_maps.map do |ecosystem_map|
+        "Invalid mapping: #{ecosystem_map.from_ecosystem.title} => #{
+          ecosystem_map.to_ecosystem.title}. Errors: [#{
+          ecosystem_map.validity_error_messages.join(', ')}]"
+      end.join('; ')
     end
   end
 end

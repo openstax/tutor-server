@@ -1,13 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe PushSalesforceCourseStats, type: :routine, speed: :slow do
+RSpec.describe PushSalesforceCourseStats, type: :routine do
   subject(:instance) { described_class.new }
 
   context "#best_sf_contact_id_for_course" do
     let(:course)        { FactoryBot.create :course_profile_course }
-    let(:user_no_sf)    { FactoryBot.create(:user) }
-    let(:user_sf_a)     { FactoryBot.create(:user, salesforce_contact_id: 'a') }
-    let(:user_sf_b)     { FactoryBot.create(:user, salesforce_contact_id: 'b') }
+    let(:user_no_sf)    { FactoryBot.create(:user_profile) }
+    let(:user_sf_a)     { FactoryBot.create(:user_profile, salesforce_contact_id: 'a') }
+    let(:user_sf_b)     { FactoryBot.create(:user_profile, salesforce_contact_id: 'b') }
 
     subject { instance.best_sf_contact_id_for_course(course) }
 

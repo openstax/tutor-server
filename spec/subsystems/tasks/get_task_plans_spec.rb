@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Tasks::GetTaskPlans, type: :routine, speed: :medium do
+RSpec.describe Tasks::GetTaskPlans, type: :routine do
   let!(:task_plan_1) { FactoryBot.create :tasked_task_plan }
   let(:course)       { task_plan_1.owner }
   let!(:task_plan_2) { FactoryBot.create :tasks_task_plan, owner: course }

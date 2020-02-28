@@ -1,15 +1,14 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
-                                             version: :v1, speed: :medium do
+RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, version: :v1 do
   before(:all) do
     @course = FactoryBot.create :course_profile_course, :with_assistants
     period = FactoryBot.create :course_membership_period, course: @course
 
-    @user = FactoryBot.create(:user)
-    @teacher = FactoryBot.create(:user)
-    student = FactoryBot.create(:user)
-    @unaffiliated_teacher = FactoryBot.create(:user)
+    @user = FactoryBot.create(:user_profile)
+    @teacher = FactoryBot.create(:user_profile)
+    student = FactoryBot.create(:user_profile)
+    @unaffiliated_teacher = FactoryBot.create(:user_profile)
 
     @published_task_plan = FactoryBot.create(
       :tasked_task_plan,
@@ -34,7 +33,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true,
     FactoryBot.create(
       :tasks_tasking_plan,
       task_plan: @task_plan,
-      target: period.to_model,
+      target: period,
       opens_at: Time.current.tomorrow
     )
 

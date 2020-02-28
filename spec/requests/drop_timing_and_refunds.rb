@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe 'Drop timing and refunds', type: :request do
   let(:period)  { FactoryBot.create :course_membership_period }
-  let(:user)    { FactoryBot.create :user }
+  let(:user)    { FactoryBot.create :user_profile }
   let(:student) do
     AddUserAsPeriodStudent[user: user, period: period, student_identifier: 'N0B0DY'].student
   end

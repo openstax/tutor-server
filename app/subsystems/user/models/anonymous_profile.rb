@@ -3,9 +3,11 @@ module User
     class AnonymousProfile < ::User::Models::Profile
       include Singleton
 
-      wrapped_by ::User::Strategies::Direct::AnonymousUser
-
       before_save { false }
+
+      def self.find(_)
+        instance
+      end
 
       def account
         OpenStax::Accounts::AnonymousAccount.instance
@@ -46,6 +48,10 @@ module User
       # convention that anonymous user has an ID of -1, helps with globalID lookup
       def id
         -1
+      end
+
+      def is_signed_in?
+        false
       end
 
       def is_anonymous?

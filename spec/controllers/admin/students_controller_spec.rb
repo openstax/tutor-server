@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::StudentsController, type: :controller do
-  let(:admin)        { FactoryBot.create(:user, :administrator) }
+  let(:admin)        { FactoryBot.create(:user_profile, :administrator) }
 
   before             { controller.sign_in(admin) }
 
@@ -17,10 +17,10 @@ RSpec.describe Admin::StudentsController, type: :controller do
     end
     let(:periods_2)  { [ FactoryBot.create(:course_membership_period, course: course_2) ] }
 
-    let(:user_1)     { FactoryBot.create(:user, first_name: 'Benjamin', last_name: 'Franklin') }
-    let(:user_2)     { FactoryBot.create(:user, first_name: 'Nikola', last_name: 'Tesla') }
-    let(:user_3)     { FactoryBot.create(:user, first_name: 'Freja', last_name: 'Asgard') }
-    let(:user_4)     { FactoryBot.create(:user, first_name: 'Oliver', last_name: 'Wilde') }
+    let(:user_1)     { FactoryBot.create(:user_profile, first_name: 'Benjamin', last_name: 'Franklin') }
+    let(:user_2)     { FactoryBot.create(:user_profile, first_name: 'Nikola', last_name: 'Tesla') }
+    let(:user_3)     { FactoryBot.create(:user_profile, first_name: 'Freja', last_name: 'Asgard') }
+    let(:user_4)     { FactoryBot.create(:user_profile, first_name: 'Oliver', last_name: 'Wilde') }
 
     let!(:student_1) do
       AddUserAsPeriodStudent.call(user: user_1, period: periods[0]).outputs.student
@@ -119,7 +119,7 @@ RSpec.describe Admin::StudentsController, type: :controller do
   end
 
   context '#drop/#restore' do
-    let(:user)    { FactoryBot.create :user }
+    let(:user)    { FactoryBot.create :user_profile }
     let(:course)  { FactoryBot.create :course_profile_course }
     let(:period)  { FactoryBot.create :course_membership_period, course: course }
     let(:student) { AddUserAsPeriodStudent[user: user, period: period].student }

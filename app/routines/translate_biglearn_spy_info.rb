@@ -31,22 +31,21 @@ class TranslateBiglearnSpyInfo
     outputs.spy_info['task_history'] = {}
 
     history.each do |key, value|
-      outputs.spy_info['task_history'][key] =
-        if value.has_key?('assignment_uuid')
-          assignment_uuid = value['assignment_uuid']
-          book_container_uuids = value['book_container_uuids']
+      outputs.spy_info['task_history'][key] = if value.has_key?('assignment_uuid')
+        assignment_uuid = value['assignment_uuid']
+        book_container_uuids = value['book_container_uuids']
 
-          value.except('assignment_uuid', 'book_container_uuids').merge(
-            'task_id' => task_id_by_uuid[assignment_uuid],
-            'task_uuid' => assignment_uuid,
-            'cnx_page_uuids' => book_container_uuids.map do |book_container_uuid|
-              cnx_page_uuid_by_book_container_uuid[book_container_uuid]
-            end.compact,
-            'book_container_uuids' => book_container_uuids
-          )
-        else
-          value
-        end
+        value.except('assignment_uuid', 'book_container_uuids').merge(
+          'task_id' => task_id_by_uuid[assignment_uuid],
+          'task_uuid' => assignment_uuid,
+          'cnx_page_uuids' => book_container_uuids.map do |book_container_uuid|
+            cnx_page_uuid_by_book_container_uuid[book_container_uuid]
+          end.compact,
+          'book_container_uuids' => book_container_uuids
+        )
+      else
+        value
+      end
     end
   end
 end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'DistrictTermsWork' do
   scenario 'normal creation, no deletion or editing' do
-    admin = FactoryBot.create(:user, :administrator)
+    admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)
 
     visit admin_districts_path
@@ -40,7 +40,7 @@ RSpec.feature 'DistrictTermsWork' do
     check 'targeted_contract_is_proxy_signed'
     click_button 'Submit'
 
-    user   = FactoryBot.create :user
+    user   = FactoryBot.create :user_profile
     course = CourseProfile::Models::Course.last
     period = FactoryBot.create :course_membership_period, course: course
 
@@ -73,7 +73,7 @@ RSpec.feature 'DistrictTermsWork' do
       content: 'blah'
     ).publish
 
-    admin = FactoryBot.create(:user, :administrator)
+    admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)
 
     create_targeted_terms(contract_name: 'district_a_terms', target_name: district_a.name)
@@ -113,13 +113,13 @@ RSpec.feature 'DistrictTermsWork' do
     FinePrint::Contract.create(name: 'general_terms_of_use', title: 'a', content: 'a').publish
     FinePrint::Contract.create(name: 'privacy_policy', title: 'a', content: 'a').publish
 
-    user_1 = FactoryBot.create(:user, skip_terms_agreement: true)
-    user_2 = FactoryBot.create(:user, skip_terms_agreement:true)
+    user_1 = FactoryBot.create(:user_profile, skip_terms_agreement: true)
+    user_2 = FactoryBot.create(:user_profile, skip_terms_agreement:true)
 
     AddUserAsCourseTeacher[user: user_1, course: course_e]
     AddUserAsCourseTeacher[user: user_2, course: course_f]
 
-    admin = FactoryBot.create(:user, :administrator)
+    admin = FactoryBot.create(:user_profile, :administrator)
 
     stub_current_user(admin)
     create_targeted_terms(contract_name: 'district_a_terms', target_name: district_a.name,
@@ -131,14 +131,14 @@ RSpec.feature 'DistrictTermsWork' do
 
     # User 1 should not have signed district a terms yet
 
-    expect(FinePrint.signed_contract?(user_1.to_model, 'district_a_terms')).to be_falsy
+    expect(FinePrint.signed_contract?(user_1, 'district_a_terms')).to be_falsy
 
     # Simulate the FE getting the terms listing for a user, should add an implicit signature
     # for user1 / district_a_terms
 
     expect { visit api_terms_path }.to change { FinePrint::Signature.count }.by(1)
 
-    expect(FinePrint.signed_contract?(user_1.to_model, 'district_a_terms')).to be_truthy
+    expect(FinePrint.signed_contract?(user_1, 'district_a_terms')).to be_truthy
     expect(FinePrint::Signature.all.max_by(&:created_at).is_implicit?).to be_truthy
 
     # user 2 is not in district A, so should just see normal terms

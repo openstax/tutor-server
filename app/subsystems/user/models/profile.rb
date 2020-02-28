@@ -1,8 +1,6 @@
 module User
   module Models
     class Profile < IndestructibleRecord
-      wrapped_by Strategies::Direct::User
-
       belongs_to :account, class_name: 'OpenStax::Accounts::Account',
                            subsystem: 'none',
                            inverse_of: :profile
@@ -42,6 +40,10 @@ module User
 
       def is_application?
         false
+      end
+
+      def is_signed_in?
+        true
       end
 
       def is_anonymous?

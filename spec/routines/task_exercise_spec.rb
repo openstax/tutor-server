@@ -1,17 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe TaskExercise, type: :routine do
+  let(:exercise) { FactoryBot.create(:content_exercise) }
 
-  let(:exercise)  do
-    content_exercise = FactoryBot.create(:content_exercise)
-    strategy = Content::Strategies::Direct::Exercise.new(content_exercise)
-    Content::Exercise.new(strategy: strategy)
-  end
-
-  let(:multipart_exercise)  do
-    content_exercise = FactoryBot.create(:content_exercise, num_parts: 2, context: 'Some context')
-    strategy = Content::Strategies::Direct::Exercise.new(content_exercise)
-    Content::Exercise.new(strategy: strategy)
+  let(:multipart_exercise) do
+    FactoryBot.create(:content_exercise, num_parts: 2, context: 'Some context')
   end
 
   let(:task_step) { FactoryBot.build(:tasks_task_step) }
@@ -47,7 +40,7 @@ RSpec.describe TaskExercise, type: :routine do
       expect(ts.tasked.is_in_multipart).to eq true
       expect(ts.tasked.context).to eq 'Some context'
       expect(ts.group_type).to eq task_step.group_type
-      expect(ts.page).to eq multipart_exercise.page.to_model
+      expect(ts.page).to eq multipart_exercise.page
       expect(ts.labels).to eq []
     end
     expect(task.task_steps[0].tasked.question_index).to eq 0
@@ -81,7 +74,7 @@ RSpec.describe TaskExercise, type: :routine do
       expect(task_step.tasked.is_in_multipart).to eq true
       expect(task_step.tasked.context).to eq 'Some context'
       expect(task_step.group_type).to eq 'personalized_group'
-      expect(task_step.page).to eq multipart_exercise.page.to_model
+      expect(task_step.page).to eq multipart_exercise.page
       expect(task_step.labels).to eq ['test']
     end
     expect(task.task_steps[1].tasked.question_index).to eq 0
@@ -93,7 +86,6 @@ RSpec.describe TaskExercise, type: :routine do
 
     expect(task.task_steps[3]).to eq exercise_step
     expect(task.task_steps[3].tasked.is_in_multipart).to eq false
-    expect(task.task_steps[3].page).not_to eq multipart_exercise.page.to_model
+    expect(task.task_steps[3].page).not_to eq multipart_exercise.page
   end
-
 end

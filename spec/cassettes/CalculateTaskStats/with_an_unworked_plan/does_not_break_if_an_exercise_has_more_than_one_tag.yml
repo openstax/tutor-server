@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/e26d1433-f8e4-41db-a757-0e061d6d2737
+    uri: https://archive-staging-tutor.cnx.org/contents/6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2@22.1:e26d1433-f8e4-41db-a757-0e061d6d2737
     body:
       encoding: US-ASCII
       string: ''
@@ -35,7 +35,7 @@ http_interactions:
       Access-Control-Allow-Origin:
       - "*"
       Location:
-      - "/contents/e26d1433-f8e4-41db-a757-0e061d6d2737@29.json"
+      - "/contents/6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2@22.1:e26d1433-f8e4-41db-a757-0e061d6d2737@29.json"
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains
     body:
@@ -45,7 +45,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:21:53 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/e26d1433-f8e4-41db-a757-0e061d6d2737@29.json
+    uri: https://archive-staging-tutor.cnx.org/contents/6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2@22.1:e26d1433-f8e4-41db-a757-0e061d6d2737@29.json
     body:
       encoding: US-ASCII
       string: ''

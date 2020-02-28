@@ -48,9 +48,6 @@ RSpec.describe OpenStax::Biglearn::Scheduler, type: :external do
 
     it 'converts returned exercise uuids to exercise objects, preserving their order' do
       expect(@exercises).not_to be_empty
-      exercises = @exercises.map do |exercise|
-        Content::Exercise.new strategy: exercise.wrap
-      end
       expect(Rails.logger).not_to receive(:warn)
 
       expect(described_class.client).to(
@@ -64,7 +61,7 @@ RSpec.describe OpenStax::Biglearn::Scheduler, type: :external do
                   calculation_uuid: SecureRandom.uuid,
                   ecosystem_matrix_uuid: SecureRandom.uuid,
                   algorithm_name: request[:algorithm_name],
-                  exercise_uuids: exercises.map(&:uuid)
+                  exercise_uuids: @exercises.map(&:uuid)
                 }
               ]
             }
@@ -77,7 +74,7 @@ RSpec.describe OpenStax::Biglearn::Scheduler, type: :external do
       ]
       results.values.each do |calculations|
         calculations.each do |calculation|
-          expect(calculation[:exercises]).to eq exercises
+          expect(calculation[:exercises]).to eq @exercises
         end
       end
     end

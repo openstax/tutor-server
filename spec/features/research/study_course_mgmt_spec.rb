@@ -4,7 +4,7 @@ require 'feature_js_helper'
 RSpec.feature 'Study Course Management', js: true do
 
   before do
-    researcher = FactoryBot.create(:user, :researcher)
+    researcher = FactoryBot.create(:user_profile, :researcher)
     stub_current_user(researcher)
   end
 

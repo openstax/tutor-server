@@ -13,9 +13,7 @@ class TargetAccessPolicy
       when Entity::Role
         CourseMembership::IsCourseStudent[roles: target, course: course]
       when ::User::Models::Profile
-        strategy = ::User::Strategies::Direct::User.new(target)
-        user = ::User::User.new(strategy: strategy)
-        UserIsCourseStudent[user: user, course: course]
+        UserIsCourseStudent[user: target, course: course]
       when CourseProfile::Models::Course
         target == course
       when CourseMembership::Models::Period

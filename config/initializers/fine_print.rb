@@ -14,7 +14,7 @@ FinePrint.configure do |config|
   # Default: lambda { current_user }
   config.current_user_proc = lambda {
     # FinePrint does not understand how to read/write contract signatures for wrappers
-    current_user.to_model
+    current_user
   }
 
   # Proc called with a user as argument and a controller as self.

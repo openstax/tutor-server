@@ -13,17 +13,17 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
 
     @clone_task_plan = FactoryBot.create(:tasks_task_plan, owner: @clone_course)
 
-    @anonymous = User::User.anonymous
-    @user = FactoryBot.create(:user)
-    @student = FactoryBot.create(:user)
-    @teacher = FactoryBot.create(:user)
-    @clone_student = FactoryBot.create(:user)
-    @clone_teacher = FactoryBot.create(:user)
+    @anonymous = User::Models::Profile.anonymous
+    @user = FactoryBot.create(:user_profile)
+    @student = FactoryBot.create(:user_profile)
+    @teacher = FactoryBot.create(:user_profile)
+    @clone_student = FactoryBot.create(:user_profile)
+    @clone_teacher = FactoryBot.create(:user_profile)
 
-    @owner = FactoryBot.create(:user)
+    @owner = FactoryBot.create(:user_profile)
     # NotYetImplemented, but we can kid of simulate it by creating a task_plan and then updating it
     @owned_task_plan = FactoryBot.create(:tasks_task_plan)
-    @owned_task_plan.update_attribute :owner, @owner.to_model
+    @owned_task_plan.update_attribute :owner, @owner
 
     AddUserAsPeriodStudent[user: @student, period: @period]
     AddUserAsCourseTeacher[user: @teacher, course: @course]

@@ -1,6 +1,5 @@
 module Api::V1::Tasks
   class TaskStepRepresenter < Roar::Decorator
-
     include Roar::JSON
     include Representable::Coercion
 

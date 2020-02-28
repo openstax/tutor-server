@@ -4,12 +4,8 @@ RSpec.describe "Pardot" do
   # No real SF tests here, lots of those in tracking routine spec
   before(:each) { disable_sfdc_client }
 
-  let(:user) { FactoryBot.create :user }
-  let(:anonymous_user) do
-    profile = User::Models::AnonymousProfile.instance
-    strategy = User::Strategies::Direct::AnonymousUser.new(profile)
-    User::User.new(strategy: strategy)
-  end
+  let(:user)           { FactoryBot.create :user_profile }
+  let(:anonymous_user) { User::Models::AnonymousProfile.instance }
 
   def happy_path_test(expected_user)
     Delayed::Worker.with_delay_jobs(true) do
@@ -25,7 +21,7 @@ RSpec.describe "Pardot" do
           pardot_reported_picid: "c"
         }
       )
-      expect(Delayed::Worker.new.work_off).to eq [1,0]
+      expect(Delayed::Worker.new.work_off).to eq [ 1, 0 ]
     end
   end
 

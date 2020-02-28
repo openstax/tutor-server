@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Concept Coach teacher logout", type: :request do
-  let(:user)    { FactoryBot.create(:user) }
+  let(:user)    { FactoryBot.create(:user_profile) }
   let(:default) { OpenStax::Accounts.configuration.default_logout_redirect_url }
 
   it "redirects to cc.openstax.org when the request is a CC one" do

@@ -1,14 +1,10 @@
 class Content::Models::Exercise < IndestructibleRecord
-
   attr_accessor :pool_types, :is_excluded
-
-  wrapped_by ::Content::Strategies::Direct::Exercise
 
   acts_as_resource
 
   belongs_to :page, inverse_of: :exercises
-  has_one :chapter, through: :page
-  has_one :book, through: :chapter
+  has_one :book, through: :page
   has_one :ecosystem, through: :book
 
   has_many :exercise_tags, dependent: :destroy, inverse_of: :exercise
@@ -36,6 +32,14 @@ class Content::Models::Exercise < IndestructibleRecord
           )
         ).arel.exists
     )
+  end
+
+  def units
+    books.flat_map(&:units)
+  end
+
+  def chapters
+    books.flat_map(&:chapters)
   end
 
   def uid
@@ -93,5 +97,4 @@ class Content::Models::Exercise < IndestructibleRecord
   def feature_ids
     cnxfeatures.map(&:data)
   end
-
 end

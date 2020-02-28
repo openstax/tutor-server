@@ -1,6 +1,4 @@
 class Api::V1::EnrollmentController < Api::V1::ApiController
-
-
   resource_description do
     api_versions "v1"
     short_description 'Indicates the intent of a user to enroll in a course or to switch periods'
@@ -81,7 +79,7 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
   EOS
   def create
     OSU::AccessPolicy.require_action_allowed!(
-      :create, current_api_user, CourseMembership::EnrollmentChange
+      :create, current_api_user, CourseMembership::Models::EnrollmentChange
     )
 
     enrollment_params = OpenStruct.new
@@ -119,14 +117,13 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
   EOS
   def approve
     CourseMembership::Models::EnrollmentChange.transaction do
-      model = CourseMembership::Models::EnrollmentChange.lock.find(params[:id])
-      enrollment_change = CourseMembership::EnrollmentChange.new(strategy: model.wrap)
+      enrollment_change = CourseMembership::Models::EnrollmentChange.lock.find(params[:id])
       OSU::AccessPolicy.require_action_allowed!(:approve, current_api_user, enrollment_change)
 
       approve_params = OpenStruct.new
       consume!(approve_params, represent_with: Api::V1::ApproveEnrollmentChangeRepresenter)
 
-      model.approve_by(current_human_user).save if enrollment_change.pending?
+      enrollment_change.approve_by(current_human_user).save if enrollment_change.pending?
 
       result = CourseMembership::ProcessEnrollmentChange.call(
         enrollment_change: enrollment_change, student_identifier: approve_params.student_identifier
@@ -139,5 +136,4 @@ class Api::V1::EnrollmentController < Api::V1::ApiController
       )
     end
   end
-
 end

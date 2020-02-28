@@ -11,13 +11,13 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     store.clear
   end
 
-  # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
+  # ecosystem is a Content::Models::Ecosystem or Content::Models::Ecosystem
   # course is a CourseProfile::Models::Course
   # task is a Tasks::Models::Task
   # student is a CourseMembership::Models::Student
   # book_container is a Content::Chapter or Content::Page or one of their models
   # exercise_id is a String containing an Exercise uuid, number or uid
-  # period is a CourseMembership::Period or CourseMembership::Models::Period
+  # period is a CourseMembership::Models::Period
   # max_num_exercises is an integer
 
   # Adds the given ecosystem to Biglearn
@@ -95,27 +95,20 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     task_id_to_core_page_ids_map = GetTaskCorePageIds[tasks: tasks_without_core_page_ids_override]
                                      .merge(task_id_to_core_page_ids_overrides)
     all_core_page_ids = task_id_to_core_page_ids_map.values.flatten
-    page_id_to_page_map = Content::Models::Page.where(id: all_core_page_ids)
-                                               .preload([:reading_dynamic_pool,
-                                                         :homework_dynamic_pool,
-                                                         :practice_widget_pool,
-                                                         :concept_coach_pool])
-                                               .index_by(&:id)
+    page_id_to_page_map = Content::Models::Page.where(id: all_core_page_ids).index_by(&:id)
 
     # Do some queries to get the dynamic exercises for each assignment type
     task_to_pe_ids_map = {}
     requests.each do |request|
       task = request[:task]
 
-      pe_pool_method = case task.task_type.try!(:to_sym)
+      pe_pool_method = case task.task_type&.to_sym
       when :reading
-        :reading_dynamic_pool
+        :reading_dynamic_exercise_ids
       when :homework
-        :homework_dynamic_pool
-      when :concept_coach
-        :concept_coach_pool
+        :homework_dynamic_exercise_ids
       else # Assuming it is one of the different types of practice tasks
-        :practice_widget_pool
+        :practice_widget_exercise_ids
       end
 
       core_page_ids = task_id_to_core_page_ids_map[task.id]
@@ -123,7 +116,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       task_to_pe_ids_map[task] = core_page_ids.flat_map do |page_id|
         page = page_id_to_page_map[page_id]
 
-        page.send(pe_pool_method).content_exercise_ids
+        page.send(pe_pool_method)
       end
     end
 
@@ -220,7 +213,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   # Always returns 5 random exercises from the correct ecosystem in the FakeClient
   def fetch_practice_worst_areas_exercises(requests)
     requests.map do |request|
-      ecosystem = request[:student].course.ecosystem
+      ecosystem = request.fetch(:student).course.ecosystem
       exercises = ecosystem.nil? ? [] : ecosystem.exercises.sample(5)
 
       {
@@ -237,7 +230,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   # Always returns randomized CLUes in the FakeClient
   def fetch_student_clues(requests)
     requests.map do |request|
-      ecosystem = request.fetch(:book_container).ecosystem
+      ecosystem = request.fetch(:student).course.ecosystem
 
       {
         request_uuid: request[:request_uuid],
@@ -251,7 +244,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   # Always returns randomized CLUes in the FakeClient
   def fetch_teacher_clues(requests)
     requests.map do |request|
-      ecosystem = request.fetch(:book_container).ecosystem
+      ecosystem = request.fetch(:course_container).course.ecosystem
 
       {
         request_uuid: request[:request_uuid],

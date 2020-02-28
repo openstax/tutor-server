@@ -13,10 +13,6 @@ module Api::V1
              }
 
     property :book_location,
-             getter: ->(*) {
-               baked_book_location.blank? ?
-                 book_location : baked_book_location
-             },
              as: :chapter_section,
              type: Array,
              readable: true,

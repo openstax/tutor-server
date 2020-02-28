@@ -1,5 +1,4 @@
 class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistant
-
   NUM_PES_PER_CORE_PAGE = 3
   NUM_SPES = 3
 
@@ -26,7 +25,9 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
   def initialize(task_plan:, individualized_tasking_plans:)
     super
 
-    @pages = ecosystem.pages_by_ids(task_plan.settings['page_ids'])
+    page_ids = task_plan.settings['page_ids'].map(&:to_i)
+    pages_by_id = ecosystem.pages.where(id: page_ids).index_by(&:id)
+    @pages = pages_by_id.values_at(*page_ids).compact
   end
 
   def build_tasks
@@ -65,7 +66,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
       task_fragments(
         task: task,
         fragments: page.fragments,
-        page_title: page.tutor_title,
+        page_title: page.title,
         page: page
       )
 
@@ -73,7 +74,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
       # Don't add dynamic exercises if all the reading dynamic exercise pools are empty
       # This happens, for example, on intro pages
-      next if page.reading_dynamic_pool.empty?
+      next if page.reading_dynamic_exercise_ids.empty?
 
       add_placeholder_steps!(
         task: task,
@@ -86,5 +87,4 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
     task
   end
-
 end

@@ -1,15 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Admin::CatalogOfferingsController, type: :controller do
-  let(:admin) do
-    profile = FactoryBot.create :user_profile,
-                                 :administrator,
-                                 username: 'admin',
-                                 full_name: 'Administrator'
-    strategy = User::Strategies::Direct::User.new(profile)
-    User::User.new(strategy: strategy)
+  let(:admin)       do
+    FactoryBot.create :user_profile, :administrator, username: 'admin', full_name: 'Administrator'
   end
-  let(:offering)  { FactoryBot.create(:catalog_offering) }
+  let(:offering)    { FactoryBot.create(:catalog_offering) }
   let!(:attributes) { offering.attributes }
 
   before { controller.sign_in(admin) }
@@ -52,7 +47,7 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
   context '#update' do
     it 'complains about blank fields' do
       attrs = attributes.dup
-      attrs['webview_url']=''
+      attrs['webview_url'] = ''
 
       expect do
         put :update, params: { id: offering.id, offering: attrs }
@@ -98,5 +93,4 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
       expect { offering.reload }.not_to raise_error
     end
   end
-
 end

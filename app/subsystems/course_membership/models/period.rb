@@ -1,10 +1,7 @@
 class CourseMembership::Models::Period < ApplicationRecord
-
   acts_as_paranoid column: :archived_at, without_default_scope: true
 
   include DefaultTimeValidations
-
-  wrapped_by CourseMembership::Strategies::Direct::Period
 
   auto_uuid
 
@@ -71,5 +68,4 @@ class CourseMembership::Models::Period < ApplicationRecord
     students.loaded? ? students.to_a.count { |student| !student.dropped? } :
                        students.without_deleted.count
   end
-
 end

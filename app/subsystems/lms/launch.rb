@@ -1,7 +1,6 @@
 require 'active_support/core_ext/module/delegation'
 
 class Lms::Launch
-
   # A PORO that hides the details of a launch request's internals and
   # launch-related models from other LMS code.
 
@@ -206,7 +205,7 @@ class Lms::Launch
       # only the most recent resource_link_id should be retained
       Lms::Models::CourseScoreCallback.where(
         course: context.course,
-        profile: user.to_model,
+        profile: user,
         resource_link_id: resource_link_id
       ).destroy_all
 
@@ -230,7 +229,7 @@ class Lms::Launch
         result_sourcedid: result_sourcedid,
         outcome_url: outcome_url,
         course: context.course,
-        profile: user.to_model
+        profile: user
       )
     end
   end
@@ -334,5 +333,4 @@ class Lms::Launch
 
     data
   end
-
 end

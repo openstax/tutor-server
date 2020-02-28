@@ -1,6 +1,5 @@
 module Api::V1
   class TaskedRepresenterMapper
-
     REPRESENTER_MAP = {
       'Tasks::Models::TaskedExercise'    => 'Api::V1::Tasks::TaskedExerciseRepresenter',
       'Tasks::Models::TaskedInteractive' => 'Api::V1::Tasks::TaskedInteractiveRepresenter',
@@ -14,10 +13,11 @@ module Api::V1
 
     def self.representer_for(task_step_or_tasked)
       tasked_class = task_step_or_tasked.is_a?(::Tasks::Models::TaskStep) ?
-                       task_step_or_tasked.tasked.class :
-                       task_step_or_tasked.class
-      representer = REPRESENTER_MAP[tasked_class.name].constantize
-      representer || (raise NotYetImplemented)
+                       task_step_or_tasked.tasked.class : task_step_or_tasked.class
+
+      REPRESENTER_MAP[tasked_class.name].constantize.tap do |representer|
+        raise(NotYetImplemented) if representer.nil?
+      end
     end
 
     def call(*args)
@@ -27,6 +27,5 @@ module Api::V1
         self.class.representer_for(args[1])
       end
     end
-
   end
 end

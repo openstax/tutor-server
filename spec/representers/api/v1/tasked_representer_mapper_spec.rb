@@ -6,8 +6,7 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :routine do
       # Get all the Tasked.* classes
       expected_tasked_models = Set.new Dir[
         'app/subsystems/tasks/models/tasked*.rb'
-      ].map{ |f| f.remove('app/subsystems/tasks/models/')
-                  .remove('.rb').classify }
+      ].map{ |f| f.remove('app/subsystems/tasks/models/').remove('.rb').classify }
 
       # Get all the models in the mapper
       registered_tasked_models = Set.new(

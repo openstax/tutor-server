@@ -1,7 +1,6 @@
 class ConvertSerializedFieldsToJson < ActiveRecord::Migration[4.2]
   FIELDS_TO_MIGRATE = {
     'Content::Models::Book'           => { reading_processing_instructions: [] },
-    'Content::Models::Chapter'        => { book_location: [] },
     'Content::Models::Map' => {
       exercise_id_to_page_id_map: {},
       page_id_to_page_id_map: {},
@@ -9,7 +8,6 @@ class ConvertSerializedFieldsToJson < ActiveRecord::Migration[4.2]
       validity_error_messages: []
     },
     'Content::Models::Page'           => { book_location: [], fragments: [], snap_labs: [] },
-    'Content::Models::Pool'           => { content_exercise_ids: [] },
     'Legal::Models::TargetedContract' => { masked_contract_names: [] },
     'Tasks::Models::CourseAssistant'  => { settings: {}, data: {} },
     'Tasks::Models::TaskedReading'    => { book_location: [] },

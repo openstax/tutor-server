@@ -35,7 +35,7 @@ class Demo::Assign < Demo::Base
     end.compact.uniq
     pages_by_book_location = ecosystem.pages.where(
       Content::Models::Page.arel_table[:book_location].in all_book_locations
-    ).preload(:homework_core_pool).index_by(&:book_location)
+    ).index_by(&:book_location)
     missing_book_locations = all_book_locations - pages_by_book_location.keys
     raise(
       ActiveRecord::RecordNotFound,
@@ -87,7 +87,7 @@ class Demo::Assign < Demo::Base
         task_plan[:exercises_count_core] ||= 3
         task_plan[:exercises_count_dynamic] ||= 3
 
-        exercise_ids = pages.map(&:homework_core_pool).flat_map(&:content_exercise_ids).uniq
+        exercise_ids = pages.flat_map(&:homework_core_exercise_ids).uniq
         raise(
           ActiveRecord::RecordNotFound,
           "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"

@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine do
-
   before(:all) do
     cnx_page_1 = OpenStax::Cnx::V1::Page.new(
       id: '102e9604-daa7-4a09-9f9e-232251d1a4ee@7',
@@ -13,18 +12,16 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
       title: "Introduction to Electric Current, Resistance, and Ohm's Law"
     )
 
-    chapter_1 = FactoryBot.create :content_chapter, book_location: [1]
-    @book = chapter_1.book
-    chapter_20 = FactoryBot.create :content_chapter, book: @book, book_location: [20]
+    @book = FactoryBot.create :content_book
 
     @pages = OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
       VCR.use_cassette("Content_Routines_TransformAndCachePageContent/with_book", VCR_OPTS) do
         [
           Content::Routines::ImportPage[
-            cnx_page: cnx_page_1, chapter: chapter_1, book_location: [1, 2]
+            cnx_page: cnx_page_1, book: @book, book_location: [1, 2]
           ],
           Content::Routines::ImportPage[
-            cnx_page: cnx_page_2, chapter: chapter_20, book_location: [20, 0]
+            cnx_page: cnx_page_2, book: @book, book_location: [20, 0]
           ]
         ]
       end
@@ -97,7 +94,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                   expect(link.attribute('href').value).to eq before_hrefs[index]
                 end
 
-                described_class.call(book: @book, pages: @pages)
+                described_class.call(book: @book)
                 @pages.each(&:save!)
 
                 doc = Nokogiri::HTML(@page_1.reload.content)
@@ -138,7 +135,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                   expect(link.attribute('href').value).to eq composite_before_hrefs[index]
                 end
 
-                described_class.call(book: @book, pages: @pages)
+                described_class.call(book: @book)
                 @pages.each(&:save!)
 
                 doc = Nokogiri::HTML(@page_1.reload.content)
@@ -168,7 +165,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                 expect(link.attribute('href').value).to eq book_before_href
               end
 
-              described_class.call(book: @book, pages: @pages)
+              described_class.call(book: @book)
               @pages.each(&:save!)
 
               doc = Nokogiri::HTML(@page_1.reload.content)
@@ -224,7 +221,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                   expect(link.attribute('href').value).to eq before_hrefs[index]
                 end
 
-                described_class.call(book: @book, pages: @pages)
+                described_class.call(book: @book)
                 @pages.each(&:save!)
 
                 doc = Nokogiri::HTML(@page_1.reload.content)
@@ -265,7 +262,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                   expect(link.attribute('href').value).to eq composite_before_hrefs[index]
                 end
 
-                described_class.call(book: @book, pages: @pages)
+                described_class.call(book: @book)
                 @pages.each(&:save!)
 
                 doc = Nokogiri::HTML(@page_1.reload.content)
@@ -295,7 +292,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                 expect(link.attribute('href').value).to eq book_before_href
               end
 
-              described_class.call(book: @book, pages: @pages)
+              described_class.call(book: @book)
               @pages.each(&:save!)
 
               doc = Nokogiri::HTML(@page_1.reload.content)
@@ -347,7 +344,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                   expect(link.attribute('href').value).to eq before_hrefs[index]
                 end
 
-                described_class.call(book: @book, pages: @pages)
+                described_class.call(book: @book)
                 @pages.each(&:save!)
 
                 doc = Nokogiri::HTML(@page_1.reload.content)
@@ -388,7 +385,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                   expect(link.attribute('href').value).to eq composite_before_hrefs[index]
                 end
 
-                described_class.call(book: @book, pages: @pages)
+                described_class.call(book: @book)
                 @pages.each(&:save!)
 
                 doc = Nokogiri::HTML(@page_1.reload.content)
@@ -418,7 +415,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                 expect(link.attribute('href').value).to eq book_before_href
               end
 
-              described_class.call(book: @book, pages: @pages)
+              described_class.call(book: @book)
               @pages.each(&:save!)
 
               doc = Nokogiri::HTML(@page_1.reload.content)
@@ -474,7 +471,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                   expect(link.attribute('href').value).to eq before_hrefs[index]
                 end
 
-                described_class.call(book: @book, pages: @pages)
+                described_class.call(book: @book)
                 @pages.each(&:save!)
 
                 doc = Nokogiri::HTML(@page_1.reload.content)
@@ -515,7 +512,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                   expect(link.attribute('href').value).to eq composite_before_hrefs[index]
                 end
 
-                described_class.call(book: @book, pages: @pages)
+                described_class.call(book: @book)
                 @pages.each(&:save!)
 
                 doc = Nokogiri::HTML(@page_1.reload.content)
@@ -545,7 +542,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
                 expect(link.attribute('href').value).to eq book_before_href
               end
 
-              described_class.call(book: @book, pages: @pages)
+              described_class.call(book: @book)
               @pages.each(&:save!)
 
               doc = Nokogiri::HTML(@page_1.reload.content)

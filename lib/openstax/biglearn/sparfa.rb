@@ -17,11 +17,7 @@ module OpenStax::Biglearn::Sparfa
       requests, options = extract_options requests
 
       sparfa_requests = requests.map do |request|
-        students = request[:students]
-
-        request.slice(:ecosystem_matrix_uuid, :responded_before).tap do |sparfa_request|
-          sparfa_request[:students] = students.map(&:to_model) unless students.nil?
-        end
+        request.slice(:ecosystem_matrix_uuid, :students, :responded_before)
       end
 
       bulk_api_request(

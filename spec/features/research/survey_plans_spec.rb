@@ -5,8 +5,8 @@ RSpec.feature 'Researcher working with survey plans' do
     @course = FactoryBot.create :course_profile_course
     @period = FactoryBot.create :course_membership_period, course: @course
 
-    @student_1_user = FactoryBot.create(:user)
-    @student_2_user = FactoryBot.create(:user)
+    @student_1_user = FactoryBot.create(:user_profile)
+    @student_2_user = FactoryBot.create(:user_profile)
 
     @student_1 = AddUserAsPeriodStudent[period: @period, user: @student_1_user].student
     @student_2 = AddUserAsPeriodStudent[period: @period, user: @student_2_user].student
@@ -14,7 +14,7 @@ RSpec.feature 'Researcher working with survey plans' do
     @study = FactoryBot.create :research_study, name: "Study 1"
     Research::AddCourseToStudy[course: @course, study: @study]
 
-    researcher = FactoryBot.create(:user, :researcher)
+    researcher = FactoryBot.create(:user_profile, :researcher)
     stub_current_user(researcher)
   end
 

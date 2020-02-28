@@ -53,7 +53,7 @@ class Api::V1::TermsController < Api::V1::ApiController
     params[:ids].split(',').map(&:strip).each do |id|
       signature =
         begin
-          FinePrint.sign_contract(current_human_user.to_model, id)
+          FinePrint.sign_contract(current_human_user, id)
         rescue ActiveRecord::RecordNotFound
           return render_api_errors("Terms with ID #{id} not found")
         end

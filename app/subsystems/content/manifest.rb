@@ -1,51 +1,55 @@
 module Content
-  class Manifest
-
-    include Wrapper
-
-    def self.from_yaml(yaml, strategy_class: ::Content::Strategies::Generated::Manifest)
-      yaml = verify_and_return yaml, klass: String
-      strategy = verify_and_return strategy_class.from_yaml(yaml), klass: strategy_class,
-                                                                   error: StrategyError
-      new(strategy: strategy)
+  class Manifest < OpenStruct
+    def self.from_yaml(yaml)
+      new(YAML.load(yaml))
     end
 
     def to_h
-      verify_and_return @strategy.to_h, klass: Hash, error: StrategyError
+      super.deep_stringify_keys
     end
 
     def to_yaml
-      verify_and_return @strategy.to_yaml, klass: String, error: StrategyError
-    end
-
-    def title
-      verify_and_return @strategy.title, klass: String, error: StrategyError
+      to_h.to_yaml
     end
 
     def books
-      verify_and_return @strategy.books, klass: ::Content::Manifest::Book, error: StrategyError
+      super.to_a.map { |book_hash| ::Content::Manifest::Book.new(book_hash) }
     end
 
     def errors
-      verify_and_return @strategy.errors, klass: String, error: StrategyError
+      return @errors unless @errors.nil?
+
+      @errors = []
+      @errors << 'Manifest ecosystem has no title' if title.blank?
+      @errors << 'Manifest ecosystem has no books' if books.empty?
+      books.each { |book| @errors += book.errors }
+
+      @errors
     end
 
     def valid?
-      !!@strategy.valid?
+      errors.empty?
     end
 
-    # For the following 3 methods, the array returned can contain both Strings and nils
     def update_books!
-      verify_and_return @strategy.update_books!, klass: Array, error: StrategyError
+      current_books = books
+      result = current_books.map(&:update_version!)
+      self.books = current_books.map(&:to_h)
+      result
     end
 
     def update_exercises!
-      verify_and_return @strategy.update_exercises!, klass: Array, error: StrategyError
+      current_books = books
+      result = current_books.map(&:update_exercises!)
+      self.books = current_books.map(&:to_h)
+      result
     end
 
     def discard_exercises!
-      verify_and_return @strategy.discard_exercises!, klass: Array, error: StrategyError
+      current_books = books
+      result = current_books.map(&:discard_exercises!)
+      self.books = current_books.map(&:to_h)
+      result
     end
-
   end
 end

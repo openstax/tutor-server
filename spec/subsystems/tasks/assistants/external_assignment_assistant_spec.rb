@@ -31,7 +31,7 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
 
   let!(:students)       do
     num_taskees.times.map do
-      user = FactoryBot.create(:user)
+      user = FactoryBot.create(:user_profile)
       AddUserAsPeriodStudent.call(user: user, period: period).outputs.student
     end
   end

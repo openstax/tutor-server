@@ -1,6 +1,5 @@
 module Api::V1
   class TaskPlanWithStatsRepresenter < ::Roar::Decorator
-
     include Roar::JSON
     include Representable::Coercion
 
@@ -35,6 +34,5 @@ module Api::V1
              readable: true,
              writeable: false,
              getter: ->(*) { try(:shareable_url) || ShortCode::UrlFor[self, suffix: title] }
-
   end
 end

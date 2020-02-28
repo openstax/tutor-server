@@ -1,23 +1,18 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::EnrollmentController, type: :controller, api: true,
-                                              version: :v1, speed: :medium do
-  let(:user)                 { FactoryBot.create :user }
+RSpec.describe Api::V1::EnrollmentController, type: :controller, api: true, version: :v1 do
+  let(:user)              { FactoryBot.create :user_profile }
 
-  let(:user_2)               { FactoryBot.create :user }
+  let(:user_2)            { FactoryBot.create :user_profile }
 
-  let(:course)               { FactoryBot.create :course_profile_course, is_concept_coach: true }
+  let(:course)            { FactoryBot.create :course_profile_course, is_concept_coach: true }
 
-  let(:period)               { FactoryBot.create :course_membership_period, course: course }
-  let(:period_2)             { FactoryBot.create :course_membership_period, course: course }
+  let(:period)            { FactoryBot.create :course_membership_period, course: course }
+  let(:period_2)          { FactoryBot.create :course_membership_period, course: course }
 
-  let(:book)                 { FactoryBot.create :content_book }
+  let(:book)              { FactoryBot.create :content_book }
 
-  let(:ecosystem)            do
-    model = book.ecosystem
-    strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
-    ::Content::Ecosystem.new(strategy: strategy)
-  end
+  let(:ecosystem)         { book.ecosystem }
 
   let!(:course_ecosystem) { AddEcosystemToCourse[course: course, ecosystem: ecosystem] }
 
@@ -285,7 +280,7 @@ RSpec.describe Api::V1::EnrollmentController, type: :controller, api: true,
       end
 
       it 'processes an approved EnrollmentChange request' do
-        enrollment_change.to_model.approve_by(user).save!
+        enrollment_change.approve_by(user).save!
 
         expect do
           api_put :approve, nil, params: { id: enrollment_change.id }
@@ -308,8 +303,7 @@ RSpec.describe Api::V1::EnrollmentController, type: :controller, api: true,
       end
 
       it 'returns an error if the EnrollmentChange request has already been rejected' do
-        enrollment_change.to_model.status = :rejected
-        enrollment_change.to_model.save!
+        enrollment_change.rejected!
 
         expect do
           api_put :approve, nil, params: { id: enrollment_change.id }
@@ -319,8 +313,7 @@ RSpec.describe Api::V1::EnrollmentController, type: :controller, api: true,
       end
 
       it 'returns an error if the EnrollmentChange request has already been processed' do
-        enrollment_change.to_model.status = :processed
-        enrollment_change.to_model.save!
+        enrollment_change.processed!
 
         expect do
           api_put :approve, nil, params: { id: enrollment_change.id }

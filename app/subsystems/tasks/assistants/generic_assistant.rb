@@ -2,7 +2,6 @@
 # It's not intended for direct use
 # since it does not implement the all-important `build_tasks` method
 class Tasks::Assistants::GenericAssistant
-
   def initialize(task_plan:, individualized_tasking_plans:)
     @task_plan = task_plan
     @individualized_tasking_plans = individualized_tasking_plans
@@ -32,16 +31,13 @@ class Tasks::Assistants::GenericAssistant
   attr_reader :task_plan, :individualized_tasking_plans
 
   def ecosystem
-    return @ecosystem unless @ecosystem.nil?
-
-    ecosystem_strategy = ::Content::Strategies::Direct::Ecosystem.new(task_plan.ecosystem)
-    @ecosystem = ::Content::Ecosystem.new(strategy: ecosystem_strategy)
+    task_plan.ecosystem
   end
 
   def get_spaced_ecosystems_map(spaced_ecosystem_id:)
     # Reuse Ecosystems map when possible
     @ecosystems_map[spaced_ecosystem_id] ||= begin
-      spaced_ecosystem = Content::Ecosystem.find(spaced_ecosystem_id)
+      spaced_ecosystem = Content::Models::Ecosystem.find(spaced_ecosystem_id)
 
       Content::Map.find_or_create_by(
         from_ecosystems: [spaced_ecosystem, ecosystem].uniq, to_ecosystem: ecosystem
@@ -68,14 +64,16 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def get_all_page_exercises_with_queries(page:, queries:)
-    (queries||[]).flat_map do |field, values|
+    (queries || []).flat_map do |field, values|
       sorted_values = [values].flatten.uniq.sort
 
       @exercise_cache[page.id][field][sorted_values] ||= case field.to_sym
       when :tag
-        ecosystem.exercises_with_tags(sorted_values, pages: page)
+        ecosystem.exercises.joins(:tags).where(
+          content_page_id: page.id, tags: { value: sorted_values }
+        )
       when :nickname
-        ecosystem.exercises_by_nicknames(sorted_values, pages: page)
+        ecosystem.exercises.where(content_page_id: page.id, nickname: sorted_values)
       else
         raise NotImplementedError
       end
@@ -83,9 +81,9 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def get_pool_exercises(page:, pool_type:)
-    pool_method = "#{pool_type}_pool".to_sym
+    pool_method = "#{pool_type}_exercise_ids".to_sym
 
-    @pool_exercise_cache[page.id][pool_type] ||= page.send(pool_method).exercises
+    @pool_exercise_cache[page.id][pool_type] ||= page.exercises.where(id: page.send(pool_method))
   end
 
   def get_unused_page_exercises_with_queries(page:, queries:)
@@ -94,7 +92,7 @@ class Tasks::Assistants::GenericAssistant
 
     exercises = get_all_page_exercises_with_queries(page: page, queries: queries)
 
-    exercises.reject{ |ex| @used_exercise_numbers.include?(ex.number) }
+    exercises.reject { |ex| @used_exercise_numbers.include?(ex.number) }
   end
 
   def get_unused_pool_exercises(page:, pool_type:)
@@ -153,9 +151,8 @@ class Tasks::Assistants::GenericAssistant
     uncached_page_ids = page_ids - cached_page_ids
 
     unless uncached_page_ids.empty?
-      page_models = Content::Models::Page.where(id: uncached_page_ids)
-      pages = page_models.map{ |model| Content::Page.new(strategy: model.wrap) }
-      pages.each{ |page| @page_cache[page.id] = page }
+      pages = Content::Models::Page.where(id: uncached_page_ids)
+      pages.each { |page| @page_cache[page.id] = page }
     end
 
     @page_cache.values_at(*page_ids)
@@ -192,9 +189,7 @@ class Tasks::Assistants::GenericAssistant
 
   def add_placeholder_steps!(task:, group_type:, is_core:, count:, labels: [], page: nil)
     count.times do
-      task_step = Tasks::Models::TaskStep.new(
-        task: task, labels: labels, page: page.try!(:to_model)
-      )
+      task_step = Tasks::Models::TaskStep.new(task: task, labels: labels, page: page)
       tasked_placeholder = Tasks::Models::TaskedPlaceholder.new(task_step: task_step)
       tasked_placeholder.placeholder_type = :exercise_type
       task_step.tasked = tasked_placeholder
@@ -205,5 +200,4 @@ class Tasks::Assistants::GenericAssistant
 
     task
   end
-
 end

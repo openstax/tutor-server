@@ -1,5 +1,4 @@
 class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
-
   def self.schema
     '{
       "type": "object",
@@ -35,12 +34,13 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
   def initialize(task_plan:, individualized_tasking_plans:)
     super
 
-    @exercise_ids = task_plan.settings['exercise_ids']
-    raise "No exercises selected" if @exercise_ids.blank?
+    exercise_ids = task_plan.settings['exercise_ids'].map(&:to_i)
+    raise 'No exercises selected' if exercise_ids.blank?
 
-    @exercises = ecosystem.exercises_by_ids(@exercise_ids)
+    exercises_by_id = ecosystem.exercises.where(id: exercise_ids).index_by(&:id)
+    @exercises = exercises_by_id.values_at(*exercise_ids).compact
 
-    @core_page_ids = @exercises.map { |ex| ex.page.id }.uniq
+    @core_page_ids = @exercises.map(&:content_page_id).uniq
   end
 
   def build_tasks
@@ -81,5 +81,4 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
     task
   end
-
 end

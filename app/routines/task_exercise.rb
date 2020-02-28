@@ -19,8 +19,7 @@ class TaskExercise
       is_new_step = !task.task_steps.include?(task_step)
     end
 
-    exercise_model = exercise.to_model
-    page = exercise_model.page
+    page = exercise.page
     current_step.page = page
 
     group_type = current_step.group_type
@@ -49,7 +48,7 @@ class TaskExercise
       current_step.last_completed_at = nil
 
       current_step.tasked = Tasks::Models::TaskedExercise.new(
-        exercise: exercise_model,
+        exercise: exercise,
         url: exercise.url,
         title: title || exercise.title,
         context: exercise.context,

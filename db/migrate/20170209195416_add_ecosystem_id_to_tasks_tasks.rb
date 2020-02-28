@@ -35,10 +35,10 @@ class AddEcosystemIdToTasksTasks < ActiveRecord::Migration[4.2]
       tasks.each do |task|
         core_page_ids = task_id_to_core_page_ids_map[task.id]
         next if core_page_ids.empty?
-        ecosystem = Content::Ecosystem.find_by_page_ids(*core_page_ids)
+        ecosystem = Content::Models::Ecosystem.find_by_page_ids(*core_page_ids)
         next if ecosystem.nil?
 
-        task.update_attribute :ecosystem, ecosystem.to_model
+        task.update_attribute :ecosystem, ecosystem
       end
     end
 

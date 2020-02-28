@@ -1,17 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe UserIsCourseTeacher, type: :routine do
-
   context "when the user is not a teacher for the given course" do
     it "returns false" do
-      target_user         = FactoryBot.create :user
+      target_user         = FactoryBot.create :user_profile
 
-      target_student_role = FactoryBot.create :entity_role, profile: target_user.to_model
-      target_teacher_role = FactoryBot.create :entity_role, profile: target_user.to_model
+      target_student_role = FactoryBot.create :entity_role, profile: target_user
+      target_teacher_role = FactoryBot.create :entity_role, profile: target_user
 
-      other_user          = FactoryBot.create :user
+      other_user          = FactoryBot.create :user_profile
 
-      other_teacher_role  = FactoryBot.create :entity_role, profile: other_user.to_model
+      other_teacher_role  = FactoryBot.create :entity_role, profile: other_user
 
       target_course       = FactoryBot.create :course_profile_course
       target_period       = FactoryBot.create :course_membership_period, course: target_course
@@ -35,8 +34,8 @@ RSpec.describe UserIsCourseTeacher, type: :routine do
   context "when the user a teacher for the given course" do
     it "returns true" do
       ## Make the target user a teacher for the target course
-      target_user         = FactoryBot.create(:user)
-      target_teacher_role = FactoryBot.create :entity_role, profile: target_user.to_model
+      target_user         = FactoryBot.create(:user_profile)
+      target_teacher_role = FactoryBot.create :entity_role, profile: target_user
       target_course       = FactoryBot.create :course_profile_course
       CourseMembership::AddTeacher.call(course: target_course, role: target_teacher_role)
 

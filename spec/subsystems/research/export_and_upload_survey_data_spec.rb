@@ -8,12 +8,12 @@ RSpec.describe Research::ExportAndUploadSurveyData, type: :routine do
     study = study_course.study
     @survey_plan = FactoryBot.create :research_survey_plan, study: study
 
-    @teacher = FactoryBot.create :user
+    @teacher = FactoryBot.create :user_profile
 
-    @student_1 = FactoryBot.create :user
-    @student_2 = FactoryBot.create :user
-    @student_3 = FactoryBot.create :user
-    @student_4 = FactoryBot.create :user
+    @student_1 = FactoryBot.create :user_profile
+    @student_2 = FactoryBot.create :user_profile
+    @student_3 = FactoryBot.create :user_profile
+    @student_4 = FactoryBot.create :user_profile
 
     AddUserAsCourseTeacher.call user: @teacher, course: course
     AddUserAsPeriodStudent.call user: @student_1, period: period

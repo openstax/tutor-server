@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe TaskedAccessPolicy, type: :access_policy, speed: :slow do
+RSpec.describe TaskedAccessPolicy, type: :access_policy do
   let(:period)       { FactoryBot.create(:course_membership_period) }
-  let(:requestor)    { FactoryBot.create(:user) }
+  let(:requestor)    { FactoryBot.create(:user_profile) }
   let(:student_role) { AddUserAsPeriodStudent[user: requestor, period: period] }
   let(:tasked)       do
     FactoryBot.create(:tasks_tasked_exercise, :with_tasking, tasked_to: student_role)

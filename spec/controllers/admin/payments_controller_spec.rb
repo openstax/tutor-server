@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin::PaymentsController, type: :controller do
-  let(:admin)  { FactoryBot.create(:user, :administrator) }
+  let(:admin)  { FactoryBot.create(:user_profile, :administrator) }
   before       { controller.sign_in(admin) }
 
   context 'extend payment due dates' do
@@ -10,12 +10,12 @@ RSpec.describe Admin::PaymentsController, type: :controller do
       Timecop.travel(1.year.ago) do
         old_course = FactoryBot.create :course_profile_course
         old_period = FactoryBot.create :course_membership_period, course: old_course
-        old_student = AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: old_period].student
+        old_student = AddUserAsPeriodStudent[user: FactoryBot.create(:user_profile), period: old_period].student
       end
 
       current_course = FactoryBot.create :course_profile_course
       current_period = FactoryBot.create :course_membership_period, course: current_course
-      current_student = AddUserAsPeriodStudent[user: FactoryBot.create(:user), period: current_period].student
+      current_student = AddUserAsPeriodStudent[user: FactoryBot.create(:user_profile), period: current_period].student
 
       Timecop.travel(1.month.from_now) do
         original_old_student_payment_due_at = old_student.payment_due_at

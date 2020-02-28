@@ -50,13 +50,11 @@ module Admin
     end
 
     def destroy
-      offering_model = @offering.to_model
-
-      if offering_model.destroy
-        redirect_to admin_catalog_offerings_path, alert: "#{offering_model.title} deleted"
+      if @offering.destroy
+        redirect_to admin_catalog_offerings_path, alert: "#{@offering.title} deleted"
       else
-        flash.now[:error] = offering_model.errors.map do |att, msg|
-          att = offering_model.title if att == :base
+        flash.now[:error] = @offering.errors.map do |att, msg|
+          att = @offering.title if att == :base
 
           [att, msg].join(' ')
         end
@@ -68,9 +66,9 @@ module Admin
     protected
 
     def get_offerings_and_ecosystems
-      @offerings = Catalog::ListOfferings[]
+      @offerings = Catalog::Models::Offering.preload_deletable.to_a
       @offering = params[:id] ? @offerings.find { |offering| offering.id.to_s == params[:id] } :
-                                Catalog::Offering.new(strategy: Catalog::Models::Offering.new.wrap)
+                                Catalog::Models::Offering.new
       @ecosystems = Content::ListEcosystems[]
     end
 

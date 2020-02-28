@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CustomerService::CoursesController, type: :controller do
-  let(:customer_service) { FactoryBot.create(:user, :customer_service) }
+  let(:customer_service) { FactoryBot.create(:user_profile, :customer_service) }
 
   before                 { controller.sign_in(customer_service) }
 
@@ -81,7 +81,7 @@ RSpec.describe CustomerService::CoursesController, type: :controller do
     end
 
     it 'disallows non-customer-service authenticated visitors' do
-      controller.sign_in(FactoryBot.create(:user))
+      controller.sign_in(FactoryBot.create(:user_profile))
 
       expect { get :index }.to raise_error(SecurityTransgression)
       expect { get :show, params: { id: 1 } }.to raise_error(SecurityTransgression)

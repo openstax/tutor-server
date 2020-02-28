@@ -47,9 +47,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         books: [
           {
             id: book.id,
-            unmapped_ids: [ book.id ],
             tutor_uuid: book.tutor_uuid,
-            unmapped_tutor_uuids: [ book.tutor_uuid ],
             title: book.title,
             has_exercises: true,
             num_assigned_steps: 80,
@@ -62,13 +60,9 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
             student_names: [ kind_of(String) ] * 10,
             chapters: [
               {
-                id: chapter.id,
-                unmapped_ids: [ chapter.id ],
                 tutor_uuid: chapter.tutor_uuid,
-                unmapped_tutor_uuids: [ chapter.tutor_uuid ],
                 title: chapter.title,
                 book_location: chapter.book_location,
-                baked_book_location: chapter.baked_book_location,
                 has_exercises: true,
                 is_spaced_practice: false,
                 num_assigned_steps: 80,
@@ -87,7 +81,6 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
                     unmapped_tutor_uuids: [ page.tutor_uuid ],
                     title: page.title,
                     book_location: page.book_location,
-                    baked_book_location: page.baked_book_location,
                     has_exercises: true,
                     is_spaced_practice: false,
                     num_assigned_steps: 80,
@@ -125,9 +118,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         books: [
           {
             id: book.id,
-            unmapped_ids: [ book.id ],
             tutor_uuid: book.tutor_uuid,
-            unmapped_tutor_uuids: [ book.tutor_uuid ],
             title: book.title,
             has_exercises: true,
             num_assigned_steps: 83,
@@ -140,13 +131,9 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
             student_names: [ kind_of(String) ] * 10,
             chapters: [
               {
-                id: chapter.id,
-                unmapped_ids: [ chapter.id ],
                 tutor_uuid: chapter.tutor_uuid,
-                unmapped_tutor_uuids: [ chapter.tutor_uuid ],
                 title: chapter.title,
                 book_location: chapter.book_location,
-                baked_book_location: chapter.baked_book_location,
                 has_exercises: true,
                 is_spaced_practice: false,
                 num_assigned_steps: 83,
@@ -165,7 +152,6 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
                     unmapped_tutor_uuids: [ page.tutor_uuid ],
                     title: page.title,
                     book_location: page.book_location,
-                    baked_book_location: page.baked_book_location,
                     has_exercises: true,
                     is_spaced_practice: false,
                     num_assigned_steps: 83,

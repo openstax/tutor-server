@@ -1,27 +1,27 @@
 require 'rails_helper'
 
-RSpec.describe SearchCourses, type: :routine, speed: :medium do
+RSpec.describe SearchCourses, type: :routine do
 
   let(:tutor_school) { FactoryBot.create(:school_district_school, name: 'TTS') }
   let(:cc_school)    { FactoryBot.create(:school_district_school, name: 'CCS') }
 
   let(:book_1)       { FactoryBot.create :content_book, title: 'College Physics' }
-  let(:ecosystem_1)  { Content::Ecosystem.new strategy: book_1.ecosystem.wrap }
+  let(:ecosystem_1)  { book_1.ecosystem }
   let(:offering_1)   do
     FactoryBot.create(:catalog_offering,
                        salesforce_book_name: 'College Physics (Algebra)',
                        title: 'College Physics',
                        description: 'Introductory two-semester physics book',
-                       ecosystem: ecosystem_1.to_model)
+                       ecosystem: ecosystem_1)
   end
 
   let(:book_2)       { FactoryBot.create :content_book, title: 'Biology'     }
-  let(:ecosystem_2)  { Content::Ecosystem.new strategy: book_2.ecosystem.wrap }
+  let(:ecosystem_2)  { book_2.ecosystem }
   let(:offering_2)   do
     FactoryBot.create(:catalog_offering,
                        salesforce_book_name: 'Biology',
                        description: 'Biology',
-                       ecosystem: ecosystem_2.to_model)
+                       ecosystem: ecosystem_2)
   end
 
   let!(:course_1) do
@@ -49,7 +49,7 @@ RSpec.describe SearchCourses, type: :routine, speed: :medium do
     )
   end
 
-  let(:teacher_user) { FactoryBot.create(:user, first_name: 'Charles') }
+  let(:teacher_user) { FactoryBot.create(:user_profile, first_name: 'Charles') }
 
   before do
     AddUserAsCourseTeacher[course: course_1, user: teacher_user]

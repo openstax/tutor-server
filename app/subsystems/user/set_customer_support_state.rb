@@ -8,8 +8,7 @@ module User
       return if (customer_support && user.is_customer_support?) || \
                 (!customer_support && !user.is_customer_support?)
 
-      profile = user.to_model
-      customer_support ? profile.create_customer_support! : profile.customer_support.destroy
+      customer_support ? user.create_customer_support! : user.customer_support.destroy
     end
   end
 end

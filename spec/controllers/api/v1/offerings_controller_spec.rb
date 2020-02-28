@@ -6,9 +6,9 @@ RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, versi
   let!(:available_offering_2) { FactoryBot.create :catalog_offering, number: 1 }
   let!(:unavailable_offering) { FactoryBot.create :catalog_offering, is_available: false }
 
-  let(:anon)                  { User::User.anonymous }
+  let(:anon)                  { User::Models::Profile.anonymous }
   let(:faculty)               do
-    FactoryBot.create(:user).tap do |user|
+    FactoryBot.create(:user_profile).tap do |user|
       user.account.confirmed_faculty!
       user.account.college!
     end

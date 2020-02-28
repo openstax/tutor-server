@@ -9,15 +9,15 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     @clone_course = FactoryBot.create :course_profile_course, cloned_from: @course
     @clone_period = FactoryBot.create :course_membership_period, course: @clone_course
 
-    @anonymous = User::User.anonymous
-    @user = FactoryBot.create(:user)
-    @student = FactoryBot.create(:user)
-    @teacher = FactoryBot.create(:user)
-    @faculty = FactoryBot.create(:user)
-    @new_faculty = FactoryBot.create(:user)
-    @clone_student = FactoryBot.create(:user)
-    @clone_teacher = FactoryBot.create(:user)
-    @clone_faculty = FactoryBot.create(:user)
+    @anonymous = User::Models::Profile.anonymous
+    @user = FactoryBot.create(:user_profile)
+    @student = FactoryBot.create(:user_profile)
+    @teacher = FactoryBot.create(:user_profile)
+    @faculty = FactoryBot.create(:user_profile)
+    @new_faculty = FactoryBot.create(:user_profile)
+    @clone_student = FactoryBot.create(:user_profile)
+    @clone_teacher = FactoryBot.create(:user_profile)
+    @clone_faculty = FactoryBot.create(:user_profile)
 
     AddUserAsPeriodStudent[period: @period, user: @student]
     AddUserAsCourseTeacher[course: @course, user: @teacher]

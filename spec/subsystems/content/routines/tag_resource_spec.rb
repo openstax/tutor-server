@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Content::Routines::TagResource, type: :routine do
-  let(:tag_1)    { FactoryBot.create :content_tag }
-  let(:tag_2)    { FactoryBot.create :content_tag }
-  let(:lo_tag_1) { FactoryBot.create :content_tag, tag_type: :lo }
-  let(:lo_tag_2) { FactoryBot.create :content_tag, tag_type: :lo }
+  let(:tag_1)    { 'testing' }
+  let(:tag_2)    { 'tags' }
+  let(:lo_tag_1) { 'lo:stax-test:1-1-1' }
+  let(:lo_tag_2) { 'lo:stax-test:1-2-1' }
 
   resource_definitions = [
     {
@@ -17,7 +17,7 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
       factory: :content_exercise,
       tagging_relation: :exercise_tags,
     }
-  ].map{|rd| Hashie::Mash.new(rd)}
+  ].map { |rd| Hashie::Mash.new(rd) }
 
   resource_definitions.each do |resource_definition|
     it "assigns the given Tags to the given #{resource_definition.class_name}" do
@@ -26,18 +26,16 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
       result = nil
       expect do
         result = Content::Routines::TagResource.call(
-          resource, [tag_1, tag_2]
+          ecosystem: resource.ecosystem, resource: resource, tags: [tag_1, tag_2]
         )
-      end.to change{ resource.send(resource_definition.tagging_relation).count }.by(2)
+      end.to change { resource.send(resource_definition.tagging_relation).count }.by(2)
 
       expect(result.errors).to be_empty
 
       resource.reload
 
-      expected_tags = [tag_1, tag_2]
+      expected_values = [tag_1, tag_2]
       actual_tags = resource.send(resource_definition.tagging_relation).map(&:tag)
-
-      expected_values = expected_tags.map(&:value)
       actual_values = actual_tags.map(&:value)
       expect(Set.new actual_values).to eq Set.new expected_values
 
@@ -47,7 +45,7 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
 
       expect do
         result = Content::Routines::TagResource.call(
-          resource, [lo_tag_1, lo_tag_2]
+          ecosystem: resource.ecosystem, resource: resource, tags: [lo_tag_1, lo_tag_2]
         )
       end.to change { resource.send(resource_definition.tagging_relation).count }.by(2)
 
@@ -55,10 +53,8 @@ RSpec.describe Content::Routines::TagResource, type: :routine do
 
       resource.reload
 
-      expected_tags = [tag_1, tag_2, lo_tag_1, lo_tag_2]
+      expected_values = [tag_1, tag_2, lo_tag_1, lo_tag_2]
       actual_tags = resource.send(resource_definition.tagging_relation).map(&:tag)
-
-      expected_values = expected_tags.map(&:value)
       actual_values = actual_tags.map(&:value)
       expect(Set.new actual_values).to eq Set.new expected_values
 

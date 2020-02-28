@@ -15,7 +15,7 @@ RSpec.describe ShortCode::GetShortCodeUrl, type: :routine do
   let(:tasking_gid) { tasking.to_global_id.to_s }
   let(:tasking_url) { FactoryBot.create :short_code_short_code, uri: tasking_gid }
 
-  let(:user) { FactoryBot.create :user }
+  let(:user) { FactoryBot.create :user_profile }
 
   it 'returns absolute urls' do
     result = described_class.call(short_code: absolute_url.code, user: user)

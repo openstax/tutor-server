@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe Admin::UsersController, type: :controller do
   let!(:admin) do
-    FactoryBot.create :user, :administrator, first_name: 'Ad', last_name: 'Min',
+    FactoryBot.create :user_profile, :administrator, first_name: 'Ad', last_name: 'Min',
                                              username: 'admin', full_name: 'Admin'
   end
-  let!(:user) { FactoryBot.create :user, username: 'student', full_name: 'User One' }
+  let!(:user) { FactoryBot.create :user_profile, username: 'student', full_name: 'User One' }
 
   before { controller.sign_in(admin) }
 
@@ -66,7 +66,7 @@ RSpec.describe Admin::UsersController, type: :controller do
       }
     }
 
-    user.to_model.reload
+    user.reload
 
     expect(user.username).to eq 'updated'
     expect(user.name).to eq 'Updated Name'

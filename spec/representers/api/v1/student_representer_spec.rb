@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::StudentRepresenter, type: :representer do
-  let(:user)    { FactoryBot.create(:user) }
+  let(:user)    { FactoryBot.create(:user_profile) }
   let(:period)  { FactoryBot.create(:course_membership_period) }
   let(:course)  { period.course }
   let(:student) { AddUserAsPeriodStudent.call(period: period, user: user).outputs.student }

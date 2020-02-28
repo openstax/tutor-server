@@ -22,7 +22,7 @@
         <% if ecosystem_path.nil? %>
           <%= ecosystem.comments %>
         <% else %>
-          <%= form_for(ecosystem.to_model,
+          <%= form_for(ecosystem,
                        as: :ecosystem,
                        url: ecosystem_path.call(ecosystem.id),
                        method: :put,
@@ -33,7 +33,7 @@
         <% end %>
       </td>
       <td><%= book.version %></td>
-      <td><%= ecosystem.imported_at %></td>
+      <td><%= ecosystem.created_at %></td>
       <td><%= link_to 'Archive', book.url, target: '_blank',
                                            class: 'btn btn-xs btn-primary' %></td>
       <td data-toggle="popover"

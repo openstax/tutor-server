@@ -6,8 +6,8 @@ RSpec.describe Research::PublishSurveyPlan do
     @course = FactoryBot.create :course_profile_course
     @period = FactoryBot.create :course_membership_period, course: @course
 
-    @student_1_user = FactoryBot.create(:user)
-    @student_2_user = FactoryBot.create(:user)
+    @student_1_user = FactoryBot.create(:user_profile)
+    @student_2_user = FactoryBot.create(:user_profile)
 
     @student_1 = AddUserAsPeriodStudent[period: @period, user: @student_1_user].student
     @student_2 = AddUserAsPeriodStudent[period: @period, user: @student_2_user].student

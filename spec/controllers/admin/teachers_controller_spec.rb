@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Admin::TeachersController, type: :controller do
-  let(:admin)  { FactoryBot.create :user, :administrator }
+  let(:admin)  { FactoryBot.create :user_profile, :administrator }
 
-  let(:user_1) { FactoryBot.create :user }
-  let(:user_2) { FactoryBot.create :user }
+  let(:user_1) { FactoryBot.create :user_profile }
+  let(:user_2) { FactoryBot.create :user_profile }
 
   let(:period) { FactoryBot.create :course_membership_period }
   let(:course) { period.course }

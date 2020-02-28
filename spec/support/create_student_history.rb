@@ -10,7 +10,7 @@ class CreateStudentHistory
   private
 
   def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
-    raise(ArgumentError, "Role index #{i} not in given course", caller) if roles.any? do |role|
+    raise(ArgumentError, 'Role not in given course', caller) if roles.any? do |role|
       role.course != course
     end
 
@@ -19,7 +19,7 @@ class CreateStudentHistory
     create_assignments(ecosystem, course, course.periods.reload)
 
     [roles].flatten.each_with_index do |role, i|
-      puts "=== Set Role##{role.id} history ==="
+      Rails.logger.debug { "=== Set Role##{role.id} history ===" }
 
       # practice widgets assign 5 task steps to the role
       practice_task = create_practice_widget(
@@ -33,27 +33,27 @@ class CreateStudentHistory
       answer_correctly(practice_task, 5) # 5 out of 5
 
       create_practice_widget(
-        course: course, role: role, chapter_ids: ecosystem.chapters[3].id
+        course: course, role: role, page_ids: ecosystem.chapters[3].pages.map(&:id)
       ) # Not started
     end
   end
 
   def setup_student_role
-    puts "=== Creating a course period ==="
+    Rails.logger.debug { '=== Creating a course period ===' }
     outputs.period = FactoryBot.create :course_membership_period, course: course
 
-    puts "=== Creating a student ==="
-    student = FactoryBot.create(:user)
+    Rails.logger.debug { '=== Creating a student ===' }
+    student = FactoryBot.create(:user_profile)
 
-    puts "=== Add student to course ==="
+    Rails.logger.debug { '=== Add student to course ===' }
     run(:add_user_as_period_student, period: outputs.period, user: student).outputs.role
   end
 
   def setup_course_book(course, book_id)
-    puts "=== Fetch & import book ==="
+    Rails.logger.debug { '=== Fetch & import book ===' }
     run(:fetch_and_import_book_and_create_ecosystem, book_cnx_id: book_id)
 
-    puts "=== Add ecosystem to course ==="
+    Rails.logger.debug { '=== Add ecosystem to course ===' }
     run(:add_ecosystem_to_course, course: course, ecosystem: outputs.ecosystem)
 
     outputs.ecosystem
@@ -72,10 +72,8 @@ class CreateStudentHistory
     tasks.each { |task| answer_correctly(task, 2) }
   end
 
-  def create_practice_widget(course:, role:, chapter_ids: nil, page_ids: nil)
-    CreatePracticeSpecificTopicsTask[
-      course: course, role: role, chapter_ids: chapter_ids, page_ids: page_ids
-    ]
+  def create_practice_widget(course:, role:, page_ids:)
+    CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: page_ids]
   end
 
   def answer_correctly(task, num)
@@ -128,7 +126,9 @@ class CreateStudentHistory
   end
 
   def create_homework_task_plan(ecosystem, course, periods, chapter, page, exercise)
-    exercise_ids = [ecosystem.chapters[chapter].pages[page].exercises[exercise].id.to_s]
+    exercise_ids = [
+      ecosystem.chapters[chapter].pages[page].homework_core_exercise_ids[exercise].to_s
+    ]
 
     task_plan = FactoryBot.build(
       :tasks_task_plan,

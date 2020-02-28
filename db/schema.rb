@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_04_192400) do
+ActiveRecord::Schema.define(version: 2020_02_04_234650) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -53,25 +53,11 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.uuid "tutor_uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "baked_at"
     t.boolean "is_collated", default: false
+    t.jsonb "tree", null: false
     t.index ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id"
     t.index ["title"], name: "index_content_books_on_title"
     t.index ["tutor_uuid"], name: "index_content_books_on_tutor_uuid", unique: true
     t.index ["url"], name: "index_content_books_on_url"
-  end
-
-  create_table "content_chapters", id: :serial, force: :cascade do |t|
-    t.integer "content_book_id", null: false
-    t.integer "number", null: false
-    t.string "title", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "content_all_exercises_pool_id"
-    t.text "book_location", default: "[]", null: false
-    t.uuid "tutor_uuid", default: -> { "gen_random_uuid()" }, null: false
-    t.text "baked_book_location", default: "[]", null: false
-    t.index ["content_book_id", "number"], name: "index_content_chapters_on_content_book_id_and_number", unique: true
-    t.index ["title"], name: "index_content_chapters_on_title"
-    t.index ["tutor_uuid"], name: "index_content_chapters_on_tutor_uuid", unique: true
   end
 
   create_table "content_ecosystems", id: :serial, force: :cascade do |t|
@@ -166,44 +152,28 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
   create_table "content_pages", id: :serial, force: :cascade do |t|
     t.string "url", null: false
     t.text "content"
-    t.integer "content_chapter_id", null: false
-    t.integer "content_reading_dynamic_pool_id"
-    t.integer "content_reading_context_pool_id"
-    t.integer "content_homework_core_pool_id"
-    t.integer "content_homework_dynamic_pool_id"
-    t.integer "content_practice_widget_pool_id"
-    t.integer "number", null: false
     t.string "title", null: false
     t.string "uuid", null: false
     t.string "version", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "content_all_exercises_pool_id"
-    t.integer "content_concept_coach_pool_id"
     t.string "short_id"
-    t.text "book_location", default: "[]", null: false
     t.text "fragments", default: "[]", null: false
     t.text "snap_labs", default: "[]", null: false
     t.uuid "tutor_uuid", default: -> { "gen_random_uuid()" }, null: false
-    t.text "baked_book_location", default: "[]", null: false
-    t.index ["book_location"], name: "index_content_pages_on_book_location"
-    t.index ["content_chapter_id", "number"], name: "index_content_pages_on_content_chapter_id_and_number", unique: true
+    t.text "book_location", default: "[]", null: false
+    t.bigint "content_book_id", null: false
+    t.integer "all_exercise_ids", default: [], null: false, array: true
+    t.integer "reading_dynamic_exercise_ids", default: [], null: false, array: true
+    t.integer "reading_context_exercise_ids", default: [], null: false, array: true
+    t.integer "homework_core_exercise_ids", default: [], null: false, array: true
+    t.integer "homework_dynamic_exercise_ids", default: [], null: false, array: true
+    t.integer "practice_widget_exercise_ids", default: [], null: false, array: true
+    t.index ["content_book_id"], name: "index_content_pages_on_content_book_id"
     t.index ["title"], name: "index_content_pages_on_title"
     t.index ["tutor_uuid"], name: "index_content_pages_on_tutor_uuid", unique: true
     t.index ["url"], name: "index_content_pages_on_url"
     t.index ["uuid"], name: "index_content_pages_on_uuid"
-  end
-
-  create_table "content_pools", id: :serial, force: :cascade do |t|
-    t.integer "content_ecosystem_id", null: false
-    t.string "uuid", null: false
-    t.integer "pool_type", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "content_exercise_ids", default: "[]", null: false
-    t.index ["content_ecosystem_id"], name: "index_content_pools_on_content_ecosystem_id"
-    t.index ["pool_type"], name: "index_content_pools_on_pool_type"
-    t.index ["uuid"], name: "index_content_pools_on_uuid", unique: true
   end
 
   create_table "content_tags", id: :serial, force: :cascade do |t|
@@ -925,7 +895,6 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "book_location", default: "[]", null: false
-    t.text "baked_book_location", default: "[]", null: false
   end
 
   create_table "tasks_tasked_videos", id: :serial, force: :cascade do |t|
@@ -1074,8 +1043,6 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
 
   add_foreign_key "catalog_offerings", "content_ecosystems", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "content_chapters", "content_books", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "content_chapters", "content_pools", column: "content_all_exercises_pool_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercises", "content_pages", on_update: :cascade, on_delete: :cascade
@@ -1087,14 +1054,7 @@ ActiveRecord::Schema.define(version: 2020_02_04_192400) do
   add_foreign_key "content_notes", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_page_tags", "content_tags", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "content_pages", "content_chapters", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "content_pages", "content_pools", column: "content_all_exercises_pool_id", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "content_pages", "content_pools", column: "content_homework_core_pool_id", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "content_pages", "content_pools", column: "content_homework_dynamic_pool_id", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "content_pages", "content_pools", column: "content_practice_widget_pool_id", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "content_pages", "content_pools", column: "content_reading_context_pool_id", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "content_pages", "content_pools", column: "content_reading_dynamic_pool_id", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "content_pools", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_pages", "content_books", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_tags", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_ecosystems", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_content_course_ecosystems", "course_profile_courses", on_update: :cascade, on_delete: :cascade

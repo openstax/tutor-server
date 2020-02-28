@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
-  let(:admin) { FactoryBot.create(:user, :administrator) }
+RSpec.describe Admin::CoursesController, type: :controller do
+  let(:admin) { FactoryBot.create(:user_profile, :administrator) }
 
   before      { controller.sign_in(admin) }
 
@@ -107,12 +107,10 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
 
   context 'GET #edit' do
     let!(:eco_1)            do
-      model = FactoryBot.create(:content_book, title: 'Physics').ecosystem
-      strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
-      ::Content::Ecosystem.new(strategy: strategy)
+      FactoryBot.create(:content_book, title: 'Physics').ecosystem
     end
     let(:catalog_offering)  do
-      FactoryBot.create :catalog_offering, ecosystem: eco_1.to_model
+      FactoryBot.create :catalog_offering, ecosystem: eco_1
     end
     let(:course)            do
       FactoryBot.create :course_profile_course, name: 'Physics I', offering: catalog_offering
@@ -121,9 +119,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
     let(:uuid_1)            { book_1.uuid }
     let(:version_1)         { book_1.version }
     let!(:eco_2)            do
-      model = FactoryBot.create(:content_book, title: 'Biology').ecosystem
-      strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
-      ::Content::Ecosystem.new(strategy: strategy)
+      FactoryBot.create(:content_book, title: 'Biology').ecosystem
     end
     let(:book_2)            { eco_2.books.first }
     let(:uuid_2)            { book_2.uuid }
@@ -195,14 +191,10 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
       FactoryBot.create(:course_profile_course, :without_ecosystem, name: 'Physics I')
     end
     let(:eco_1)             do
-      model = FactoryBot.create(:content_book, title: 'Physics', version: '1').ecosystem
-      strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
-      ::Content::Ecosystem.new(strategy: strategy)
+      FactoryBot.create(:content_book, title: 'Physics', version: '1').ecosystem
     end
     let(:eco_2)             do
-      model = FactoryBot.create(:content_book, title: 'Biology', version: '2').ecosystem
-      strategy = ::Content::Strategies::Direct::Ecosystem.new(model)
-      ::Content::Ecosystem.new(strategy: strategy)
+      FactoryBot.create(:content_book, title: 'Biology', version: '2').ecosystem
     end
     let!(:course_ecosystem) do
       AddEcosystemToCourse.call(course: course, ecosystem: eco_1)
@@ -223,10 +215,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
     context 'when a new ecosystem is selected' do
       it 'adds the selected ecosystem as the first ecosystem' do
         post :set_ecosystem, params: { id: course.id, ecosystem_id: eco_2.id }
-        ecosystems = course.reload.ecosystems.map do |ecosystem_model|
-          strategy = ::Content::Strategies::Direct::Ecosystem.new(ecosystem_model)
-          ::Content::Ecosystem.new(strategy: strategy)
-        end
+        ecosystems = course.reload.ecosystems
         expect(ecosystems).to eq [eco_2, eco_1]
         expect(flash[:notice]).to(
           eq "Course ecosystem update to \"#{eco_2.title}\" queued for \"Physics I\""
@@ -236,7 +225,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
 
     context 'when the mapping is invalid' do
       it 'errors out with a Content::MapInvalidError so the background job fails immediately' do
-        allow_any_instance_of(Content::Strategies::Generated::Map).to(
+        allow_any_instance_of(Content::Map).to(
           receive(:is_valid).and_return(false)
         )
         expect do
@@ -258,7 +247,7 @@ RSpec.describe Admin::CoursesController, type: :controller, speed: :medium do
     end
 
     it 'disallows non-admin authenticated visitors' do
-      controller.sign_in(FactoryBot.create(:user))
+      controller.sign_in(FactoryBot.create(:user_profile))
 
       expect { get :index }.to raise_error(SecurityTransgression)
       expect { get :new }.to raise_error(SecurityTransgression)

@@ -18,14 +18,12 @@ require_relative './v1/fragment_splitter'
 require_relative './v1/book'
 require_relative './v1/book_part'
 require_relative './v1/page'
-require_relative './v1/baked'
+require_relative './v1/title'
 
 module OpenStax::Cnx::V1
-
   extend Configurable
 
   class << self
-
     def new_configuration
       OpenStax::Cnx::V1::Configuration.new
     end
@@ -84,7 +82,5 @@ module OpenStax::Cnx::V1
     def book(options = {})
       OpenStax::Cnx::V1::Book.new(options)
     end
-
   end
-
 end

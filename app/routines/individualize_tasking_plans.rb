@@ -17,9 +17,7 @@ class IndividualizeTaskingPlans
       when Entity::Role
         target
       when User::Models::Profile
-        strategy = ::User::Strategies::Direct::User.new(target)
-        user = ::User::User.new(strategy: strategy)
-        Role::GetDefaultUserRole[user]
+        Role::GetDefaultUserRole[target]
       when CourseProfile::Models::Course
         CourseMembership::GetCourseRoles.call(
           course: target, types: [:student, :teacher_student]

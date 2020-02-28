@@ -1,22 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
-  let(:user)              do
-    profile = FactoryBot.create :user_profile
-    strategy = ::User::Strategies::Direct::User.new(profile)
-    ::User::User.new(strategy: strategy)
-  end
+  let(:user)              { FactoryBot.create :user_profile }
 
   let(:course)            { FactoryBot.create :course_profile_course }
   let(:period_1)          { FactoryBot.create :course_membership_period, course: course }
   let(:period_2)          { FactoryBot.create :course_membership_period, course: course }
 
-  let(:teacher_user)      { FactoryBot.create(:user) }
+  let(:teacher_user)      { FactoryBot.create(:user_profile) }
   let!(:teacher_role)     { AddUserAsCourseTeacher[user: teacher_user, course: course] }
 
-  let(:enrollment_change) { CourseMembership::CreateEnrollmentChange[
-    user: user, enrollment_code: period_2.enrollment_code, requires_enrollee_approval: false
-  ] }
+  let(:enrollment_change) do
+    CourseMembership::CreateEnrollmentChange[
+      user: user, enrollment_code: period_2.enrollment_code, requires_enrollee_approval: false
+    ]
+  end
 
   let(:representation)    { described_class.new(enrollment_change).as_json }
 
@@ -48,7 +46,7 @@ RSpec.describe Api::V1::EnrollmentChangeRepresenter, type: :representer do
   it 'does not include archived periods as "from"' do
     # If a "from" period is included in the output, the FE will display it as a transfer
     # If the previous period is archived, then the enrollment should be considered a fresh join
-    period_1.to_model.destroy
+    period_1.destroy
     expect(representation['from']).to be_nil
   end
 end

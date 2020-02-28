@@ -5,14 +5,14 @@ RSpec.describe Api::V1::PurchasesController, type: :request, api: true, version:
 
   let(:period)            { FactoryBot.create :course_membership_period }
 
-  let(:student_user)      { FactoryBot.create(:user) }
+  let(:student_user)      { FactoryBot.create(:user_profile) }
   let(:student_role)      { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)          { student_role.student }
   let(:student_token)     { FactoryBot.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: student_user.id }
 
-  let(:other_user)        { FactoryBot.create(:user) }
+  let(:other_user)        { FactoryBot.create(:user_profile) }
   let(:other_user_token)  { FactoryBot.create :doorkeeper_access_token,
                                                application: application,
                                                resource_owner_id: other_user.id }

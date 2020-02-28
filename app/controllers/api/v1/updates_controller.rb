@@ -1,5 +1,4 @@
 class Api::V1::UpdatesController < Api::V1::ApiController
-
   api :GET, '/notifications', 'Request current system notifications'
   description <<-EOS
     #{json_schema(Api::V1::NotificationRepresenter, include: :readable)}
@@ -18,7 +17,7 @@ class Api::V1::UpdatesController < Api::V1::ApiController
   def updates
     notifications = get_notifications(:general)
     notifications.concat(get_notifications(:instructor)) \
-      if current_human_user.to_model.roles.any?(&:teacher?)
+      if current_human_user.roles.any?(&:teacher?)
 
     OpenStruct.new notifications: notifications
   end
@@ -26,5 +25,4 @@ class Api::V1::UpdatesController < Api::V1::ApiController
   def get_notifications(type)
     Settings::Notifications.active(type: type)
   end
-
 end

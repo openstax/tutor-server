@@ -5,128 +5,42 @@
 class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
   include OpenStax::Biglearn::Api::Client
 
-  # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
+  # ecosystem is a Content::Models::Ecosystem or Content::Models::Ecosystem
   # course is a CourseProfile::Models::Course
   # task is a Tasks::Models::Task
   # student is a CourseMembership::Models::Student
   # book_container is a Content::Chapter or Content::Page or one of their models
   # exercise_id is a String containing an Exercise uuid, number or uid
-  # period is a CourseMembership::Period or CourseMembership::Models::Period
+  # period is a CourseMembership::Models::Period
   # max_num_exercises is an integer
 
   # Adds the given ecosystem to Biglearn
   def create_ecosystem(request)
     ecosystem = request.fetch(:ecosystem)
     # Assumes ecosystems only have 1 book
-    book = ecosystem.books.preload(
-      chapters: [
-        :all_exercises_pool,
-        {
-          pages: [
-            :all_exercises_pool, :reading_dynamic_pool, :homework_dynamic_pool, :concept_coach_pool
-          ]
-        }
-      ]
-    ).first
-    all_pools = book.chapters.flat_map do |chapter|
-      [chapter.all_exercises_pool] + chapter.pages.flat_map do |page|
-        [
-          page.all_exercises_pool,
-          page.reading_dynamic_pool,
-          page.homework_dynamic_pool,
-          page.practice_widget_pool,
-          page.concept_coach_pool
-        ]
-      end
-    end
-    all_exercise_ids = all_pools.flat_map(&:content_exercise_ids)
-    exercise_uuids_by_id = Content::Models::Exercise.where(id: all_exercise_ids)
-                                                    .pluck(:id, :uuid)
-                                                    .to_h
-    exercise_uuids_by_pool = {}
-    all_pools.each do |pool|
-      exercise_uuids_by_pool[pool] = pool.content_exercise_ids.map do |exercise_id|
-        exercise_uuids_by_id[exercise_id]
-      end.compact
-    end
+    book = ecosystem.books.first
+    page_uuid_by_id = book.pages.pluck(:id, :uuid).to_h
+    exercises = ecosystem.exercises.preload(:tags)
+    exercise_uuid_by_id = {}
+    exercises.each { |exercise| exercise_uuid_by_id[exercise.id] = exercise.uuid }
 
-    contents = [
-      {
-        container_uuid: book.tutor_uuid,
-        container_parent_uuid: ecosystem.tutor_uuid,
-        container_cnx_identity: book.cnx_id,
-        pools: []
-      }
-    ]
-    book.chapters.each do |chapter|
-      pools = [
-        {
-          use_for_clue: true,
-          use_for_personalized_for_assignment_types: [],
-          exercise_uuids: exercise_uuids_by_pool[chapter.all_exercises_pool]
-        }
-      ]
+    contents = get_containers ecosystem, book, exercise_uuid_by_id
 
-      contents << {
-        container_uuid: chapter.tutor_uuid,
-        container_parent_uuid: book.tutor_uuid,
-        container_cnx_identity: chapter.tutor_uuid,
-        pools: pools
-      }
-
-      chapter.pages.each do |page|
-        pools = [
-          {
-            use_for_clue: true,
-            use_for_personalized_for_assignment_types: [],
-            exercise_uuids: exercise_uuids_by_pool[page.all_exercises_pool]
-          },
-          {
-            use_for_clue: false,
-            use_for_personalized_for_assignment_types: ['reading'],
-            exercise_uuids: exercise_uuids_by_pool[page.reading_dynamic_pool]
-          },
-          {
-            use_for_clue: false,
-            use_for_personalized_for_assignment_types: ['homework'],
-            exercise_uuids: exercise_uuids_by_pool[page.homework_dynamic_pool]
-          },
-          {
-            use_for_clue: false,
-            use_for_personalized_for_assignment_types: ['practice'],
-            exercise_uuids: exercise_uuids_by_pool[page.practice_widget_pool]
-          },
-          {
-            use_for_clue: false,
-            use_for_personalized_for_assignment_types: ['concept-coach'],
-            exercise_uuids: exercise_uuids_by_pool[page.concept_coach_pool]
-          }
-        ]
-
-        contents << {
-          container_uuid: page.tutor_uuid,
-          container_parent_uuid: chapter.tutor_uuid,
-          container_cnx_identity: page.cnx_id,
-          pools: pools
-        }
-      end
-    end
-
-    exercises = ecosystem.exercises.preload(:tags, :page).map do |exercise|
-      los = ([ "cnxmod:#{exercise.page.uuid}" ] + exercise.los.map(&:value)).uniq
-
+    exercise_requests = exercises.map do |exercise|
       {
         exercise_uuid: exercise.uuid,
         group_uuid: exercise.group_uuid,
         version: exercise.version,
-        los: los
+        los: (
+          [ "cnxmod:#{page_uuid_by_id[exercise.content_page_id]}" ] + exercise.los.map(&:value)
+        ).uniq
       }
     end
 
     biglearn_request = {
       ecosystem_uuid: ecosystem.tutor_uuid,
       book: { cnx_identity: book.cnx_id, contents: contents },
-      exercises: exercises,
+      exercises: exercise_requests,
       imported_at: ecosystem.created_at.utc.iso8601(6)
     }
 
@@ -152,25 +66,37 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
   # Prepares Biglearn for a course ecosystem update
   def prepare_course_ecosystem(request)
     course = request.fetch(:course)
-    from_ecosystem_model = request.fetch(:from_ecosystem)
-    to_ecosystem_model = request.fetch(:to_ecosystem)
-    from_ecosystem = Content::Ecosystem.new strategy: from_ecosystem_model.wrap
-    to_ecosystem = Content::Ecosystem.new strategy: to_ecosystem_model.wrap
+    from_ecosystem = request.fetch(:from_ecosystem)
+    to_ecosystem = request.fetch(:to_ecosystem)
     content_map = Content::Map.find_or_create_by(
-      from_ecosystems: [from_ecosystem], to_ecosystem: to_ecosystem
+      from_ecosystems: [ from_ecosystem ], to_ecosystem: to_ecosystem
     )
-    book_container_mappings = content_map.map_pages_to_pages(pages: from_ecosystem.pages)
-                                         .map do |from_page, to_page|
-      next if to_page.nil?
 
-      { from_book_container_uuid: from_page.tutor_uuid, to_book_container_uuid: to_page.tutor_uuid }
-    end.compact
-    exercise_mappings = content_map.map_exercises_to_pages(exercises: from_ecosystem.exercises)
-                                   .map do |exercise, page|
-      next if page.nil?
+    page_uuid_by_id = (
+      from_ecosystem.pages.pluck(:id, :uuid) + to_ecosystem.pages.pluck(:id, :tutor_uuid)
+    ).to_h
+    book_container_mappings = content_map.map_page_ids(page_ids: page_uuid_by_id.keys)
+                                         .map do |from_page_id, to_page_id|
+      next if to_page_id.nil?
 
-      { from_exercise_uuid: exercise.uuid, to_book_container_uuid: page.tutor_uuid }
+      {
+        from_book_container_uuid: page_uuid_by_id[from_page_id],
+        to_book_container_uuid: page_uuid_by_id[to_page_id]
+      }
     end.compact
+
+    exercise_uuid_by_id = from_ecosystem.exercises.pluck(:id, :uuid).to_h
+    exercise_mappings = content_map.map_exercise_ids_to_page_ids(
+      exercise_ids: exercise_uuid_by_id.keys
+    ).map do |exercise_id, page_id|
+      next if page_id.nil?
+
+      {
+        from_exercise_uuid: exercise_uuid_by_id[exercise_id],
+        to_book_container_uuid: page_uuid_by_id[page_id]
+      }
+    end.compact
+
     prepared_at = request[:prepared_at] || course.course_ecosystems.find do |ce|
       ce.content_ecosystem_id == to_ecosystem.id
     end&.created_at || Time.current
@@ -562,11 +488,10 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
       course = student.course
       algorithm_name = course.biglearn_student_clues_algorithm_name ||
                        Settings::Biglearn.student_clues_algorithm_name.to_s
-
       {
         request_uuid: request.fetch(:request_uuid),
         student_uuid: student.uuid,
-        book_container_uuid: request.fetch(:book_container).tutor_uuid,
+        book_container_uuid: request.fetch(:book_container_uuid),
         algorithm_name: algorithm_name
       }
     end
@@ -582,11 +507,10 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
       course = course_container.course
       algorithm_name = course.biglearn_teacher_clues_algorithm_name ||
                        Settings::Biglearn.teacher_clues_algorithm_name.to_s
-
       {
         request_uuid: request.fetch(:request_uuid),
         course_container_uuid: course_container.uuid,
-        book_container_uuid: request.fetch(:book_container).tutor_uuid,
+        book_container_uuid: request.fetch(:book_container_uuid),
         algorithm_name: algorithm_name
       }
     end
@@ -599,5 +523,50 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
 
   def token_header
     'Biglearn-Api-Token'
+  end
+
+  def get_containers(parent, container, exercise_uuid_by_id)
+    pools = [
+      {
+        use_for_clue: true,
+        use_for_personalized_for_assignment_types: [],
+        exercise_uuids: exercise_uuid_by_id.values_at(*container.all_exercise_ids)
+      }
+    ]
+
+    pools.concat(
+      [
+        {
+          use_for_clue: false,
+          use_for_personalized_for_assignment_types: ['reading'],
+          exercise_uuids: exercise_uuid_by_id.values_at(*container.reading_dynamic_exercise_ids)
+        },
+        {
+          use_for_clue: false,
+          use_for_personalized_for_assignment_types: ['homework'],
+          exercise_uuids: exercise_uuid_by_id.values_at(*container.homework_dynamic_exercise_ids)
+        },
+        {
+          use_for_clue: false,
+          use_for_personalized_for_assignment_types: ['practice'],
+          exercise_uuids: exercise_uuid_by_id.values_at(*container.practice_widget_exercise_ids)
+        }
+      ]
+    ) if container.is_a?(Content::Page)
+
+    containers = [
+      {
+        container_uuid: container.tutor_uuid,
+        container_parent_uuid: parent.tutor_uuid,
+        container_cnx_identity: container.cnx_id,
+        pools: pools
+      }
+    ]
+
+    containers.concat(
+      container.children.flat_map { |child| get_containers container, child, exercise_uuid_by_id }
+    ) if container.respond_to?(:children)
+
+    containers
   end
 end

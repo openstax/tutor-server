@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CourseMembership::InactivateStudent, type: :routine do
   let(:course)  { FactoryBot.create :course_profile_course }
   let(:period)  { FactoryBot.create :course_membership_period, course: course }
-  let(:user)    { FactoryBot.create(:user) }
+  let(:user)    { FactoryBot.create(:user_profile) }
   let(:student) { AddUserAsPeriodStudent.call(user: user, period: period).outputs.student }
 
   context "active student" do

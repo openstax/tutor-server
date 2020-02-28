@@ -1,6 +1,13 @@
 class Content::Models::Page < IndestructibleRecord
-  wrapped_by ::Content::Strategies::Direct::Page
-
+  POOL_TYPES = [
+    :all,
+    :reading_context,
+    :reading_dynamic,
+    :homework_core,
+    :homework_dynamic,
+    :practice_widget
+  ]
+  EXERCISE_ID_FIELDS = POOL_TYPES.map { |type| "#{type}_exercise_ids".to_sym }
   acts_as_resource
 
   auto_uuid :tutor_uuid
@@ -8,32 +15,8 @@ class Content::Models::Page < IndestructibleRecord
   json_serialize :fragments, OpenStax::Cnx::V1::Fragment, array: true
   json_serialize :snap_labs, Hash, array: true
   json_serialize :book_location, Integer, array: true
-  json_serialize :baked_book_location, Integer, array: true
 
-  belongs_to :reading_dynamic_pool, class_name: 'Content::Models::Pool',
-                                    dependent: :destroy,
-                                    optional: true
-  belongs_to :reading_context_pool, class_name: 'Content::Models::Pool',
-                                    dependent: :destroy,
-                                    optional: true
-  belongs_to :homework_core_pool, class_name: 'Content::Models::Pool',
-                                  dependent: :destroy,
-                                  optional: true
-  belongs_to :homework_dynamic_pool, class_name: 'Content::Models::Pool',
-                                     dependent: :destroy,
-                                     optional: true
-  belongs_to :practice_widget_pool, class_name: 'Content::Models::Pool',
-                                    dependent: :destroy,
-                                    optional: true
-  belongs_to :concept_coach_pool, class_name: 'Content::Models::Pool',
-                                  dependent: :destroy,
-                                  optional: true
-  belongs_to :all_exercises_pool, class_name: 'Content::Models::Pool',
-                                  dependent: :destroy,
-                                  optional: true
-
-  sortable_belongs_to :chapter, on: :number, inverse_of: :pages
-  has_one :book, through: :chapter
+  belongs_to :book, inverse_of: :pages
   has_one :ecosystem, through: :book
 
   has_many :exercises, dependent: :destroy, inverse_of: :page
@@ -46,29 +29,31 @@ class Content::Models::Page < IndestructibleRecord
 
   has_many :notes, subsystem: :content, dependent: :destroy, inverse_of: :page
 
-  validates :book_location, presence: true
   validates :title, presence: true
   validates :uuid, presence: true
   validates :version, presence: true
 
-  scope :book_location, ->(chapter, section) do
-    where("content_pages.book_location = '[?,?]'", chapter.to_i, section.to_i)
+  def self.pool_types
+    [
+      :all,
+      :reading_context,
+      :reading_dynamic,
+      :homework_core,
+      :homework_dynamic,
+      :practice_widget
+    ]
   end
 
-  delegate :is_intro?, to: :parser
-
-  def tutor_title
-    # Chapter intro pages get their titles from the chapter instead
-    is_intro? ? chapter.title : title
+  def type
+    'Page'
   end
 
   def related_content
     {
       uuid: uuid,
       page_id: id,
-      title: tutor_title,
-      book_location: book_location,
-      baked_book_location: baked_book_location
+      title: title,
+      book_location: book_location
     }
   end
 
@@ -124,7 +109,7 @@ class Content::Models::Page < IndestructibleRecord
 
 
   def snap_labs_with_page_id
-    snap_labs.map{ |snap_lab| snap_lab.merge(page_id: id) }
+    snap_labs.map { |snap_lab| snap_lab.merge(page_id: id) }
   end
 
   def context_for_feature_ids(feature_ids)
@@ -144,7 +129,7 @@ class Content::Models::Page < IndestructibleRecord
     @context_for_feature_ids[feature_ids] = feature_node.try(:to_html)
   end
 
-  def reference_view_url(book = chapter.book)
+  def reference_view_url(book: self.book)
     raise('Unpersisted Page') if id.nil?
 
     "#{book.reference_view_url}/page/#{id}"
@@ -161,10 +146,10 @@ class Content::Models::Page < IndestructibleRecord
   end
 
   def fragment_splitter
-    return if chapter&.book.nil?
+    return if book.nil?
 
     @fragment_splitter ||= OpenStax::Cnx::V1::FragmentSplitter.new(
-      chapter.book.reading_processing_instructions, reference_view_url
+      book.reading_processing_instructions, reference_view_url
     )
   end
 end

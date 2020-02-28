@@ -4,12 +4,12 @@ require 'database_cleaner'
 
 RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
                                           version: :v1, vcr: VCR_OPTS do
-  let(:user_1)              { FactoryBot.create(:user) }
+  let(:user_1)              { FactoryBot.create(:user_profile) }
   let(:user_1_token)        do
     FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_1.id
   end
 
-  let(:user_2)              { FactoryBot.create(:user) }
+  let(:user_2)              { FactoryBot.create(:user_profile) }
   let(:user_2_token)        do
     FactoryBot.create :doorkeeper_access_token, resource_owner_id: user_2.id
   end
@@ -29,7 +29,7 @@ RSpec.describe Api::V1::GuidesController, type: :controller, api: true,
         AddUserAsPeriodStudent.call(period: period, user: user_2).outputs[:role]
       end
 
-      let(:user_3)          { FactoryBot.create(:user) }
+      let(:user_3)          { FactoryBot.create(:user_profile) }
 
       let!(:student_3_role) do
         AddUserAsPeriodStudent.call(period: period, user: user_3).outputs[:role]

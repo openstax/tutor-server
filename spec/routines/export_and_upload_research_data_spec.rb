@@ -8,21 +8,21 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
                                 :with_assistants,
                                 time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
 
-    @teacher = FactoryBot.create :user
+    @teacher = FactoryBot.create :user_profile
 
-    @student_1 = FactoryBot.create :user, first_name: 'Student',
+    @student_1 = FactoryBot.create :user_profile, first_name: 'Student',
                                           last_name: 'One',
                                           full_name: 'Student One'
 
-    @student_2 = FactoryBot.create :user, first_name: 'Student',
+    @student_2 = FactoryBot.create :user_profile, first_name: 'Student',
                                           last_name: 'Two',
                                           full_name: 'Student Two'
 
-    @student_3 = FactoryBot.create :user, first_name: 'Student',
+    @student_3 = FactoryBot.create :user_profile, first_name: 'Student',
                                           last_name: 'Three',
                                           full_name: 'Student Three'
 
-    @student_4 = FactoryBot.create :user, first_name: 'Student',
+    @student_4 = FactoryBot.create :user_profile, first_name: 'Student',
                                           last_name: 'Four',
                                           full_name: 'Student Four'
   end
@@ -130,7 +130,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
           pages_by_url = Content::Models::Page
             .select('DISTINCT ON ("content_pages"."url") *')
             .where(url: page_urls)
-            .preload(chapter: :book)
+            .preload(:book)
             .index_by(&:url)
 
           period_ids = @course.periods.map { |period| period.id.to_s }
@@ -138,15 +138,12 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
           rows[1..-1].each do |row|
             data = headers.zip(row).to_h
             page = pages_by_url.fetch(data['CNX HTML URL'])
-            chapter = page.chapter
-            book = chapter.book
+            book = page.book
             fragment = page.fragments[data['HTML Fragment Number'].to_i - 1]
 
             expect(data['CNX JSON URL']).to eq("#{page.url}.json")
             expect(data['CNX Book Name']).to eq(book.title)
-            expect(data['CNX Chapter Number'].to_i).to eq(chapter.number)
-            expect(data['CNX Chapter Name']).to eq(chapter.title)
-            expect(data['CNX Section Number'].to_i).to eq(page.number)
+            expect(data['CNX Section Number']).to eq(page.book_location.join('.'))
             expect(data['CNX Section Name']).to eq(page.title)
             expect(data['HTML Fragment Labels']).to eq(fragment.labels.join(','))
             expect(data['HTML Fragment Content']).to eq(fragment.try(:to_html))
@@ -222,7 +219,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
         old_reading_task = FactoryBot.create :tasks_task, step_types: [:tasks_tasked_reading],
                                                           num_random_taskings: 1
         page = old_reading_task.task_steps.first.page
-        Content::Routines::TransformAndCachePageContent.call book: page.book, pages: [ page ]
+        Content::Routines::TransformAndCachePageContent.call book: page.book
         FactoryBot.create :tasks_task_step, task: old_reading_task, page: page
 
         student = old_reading_task.taskings.first.role.student
@@ -234,7 +231,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
                                        step_types: [:tasks_tasked_exercise],
                                        num_random_taskings: 1).tap do |cc_task|
           page = cc_task.task_steps.first.page
-          Content::Routines::TransformAndCachePageContent.call book: page.book, pages: [ page ]
+          Content::Routines::TransformAndCachePageContent.call book: page.book
           FactoryBot.create :tasks_task_step, task: cc_task,
                                               page: page,
                                               tasked_type: :tasks_tasked_exercise
@@ -245,7 +242,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
                                                     step_types: [:tasks_tasked_reading],
                                                     num_random_taskings: 1
       page = reading_task.task_steps.first.page
-      Content::Routines::TransformAndCachePageContent.call book: page.book, pages: [ page ]
+      Content::Routines::TransformAndCachePageContent.call book: page.book
       FactoryBot.create :tasks_task_step, task: reading_task,
                                           page: reading_task.task_steps.first.page
 

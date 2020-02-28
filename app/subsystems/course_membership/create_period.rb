@@ -6,13 +6,11 @@ class CourseMembership::CreatePeriod
   def exec(course:, name: nil, enrollment_code: nil, uuid: nil)
     name ||= (course.periods.count + 1).ordinalize
     uuid ||= SecureRandom.uuid
-    period = CourseMembership::Models::Period.new(
+    outputs.period = CourseMembership::Models::Period.new(
       name: name, enrollment_code: enrollment_code, uuid: uuid
     )
-    course.periods << period
-    transfer_errors_from(period, {type: :verbatim}, true)
-    strategy = CourseMembership::Strategies::Direct::Period.new(period)
-    outputs[:period] = CourseMembership::Period.new(strategy: strategy)
+    course.periods << outputs.period
+    transfer_errors_from(outputs.period, {type: :verbatim}, true)
 
     OpenStax::Biglearn::Api.update_rosters(course: course)
   end

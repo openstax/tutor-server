@@ -2,7 +2,7 @@ class Admin::TeachersController < Admin::BaseController
   def teachers
     course = CourseProfile::Models::Course.find(params[:id])
     results = (params[:teacher_ids] || []).map do |user_id|
-      user = User::User.find(user_id)
+      user = User::Models::Profile.find(user_id)
       AddUserAsCourseTeacher.call(course: course, user: user)
     end
 

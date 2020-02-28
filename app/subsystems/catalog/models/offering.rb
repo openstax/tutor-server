@@ -1,5 +1,4 @@
 class Catalog::Models::Offering < ApplicationRecord
-
   DELETABLE_SQL = <<-DEL_SQL.strip_heredoc
     NOT EXISTS (
       SELECT * FROM "course_profile_courses"
@@ -20,8 +19,6 @@ class Catalog::Models::Offering < ApplicationRecord
 
   before_destroy :no_courses
 
-  wrapped_by ::Catalog::Strategies::Direct::Offering
-
   scope :preload_deletable, -> do
     select(arel_table[Arel.star], DELETABLE_SQL)
   end
@@ -38,5 +35,4 @@ class Catalog::Models::Offering < ApplicationRecord
     errors.add :base, 'cannot be deleted because there are courses that use it'
     throw :abort
   end
-
 end

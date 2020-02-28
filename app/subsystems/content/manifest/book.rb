@@ -1,58 +1,44 @@
 module Content
-  class Manifest
-    class Book
+  class Manifest::Book < OpenStruct
+    def to_h
+      super.deep_stringify_keys
+    end
 
-      include Wrapper
+    def reading_processing_instructions
+      super.to_a
+    end
 
-      def to_h
-        verify_and_return @strategy.to_h, klass: Hash, error: StrategyError
-      end
+    def errors
+      return @errors unless @errors.nil?
 
-      def archive_url
-        verify_and_return @strategy.archive_url, klass: String, error: StrategyError,
-                                                 allow_nil: true
-      end
+      @errors = []
+      @errors << 'Manifest Book has no cnx_id' if cnx_id.blank?
 
-      def cnx_id
-        verify_and_return @strategy.cnx_id, klass: String, error: StrategyError
-      end
+      @errors
+    end
 
-      def reading_processing_instructions
-        verify_and_return @strategy.reading_processing_instructions, klass: Hash,
-                                                                     error: StrategyError
-      end
+    def valid?
+      errors.empty?
+    end
 
-      def exercise_ids
-        verify_and_return @strategy.exercise_ids, klass: String, error: StrategyError,
-                                                  allow_nil: true
-      end
+    def update_version!
+      old_cnx_id = cnx_id
+      return if old_cnx_id.nil?
 
-      def errors
-        verify_and_return @strategy.errors, klass: String, error: StrategyError
-      end
+      self.cnx_id = old_cnx_id.split('@').first
+      old_cnx_id
+    end
 
-      def valid?
-        !!@strategy.valid?
-      end
+    def update_exercises!
+      old_exercise_ids = exercise_ids
+      return if old_exercise_ids.nil?
 
-      def update_version!
-        verify_and_return @strategy.update_version!, klass: String,
-                                                     error: StrategyError,
-                                                     allow_nil: true
-      end
+      self.exercise_ids = old_exercise_ids.map{ |exercise_id| exercise_id.split('@').first }
+      old_exercise_ids
+    end
 
-      def update_exercises!
-        verify_and_return @strategy.update_exercises!, klass: String,
-                                                       error: StrategyError,
-                                                       allow_nil: true
-      end
-
-      def discard_exercises!
-        verify_and_return @strategy.discard_exercises!, klass: String,
-                                                        error: StrategyError,
-                                                        allow_nil: true
-      end
-
+    def discard_exercises!
+      delete_field(:exercise_ids) if respond_to?(:exercise_ids)
     end
   end
 end

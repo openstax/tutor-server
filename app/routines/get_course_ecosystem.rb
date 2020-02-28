@@ -3,15 +3,7 @@ class GetCourseEcosystem
 
   protected
 
-  def exec(course:, strategy_class: ::Content::Strategies::Direct::Ecosystem)
-    content_ecosystem = course.ecosystem
-
-    if content_ecosystem.nil?
-      outputs[:ecosystem] = nil
-      return
-    end
-
-    strategy = strategy_class.new(content_ecosystem)
-    outputs[:ecosystem] = ::Content::Ecosystem.new(strategy: strategy)
+  def exec(course:)
+    outputs.ecosystem = course.ecosystem
   end
 end

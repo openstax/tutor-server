@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe AddUserAsCourseTeacher, type: :routine do
   context "when the given user is not a teacher in the given course" do
     it "returns the user's new teacher role" do
-      user = FactoryBot.create :user
+      user = FactoryBot.create :user_profile
       course = FactoryBot.create :course_profile_course
 
       result = AddUserAsCourseTeacher.call(user: user, course: course)
@@ -13,7 +13,7 @@ RSpec.describe AddUserAsCourseTeacher, type: :routine do
   end
   context "when the given user is a teacher in the given course" do
     it "has errors" do
-      user = FactoryBot.create :user
+      user = FactoryBot.create :user_profile
       course = FactoryBot.create :course_profile_course
 
       result = AddUserAsCourseTeacher.call(user: user, course: course)

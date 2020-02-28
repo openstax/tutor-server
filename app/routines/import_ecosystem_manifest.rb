@@ -18,8 +18,8 @@ class ImportEcosystemManifest
 
   protected
 
-  # Imports and saves a Content::Manifest as a new Content::Ecosystem
-  # Returns the new Content::Ecosystem
+  # Imports and saves a Content::Manifest as a new Content::Models::Ecosystem
+  # Returns the new Content::Models::Ecosystem
   def exec(manifest:, comments: nil)
     manifest = Content::Manifest.from_yaml(manifest) if manifest.is_a?(String)
 

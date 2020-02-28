@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::Models::TaskStep, type: :model, speed: :medium do
+RSpec.describe Tasks::Models::TaskStep, type: :model do
 
   subject(:task_step) { FactoryBot.create :tasks_task_step }
 

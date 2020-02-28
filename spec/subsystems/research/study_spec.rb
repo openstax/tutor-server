@@ -21,7 +21,6 @@ RSpec.describe Research::Models::Study, type: :model do
 
   # it { is_expected.to belong_to(:ecosystem) }
 
-  # it { is_expected.to have_many(:chapters).dependent(:destroy) }
   # it { is_expected.to have_many(:pages) }
   # it { is_expected.to have_many(:exercises) }
 

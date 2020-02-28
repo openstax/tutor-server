@@ -24,8 +24,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it "validates settings against the assistant's schema" do
     book = FactoryBot.create :content_book, ecosystem: task_plan.ecosystem
-    chapter = FactoryBot.create :content_chapter, book: book
-    page = FactoryBot.create :content_page, chapter: chapter
+    page = FactoryBot.create :content_page, book: book
     exercise = FactoryBot.create :content_exercise, page: page
     task_plan.reload
 
@@ -45,8 +44,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   it "automatically infers the ecosystem from the settings or owner" do
     ecosystem = task_plan.ecosystem
     book = FactoryBot.create :content_book, ecosystem: ecosystem
-    chapter = FactoryBot.create :content_chapter, book: book
-    page = FactoryBot.create :content_page, chapter: chapter
+    page = FactoryBot.create :content_page, book: book
     exercise = FactoryBot.create :content_exercise, page: page
 
     task_plan.owner.course_ecosystems.delete_all :delete_all
@@ -79,8 +77,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it "requires that any exercise_ids or page_ids be in the task_plan's ecosystem" do
     book = FactoryBot.create :content_book, ecosystem: task_plan.ecosystem
-    chapter = FactoryBot.create :content_chapter, book: book
-    page = FactoryBot.create :content_page, chapter: chapter
+    page = FactoryBot.create :content_page, book: book
     exercise = FactoryBot.create :content_exercise, page: page
     task_plan.reload
 
@@ -142,13 +139,12 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it "automatically sets its ecosystem to the owner's if cloned_from is not specified" do
     course = task_plan.owner
-    ecosystem_model = FactoryBot.create :content_ecosystem
-    ecosystem = Content::Ecosystem.new(strategy: ecosystem_model.wrap)
+    ecosystem = FactoryBot.create :content_ecosystem
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
     new_task_plan = FactoryBot.build :tasks_task_plan, owner: course
     new_task_plan.ecosystem = nil
     expect(new_task_plan.valid?).to eq true
-    expect(new_task_plan.ecosystem).to eq ecosystem_model
+    expect(new_task_plan.ecosystem).to eq ecosystem
   end
 
   context 'with tasks assigned to students' do

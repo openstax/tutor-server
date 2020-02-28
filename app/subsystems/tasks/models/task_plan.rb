@@ -75,26 +75,30 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   protected
 
-  def get_ecosystem_from_exercise_ids
-    Content::Ecosystem.find_by_exercise_ids(*settings['exercise_ids']).try!(:to_model)
+  def get_ecosystems_from_exercise_ids
+    ecosystems = Content::Models::Ecosystem.distinct.joins(:exercises).where(
+      exercises: { id: settings['exercise_ids'] }
+    ).to_a
   end
 
-  def get_ecosystem_from_page_ids
-    Content::Ecosystem.find_by_page_ids(*settings['page_ids']).try!(:to_model)
+  def get_ecosystems_from_page_ids
+    ecosystems = Content::Models::Ecosystem.distinct.joins(:pages).where(
+      pages: { id: settings['page_ids'] }
+    ).to_a
   end
 
-  def get_ecosystem_from_settings
+  def get_ecosystems_from_settings
     if settings['exercise_ids'].present?
-      get_ecosystem_from_exercise_ids
+      get_ecosystems_from_exercise_ids
     elsif settings['page_ids'].present?
-      get_ecosystem_from_page_ids
+      get_ecosystems_from_page_ids
     end
   end
 
   def set_ecosystem
-    self.ecosystem ||= cloned_from.try!(:ecosystem) ||
-                       get_ecosystem_from_settings ||
-                       owner.try(:ecosystems).try(:first)
+    self.ecosystem ||= cloned_from&.ecosystem ||
+                       get_ecosystems_from_settings&.first ||
+                       owner.try(:ecosystems)&.first
   end
 
   def valid_settings
@@ -113,10 +117,10 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
     # Special checks for the page_ids and exercise_ids settings
     errors.add(:settings, '- Invalid exercises selected') \
-      if settings['exercise_ids'].present? && ecosystem != get_ecosystem_from_exercise_ids
+      if settings['exercise_ids'].present? && get_ecosystems_from_exercise_ids != [ ecosystem ]
 
     errors.add(:settings, '- Invalid pages selected') \
-      if settings['page_ids'].present? && ecosystem != get_ecosystem_from_page_ids
+      if settings['page_ids'].present? && get_ecosystems_from_page_ids != [ ecosystem ]
 
     throw(:abort) if errors.any?
   end

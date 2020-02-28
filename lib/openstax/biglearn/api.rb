@@ -18,13 +18,13 @@ module OpenStax::Biglearn::Api
   ]
 
   class << self
-    # ecosystem is a Content::Ecosystem or Content::Models::Ecosystem
+    # ecosystem is a Content::Models::Ecosystem or Content::Models::Ecosystem
     # course is a CourseProfile::Models::Course
     # task is a Tasks::Models::Task
     # student is a CourseMembership::Models::Student
     # book_container is a Content::Chapter or Content::Page or one of their models
     # exercise_id is a String containing an Exercise uuid, number or uid
-    # period is a CourseMembership::Period or CourseMembership::Models::Period
+    # period is a CourseMembership::Models::Period
     # max_num_exercises is an integer
 
     # Adds the given ecosystem to Biglearn
@@ -34,7 +34,7 @@ module OpenStax::Biglearn::Api
 
       single_api_request options.merge(
         method: :create_ecosystem,
-        request: { ecosystem: request[:ecosystem].to_model },
+        request: { ecosystem: request[:ecosystem] },
         keys: :ecosystem,
         create: true,
         sequence_number_model_key: :ecosystem,
@@ -403,7 +403,7 @@ module OpenStax::Biglearn::Api
         options.merge(
           method: :fetch_student_clues,
           requests: requests,
-          keys: [:book_container, :student],
+          keys: [:book_container_uuid, :student],
           perform_later: false
         )
       ) do |_, response, _|
@@ -422,7 +422,7 @@ module OpenStax::Biglearn::Api
         options.merge(
           method: :fetch_teacher_clues,
           requests: requests,
-          keys: [:book_container, :course_container],
+          keys: [:book_container_uuid, :course_container],
           perform_later: false
         )
       ) do |_, response, _|

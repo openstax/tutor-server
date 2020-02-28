@@ -1,5 +1,4 @@
 class Research::BrainsController < Research::BaseController
-
   # Research::BaseController makes sure users are researchers
 
   def index

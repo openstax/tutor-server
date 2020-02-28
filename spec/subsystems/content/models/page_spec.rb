@@ -5,12 +5,9 @@ require 'database_cleaner'
 RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
   subject(:page) { FactoryBot.create :content_page }
 
-  it { is_expected.to belong_to(:chapter) }
+  it { is_expected.to belong_to(:book) }
 
   it { is_expected.to validate_presence_of(:title) }
-  it { is_expected.to validate_presence_of(:book_location) }
-
-  it { is_expected.to delegate_method(:is_intro?).to(:parser) }
 
   context 'with snap lab page' do
 

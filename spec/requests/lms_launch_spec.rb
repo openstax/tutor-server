@@ -6,7 +6,7 @@ RSpec.describe 'LMS Launch', type: :request do
   let(:period)        { FactoryBot.create :course_membership_period, course: course }
   let(:lms_app)       { FactoryBot.create(:lms_app, owner: course) }
   let(:willo_labs)    { Lms::WilloLabs.new }
-  let(:user)          { FactoryBot.create(:user) }
+  let(:user)          { FactoryBot.create(:user_profile) }
 
   let(:simulator)     { Lms::Simulator.new(self) }
   let(:launch_helper) { Lms::LaunchHelper.new(self) }
@@ -509,11 +509,13 @@ RSpec.describe 'LMS Launch', type: :request do
   end
 
   def expect_course_score_callback_count(user:, count:)
-    expect(Lms::Models::CourseScoreCallback.where(course: course).where(profile: user.to_model).count).to eq count
+    expect(
+      Lms::Models::CourseScoreCallback.where(course: course).where(profile: user).count
+    ).to eq count
   end
 
   def callbacks(user)
-    Lms::Models::CourseScoreCallback.where(course: course).where(profile: user.to_model)
+    Lms::Models::CourseScoreCallback.where(course: course).where(profile: user)
   end
 
   def expect_error(message, status_code=422)

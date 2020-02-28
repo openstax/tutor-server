@@ -8,11 +8,11 @@ class SetupPerformanceReportData
     students = [students].flatten
 
     # There should be at least 4 students
-    (4 - students.length).times { students << FactoryBot.create(:user) }
+    (4 - students.length).times { students << FactoryBot.create(:user_profile) }
 
     CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
     AddUserAsCourseTeacher[course: course, user: teacher] \
-      unless CourseMembership::IsCourseTeacher[course: course, roles: teacher.to_model.roles]
+      unless CourseMembership::IsCourseTeacher[course: course, roles: teacher.roles]
     period_1 = course.periods.any? ? course.periods.first :
                                      FactoryBot.create(:course_membership_period, course: course)
     period_2 = FactoryBot.create(:course_membership_period, course: course)
@@ -27,10 +27,8 @@ class SetupPerformanceReportData
 
     roles = students.map { |student| GetUserCourseRoles[courses: course, user: student].first }
 
-    # Exclude introduction pages b/c they don't have LOs
-    pages = ecosystem.books.first.chapters.flat_map do |ch|
-      ch.pages.reject { |page| page.title == "Introduction" }
-    end
+    # Exclude introduction pages
+    pages = ecosystem.books.first.as_toc.pages.reject { |page| page.title == 'Introduction' }
 
     teacher_students.each do |teacher_student|
       roles << CreateOrResetTeacherStudent[user: teacher_student, period: period_1]
@@ -63,8 +61,10 @@ class SetupPerformanceReportData
     reading_assistant = get_assistant(course: course, task_plan_type: 'reading')
     homework_assistant = get_assistant(course: course, task_plan_type: 'homework')
 
-    page_ids = pages.map{ |page| page.id.to_s }
-    exercise_ids = pages.flat_map{ |page| page.exercises.map{ |ex| ex.id.to_s } }
+    page_ids = pages.map(&:id).map(&:to_s)
+    exercise_ids = Content::Models::Page.where(
+      id: page_ids
+    ).pluck(:homework_core_exercise_ids).flatten.map(&:to_s)
 
     time_zone = course.time_zone.to_tz
 
@@ -74,12 +74,14 @@ class SetupPerformanceReportData
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: ecosystem.id,
-      settings: { page_ids: page_ids.first(2).map(&:to_s) }
+      settings: { page_ids: page_ids.first(2) }
     )
 
     reading_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
-      target: course, task_plan: reading_taskplan,
-      opens_at: time_zone.now, due_at: time_zone.now + 1.week,
+      target: course,
+      task_plan: reading_taskplan,
+      opens_at: time_zone.now,
+      due_at: time_zone.now + 1.week,
       time_zone: course.time_zone
     )
 
@@ -188,5 +190,4 @@ class SetupPerformanceReportData
     student_3_tasks = student_tasks[2]
     Preview::WorkTask[task: student_3_tasks[0], is_correct: true]
   end
-
 end

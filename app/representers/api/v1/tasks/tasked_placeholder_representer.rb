@@ -1,6 +1,5 @@
 module Api::V1::Tasks
   class TaskedPlaceholderRepresenter < TaskStepRepresenter
-
     property :placeholder_type,
              as: :placeholder_for,
              type: String,

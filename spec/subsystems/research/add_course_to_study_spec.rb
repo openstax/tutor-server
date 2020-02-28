@@ -6,8 +6,8 @@ RSpec.describe Research::AddCourseToStudy do
     @course = FactoryBot.create :course_profile_course
     @period = FactoryBot.create :course_membership_period, course: @course
 
-    @student_1_user = FactoryBot.create(:user)
-    @student_2_user = FactoryBot.create(:user)
+    @student_1_user = FactoryBot.create(:user_profile)
+    @student_2_user = FactoryBot.create(:user_profile)
 
     @student_1 = AddUserAsPeriodStudent[period: @period, user: @student_1_user].student
     @student_2 = AddUserAsPeriodStudent[period: @period, user: @student_2_user].student
@@ -63,7 +63,7 @@ RSpec.describe Research::AddCourseToStudy do
     # Add a new course to the study...
     another_course = FactoryBot.create :course_profile_course
     another_period = FactoryBot.create :course_membership_period, course: another_course
-    student_3_user = FactoryBot.create(:user)
+    student_3_user = FactoryBot.create(:user_profile)
     student_3 = AddUserAsPeriodStudent[period: another_period, user: student_3_user].student
 
     # It should not mess with students 1 and 2, but should add survey to student 3

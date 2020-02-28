@@ -158,7 +158,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         ],
         [
           :fetch_student_clues,
-          -> { [ { book_container: @page, student: @student } ] },
+          -> { [ { book_container_uuid: @page.tutor_uuid, student: @student } ] },
           nil,
           Hash,
           -> { @course },
@@ -166,7 +166,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
         ],
         [
           :fetch_teacher_clues,
-          -> { [ { book_container: @page, course_container: @period } ] },
+          -> { [ { book_container_uuid: @page.tutor_uuid, course_container: @period } ] },
           nil,
           Hash,
           -> { @course },
@@ -233,9 +233,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
     it 'converts returned exercise uuids to exercise objects, preserving their order' do
       expect(@exercises).not_to be_empty
-      exercises = @exercises.first(max_num_exercises).map do |exercise|
-        Content::Exercise.new strategy: exercise.wrap
-      end
+      exercises = @exercises.first(max_num_exercises)
       expect(Rails.logger).not_to receive(:warn)
 
       [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
@@ -327,9 +325,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
     end
 
     it 'logs a warning when client returns less exercises than expected' do
-      exercises = @exercises.first(max_num_exercises - 1).map do |exercise|
-        Content::Exercise.new strategy: exercise.wrap
-      end
+      exercises = @exercises.first(max_num_exercises - 1)
 
       [ :fetch_assignment_pes, :fetch_assignment_spes ].each do |api_method|
         expect(described_class.client).to receive(api_method) do |requests|

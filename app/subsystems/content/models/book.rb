@@ -1,6 +1,4 @@
 class Content::Models::Book < IndestructibleRecord
-  wrapped_by ::Content::Strategies::Direct::Book
-
   acts_as_resource
 
   auto_uuid :tutor_uuid
@@ -9,19 +7,33 @@ class Content::Models::Book < IndestructibleRecord
 
   belongs_to :ecosystem, inverse_of: :books
 
-  sortable_has_many :chapters, on: :number, dependent: :destroy, inverse_of: :book
-  # If you need the pages in order, you MUST iterate through the chapters
-  has_many :pages, through: :chapters
+  # If you need the pages in order, use the children method to obtain the book tree
+  # or sort using the book_location
+  has_many :pages, dependent: :destroy, inverse_of: :book
   has_many :exercises, through: :pages
 
-  #validates :ecosystem, presence: true
+  validates :ecosystem, presence: true
   validates :title, presence: true
   validates :uuid, presence: true
   validates :version, presence: true
 
-  scope :preloaded, ->{ preload(chapters: :pages) }
+  scope :preloaded, -> { preload :pages }
 
   after_create :set_ecosystem_title
+
+  delegate :children, :units, :chapters, *Content::Models::Page::EXERCISE_ID_FIELDS, to: :as_toc
+
+  def type
+    'Book'
+  end
+
+  def book_location
+    []
+  end
+
+  def as_toc
+    @as_toc ||= Content::Book.new(tree)
+  end
 
   def archive_url
     Addressable::URI.parse(url).site
@@ -46,7 +58,7 @@ class Content::Models::Book < IndestructibleRecord
 
   def set_ecosystem_title
     ecosystem.books.reload unless ecosystem.books.include?(self)
-    ecosystem.update_attribute(:title, ecosystem.set_title)
+    ecosystem.update_attribute :title, ecosystem.set_title
   end
 
   def reference_view_url

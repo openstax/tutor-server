@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::GetPerformanceReport, type: :routine do
-
   before(:all) do
     VCR.use_cassette("Tasks_GetPerformanceReport/with_book", VCR_OPTS) do
       @ecosystem = FetchAndImportBookAndCreateEcosystem[
@@ -12,13 +11,13 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     @course = FactoryBot.create :course_profile_course, :with_assistants
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
-    @teacher = FactoryBot.create(:user)
-    @student_1 = FactoryBot.create(:user)
-    @student_2 = FactoryBot.create(:user)
-    @student_3 = FactoryBot.create(:user)
-    @student_4 = FactoryBot.create(:user)
+    @teacher = FactoryBot.create(:user_profile)
+    @student_1 = FactoryBot.create(:user_profile)
+    @student_2 = FactoryBot.create(:user_profile)
+    @student_3 = FactoryBot.create(:user_profile)
+    @student_4 = FactoryBot.create(:user_profile)
 
-    @teacher_student = FactoryBot.create(:user)
+    @teacher_student = FactoryBot.create(:user_profile)
 
     SetupPerformanceReportData[
       course: @course,
@@ -108,8 +107,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
   end
 
   before do
-    @student_1.to_model.reload
-    @student_2.to_model.reload
+    @student_1.reload
+    @student_2.reload
   end
 
   # Make homework assignments due so that their scores are included in the averages
@@ -118,7 +117,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
   end
 
   context 'teacher' do
-    let(:role)                          { @teacher.to_model.roles.first }
+    let(:role)                          { @teacher.roles.first }
 
     let(:expected_periods)              { 2 }
     let(:expected_students)             { 2 }
@@ -243,11 +242,11 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         @student_1.last_name, @student_2.last_name
       ]
       expect(first_period_students.map(&:role)).to match_array [
-        @student_1.to_model.roles.first.id, @student_2.to_model.roles.first.id
+        @student_1.roles.first.id, @student_2.roles.first.id
       ]
       expect(first_period_students.map(&:student_identifier)).to match_array [
-        @student_1.to_model.roles.first.student.student_identifier,
-        @student_2.to_model.roles.first.student.student_identifier
+        @student_1.roles.first.student.student_identifier,
+        @student_2.roles.first.student.student_identifier
       ]
       expect(first_period_students.map(&:homework_score)).to match_array [
         1.0, be_within(1e-6).of(2/7.0)
@@ -276,11 +275,11 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         @student_3.last_name, @student_4.last_name
       ]
       expect(second_period_students.map(&:role)).to match_array [
-        @student_3.to_model.roles.first.id, @student_4.to_model.roles.first.id
+        @student_3.roles.first.id, @student_4.roles.first.id
       ]
       expect(second_period_students.map(&:student_identifier)).to match_array [
-        @student_3.to_model.roles.first.student.student_identifier,
-        @student_4.to_model.roles.first.student.student_identifier
+        @student_3.roles.first.student.student_identifier,
+        @student_4.roles.first.student.student_identifier
       ]
       expect(second_period_students.map(&:homework_score)).to match_array [ 1.0, 0.0 ]
       expect(second_period_students.map(&:homework_progress)).to match_array [ 1.0, 0.0 ]
@@ -321,7 +320,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     end
 
     it 'works after a student has moved period' do
-      MoveStudent.call(period: second_period, student: @student_1.to_model.roles.first.student)
+      MoveStudent.call(period: second_period, student: @student_1.roles.first.student)
 
       # No need to retest the entire response, just spot check some things that
       # should change when the student moves
@@ -376,7 +375,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     end
 
     it 'marks dropped students and excludes them from averages' do
-      CourseMembership::InactivateStudent.call(student: @student_2.to_model.roles.first.student)
+      CourseMembership::InactivateStudent.call(student: @student_2.roles.first.student)
 
       expect(first_period_report.overall_homework_score).to eq 1.0
       expect(first_period_report.overall_homework_progress).to eq 1.0
@@ -390,7 +389,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
   end
 
   context 'student' do
-    let(:role)                          { @student_1.to_model.roles.first }
+    let(:role)                          { @student_1.roles.first }
 
     let(:expected_task_types)           { ['homework', 'reading', 'homework', 'external'] }
     let(:expected_tasks)                { expected_task_types.size }
@@ -453,9 +452,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       expect(student.name).to eq @student_1.name
       expect(student.first_name).to eq @student_1.first_name
       expect(student.last_name).to eq @student_1.last_name
-      expect(student.role).to eq @student_1.to_model.roles.first.id
+      expect(student.role).to eq @student_1.roles.first.id
       expect(student.student_identifier).to(
-        eq @student_1.to_model.roles.first.student.student_identifier
+        eq @student_1.roles.first.student.student_identifier
       )
       expect(student.homework_score).to eq 1.0
       expect(student.homework_progress).to eq 1.0
@@ -495,7 +494,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
 
     it 'does not include correctness and score for tasks with feedback_at in the future' do
       task = Tasks::Models::Task.joins(:taskings).find_by(
-        taskings: { entity_role_id: @student_1.to_model.roles.first.id },
+        taskings: { entity_role_id: @student_1.roles.first.id },
         title: 'Homework task plan'
       )
       task.feedback_at = task.time_zone.to_tz.now + 1.2.days
@@ -540,9 +539,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       expect(student.name).to eq @student_1.name
       expect(student.first_name).to eq @student_1.first_name
       expect(student.last_name).to eq @student_1.last_name
-      expect(student.role).to eq @student_1.to_model.roles.first.id
+      expect(student.role).to eq @student_1.roles.first.id
       expect(student.student_identifier).to(
-        eq @student_1.to_model.roles.first.student.student_identifier
+        eq @student_1.roles.first.student.student_identifier
       )
       expect(student.homework_score).to be_nil
       expect(student.homework_progress).to eq 1.0
@@ -578,11 +577,11 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
   end
 
   context 'teacher student' do
-    let(:role) { @teacher_student.to_model.roles.first }
-    let(:expected_task_types)           { ['homework', 'reading', 'homework', 'external'] }
-    let(:expected_tasks)                { expected_task_types.size }
-    let(:report)  { reports.first }
-    let(:student) { report.students.first }
+    let(:role)                { @teacher_student.roles.first }
+    let(:expected_task_types) { ['homework', 'reading', 'homework', 'external'] }
+    let(:expected_tasks)      { expected_task_types.size }
+    let(:report)              { reports.first }
+    let(:student)             { report.students.first }
 
     it 'has the proper structure' do
       expect(reports.size).to eq 1
@@ -598,7 +597,6 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       data_types = student.data.map(&:type)
       expect(data_types).to eq expected_task_types
     end
-
   end
 
   context 'random role' do

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe AddUserAsPeriodStudent, type: :routine do
   context "when the given user is not a teacher of the course" do
-    let(:user)   { FactoryBot.create(:user) }
+    let(:user)   { FactoryBot.create(:user_profile) }
     let(:course) { FactoryBot.create :course_profile_course }
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 
@@ -49,7 +49,7 @@ RSpec.describe AddUserAsPeriodStudent, type: :routine do
     context "and the period is archived" do
       before(:each) do
         AddUserAsPeriodStudent.call(user: user, period: period)
-        period.to_model.destroy
+        period.destroy
       end
       it "has inactive student error" do
         result = AddUserAsPeriodStudent.call(user: user, period: period)
@@ -60,7 +60,7 @@ RSpec.describe AddUserAsPeriodStudent, type: :routine do
   end
 
   context "when the given user is a teacher in the given course" do
-    let(:user)   { FactoryBot.create(:user) }
+    let(:user)   { FactoryBot.create(:user_profile) }
     let(:course) { FactoryBot.create :course_profile_course }
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 

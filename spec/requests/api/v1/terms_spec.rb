@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Terms", type: :request, api: true, version: :v1 do
 
   let(:application)     { FactoryBot.create :doorkeeper_application }
-  let!(:user_1)         { FactoryBot.create(:user) }
+  let!(:user_1)         { FactoryBot.create(:user_profile) }
   let(:user_1_token)    do
     FactoryBot.create :doorkeeper_access_token,
                       application: application, resource_owner_id: user_1.id
@@ -41,23 +41,23 @@ RSpec.describe "Terms", type: :request, api: true, version: :v1 do
 
   context 'signing terms' do
     it 'lets users sign one set of terms' do
-      expect(FinePrint.signed_contract?(user_1.to_model, general_terms_of_use)).to be false
+      expect(FinePrint.signed_contract?(user_1, general_terms_of_use)).to be false
 
       api_put("/api/terms/#{general_terms_of_use.id}", user_1_token)
 
       expect(response).to have_http_status(:success)
-      expect(FinePrint.signed_contract?(user_1.to_model, general_terms_of_use)).to be true
+      expect(FinePrint.signed_contract?(user_1, general_terms_of_use)).to be true
     end
 
     it 'lets users sign multiple terms' do
-      expect(FinePrint.signed_contract?(user_1.to_model, general_terms_of_use)).to be false
-      expect(FinePrint.signed_contract?(user_1.to_model, privacy_policy)).to be false
+      expect(FinePrint.signed_contract?(user_1, general_terms_of_use)).to be false
+      expect(FinePrint.signed_contract?(user_1, privacy_policy)).to be false
 
       api_put("/api/terms/#{general_terms_of_use.id},#{privacy_policy.id}", user_1_token)
 
       expect(response).to have_http_status(:success)
-      expect(FinePrint.signed_contract?(user_1.to_model, general_terms_of_use)).to be true
-      expect(FinePrint.signed_contract?(user_1.to_model, privacy_policy)).to be true
+      expect(FinePrint.signed_contract?(user_1, general_terms_of_use)).to be true
+      expect(FinePrint.signed_contract?(user_1, privacy_policy)).to be true
     end
 
     it 'errors if terms do not exist' do
@@ -66,13 +66,13 @@ RSpec.describe "Terms", type: :request, api: true, version: :v1 do
     end
 
     it 'does not error if one of terms already signed' do
-      expect(FinePrint.signed_contract?(user_1.to_model, privacy_policy)).to be false
-      FinePrint.sign_contract(user_1.to_model, 'general_terms_of_use')
+      expect(FinePrint.signed_contract?(user_1, privacy_policy)).to be false
+      FinePrint.sign_contract(user_1, 'general_terms_of_use')
       expect do
         api_put("/api/terms/#{general_terms_of_use.id},#{privacy_policy.id}", user_1_token)
-      end.to change{FinePrint::Signature.count}.by(1)
+      end.to change { FinePrint::Signature.count }.by(1)
       expect(response).to have_http_status(:success)
-      expect(FinePrint.signed_contract?(user_1.to_model, privacy_policy)).to be true
+      expect(FinePrint.signed_contract?(user_1, privacy_policy)).to be true
     end
   end
 

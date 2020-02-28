@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CloneCourse, type: :routine do
 
   let(:course) { FactoryBot.create :course_profile_course }
-  let(:user)   { FactoryBot.create :user }
+  let(:user)   { FactoryBot.create :user_profile }
 
   it 'creates a copy of a course' do
 

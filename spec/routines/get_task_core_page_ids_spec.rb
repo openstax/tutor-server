@@ -9,7 +9,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
     period = FactoryBot.create :course_membership_period
     course = period.course
 
-    user = FactoryBot.create :user
+    user = FactoryBot.create :user_profile
 
     @role = AddUserAsPeriodStudent[user: user, period: period]
 

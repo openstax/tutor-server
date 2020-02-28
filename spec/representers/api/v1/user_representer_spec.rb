@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::UserRepresenter, type: :representer do
 
 
-  let(:user)           { FactoryBot.create(:user) }
+  let(:user)           { FactoryBot.create(:user_profile) }
   let(:representation) { Api::V1::UserRepresenter.new(user).as_json }
 
   it 'generates a JSON representation of a user' do

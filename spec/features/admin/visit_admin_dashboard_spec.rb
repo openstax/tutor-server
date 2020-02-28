@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Admnistration' do
   scenario 'visit the admin dashboard' do
-    admin = FactoryBot.create(:user, :administrator)
+    admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)
 
     visit admin_root_path
@@ -13,7 +13,7 @@ RSpec.feature 'Admnistration' do
 
   context 'pages are reachable via the menu' do
     scenario 'System Setting/Settings' do
-      admin = FactoryBot.create(:user, :administrator)
+      admin = FactoryBot.create(:user_profile, :administrator)
       stub_current_user(admin)
       visit admin_root_path
 
@@ -29,7 +29,7 @@ RSpec.feature 'Admnistration' do
     end
 
     scenario 'Payments' do
-      admin = FactoryBot.create(:user, :administrator)
+      admin = FactoryBot.create(:user_profile, :administrator)
       stub_current_user(admin)
       visit admin_root_path
 

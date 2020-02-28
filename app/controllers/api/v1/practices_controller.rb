@@ -4,7 +4,7 @@ module Api::V1
     before_action :error_if_student_and_needs_to_pay, only: [:create, :create_worst, :show]
 
     api :POST, '/courses/:course_id/practice',
-               'Starts a new practice widget for a specific set of page_ids or chapter_ids'
+               'Starts a new practice widget for a specific set of page_ids'
     description <<-EOS
       #{json_schema(Api::V1::PracticeRepresenter, include: :writeable)}
     EOS
@@ -15,7 +15,7 @@ module Api::V1
       consume!(practice, represent_with: Api::V1::PracticeRepresenter)
 
       result = CreatePracticeSpecificTopicsTask.call(
-        course: @course, role: @role, page_ids: practice.page_ids, chapter_ids: practice.chapter_ids
+        course: @course, role: @role, page_ids: practice.page_ids
       )
 
       render_api_errors(result.errors) || respond_with(

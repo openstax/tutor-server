@@ -10,7 +10,7 @@ RSpec.describe "Purchase endpoints", type: :request, api: true, version: :v1, vc
   let(:course)        { FactoryBot.create :course_profile_course }
   let(:period)        { FactoryBot.create :course_membership_period, course: course }
 
-  let(:student_user)  { FactoryBot.create(:user) }
+  let(:student_user)  { FactoryBot.create(:user_profile) }
   let(:student_role)  { AddUserAsPeriodStudent[user: student_user, period: period] }
   let!(:student)      { student_role.student }
   let(:student_token) { FactoryBot.create :doorkeeper_access_token,

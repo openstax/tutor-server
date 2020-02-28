@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Role::CreateUserRole, type: :routine do
   it "creates and returns a new role for the given user" do
-    user = FactoryBot.create(:user)
+    user = FactoryBot.create(:user_profile)
 
     result = nil
     expect { result = Role::CreateUserRole.call(user) }.to change { user.roles.count }.by(1)
