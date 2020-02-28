@@ -54,7 +54,7 @@ RSpec.describe Admin::TeachersController, type: :controller do
       expect(response).to redirect_to edit_admin_course_path(course, anchor: 'teachers')
     end
 
-    it 'restores a teacher and all of their teacher_students' do
+    it 'restores a teacher but not their teacher_students' do
       teacher.destroy!
       expect(UserIsCourseTeacher[course: course, user: user_1]).to eq false
       expect(teacher.reload.deleted?).to eq true
@@ -63,7 +63,7 @@ RSpec.describe Admin::TeachersController, type: :controller do
         post :restore, params: { course_id: course.id, id: teacher.id }
       end.to  change     { UserIsCourseTeacher[course: course, user: user_1] }.to(true)
          .and change     { teacher.reload.deleted? }.to(false)
-         .and change     { teacher_student_1.reload.deleted? }.to(false)
+         .and not_change { teacher_student_1.reload.deleted? }
          .and not_change { teacher_student_2.reload.deleted? }
 
       expect(response).to redirect_to edit_admin_course_path(course, anchor: 'teachers')

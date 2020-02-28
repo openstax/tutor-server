@@ -29,12 +29,7 @@ class Admin::TeachersController < Admin::BaseController
 
   def restore
     teacher = CourseMembership::Models::Teacher.find params[:id]
-    CourseMembership::Models::Teacher.transaction do
-      teacher.restore!
-      teacher.role.profile.roles.teacher_student.map(&:teacher_student).compact.select do |ts|
-        ts.course_profile_course_id == teacher.course_profile_course_id
-      end.select(&:deleted?).each(&:restore!)
-    end
+    teacher.restore!
     flash[:notice] = "Teacher \"#{teacher.role.name}\" readded to course."
     redirect_to edit_admin_course_path(teacher.course, anchor: 'teachers')
   end
