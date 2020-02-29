@@ -75,6 +75,9 @@ class Demo::Import < Demo::Base
           attrs[:webview_url] = "#{attrs.delete(:webview_url_base)}#{book_cnx_id}"
           attrs[:pdf_url_base] ||= book[:archive_url_base].sub('/contents/', '/exports/')
           attrs[:pdf_url] = "#{attrs.delete(:pdf_url_base)}#{book_cnx_id}"
+          if @retries > 0
+            attrs[:number] = (Catalog::Models::Offering.maximum(:number) || 0) + @retries + 1
+          end
 
           # Create the catalog offering
           Catalog::CreateOffering[attrs]
