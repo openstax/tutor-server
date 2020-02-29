@@ -40,7 +40,7 @@ gem 'jquery-ui-rails'
 gem 'turbolinks'
 
 # PostgreSQL database
-gem 'pg', '~> 1.1.4'
+gem 'pg'
 
 # Use the puma webserver
 gem 'puma'
@@ -203,7 +203,7 @@ gem 'boxr'
 # OAuth gem for generating and validating lti requests
 gem 'oauth', '~> 0.5.1'
 
-gem 'scout_apm', '~> 3.0.0.pre28'
+gem 'scout_apm'
 
 # Respond to ELB healthchecks in /ping and /ping/
 gem 'openstax_healthcheck'
