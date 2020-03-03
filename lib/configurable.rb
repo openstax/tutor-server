@@ -5,7 +5,6 @@ require 'configurable/client_methods'
 # Other threads will not see (shallow) changes to the configuration
 # To persist changes, read the docs for #save_static_configuration! below
 module Configurable
-
   class << self
     def included(base)
       base.extend self
@@ -51,5 +50,4 @@ module Configurable
   def static_configuration?
     configuration == @static_configuration
   end
-
 end

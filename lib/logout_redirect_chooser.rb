@@ -2,7 +2,6 @@
 # return nil if some outside default redirect should be used)
 
 class LogoutRedirectChooser
-
   def initialize(request_url)
     @url = request_url
   end
@@ -33,5 +32,4 @@ class LogoutRedirectChooser
   def to_bool(boolean_thing)
     ActiveRecord::Type::Boolean.new.cast(boolean_thing)
   end
-
 end

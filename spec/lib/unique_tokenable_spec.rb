@@ -33,27 +33,17 @@ RSpec.describe UniqueTokenable, type: :lib do
     expect(dummy.enrollment_code).to eq('abc_12-3')
   end
 
-  it 'works with the memorable babbler plugin' do
-    DummyModel.unique_token :enrollment_code, mode: :memorable
-
-    allow(Babbler).to receive(:babble) { 'memorable code' }
-    dummy = DummyModel.new
-    dummy.valid?
-
-    expect(dummy.enrollment_code).to eq('memorable code')
-  end
-
   it "doesn't overwrite existing values" do
     dummy = DummyModel.new(enrollment_code: 'anything i want here')
     dummy.valid?
     expect(dummy.enrollment_code).to eq('anything i want here')
   end
 
-  it "prevents token duplication" do
-    dummy = DummyModel.create!(enrollment_code: "dontCopyMe!")
+  it 'prevents token duplication' do
+    dummy = DummyModel.create!(enrollment_code: 'dontCopyMe!')
     expect(dummy).to be_valid
 
-    dummy = DummyModel.new(enrollment_code: "dontCopyMe!")
+    dummy = DummyModel.new(enrollment_code: 'dontCopyMe!')
     expect(dummy).not_to be_valid
   end
 
@@ -101,19 +91,10 @@ RSpec.describe UniqueTokenable, type: :lib do
     expect(dummy.enrollment_code).not_to be_blank
   end
 
-  it "lets you know when a mode is already handled" do
-    expect do
-      class DummyTokenGenerator
-        def self.handled_modes; [:hex]; end
-        TokenGenerator.register(self)
-      end
-    end.to raise_error(TokenGenerator::TokenGeneratorModeAlreadyHandled, "hex")
-  end
-
-  it "lets you know when a mode is unhandled" do
+  it 'lets you know when a mode is unhandled' do
     expect do
       DummyModel.unique_token :enrollment_code, mode: :nope
       DummyModel.create
-    end.to raise_error(TokenGenerator::UnhandledTokenGeneratorMode, "nope")
+    end.to raise_error(UnhandledTokenGeneratorMode, 'nope')
   end
 end

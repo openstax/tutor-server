@@ -80,7 +80,15 @@ Delayed::Worker.class_exec do
     end
   }
 
-  # Not ThreadSafe(TM)
+  def self.delay_jobs
+    RequestStore.store[:delay_jobs] ||= class_variable_get(:@@delay_jobs)
+  end
+
+  # Note: Make sure this method is redefined only after the global delay_jobs is set above
+  def self.delay_jobs=(value)
+    RequestStore.store[:delay_jobs] = value
+  end
+
   def self.with_delay_jobs(value, &block)
     begin
       original_value = delay_jobs

@@ -159,9 +159,6 @@ gem 'openstax_rescue_from'
 # Sentry integration (the require disables automatic Rails integration since we use rescue_from)
 gem 'sentry-raven', require: 'raven/base'
 
-# Generate memorable codes
-gem 'babbler', '~> 1.0.1'
-
 # Soft-deletion
 gem 'paranoia', '~> 2.4.1'
 

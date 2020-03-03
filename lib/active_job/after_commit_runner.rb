@@ -36,7 +36,7 @@ class ActiveJob::AfterCommitRunner
   protected
 
   def delayed_worker
-    Thread.current[:delayed_worker] ||= Delayed::Worker.new
+    RequestStore.store[:delayed_worker] ||= Delayed::Worker.new
   end
 
   def reserve_and_return_delayed_job(active_job, now)

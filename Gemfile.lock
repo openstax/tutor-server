@@ -89,7 +89,6 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    babbler (1.0.1)
     best_in_place (3.1.1)
       actionpack (>= 3.2)
       railties (>= 3.2)
@@ -726,7 +725,6 @@ DEPENDENCIES
   awesome_print
   aws-ses (~> 0.6.0)
   axlsx!
-  babbler (~> 1.0.1)
   best_in_place
   bootsnap (~> 1.4.0)
   bootstrap-sass (~> 3.3.7)
