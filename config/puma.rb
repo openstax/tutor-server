@@ -11,7 +11,7 @@ tag 'OpenStax Tutor Puma'
 
 worker_timeout ENV.fetch('TIMEOUT', 300)
 
-NUM_WORKERS = ENV.fetch('WEB_CONCURRENCY', 4).to_i
+NUM_WORKERS = ENV.fetch('WEB_CONCURRENCY') { Etc.nprocessors }.to_i
 
 before_fork do
   require 'puma_worker_killer'
@@ -55,7 +55,7 @@ port ENV.fetch('PORT', 3001)
 environment ENV.fetch('RAILS_ENV', 'development')
 
 # Specifies the `pidfile` that Puma will use.
-pidfile ENV.fetch('PIDFILE', 'tmp/pids/server.pid')
+pidfile ENV.fetch('PIDFILE', 'tmp/pids/puma.pid')
 
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked web server processes. If using threads and workers together
