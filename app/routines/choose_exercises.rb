@@ -1,10 +1,15 @@
 class ChooseExercises
-
   lev_routine express_output: :exercises
 
-  def exec(exercises:, count:, history:, allow_repeats: true,
-           randomize_exercises: true, randomize_order: true)
-    worked_exercise_numbers_set = Set.new history.exercise_numbers.flatten
+  def exec(
+    exercises:,
+    count:,
+    worker_exercise_numbers: [],
+    allow_repeats: true,
+    randomize_exercises: true,
+    randomize_order: true
+  )
+    worked_exercise_numbers_set = Set.new worker_exercise_numbers
 
     exercises = exercises.uniq
     exercises = exercises.shuffle if randomize_exercises
@@ -23,7 +28,6 @@ class ChooseExercises
 
     chosen_exercises = chosen_exercises.shuffle if randomize_order
 
-    outputs[:exercises] = chosen_exercises
+    outputs.exercises = chosen_exercises
   end
-
 end
