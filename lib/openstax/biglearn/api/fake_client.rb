@@ -1,4 +1,8 @@
 class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
+  CLUE_MIN_NUM_RESPONSES = 3 # Must be 2 or more to prevent division by 0
+  CLUE_Z_ALPHA = 0.68
+  CLUE_Z_ALPHA_SQUARED = CLUE_Z_ALPHA**2
+
   include OpenStax::Biglearn::Api::Client
 
   attr_reader :store
@@ -227,39 +231,75 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   end
 
   # Returns the CLUes for the given book containers and students (for students)
-  # Always returns randomized CLUes in the FakeClient
+  # The FakeClient performs the same calculation as biglearn-local-query
   def fetch_student_clues(requests)
     requests.map do |request|
-      ecosystem = request.fetch(:student).course.ecosystem
+      student = request.fetch(:student)
+      student_uuids = [ student.uuid ]
+      ecosystem_uuid = student.course.ecosystem
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: random_clue(ecosystem_uuid: ecosystem.tutor_uuid),
+        clue_data: calculate_clue(student_uuids: student_uuids, ecosystem_uuid: ecosystem_uuid),
         clue_status: 'clue_ready'
       }
     end
   end
 
   # Returns the CLUes for the given book containers and periods (for teachers)
-  # Always returns randomized CLUes in the FakeClient
+  # The FakeClient performs the same calculation as biglearn-local-query
   def fetch_teacher_clues(requests)
     requests.map do |request|
-      ecosystem = request.fetch(:course_container).course.ecosystem
+      period = request.fetch(:course_container)
+      student_uuids = period.students.map(&:uuid)
+      ecosystem_uuid = period.course.ecosystem.tutor_uuid
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: random_clue(ecosystem_uuid: ecosystem.tutor_uuid),
+        clue_data: calculate_clue(student_uuids: student_uuids, ecosystem_uuid: ecosystem_uuid),
         clue_status: 'clue_ready'
       }
     end
   end
 
-  def random_clue(options = {})
-    options[:most_likely] ||= rand
-    options[:minimum]     ||= rand * options[:most_likely]
-    options[:maximum]     ||= 1 - rand * (1 - options[:most_likely])
-    options[:is_real]     ||= [true, false].sample
+  protected
 
-    options.slice(:minimum, :most_likely, :maximum, :is_real, :ecosystem_uuid)
+  def calculate_clue(student_uuids:, ecosystem_uuid:)
+    tasked_exercises = Tasks::Models::TaskedExercise.select(:answer_id, :correct_answer_id).joins(
+      task_step: { task: { taskings: { role: :student } } }
+    ).where(task_step: { task: { taskings: { role: { student: { uuid: student_uuids } } } } }).to_a
+    responses = tasked_exercises.map(&:is_correct?)
+
+    num_responses = responses.size
+    if num_responses >= CLUE_MIN_NUM_RESPONSES
+      num_correct = responses.count { |bool| bool }
+
+      p_hat = (num_correct + 0.5 * CLUE_Z_ALPHA_SQUARED) / (num_responses + CLUE_Z_ALPHA_SQUARED)
+
+      variance = responses.map do |correct|
+        (p_hat - (correct ? 1 : 0))**2
+      end.sum / (num_responses - 1)
+
+      interval_delta = (
+        CLUE_Z_ALPHA * Math.sqrt(p_hat * (1 - p_hat)/(num_responses + CLUE_Z_ALPHA_SQUARED)) +
+        0.1 * Math.sqrt(variance) + 0.05
+      )
+
+      {
+        minimum: [p_hat - interval_delta, 0].max,
+        most_likely: p_hat,
+        maximum: [p_hat + interval_delta, 1].min,
+        is_real: true,
+        ecosystem_uuid: ecosystem_uuid
+      }
+    else
+      {
+        minimum: 0,
+        most_likely: 0.5,
+        maximum: 1,
+        is_real: false,
+        ecosystem_uuid: ecosystem_uuid
+      }
+    end
   end
 end
