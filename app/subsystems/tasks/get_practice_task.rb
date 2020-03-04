@@ -3,18 +3,11 @@ class Tasks::GetPracticeTask
 
   protected
 
-  def exec(role:)
-    task_types = Tasks::Models::Task.task_types.values_at(
-      :page_practice,
-      :chapter_practice,
-      :mixed_practice,
-      :practice_worst_topics
-    )
-
+  def exec(role:, task_type:, page_ids:)
     outputs[:task] = Tasks::Models::Task
-                       .joins(:taskings)
-                       .where(taskings: { entity_role_id: role.id }, task_type: task_types)
-                       .order(:created_at)
-                       .last
+                     .joins(:taskings)
+                     .where(taskings: { entity_role_id: role.id },
+                            task_type: task_type, page_ids: page_ids)
+                     .where('completed_steps_count < steps_count').first
   end
 end

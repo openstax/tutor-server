@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_04_234650) do
+ActiveRecord::Schema.define(version: 2020_03_03_163234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -860,7 +860,7 @@ ActiveRecord::Schema.define(version: 2020_02_04_234650) do
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "question_index", null: false
     t.jsonb "response_validation"
-    t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
+    t.index "(COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0))", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"
     t.index ["updated_at"], name: "index_tasks_tasked_exercises_on_updated_at"
@@ -972,6 +972,7 @@ ActiveRecord::Schema.define(version: 2020_02_04_234650) do
     t.uuid "pe_ecosystem_matrix_uuid"
     t.uuid "spe_calculation_uuid"
     t.uuid "spe_ecosystem_matrix_uuid"
+    t.integer "page_ids", array: true
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"

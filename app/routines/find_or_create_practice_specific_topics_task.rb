@@ -1,5 +1,5 @@
-class CreatePracticeSpecificTopicsTask
-  include CreatePracticeTaskRoutine
+class FindOrCreatePracticeSpecificTopicsTask
+  include FindOrCreatePracticeTaskRoutine
 
   protected
 

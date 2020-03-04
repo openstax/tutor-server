@@ -238,7 +238,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
       AddEcosystemToCourse[course: @course, ecosystem: page.ecosystem]
 
-      CreatePracticeSpecificTopicsTask[
+      FindOrCreatePracticeSpecificTopicsTask[
         course: @course, role: @user_1_role, page_ids: [page.id]
       ].task_steps.first
     end

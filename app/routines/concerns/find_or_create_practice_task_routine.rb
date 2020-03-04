@@ -1,10 +1,13 @@
-module CreatePracticeTaskRoutine
+module FindOrCreatePracticeTaskRoutine
   NUM_BIGLEARN_EXERCISES = 5
 
   extend ActiveSupport::Concern
 
   included do
     lev_routine express_output: :task
+
+    uses_routine Tasks::GetPracticeTask, translations: { outputs: { type: :verbatim } },
+                                         as: :get_practice_task
 
     uses_routine Tasks::BuildTask, translations: { outputs: { type: :verbatim } },
                                    as: :build_task
@@ -45,23 +48,34 @@ module CreatePracticeTaskRoutine
 
     time_zone = course.time_zone
 
-    # Create the new practice widget task
-    @task = run(
-      :build_task,
+    # Find a not completed practice task
+    @task = Tasks::GetPracticeTask[
+      role: @role,
       task_type: @task_type,
-      time_zone: time_zone,
-      title: 'Practice',
-      ecosystem: @ecosystem
-    ).outputs.task
+      page_ids: args[:page_ids]]
 
-    run(:add_spy_info, to: @task, from: @ecosystem)
+    if @task.nil? 
+         # Create the new practice widget task
+         @task = run(
+           :build_task,
+           task_type: @task_type,
+           time_zone: time_zone,
+           title: 'Practice',
+           ecosystem: @ecosystem,
+           page_ids: args[:page_ids]
+         ).outputs.task
 
-    run(:create_tasking, role: role, task: @task)
+         run(:add_spy_info, to: @task, from: @ecosystem)
 
-    @task.save!
+         run(:create_tasking, role: role, task: @task)
 
-    add_task_steps
+         @task.save!
 
-    send_task_to_biglearn
+         add_task_steps
+
+         send_task_to_biglearn
+    else
+        outputs.task = @task
+    end
   end
 end
