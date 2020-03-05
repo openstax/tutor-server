@@ -6,9 +6,6 @@ module FindOrCreatePracticeTaskRoutine
   included do
     lev_routine express_output: :task
 
-    uses_routine Tasks::BuildTask, translations: { outputs: { type: :verbatim } },
-                                   as: :build_task
-
     uses_routine AddSpyInfo, as: :add_spy_info
 
     uses_routine Tasks::CreateTasking, translations: { outputs: { type: :verbatim } },
@@ -54,14 +51,13 @@ module FindOrCreatePracticeTaskRoutine
 
     if @task.nil? 
       # Create the new practice widget task
-      @task = run(
-        :build_task,
+      @task = Tasks::Models::Task.new(
         task_type: @task_type,
         time_zone: time_zone,
         title: 'Practice',
         ecosystem: @ecosystem,
         page_ids: @page_ids
-      ).outputs.task
+      )
 
       run(:add_spy_info, to: @task, from: @ecosystem)
 
@@ -72,9 +68,8 @@ module FindOrCreatePracticeTaskRoutine
       add_task_steps
 
       send_task_to_biglearn
-    else
-      # this happens inside add_task_steps, as a side effect. Hmmm.
-      outputs.task = @task
     end
+
+    outputs.task = @task
   end
 end

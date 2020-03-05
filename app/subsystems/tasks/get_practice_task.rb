@@ -4,6 +4,7 @@ class Tasks::GetPracticeTask
   protected
 
   def exec(role:, task_type:, page_ids:)
+    page_ids = [page_ids].flatten
     outputs[:task] = Tasks::Models::Task
                      .joins(:taskings)
                      .where(taskings: { entity_role_id: role.id },
