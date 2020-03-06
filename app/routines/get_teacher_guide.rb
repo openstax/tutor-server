@@ -63,8 +63,8 @@ class GetTeacherGuide
     biglearn_requests = periods.flat_map do |period|
       chs = chs_by_period_id[period.id]
       pgs = chs.flat_map { |ch| ch[:pages] }
-      bc_uuids = chs.map { |ch| ch[:tutor_uuid] } + pgs.flat_map do |pg|
-        pg[:unmapped_tutor_uuids] || [ pg[:tutor_uuid] ]
+      bc_uuids = chs.map { |ch| ch[:tutor_uuid] }.uniq + pgs.flat_map do |pg|
+        (pg[:unmapped_tutor_uuids] || []) + [ pg[:tutor_uuid] ]
       end.uniq
       bc_uuids.map do |book_container_uuid|
         { book_container_uuid: book_container_uuid, course_container: period }
