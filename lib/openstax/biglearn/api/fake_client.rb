@@ -3,6 +3,8 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   CLUE_Z_ALPHA = 0.68
   CLUE_Z_ALPHA_SQUARED = CLUE_Z_ALPHA**2
 
+  PRACTICE_WORST_NUM_EXERCISES = 5
+
   include OpenStax::Biglearn::Api::Client
 
   attr_reader :store
@@ -142,12 +144,10 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       outs = FilterExcludedExercises.call(
         exercises: pool_exercises, task: task, current_time: current_time
       ).outputs
-      worked_exercise_numbers = outs.worked_exercise_numbers
-      filtered_exercises = outs.exercises
       chosen_exercises = ChooseExercises[
         exercises: outs.exercises,
         count: count,
-        worked_exercise_numbers: outs.worked_exercise_numbers
+        already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
       ]
 
       {
@@ -168,11 +168,63 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   end
 
   # Returns a number of recommended personalized exercises for the student's worst topics
-  # Always returns 5 random exercises from the correct ecosystem in the FakeClient
+  # Returns a random personalized exercise from the student's 5 worst topics
   def fetch_practice_worst_areas_exercises(requests)
+    current_time = Time.current
+
     requests.map do |request|
-      ecosystem = request.fetch(:student).course.ecosystem
-      exercises = ecosystem.nil? ? [] : ecosystem.exercises.sample(5)
+      student = request.fetch(:student)
+      ecosystem = student.course.ecosystem
+      exercises = []
+
+      unless ecosystem.nil?
+        responses_by_page_id = Hash.new { |hash, key| hash[key] = [] }
+        Tasks::Models::TaskedExercise.select(:id, :answer_id, :correct_answer_id).joins(
+          task_step: { task: :taskings }
+        ).where(
+          task_step: {
+            task: { ecosystem: ecosystem, taskings: { entity_role_id: student.entity_role_id } }
+          }
+        ).preload(task_step: :task).filter do |tasked_exercise|
+          tasked_exercise.task_step.task.feedback_available?(current_time: current_time)
+        end.each do |tasked_exercise|
+          responses_by_page_id[tasked_exercise.task_step.content_page_id] <<
+            tasked_exercise.is_correct?
+        end
+
+        page_ids = responses_by_page_id.sort_by do |_, responses|
+          calculate_clue(responses: responses)[:most_likely]
+        end.first(PRACTICE_WORST_NUM_EXERCISES).map(&:first)
+
+        pools = Content::Models::Page.where(
+          id: page_ids
+        ).pluck(:practice_widget_exercise_ids)
+        num_pools = pools.size
+
+        if num_pools > 0
+          exercises_per_pool, remainder = PRACTICE_WORST_NUM_EXERCISES.divmod(num_pools)
+          exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
+            id: pools.flatten
+          ).index_by(&:id)
+          pools.each_with_index do |pool, index|
+            pool_exercises = exercises_by_id.values_at *pool
+
+            outs = FilterExcludedExercises.call(
+              exercises: pool_exercises, role: role, current_time: current_time
+            ).outputs
+
+            ex = ChooseExercises[
+              exercises: outs.exercises,
+              count: exercises_per_pool + (remainder.to_f/(num_pools - index)).ceil,
+              already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
+            ]
+
+            remainder += exercises_per_pool - ex.size
+
+            exercises.concat ex
+          end
+        end
+      end
 
       {
         request_uuid: request[:request_uuid],
@@ -187,12 +239,19 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   # Returns the CLUes for the given book containers and students (for students)
   # The FakeClient performs the same calculation as biglearn-local-query
   def fetch_student_clues(requests)
+    current_time = Time.current
+
     requests.map do |request|
       student = request.fetch(:student)
+      course = student.course
+      pages = get_pages course: course, book_container_uuid: request.fetch(:book_container_uuid)
+      ecosystem = course.ecosystem
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: calculate_clue(students: student, ecosystem: student.course.ecosystem),
+        clue_data: calculate_clue_for_students_and_pages(
+          students: student, pages: pages, ecosystem: ecosystem, current_time: current_time
+        ),
         clue_status: 'clue_ready'
       }
     end
@@ -201,12 +260,19 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   # Returns the CLUes for the given book containers and periods (for teachers)
   # The FakeClient performs the same calculation as biglearn-local-query
   def fetch_teacher_clues(requests)
+    current_time = Time.current
+
     requests.map do |request|
       period = request.fetch(:course_container)
+      course = period.course
+      pages = get_pages course: course, book_container_uuid: request.fetch(:book_container_uuid)
+      ecosystem = course.ecosystem
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: calculate_clue(students: period.students, ecosystem: period.course.ecosystem),
+        clue_data: calculate_clue_for_students_and_pages(
+          students: period.students, pages: pages, ecosystem: ecosystem, current_time: current_time
+        ),
         clue_status: 'clue_ready'
       }
     end
@@ -214,16 +280,30 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
   protected
 
-  def calculate_clue(students:, ecosystem:)
-    students = [ students ].flatten
-    role_ids = students.map(&:entity_role_id)
-    tasked_exercises = Tasks::Models::TaskedExercise.select(:answer_id, :correct_answer_id).joins(
-      task_step: { task: :taskings }
-    ).where(task_step: { task: { taskings: { entity_role_id: role_ids } } }).to_a
-    responses = tasked_exercises.map(&:is_correct?)
+  def get_pages(course:, book_container_uuid:)
+    course.ecosystems.each do |ecosystem|
+      ecosystem.books.each do |book|
+        toc = book.as_toc
+        return toc.pages if toc.unmapped_tutor_uuids.include? book_container_uuid
 
+        # No need to check the units, since we don't currently request unit CLUes
+        toc.chapters.each do |chapter|
+          return chapter.pages if chapter.unmapped_tutor_uuids.include? book_container_uuid
+
+          chapter.pages.each do |page|
+            return [ page ] if page.unmapped_tutor_uuids.include? book_container_uuid
+          end
+        end
+      end
+    end
+
+    []
+  end
+
+  def calculate_clue(responses:, ecosystem: nil)
     num_responses = responses.size
-    if num_responses >= CLUE_MIN_NUM_RESPONSES
+
+    clue = if num_responses >= CLUE_MIN_NUM_RESPONSES
       num_correct = responses.count { |bool| bool }
 
       p_hat = (num_correct + 0.5 * CLUE_Z_ALPHA_SQUARED) / (num_responses + CLUE_Z_ALPHA_SQUARED)
@@ -241,17 +321,34 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         minimum: [p_hat - interval_delta, 0].max,
         most_likely: p_hat,
         maximum: [p_hat + interval_delta, 1].min,
-        is_real: true,
-        ecosystem_uuid: ecosystem.tutor_uuid
+        is_real: true
       }
     else
       {
         minimum: 0,
         most_likely: 0.5,
         maximum: 1,
-        is_real: false,
-        ecosystem_uuid: ecosystem.tutor_uuid
+        is_real: false
       }
     end
+
+    ecosystem.nil? ? clue : clue.merge(ecosystem_uuid: ecosystem.tutor_uuid)
+  end
+
+  def calculate_clue_for_students_and_pages(
+    students:, pages:, ecosystem:, current_time: Time.current
+  )
+    students = [ students ].flatten
+    role_ids = students.map(&:entity_role_id)
+    page_ids = [ pages ].flatten.map(&:id)
+    responses = Tasks::Models::TaskedExercise.select(:id, :answer_id, :correct_answer_id).joins(
+      task_step: { task: :taskings }
+    ).where(
+      task_step: { content_page_id: page_ids, task: { taskings: { entity_role_id: role_ids } } }
+    ).preload(task_step: :task).filter do |tasked_exercise|
+      tasked_exercise.task_step.task.feedback_available?(current_time: current_time)
+    end.map(&:is_correct?)
+
+    calculate_clue responses: responses, ecosystem: ecosystem
   end
 end

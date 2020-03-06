@@ -21,10 +21,9 @@ class FilterExcludedExercises
     course_excluded_numbers = course.nil? ? [] : course.excluded_exercises.map(&:exercise_number)
 
     role_excluded_numbers = if role.nil?
-      outputs.worked_exercise_numbers = []
+      outputs.already_assigned_exercise_numbers = []
       []
     else
-      # Get tasks are not yet due or do not yet have feedback
       tasks = role.taskings.preload(task: :time_zone).map(&:task)
 
       exercise_numbers_by_task_id = Hash.new { |hash, key| hash[key] = [] }
@@ -36,8 +35,9 @@ class FilterExcludedExercises
         exercise_numbers_by_task_id[task_id] << number
       end
 
-      outputs.worked_exercise_numbers = exercise_numbers_by_task_id.values.flatten.uniq
+      outputs.already_assigned_exercise_numbers = exercise_numbers_by_task_id.values.flatten.uniq
 
+      # Get tasks are not yet due or do not yet have feedback
       exercise_numbers_by_task_id.values_at(
         *tasks.filter do |task|
           (!task.due_at.nil? && !task.past_due?(current_time: current_time)) ||

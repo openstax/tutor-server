@@ -4,19 +4,19 @@ class ChooseExercises
   def exec(
     exercises:,
     count:,
-    worked_exercise_numbers: [],
+    already_assigned_exercise_numbers: [],
     allow_repeats: true,
     randomize_exercises: true,
     randomize_order: true
   )
-    worked_exercise_numbers_set = Set.new worked_exercise_numbers
+    already_assigned_exercise_numbers_set = Set.new already_assigned_exercise_numbers
 
     exercises = exercises.uniq
     exercises = exercises.shuffle if randomize_exercises
 
     # Partition exercises into new exercises and the repeated exercises
     repeated_exercises, new_exercises = exercises.partition do |ex|
-      worked_exercise_numbers_set.include?(ex.number)
+      already_assigned_exercise_numbers_set.include?(ex.number)
     end
 
     new_exercises_count = [new_exercises.size, count].min
