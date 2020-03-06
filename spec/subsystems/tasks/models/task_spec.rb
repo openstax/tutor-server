@@ -17,8 +17,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   it 'is late when last_worked_at is past due_at' do
     expect(task).not_to be_late
 
-    task.set_last_worked_at(last_worked_at: Time.current)
-    task.save
+    task.last_worked_at = Time.current
+    task.save!
 
     expect(task).to be_late
   end
@@ -35,8 +35,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     expect(task).not_to be_past_due
     expect(task).not_to be_late
 
-    task.set_last_worked_at(last_worked_at: Time.current)
-    task.save
+    task.last_worked_at = Time.current
+    task.save!
 
     expect(task).not_to be_past_due
     expect(task).not_to be_late

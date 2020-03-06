@@ -79,7 +79,7 @@ class Tasks::Models::Task < ApplicationRecord
     task_plan.present? && task_plan.is_preview
   end
 
-  def update_cached_attributes(steps: nil)
+  def update_cached_attributes(steps: nil, current_time: Time.current)
     steps ||= persisted? && !task_steps.loaded? ? task_steps.preload(:tasked) : task_steps
     steps = steps.to_a
 
@@ -112,6 +112,8 @@ class Tasks::Models::Task < ApplicationRecord
     self.placeholder_steps_count = placeholder_steps.count
     self.placeholder_exercise_steps_count = placeholder_exercise_steps.count
     self.core_placeholder_exercise_steps_count = placeholder_exercise_steps.count(&:is_core?)
+
+    self.student_history_at ||= current_time if completed_core_steps_count == core_steps_count
 
     self
   end
@@ -194,11 +196,6 @@ class Tasks::Models::Task < ApplicationRecord
     self
   end
 
-  def set_last_worked_at(last_worked_at:)
-    self.last_worked_at = last_worked_at
-    self
-  end
-
   def late?
     worked_on? && due_at.present? && last_worked_at > due_at
   end
@@ -241,7 +238,8 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def handle_task_step_completion!(completed_at: Time.current)
-    set_last_worked_at(last_worked_at: completed_at).save!
+    self.last_worked_at = completed_at
+    save!
   end
 
   def exercise_count

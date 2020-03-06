@@ -975,6 +975,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.uuid "pe_ecosystem_matrix_uuid"
     t.uuid "spe_calculation_uuid"
     t.uuid "spe_ecosystem_matrix_uuid"
+    t.datetime "student_history_at"
     t.integer "core_page_ids", default: [], null: false, array: true
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
