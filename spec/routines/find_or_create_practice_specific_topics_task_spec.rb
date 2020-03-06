@@ -44,4 +44,10 @@ RSpec.describe FindOrCreatePracticeSpecificTopicsTask, type: :routine do
     second_result = described_class.call( course: course, role: role, page_ids: [ page.id ] )
     expect { second_result.outputs.task.id == practice_task.id }
   end
+
+  it 'returns a new task when the previous one has been worked' do
+    practice_task.task_steps.map { |step| Preview::AnswerExercise.call task_step: step, is_correct: true }
+    third_result = described_class.call( course: course, role: role, page_ids: [ page.id ] )
+    expect { third_result.outputs.task.id != practice_task.id }
+  end
 end
