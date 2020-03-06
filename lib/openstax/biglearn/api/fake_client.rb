@@ -174,6 +174,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
     requests.map do |request|
       student = request.fetch(:student)
+      role = student.role
       ecosystem = student.course.ecosystem
       exercises = []
 
@@ -183,7 +184,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
           task_step: { task: :taskings }
         ).where(
           task_step: {
-            task: { ecosystem: ecosystem, taskings: { entity_role_id: student.entity_role_id } }
+            task: { ecosystem: ecosystem, taskings: { entity_role_id: role.id } }
           }
         ).preload(task_step: :task).filter do |tasked_exercise|
           tasked_exercise.task_step.task.feedback_available?(current_time: current_time)
@@ -193,7 +194,8 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         end
 
         page_ids = responses_by_page_id.sort_by do |_, responses|
-          calculate_clue(responses: responses)[:most_likely]
+          clue = calculate_clue(responses: responses)
+          clue[:is_real] ? clue[:most_likely] : 1.5
         end.first(PRACTICE_WORST_NUM_EXERCISES).map(&:first)
 
         pools = Content::Models::Page.where(

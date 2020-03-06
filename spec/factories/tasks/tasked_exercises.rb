@@ -38,6 +38,5 @@ FactoryBot.define do
         task.task_steps = task_steps
       end
     end
-
   end
 end
