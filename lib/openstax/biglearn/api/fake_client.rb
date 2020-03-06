@@ -96,7 +96,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   end
 
   # Returns a number of recommended personalized exercises for the given tasks
-  # In the FakeClient, always returns random PEs from the same pages as the task
+  # The FakeClient returns random PEs from the same pages as the task
   def fetch_assignment_pes(requests)
     tasks = requests.map { |request| request[:task] }
 
@@ -140,20 +140,17 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       count = request.fetch(:max_num_exercises) { task.practice? ? 5 : 3 }
       request_uuid = request[:request_uuid]
 
-      pool_exercises = pool_exercises_by_task_id[task.id]
-      outs = FilterExcludedExercises.call(
-        exercises: pool_exercises, task: task, current_time: current_time
-      ).outputs
-      chosen_exercises = ChooseExercises[
-        exercises: outs.exercises,
+      exercises = filter_and_choose_exercises(
+        exercises: pool_exercises_by_task_id[task.id],
+        task: task,
         count: count,
-        already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
-      ]
+        current_time: current_time
+      )
 
       {
         request_uuid: request_uuid,
         assignment_uuid: task.uuid,
-        exercise_uuids: chosen_exercises.map(&:uuid),
+        exercise_uuids: exercises.map(&:uuid),
         assignment_status: 'assignment_ready',
         spy_info: {}
       }
@@ -161,14 +158,69 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   end
 
   # Returns a number of recommended spaced practice exercises for the given tasks
-  # In the FakeClient, we pretend there are no Spaced Practice exercises,
-  # which causes us to return Personalized exercises instead
+  # In the FakeClient returns random SPEs from those allowed by our spaced practice rules
   def fetch_assignment_spes(requests)
-    fetch_assignment_pes(requests)
+    tasks = requests.map { |request| request[:task] }
+
+    ActiveRecord::Associations::Preloader.new.preload(
+      tasks, [
+        :task_steps, taskings: { role: [ { student: :course }, { teacher_student: :course } ] }
+      ]
+    )
+
+    pool_exercises_by_task_id = {}
+    tasks.group_by(&:task_type).each do |task_type, tasks|
+      case task_type
+      when 'reading', 'homework'
+        pool_method = "#{task_type}_dynamic_exercise_ids".to_sym
+      when 'chapter_practice', 'page_practice', 'mixed_practice', 'practice_worst_topics'
+        pool_method = :practice_widget_exercise_ids
+      else
+        tasks.map(&:id).each { |task_id| pool_exercise_ids_by_task_id[task_id] = [] }
+        next
+      end
+
+      page_ids_by_task_id = tasks.map do |task|
+        [ task.id, task.task_steps.map(&:content_page_id).uniq ]
+      end.to_h
+      exercise_ids_by_page_id = Content::Models::Page.where(
+        id: page_ids_by_task_id.values.flatten.uniq
+      ).pluck(:id, pool_method).to_h
+      exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
+        id: exercise_ids_by_page_id.values.flatten
+      ).index_by(&:id)
+
+      page_ids_by_task_id.each do |task_id, page_ids|
+        exercise_ids = exercise_ids_by_page_id.values_at(*page_ids).flatten
+        pool_exercises_by_task_id[task_id] = exercises_by_id.values_at(*exercise_ids).compact
+      end
+    end
+
+    current_time = Time.current
+    requests.map do |request|
+      task = request[:task]
+      count = request.fetch(:max_num_exercises) { task.practice? ? 5 : 3 }
+      request_uuid = request[:request_uuid]
+
+      exercises = filter_and_choose_exercises(
+        exercises: pool_exercises_by_task_id[task.id],
+        task: task,
+        count: count,
+        current_time: current_time
+      )
+
+      {
+        request_uuid: request_uuid,
+        assignment_uuid: task.uuid,
+        exercise_uuids: exercises.map(&:uuid),
+        assignment_status: 'assignment_ready',
+        spy_info: {}
+      }
+    end
   end
 
   # Returns a number of recommended personalized exercises for the student's worst topics
-  # Returns a random personalized exercise from the student's 5 worst topics
+  # The FakeClient returns a random personalized exercise from the student's 5 worst topics
   def fetch_practice_worst_areas_exercises(requests)
     current_time = Time.current
 
@@ -209,17 +261,12 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
             id: pools.flatten
           ).index_by(&:id)
           pools.each_with_index do |pool, index|
-            pool_exercises = exercises_by_id.values_at *pool
-
-            outs = FilterExcludedExercises.call(
-              exercises: pool_exercises, role: role, current_time: current_time
-            ).outputs
-
-            ex = ChooseExercises[
-              exercises: outs.exercises,
+            ex = filter_and_choose_exercises(
+              exercises: exercises_by_id.values_at(*pool),
+              role: role,
               count: exercises_per_pool + (remainder.to_f/(num_pools - index)).ceil,
-              already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
-            ]
+              current_time: current_time
+            )
 
             remainder += exercises_per_pool - ex.size
 
@@ -281,6 +328,20 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   end
 
   protected
+
+  def filter_and_choose_exercises(
+    exercises:, task: nil, role: nil, count:, current_time: Time.current
+  )
+    outs = FilterExcludedExercises.call(
+      exercises: exercises, task: task, role: role, current_time: current_time
+    ).outputs
+
+    ChooseExercises[
+      exercises: outs.exercises,
+      count: count,
+      already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
+    ]
+  end
 
   def get_pages(course:, book_container_uuid:)
     course.ecosystems.each do |ecosystem|
