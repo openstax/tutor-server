@@ -124,7 +124,7 @@ class Content::Models::Map < IndestructibleRecord
   # This check may fail if an exercise fails to map to any page in the new ecosystem
   def all_exercises_are_mapped
     from_exercises                      = from_ecosystem.exercises
-    from_exercise_ids_set               = Set.new from_exercises.map{ |ex| ex.id.to_s }
+    from_exercise_ids_set               = Set.new from_exercises.map { |ex| ex.id.to_s }
     exercise_id_to_page_id_map_keys_set = Set.new exercise_id_to_page_id_map.keys
 
     return true if from_exercise_ids_set == exercise_id_to_page_id_map_keys_set
@@ -145,7 +145,7 @@ class Content::Models::Map < IndestructibleRecord
 
     return true if exercise_id_to_page_id_map_values_set.subset?(to_page_ids_set)
 
-    from_exercises_by_id = from_ecosystem.exercises.index_by{ |ex| ex.id.to_s }
+    from_exercises_by_id = from_ecosystem.exercises.index_by { |ex| ex.id.to_s }
     to_pages_by_id = to_ecosystem.pages.index_by(&:id)
 
     mismapped_hash = exercise_id_to_page_id_map.reject do |ex_id, pg_id|
@@ -170,7 +170,7 @@ class Content::Models::Map < IndestructibleRecord
 
     return true if page_id_to_page_id_map_values_set.subset?(to_page_ids_set)
 
-    from_pages_by_id = from_ecosystem.pages.index_by{ |ex| ex.id.to_s }
+    from_pages_by_id = from_ecosystem.pages.index_by { |ex| ex.id.to_s }
     to_pages_by_id = from_ecosystem.pages.index_by(&:id)
 
     mismapped_hash = page_id_to_page_id_map.reject do |from_pg_id, to_pg_id|
@@ -199,7 +199,7 @@ class Content::Models::Map < IndestructibleRecord
     return true if pool_type_exercise_ids_maps_values_set.subset?(to_exercise_ids_set)
 
     pool_types = Content::Models::Page::POOL_TYPES
-    from_pages_by_id = from_ecosystem.pages.index_by{ |ex| ex.id.to_s }
+    from_pages_by_id = from_ecosystem.pages.index_by { |ex| ex.id.to_s }
     to_exercises_by_id = from_ecosystem.exercises.index_by(&:id)
 
     error_messages = []
@@ -208,17 +208,17 @@ class Content::Models::Map < IndestructibleRecord
         exercise_ids = pool_type_exercise_ids_map[pool_type]
 
         next if exercise_ids.is_a?(Array) &&
-                exercise_ids.all?{ |ex_id| to_exercise_ids_set.include? ex_id }
+                exercise_ids.all? { |ex_id| to_exercise_ids_set.include? ex_id }
 
         title = from_pages_by_id[pg_id].try(:title)
         ex_uids = exercise_ids
-        ex_uids = exercise_ids.map{ |ex_id| to_exercises_by_id[ex_id].try(:uid) } \
+        ex_uids = exercise_ids.map { |ex_id| to_exercises_by_id[ex_id].try(:uid) } \
           if exercise_ids.is_a?(Array)
         error_messages << "#{title.inspect} => { #{pool_type.inspect} => #{ex_uids.inspect} }"
       end
     end
 
-    validity_error_messages << "Mismapped pages: [#{error_messages.join(', ')}]"
+    validity_error_messages << "Mismapped pages/exercises: [#{error_messages.join(', ')}]"
     self.is_valid = false
   end
 end

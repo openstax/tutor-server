@@ -9,8 +9,16 @@ RSpec.describe ChooseExercises, type: :routine do
   let(:count)    { 3 }
   let(:history)  { Hashie::Mash.new(exercise_numbers: [worked_exercises.map(&:number)]) }
 
-  let(:args) { { exercises: exercises, count: count, history: history, allow_repeats: allow_repeats,
-                 randomize_exercises: randomize_exercises, randomize_order: randomize_order } }
+  let(:args) do
+    {
+      exercises: exercises,
+      count: count,
+      worked_exercise_numbers: worked_exercises.map(&:number),
+      allow_repeats: allow_repeats,
+      randomize_exercises: randomize_exercises,
+      randomize_order: randomize_order
+    }
+  end
 
   context 'allow repeats' do
     let(:allow_repeats) { true }

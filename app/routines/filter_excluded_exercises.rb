@@ -30,7 +30,7 @@ class FilterExcludedExercises
       exercise_numbers_by_task_id = Hash.new { |hash, key| hash[key] = [] }
       Content::Models::Exercise
         .joins(tasked_exercises: :task_step)
-        .where(tasked_exercises: { task_step: { tasks_task_id: tasks.map(:&:id) } })
+        .where(tasked_exercises: { task_step: { tasks_task_id: tasks.map(&:id) } })
         .pluck(:tasks_task_id, :number)
         .each do |task_id, number|
         exercise_numbers_by_task_id[task_id] << number

@@ -1,4 +1,4 @@
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, version: :v1 do
   before(:all) do
@@ -50,10 +50,26 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     )
   end
 
-  before { @course.reload }
+  before do
+    @course.reload
 
-  context "#show" do
-    it "should work on the happy path" do
+    @user_1.reload
+    @user_1_role.reload
+    @user_1_token.reload
+
+    @user_2_token.reload
+
+    @task_step.reload
+    @task.reload
+    @tasked_exercise.reload
+
+    @tasked_exercise_with_related.reload
+
+    @teacher_user_token.reload
+  end
+
+  context '#show' do
+    it 'should work on the happy path' do
       api_get :show, @user_1_token, params: { task_id: @task.id, id: @task_step.id }
 
       expect(response).to have_http_status(:success)
@@ -113,35 +129,34 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     end
   end
 
-  context "PATCH update" do
+  context 'PATCH update' do
 
     let(:tasked)        { create_tasked(:tasked_exercise, @user_1_role) }
     let(:id_parameters) { { task_id: tasked.task_step.task.id, id: tasked.task_step.id } }
 
-    it "updates the free response of an exercise" do
+    it 'updates the free response of an exercise' do
       answer_id = tasked.answer_ids.first
 
       api_put :update, @user_1_token, params: id_parameters,
-              body: { free_response: "Ipsum lorem",
-                               answer_id: answer_id.to_s }
+              body: { free_response: 'Ipsum lorem', answer_id: answer_id.to_s }
       expect(response).to have_http_status(:success)
 
       expect(response.body_as_hash).to(
-        include(answer_id: answer_id.to_s, free_response: "Ipsum lorem")
+        include(answer_id: answer_id.to_s, free_response: 'Ipsum lorem')
       )
 
-      expect(tasked.reload.free_response).to eq "Ipsum lorem"
+      expect(tasked.reload.free_response).to eq 'Ipsum lorem'
     end
 
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: @course, user: @user_1) {
         api_put :update, @user_1_token, params: id_parameters,
-                body: { free_response: "Ipsum lorem" }
+                body: { free_response: 'Ipsum lorem' }
       }
     end
 
-    it "updates the selected answer of an exercise" do
-      tasked.free_response = "Ipsum lorem"
+    it 'updates the selected answer of an exercise' do
+      tasked.free_response = 'Ipsum lorem'
       tasked.save!
       answer_id = tasked.answer_ids.first
 
@@ -156,7 +171,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       expect(task_step.last_completed_at).not_to be_nil
     end
 
-    it "does not update the answer if the free response is not set" do
+    it 'does not update the answer if the free response is not set' do
       answer_id = tasked.answer_ids.first
 
       api_put :update, @user_1_token,
@@ -173,7 +188,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
-    it "updates last_completed_at if the step is already completed" do
+    it 'updates last_completed_at if the step is already completed' do
       tasked.free_response = 'Ipsum Lorem'
       tasked.answer_id = tasked.answer_ids.first
       tasked.save!
@@ -205,10 +220,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
         Research::AddCourseToStudy[course: @course, study: study]
       end
 
-      it "can override requiring free-response format" do
-        expect(tasked.parser.question_formats_for_students).to eq ["multiple-choice", "free-response"]
-        FactoryBot.create :research_modified_tasked, study: study,
-                          code: <<~EOC
+      it 'can override requiring free-response format' do
+        expect(tasked.parser.question_formats_for_students).to eq [
+          'multiple-choice', 'free-response'
+        ]
+        FactoryBot.create :research_modified_tasked, study: study, code: <<~EOC
           tasked.parser.questions_for_students.each{|q|
             q['formats'] -= ['free-response']
           } if tasked.exercise? && cohort.name == 'control'
@@ -228,13 +244,13 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
   end
 
-  context "practice task update step" do
+  context 'practice task update step' do
     let(:step) do
       page = @tasked_exercise.exercise.page
 
-      Content::Routines::PopulateExercisePools[book: page.book]
+      FactoryBot.create :content_exercise, page: page
 
-      page.update_attribute :practice_widget_exercise_ids, [@tasked_exercise.content_exercise_id]
+      Content::Routines::PopulateExercisePools[book: page.book]
 
       AddEcosystemToCourse[course: @course, ecosystem: page.ecosystem]
 
@@ -243,10 +259,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       ].task_steps.first
     end
 
-    it "allows updating of a step" do
+    it 'allows updating of a step' do
       api_put :update, @user_1_token, params: { id: step.id },
-              body: { free_response: "Ipsum lorem",
-                               answer_id: step.tasked.answer_ids.first }
+              body: { free_response: 'Ipsum lorem', answer_id: step.tasked.answer_ids.first }
 
       expect(response).to have_http_status(:success)
     end
@@ -254,7 +269,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: @course, user: @user_1) {
         api_put :update, @user_1_token, params: { id: step.id },
-                body: { free_response: "Ipsum lorem" }
+                body: { free_response: 'Ipsum lorem' }
       }
     end
   end
@@ -262,7 +277,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
   # TODO: could replace with FactoryBot calls like in TaskedExercise factory examples
   def create_tasked(type, owner)
     # Make sure the type has the tasks_ prefix
-    type = type.to_s.starts_with?("tasks_") ? type : "tasks_#{type}".to_sym
+    type = type.to_s.starts_with?('tasks_') ? type : "tasks_#{type}".to_sym
     tasked = FactoryBot.create(type)
     tasking = FactoryBot.create(:tasks_tasking, role: owner, task: tasked.task_step.task)
     tasked

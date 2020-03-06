@@ -99,11 +99,13 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     tasks = requests.map { |request| request[:task] }
 
     ActiveRecord::Associations::Preloader.new.preload(
-      tasks, :task_steps, taskings: { role: [ { student: :course }, { teacher_student: :course } ] }
+      tasks, [
+        :task_steps, taskings: { role: [ { student: :course }, { teacher_student: :course } ] }
+      ]
     )
 
-    pool_exercise_ids_by_task_id = {}
-    tasks.group_by(:task_type).each do |task_type, tasks|
+    pool_exercises_by_task_id = {}
+    tasks.group_by(&:task_type).each do |task_type, tasks|
       case task_type
       when 'reading', 'homework'
         pool_method = "#{task_type}_dynamic_exercise_ids".to_sym
@@ -120,13 +122,13 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       exercise_ids_by_page_id = Content::Models::Page.where(
         id: page_ids_by_task_id.values.flatten.uniq
       ).pluck(:id, pool_method).to_h
-      exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number).where(
+      exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
         id: exercise_ids_by_page_id.values.flatten
       ).index_by(&:id)
 
       page_ids_by_task_id.each do |task_id, page_ids|
         exercise_ids = exercise_ids_by_page_id.values_at(*page_ids).flatten
-        pool_exercises_by_task_id[task_id] = exercises_by_id.values_at *exercise_ids
+        pool_exercises_by_task_id[task_id] = exercises_by_id.values_at(*exercise_ids).compact
       end
     end
 
@@ -213,6 +215,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   protected
 
   def calculate_clue(students:, ecosystem:)
+    students = [ students ].flatten
     role_ids = students.map(&:entity_role_id)
     tasked_exercises = Tasks::Models::TaskedExercise.select(:answer_id, :correct_answer_id).joins(
       task_step: { task: :taskings }

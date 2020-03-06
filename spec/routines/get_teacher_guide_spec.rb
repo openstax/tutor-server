@@ -369,7 +369,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
           title: 'Synthesis of Biological Macromolecules',
           book_location: [3, 1],
           student_count: 1,
-          questions_answered_count: 2,
+          questions_answered_count: 1,
           clue: clue_matcher,
           page_ids: [kind_of(Integer)]
         },
@@ -515,7 +515,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
           title: 'Synthesis of Biological Macromolecules',
           book_location: [3, 1],
           student_count: 1,
-          questions_answered_count: 5,
+          questions_answered_count: 4,
           clue: clue_matcher,
           page_ids: [kind_of(Integer)]
         },

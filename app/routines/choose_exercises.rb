@@ -4,12 +4,12 @@ class ChooseExercises
   def exec(
     exercises:,
     count:,
-    worker_exercise_numbers: [],
+    worked_exercise_numbers: [],
     allow_repeats: true,
     randomize_exercises: true,
     randomize_order: true
   )
-    worked_exercise_numbers_set = Set.new worker_exercise_numbers
+    worked_exercise_numbers_set = Set.new worked_exercise_numbers
 
     exercises = exercises.uniq
     exercises = exercises.shuffle if randomize_exercises

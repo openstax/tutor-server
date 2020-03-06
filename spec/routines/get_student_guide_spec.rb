@@ -300,7 +300,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               title: 'Synthesis of Biological Macromolecules',
               book_location: [3, 1],
               student_count: 1,
-              questions_answered_count: 2,
+              questions_answered_count: 1,
               clue: clue_matcher,
               page_ids: [kind_of(Integer)],
               first_worked_at: kind_of(String),
