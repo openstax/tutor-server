@@ -15,10 +15,10 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
     end
   end
 
-  # Workaround for PostgreSQL bug where the task records
-  # stop existing in SELECT ... FOR UPDATE queries (but not in regular SELECTs)
-  # after the transaction rollback that happens in-between spec examples
-  before(:each)       { @task_plan.tasks.each(&:touch).each(&:reload) }
+  before              do
+    @task_plan.reload
+    @period.reload
+  end
 
   let(:student_tasks) do
     @task_plan.tasks.joins(taskings: { role: :student }).preload(taskings: { role: :profile }).to_a

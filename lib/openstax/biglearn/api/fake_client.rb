@@ -1,4 +1,10 @@
 class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
+  NON_RANDOM_K_AGOS = [ 1, 3, 5 ]
+
+  DEFAULT_NUM_SPES_PER_K_AGO = 1
+
+  MIN_HISTORY_SIZE_FOR_RANDOM_AGO = 5
+
   CLUE_MIN_NUM_RESPONSES = 3 # Must be 2 or more to prevent division by 0
   CLUE_Z_ALPHA = 0.68
   CLUE_Z_ALPHA_SQUARED = CLUE_Z_ALPHA**2
@@ -137,7 +143,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     current_time = Time.current
     requests.map do |request|
       task = request[:task]
-      count = request.fetch(:max_num_exercises) { task.practice? ? 5 : 3 }
+      count = request.fetch(:max_num_exercises) { task.goal_num_pes }
       request_uuid = request[:request_uuid]
 
       exercises = filter_and_choose_exercises(
@@ -163,12 +169,11 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     tasks = requests.map { |request| request[:task] }
 
     ActiveRecord::Associations::Preloader.new.preload(
-      tasks, [
-        :task_steps, taskings: { role: [ { student: :course }, { teacher_student: :course } ] }
-      ]
+      tasks, [ taskings: { role: [ { student: :course }, { teacher_student: :course } ] } ]
     )
 
-    pool_exercises_by_task_id = {}
+    current_time = Time.current
+    spaced_exercises_by_task_id = {}
     tasks.group_by(&:task_type).each do |task_type, tasks|
       case task_type
       when 'reading', 'homework'
@@ -180,39 +185,61 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         next
       end
 
-      page_ids_by_task_id = tasks.map do |task|
-        [ task.id, task.task_steps.map(&:content_page_id).uniq ]
-      end.to_h
-      exercise_ids_by_page_id = Content::Models::Page.where(
-        id: page_ids_by_task_id.values.flatten.uniq
-      ).pluck(:id, pool_method).to_h
-      exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
-        id: exercise_ids_by_page_id.values.flatten
-      ).index_by(&:id)
+      tasks.each do |task|
+        student_history = (
+          [ task ] + Tasks::Models::Task.select(:id).joins(:taskings).where(
+            taskings: { entity_role_id: task.taskings.map(&:entity_role_id) },
+            task_type: task.task_type
+          ).order(student_history_at: :desc).first(6)
+        ).uniq
 
-      page_ids_by_task_id.each do |task_id, page_ids|
-        exercise_ids = exercise_ids_by_page_id.values_at(*page_ids).flatten
-        pool_exercises_by_task_id[task_id] = exercises_by_id.values_at(*exercise_ids).compact
+        spaced_page_ids_num_exercises = get_k_ago_map(
+          task: task, include_random_ago: student_history.size > MIN_HISTORY_SIZE_FOR_RANDOM_AGO
+        ).map { |k_ago, num_exercises| [ student_history[k_ago]&.page_ids || [], num_exercises ] }
+
+        exercise_ids_by_page_id = Content::Models::Page.where(
+          id: (task.page_ids + spaced_page_ids_num_exercises.map(&:first).flatten).uniq
+        ).pluck(:id, pool_method).to_h
+        exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
+          id: exercise_ids_by_page_id.values.flatten
+        ).index_by(&:id)
+
+        spaced_exercises_by_task_id[task.id] =
+          spaced_page_ids_num_exercises.flat_map do |page_ids, num_exercises|
+          exercise_ids = exercise_ids_by_page_id.values_at(*page_ids).compact.flatten
+
+          spaced_exercises = filter_and_choose_exercises(
+            exercises: exercises_by_id.values_at(*exercise_ids),
+            task: task,
+            count: num_exercises,
+            current_time: current_time
+          )
+
+          remainder = num_exercises - spaced_exercises.size
+          next spaced_exercises unless remainder > 0
+
+          # Use personalized exercises if not enough spaced practice exercises available
+          exercise_ids = exercise_ids_by_page_id.values_at(*task.page_ids).compact.flatten
+
+          spaced_exercises + filter_and_choose_exercises(
+            exercises: exercises_by_id.values_at(*exercise_ids),
+            task: task,
+            count: remainder,
+            current_time: current_time
+          )
+        end
       end
     end
 
-    current_time = Time.current
     requests.map do |request|
       task = request[:task]
-      count = request.fetch(:max_num_exercises) { task.practice? ? 5 : 3 }
+      count = request.fetch(:max_num_exercises) { task.goal_num_spes }
       request_uuid = request[:request_uuid]
-
-      exercises = filter_and_choose_exercises(
-        exercises: pool_exercises_by_task_id[task.id],
-        task: task,
-        count: count,
-        current_time: current_time
-      )
 
       {
         request_uuid: request_uuid,
         assignment_uuid: task.uuid,
-        exercise_uuids: exercises.map(&:uuid),
+        exercise_uuids: spaced_exercises_by_task_id[task.id].first(count).map(&:uuid),
         assignment_status: 'assignment_ready',
         spy_info: {}
       }
@@ -361,6 +388,40 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     end
 
     []
+  end
+
+  def get_k_ago_map(task:, include_random_ago: false)
+    # Entries in the list have the form: [from-this-many-tasks-ago, pick-this-many-exercises]
+    num_spes = task.goal_num_spes
+
+    case num_spes
+    when Integer
+      # Tutor decides
+      return [] if num_spes == 0
+
+      # Subtract 1 for random-ago/personalized
+      num_spes -= 1
+      num_spes_per_k_ago, remainder = num_spes.divmod NON_RANDOM_K_AGOS.size
+
+      [].tap do |k_ago_map|
+        NON_RANDOM_K_AGOS.each_with_index do |k_ago, index|
+          num_k_ago_spes = index < remainder ? num_spes_per_k_ago + 1 : num_spes_per_k_ago
+
+          k_ago_map << [k_ago, num_k_ago_spes] if num_k_ago_spes > 0
+        end
+
+        k_ago_map << [(include_random_ago ? nil : 0), 1]
+      end
+    when NilClass
+      # Biglearn decides
+      NON_RANDOM_K_AGOS.map do |k_ago|
+        [k_ago, DEFAULT_NUM_SPES_PER_K_AGO]
+      end.compact.tap do |k_ago_map|
+        k_ago_map << [(include_random_ago ? nil : 0), 1]
+      end
+    else
+      raise ArgumentError, "Invalid assignment num_spes: #{num_spes.inspect}", caller
+    end
   end
 
   def calculate_clue(responses:, ecosystem: nil)
