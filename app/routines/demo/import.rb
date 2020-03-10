@@ -55,6 +55,7 @@ class Demo::Import < Demo::Base
     ).merge(
       is_tutor: true,
       is_concept_coach: false,
+      is_preview_available: true,
       is_available: true,
       ecosystem: ecosystem_model
     )

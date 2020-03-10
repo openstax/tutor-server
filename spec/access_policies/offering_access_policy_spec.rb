@@ -80,7 +80,7 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
     end
 
     context 'available offering' do
-      [:read, :create_course].each do |test_action|
+      [ :read, :create_preview, :create_course ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -89,17 +89,24 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
       end
     end
 
-    context 'unavailable offering' do
-      before{ offering.update_attribute :is_available, false }
+    context 'unavailable preview' do
+      before { offering.update_attribute :is_preview_available, false }
 
-      [:create_course].each do |test_action|
-        context test_action.to_s do
-          let(:action) { test_action }
+      context 'create_preview' do
+        let(:action) { :create_preview }
 
-          it { should eq false }
-        end
+        it { should eq false }
       end
     end
 
+    context 'unavailable offering' do
+      before { offering.update_attribute :is_available, false }
+
+      context 'create_course' do
+        let(:action) { :create_course }
+
+        it { should eq false }
+      end
+    end
   end
 end

@@ -39,7 +39,13 @@
     <b>Ecosystem:</b> <%= offering.ecosystem ? offering.ecosystem.title : 'not set' %>
   </div>
   <div>
-    <b>Available for teachers to select:</b> <%= tf_to_yn(offering.is_available) %>
+    <b>Available for preview courses:</b> <%= tf_to_yn(offering.is_preview_available) %>
+  </div>
+  <div>
+    <b>Available for real courses:</b> <%= tf_to_yn(offering.is_available) %>
+  </div>
+  <div>
+    <b>Message displayed when a preview course is created:</b> <%= offering.preview_message %>
   </div>
   <div>
     <b>Costs students:</b> <%= tf_to_yn(offering.does_cost) %>

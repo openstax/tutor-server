@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, version: :v1 do
-
   let!(:available_offering_1) { FactoryBot.create :catalog_offering, number: 2 }
   let!(:available_offering_2) { FactoryBot.create :catalog_offering, number: 1 }
+  let!(:unavailable_preview)  { FactoryBot.create :catalog_offering, is_preview_available: false }
   let!(:unavailable_offering) { FactoryBot.create :catalog_offering, is_available: false }
 
   let(:anon)                  { User::Models::Profile.anonymous }
@@ -31,9 +31,9 @@ RSpec.describe Api::V1::OfferingsController, type: :controller, api: true, versi
       expect(items).to eq [
         Api::V1::OfferingRepresenter.new(available_offering_2).as_json,
         Api::V1::OfferingRepresenter.new(available_offering_1).as_json,
-        Api::V1::OfferingRepresenter.new(unavailable_offering).as_json,
+        Api::V1::OfferingRepresenter.new(unavailable_preview).as_json,
+        Api::V1::OfferingRepresenter.new(unavailable_offering).as_json
       ]
     end
   end
-
 end

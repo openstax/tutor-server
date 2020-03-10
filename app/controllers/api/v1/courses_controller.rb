@@ -40,7 +40,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     attributes = consumed(Api::V1::CourseRepresenter)
 
-    errors = CREATE_REQUIRED_ATTRIBUTES.reject{ |sym| attributes.has_key?(sym) }.map do |sym|
+    errors = CREATE_REQUIRED_ATTRIBUTES.reject { |sym| attributes.has_key?(sym) }.map do |sym|
       { code: :missing_attribute, message: "The #{sym} attribute must be provided" }
     end
     return render_api_errors(errors) unless errors.empty?
@@ -49,12 +49,12 @@ class Api::V1::CoursesController < Api::V1::ApiController
       if attributes[:term].present? && !TermYear::VISIBLE_TERMS.include?(attributes[:term].to_sym)
 
     catalog_offering = Catalog::Models::Offering.find(attributes[:catalog_offering_id])
-    OSU::AccessPolicy.require_action_allowed!(:create_course, current_api_user, catalog_offering)
+    offering_action = attributes[:is_preview] ? :create_preview : :create_course
+    OSU::AccessPolicy.require_action_allowed! offering_action, current_api_user, catalog_offering
 
     result = CreateOrClaimCourse.call(
       attributes.except(:catalog_offering_id).merge(
-        teacher: current_human_user,
-        catalog_offering: catalog_offering
+        teacher: current_human_user, catalog_offering: catalog_offering
       )
     )
 

@@ -16,8 +16,7 @@ class CourseAccessPolicy
     when :create
       requestor.account.confirmed_faculty? && requestor.account.college?
     when :clone
-      UserIsCourseTeacher[user: requestor, course: course] &&
-        course.offering.try!(:is_available)
+      UserIsCourseTeacher[user: requestor, course: course] && course.offering&.is_available
     when :lms_connection_info, :lms_sync_scores, :lms_course_pair
       UserIsCourseTeacher[user: requestor, course: course]
     else

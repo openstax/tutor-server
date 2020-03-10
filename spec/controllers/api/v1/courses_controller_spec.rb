@@ -4,7 +4,6 @@ require 'database_cleaner'
 
 RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                            version: :v1, vcr: VCR_OPTS do
-
   before(:all) do
     @user_1 = FactoryBot.create :user_profile
     @user_1_token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: @user_1.id
@@ -22,7 +21,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                 offering: @offering, name: 'Physics 101', is_college: true
     @period = FactoryBot.create :course_membership_period, course: @course
 
-    @zeroth_period = FactoryBot.create(:course_membership_period, course: @course, name: '0th')
+    @zeroth_period = FactoryBot.create :course_membership_period, course: @course, name: '0th'
     @zeroth_period.destroy!
   end
 
@@ -186,7 +185,12 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       end
 
       context 'is_preview: true' do
-        before { valid_body_hash[:is_preview] = true }
+        before do
+          valid_body_hash[:is_preview] = true
+          expect(OfferingAccessPolicy).to(
+            receive(:action_allowed?).with(:create_preview, @user_1, @offering).and_call_original
+          )
+        end
 
         it 'claims a preview course for the faculty if all required attributes are given' do
           valid_body_hash.delete(:term)
@@ -230,6 +234,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       context 'is_preview: false' do
         it 'creates a new course for the faculty if all required attributes are given' do
+          expect(OfferingAccessPolicy).to(
+            receive(:action_allowed?).with(:create_course, @user_1, @offering).and_call_original
+          )
+
           expect do
             api_post :create, @user_1_token, body: valid_body
           end.to change { CourseProfile::Models::Course.count }.by(1)
@@ -240,6 +248,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         end
 
         it 'makes the requesting faculty a teacher in the new course' do
+          expect(OfferingAccessPolicy).to(
+            receive(:action_allowed?).with(:create_course, @user_1, @offering).and_call_original
+          )
+
           expect do
             api_post :create, @user_1_token, body: valid_body
           end.to change { CourseMembership::Models::Teacher.count }.by(1)
@@ -250,6 +262,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         end
 
         it 'requires the term and year attributes' do
+          expect(OfferingAccessPolicy).to(
+            receive(:action_allowed?).with(:create_course, @user_1, @offering).and_call_original
+          )
+
           body_hash = valid_body_hash.except(:term, :year)
           expect do
             api_post :create, @user_1_token, body: body_hash.to_json
@@ -1076,5 +1092,4 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       expect(response.body_as_hash.size).to eq courses.size
     end
   end
-
 end
