@@ -102,7 +102,7 @@ class SetupPerformanceReportData
       content_ecosystem_id: ecosystem.id,
       settings: {
         exercises: exercises.first(5).map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
         end,
         exercises_count_dynamic: 2
       },
@@ -131,7 +131,7 @@ class SetupPerformanceReportData
       content_ecosystem_id: ecosystem.id,
       settings: {
         exercises: exercises.last(2).map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
         end,
         exercises_count_dynamic: 2
       },
@@ -160,7 +160,7 @@ class SetupPerformanceReportData
       content_ecosystem_id: ecosystem.id,
       settings: {
         exercises: exercises.first(5).map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.to_model.num_questions }
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
         end,
         exercises_count_dynamic: 2
       },

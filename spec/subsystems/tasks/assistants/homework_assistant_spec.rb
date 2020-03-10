@@ -13,9 +13,9 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
 
       generate_homework_test_exercise_content
 
-      core_exercise_ids = @pages.flat_map(&:homework_core_exercise_ids).sort
+      core_exercise_ids = @pages.flat_map(&:homework_core_exercise_ids)[1..5]
 
-      @teacher_selected_exercises = core_exercises[1..5]
+      @teacher_selected_exercises = Content::Models::Exercise.where(id: core_exercise_ids)
 
       @exercises_count_dynamic = 4
 
@@ -88,19 +88,19 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
 
     it "assigns the correct number of exercises" do
       @tasks.each do |task|
-        expect(task.task_steps.count).to eq(@assignment_exercise_count)
+        expect(task.task_steps.size).to eq(@assignment_exercise_count)
       end
     end
 
     it "assigns the teacher-selected exercises as the task's core exercises" do
       @tasks.each do |task|
         core_task_steps = task.core_task_steps
-        expect(core_task_steps.count).to eq(@teacher_selected_exercise_ids.count)
+        expect(core_task_steps.size).to eq(@teacher_selected_exercises.size)
 
         core_task_steps.each_with_index do |task_step, ii|
           tasked_exercise = task_step.tasked
 
-          exercise = Content::Models::Exercise.find @teacher_selected_exercise_ids[ii]
+          exercise = @teacher_selected_exercises[ii]
 
           expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
           expect(tasked_exercise.url).to eq(exercise.url)

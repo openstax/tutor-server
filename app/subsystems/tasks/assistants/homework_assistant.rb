@@ -53,7 +53,7 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
 
     @exercise_hashes = task_plan.settings['exercises']
 
-    exercise_ids = @exercise_hashes.map { |ex| ex['id'] }
+    exercise_ids = @exercise_hashes.map { |ex| ex['id'].to_i }
     exercises_by_id = ecosystem.exercises.where(id: exercise_ids).index_by(&:id)
     @exercises = exercises_by_id.values_at(*exercise_ids).compact
 

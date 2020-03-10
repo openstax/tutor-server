@@ -442,9 +442,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
       it 'updates the time_zone' do
         time_zone = @course.time_zone.to_tz
-        opens_at = time_zone.now - 2.months
-        due_at = time_zone.now + 2.months
-        closes_at = time_zone.now + 3.months
+        opens_at = time_zone.now - 1.months
+        due_at = time_zone.now + 1.months
+        closes_at = time_zone.now + 2.months
 
         # User time-zone-less strings to update the open/due dates
         opens_at_str = opens_at.strftime "%Y-%m-%d %H:%M:%S"

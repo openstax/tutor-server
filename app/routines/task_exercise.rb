@@ -26,7 +26,7 @@ class TaskExercise
     labels = current_step.labels
     spy = current_step.spy
 
-    questions = exercise_model.questions
+    questions = exercise.questions
     is_in_multipart = questions.size > 1
     outputs.task_steps = questions.each_with_index.map do |question, ii|
       # Make sure that all steps after the first exercise part get their own new step

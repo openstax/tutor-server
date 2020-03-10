@@ -94,7 +94,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     ).to_a
   end
 
-  def get_ecosystem_from_settings
+  def get_ecosystems_from_settings
     if settings['exercises'].present?
       get_ecosystems_from_exercise_ids
     elsif settings['page_ids'].present?
