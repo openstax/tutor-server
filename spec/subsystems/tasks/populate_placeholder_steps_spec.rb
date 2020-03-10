@@ -34,7 +34,7 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
 
     it 'does not send the task to Biglearn again' do
       expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(accepted: false)
-      expect_any_instance_of(Tasks::Models::Task).not_to receive(:update_step_counts)
+      expect_any_instance_of(Tasks::Models::Task).not_to receive(:update_cached_attributes)
       expect(OpenStax::Biglearn::Api).not_to receive(:create_update_assignments)
 
       expect { subject }.to  not_change { @task.reload.pes_are_assigned }

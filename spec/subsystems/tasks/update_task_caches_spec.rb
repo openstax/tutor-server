@@ -324,7 +324,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       it 'is called when a task step is updated' do
         task = @task_plan.tasks.first
         expect(configured_job).to receive(:perform_later).with(
-          task_ids: task.id, update_step_counts: true, queue: queue.to_s
+          task_ids: task.id, update_cached_attributes: true, queue: queue.to_s
         )
 
         tasked_exercise = task.tasked_exercises.first
@@ -335,7 +335,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       it 'is called when a task step is marked as completed' do
         task = @task_plan.tasks.first
         expect(configured_job).to receive(:perform_later).with(
-          task_ids: task.id, update_step_counts: true, queue: queue.to_s
+          task_ids: task.id, update_cached_attributes: true, queue: queue.to_s
         )
 
         task_step = task.task_steps.first
@@ -345,7 +345,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       it 'is called when placeholder steps are populated' do
         task = @task_plan.tasks.first
         expect(configured_job).to receive(:perform_later).once.with(
-          task_ids: task.id, update_step_counts: false, queue: queue.to_s
+          task_ids: task.id, update_cached_attributes: false, queue: queue.to_s
         )
 
         Tasks::PopulatePlaceholderSteps.call(task: task)
@@ -495,7 +495,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       it 'is called when a task step is updated' do
         task = @task_plan.tasks.first
         expect(configured_job).to receive(:perform_later).with(
-          task_ids: task.id, update_step_counts: true, queue: queue.to_s
+          task_ids: task.id, update_cached_attributes: true, queue: queue.to_s
         )
 
         tasked_exercise = task.tasked_exercises.first
@@ -507,7 +507,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         task = @task_plan.tasks.first
         expect(configured_job).to(
           receive(:perform_later).with(
-            task_ids: task.id, update_step_counts: true, queue: queue.to_s
+            task_ids: task.id, update_cached_attributes: true, queue: queue.to_s
           )
         )
 
@@ -519,7 +519,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         task = @task_plan.tasks.first
         expect(configured_job).to(
           receive(:perform_later).once.with(
-            task_ids: task.id, update_step_counts: false, queue: queue.to_s
+            task_ids: task.id, update_cached_attributes: false, queue: queue.to_s
           )
         )
 

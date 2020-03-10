@@ -860,7 +860,7 @@ ActiveRecord::Schema.define(version: 2020_03_03_163234) do
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "question_index", null: false
     t.jsonb "response_validation"
-    t.index "(COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0))", name: "tasked_exercise_nudges_index"
+    t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"
     t.index ["updated_at"], name: "index_tasks_tasked_exercises_on_updated_at"

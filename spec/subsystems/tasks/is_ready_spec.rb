@@ -14,7 +14,7 @@ RSpec.describe Tasks::IsReady, type: :routine do
       :tasks_tasked_placeholder, placeholder_type: :exercise_type
     ).task_step.tap do |ts|
       ts.update_attribute :group_type, :spaced_practice_group
-    end.task.tap { |task| task.update_step_counts.save! }
+    end.task.tap { |task| task.update_cached_attributes.save! }
     @biglearn_task_1 = FactoryBot.create(
       :tasks_tasked_placeholder, placeholder_type: :exercise_type
     ).task_step.tap do |ts|
