@@ -5,8 +5,8 @@ module Api::V1
 
         include Roar::JSON
 
-        collection :student_names,
-                   type: String,
+        collection :students,
+                   type: Object,
                    writeable: false,
                    readable: true
 

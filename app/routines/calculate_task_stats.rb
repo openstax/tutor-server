@@ -178,7 +178,7 @@ class CalculateTaskStats
       trouble: trouble
     }.tap do |stats|
       if details
-        exs = pgs.flat_map { |pg| pg[:exercises].map { |ex| ex.merge pg.slice(:student_names) } }
+        exs = pgs.flat_map { |pg| pg[:exercises].map { |ex| ex.merge pg.slice(:student_names, :student_ids) } }
 
         stats[:exercises] = exs.group_by { |ex| ex[:id] }.map do |exercise_id, exs|
           content = content_by_exercise_id[exercise_id]
@@ -196,7 +196,7 @@ class CalculateTaskStats
               end
               answers = completed_exs.map do |ex|
                 {
-                  student_names: ex[:student_names],
+                  students: ex[:student_names].each_with_index.map{|name, i| { id: ex[:student_ids][i], name: name } },
                   free_response: ex[:free_response],
                   answer_id: ex[:selected_answer_id]
                 }

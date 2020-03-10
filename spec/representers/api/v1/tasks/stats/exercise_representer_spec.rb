@@ -6,7 +6,7 @@ RSpec.describe Api::V1::Tasks::Stats::ExerciseRepresenter, type: :representer do
                            question_stats: [{
                              answered_count: 1,
                              answers: [{
-                               student_names: ['Jim', 'Jack'],
+                               students: [{ id: 1, name: 'Jim' },{ id: 2, name: 'Jack' }],
                                free_response: 'Hello',
                                answer_id: 1
                              }],
@@ -26,7 +26,7 @@ RSpec.describe Api::V1::Tasks::Stats::ExerciseRepresenter, type: :representer do
       'content' => exercise_stats[:content_hash],
       'question_stats' => [{
         'answered_count' => 1,
-        'answers' => [{ 'student_names' => ['Jim', 'Jack'],
+        'answers' => [{ 'students' => [{ 'id' => 1, 'name' => 'Jim' }, { 'id' => 2, 'name' => 'Jack' }],
                         'free_response' => 'Hello',
                         'answer_id' => 1 }],
         'answer_stats' => [{ 'answer_id' => 'abc', 'selected_count' => 7 }]

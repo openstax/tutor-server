@@ -301,10 +301,11 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
           expect(question_id).to be_kind_of(String)
           expect(question_stats.answered_count).to be <= 3
           expect(question_stats.answers.length).to eq question_stats.answered_count
-          student_names = question_stats.answers.flat_map(&:student_names)
+          students = question_stats.answers.flat_map(&:students)
+          student_names = students.map{|s| s[:name] }
           expect(student_names).to match_array student_names_map[question_id]
           question_stats.answers.group_by do |student_answer|
-            student_answer.student_names.sort.join('; ')
+            student_answer.students.map{|s| s[:name]}.sort.join('; ')
           end.each do |student_names, student_answers|
             expect(student_answers.map(&:free_response)).to(
               match_array free_responses_map[question_id][student_names]

@@ -867,7 +867,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         expect(task.score).to eq 0.0
 
         Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
-        expect(task.score).to eq 0.1
+        expect(task.score).to eq 0.225
 
         Preview::AnswerExercise[task_step: task.task_steps.second, is_correct: true]
         expect(task.score).to eq 0.3

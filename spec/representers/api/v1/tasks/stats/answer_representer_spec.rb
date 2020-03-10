@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::Tasks::Stats::AnswerRepresenter, type: :representer do
-  let(:answer) { { student_names: ['Jim', 'Jack'],
+  let(:answer) { { students: [{ id: 1, name: 'Jim' },{ id: 2, name: 'Jack' }],
                    free_response: 'Hello',
                    answer_id: 1 } }
 
@@ -11,7 +11,7 @@ RSpec.describe Api::V1::Tasks::Stats::AnswerRepresenter, type: :representer do
 
   it 'represents answers' do
     expect(represented).to eq({
-      'student_names' => ['Jim', 'Jack'],
+    'students' => [{ 'id' => 1, 'name' => 'Jim' }, { 'id' => 2, 'name' => 'Jack' }],
       'free_response' => 'Hello',
       'answer_id' => 1
     })

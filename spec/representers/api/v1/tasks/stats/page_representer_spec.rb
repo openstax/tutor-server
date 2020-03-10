@@ -14,7 +14,7 @@ RSpec.describe Api::V1::Tasks::Stats::PageRepresenter, type: :representer do
           question_id: 'id42',
           answered_count: 1,
           answers: [{
-            student_names: ['Jim', 'Jack'],
+            students: [{ id: 1, name: 'Jim' },{ id: 2, name: 'Jack' }],
             free_response: 'Hello',
             answer_id: 1
           }] # skipped answer_stats, taken care of in exercise representer spec
@@ -33,7 +33,7 @@ RSpec.describe Api::V1::Tasks::Stats::PageRepresenter, type: :representer do
             question_id: 'id38',
             answered_count: 1,
             answers: [{
-              student_names: ['Jim', 'Jack'],
+              students: [{ id: 1, name: 'Jim' },{ id: 2, name: 'Jack' }],
               free_response: 'Hello',
               answer_id: 1
             }]
@@ -60,7 +60,7 @@ RSpec.describe Api::V1::Tasks::Stats::PageRepresenter, type: :representer do
         'question_stats' => [{
           'question_id' => 'id42',
           'answered_count' => 1,
-          'answers' => [{ 'student_names' => ['Jim', 'Jack'],
+          'answers' => [{ 'students' => [{ 'id' => 1, 'name' => 'Jim' }, { 'id' => 2, 'name' => 'Jack' }],
                           'free_response' => 'Hello',
                           'answer_id' => 1 }]
         }],
@@ -78,7 +78,7 @@ RSpec.describe Api::V1::Tasks::Stats::PageRepresenter, type: :representer do
           'question_stats' => [{
             'question_id' => 'id38',
             'answered_count' => 1,
-            'answers' => [{ 'student_names' => ['Jim', 'Jack'],
+            'answers' => [{ 'students' => [{ 'id' => 1, 'name' => 'Jim' }, { 'id' => 2, 'name' => 'Jack' }],
                             'free_response' => 'Hello',
                             'answer_id' => 1 }]
            }]
