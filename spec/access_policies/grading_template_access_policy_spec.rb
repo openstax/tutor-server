@@ -21,7 +21,7 @@ RSpec.describe GradingTemplateAccessPolicy, type: :access_policy, speed: :medium
   end
 
   context 'any user' do
-    let(:requestor) { FactoryBot.create :user }
+    let(:requestor) { FactoryBot.create :user_profile }
 
     [ :index, :create ].each do |action|
       context "##{action}" do
@@ -45,7 +45,7 @@ RSpec.describe GradingTemplateAccessPolicy, type: :access_policy, speed: :medium
   end
 
   context 'teacher user' do
-    let(:requestor) { FactoryBot.create :user }
+    let(:requestor) { FactoryBot.create :user_profile }
 
     before { AddUserAsCourseTeacher[user: requestor, course: course] }
 

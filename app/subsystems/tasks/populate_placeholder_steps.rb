@@ -138,7 +138,7 @@ class Tasks::PopulatePlaceholderSteps
         # Iterate through all the exercises and steps
         # Add/remove steps as needed
         [exercises.size, placeholder_steps.size].max.times do |index|
-          exercise = exercises[index]&.to_model
+          exercise = exercises[index]
           task_step = placeholder_steps[index]
 
           if exercise.nil? || exercise.num_questions == 0

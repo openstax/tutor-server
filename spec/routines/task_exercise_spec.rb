@@ -31,7 +31,7 @@ RSpec.describe TaskExercise, type: :routine do
 
     TaskExercise[exercise: multipart_exercise, task_step: task_step, task: task]
 
-    question_ids = multipart_exercise.to_model.questions.map(&:id)
+    question_ids = multipart_exercise.questions.map(&:id)
 
     expect(task.task_steps.length).to eq 2
 
@@ -63,7 +63,7 @@ RSpec.describe TaskExercise, type: :routine do
 
     TaskExercise[exercise: multipart_exercise, task_step: placeholder_step, task: task]
 
-    question_ids = multipart_exercise.to_model.questions.map(&:id)
+    question_ids = multipart_exercise.questions.map(&:id)
 
     expect(task.task_steps.length).to eq 4
     expect(task.task_steps[0]).to eq reading_step
