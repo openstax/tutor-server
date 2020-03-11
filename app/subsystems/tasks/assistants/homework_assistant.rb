@@ -14,7 +14,9 @@ class Tasks::Assistants::HomeworkAssistant < Tasks::Assistants::GenericAssistant
               "points": {
                 "type": "array",
                 "items": {
-                  "type": "integer"
+                  "type": "number",
+                  "multipleOf" : 0.1,
+                  "minimum": 0
                 },
                 "minItems": 1
               }
