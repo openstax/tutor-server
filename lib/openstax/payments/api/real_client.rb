@@ -1,11 +1,11 @@
 class OpenStax::Payments::Api::RealClient
-
   HEADER_OPTIONS = { headers: { 'Content-Type' => 'application/json' } }.freeze
 
   def initialize(configuration)
-    @server_url   = configuration.server_url
-    @client_id    = configuration.client_id
-    @secret       = configuration.secret
+    @server_url = configuration.server_url
+    @client_id  = configuration.client_id
+    @secret     = configuration.secret
+    @mutex      = Mutex.new
   end
 
   def name
@@ -30,7 +30,7 @@ class OpenStax::Payments::Api::RealClient
 
   if !Rails.env.production?
     def make_fake_purchase(product_instance_uuid: nil, purchaser_account_uuid: nil)
-      api_request(method: :post, url: "/pay/mock_purchase/", body: {
+      api_request(method: :post, url: '/pay/mock_purchase/', body: {
         product_instance_uuid: product_instance_uuid,
         purchaser_account_uuid: purchaser_account_uuid
       }.select { |k,v| !v.nil? })
@@ -40,23 +40,29 @@ class OpenStax::Payments::Api::RealClient
   protected
 
   def oauth_worker
-    # Lazily instantiate the oauth "worker" aka client/token primarily to ensure that
-    # initialization does not occur before test code initialized (so that all
-    # interactions are recorded inside VCR cassettes)
+    return @oauth_worker unless @oauth_worker.nil?
 
-    if @oauth_worker.nil?
-      initialize_oauth_variables!
-    end
+    # Lazily instantiate the oauth "worker" aka client/token primarily
+    # to ensure that Tutor can still boot even if Payments is offline
+
+    initialize_oauth_variables!
+
     @oauth_worker
   end
 
-  def initialize_oauth_variables!
-    @oauth_client = OAuth2::Client.new @client_id, @secret,
-                                       site: @server_url, token_url: '/o/token/'
+  def initialize_oauth_variables!(force: false)
+    @mutex.synchronize do
+      return unless force || @oauth_worker.nil?
 
-    @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
+      oauth_client = OAuth2::Client.new(
+        @client_id, @secret, site: @server_url, token_url: '/o/token/'
+      )
 
-    @oauth_worker = @oauth_token || @oauth_client
+      # Don't record access token requests in cassettes
+      oauth_token = oauth_client.client_credentials.get_token unless @client_id.nil?
+
+      @oauth_worker = oauth_token || oauth_client
+    end
   end
 
   def absolutize_url(url)
@@ -82,9 +88,9 @@ class OpenStax::Payments::Api::RealClient
         # a new token even if not expired.
 
         if num_tries >= 1
-          Rails.logger.info("OX Payments: client token expired") if token_expired?
-          Rails.logger.info("OX Payments: getting a new token to try to resolve a 403")
-          initialize_oauth_variables! # resets token
+          Rails.logger.info('OX Payments: client token expired') if token_expired?
+          Rails.logger.info('OX Payments: getting a new token to try to resolve a 403')
+          initialize_oauth_variables! force: true # resets token
           retry
         else
           Rails.logger.info("OX Payments: getting a new token didn't resolve the 403")
@@ -102,5 +108,4 @@ class OpenStax::Payments::Api::RealClient
     return false if expires_at.nil?
     Time.now >= Time.at(expires_at)
   end
-
 end

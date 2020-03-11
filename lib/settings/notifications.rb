@@ -1,6 +1,5 @@
 module Settings
   module Notifications
-
     KEY_BASE = 'notifications'
 
     VALID_TYPES = ['general', 'instructor']
@@ -71,6 +70,5 @@ module Settings
         "#{KEY_BASE}/#{type}"
       end
     end
-
   end
 end

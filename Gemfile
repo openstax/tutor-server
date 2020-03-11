@@ -40,13 +40,13 @@ gem 'jquery-ui-rails'
 gem 'turbolinks'
 
 # PostgreSQL database
-gem 'pg', '~> 1.1.4'
+gem 'pg'
 
-# Run unicorn when using the `rails server` or `rails s` command
-gem 'unicorn-rails'
+# Use the puma webserver
+gem 'puma'
 
 # Prevent server memory from growing until OOM
-gem 'unicorn-worker-killer'
+gem 'puma_worker_killer'
 
 # Rails 5 HTML sanitizer
 gem 'rails-html-sanitizer', '~> 1.0'
@@ -159,9 +159,6 @@ gem 'openstax_rescue_from'
 # Sentry integration (the require disables automatic Rails integration since we use rescue_from)
 gem 'sentry-raven', require: 'raven/base'
 
-# Generate memorable codes
-gem 'babbler', '~> 1.0.1'
-
 # Soft-deletion
 gem 'paranoia', '~> 2.4.1'
 
@@ -203,7 +200,7 @@ gem 'boxr'
 # OAuth gem for generating and validating lti requests
 gem 'oauth', '~> 0.5.1'
 
-gem 'scout_apm', '~> 3.0.0.pre28'
+gem 'scout_apm'
 
 # Respond to ELB healthchecks in /ping and /ping/
 gem 'openstax_healthcheck'

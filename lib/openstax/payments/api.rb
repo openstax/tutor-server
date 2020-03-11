@@ -1,15 +1,13 @@
 require_relative './api/configuration'
-require_relative './api/exceptions'
+require_relative './api/remote_error'
 require_relative './api/fake_client'
 require_relative './api/real_client'
 
 module OpenStax::Payments::Api
-
   extend Configurable
   extend Configurable::ClientMethods
 
   class << self
-
     #
     # API Wrappers
     #
@@ -24,14 +22,6 @@ module OpenStax::Payments::Api
 
     def orders_for_account(account)
       client.orders_for_account(account)
-    end
-
-    def use_fake_client
-      self.client = new_fake_client
-    end
-
-    def use_real_client
-      self.client = new_real_client
     end
 
     def embed_js_url
@@ -53,13 +43,5 @@ module OpenStax::Payments::Api
     def new_configuration
       OpenStax::Payments::Api::Configuration.new
     end
-
-    def new_client
-      configuration.stub ? new_fake_client : new_real_client
-    rescue StandardError => error
-      raise OpenStax::Payments::ClientError.new("initialization failure", error)
-    end
-
   end
-
 end

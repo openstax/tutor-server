@@ -1,5 +1,4 @@
 class OpenStax::Payments::FakePurchasedItem
-
   attr_reader :uuid
   attr_accessor :is_paid
 
@@ -43,5 +42,4 @@ class OpenStax::Payments::FakePurchasedItem
     @uuid = uuid
     @is_paid = is_paid
   end
-
 end

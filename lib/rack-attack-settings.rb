@@ -1,7 +1,5 @@
 # Set up rack-attack settings
-
 class Rack::Attack
-
   Rails.application.reload_routes!
 
   ROUTES = UrlGenerator.new
@@ -14,13 +12,10 @@ class Rack::Attack
     # Throttled based on the ID field for requests to this endpoint
     req.path.match(ROUTES.check_api_purchase_path('(.*)')).try(:[],1)
   end
-
 end
 
 # Monkey-patch the rack-attack Request object (this is where the author says to do this)
-
 class Rack::Attack::Request
-
   def throttled?
     env['rack.attack.match_type'] == :throttle
   end
@@ -52,7 +47,6 @@ class Rack::Attack::Request
 end
 
 # Log events
-
 ActiveSupport::Notifications.subscribe("rack.attack") do |name, start, finish, request_id, req|
   req.log_throttled! if req.is_first_one_throttled?
 end

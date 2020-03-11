@@ -1,10 +1,11 @@
+require 'configurable/client_error'
+
 # Thread-safe configurable client methods
 # Can be configured in initializers
 # Other threads will not see (shallow) changes to the client
 # To persist changes, read the docs for #save_static_client! below
 module Configurable
   module ClientMethods
-
     class << self
       def included(base)
         base.extend self
@@ -13,10 +14,6 @@ module Configurable
       def extended(base)
         Rails.application.config.after_initialize { base.save_static_client! }
       end
-    end
-
-    def new_client
-      raise NotImplementedError, "You must implement the #new_client method"
     end
 
     def client=(client)
@@ -29,6 +26,42 @@ module Configurable
         unless RequestStore.store[client_variable_name].nil? || client_configuration_changed?
 
       self.client = static_client? ? @static_client.dup : new_client
+    end
+
+    def new_client
+      configuration.stub ? new_fake_client : new_real_client
+    rescue StandardError => error
+      raise OpenStax::Configurable::ClientError.new('initialization failure', error)
+    end
+
+    def use_fake_client(&block)
+      previous_client = client
+
+      begin
+        self.client = new_fake_client
+        block.call unless block.nil?
+      ensure
+        self.client = previous_client unless block.nil?
+      end
+    end
+
+    def use_real_client(&block)
+      previous_client = client
+
+      begin
+        self.client = new_real_client
+        block.call unless block.nil?
+      ensure
+        self.client = previous_client unless block.nil?
+      end
+    end
+
+    def new_fake_client
+      raise NotImplementedError, 'You must implement the #new_fake_client method'
+    end
+
+    def new_real_client
+      raise NotImplementedError, 'You must implement the #new_real_client method'
     end
 
     # Note that this method affects the current process only
@@ -57,6 +90,5 @@ module Configurable
     def static_client?
       static_configuration? && @static_client.present?
     end
-
   end
 end

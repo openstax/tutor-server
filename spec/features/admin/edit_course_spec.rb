@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 require 'feature_js_helper'
 
-RSpec.feature 'Admin editing a course', speed: :slow do
+RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   background do
     admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)

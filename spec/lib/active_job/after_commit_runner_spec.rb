@@ -1,12 +1,19 @@
 require 'rails_helper'
 
 class TestJob < ActiveJob::Base
-  cattr_reader :performed_count
-  @@performed_count = 0
+  def self.performed_count
+    Thread.current[:test_job_performed_count]
+  end
+
+  def self.reset
+    Thread.current[:test_job_performed_count] = 0
+  end
 
   def perform(count)
-    @@performed_count += count
+    Thread.current[:test_job_performed_count] += count
   end
+
+  reset
 end
 
 RSpec.describe ActiveJob::AfterCommitRunner, type: :lib, truncation: true do

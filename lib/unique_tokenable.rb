@@ -1,7 +1,3 @@
-require 'token_generator'
-require 'token_generator/secure_random_token_generator'
-require 'token_generator/babbler_token_generator'
-
 module UniqueTokenable
   def self.included(base)
     base.extend ClassMethods
@@ -15,15 +11,13 @@ module UniqueTokenable
     end
   end
 
-  private
+  protected
 
   def generate_unique_token(field, options)
-    return unless send(field).blank?
-
-    generator = TokenGenerator.generator_for(options[:mode], options.except(:mode))
+    return unless self[field].blank?
 
     begin
-      self[field] = generator.run
+      self[field] = SecureRandomTokenGenerator[options]
     end while self.class.unscoped.exists?(field => self[field])
   end
 end

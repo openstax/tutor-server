@@ -1,5 +1,5 @@
 module OpenStax
-  module Exercises
+  module Configurable
     class ClientError < StandardError
       def initialize(msg, original=$!)
         super(msg)
