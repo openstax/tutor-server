@@ -5,8 +5,8 @@ class FindOrCreatePracticeSpecificTopicsTask
 
   def setup(page_ids:)
     @task_type = :page_practice
-    @pages = Content::Models::Page.where(id: page_ids).preload(:ecosystem)
-    @page_ids = @pages.map(&:id).sort
+    @pages = Content::Models::Page.where(id: page_ids).order(:id).preload(:ecosystem)
+    @page_ids = @pages.map(&:id)
     ecosystems = @pages.map(&:ecosystem).uniq
     fatal_error(
       code: :different_ecosystems, message: 'All page_ids given must belong to the same Ecosystem'

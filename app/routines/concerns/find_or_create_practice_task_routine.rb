@@ -49,14 +49,14 @@ module FindOrCreatePracticeTaskRoutine
       page_ids: @page_ids
     ]
 
-    if @task.nil? 
+    if @task.nil?
       # Create the new practice widget task
       @task = Tasks::Models::Task.new(
         task_type: @task_type,
         time_zone: time_zone,
         title: 'Practice',
         ecosystem: @ecosystem,
-        page_ids: @page_ids
+        core_page_ids: @page_ids
       )
 
       run(:add_spy_info, to: @task, from: @ecosystem)
