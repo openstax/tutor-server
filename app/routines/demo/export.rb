@@ -88,7 +88,7 @@ class Demo::Export < Demo::Base
       periods = courses.flat_map(&:periods)
       periods.each_with_index do |period, index|
         period.name = "#{humanized_name} Period #{index + 1}"
-        period.enrollment_code = "#{humanized_name.gsub(' ', '')}Period#{index + 1}EnrollmentCode"
+        period.enrollment_code = "#{humanized_name} Period #{index + 1} Enrollment Code"
         period.save validate: false
       end
 

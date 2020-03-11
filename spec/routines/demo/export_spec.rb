@@ -166,7 +166,7 @@ RSpec.describe Demo::Export, type: :routine do
             periods: [
               {
                 name: 'Spec Period 1',
-                enrollment_code: 'SpecPeriod1EnrollmentCode',
+                enrollment_code: 'Spec Period 1 Enrollment Code',
                 students: 10.times.map do |index|
                   {
                     username: "spec_student_#{index + 1}",
