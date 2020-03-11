@@ -128,7 +128,7 @@ RSpec.describe Demo::Export, type: :routine do
         expect(YAML.load(data).deep_symbolize_keys).to eq(
           teachers: [
             {
-              username: 'Spec_Teacher_1_Username',
+              username: 'spec_teacher_1',
               full_name: 'Spec Teacher 1 Full name',
               first_name: 'Spec Teacher 1 First name',
               last_name: 'Spec Teacher 1 Last name'
@@ -136,7 +136,7 @@ RSpec.describe Demo::Export, type: :routine do
           ],
           students: 10.times.map do |index|
             {
-              username: "Spec_Student_#{index + 1}_Username",
+              username: "spec_student_#{index + 1}",
               full_name: "Spec Student #{index + 1} Full name",
               first_name: "Spec Student #{index + 1} First name",
               last_name: "Spec Student #{index + 1} Last name"
@@ -157,7 +157,7 @@ RSpec.describe Demo::Export, type: :routine do
             ends_at: /\A<%= Time\.current [+-] \d+\.days %>\z/,
             teachers: [
               {
-                username: 'Spec_Teacher_1_Username',
+                username: 'spec_teacher_1',
                 full_name: 'Spec Teacher 1 Full name',
                 first_name: 'Spec Teacher 1 First name',
                 last_name: 'Spec Teacher 1 Last name',
@@ -166,10 +166,10 @@ RSpec.describe Demo::Export, type: :routine do
             periods: [
               {
                 name: 'Spec Period 1',
-                enrollment_code: 'Spec Period 1 Enrollment Code',
+                enrollment_code: 'SpecPeriod1EnrollmentCode',
                 students: 10.times.map do |index|
                   {
-                    username: "Spec_Student_#{index + 1}_Username",
+                    username: "spec_student_#{index + 1}",
                     full_name: "Spec Student #{index + 1} Full name",
                     first_name: "Spec Student #{index + 1} First name",
                     last_name: "Spec Student #{index + 1} Last name"
@@ -253,7 +253,7 @@ RSpec.describe Demo::Export, type: :routine do
                     *10.times.map do |index|
                       {
                         student: {
-                          username: "Spec_Student_#{index + 1}_Username",
+                          username: "spec_student_#{index + 1}",
                           full_name: "Spec Student #{index + 1} Full name",
                           first_name: "Spec Student #{index + 1} First name",
                           last_name: "Spec Student #{index + 1} Last name"
@@ -271,7 +271,7 @@ RSpec.describe Demo::Export, type: :routine do
                   *10.times.map do |index|
                     {
                       student: {
-                        username: "Spec_Student_#{index + 1}_Username",
+                        username: "spec_student_#{index + 1}",
                         full_name: "Spec Student #{index + 1} Full name",
                         first_name: "Spec Student #{index + 1} First name",
                         last_name: "Spec Student #{index + 1} Last name"

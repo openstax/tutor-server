@@ -29,7 +29,7 @@ class CourseMembership::Models::Period < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :course_profile_course_id,
                                                  conditions: -> { where(archived_at: nil) } }
-  validates :enrollment_code, format: { with: /\A[a-zA-Z0-9 ]+\z/ }
+  validates :enrollment_code, format: { with: /\A[a-zA-Z0-9]+\z/ }
 
   validate :default_times_have_good_values
 
