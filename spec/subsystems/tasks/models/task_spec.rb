@@ -346,9 +346,9 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       end.task_step.tap { |step| step.is_core = false }
     end
 
-    context "page_ids" do
+    context "core_page_ids" do
       it "works with no steps" do
-        expect(task.page_ids).to eq []
+        expect(task.core_page_ids).to eq []
       end
 
       it "works with multiple steps" do
@@ -356,7 +356,9 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         task.save!
         task.reload
 
-        expect(task.page_ids).to eq [ completed_core_step_1, core_step_1 ].map(&:content_page_id)
+        expect(task.core_page_ids).to(
+          eq [ completed_core_step_1, core_step_1 ].map(&:content_page_id)
+        )
       end
     end
 

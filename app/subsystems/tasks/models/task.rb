@@ -94,7 +94,7 @@ class Tasks::Models::Task < ApplicationRecord
     placeholder_steps = steps.select(&:placeholder?)
     placeholder_exercise_steps = placeholder_steps.select { |step| step.tasked.exercise_type? }
 
-    self.page_ids = core_steps.map(&:content_page_id).uniq
+    self.core_page_ids = core_steps.map(&:content_page_id).uniq
     self.steps_count = steps.count
     self.completed_steps_count = completed_steps.count
     self.completed_on_time_steps_count = completed_steps.count { |step| step_on_time?(step) }
