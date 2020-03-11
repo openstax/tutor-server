@@ -13,7 +13,7 @@ class Demo::Export < Demo::Base
       # Disable sending updates to Accounts
       account.syncing = true
 
-      account.username = "#{user_name} Username".gsub(/[^A-Za-z\d]+/, '_')
+      account.username = user_name.downcase.gsub(/[^a-z\d]+/, '_')
 
       [ :first_name, :last_name, :full_name, :title ].each do |field|
         account.public_send "#{field}=", "#{user_name} #{field.to_s.humanize}"
@@ -87,10 +87,9 @@ class Demo::Export < Demo::Base
 
       periods = courses.flat_map(&:periods)
       periods.each_with_index do |period, index|
-        period.update_attribute :name, "#{humanized_name} Period #{index + 1}"
-        period.update_attribute(
-          :enrollment_code, "#{humanized_name} Period #{index + 1} Enrollment Code"
-        )
+        period.name = "#{humanized_name} Period #{index + 1}"
+        period.enrollment_code = "#{humanized_name} Period #{index + 1} Enrollment Code"
+        period.save validate: false
       end
 
       students = periods.flat_map(&:students)
