@@ -7,7 +7,7 @@ class Tasks::UpdateTaskCaches
 
   protected
 
-  def exec(task_ids:, update_step_counts: false, queue: 'dashboard')
+  def exec(task_ids:, update_cached_attributes: false, queue: 'dashboard')
     ScoutHelper.ignore!(0.995)
 
     task_ids = [task_ids].flatten
@@ -63,10 +63,10 @@ class Tasks::UpdateTaskCaches
     task_steps_by_task_id = task_steps.group_by(&:tasks_task_id)
 
     # Update step counts for each task
-    if update_step_counts
+    if update_cached_attributes
       tasks = tasks.map do |task|
         task_steps = task_steps_by_task_id.fetch(task.id, [])
-        task.update_step_counts steps: task_steps
+        task.update_cached_attributes steps: task_steps
       end
 
       # Update the Task cache columns (scores cache)

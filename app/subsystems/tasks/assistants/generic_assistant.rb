@@ -161,7 +161,7 @@ class Tasks::Assistants::GenericAssistant
   def build_task(type:, default_title:, individualized_tasking_plan:)
     role = individualized_tasking_plan.target
 
-    Tasks::BuildTask[
+    Tasks::Models::Task.new(
       task_plan:   task_plan,
       task_type:   type,
       title:       task_plan.title || default_title,
@@ -171,7 +171,7 @@ class Tasks::Assistants::GenericAssistant
       due_at: individualized_tasking_plan.due_at,
       feedback_at: task_plan.is_feedback_immediate ? nil : individualized_tasking_plan.due_at,
       ecosystem: task_plan.ecosystem
-    ].tap do |task|
+    ).tap do |task|
       task.taskings << Tasks::Models::Tasking.new(task: task, role: role,
                                                   period: @periods_by_role_id[role.id])
       AddSpyInfo[to: task, from: ecosystem]
