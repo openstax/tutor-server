@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer do
+RSpec.describe Api::V1::TaskPlan::Stats::DetailedRepresenter, type: :representer do
   let(:number_of_students) { 2 }
 
   let(:task_plan)          do
@@ -10,7 +10,7 @@ RSpec.describe Api::V1::TaskPlanWithDetailedStatsRepresenter, type: :representer
 
   let(:representation)     { described_class.new(task_plan).as_json }
 
-  it "represents a task plan's stats" do
+  it 'represents a task plan with detailed stats' do
     # Answer an exercise correctly and mark it as completed
     student_tasks = task_plan.tasks.joins(taskings: { role: :student })
     task_step = student_tasks.first.task_steps.filter { |ts| ts.tasked.exercise? }.first

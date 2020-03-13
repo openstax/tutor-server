@@ -2,7 +2,6 @@ module Api::V1
   module Tasks
     module Stats
       class ExerciseRepresenter < Roar::Decorator
-
         include Roar::JSON
 
         property :content,
@@ -20,7 +19,6 @@ module Api::V1
                  type: Float,
                  writeable: false,
                  readable: true
-
       end
     end
   end

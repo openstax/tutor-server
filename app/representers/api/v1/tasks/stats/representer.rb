@@ -2,7 +2,7 @@ module Api::V1
   module Tasks
     module Stats
       # Represents stats for course periods
-      class StatRepresenter < Roar::Decorator
+      class Representer < Roar::Decorator
         include Roar::JSON
         include Representable::Coercion
 

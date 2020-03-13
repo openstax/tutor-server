@@ -1,4 +1,4 @@
-class Api::V1::TaskPlanRepresenter < Roar::Decorator
+class Api::V1::TaskPlan::Representer < Roar::Decorator
   include Roar::JSON
   include Representable::Coercion
 
@@ -109,7 +109,7 @@ class Api::V1::TaskPlanRepresenter < Roar::Decorator
 
   collection :tasking_plans,
              instance: ->(*) { ::Tasks::Models::TaskingPlan.new(time_zone: owner.time_zone) },
-             extend: Api::V1::TaskingPlanRepresenter,
+             extend: Api::V1::TaskPlan::TaskingPlanRepresenter,
              setter: RailsCollectionSetter,
              readable: true,
              writeable: true
