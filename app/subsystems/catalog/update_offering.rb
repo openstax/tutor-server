@@ -5,26 +5,33 @@ module Catalog
     protected
 
     def exec(id, attributes, update_courses = false)
-      outputs.offering = Catalog::Models::Offering.find(id)
-      active_courses = outputs.offering.courses.reject(&:ended?)
-      outputs.num_active_courses = active_courses.length
-      outputs.num_updated_courses = 0
+      outputs.offering = Catalog::Models::Offering.find id
+      active_courses = outputs.offering.courses.where(is_preview: false).reject(&:ended?)
+      outputs.num_active_courses = active_courses.size
 
       old_ecosystem = outputs.offering.ecosystem
-      outputs.offering.update_attributes(attributes)
+      outputs.offering.update_attributes attributes
       new_ecosystem = outputs.offering.ecosystem
-      transfer_errors_from(outputs.offering, {type: :verbatim}, true)
+      transfer_errors_from outputs.offering, { type: :verbatim }, true
 
-      return unless update_courses
+      if update_courses
+        courses_to_update = active_courses.filter { |course| course.ecosystem != new_ecosystem }
+        outputs.num_updated_courses = courses_to_update.size
+      else
+        courses_to_update = []
+        outputs.num_updated_courses = 0
+      end
 
-      courses_to_update = active_courses.select { |course| course.ecosystem != new_ecosystem }
-      outputs.num_updated_courses = courses_to_update.length
+      # Always update all preview courses regardless of options selected and end dates
+      courses_to_update += outputs.offering.courses.where(is_preview: true).filter do |course|
+        course.ecosystem != new_ecosystem
+      end
 
       courses_to_update.each do |course|
         job_id = CourseContent::AddEcosystemToCourse.perform_later(
           course: course, ecosystem: new_ecosystem
         )
-        job = Jobba.find(job_id)
+        job = Jobba.find job_id
         job.save(
           course_id: course.id,
           course_name: course.name,
