@@ -191,8 +191,13 @@ class CalculateTaskStats
               completed_exs = exs.select { |ex| ex[:completed] }
               selected_count_by_answer_id = Hash.new 0
               completed_exs.each { |ex| selected_count_by_answer_id[ex[:selected_answer_id]] += 1 }
+              correct_answer_id = exs.first[:correct_answer_id]
               answer_stats = exs.first[:answer_ids].map do |answer_id|
-                { answer_id: answer_id, selected_count: selected_count_by_answer_id[answer_id] }
+                {
+                  answer_id: answer_id,
+                  selected_count: selected_count_by_answer_id[answer_id],
+                  is_correct: answer_id == correct_answer_id
+                }
               end
               answers = completed_exs.map do |ex|
                 {

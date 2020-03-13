@@ -13,6 +13,10 @@ module Api::V1
                  type: Integer,
                  writeable: false,
                  readable: true
+
+        property :is_correct,
+                 writeable: false,
+                 readable: true
       end
     end
   end
