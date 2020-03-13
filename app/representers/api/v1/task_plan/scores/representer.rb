@@ -26,5 +26,5 @@ class Api::V1::TaskPlan::Scores::Representer < ::Roar::Decorator
              extend: Api::V1::TaskPlan::Scores::PeriodRepresenter,
              readable: true,
              writable: false,
-             getter: ->(*) { tasking_plans.map(&:target) }
+             getter: ->(*) { CalculateTaskPlanScores[task_plan: self] }
 end

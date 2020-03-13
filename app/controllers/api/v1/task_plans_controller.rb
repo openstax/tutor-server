@@ -373,14 +373,12 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   description <<-EOS
     Retrieves all student scores for a TaskPlan
 
-    #{json_schema(Api::V1::TaskPlan::Stats::DetailedRepresenter, include: :readable)}
+    #{json_schema(Api::V1::TaskPlan::Scores::Representer, include: :readable)}
   EOS
   def scores
-    plan = Tasks::Models::TaskPlan.preload(
-      tasks: { taskings: { role: :student } }
-    ).find(params[:id])
-
-    standard_read(plan, Api::V1::TaskPlan::WithScoresRepresenter)
+    standard_read(
+      Tasks::Models::TaskPlan.find(params[:id]), Api::V1::TaskPlan::Scores::Representer
+    )
   end
 
   ###############################################################
