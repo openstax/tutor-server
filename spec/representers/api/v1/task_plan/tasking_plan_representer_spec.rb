@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
-
+RSpec.describe Api::V1::TaskPlan::TaskingPlanRepresenter, type: :representer do
   let(:tasking_plan) {
     instance_spy(Tasks::Models::TaskingPlan).tap do |dbl|
       ## bug work-around, see:
@@ -11,7 +10,7 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
   }
 
   let(:representation) { ## NOTE: This is lazily-evaluated on purpose!
-    Api::V1::TaskingPlanRepresenter.new(tasking_plan).as_json
+    Api::V1::TaskPlan::TaskingPlanRepresenter.new(tasking_plan).as_json
   }
 
   context "target_id" do
@@ -21,7 +20,7 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
     end
 
     it "cannot be written (attempts are silently ignored)" do
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_id" => 42}.to_json)
+      Api::V1::TaskPlan::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_id" => 42}.to_json)
       expect(tasking_plan).to have_received(:target_id=).with('42')
     end
   end
@@ -38,12 +37,12 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
     end
 
     it "can be written ('period' => 'CourseMembership::Models::Period')" do
-      rep = Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_type" => "period"}.to_json)
+      rep = Api::V1::TaskPlan::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_type" => "period"}.to_json)
       expect(tasking_plan).to have_received(:target_type=).with('CourseMembership::Models::Period')
     end
 
     it "can be written ('course' => 'CourseProfile::Models::Course')" do
-      Api::V1::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_type" => "course"}.to_json)
+      Api::V1::TaskPlan::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_type" => "course"}.to_json)
       expect(tasking_plan).to have_received(:target_type=).with('CourseProfile::Models::Course')
     end
   end
@@ -86,5 +85,4 @@ RSpec.describe Api::V1::TaskingPlanRepresenter, type: :representer do
       end
     )
   end
-
 end

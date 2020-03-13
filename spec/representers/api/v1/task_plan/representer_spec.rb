@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
-
+RSpec.describe Api::V1::TaskPlan::Representer, type: :representer do
   let(:job) { Jobba::Status.create! }
 
   let(:task_plan) do
@@ -255,5 +254,4 @@ RSpec.describe Api::V1::TaskPlanRepresenter, type: :representer do
       end
     end
   end
-
 end

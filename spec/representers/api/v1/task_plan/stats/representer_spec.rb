@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer do
+RSpec.describe Api::V1::TaskPlan::Stats::Representer, type: :representer do
   let(:number_of_students) { 2 }
 
   let(:task_plan)          do
@@ -10,7 +10,7 @@ RSpec.describe Api::V1::TaskPlanWithStatsRepresenter, type: :representer do
 
   let(:representation)     { described_class.new(task_plan).as_json.deep_symbolize_keys }
 
-  it "represents a task plan's stats" do
+  it 'represents a task plan with stats' do
     expect(representation).to include(
       id: task_plan.id.to_s,
       title: task_plan.title,

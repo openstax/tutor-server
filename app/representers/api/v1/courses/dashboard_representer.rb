@@ -199,7 +199,7 @@ module Api::V1::Courses
     collection :plans,
                readable: true,
                writeable: false,
-               extend: ::Api::V1::TaskPlanRepresenter
+               extend: ::Api::V1::TaskPlan::Representer
 
     collection :tasks,
                readable: true,
