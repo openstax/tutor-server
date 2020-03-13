@@ -318,6 +318,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
           expected_answer_stats = question_answer_ids.map do |aid|
             {
               answer_id: aid,
+              is_correct: be_in([ true, false ]),
               selected_count: selected_answers_map.values.map(&:values).flatten.count(aid)
             }
           end

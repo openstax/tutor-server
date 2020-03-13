@@ -1,10 +1,6 @@
 class Api::V1::TaskPlan::Scores::QuestionHeadingRepresenter < Roar::Decorator
   include Roar::JSON
-
-  property :index,
-           type: Integer,
-           readable: true,
-           writeable: false
+  include Representable::Coercion
 
   property :title,
            type: String,

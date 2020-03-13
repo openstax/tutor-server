@@ -7,10 +7,9 @@ class CalculateTaskStats
     current_time = Time.current
 
     # Preload each task's student and period
-    tasks = [tasks].flatten
-    ActiveRecord::Associations::Preloader.new.preload(tasks, taskings: [ :period, role: :student ])
-
-    tasks = tasks.reject do |task|
+    tasks = [ tasks ].flatten
+    ActiveRecord::Associations::Preloader.new.preload tasks, taskings: [ :period, role: :student ]
+    tasks = [tasks].flatten.reject do |task|
       task.taskings.all? do |tasking|
         period = tasking.period
         student = tasking.role.student

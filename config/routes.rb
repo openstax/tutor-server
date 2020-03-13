@@ -129,6 +129,7 @@ Rails.application.routes.draw do
         member do
           get :stats
           get :review
+          get :scores
           put :restore
         end
       end
