@@ -55,17 +55,16 @@ module FindOrCreatePracticeTaskRoutine
         task_type: @task_type,
         time_zone: time_zone,
         title: 'Practice',
-        ecosystem: @ecosystem,
-        core_page_ids: @page_ids
+        ecosystem: @ecosystem
       )
 
       run(:add_spy_info, to: @task, from: @ecosystem)
 
       run(:create_tasking, role: role, task: @task)
 
-      @task.save!
-
       add_task_steps
+
+      @task.update_cached_attributes.save!
 
       send_task_to_biglearn
     end

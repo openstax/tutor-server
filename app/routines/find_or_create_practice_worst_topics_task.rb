@@ -38,8 +38,8 @@ class FindOrCreatePracticeWorstTopicsTask
         step.spy = exercise_spy_info.fetch(exercise.uuid, {})
       end
     end.tap do
-      @task.update_attributes pes_are_assigned: true,
-                              spy: @task.spy.merge(spy_info.except('exercises'))
+      @task.pes_are_assigned = true
+      @task.spy = @task.spy.merge spy_info.except('exercises')
     end
   end
 end
