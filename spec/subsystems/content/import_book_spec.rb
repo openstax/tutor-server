@@ -128,9 +128,7 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow 
       expect(book.chapters.size).to eq 1
       expect(book.chapters.first.title).to eq 'Chapter 1'
 
-      expect(book.as_toc.pages.map(&:book_location)).to eq [
-        [1, 0], [1, 1], [1, 2], [1, 3], [1, 4]
-      ]
+      expect(book.as_toc.pages.map(&:book_location)).to eq [ [], [1, 1], [1, 2], [1, 3], [1, 4] ]
       expect(book.as_toc.pages.map(&:title)).to eq [
         'Introduction',
         'Douglass struggles toward literacy',

@@ -57,6 +57,6 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
       'Douglass promotes dignity',
       'Confrontation seeking righteousness'
     ]
-    expect(pages.map(&:book_location)).to eq [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]]
+    expect(pages.map(&:book_location)).to eq [[], [1, 1], [1, 2], [1, 3], [1, 4]]
   end
 end

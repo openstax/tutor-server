@@ -54,7 +54,7 @@ RSpec.describe Api::V1::PagesController, type: :controller, api: true,
           cnx_page = OpenStax::Cnx::V1::Page.new(page_hash)
           VCR.use_cassette("Api_V1_PagesController/with_an_old_version_of_force", VCR_OPTS) do
             @old_page = Content::Routines::ImportPage.call(
-              cnx_page: cnx_page, book: book, book_location: [1, 1]
+              cnx_page: cnx_page, book: book, book_indices: [1, 1]
             ).outputs.page
           end
         end

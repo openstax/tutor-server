@@ -5,21 +5,15 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
            writeable: true,
            schema_info: { required: true }
 
-  collection :book_locations,
-             extend:
-             Api::V1::Demo::Assign::Course::TaskPlan::BookLocationRepresenter,
-             class: Demo::Mash,
+  collection :book_indices,
+             type: Integer,
              getter: ->(*) do
                next unless settings.has_key? 'page_ids'
 
-               Content::Models::Page.where(id: settings['page_ids']).map(&:book_location)
-                                    .reject(&:blank?).sort.map do |book_location|
-                 Demo::Mash.new(chapter: book_location[-2], section: book_location.last)
-               end
+               Content::Models::Page.where(id: settings['page_ids']).map(&:book_indices).sort
              end,
              readable: true,
-             writeable: true,
-             schema_info: { required: true }
+             writeable: true
 
   property :exercises_count_core,
            type: Integer,

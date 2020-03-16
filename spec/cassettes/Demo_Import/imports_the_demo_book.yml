@@ -99,7 +99,7 @@ http_interactions:
         {"url": "http://creativecommons.org/licenses/by/4.0/", "code": "by", "version":
         "4.0", "name": "Attribution"}, "created": "2017-01-19T16:28:07Z", "tree":
         {"id": "dc10e469-5816-411d-8ea3-39a9b0706a48@2.16", "contents": [{"id": "subcol",
-        "contents": [{"id": "f27eec7f-2937-45fc-bb44-60dab5261a3d@1", "title": "<span class=\"os-number\">1.0</span><span class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Introduction</span>"},
+        "contents": [{"id": "f27eec7f-2937-45fc-bb44-60dab5261a3d@1", "title": "Introduction"},
         {"id": "c31232cc-cf38-4301-9845-5b801e70fa9a@8", "title": "<span class=\"os-number\">1.1</span><span class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Douglass struggles
         toward literacy</span>"}, {"id": "2c214a03-1f38-4937-ad34-b341a6792093@9", "title":
         "<span class=\"os-number\">1.2</span><span class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Douglass struggles against slavery\u2019s injustice</span>"}, {"id": "3d0b6428-3979-405e-8e81-06010035447c@5",

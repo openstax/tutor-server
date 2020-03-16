@@ -6,7 +6,8 @@ FactoryBot.define do
     uuid                { SecureRandom.uuid }
     version             { Random.rand(1..10) }
     url                 { OpenStax::Cnx::V1.archive_url_for "#{uuid}@#{version}" }
-    book_location       { [ [1, 1], [] ].sample }
+    book_indices        { [ [0], [1, 0], [1, 1], [1, 1, 1] ].sample }
+    book_location       { [ [], [1, 1] ].sample }
     fragments           { [] }
     snap_labs           { [] }
   end

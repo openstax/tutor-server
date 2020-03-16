@@ -4,13 +4,10 @@ course:
   task_plans:
     - title: Read Chapter 1 Intro and Sections 1 and 2
       type: reading
-      book_locations:
-        - chapter: 1
-          section: 0
-        - chapter: 1
-          section: 1
-        - chapter: 1
-          section: 2
+      book_indices:
+        - [0, 0]
+        - [0, 1]
+        - [0, 2]
       assigned_to:
         - period:
             name: 1st
@@ -23,11 +20,9 @@ course:
 
     - title: Read Chapter 1 Sections 3 and 4
       type: reading
-      book_locations:
-        - chapter: 1
-          section: 3
-        - chapter: 1
-          section: 4
+      book_indices:
+        - [0, 3]
+        - [0, 4]
       assigned_to:
         - period:
             name: 1st
@@ -40,13 +35,10 @@ course:
 
     - title: HW Chapter 1 Intro and Sections 1 and 2
       type: homework
-      book_locations:
-        - chapter: 1
-          section: 0
-        - chapter: 1
-          section: 1
-        - chapter: 1
-          section: 2
+      book_indices:
+        - [0, 0]
+        - [0, 1]
+        - [0, 2]
       exercises_count_core: 4
       exercises_count_dynamic: 2
       assigned_to:
@@ -61,11 +53,9 @@ course:
 
     - title: HW Chapter 1 Sections 3 and 4
       type: homework
-      book_locations:
-        - chapter: 1
-          section: 3
-        - chapter: 1
-          section: 4
+      book_indices:
+        - [0, 3]
+        - [0, 4]
       exercises_count_core: 4
       exercises_count_dynamic: 2
       assigned_to:

@@ -6,13 +6,23 @@
 %>
 
 <div class="form-group">
+  <%= form.label :unit %>
+  <%=
+    form.number_field :unit, options.merge(
+      class: 'form-control',
+      placeholder: '0-based',
+      min: 0
+    )
+  %>
+</div>
+
+<div class="form-group">
   <%= form.label :chapter %>
   <%=
     form.number_field :chapter, options.merge(
       class: 'form-control',
-      required: true,
-      placeholder: "Required (unless Book location is removed)",
-      min: 1
+      placeholder: '0-based',
+      min: 0
     )
   %>
 </div>
@@ -23,7 +33,7 @@
     form.number_field :section, options.merge(
       class: 'form-control',
       required: true,
-      placeholder: "Required (unless Book location is removed)",
+      placeholder: '0-based and Required (unless Book location is removed)',
       min: 0
     )
   %>

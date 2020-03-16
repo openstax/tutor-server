@@ -53,7 +53,7 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
           {
             title: task_plan.title,
             type: task_plan.type,
-            book_locations: [ 0, 1, 2 ].map { |section| { chapter: 1, section: section } },
+            book_indices: [ [0, 1], [1, 1], [1, 2] ],
             assigned_to: [
               {
                 period: { name: '1st' },

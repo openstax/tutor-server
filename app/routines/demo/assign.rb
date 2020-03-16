@@ -7,16 +7,16 @@ class Demo::Assign < Demo::Base
 
   protected
 
-  def convert_book_locations(book_locations)
-    return [] if book_locations.nil?
+  def convert_book_indices(book_indices)
+    return [] if book_indices.nil?
 
-    case book_locations.first
+    case book_indices.first
     when Hash
-      book_locations.map { |book_location| [ book_location[:chapter], book_location[:section] ] }
+      book_indices.map { |book_indices| [ book_indices[:chapter], book_indices[:section] ] }
     when Array
-      book_locations
+      book_indices
     else
-      [ book_locations ]
+      [ book_indices ]
     end
   end
 
@@ -30,19 +30,19 @@ class Demo::Assign < Demo::Base
     task_plans = course[:task_plans]
     task_plans_by_hash = find_course_task_plans course_model, task_plans
 
-    all_book_locations = task_plans.flat_map do |task_plan|
-      convert_book_locations task_plan[:book_locations]
+    all_book_indices = task_plans.flat_map do |task_plan|
+      convert_book_indices task_plan[:book_indices]
     end.compact.uniq
-    pages_by_book_location = ecosystem.pages.where(
-      Content::Models::Page.arel_table[:book_location].in all_book_locations
-    ).index_by(&:book_location)
-    missing_book_locations = all_book_locations - pages_by_book_location.keys
+    pages_by_book_indices = ecosystem.pages.where(
+      Content::Models::Page.arel_table[:book_indices].in all_book_indices
+    ).index_by(&:book_indices)
+    missing_book_indices = all_book_indices - pages_by_book_indices.keys
     raise(
       ActiveRecord::RecordNotFound,
-      "Could not find a Page in #{ecosystem.title} with the following book location(s): #{
-        missing_book_locations.map(&:inspect).join(', ')
+      "Could not find a Page in #{ecosystem.title} with the following book indices: #{
+        missing_book_indices.map(&:inspect).join(', ')
       }"
-    ) unless missing_book_locations.empty?
+    ) unless missing_book_indices.empty?
 
     types = task_plans.map { |task_plan| task_plan[:type] }.uniq
     assistants_by_task_plan_type = {}
@@ -65,8 +65,8 @@ class Demo::Assign < Demo::Base
         } for course #{course_model.name} (id: #{course_model.id})"
       end
 
-      book_locations = convert_book_locations task_plan[:book_locations]
-      pages = book_locations.map { |book_location| pages_by_book_location[book_location] }
+      book_indices = convert_book_indices task_plan[:book_indices]
+      pages = book_indices.map { |book_indices| pages_by_book_indices[book_indices] }
       page_ids = pages.map(&:id).map(&:to_s)
 
       attrs = {
