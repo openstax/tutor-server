@@ -115,15 +115,29 @@ class Api::V1::DemoController < Api::V1::ApiController
   end
 
   # Remove blank strings coming from unfilled form inputs (so we replace them with default values)
-  def remove_blank_strings(obj)
+  def remove_blank_strings!(obj)
     case obj
     when Hash
-      obj.delete_if { |key, value| remove_blank_strings(value) == '' }
+      obj.delete_if { |key, value| remove_blank_strings!(value) == '' }
     when Array
-      obj.delete_if { |value| remove_blank_strings(value) == '' }
+      obj.delete_if { |value| remove_blank_strings!(value) == '' }
     else
       obj
     end
+  end
+
+  def parse_book_indices!(obj)
+    course = obj['course']
+    return obj if course.nil?
+
+    task_plans = course['task_plans']
+    return obj if task_plans.nil?
+
+    task_plans.each do |task_plan|
+      task_plan['book_indices'] = JSON.parse task_plan['book_indices']
+    end
+
+    obj
   end
 
   def consume_hash(representer_class)
@@ -131,7 +145,7 @@ class Api::V1::DemoController < Api::V1::ApiController
       consume!(Demo::Mash.new, represent_with: representer_class).deep_symbolize_keys
     else # attempt to parse the params hash
       representer_class.new(Demo::Mash.new).from_hash(
-        remove_blank_strings(params.permit!.to_h)
+        parse_book_indices!(remove_blank_strings!(params.permit!.to_h))
       ).deep_symbolize_keys
     end
   end

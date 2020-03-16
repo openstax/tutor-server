@@ -55,13 +55,15 @@
   %>
 </div>
 
-<%=
-  render partial: 'form_collection', locals: {
-    form: form,
-    scope: :book_indices,
-    partial: File.join('admin', 'demo', 'assign', 'task_plan', 'book_indices')
-  }
-%>
+<div class="form-group">
+  <%= form.label :book_indices %>
+  <%=
+    form.text_field :book_indices, options.merge(
+      class: 'form-control',
+      placeholder: 'Required, 0-based JSON array'
+    )
+  %>
+</div>
 
 <%=
   render partial: 'form_collection', locals: {

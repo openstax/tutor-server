@@ -71,11 +71,6 @@ RSpec.describe 'demo', type: :rake do
       expect(match).not_to be_nil
       expect(task_plan[:type]).to eq type
       expect(task_plan[:book_indices]).not_to be_empty
-      expect(task_plan[:book_indices]).to eq(
-        task_plan[:book_indices].size.times.map do |index|
-          course[:name] == 'Biology 2e Review' ? [0, chapter, index + 1] : [chapter, index + 1]
-        end
-      )
 
       assigned_to = task_plan[:assigned_to]
       expect(assigned_to.size).to eq 2
