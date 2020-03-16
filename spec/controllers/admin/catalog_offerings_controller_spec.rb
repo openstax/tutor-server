@@ -26,11 +26,18 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
       expect(controller).to set_flash.now[:error].to(/Description can\'t be blank/)
     end
 
-    it 'can create an offering' do
+    it 'can create an offering and set its attributes' do
       expect do
         post :create, params: { offering: attributes }
       end.to change(Catalog::Models::Offering, :count).by(1)
       expect(response).to redirect_to action: :index
+
+      offering = Catalog::Models::Offering.order(:created_at).last
+      expect(offering.is_preview_available).to eq true
+      expect(offering.is_available).to eq true
+      expect(offering.is_tutor).to eq true
+      expect(offering.is_concept_coach).to eq false
+      expect(offering.does_cost).to eq false
     end
 
     it 'can have duplicated sf book names' do
@@ -56,22 +63,31 @@ RSpec.describe Admin::CatalogOfferingsController, type: :controller do
     end
 
     it 'can update an offering' do
-      expect(offering.is_tutor).to be false
-      expect(offering.is_concept_coach).to be false
-      expect(offering.does_cost).to be false
+      expect(offering.is_preview_available).to eq true
+      expect(offering.is_available).to eq true
+      expect(offering.is_tutor).to eq true
+      expect(offering.is_concept_coach).to eq false
+      expect(offering.does_cost).to eq false
+
       response = put :update, params: {
-        id: offering.id,
-        offering: offering.attributes.merge(
-          'is_tutor' => 't',
-          'is_concept_coach' => 't',
-          'does_cost' => 't'
+        id: offering.id, offering: offering.attributes.merge(
+          {
+            is_preview_available: false,
+            is_available: false,
+            is_tutor: false,
+            is_concept_coach: true,
+            does_cost: true
+          }.stringify_keys
         )
       }
       expect(response).to redirect_to action: :index
+
       offering.reload
-      expect(offering.is_tutor).to be true
-      expect(offering.is_concept_coach).to be true
-      expect(offering.does_cost).to be true
+      expect(offering.is_preview_available).to eq false
+      expect(offering.is_available).to eq false
+      expect(offering.is_tutor).to eq false
+      expect(offering.is_concept_coach).to eq true
+      expect(offering.does_cost).to eq true
     end
   end
 

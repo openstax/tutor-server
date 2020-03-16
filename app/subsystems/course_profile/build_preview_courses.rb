@@ -91,7 +91,7 @@ class CourseProfile::BuildPreviewCourses
             ON #{cc[:catalog_offering_id].eq(of[:id]).to_sql}
         JOIN_SQL
       )
-      .where(is_tutor: true, is_available: true)
+      .where(is_preview_available: true)
       .where(preview_course_count.lt(desired_count))
       .reorder(preview_course_count, :number)                  # Work on lower counts first
       .lock('FOR NO KEY UPDATE OF "catalog_offerings" SKIP LOCKED') # Skip offerings being worked on

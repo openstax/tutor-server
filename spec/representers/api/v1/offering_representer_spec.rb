@@ -12,7 +12,7 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:id=)
-      expect{ described_class.new(offering).from_hash('id' => '42') }.not_to change{ offering.id }
+      expect { described_class.new(offering).from_hash('id' => '42') }.not_to change{ offering.id }
     end
   end
 
@@ -23,8 +23,8 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:title=)
-      expect{ described_class.new(offering).from_hash('title' => 'Something') }.not_to(
-        change{ offering.title }
+      expect { described_class.new(offering).from_hash('title' => 'Something') }.not_to(
+        change { offering.title }
       )
     end
   end
@@ -36,8 +36,8 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:description=)
-      expect{ described_class.new(offering).from_hash('description' => 'Something') }.not_to(
-        change{ offering.description }
+      expect { described_class.new(offering).from_hash('description' => 'Something') }.not_to(
+        change { offering.description }
       )
     end
   end
@@ -49,8 +49,8 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:is_concept_coach=)
-      expect{ described_class.new(offering).from_hash('is_concept_coach' => false) }.not_to(
-        change{ offering.is_concept_coach }
+      expect { described_class.new(offering).from_hash('is_concept_coach' => false) }.not_to(
+        change { offering.is_concept_coach }
       )
     end
   end
@@ -62,8 +62,8 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:is_tutor=)
-      expect{ described_class.new(offering).from_hash('is_tutor' => false) }.not_to(
-        change{ offering.is_tutor }
+      expect { described_class.new(offering).from_hash('is_tutor' => false) }.not_to(
+        change { offering.is_tutor }
       )
     end
   end
@@ -75,8 +75,8 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:appearance_code=)
-      expect{ described_class.new(offering).from_hash('appearance_code' => 'sociology') }.not_to(
-        change{ offering.appearance_code }
+      expect { described_class.new(offering).from_hash('appearance_code' => 'sociology') }.not_to(
+        change { offering.appearance_code }
       )
     end
   end
@@ -91,8 +91,8 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
     end
 
     it 'cannot be written (attempts are silently ignored)' do
-      expect{ described_class.new(offering).from_hash('active_term_years' => []) }.not_to(
-        change{ TermYear.visible_term_years }
+      expect { described_class.new(offering).from_hash('active_term_years' => []) }.not_to(
+        change { TermYear.visible_term_years }
       )
     end
   end
@@ -104,8 +104,8 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:default_course_name=)
-      expect{ described_class.new(offering).from_hash('default_course_name' => 'Test') }.not_to(
-        change{ offering.default_course_name }
+      expect { described_class.new(offering).from_hash('default_course_name' => 'Test') }.not_to(
+        change { offering.default_course_name }
       )
     end
   end
@@ -117,8 +117,21 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:does_cost=)
-      expect{ described_class.new(offering).from_hash('does_cost' => 'true') }.not_to(
-        change{ offering.does_cost }
+      expect { described_class.new(offering).from_hash('does_cost' => 'true') }.not_to(
+        change { offering.does_cost }
+      )
+    end
+  end
+
+  context 'is_preview_available' do
+    it 'can be read' do
+      expect(representation['is_preview_available']).to eq offering.is_preview_available
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect(offering).not_to receive(:is_preview_available=)
+      expect { described_class.new(offering).from_hash('is_preview_available' => 'true') }.not_to(
+        change { offering.is_preview_available }
       )
     end
   end
@@ -130,8 +143,21 @@ RSpec.describe Api::V1::OfferingRepresenter, type: :representer do
 
     it 'cannot be written (attempts are silently ignored)' do
       expect(offering).not_to receive(:is_available=)
-      expect{ described_class.new(offering).from_hash('is_available' => 'true') }.not_to(
-        change{ offering.is_available }
+      expect { described_class.new(offering).from_hash('is_available' => 'true') }.not_to(
+        change { offering.is_available }
+      )
+    end
+  end
+
+  context 'preview_message' do
+    it 'can be read' do
+      expect(representation['preview_message']).to eq offering.preview_message
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect(offering).not_to receive(:preview_message=)
+      expect { described_class.new(offering).from_hash('preview_message' => 'Hi') }.not_to(
+        change { offering.preview_message }
       )
     end
   end

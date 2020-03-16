@@ -8,6 +8,8 @@ class OfferingAccessPolicy
     case action.to_sym
     when :index, :read
       true
+    when :create_preview
+      offering.is_preview_available
     when :create_course
       offering.is_available
     else

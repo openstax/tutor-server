@@ -26,6 +26,7 @@ RSpec.describe Catalog::UpdateOffering, type: :routine do
       appearance_code: 'new',
       is_tutor: true,
       is_concept_coach: false,
+      is_preview_available: true,
       is_available: true,
       title: 'New Book',
       description: 'Newest of the new',

@@ -1,7 +1,7 @@
 module Admin
   class CatalogOfferingsController < BaseController
     before_action :get_offerings_and_ecosystems
-    before_action :get_salesforce_book_names, only: [:new, :edit]
+    before_action :get_salesforce_book_names, only: [ :new, :edit ]
 
     def index
     end
