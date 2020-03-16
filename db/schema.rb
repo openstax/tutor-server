@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_03_163234) do
+ActiveRecord::Schema.define(version: 2020_03_09_221635) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -33,6 +33,8 @@ ActiveRecord::Schema.define(version: 2020_03_03_163234) do
     t.string "title", null: false
     t.integer "number", null: false
     t.boolean "does_cost", default: false, null: false
+    t.boolean "is_preview_available", null: false
+    t.text "preview_message"
     t.index ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id"
     t.index ["number"], name: "index_catalog_offerings_on_number", unique: true
     t.index ["salesforce_book_name"], name: "index_catalog_offerings_on_salesforce_book_name"
@@ -991,8 +993,8 @@ ActiveRecord::Schema.define(version: 2020_03_03_163234) do
     t.uuid "pe_ecosystem_matrix_uuid"
     t.uuid "spe_calculation_uuid"
     t.uuid "spe_ecosystem_matrix_uuid"
-    t.datetime "closes_at_ntz"
     t.integer "core_page_ids", default: [], null: false, array: true
+    t.datetime "closes_at_ntz"
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"
