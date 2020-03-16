@@ -8,8 +8,8 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
     let(:cnx_page)  do
       OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a', title: 'Force')
     end
-    let(:archive_url)   { OpenStax::Cnx::V1.archive_url_base }
-    let(:book_location) { [4, 1] }
+    let(:archive_url)  { OpenStax::Cnx::V1.archive_url_base }
+    let(:book_indices) { [4, 1] }
 
     it 'creates a new Page' do
       result = nil
@@ -24,7 +24,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
       version = cnx_page.version
       expect(result.outputs.page.uuid).to eq uuid
       expect(result.outputs.page.version).to eq version
-      expect(result.outputs.page.book_location).to eq book_location
+      expect(result.outputs.page.book_indices).to eq book_indices
     end
 
     it 'converts relative links into absolute links' do
@@ -78,8 +78,8 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
         id: '6a0568d8-23d7-439b-9a01-16e4e73886b3', title: 'The Science of Biology'
       )
     end
-    let(:archive_url)   { 'https://archive.cnx.org/contents/' }
-    let(:book_location) { [1, 1] }
+    let(:archive_url)  { 'https://archive.cnx.org/contents/' }
+    let(:book_indices) { [1, 1] }
 
     it 'creates a new Page' do
       result = nil
@@ -94,7 +94,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
       version = cnx_page.version
       expect(result.outputs.page.uuid).to eq uuid
       expect(result.outputs.page.version).to eq version
-      expect(result.outputs.page.book_location).to eq book_location
+      expect(result.outputs.page.book_indices).to eq book_indices
     end
 
     it 'converts relative links into absolute links' do
@@ -146,7 +146,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
   def import_page
     OpenStax::Cnx::V1.with_archive_url(archive_url) do
       Content::Routines::ImportPage.call(
-        cnx_page: cnx_page, book: book, book_location: book_location
+        cnx_page: cnx_page, book: book, book_indices: book_indices
       )
     end
   end

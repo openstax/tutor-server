@@ -190,12 +190,7 @@ RSpec.describe Demo::Export, type: :routine do
               {
                 title: 'Spec Reading 1',
                 type: 'reading',
-                book_locations: [
-                  {
-                    chapter: 1,
-                    section: 1
-                  }
-                ],
+                book_indices: [ [ 0, 0, 0 ] ],
                 assigned_to: [
                   period: {
                     name: 'Spec Period 1'
@@ -208,12 +203,7 @@ RSpec.describe Demo::Export, type: :routine do
               {
                 title: 'Spec Homework 1',
                 type: 'homework',
-                book_locations: [
-                  {
-                    chapter: 1,
-                    section: 1
-                  }
-                ],
+                book_indices: [ [ 0, 0, 0 ] ],
                 exercises_count_core: 5,
                 exercises_count_dynamic: 4,
                 assigned_to: [

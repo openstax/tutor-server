@@ -46,7 +46,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
           Content::Routines::ImportPage.call(
             cnx_page:  cnx_page,
             book: book,
-            book_location: [8, ii+1]
+            book_indices: [8, ii+1]
           ).outputs.page.reload
         end
       end
@@ -280,7 +280,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
         book: book,
-        book_location: [1, 1]
+        book_indices: [1, 1]
       ).outputs.page.reload
     end
 
@@ -367,7 +367,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       Content::Routines::ImportPage.call(
         cnx_page:  cnx_page,
         book: book,
-        book_location: [1, 1]
+        book_indices: [1, 1]
       ).outputs.page.reload
     end
 

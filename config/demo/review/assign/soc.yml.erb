@@ -5,3 +5,140 @@ course:
   filename = File.join(__dir__, '_assign.yml.erb')
   ERB.new(File.read(filename)).tap { |erb| erb.filename = filename }.result
 %>
+
+  task_plans:
+    - title: Read Chapter 1
+      type: reading
+      book_indices:
+        - [1, 0]
+        - [1, 1]
+        - [1, 2]
+        - [1, 3]
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday - 2.weeks %>
+          due_at: <%= due_last_monday - 5.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday - 2.weeks %>
+          due_at: <%= due_last_monday - 5.days %>
+
+    - title: Read Chapter 2
+      type: reading
+      book_indices:
+        - [2, 0]
+        - [2, 1]
+        - [2, 2]
+        - [2, 3]
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday - 1.week %>
+          due_at: <%= due_last_monday + 2.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday - 1.week %>
+          due_at: <%= due_last_monday + 2.days %>
+
+    - title: Read Chapter 3
+      type: reading
+      book_indices:
+        - [3, 0]
+        - [3, 1]
+        - [3, 2]
+        - [3, 3]
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday %>
+          due_at: <%= due_next_monday + 2.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday %>
+          due_at: <%= due_next_monday + 2.days %>
+
+    - title: Read Chapter 4
+      type: reading
+      book_indices:
+        - [4, 0]
+        - [4, 1]
+        - [4, 2]
+        - [4, 3]
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_next_monday %>
+          due_at: <%= due_next_monday + 9.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_next_monday %>
+          due_at: <%= due_next_monday + 9.days %>
+
+    - title: HW Chapter 1
+      type: homework
+      book_indices:
+        - [1, 0]
+        - [1, 1]
+        - [1, 2]
+        - [1, 3]
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday - 2.weeks %>
+          due_at: <%= due_last_monday - 3.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday - 2.weeks %>
+          due_at: <%= due_last_monday - 3.days %>
+
+    - title: HW Chapter 2
+      type: homework
+      book_indices:
+        - [2, 0]
+        - [2, 1]
+        - [2, 2]
+        - [2, 3]
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday - 1.week %>
+          due_at: <%= due_last_monday + 4.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday - 1.week %>
+          due_at: <%= due_last_monday + 4.days %>
+
+    - title: HW Chapter 3
+      type: homework
+      book_indices:
+        - [3, 0]
+        - [3, 1]
+        - [3, 2]
+        - [3, 3]
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_last_monday %>
+          due_at: <%= due_next_monday + 4.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_last_monday %>
+          due_at: <%= due_next_monday + 4.days %>
+
+    - title: HW Chapter 4
+      type: homework
+      book_indices:
+        - [4, 0]
+        - [4, 1]
+        - [4, 2]
+        - [4, 3]
+      assigned_to:
+        - period:
+            name: 1st
+          opens_at: <%= open_next_monday %>
+          due_at: <%= due_next_monday + 11.days %>
+        - period:
+            name: 2nd
+          opens_at: <%= open_next_monday %>
+          due_at: <%= due_next_monday + 11.days %>

@@ -8,18 +8,23 @@ class Content::ImportBook
 
   protected
 
-  def import_pages!(book, book_part, all_tags = nil)
-    pages = book_part.parts.flat_map do |part|
+  def import_pages!(book, book_part, book_indices = [], all_tags = nil)
+    pages = book_part.parts.each_with_index.flat_map do |part, index|
       if part.is_a?(OpenStax::Cnx::V1::Page)
         outs = run(
-          :import_page, book: book, cnx_page: part, save: false, all_tags: all_tags
+          :import_page,
+          book: book,
+          book_indices: book_indices + [ index ],
+          cnx_page: part,
+          save: false,
+          all_tags: all_tags
         ).outputs
 
         all_tags = outs.all_tags
 
         outs.page
       else
-        pages, all_tags = import_pages! book, part, all_tags
+        pages, all_tags = import_pages! book, part, book_indices + [ index ], all_tags
         pages
       end
     end

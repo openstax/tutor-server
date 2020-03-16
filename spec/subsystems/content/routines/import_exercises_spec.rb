@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS do
-
   context 'with a single tag' do
     let(:page)      { FactoryBot.create(:content_page) }
     let(:ecosystem) { page.book.ecosystem }
@@ -118,7 +117,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
-        Content::Routines::ImportPage[cnx_page: cnx_page, book: book, book_location: [3, 1]]
+        Content::Routines::ImportPage[cnx_page: cnx_page, book: book, book_indices: [3, 1]]
       end
 
       Content::Routines::TransformAndCachePageContent.call book: book
@@ -168,7 +167,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
-        Content::Routines::ImportPage[cnx_page: cnx_page, book: book, book_location: [3, 1]]
+        Content::Routines::ImportPage[cnx_page: cnx_page, book: book, book_indices: [3, 1]]
       end
     end
 
@@ -194,5 +193,4 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
 
     expect(OpenStax::Exercises::V1).to receive(:exercises).and_return(wrappers).once
   end
-
 end

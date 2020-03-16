@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_09_221635) do
+ActiveRecord::Schema.define(version: 2020_03_16_162341) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -171,6 +171,7 @@ ActiveRecord::Schema.define(version: 2020_03_09_221635) do
     t.integer "homework_core_exercise_ids", default: [], null: false, array: true
     t.integer "homework_dynamic_exercise_ids", default: [], null: false, array: true
     t.integer "practice_widget_exercise_ids", default: [], null: false, array: true
+    t.integer "book_indices", null: false, array: true
     t.index ["content_book_id"], name: "index_content_pages_on_content_book_id"
     t.index ["title"], name: "index_content_pages_on_title"
     t.index ["tutor_uuid"], name: "index_content_pages_on_tutor_uuid", unique: true
