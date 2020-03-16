@@ -7,9 +7,11 @@ class OpenStax::Biglearn::RealClient
     @client_id    = api_configuration.client_id
     @secret       = api_configuration.secret
 
-    @oauth_client = OAuth2::Client.new @client_id, @secret, site: @server_url
+    oauth_client = OAuth2::Client.new @client_id, @secret, site: @server_url
 
-    @oauth_token  = @oauth_client.client_credentials.get_token unless @client_id.nil?
+    oauth_token  = oauth_client.client_credentials.get_token unless @client_id.nil?
+
+    @oauth_worker = oauth_token || oauth_client
   end
 
   def name
@@ -35,7 +37,7 @@ class OpenStax::Biglearn::RealClient
     }
     request_options = body.nil? ? header_options : header_options.merge(body: body.to_json)
 
-    response = (@oauth_token || @oauth_client).request method, absolute_uri, request_options
+    response = @oauth_worker.request method, absolute_uri, request_options
 
     JSON.parse(response.body).deep_symbolize_keys
   end

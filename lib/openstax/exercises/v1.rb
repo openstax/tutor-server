@@ -1,5 +1,4 @@
 require_relative './v1/configuration'
-require_relative './v1/exceptions'
 require_relative './v1/exercise'
 require_relative './v1/fake_client'
 require_relative './v1/real_client'
@@ -49,28 +48,6 @@ module OpenStax::Exercises::V1
       total_exercises
     end
 
-    def use_fake_client(&block)
-      previous_client = client
-
-      begin
-        self.client = new_fake_client
-        block.call
-      ensure
-        self.client = previous_client
-      end
-    end
-
-    def use_real_client(&block)
-      previous_client = client
-
-      begin
-        self.client = new_real_client
-        block.call
-      ensure
-        self.client = previous_client
-      end
-    end
-
     def server_url
       client.server_url
     end
@@ -91,12 +68,6 @@ module OpenStax::Exercises::V1
 
     def new_configuration
       OpenStax::Exercises::V1::Configuration.new
-    end
-
-    def new_client
-      configuration.stub ? new_fake_client : new_real_client
-    rescue StandardError => error
-      raise OpenStax::Exercises::ClientError.new("initialization failure", error)
     end
   end
 end

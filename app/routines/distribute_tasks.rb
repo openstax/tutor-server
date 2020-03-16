@@ -87,7 +87,7 @@ class DistributeTasks
       # Taskeds are not saved by recursive: true because they are a belongs_to association
       # So we handle them separately
       new_taskeds = new_tasks.map do |task|
-        task.update_step_counts
+        task.update_cached_attributes
 
         task.task_steps.map(&:tasked)
       end
@@ -103,7 +103,7 @@ class DistributeTasks
         end
       end
 
-      new_tasks.each(&:update_step_counts)
+      new_tasks.each(&:update_cached_attributes)
       Tasks::Models::Task.import new_tasks, recursive: true, validate: false
     end
 

@@ -1,5 +1,5 @@
-class CreatePracticeWorstTopicsTask
-  include CreatePracticeTaskRoutine
+class FindOrCreatePracticeWorstTopicsTask
+  include FindOrCreatePracticeTaskRoutine
 
   uses_routine GetCourseEcosystem, as: :get_course_ecosystem
   uses_routine TaskExercise, as: :task_exercise
@@ -11,13 +11,15 @@ class CreatePracticeWorstTopicsTask
     @task_type = :practice_worst_topics
 
     @ecosystem = run(:get_course_ecosystem, course: @course).outputs.ecosystem
+
+    @page_ids = []
   end
 
   def add_task_steps
     result = OpenStax::Biglearn::Api.fetch_practice_worst_areas_exercises(
       student: @role.course_member
     )
-    exercises = result[:exercises].first CreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES
+    exercises = result[:exercises].first FindOrCreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES
     spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
 
     fatal_error(
@@ -36,8 +38,8 @@ class CreatePracticeWorstTopicsTask
         step.spy = exercise_spy_info.fetch(exercise.uuid, {})
       end
     end.tap do
-      @task.update_attributes pes_are_assigned: true,
-                              spy: @task.spy.merge(spy_info.except('exercises'))
+      @task.pes_are_assigned = true
+      @task.spy = @task.spy.merge spy_info.except('exercises')
     end
   end
 end

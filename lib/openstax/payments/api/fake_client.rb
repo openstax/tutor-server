@@ -1,5 +1,4 @@
 class OpenStax::Payments::Api::FakeClient
-
   # store is currently unused; use FakePurchasedItem instead
   attr_reader :store
 
@@ -73,5 +72,4 @@ class OpenStax::Payments::Api::FakeClient
   def fake_braintree_transaction_id
     "fake_bt_transaction_#{SecureRandom.uuid[0..5]}"
   end
-
 end

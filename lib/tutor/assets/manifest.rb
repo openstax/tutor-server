@@ -1,7 +1,6 @@
 module Tutor
   module Assets
     module Manifest
-
       # A remote manifest is used in development with Docker
       # The assets will be inside another container and loaded over http
       class Remote

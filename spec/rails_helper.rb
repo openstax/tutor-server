@@ -107,8 +107,8 @@ end
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
-Dir[Rails.root.join("spec/mocks/**/*.rb")].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join('spec/mocks/**/*.rb')].each { |f| require f }
 
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
@@ -213,7 +213,7 @@ end
 # https://gist.github.com/shime/9930893
 RSpec::Matchers.define :be_the_same_time_as do |expected|
   match do |actual|
-    expect(expected.strftime("%d-%m-%Y %H:%M:%S")).to eq(actual.strftime("%d-%m-%Y %H:%M:%S"))
+    expect(expected.strftime('%d-%m-%Y %H:%M:%S')).to eq(actual.strftime('%d-%m-%Y %H:%M:%S'))
   end
 end
 
@@ -244,8 +244,8 @@ def redirect_query_hash
 end
 
 def redirect_uri
-  expect(response.code).to eq "302"
-  uri = URI.parse(response.headers["Location"])
+  expect(response.code).to eq '302'
+  uri = URI.parse(response.headers['Location'])
 end
 
 def disable_sfdc_client
@@ -259,7 +259,7 @@ def make_payment_required(student: nil, course: nil, user: nil)
   course.reload.update_attribute(:does_cost, true) if course.present?
 
   if student.nil?
-    raise "user cannot be nil if student is nil" if user.nil?
+    raise 'user cannot be nil if student is nil' if user.nil?
     student = UserIsCourseStudent.call(user: user, course: course).outputs.student
   end
 

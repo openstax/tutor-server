@@ -14,7 +14,7 @@ module Api::V1
       practice = OpenStruct.new
       consume!(practice, represent_with: Api::V1::PracticeRepresenter)
 
-      result = CreatePracticeSpecificTopicsTask.call(
+      result = FindOrCreatePracticeSpecificTopicsTask.call(
         course: @course, role: @role, page_ids: practice.page_ids
       )
 
@@ -30,7 +30,7 @@ module Api::V1
     def create_worst
       OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
 
-      result = CreatePracticeWorstTopicsTask.call course: @course, role: @role
+      result = FindOrCreatePracticeWorstTopicsTask.call course: @course, role: @role
 
       render_api_errors(result.errors) || respond_with(
         result.outputs.task,

@@ -23,17 +23,17 @@ class CreateStudentHistory
 
       # practice widgets assign 5 task steps to the role
       practice_task = create_practice_widget(
-        course: course, role: role, page_ids: ecosystem.chapters[3 - (i % 2)].pages[1].id
+        course: course, role: role, page_ids: [ecosystem.chapters[3 - (i % 2)].pages[1].id]
       )
       answer_correctly(practice_task, 2 + i) # 2 or 3 out of 5
 
       practice_task = create_practice_widget(
-        course: course, role: role, page_ids: ecosystem.chapters[3].pages[2].id
+        course: course, role: role, page_ids: [ecosystem.chapters[3].pages[2].id]
       )
       answer_correctly(practice_task, 5) # 5 out of 5
 
       create_practice_widget(
-        course: course, role: role, page_ids: ecosystem.chapters[3].pages.map(&:id)
+        course: course, role: role, page_ids: [ecosystem.chapters[3].pages.map(&:id)]
       ) # Not started
     end
   end
@@ -73,7 +73,7 @@ class CreateStudentHistory
   end
 
   def create_practice_widget(course:, role:, page_ids:)
-    CreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: page_ids]
+    FindOrCreatePracticeSpecificTopicsTask[course: course, role: role, page_ids: page_ids]
   end
 
   def answer_correctly(task, num)

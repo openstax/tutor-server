@@ -4,8 +4,7 @@ RSpec.describe SecureRandomTokenGenerator, type: :lib do
   let(:length)          { 9 }
   let(:prefix)          { 'r' }
   let(:suffix)          { 'l' }
-  let(:options)         { { length: length, prefix: prefix, suffix: suffix } }
-  let(:token_generator) { described_class.new(mode, options) }
+  let(:options)         { { mode: mode, length: length, prefix: prefix, suffix: suffix } }
 
   it 'can list its handled modes' do
     expect(described_class.handled_modes).to be_a(Array)
@@ -23,7 +22,7 @@ RSpec.describe SecureRandomTokenGenerator, type: :lib do
       let(:mode) { mode }
 
       it "can generate #{mode} tokens with the correct length, prefix and suffix" do
-        result = token_generator.run
+        result = described_class[options]
 
         if result.is_a?(String)
           expect(result).to start_with(prefix)

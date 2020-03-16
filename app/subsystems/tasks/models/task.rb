@@ -70,7 +70,7 @@ class Tasks::Models::Task < ApplicationRecord
 
   validate :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at
 
-  before_validation :update_step_counts
+  before_validation :update_cached_attributes
   after_create :update_caches_now
   after_touch :update_caches_later
 
@@ -106,7 +106,7 @@ class Tasks::Models::Task < ApplicationRecord
     task_plan.present? && task_plan.is_preview
   end
 
-  def update_step_counts(steps: nil)
+  def update_cached_attributes(steps: nil)
     steps ||= persisted? && !task_steps.loaded? ? task_steps.preload(:tasked) : task_steps
     steps = steps.to_a
 
@@ -121,6 +121,7 @@ class Tasks::Models::Task < ApplicationRecord
     placeholder_steps = steps.select(&:placeholder?)
     placeholder_exercise_steps = placeholder_steps.select { |step| step.tasked.exercise_type? }
 
+    self.core_page_ids = core_steps.map(&:content_page_id).uniq
     self.steps_count = steps.count
     self.completed_steps_count = completed_steps.count
     self.completed_on_time_steps_count = completed_steps.count { |step| step_on_time?(step) }
@@ -142,14 +143,14 @@ class Tasks::Models::Task < ApplicationRecord
     self
   end
 
-  def update_caches_now(update_step_counts: false)
-    Tasks::UpdateTaskCaches.call(task_ids: id, update_step_counts: update_step_counts)
+  def update_caches_now(update_cached_attributes: false)
+    Tasks::UpdateTaskCaches.call(task_ids: id, update_cached_attributes: update_cached_attributes)
   end
 
-  def update_caches_later(update_step_counts: true)
+  def update_caches_later(update_cached_attributes: true)
     queue = is_preview ? :preview : :dashboard
     Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
-      task_ids: id, update_step_counts: update_step_counts, queue: queue.to_s
+      task_ids: id, update_cached_attributes: update_cached_attributes, queue: queue.to_s
     )
   end
 
