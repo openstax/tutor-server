@@ -37,10 +37,15 @@ class CalculateTaskPlanScores
     end
 
     available_points_per_question_index = Hash.new 1.0
-    task_plan.settings.fetch('exercises', []).each_with_index do |exercise, index|
-      available_points_per_question_index[index] = exercise['points']
-    end if task_plan.type == 'homework'
-
+    if task_plan.type == 'homework'
+      question_index = 0
+      task_plan.settings.fetch('exercises', []).each do |exercise|
+        exercise['points'].each do |points|
+          available_points_per_question_index[question_index] = points
+          question_index += 1
+        end
+      end
+    end
     expected_num_spaced_questions = task_plan.settings.fetch 'exercises_count_dynamic', 3
     outputs.scores = tasks_by_period.map do |period, tasks|
       # TODO: When 1 task doesn't have placeholders, ignore tasks in this grouping
