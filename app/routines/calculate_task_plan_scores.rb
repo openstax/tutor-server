@@ -14,7 +14,7 @@ class CalculateTaskPlanScores
         period = tasking.period
         student = tasking.role.student
 
-        period.nil? || period.archived? || student.nil? || student.dropped?
+        period.nil? || period.archived? || student.nil?
       end
     end
 
@@ -30,7 +30,8 @@ class CalculateTaskPlanScores
     tasks_by_period = tasks.group_by do |task|
       periods = task.taskings.map(&:period).uniq
       raise(
-        NotImplementedError, 'Each task in CalculateTaskStats must belong to exactly 1 period'
+        NotImplementedError,
+        'Each task in CalculateTaskPlanScores must belong to exactly 1 period'
       ) if periods.size != 1
 
       periods.first
@@ -46,14 +47,17 @@ class CalculateTaskPlanScores
         end
       end
     end
-    expected_num_spaced_questions = task_plan.settings.fetch 'exercises_count_dynamic', 3
-    outputs.scores = tasks_by_period.map do |period, tasks|
-      # TODO: When 1 task doesn't have placeholders, ignore tasks in this grouping
-      available_questions, most_common_tasks = tasks.group_by(
-        &:actual_and_placeholder_exercise_count
-      ).max_by { |_, tasks| tasks.size }
 
-      exercise_steps = most_common_tasks.first.task_steps.select(&:exercise?)
+    outputs.scores = tasks_by_period.sort_by { |period, _| period.name }.map do |period, tasks|
+      no_placeholder_tasks = tasks.select { |task| task.placeholder_steps_count == 0 }
+      representative_tasks = no_placeholder_tasks.empty? ? tasks : no_placeholder_tasks
+      most_common_tasks = representative_tasks.group_by(
+        &:actual_and_placeholder_exercise_count
+      ).max_by { |_, tasks| tasks.size }.second
+
+      exercise_steps = most_common_tasks.first.task_steps.filter do |step|
+        step.exercise? || step.placeholder?
+      end
       question_headings_array = exercise_steps.each_with_index.map do |_, index|
         { title: "Q#{index + 1}", type: 'MCQ' }
       end
@@ -68,11 +72,18 @@ class CalculateTaskPlanScores
         points_per_question: available_points_per_question
       }
 
-      actual_num_spaced_questions = most_common_tasks.first.spaced_practice_task_steps.size
-      num_questions_dropped = expected_num_spaced_questions - actual_num_spaced_questions
+      if task_plan.type == 'homework'
+        expected_num_questions = task_plan.settings.fetch(:exercises).map do |exercise|
+          exercise.points.size
+        end.sum + task_plan.settings.fetch('exercises_count_dynamic', 3)
+        actual_num_questions = most_common_tasks.first.actual_and_placeholder_exercise_count
+        num_questions_dropped = expected_num_questions - actual_num_questions
+      else
+        num_questions_dropped = 0
+      end
       points_dropped = num_questions_dropped.to_f
 
-      active_student_points = []
+      question_points = []
       students_array = tasks.each_with_index.map do |task, student_index|
         role = task.taskings.first.role
         student = role.student
@@ -80,15 +91,17 @@ class CalculateTaskPlanScores
 
         account = task.taskings.first.role.profile.account
 
-        exercise_steps = task.task_steps.select(&:exercise?)
+        exercise_steps = task.task_steps.filter { |step| step.exercise? || step.placeholder? }
         next if exercise_steps.empty?
 
-        is_dropped = student.dropped?
+        is_dropped = student.dropped? || student.period.archived?
 
         student_available_points = exercise_steps.size.times.map do |index|
           available_points_per_question_index[index]
         end.sum
         points_per_question = exercise_steps.each_with_index.map do |task_step, index|
+          next 0.0 if task_step.placeholder?
+
           tasked = tasked_exercise_by_id[task_step.tasked_id]
           tasked.is_correct? ? available_points_per_question_index[index] : 0.0
         end
@@ -101,7 +114,11 @@ class CalculateTaskPlanScores
         total_points = total_points_without_lateness - late_work_point_penalty
         total_fraction = total_points/available_points
 
-        active_student_points[student_index] = points_per_question unless is_dropped
+
+        points_per_question.each_with_index do |points, index|
+          question_points[index] ||= []
+          question_points[index] << points
+        end unless is_dropped
 
         {
           name: account.name,
@@ -117,15 +134,15 @@ class CalculateTaskPlanScores
         }
       end.compact.sort_by { |student| [ student[:last_name], student[:first_name] ] }
 
-      num_students = active_student_points.size
-      average_points_per_question = active_student_points.transpose.map do |points_per_question|
-        points_per_question.sum/num_students
+      average_points_per_question = question_points.map do |points_per_question|
+        points_per_question.sum/points_per_question.size
       end
+      num_students = students_array.size
       average_points = students_array.map { |student| student[:total_points] }.sum/num_students
       average_score_hash = {
         name: 'Average Score',
         total_points: average_points,
-        total_fraction: average_points/available_points,
+        total_fraction: [ average_points/available_points, 1.0 ].min,
         points_per_question: average_points_per_question
       }
 
