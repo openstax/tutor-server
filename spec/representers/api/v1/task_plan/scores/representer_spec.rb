@@ -39,13 +39,13 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         {
           id: task_plan.owner.periods.first.id.to_s,
           name: '1st',
-          question_headings: [ { title: 'Q1',  type: 'MCQ' }, { title: 'Q2',  type: 'MCQ' } ],
+          question_headings: 8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ' } },
           late_work_fraction_penalty: late_work_penalty,
           available_points: {
             name: 'Available Points',
-            total_points: 2.0,
+            total_points: 8.0,
             total_fraction: 1.0,
-            points_per_question: [ 1.0, 1.0 ]
+            points_per_question: [ 1.0 ] * 8
           },
           num_questions_dropped: 0,
           points_dropped: 0.0,
@@ -55,31 +55,31 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
               first_name: students.first.first_name,
               last_name: students.first.last_name,
               is_dropped: false,
-              available_points: 2.0,
+              available_points: 8.0,
               total_points: 1.0 - late_work_penalty,
-              total_fraction: (1.0 - late_work_penalty)/2,
+              total_fraction: (1.0 - late_work_penalty)/8,
               late_work_point_penalty: late_work_penalty,
               late_work_fraction_penalty: late_work_penalty,
-              points_per_question: [1.0, 0.0]
+              points_per_question: [ 1.0 ] + [ 0.0 ] * 7
             },
             {
               name: students.second.name,
               first_name: students.second.first_name,
               last_name: students.second.last_name,
               is_dropped: false,
-              available_points: 2.0,
+              available_points: 8.0,
               total_points: 0.0,
               total_fraction: 0.0,
               late_work_point_penalty: 0.0,
               late_work_fraction_penalty: late_work_penalty,
-              points_per_question: [0.0, 0.0]
+              points_per_question: [ 0.0 ] * 8
             }
           ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
           average_score: {
             name: 'Average Score',
             total_points: (1.0 - late_work_penalty)/2,
-            total_fraction: (1.0 - late_work_penalty)/4,
-            points_per_question: [ 0.5, 0.0 ]
+            total_fraction: (1.0 - late_work_penalty)/16,
+            points_per_question: [ 0.5 ] + [ 0.0 ] * 7
           }
         }
       ]

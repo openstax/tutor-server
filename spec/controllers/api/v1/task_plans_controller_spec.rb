@@ -704,7 +704,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     end
   end
 
-  context 'stats' do
+  context '#stats' do
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in @unaffiliated_teacher
       expect {
@@ -727,7 +727,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     end
   end
 
-  context 'review' do
+  context '#review' do
     it 'cannot be requested by unrelated teachers' do
       controller.sign_in @unaffiliated_teacher
       expect {
@@ -747,6 +747,29 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       api_get :review, nil, params: { id: @published_task_plan.id }
       # The representer spec does validate the json so we'll rely on it and just check presense
       expect(response.body_as_hash[:stats]).to be_a(Array)
+    end
+  end
+
+  context '#scores' do
+    it 'cannot be requested by unrelated teachers' do
+      controller.sign_in @unaffiliated_teacher
+      expect {
+        api_get :scores, nil, params: { id: @published_task_plan.id }
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it "can be requested by the course's teacher" do
+      controller.sign_in @teacher
+      expect {
+        api_get :scores, nil, params: { id: @published_task_plan.id }
+      }.to_not raise_error
+    end
+
+    it 'includes the scores' do
+      controller.sign_in @teacher
+      api_get :scores, nil, params: { id: @published_task_plan.id }
+      # The representer spec does validate the json so we'll rely on it and just check presense
+      expect(response.body_as_hash[:periods]).to be_a(Array)
     end
   end
 
