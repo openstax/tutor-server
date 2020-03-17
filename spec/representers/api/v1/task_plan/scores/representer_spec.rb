@@ -60,7 +60,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
               total_fraction: (1.0 - late_work_penalty)/8,
               late_work_point_penalty: late_work_penalty,
               late_work_fraction_penalty: late_work_penalty,
-              points_per_question: [ 1.0 ] + [ 0.0 ] * 7
+              points_per_question: [ 1.0 ] + [ nil ] * 7
             },
             {
               name: students.second.name,
@@ -72,14 +72,14 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
               total_fraction: 0.0,
               late_work_point_penalty: 0.0,
               late_work_fraction_penalty: late_work_penalty,
-              points_per_question: [ 0.0 ] * 8
+              points_per_question: [ 0.0 ] + [ nil ] * 7
             }
           ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
           average_score: {
             name: 'Average Score',
             total_points: (1.0 - late_work_penalty)/2,
             total_fraction: (1.0 - late_work_penalty)/16,
-            points_per_question: [ 0.5 ] + [ 0.0 ] * 7
+            points_per_question: [ 0.5 ] + [ nil ] * 7
           }
         }
       ]

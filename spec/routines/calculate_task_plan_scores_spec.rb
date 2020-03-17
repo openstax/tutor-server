@@ -72,14 +72,14 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               total_fraction: 0.0,
               late_work_point_penalty: 0.0,
               late_work_fraction_penalty: late_work_penalty,
-              points_per_question: [ 0.0 ] * 8
+              points_per_question: [ nil ] * 8
             }
           end
         )
         expect(period_output.average_score.symbolize_keys).to eq(
           {
             name: 'Average Score',
-            points_per_question: [ 0.0 ] * 8,
+            points_per_question: [ nil ] * 8,
             total_fraction: 0.0,
             total_points: 0.0
           }
@@ -90,11 +90,11 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
 
   context 'after task steps are marked as completed' do
     it 'shows available points and assignment scores' do
-      first_task = tasks.first
-      work_task(task: first_task, is_correct: false)
+      work_task(task: tasks.first, is_correct: false)
 
-      last_task = tasks.last
-      MarkTaskStepCompleted[task_step: last_task.task_steps.first]
+      Preview::AnswerExercise.call(
+        task_step: tasks.second.task_steps.select(&:exercise?).first, is_correct: false
+      )
 
       scores.each_with_index do |period_output, index|
         period = periods[index]
@@ -116,8 +116,16 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.num_questions_dropped).to eq 0
         expect(period_output.points_dropped).to eq 0.0
         expect(period_output.students.map(&:symbolize_keys)).to eq(
-          tasks.map do |task|
+          tasks.each_with_index.map do |task, index|
             student = task.taskings.first.role.student
+            points_per_question = case index
+            when 0
+              [ 0.0 ] * 8
+            when 1
+              [ 0.0 ] + [ nil ] * 7
+            else
+              [ nil ] * 8
+            end
 
             {
               name: student.name,
@@ -129,7 +137,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               total_fraction: 0.0,
               late_work_point_penalty: 0.0,
               late_work_fraction_penalty: late_work_penalty,
-              points_per_question: [ 0.0 ] * 8
+              points_per_question: points_per_question
             }
           end
         )
@@ -172,7 +180,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.num_questions_dropped).to eq 0
         expect(period_output.points_dropped).to eq 0.0
         expect(period_output.students.map(&:symbolize_keys)).to eq(
-          tasks.each_with_index.map do |task, index|
+          tasks[0..3].each_with_index.map do |task, index|
             student = task.taskings.first.role.student
             multiplier = [ 0, 2, 3 ].include?(index) ? 1.0 : 0.0
 
@@ -188,12 +196,27 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               late_work_fraction_penalty: late_work_penalty,
               points_per_question: [ 1.0 * multiplier ] * 8
             }
+          end + tasks[4..-1].map do |task|
+            student = task.taskings.first.role.student
+
+            {
+              name: student.name,
+              first_name: student.first_name,
+              last_name: student.last_name,
+              is_dropped: student.dropped?,
+              available_points: 8.0,
+              total_points: 0.0,
+              total_fraction: 0.0,
+              late_work_point_penalty: 0.0,
+              late_work_fraction_penalty: late_work_penalty,
+              points_per_question: [ nil ] * 8
+            }
           end
         )
         expect(period_output.average_score.symbolize_keys).to eq(
           {
             name: 'Average Score',
-            points_per_question: [ 3.0/8 ] * 8,
+            points_per_question: [ 3.0/4 ] * 8,
             total_fraction: 3.0/8 * (1.0 - late_work_penalty),
             total_points: 3.0 * (1.0 - late_work_penalty)
           }
