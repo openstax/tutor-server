@@ -100,13 +100,15 @@ class CalculateTaskPlanScores
           available_points_per_question_index[index]
         end.sum
         points_per_question = exercise_steps.each_with_index.map do |task_step, index|
-          next 0.0 if task_step.placeholder?
+          if task_step.placeholder? || !task_step.completed?
+            next task.past_due?(current_time: current_time) ? 0.0 : nil
+          end
 
           tasked = tasked_exercise_by_id[task_step.tasked_id]
           tasked.is_correct? ? available_points_per_question_index[index] : 0.0
         end
 
-        total_points_without_lateness = points_per_question.sum
+        total_points_without_lateness = points_per_question.compact.sum
 
         late_work_fraction_penalty = task.late_work_penalty
         late_work_point_penalty = late_work_fraction_penalty * total_points_without_lateness
@@ -117,7 +119,7 @@ class CalculateTaskPlanScores
 
         points_per_question.each_with_index do |points, index|
           question_points[index] ||= []
-          question_points[index] << points
+          question_points[index] << points unless points.nil?
         end unless is_dropped
 
         {
@@ -135,6 +137,8 @@ class CalculateTaskPlanScores
       end.compact.sort_by { |student| [ student[:last_name], student[:first_name] ] }
 
       average_points_per_question = question_points.map do |points_per_question|
+        next if points_per_question.empty?
+
         points_per_question.sum/points_per_question.size
       end
       num_students = students_array.size
