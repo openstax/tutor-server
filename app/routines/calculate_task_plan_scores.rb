@@ -72,8 +72,8 @@ class CalculateTaskPlanScores
       }
 
       if task_plan.type == 'homework'
-        expected_num_questions = task_plan.settings.fetch(:exercises).map do |exercise|
-          exercise.points.size
+        expected_num_questions = task_plan.settings.fetch('exercises').map do |exercise|
+          exercise['points'].size
         end.sum + task_plan.settings.fetch('exercises_count_dynamic', 3)
         actual_num_questions = most_common_tasks.first.actual_and_placeholder_exercise_count
         num_questions_dropped = expected_num_questions - actual_num_questions
