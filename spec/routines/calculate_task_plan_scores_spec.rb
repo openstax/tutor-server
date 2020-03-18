@@ -69,7 +69,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               is_dropped: student.dropped?,
               available_points: 8.0,
               total_points: 0.0,
-              total_fraction: 0.0,
+              total_fraction: nil,
               late_work_point_penalty: 0.0,
               late_work_fraction_penalty: late_work_penalty,
               points_per_question: [ nil ] * 8
@@ -80,7 +80,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           {
             name: 'Average Score',
             points_per_question: [ nil ] * 8,
-            total_fraction: 0.0,
+            total_fraction: nil,
             total_points: 0.0
           }
         )
@@ -118,13 +118,16 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.students.map(&:symbolize_keys)).to eq(
           tasks.each_with_index.map do |task, index|
             student = task.taskings.first.role.student
-            points_per_question = case index
+            case index
             when 0
-              [ 0.0 ] * 8
+              total_fraction = 0.0
+              points_per_question = [ 0.0 ] * 8
             when 1
-              [ 0.0 ] + [ nil ] * 7
+              total_fraction = 0.0
+              points_per_question = [ 0.0 ] + [ nil ] * 7
             else
-              [ nil ] * 8
+              total_fraction = nil
+              points_per_question = [ nil ] * 8
             end
 
             {
@@ -134,7 +137,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               is_dropped: student.dropped?,
               available_points: 8.0,
               total_points: 0.0,
-              total_fraction: 0.0,
+              total_fraction: total_fraction,
               late_work_point_penalty: 0.0,
               late_work_fraction_penalty: late_work_penalty,
               points_per_question: points_per_question
@@ -206,7 +209,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               is_dropped: student.dropped?,
               available_points: 8.0,
               total_points: 0.0,
-              total_fraction: 0.0,
+              total_fraction: nil,
               late_work_point_penalty: 0.0,
               late_work_fraction_penalty: late_work_penalty,
               points_per_question: [ nil ] * 8
