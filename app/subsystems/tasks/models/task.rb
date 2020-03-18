@@ -75,13 +75,9 @@ class Tasks::Models::Task < ApplicationRecord
   after_create :update_caches_now
   after_touch :update_caches_later
 
-  def page_ids
-    task_steps.map(&:content_page_id)
-  end
-
   def goal_num_pes
     if practice?
-      CreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES
+      FindOrCreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES
     else
       task_steps.personalized_group.to_a.count { |step| step.exercise? || step.placeholder? }
     end

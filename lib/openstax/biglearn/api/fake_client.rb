@@ -177,9 +177,9 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     tasks.group_by(&:task_type).each do |task_type, tasks|
       case task_type
       when 'reading', 'homework'
-        pool_method = "#{task_type}_dynamic_exercise_ids".to_sym
+        pool_type = "#{task_type}_dynamic".to_sym
       when 'chapter_practice', 'page_practice', 'mixed_practice', 'practice_worst_topics'
-        pool_method = :practice_widget_exercise_ids
+        pool_type = :practice_widget
       else
         tasks.map(&:id).each { |task_id| pool_exercise_ids_by_task_id[task_id] = [] }
         next
@@ -187,26 +187,35 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
       tasks.each do |task|
         student_history = (
-          [ task ] + Tasks::Models::Task.select(:id).joins(:taskings).where(
+          [ task ] + Tasks::Models::Task.select(
+            :id, :content_ecosystem_id, :core_page_ids
+          ).joins(:taskings).where(
             taskings: { entity_role_id: task.taskings.map(&:entity_role_id) },
             task_type: task.task_type
-          ).order(student_history_at: :desc).first(6)
+          ).order(student_history_at: :desc).preload(:ecosystem).first(6)
         ).uniq
 
-        spaced_page_ids_num_exercises = get_k_ago_map(
+        spaced_tasks_num_exercises = get_k_ago_map(
           task: task, include_random_ago: student_history.size > MIN_HISTORY_SIZE_FOR_RANDOM_AGO
-        ).map { |k_ago, num_exercises| [ student_history[k_ago]&.page_ids || [], num_exercises ] }
+        ).map { |k_ago, num_exercises| [ student_history[k_ago] || task, num_exercises ] }
 
-        exercise_ids_by_page_id = Content::Models::Page.where(
-          id: (task.page_ids + spaced_page_ids_num_exercises.map(&:first).flatten).uniq
-        ).pluck(:id, pool_method).to_h
+        spaced_tasks = spaced_tasks_num_exercises.map(&:first).compact
+        ecosystem_map = Content::Map.find_or_create_by(
+          from_ecosystems: spaced_tasks.map(&:ecosystem).uniq,
+          to_ecosystem: task.ecosystem
+        )
+
+        page_ids = (task.core_page_ids + spaced_tasks.flat_map(&:core_page_ids)).uniq
+        exercise_ids_by_page_id = ecosystem_map.map_page_ids_to_exercise_ids(
+          page_ids: page_ids, pool_type: pool_type
+        )
         exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
           id: exercise_ids_by_page_id.values.flatten
         ).index_by(&:id)
 
         spaced_exercises_by_task_id[task.id] =
-          spaced_page_ids_num_exercises.flat_map do |page_ids, num_exercises|
-          exercise_ids = exercise_ids_by_page_id.values_at(*page_ids).compact.flatten
+          spaced_tasks_num_exercises.flat_map do |task, num_exercises|
+          exercise_ids = exercise_ids_by_page_id.values_at(*task.core_page_ids).compact.flatten
 
           spaced_exercises = filter_and_choose_exercises(
             exercises: exercises_by_id.values_at(*exercise_ids),
@@ -219,7 +228,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
           next spaced_exercises unless remainder > 0
 
           # Use personalized exercises if not enough spaced practice exercises available
-          exercise_ids = exercise_ids_by_page_id.values_at(*task.page_ids).compact.flatten
+          exercise_ids = exercise_ids_by_page_id.values_at(*task.core_page_ids).compact.flatten
 
           spaced_exercises + filter_and_choose_exercises(
             exercises: exercises_by_id.values_at(*exercise_ids),

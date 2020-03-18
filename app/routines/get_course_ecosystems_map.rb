@@ -16,7 +16,7 @@ class GetCourseEcosystemsMap
 
     from_ecosystems = (course_ecosystems + tp_ecosystems).uniq
 
-    outputs.ecosystems_map = ::Content::Map.find_or_create_by(
+    outputs.ecosystems_map = Content::Map.find_or_create_by(
       from_ecosystems: from_ecosystems, to_ecosystem: to_ecosystem
     )
   end
