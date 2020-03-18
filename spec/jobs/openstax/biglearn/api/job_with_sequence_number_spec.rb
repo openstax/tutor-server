@@ -1,39 +1,44 @@
 require 'rails_helper'
 
 RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
-  subject(:job_with_sequence_number)  { described_class.new }
+  subject(:job_with_sequence_number) { described_class.new }
 
-  let(:course)                        { FactoryBot.create :course_profile_course }
+  let(:course)                       { FactoryBot.create :course_profile_course }
 
-  let(:sequence_number_model_key)     { :course }
-  let(:sequence_number_model_class)   { CourseProfile::Models::Course }
+  let(:sequence_number_model_key)    { :course }
+  let(:sequence_number_model_class)  { CourseProfile::Models::Course }
 
-  let(:perform_later_args)             do
+  let(:client)                       { [ nil, 'fake' ].sample }
+
+  let(:perform_later_args)           do
     {
       method: method.to_s,
       requests: requests,
       create: create,
       sequence_number_model_key: sequence_number_model_key.to_s,
       sequence_number_model_class: sequence_number_model_class.to_s,
-      queue: 'preview'
+      queue: 'preview',
+      client: client
     }
   end
-  let(:perform_args)                   do
+  let(:perform_args)                 do
     {
       method: method,
       requests: requests,
       create: create,
       sequence_number_model_key: sequence_number_model_key,
       sequence_number_model_class: sequence_number_model_class,
-      queue: 'biglearn'
+      queue: 'biglearn',
+      client: client
     }
   end
-  let(:job_args)                      do
+  let(:job_args)                    do
     {
       method: method.to_s,
       requests: requests_with_sequence_numbers,
       response_status_key: nil,
-      accepted_response_status: []
+      accepted_response_status: [],
+      client: client
     }
   end
 

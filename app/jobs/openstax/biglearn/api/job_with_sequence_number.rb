@@ -16,7 +16,7 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
 
   def perform(
     method:, requests:, create:, sequence_number_model_key:, sequence_number_model_class:, queue:,
-    response_status_key: nil, accepted_response_status: []
+    response_status_key: nil, accepted_response_status: [], client: nil
   )
     ScoutHelper.ignore!(0.8)
     req = [requests].flatten
@@ -107,7 +107,8 @@ class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::
         method: method.to_s,
         requests: modified_requests,
         response_status_key: response_status_key.try!(:to_s),
-        accepted_response_status: accepted_response_status
+        accepted_response_status: accepted_response_status,
+        client: client
       )
     end
   end
