@@ -57,7 +57,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
               is_dropped: false,
               available_points: 8.0,
               total_points: 1.0 - late_work_penalty,
-              total_fraction: (1.0 - late_work_penalty)/8,
+              total_fraction: 1.0 - late_work_penalty,
               late_work_point_penalty: late_work_penalty,
               late_work_fraction_penalty: late_work_penalty,
               points_per_question: [ 1.0 ] + [ nil ] * 7
@@ -78,7 +78,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
           average_score: {
             name: 'Average Score',
             total_points: (1.0 - late_work_penalty)/2,
-            total_fraction: (1.0 - late_work_penalty)/16,
+            total_fraction: (1.0 - late_work_penalty)/2,
             points_per_question: [ 0.5 ] + [ nil ] * 7
           }
         }
