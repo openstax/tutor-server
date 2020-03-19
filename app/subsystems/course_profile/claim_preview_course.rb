@@ -6,11 +6,35 @@ class CourseProfile::ClaimPreviewCourse
 
   def exec(catalog_offering:, name:, current_time: Time.current)
     course = CourseProfile::Models::Course
-               .where(is_preview: true,
-                      is_preview_ready: true,
-                      preview_claimed_at: nil,
-                      catalog_offering_id: catalog_offering.id)
                .lock
+               .joins(
+                 <<~JOIN_SQL
+                   CROSS JOIN LATERAL (
+                     SELECT "course_content_course_ecosystems"."content_ecosystem_id"
+                     FROM "course_content_course_ecosystems"
+                     WHERE "course_content_course_ecosystems"."course_profile_course_id" =
+                       "course_profile_courses"."id"
+                     ORDER BY "course_content_course_ecosystems"."created_at"
+                     LIMIT 1
+                   ) AS "initial_course_ecosystem"
+                 JOIN_SQL
+               )
+               .where(
+                 is_preview: true,
+                 is_preview_ready: true,
+                 preview_claimed_at: nil,
+                 catalog_offering_id: catalog_offering.id
+               )
+               .reorder(
+                 Arel.sql(
+                   ActiveRecord::Base.sanitize_sql_for_order(
+                     [
+                       '"initial_course_ecosystem"."content_ecosystem_id" = ? DESC',
+                       catalog_offering.content_ecosystem_id
+                     ]
+                   )
+                 )
+               )
                .first
     if course.nil?
       WarningMailer.log_and_deliver(
