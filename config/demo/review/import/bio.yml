@@ -4,13 +4,18 @@ book:
   uuid: 8d50a0af-948b-4204-a71d-4826cba765b8
 
   reading_processing_instructions:
-    - css: .multiple-choice, .free-response, .art-exercise, .interactive-embedded-homework,
+    - css: .multiple-choice, .free-response, .art-exercise, .interactive-long,
         .scientific, [data-type="glossary"]
       fragments: []
-    - css: .interactive-embedded-reading
+    - css: '[data-type="footnote-refs"]'
+      fragments:
+      - media
+    - css: .interactive
       fragments:
       - node
       - exercise
+      labels:
+      - interactive
 
 catalog_offering:
   title: Biology 2e

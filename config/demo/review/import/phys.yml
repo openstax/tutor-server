@@ -8,17 +8,26 @@ book:
         [data-element-type="problems-exercises"], [data-element-type="check-understanding"],
         [data-type="glossary"]
       fragments: []
+    - css: '[data-type="footnote-refs"]'
+      fragments:
+      - media
     - css: .phet-explorations-embedded
       fragments:
       - interactive
       - exercise
+      labels:
+      - phet-explorations
     - css: .watch-physics
       fragments:
       - video
       - exercise
+      labels:
+      - watch-physics
     - css: .example-video, [data-type="example"]
       fragments:
       - reading
+      labels:
+      - example
 
 catalog_offering:
   title: Physics with Courseware
