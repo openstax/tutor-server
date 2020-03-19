@@ -1,5 +1,6 @@
 class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   NON_RANDOM_K_AGOS = [ 1, 3, 5 ]
+  RANDOM_K_AGOS = [ 2, 4 ]
 
   DEFAULT_NUM_SPES_PER_K_AGO = 1
 
@@ -197,7 +198,9 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
         spaced_tasks_num_exercises = get_k_ago_map(
           task: task, include_random_ago: student_history.size > MIN_HISTORY_SIZE_FOR_RANDOM_AGO
-        ).map { |k_ago, num_exercises| [ student_history[k_ago] || task, num_exercises ] }
+        ).map do |k_ago, num_exercises|
+          [ student_history[k_ago || RANDOM_K_AGOS.sample] || task, num_exercises ]
+        end
 
         spaced_tasks = spaced_tasks_num_exercises.map(&:first).compact
         ecosystem_map = Content::Map.find_or_create_by(
