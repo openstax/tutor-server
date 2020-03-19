@@ -27,7 +27,7 @@ class CourseProfile::ClaimPreviewCourse
                )
                .reorder(
                  Arel.sql(
-                   ActiveRecord::Base.sanitize_sql_for_order(
+                   ActiveRecord::Base.sanitize_sql_array(
                      [
                        '"initial_course_ecosystem"."content_ecosystem_id" = ? DESC',
                        catalog_offering.content_ecosystem_id

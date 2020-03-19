@@ -6,6 +6,24 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
   let(:current_time) { Time.current }
   let(:year)         { current_time.year }
 
+  before do
+    # Not used because no ecosystem
+    CreateCourse[
+      name: 'Unclaimed',
+      term: term,
+      year: year,
+      time_zone: 'Indiana (East)',
+      is_preview: true,
+      is_college: true,
+      is_test: false,
+      catalog_offering: offering,
+      estimated_student_count: 42
+    ].tap do |course|
+      course.course_ecosystems.delete_all :delete_all
+      course.update_attribute :is_preview_ready, true
+    end
+  end
+
   context 'with preview available' do
     around(:all) { |example| Timecop.freeze(current_time - 3.months) { example.run } }
 
@@ -20,9 +38,14 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
         is_test: false,
         catalog_offering: offering,
         estimated_student_count: 42
-      ].tap { |course| course.update_attribute :is_preview_ready, true }
+      ].tap do |course|
+        course.course_ecosystems.delete_all :delete_all
+        course.update_attribute :is_preview_ready, true
+      end
     end
     let!(:task_plan) { FactoryBot.create :tasked_task_plan, owner: course }
+
+    before { offering.update_attribute :ecosystem, task_plan.ecosystem }
 
     it 'finds the course, task plans and tasks and updates their attributes' do
       claimed_course = Timecop.freeze(current_time) do
@@ -50,6 +73,47 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
         expect(task.due_at).to be_within(1.hour + 1.second).of(current_time + 1.week)
         expect(task.feedback_at).to be_nil
         expect(task.last_worked_at).to be_nil
+      end
+    end
+
+    context 'with some preview courses with old content' do
+      let!(:old_ecosystem_course) do
+        CreateCourse[
+          name: 'Unclaimed',
+          term: term,
+          year: year,
+          time_zone: 'Indiana (East)',
+          is_preview: true,
+          is_college: true,
+          is_test: false,
+          catalog_offering: offering,
+          estimated_student_count: 42
+        ].tap do |course|
+          course.update_attribute :is_preview_ready, true
+          FactoryBot.create(
+            :course_content_course_ecosystem, course: course, created_at: Time.current - 1.hour
+          )
+        end
+      end
+
+      it 'prefers the course that was created in the newer ecosystem' do
+        claimed_course = Timecop.freeze(current_time) do
+          CourseProfile::ClaimPreviewCourse[
+            catalog_offering: offering, name: 'My New Preview Course'
+          ]
+        end
+        expect(claimed_course.id).to eq course.id
+      end
+
+      it 'falls back to the course created in the older ecosystem' do
+        course.update_attribute :preview_claimed_at, Time.current
+
+        claimed_course = Timecop.freeze(current_time) do
+          CourseProfile::ClaimPreviewCourse[
+            catalog_offering: offering, name: 'My New Preview Course'
+          ]
+        end
+        expect(claimed_course.id).to eq old_ecosystem_course.id
       end
     end
   end
