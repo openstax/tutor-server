@@ -78,26 +78,36 @@ class WorkPreviewCourseTasks
       end
 
       great_student_role = student_roles.first
+      current_time = Time.current
 
       work_tasks(
-        role: great_student_role, correct_probability: GREAT_STUDENT_CORRECT_PROBABILITY
+        role: great_student_role,
+        correct_probability: GREAT_STUDENT_CORRECT_PROBABILITY,
+        current_time: current_time
       )
 
       next if student_roles.size < 2
 
       struggling_student_role = student_roles.last
 
-      work_tasks(role: struggling_student_role,
-                 correct_probability: STRUGGLING_STUDENT_CORRECT_PROBABILITY,
-                 late: true,
-                 incomplete: true)
+      work_tasks(
+        role: struggling_student_role,
+        correct_probability: STRUGGLING_STUDENT_CORRECT_PROBABILITY,
+        late: true,
+        incomplete: true,
+        current_time: current_time
+      )
 
       next if student_roles.size < 3
 
       average_student_roles = student_roles[1..-2]
 
       average_student_roles.each do |role|
-        work_tasks(role: role, correct_probability: AVERAGE_STUDENT_CORRECT_PROBABILITY)
+        work_tasks(
+          role: role,
+          correct_probability: AVERAGE_STUDENT_CORRECT_PROBABILITY,
+          current_time: current_time
+        )
       end
 
       Tasks::UpdateTaskCaches.call(

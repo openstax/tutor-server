@@ -1,5 +1,4 @@
 class Tasks::GetTaskPlans
-
   lev_routine express_output: :plans
 
   protected
@@ -9,7 +8,7 @@ class Tasks::GetTaskPlans
                                    .distinct
                                    .joins(:tasking_plans)
                                    .where(owner: owner)
-                                   .preload(:tasking_plans)
+                                   .preload(tasking_plans: :time_zone)
 
     tgp = Tasks::Models::TaskingPlan.arel_table
     query = query.where(
@@ -25,5 +24,4 @@ class Tasks::GetTaskPlans
 
     outputs.plans = query.to_a
   end
-
 end
