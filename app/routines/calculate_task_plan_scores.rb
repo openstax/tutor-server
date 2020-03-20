@@ -23,7 +23,7 @@ class CalculateTaskPlanScores
     # We load these separately because we don't need the huge exercise content field
     tasked_exercise_ids = tasks.flat_map(&:task_steps).select(&:exercise?).map(&:tasked_id)
     tasked_exercise_by_id = Tasks::Models::TaskedExercise.select(
-      :id, :correct_answer_id, :answer_id
+      :id, :correct_answer_id, :answer_id, :free_response, :content_exercise_id,
     ).where(id: tasked_exercise_ids).index_by(&:id)
 
     # Group tasks by period
@@ -59,13 +59,12 @@ class CalculateTaskPlanScores
         step.exercise? || step.placeholder?
       end
       question_headings_array = exercise_steps.each_with_index.map do |_, index|
-        { title: "Q#{index + 1}", type: 'MCQ' }
+        { title: "Q#{index + 1}", type: 'MCQ', points: available_points_per_question_index[index] }
       end
       available_points_per_question = exercise_steps.each_with_index.map do |_, index|
         available_points_per_question_index[index]
       end
       available_points_hash = {
-        name: 'Available Points',
         total_points: available_points_per_question.sum,
         total_fraction: 1.0,
         points_per_question: available_points_per_question
@@ -88,7 +87,7 @@ class CalculateTaskPlanScores
         student = role.student
         next if student.nil?
 
-        account = task.taskings.first.role.profile.account
+        role = task.taskings.first.role
 
         exercise_steps = task.task_steps.filter { |step| step.exercise? || step.placeholder? }
         next if exercise_steps.empty?
@@ -98,16 +97,28 @@ class CalculateTaskPlanScores
         available_points = exercise_steps.size.times.map do |index|
           available_points_per_question_index[index]
         end.sum
-        points_per_question = exercise_steps.each_with_index.map do |task_step, index|
-          if task_step.placeholder? || !task_step.completed?
-            next task.past_due?(current_time: current_time) ? 0.0 : nil
-          end
 
-          tasked = tasked_exercise_by_id[task_step.tasked_id]
-          tasked.is_correct? ? available_points_per_question_index[index] : 0.0
+        student_questions = exercise_steps.each_with_index.map do |task_step, index|
+          if task_step.placeholder?
+            {
+             is_completed: false,
+             points: task.late? ? 0.0 : nil
+            }
+          else
+            tasked = tasked_exercise_by_id[task_step.tasked_id]
+            debugger unless tasked
+            {
+             id: task_step.tasked.question_id,
+              exercise_id: tasked.content_exercise_id,
+              is_completed: task_step.completed?,
+              selected_answer_id: task_step.tasked.answer_id,
+              points: available_points_per_question_index[index],
+              free_response: tasked.free_response,
+            }
+          end
         end
 
-        total_points_without_lateness = points_per_question.compact.sum
+        total_points_without_lateness = student_questions.map{|sq| sq[:points] }.compact.sum
 
         late_work_fraction_penalty = task.late_work_penalty
         late_work_point_penalty = late_work_fraction_penalty * total_points_without_lateness
@@ -115,27 +126,26 @@ class CalculateTaskPlanScores
         total_points = total_points_without_lateness - late_work_point_penalty
 
         worked_points = 0.0
-        points_per_question.each_with_index do |points, index|
+        student_questions.each_with_index do |sq, index|
           all_question_points[index] ||= []
-          next if points.nil?
+          next if sq[:points].nil?
 
-          all_question_points[index] << points
+          all_question_points[index] << sq[:points]
           worked_points += available_points_per_question_index[index]
         end unless is_dropped
 
         total_fraction = total_points/worked_points if worked_points != 0.0
 
         {
-          name: account.name,
-          first_name: account.first_name,
-          last_name: account.last_name,
+          name: role.profile.name,
           is_dropped: is_dropped,
+          student_identifier: role.student.student_identifier,
           available_points: available_points,
           total_points: total_points,
           total_fraction: total_fraction,
           late_work_point_penalty: late_work_point_penalty,
           late_work_fraction_penalty: late_work_fraction_penalty,
-          points_per_question: points_per_question
+          questions: student_questions
         }
       end.compact.sort_by { |student| [ student[:last_name], student[:first_name] ] }
 
@@ -149,7 +159,7 @@ class CalculateTaskPlanScores
       all_fractions = students_array.map { |student| student[:total_fraction] }.compact
       average_fraction = all_fractions.empty? ? nil : all_fractions.sum/num_students
       average_score_hash = {
-        name: 'Average Score',
+
         total_points: average_points,
         total_fraction: average_fraction,
         points_per_question: average_points_per_question

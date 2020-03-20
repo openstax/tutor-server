@@ -27,4 +27,6 @@ class Api::V1::TaskPlan::Scores::Representer < ::Roar::Decorator
              readable: true,
              writable: false,
              getter: ->(*) { CalculateTaskPlanScores[task_plan: self] }
+
+
 end

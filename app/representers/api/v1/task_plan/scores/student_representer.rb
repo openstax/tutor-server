@@ -7,12 +7,7 @@ class Api::V1::TaskPlan::Scores::StudentRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
-  property :first_name,
-           type: String,
-           readable: true,
-           writeable: false
-
-  property :last_name,
+  property :student_identifier,
            type: String,
            readable: true,
            writeable: false
@@ -46,8 +41,8 @@ class Api::V1::TaskPlan::Scores::StudentRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
-  collection :points_per_question,
-             type: Float,
+         collection :questions,
+             extend: Api::V1::TaskPlan::Scores::StudentQuestionRepresenter,
              readable: true,
              writeable: false
 end
