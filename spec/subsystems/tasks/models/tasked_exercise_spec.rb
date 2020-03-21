@@ -9,7 +9,6 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   it { is_expected.to validate_presence_of(:url) }
   it { is_expected.to validate_presence_of(:question_id) }
   it { is_expected.to validate_presence_of(:question_index) }
-  it { is_expected.to validate_presence_of(:content) }
   it { is_expected.to validate_presence_of(:correct_answer_id) }
   it { is_expected.to validate_length_of(:free_response).is_at_most(10000) }
 
@@ -87,16 +86,23 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   context '#content_preview' do
     let(:default_exercise_copy) { "Exercise step ##{tasked_exercise.id}" }
     let(:content_body) { 'exercise content' }
-    let(:content) { { "questions" => [ {"stem_html" => content_body } ] }.to_json }
-
-    it "parses the content for the content preview" do
-      tasked_exercise.content = content
-      expect(tasked_exercise.content_preview).to eq(content_body)
+    let(:content) do
+      {
+        questions: [
+          {
+            id: '1',
+            stem_html: content_body,
+            answers: [
+              { id: '1', correctness: 1.0 }
+            ]
+          }
+        ]
+      }.to_json
     end
 
-    it "provides a default if the content preview is missing" do
-      tasked_exercise.content = { blah: "preview missing" }.to_json
-      expect(tasked_exercise.content_preview).to eq(default_exercise_copy)
+    it "parses the content for the content preview" do
+      content_exercise.update_attribute :content, content
+      expect(tasked_exercise.content_preview).to eq(content_body)
     end
   end
 end

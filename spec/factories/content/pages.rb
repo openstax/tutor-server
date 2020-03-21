@@ -8,7 +8,10 @@ FactoryBot.define do
     url                 { OpenStax::Cnx::V1.archive_url_for "#{uuid}@#{version}" }
     book_indices        { [ [0], [1, 0], [1, 1], [1, 1, 1] ].sample }
     book_location       { [ [], [1, 1] ].sample }
-    fragments           { [] }
     snap_labs           { [] }
+
+    after(:create) do |page|
+      Content::Routines::TransformAndCachePageContent.call book: page.book, pages: [ page ]
+    end
   end
 end

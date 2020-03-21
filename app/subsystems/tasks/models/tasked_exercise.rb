@@ -19,13 +19,26 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     where('tasks_tasked_exercises.answer_id != tasks_tasked_exercises.correct_answer_id')
   end
 
+  delegate :context, to: :exercise
+
   delegate :uid, :questions, :question_formats, :question_answers,
            :question_answer_ids, :question_formats_for_students,
            :correct_question_answers, :correct_question_answer_ids,
            :feedback_map, :solutions, :content_hash_for_students,
            :tags, :los, :aplos, to: :parser
 
-  # We depend on the parser because we do not save the parsed content
+  def content
+    return if question_index.nil?
+
+    questions = exercise&.content_as_independent_questions
+    return if questions.nil?
+
+    question = questions[question_index]
+    return if question.nil?
+
+    question[:content]
+  end
+
   def parser
     @parser ||= OpenStax::Exercises::V1::Exercise.new(content: content)
   end

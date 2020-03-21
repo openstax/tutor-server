@@ -6,12 +6,13 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
   end
 
   it { is_expected.to validate_presence_of(:url) }
-  it { is_expected.to validate_presence_of(:content) }
+  it { is_expected.to validate_presence_of(:fragment_index) }
 
-  describe '#content_preview' do
-
+  context '#content_preview' do
     before do
-      tasked_reading.content = content
+      tasked_reading.task_step.update_attribute(
+        :page, FactoryBot.create(:content_page, content: content)
+      )
     end
 
     context "When document title is present" do
@@ -63,7 +64,7 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
     end
 
     context "When there is no markup with title content" do
-      let(:content) { '' }
+      let(:content) { 'Some Content' }
 
       it "defaults to page title" do
         expect(tasked_reading.content_preview).to eq(tasked_reading.task_step.page.title)

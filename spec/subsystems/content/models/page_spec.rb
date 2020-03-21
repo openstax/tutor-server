@@ -19,8 +19,6 @@ RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
       end
 
       @snap_lab_page = FactoryBot.create :content_page, content: snap_lab_page_content
-      @snap_lab_page.cache_fragments_and_snap_labs
-      @snap_lab_page.save!
     end
 
     it 'caches fragments' do

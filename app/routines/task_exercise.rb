@@ -1,5 +1,4 @@
 class TaskExercise
-
   lev_routine transaction: :read_committed
 
   protected
@@ -8,7 +7,7 @@ class TaskExercise
     # This routine will make one step per exercise part.
     # If provided, the incoming `task_step` will be used as the first step.
 
-    task ||= task_step.try!(:task)
+    task ||= task_step&.task
     fatal_error(code: :cannot_get_task) if task.nil?
 
     if task_step.nil?
@@ -51,10 +50,8 @@ class TaskExercise
         exercise: exercise,
         url: exercise.url,
         title: title || exercise.title,
-        context: exercise.context,
         question_id: question[:id],
         question_index: ii,
-        content: question[:content],
         is_in_multipart: questions.size > 1
       )
 
@@ -80,5 +77,4 @@ class TaskExercise
     # Task was already saved and we added more steps, so need to reload steps from DB
     task.task_steps.reset if task.persisted? && current_step != task_step
   end
-
 end

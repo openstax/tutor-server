@@ -81,7 +81,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
         chapter_section: @task_step.tasked.book_location,
         is_completed: false,
         content_url: 'http://u.rl',
-        html: 'content',
+        html: '<body><p>content</p></body>',
         related_content: a_kind_of(Array)
       )
     end
