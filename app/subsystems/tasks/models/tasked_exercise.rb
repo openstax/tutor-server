@@ -19,15 +19,19 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     where('tasks_tasked_exercises.answer_id != tasks_tasked_exercises.correct_answer_id')
   end
 
-  delegate :context, to: :exercise
+  # Fields shared by all parts of a multipart exercise
+  delegate :uid, :tags, :los, :aplos, to: :exercise
 
-  delegate :uid, :questions, :question_formats, :question_answers,
+  # Fields specific to each part of a multipart exercise
+  delegate :questions, :question_formats, :question_answers,
            :question_answer_ids, :question_formats_for_students,
            :correct_question_answers, :correct_question_answer_ids,
-           :feedback_map, :solutions, :content_hash_for_students,
-           :tags, :los, :aplos, to: :parser
+           :feedback_map, :solutions, :content_hash_for_students, to: :parser
 
   def content
+    cont = super
+    return cont unless cont.nil?
+
     return if question_index.nil?
 
     questions = exercise&.content_as_independent_questions
@@ -37,6 +41,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     return if question.nil?
 
     question[:content]
+  end
+
+  def context
+    super || exercise.context
   end
 
   def parser
@@ -144,7 +152,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     # Cannot change the answer after feedback is available
     # Feedback is available immediately for iReadings, or at the due date for HW,
     # but waits until the step is marked as completed
-    return unless task_step.try!(:feedback_available?)
+    return unless task_step&.feedback_available?
 
     [:answer_id, :free_response].each do |attr|
       errors.add(

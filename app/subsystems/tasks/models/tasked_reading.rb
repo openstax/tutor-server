@@ -6,6 +6,9 @@ class Tasks::Models::TaskedReading < IndestructibleRecord
   validates :url, :fragment_index, presence: true
 
   def content
+    cont = super
+    return cont unless cont.nil?
+
     return if fragment_index.nil?
 
     fragments = task_step&.page&.fragments
