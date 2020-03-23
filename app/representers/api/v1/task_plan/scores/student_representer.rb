@@ -2,7 +2,12 @@ class Api::V1::TaskPlan::Scores::StudentRepresenter < Roar::Decorator
   include Roar::JSON
   include Representable::Coercion
 
-  property :name,
+  property :first_name,
+           type: String,
+           readable: true,
+           writeable: false
+
+  property :last_name,
            type: String,
            readable: true,
            writeable: false

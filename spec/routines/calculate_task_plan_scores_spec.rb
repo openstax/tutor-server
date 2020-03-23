@@ -45,44 +45,44 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ' } }
+          8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ', points: 1.0 } }
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
-        expect(period_output.available_points.symbolize_keys).to eq(
-          {
-            name: 'Available Points',
-            points_per_question: [ 1.0 ] * 8,
-            total_fraction: 1.0,
-            total_points: 8.0
-          }
-        )
         expect(period_output.num_questions_dropped).to eq 0
         expect(period_output.points_dropped).to eq 0.0
-        expect(period_output.students.map(&:symbolize_keys)).to eq(
+
+        expect(period_output.students.map(&:deep_symbolize_keys)).to eq(
           tasks.map do |task|
             student = task.taskings.first.role.student
-
             {
-              name: student.name,
-              first_name: student.first_name,
-              last_name: student.last_name,
-              is_dropped: student.dropped?,
-              available_points: 8.0,
-              total_points: 0.0,
-              total_fraction: nil,
-              late_work_point_penalty: 0.0,
-              late_work_fraction_penalty: late_work_penalty,
-              points_per_question: [ nil ] * 8
+               available_points: 8.0,
+               late_work_fraction_penalty: late_work_penalty,
+               first_name: student.first_name,
+               last_name: student.last_name,
+               late_work_point_penalty: 0.0,
+               is_dropped: false,
+               student_identifier: student.student_identifier,
+               total_fraction: 0.0,
+               total_points: 0.0,
+               questions: tasks[0].task_steps.map do |ts|
+                 if ts.exercise?
+                   {
+                    id: ts.tasked.question_id,
+                    exercise_id: ts.tasked.content_exercise_id,
+                    is_completed: false,
+                    selected_answer_id: ts.tasked.answer_id,
+                    points: 0.0,
+                    free_response: nil,
+                   }
+                 elsif ts.placeholder?
+                   {
+                    is_completed: false,
+                    points: ts.task.late? ? 0.0 : nil
+                   }
+                 end
+               end.compact
             }
           end
-        )
-        expect(period_output.average_score.symbolize_keys).to eq(
-          {
-            name: 'Average Score',
-            points_per_question: [ nil ] * 8,
-            total_fraction: nil,
-            total_points: 0.0
-          }
         )
       end
     end
@@ -102,55 +102,44 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ' } }
+          8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ', points: 1.0 } }
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
-        expect(period_output.available_points.symbolize_keys).to eq(
-          {
-            name: 'Available Points',
-            points_per_question: [ 1.0 ] * 8,
-            total_fraction: 1.0,
-            total_points: 8.0
-          }
-        )
         expect(period_output.num_questions_dropped).to eq 0
         expect(period_output.points_dropped).to eq 0.0
-        expect(period_output.students.map(&:symbolize_keys)).to eq(
-          tasks.each_with_index.map do |task, index|
-            student = task.taskings.first.role.student
-            case index
-            when 0
-              total_fraction = 0.0
-              points_per_question = [ 0.0 ] * 8
-            when 1
-              total_fraction = 0.0
-              points_per_question = [ 0.0 ] + [ nil ] * 7
-            else
-              total_fraction = nil
-              points_per_question = [ nil ] * 8
-            end
 
+        expect(period_output.students[0..0].map(&:deep_symbolize_keys)).to eq(
+          tasks[0..0].map do |task|
+            student = task.taskings.first.role.student
             {
-              name: student.name,
+              available_points: 8.0,
+              late_work_fraction_penalty: late_work_penalty,
               first_name: student.first_name,
               last_name: student.last_name,
-              is_dropped: student.dropped?,
-              available_points: 8.0,
-              total_points: 0.0,
-              total_fraction: total_fraction,
               late_work_point_penalty: 0.0,
-              late_work_fraction_penalty: late_work_penalty,
-              points_per_question: points_per_question
+              is_dropped: false,
+              student_identifier: student.student_identifier,
+              total_fraction: 0.0,
+              total_points: 0.0,
+              questions: tasks[0].task_steps.map do |ts|
+                if ts.exercise?
+                  {
+                   id: ts.tasked.question_id,
+                   exercise_id: ts.tasked.content_exercise_id,
+                   is_completed: ts.completed?,
+                   selected_answer_id: ts.tasked.answer_id,
+                   points: 0.0,
+                   free_response: ts.tasked.free_response,
+                  }
+                elsif ts.placeholder?
+                  {
+                   is_completed: false,
+                   points: ts.task.late? ? 0.0 : nil
+                  }
+                end
+              end.compact
             }
           end
-        )
-        expect(period_output.average_score.symbolize_keys).to eq(
-          {
-            name: 'Average Score',
-            points_per_question: [ 0.0 ] * 8,
-            total_fraction: 0.0,
-            total_points: 0.0
-          }
         )
       end
     end
@@ -169,60 +158,45 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ' } }
+          8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ', points: 1.0 } }
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
-        expect(period_output.available_points.symbolize_keys).to eq(
-          {
-            name: 'Available Points',
-            points_per_question: [ 1.0 ] * 8,
-            total_fraction: 1.0,
-            total_points: 8.0
-          }
-        )
         expect(period_output.num_questions_dropped).to eq 0
         expect(period_output.points_dropped).to eq 0.0
-        expect(period_output.students.map(&:symbolize_keys)).to eq(
-          tasks[0..3].each_with_index.map do |task, index|
-            student = task.taskings.first.role.student
-            multiplier = [ 0, 2, 3 ].include?(index) ? 1.0 : 0.0
 
+        expect(period_output.students[0..0].map(&:deep_symbolize_keys)).to eq(
+          tasks[0..0].each_with_index.map do |task, index|
+            student = task.taskings.first.role.student
+            points = [ 0, 2, 3 ].include?(index) ? 1.0 : 0.0
             {
-              name: student.name,
+              available_points: 8.0,
+              late_work_fraction_penalty: late_work_penalty,
               first_name: student.first_name,
               last_name: student.last_name,
-              is_dropped: student.dropped?,
-              available_points: 8.0,
-              total_points: 8.0 * (1.0 - late_work_penalty) * multiplier,
-              total_fraction: 1.0 * (1.0 - late_work_penalty) * multiplier,
-              late_work_point_penalty: 8.0 * late_work_penalty * multiplier,
-              late_work_fraction_penalty: late_work_penalty,
-              points_per_question: [ 1.0 * multiplier ] * 8
-            }
-          end + tasks[4..-1].map do |task|
-            student = task.taskings.first.role.student
-
-            {
-              name: student.name,
-              first_name: student.first_name,
-              last_name: student.last_name,
-              is_dropped: student.dropped?,
-              available_points: 8.0,
-              total_points: 0.0,
-              total_fraction: nil,
-              late_work_point_penalty: 0.0,
-              late_work_fraction_penalty: late_work_penalty,
-              points_per_question: [ nil ] * 8
+              late_work_point_penalty: 8.0 * late_work_penalty * points,
+              is_dropped: false,
+              student_identifier: student.student_identifier,
+              total_fraction: 0.5,
+              total_points: 4.0,
+              questions: tasks[0].task_steps.map do |ts|
+                if ts.exercise?
+                  {
+                   id: ts.tasked.question_id,
+                   exercise_id: ts.tasked.content_exercise_id,
+                   is_completed: ts.completed?,
+                   selected_answer_id: ts.tasked.answer_id,
+                   points: points,
+                   free_response: ts.tasked.free_response,
+                  }
+                elsif ts.placeholder?
+                  {
+                   is_completed: false,
+                   points: ts.task.late? ? 0.0 : nil
+                  }
+                end
+              end.compact
             }
           end
-        )
-        expect(period_output.average_score.symbolize_keys).to eq(
-          {
-            name: 'Average Score',
-            points_per_question: [ 3.0/4 ] * 8,
-            total_fraction: 3.0/8 * (1.0 - late_work_penalty),
-            total_points: 3.0 * (1.0 - late_work_penalty)
-          }
         )
       end
     end
