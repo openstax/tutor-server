@@ -22,11 +22,6 @@ class Api::V1::TaskPlan::Scores::PeriodRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
-  property :available_points,
-           readable: true,
-           writeable: false,
-           extend: Api::V1::TaskPlan::Scores::StudentRepresenter
-
   property :num_questions_dropped,
            type: Integer,
            readable: true,
@@ -41,9 +36,4 @@ class Api::V1::TaskPlan::Scores::PeriodRepresenter < Roar::Decorator
              readable: true,
              writeable: false,
              extend: Api::V1::TaskPlan::Scores::StudentRepresenter
-
-  property :average_score,
-           readable: true,
-           writeable: false,
-           extend: Api::V1::TaskPlan::Scores::StudentRepresenter
 end

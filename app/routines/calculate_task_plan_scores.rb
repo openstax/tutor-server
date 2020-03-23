@@ -61,15 +61,6 @@ class CalculateTaskPlanScores
       question_headings_array = exercise_steps.each_with_index.map do |_, index|
         { title: "Q#{index + 1}", type: 'MCQ', points: available_points_per_question_index[index] }
       end
-      available_points_per_question = exercise_steps.each_with_index.map do |_, index|
-        available_points_per_question_index[index]
-      end
-      available_points_hash = {
-        total_points: available_points_per_question.sum,
-        total_fraction: 1.0,
-        points_per_question: available_points_per_question
-      }
-
       if task_plan.type == 'homework'
         expected_num_questions = task_plan.settings.fetch('exercises').map do |exercise|
           exercise['points'].size
@@ -106,13 +97,12 @@ class CalculateTaskPlanScores
             }
           else
             tasked = tasked_exercise_by_id[task_step.tasked_id]
-            debugger unless tasked
             {
-             id: task_step.tasked.question_id,
+              id: task_step.tasked.question_id,
               exercise_id: tasked.content_exercise_id,
               is_completed: task_step.completed?,
               selected_answer_id: task_step.tasked.answer_id,
-              points: available_points_per_question_index[index],
+              points: tasked.is_correct? ? available_points_per_question_index[index] : 0.0,
               free_response: tasked.free_response,
             }
           end
@@ -137,7 +127,8 @@ class CalculateTaskPlanScores
         total_fraction = total_points/worked_points if worked_points != 0.0
 
         {
-          name: role.profile.name,
+          first_name: role.profile.first_name,
+          last_name: role.profile.last_name,
           is_dropped: is_dropped,
           student_identifier: role.student.student_identifier,
           available_points: available_points,
@@ -149,32 +140,14 @@ class CalculateTaskPlanScores
         }
       end.compact.sort_by { |student| [ student[:last_name], student[:first_name] ] }
 
-      average_points_per_question = all_question_points.map do |points_per_question|
-        next if points_per_question.empty?
-
-        points_per_question.sum/points_per_question.size
-      end
-      num_students = students_array.size
-      average_points = students_array.map { |student| student[:total_points] }.sum/num_students
-      all_fractions = students_array.map { |student| student[:total_fraction] }.compact
-      average_fraction = all_fractions.empty? ? nil : all_fractions.sum/num_students
-      average_score_hash = {
-
-        total_points: average_points,
-        total_fraction: average_fraction,
-        points_per_question: average_points_per_question
-      }
-
       {
         id: period.id,
         name: period.name,
         question_headings: question_headings_array,
         late_work_fraction_penalty: task_plan.grading_template.late_work_penalty,
-        available_points: available_points_hash,
         num_questions_dropped: num_questions_dropped,
         points_dropped: points_dropped,
         students: students_array,
-        average_score: average_score_hash
       }
     end
   end
