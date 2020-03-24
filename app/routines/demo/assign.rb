@@ -158,6 +158,8 @@ class Demo::Assign < Demo::Base
         log { "  Is a draft, skipping distributing" }
       end
 
+      task_plan_model.tasks.reset
+
       task_plan_model
     end
 

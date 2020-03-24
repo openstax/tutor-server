@@ -28,6 +28,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
            :correct_question_answers, :correct_question_answer_ids,
            :feedback_map, :solutions, :content_hash_for_students, to: :parser
 
+  def context
+    super || exercise.context
+  end
+
   def content
     cont = super
     return cont unless cont.nil?
@@ -41,10 +45,6 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     return if question.nil?
 
     question[:content]
-  end
-
-  def context
-    super || exercise.context
   end
 
   def parser
@@ -124,9 +124,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   protected
 
   def free_response_required
-    if parser.question_formats_for_students.include?('free-response') && free_response.blank?
-      errors.add(:free_response, 'is required')
-    end
+    errors.add(:free_response, 'is required') if is_two_step? && free_response.blank?
   end
 
   def answer_id_required

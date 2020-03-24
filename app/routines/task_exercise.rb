@@ -52,7 +52,7 @@ class TaskExercise
         title: title || exercise.title,
         question_id: question[:id],
         question_index: question_index,
-        answer_ids: exercise.parser.question_answer_ids[question_index],
+        answer_ids: exercise.question_answer_ids[question_index],
         is_in_multipart: questions.size > 1
       )
 

@@ -83,6 +83,9 @@ class Demo::Work < Demo::Base
             is_correct: is_correct,
             free_response: free_response
           )
+
+          # Clear task steps to save memory
+          task_model.task_steps.reset
         end
       end
     end

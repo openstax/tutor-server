@@ -100,6 +100,7 @@ ActiveRecord::Schema.define(version: 2020_03_20_203024) do
     t.uuid "uuid", null: false
     t.uuid "group_uuid", null: false
     t.string "nickname"
+    t.jsonb "question_answer_ids", null: false
     t.index ["content_page_id"], name: "index_content_exercises_on_content_page_id"
     t.index ["group_uuid", "version"], name: "index_content_exercises_on_group_uuid_and_version"
     t.index ["number", "version"], name: "index_content_exercises_on_number_and_version"
