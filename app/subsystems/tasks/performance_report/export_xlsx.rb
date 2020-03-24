@@ -633,14 +633,8 @@ module Tasks
           on_time_correct_count = data[:correct_on_time_exercise_count]
           on_time_completed_count = data[:completed_on_time_exercise_count]
 
-          correct_count = [
-            data[:correct_on_time_exercise_count], data[:correct_accepted_late_exercise_count]
-          ].max
-          completed_count = [
-            data[:completed_on_time_step_count], data[:completed_accepted_late_step_count]
-          ].max
-
-          some_late_work_accepted = data[:completed_accepted_late_exercise_count] != 0
+          correct_count = data[:correct_on_time_exercise_count]
+          completed_count = data[:completed_on_time_step_count]
 
           pending_late_correct_count = data[:correct_exercise_count]
           pending_late_completed_count = data[:completed_step_count]
@@ -652,12 +646,7 @@ module Tasks
 
           if format == :counts
             columns.push([
-              correct_count,
-              {
-                style: @normal_L,
-                comment: some_late_work_accepted ?
-                  late_accepted_comment(on_time_correct_count) : nil
-              }
+              correct_count, { style: @normal_L }
             ])
             columns.push(completed_count)
 
@@ -671,12 +660,7 @@ module Tasks
           else
             columns.push([
               correct_count * 1.0 / exercise_steps_count,
-              {
-                style: @pct_L,
-                comment: some_late_work_accepted ? late_accepted_comment(
-                  "#{(on_time_correct_count * 100.0 / exercise_steps_count).round(0)}%"
-                ) : nil
-              }
+              { style: @pct_L }
             ])
             columns.push([completed_count * 1.0 / steps_count, style: @pct])
 

@@ -74,6 +74,25 @@ class Tasks::Models::Task < ApplicationRecord
   after_create :update_caches_now
   after_touch :update_caches_later
 
+  alias_method :due_at_without_extension, :due_at
+  alias_method :closes_at_without_extension, :closes_at
+
+  def extended_due_at
+    task_plan&.extended_task_ids&.include?(id) ? task_plan.extended_due_at : nil
+  end
+
+  def extended_closes_at
+    task_plan&.extended_task_ids&.include?(id) ? task_plan.extended_due_at : nil
+  end
+
+  def due_at
+    [ due_at_without_extension, extended_due_at ].compact.max
+  end
+
+  def closes_at
+    [ closes_at_without_extension, extended_closes_at ].compact.max
+  end
+
   def grading_template
     task_plan&.grading_template
   end
@@ -315,20 +334,12 @@ class Tasks::Models::Task < ApplicationRecord
     completed_on_time_exercise_steps_count
   end
 
-  def completed_accepted_late_exercise_count
-    completed_accepted_late_exercise_steps_count
-  end
-
   def correct_exercise_count
     correct_exercise_steps_count
   end
 
   def correct_on_time_exercise_count
     correct_on_time_exercise_steps_count
-  end
-
-  def correct_accepted_late_exercise_count
-    correct_accepted_late_exercise_steps_count
   end
 
   def exercise_steps
@@ -365,7 +376,7 @@ class Tasks::Models::Task < ApplicationRecord
   def lateness
     return 0 if last_worked_at.blank? || due_at.blank?
 
-    last_worked_at - [ due_at, accepted_late_at ].compact.max
+    last_worked_at - due_at
   end
 
   def late_work_multiplier
@@ -387,20 +398,6 @@ class Tasks::Models::Task < ApplicationRecord
 
   def score
     score_without_lateness.nil? ? nil : late_work_multiplier * score_without_lateness
-  end
-
-  def accept_late_work
-    self.completed_accepted_late_steps_count = completed_steps_count
-    self.completed_accepted_late_exercise_steps_count = completed_exercise_steps_count
-    self.correct_accepted_late_exercise_steps_count = correct_exercise_steps_count
-    self.accepted_late_at = Time.current
-  end
-
-  def reject_late_work
-    self.completed_accepted_late_steps_count = 0
-    self.completed_accepted_late_exercise_steps_count = 0
-    self.correct_accepted_late_exercise_steps_count = 0
-    self.accepted_late_at = nil
   end
 
   protected

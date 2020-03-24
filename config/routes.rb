@@ -86,11 +86,6 @@ Rails.application.routes.draw do
     end
 
     resources :tasks, only: [ :show, :destroy ] do
-      member do
-        put :accept_late_work
-        put :reject_late_work
-      end
-
       resources :steps, controller: :task_steps, shallow: true, only: [ :show, :update ]
     end
 

@@ -36,13 +36,14 @@ FactoryBot.define do
         :tasks_grading_template, course: task_plan.owner, task_plan_type: task_plan.type.to_sym
       ) if [ 'reading', 'homework' ].include? task_plan.type
 
+      task_plan.time_zone ||= task_plan.owner.try(:time_zone) || build(:time_zone)
+
       task_plan.tasking_plans += evaluator.num_tasking_plans.times.map do
         args = {
           task_plan: task_plan,
           opens_at: evaluator.opens_at,
           due_at: evaluator.due_at,
-          closes_at: evaluator.closes_at,
-          time_zone: task_plan.owner.try(:time_zone)
+          closes_at: evaluator.closes_at
         }
         args[:target] = evaluator.target unless evaluator.target.nil?
 

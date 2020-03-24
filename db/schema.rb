@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_16_162341) do
+ActiveRecord::Schema.define(version: 2020_03_24_204502) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -836,6 +836,10 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.integer "cloned_from_id"
     t.boolean "is_preview", default: false
     t.integer "tasks_grading_template_id"
+    t.integer "time_zone_id", null: false
+    t.string "extended_task_ids", default: [], null: false, array: true
+    t.datetime "extended_due_at_ntz"
+    t.datetime "extended_closes_at_ntz"
     t.index ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id"
     t.index ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type"
@@ -979,10 +983,6 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.integer "correct_on_time_exercise_steps_count", default: 0, null: false
     t.integer "completed_on_time_exercise_steps_count", default: 0, null: false
     t.integer "completed_on_time_steps_count", default: 0, null: false
-    t.datetime "accepted_late_at"
-    t.integer "correct_accepted_late_exercise_steps_count", default: 0, null: false
-    t.integer "completed_accepted_late_exercise_steps_count", default: 0, null: false
-    t.integer "completed_accepted_late_steps_count", default: 0, null: false
     t.integer "time_zone_id"
     t.datetime "hidden_at"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false

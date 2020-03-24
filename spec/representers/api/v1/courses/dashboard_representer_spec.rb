@@ -84,7 +84,6 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed_exercise_count: 4,
           correct_exercise_count: 3,
           completed_on_time_exercise_count: 2,
-          completed_accepted_late_exercise_count: 0,
           completed_steps_count: 4,
           completed_on_time_steps_count: 2,
           withdrawn?: true
@@ -194,7 +193,6 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'completed_on_time_exercise_count' => 2,
           'completed_steps_count' => 4,
           'completed_on_time_steps_count' => 2,
-          'completed_accepted_late_exercise_count' => 0,
           'type' => 'homework',
           'complete' => false,
           'exercise_count' => 5,

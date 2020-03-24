@@ -11,6 +11,8 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   validate :due_at_in_the_future, :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at,
            :opens_after_course_starts, :closes_before_course_ends, :owner_can_task_target
 
+  before_validation :set_time_zone, on: :create
+
   def past_open?(current_time: Time.current)
     opens_at.nil? || current_time > opens_at
   end
@@ -24,6 +26,10 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   end
 
   protected
+
+  def set_time_zone
+    self.time_zone ||= task_plan.time_zone
+  end
 
   def due_at_in_the_future
     return if task_plan.try(:is_draft?) ||

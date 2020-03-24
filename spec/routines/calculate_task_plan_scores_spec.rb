@@ -8,7 +8,24 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
     begin
       RSpec::Mocks.setup
 
-      @task_plan = FactoryBot.create :tasked_task_plan, number_of_students: @number_of_students
+      reading = FactoryBot.create :tasked_task_plan, number_of_students: @number_of_students
+      course = reading.owner
+      reading_pages = Content::Models::Page.where(id: reading.settings['page_ids'])
+
+      @task_plan = FactoryBot.create(
+        :tasks_task_plan,
+        type: :homework,
+        owner: course,
+        assistant_code_class_name: 'Tasks::Assistants::HomeworkAssistant',
+        target: course.periods.first,
+        settings: {
+          page_ids: reading_pages.map(&:id).map(&:to_s),
+          exercises: reading_pages.first.exercises.first(5).map do |exercise|
+            { id: exercise.id.to_s, points: [ 1.0 ] * exercise.num_questions }
+          end,
+          exercises_count_dynamic: 3
+        }
+      ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }
       @period = @task_plan.owner.periods.first
       @period_2 = FactoryBot.create :course_membership_period, course: @period.course
       FactoryBot.create :tasks_tasking_plan, task_plan: @task_plan, target: @period_2
@@ -45,7 +62,9 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map { |idx| { title: "Q#{idx + 1}", points: 1.0, type: idx < 5 ? 'MCQ' : 'Tutor' } }
+          8.times.map do |index|
+            { title: "Q#{index + 1}", points: 1.0, type: index < 5 ? 'MCQ' : 'Tutor' }
+          end
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
         expect(period_output.num_questions_dropped).to eq 0
@@ -54,6 +73,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.students.map(&:deep_symbolize_keys)).to eq(
           tasks.map do |task|
             student = task.taskings.first.role.student
+
             {
                role_id: task.taskings.first.entity_role_id,
                available_points: 8.0,
@@ -66,20 +86,20 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                student_identifier: student.student_identifier,
                total_fraction: 0.0,
                total_points: 0.0,
-               questions: tasks[0].task_steps.map do |ts|
+               questions: task.task_steps.map do |ts|
                  if ts.exercise?
                    {
                     id: ts.tasked.question_id,
                     exercise_id: ts.tasked.content_exercise_id,
                     is_completed: false,
                     selected_answer_id: ts.tasked.answer_id,
-                    points: 0.0,
-                    free_response: nil,
+                    points: ts.completed? || task.late? ? 0.0 : nil,
+                    free_response: nil
                    }
-                 elsif ts.placeholder?
+                 else
                    {
                     is_completed: false,
-                    points: ts.task.late? ? 0.0 : nil
+                    points: task.late? ? 0.0 : nil
                    }
                  end
                end.compact
@@ -104,14 +124,16 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map { |idx| { title: "Q#{idx + 1}", points: 1.0, type: idx < 5 ? 'MCQ' : 'Tutor' } }
+          8.times.map do |index|
+            { title: "Q#{index + 1}", points: 1.0, type: index < 5 ? 'MCQ' : 'Tutor' }
+          end
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
         expect(period_output.num_questions_dropped).to eq 0
         expect(period_output.points_dropped).to eq 0.0
 
-        expect(period_output.students[0..0].map(&:deep_symbolize_keys)).to eq(
-          tasks[0..0].map do |task|
+        expect(period_output.students.map(&:deep_symbolize_keys)).to eq(
+          tasks.map do |task|
             student = task.taskings.first.role.student
             {
               role_id: task.taskings.first.entity_role_id,
@@ -125,20 +147,20 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               student_identifier: student.student_identifier,
               total_fraction: 0.0,
               total_points: 0.0,
-              questions: tasks[0].task_steps.map do |ts|
+              questions: task.task_steps.map do |ts|
                 if ts.exercise?
                   {
                    id: ts.tasked.question_id,
                    exercise_id: ts.tasked.content_exercise_id,
                    is_completed: ts.completed?,
                    selected_answer_id: ts.tasked.answer_id,
-                   points: 0.0,
-                   free_response: ts.tasked.free_response,
+                   points: ts.completed? || task.late? ? 0.0 : nil,
+                   free_response: ts.tasked.free_response
                   }
-                elsif ts.placeholder?
+                else
                   {
                    is_completed: false,
-                   points: ts.task.late? ? 0.0 : nil
+                   points: task.late? ? 0.0 : nil
                   }
                 end
               end.compact
@@ -162,42 +184,45 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map { |idx| { title: "Q#{idx + 1}", points: 1.0, type: idx < 5 ? 'MCQ' : 'Tutor' } }
+          8.times.map do |index|
+            { title: "Q#{index + 1}", points: 1.0, type: index < 5 ? 'MCQ' : 'Tutor' }
+          end
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
         expect(period_output.num_questions_dropped).to eq 0
         expect(period_output.points_dropped).to eq 0.0
 
-        expect(period_output.students[0..0].map(&:deep_symbolize_keys)).to eq(
-          tasks[0..0].each_with_index.map do |task, index|
+        expect(period_output.students.map(&:deep_symbolize_keys)).to eq(
+          tasks.each_with_index.map do |task, index|
             student = task.taskings.first.role.student
-            points = [ 0, 2, 3 ].include?(index) ? 1.0 : 0.0
+            is_correct = [ 0, 2, 3 ].include?(index)
+
             {
               role_id: task.taskings.first.entity_role_id,
               available_points: 8.0,
               late_work_fraction_penalty: late_work_penalty,
               first_name: student.first_name,
               last_name: student.last_name,
-              late_work_point_penalty: 8.0 * late_work_penalty * points,
+              late_work_point_penalty: is_correct ? 8.0 * late_work_penalty : 0.0,
               is_dropped: false,
               is_late: false,
               student_identifier: student.student_identifier,
-              total_fraction: 0.5,
-              total_points: 4.0,
-              questions: tasks[0].task_steps.map do |ts|
+              total_fraction: is_correct ? (1 - late_work_penalty) : 0.0,
+              total_points: is_correct ? 8.0 * (1 - late_work_penalty) : 0.0,
+              questions: task.task_steps.map do |ts|
                 if ts.exercise?
                   {
                    id: ts.tasked.question_id,
                    exercise_id: ts.tasked.content_exercise_id,
                    is_completed: ts.completed?,
                    selected_answer_id: ts.tasked.answer_id,
-                   points: points,
-                   free_response: ts.tasked.free_response,
+                   points: ts.completed? || task.late? ? (is_correct ? 1.0 : 0.0) : nil,
+                   free_response: ts.tasked.free_response
                   }
-                elsif ts.placeholder?
+                else
                   {
                    is_completed: false,
-                   points: ts.task.late? ? 0.0 : nil
+                   points: task.late? ? 0.0 : nil
                   }
                 end
               end.compact
