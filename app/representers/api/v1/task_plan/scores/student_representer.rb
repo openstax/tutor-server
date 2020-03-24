@@ -21,6 +21,10 @@ class Api::V1::TaskPlan::Scores::StudentRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
+  property :is_late,
+           readable: true,
+           writeable: false
+
   property :available_points,
            type: Float,
            readable: true,
