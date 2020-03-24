@@ -558,7 +558,9 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         expect(task.completed_exercise_steps_count).to eq 0
         expect(task.correct_exercise_steps_count).to eq 0
 
-        Preview::AnswerExercise[task_step: task.task_steps[0], is_correct: true, is_completed: true]
+        Preview::AnswerExercise[
+          task_step: task.task_steps[0], is_correct: true, is_completed: true
+        ]
         task.reload
 
         expect(task.steps_count).to eq 5

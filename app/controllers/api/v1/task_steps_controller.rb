@@ -65,7 +65,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       @task = Tasks::Models::Task
         .joins(:task_steps)
         .lock('FOR NO KEY UPDATE OF "tasks_tasks", "tasks_task_steps"')
-        .preload(:research_study_brains, task_steps: :tasked)\
+        .preload(:research_study_brains)
         .find_by(task_steps: { id: params[:id] })
 
       return render_api_errors(:no_exercises, :not_found) if @task.nil?

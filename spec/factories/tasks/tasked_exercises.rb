@@ -17,6 +17,7 @@ FactoryBot.define do
     association :exercise, factory: :content_exercise
     question_index { 0 }
     question_id    { exercise.content_as_independent_questions[question_index][:id] }
+    answer_ids     { exercise.parser.question_answer_ids[question_index] }
     url            { exercise.url }
     title          { exercise.title }
 

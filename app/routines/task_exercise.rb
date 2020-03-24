@@ -27,9 +27,9 @@ class TaskExercise
     spy = current_step.spy
 
     questions = exercise.content_as_independent_questions
-    outputs.task_steps = questions.each_with_index.map do |question, ii|
+    outputs.task_steps = questions.each_with_index.map do |question, question_index|
       # Make sure that all steps after the first exercise part get their own new step
-      if ii > 0
+      if question_index > 0
         current_step = Tasks::Models::TaskStep.new(
           task: task,
           number: current_step.number.nil? ? nil : current_step.number + 1,
@@ -51,7 +51,8 @@ class TaskExercise
         url: exercise.url,
         title: title || exercise.title,
         question_id: question[:id],
-        question_index: ii,
+        question_index: question_index,
+        answer_ids: exercise.parser.question_answer_ids[question_index],
         is_in_multipart: questions.size > 1
       )
 

@@ -157,7 +157,7 @@ class SetupPerformanceReportData
 
     DistributeTasks[task_plan: future_homework_taskplan]
 
-    roles.map{ |role| get_student_tasks(role) }
+    roles.map { |role| get_student_tasks(role) }
   end
 
   def answer_tasks(student_tasks)

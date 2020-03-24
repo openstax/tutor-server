@@ -1,6 +1,5 @@
 module Api::V1
   class TaskRepresenter < Roar::Decorator
-
     include Roar::JSON
     include Representable::Coercion
 
@@ -78,5 +77,10 @@ module Api::V1
                  required: true,
                  description: "The steps which this task is composed of"
                }
+
+    # Make sure we always preload the all task steps' content before representing the task
+    def initialize(task)
+      super task.preload_content
+    end
   end
 end

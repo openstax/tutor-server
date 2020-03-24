@@ -15,9 +15,11 @@ class Preview::WorkTask
     completed_at: Time.current,
     update_caches: true
   )
+    task.preload_taskeds
+
     run :populate_placeholders, task: task, force: true, background: true
 
-    task_steps = task.task_steps.preload(:tasked).to_a
+    task_steps = task.task_steps.to_a
 
     task_steps.each_with_index do |task_step, index|
       is_completed_value = is_completed.is_a?(Proc) ? is_completed.call(task_step, index) :

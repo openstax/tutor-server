@@ -41,6 +41,10 @@ class Tasks::Models::TaskStep < ApplicationRecord
     !is_core?
   end
 
+  def reading?
+    tasked_type == Tasks::Models::TaskedReading.name
+  end
+
   def exercise?
     tasked_type == Tasks::Models::TaskedExercise.name
   end
@@ -77,13 +81,15 @@ class Tasks::Models::TaskStep < ApplicationRecord
     self.first_completed_at ||= completed_at
     self.last_completed_at = completed_at
 
-    task.handle_task_step_completion! completed_at: completed_at
+    task.handle_task_step_completion completed_at: completed_at
   end
 
   def complete!(completed_at: Time.current)
     complete completed_at: completed_at
 
     save!
+
+    task.save!
   end
 
   def completed?

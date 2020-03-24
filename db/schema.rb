@@ -850,7 +850,6 @@ ActiveRecord::Schema.define(version: 2020_03_20_203024) do
   create_table "tasks_tasked_exercises", id: :serial, force: :cascade do |t|
     t.integer "content_exercise_id", null: false
     t.string "url", null: false
-    t.text "content"
     t.string "title"
     t.text "free_response"
     t.string "answer_id"
@@ -859,10 +858,12 @@ ActiveRecord::Schema.define(version: 2020_03_20_203024) do
     t.string "correct_answer_id", null: false
     t.boolean "is_in_multipart", default: false, null: false
     t.string "question_id", null: false
-    t.text "context"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "question_index", null: false
     t.jsonb "response_validation"
+    t.text "content"
+    t.text "context"
+    t.string "answer_ids", null: false, array: true
     t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"
