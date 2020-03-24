@@ -134,6 +134,7 @@ class CalculateTaskPlanScores
           first_name: role.profile.first_name,
           last_name: role.profile.last_name,
           is_dropped: is_dropped,
+          is_late: task.late?,
           student_identifier: role.student.student_identifier,
           available_points: available_points,
           total_points: total_points,
