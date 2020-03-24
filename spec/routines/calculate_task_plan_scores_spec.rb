@@ -45,7 +45,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ', points: 1.0 } }
+          8.times.map { |idx| { title: "Q#{idx + 1}", points: 1.0, type: idx < 5 ? 'MCQ' : 'Tutor' } }
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
         expect(period_output.num_questions_dropped).to eq 0
@@ -102,7 +102,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ', points: 1.0 } }
+          8.times.map { |idx| { title: "Q#{idx + 1}", points: 1.0, type: idx < 5 ? 'MCQ' : 'Tutor' } }
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
         expect(period_output.num_questions_dropped).to eq 0
@@ -158,7 +158,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map { |idx| { title: "Q#{idx + 1}", type: 'MCQ', points: 1.0 } }
+          8.times.map { |idx| { title: "Q#{idx + 1}", points: 1.0, type: idx < 5 ? 'MCQ' : 'Tutor' } }
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
         expect(period_output.num_questions_dropped).to eq 0

@@ -58,8 +58,12 @@ class CalculateTaskPlanScores
       exercise_steps = most_common_tasks.first.task_steps.filter do |step|
         step.exercise? || step.placeholder?
       end
-      question_headings_array = exercise_steps.each_with_index.map do |_, index|
-        { title: "Q#{index + 1}", type: 'MCQ', points: available_points_per_question_index[index] }
+      question_headings_array = exercise_steps.each_with_index.map do |step, index|
+        {
+         title: "Q#{index + 1}",
+         type: step.is_core ? 'MCQ' : 'Tutor', # TODO: actually check if exercise is MCQ
+         points: available_points_per_question_index[index]
+        }
       end
       if task_plan.type == 'homework'
         expected_num_questions = task_plan.settings.fetch('exercises').map do |exercise|
