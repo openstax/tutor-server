@@ -87,17 +87,6 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-      property :completed_on_time_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :correct_on_time_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false,
-               if: ->(*) { auto_grading_feedback_available? }
-
       property :correct_exercise_count,
                type: Integer,
                readable: true,
@@ -110,11 +99,6 @@ module Api::V1::Courses
                writeable: false
 
       property :completed_steps_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_on_time_steps_count,
                type: Integer,
                readable: true,
                writeable: false

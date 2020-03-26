@@ -578,28 +578,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      it 'updates on_time counts when the due date changes' do
-        task = FactoryBot.create(
-          :tasks_task, opens_at: Time.current - 1.week,
-                       due_at: Time.current - 1.day,
-                       step_types: [ :tasks_tasked_exercise ]
-        )
-
-        Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
-        task.reload
-
-        expect(task.completed_on_time_steps_count).to eq 0
-        expect(task.completed_on_time_exercise_steps_count).to eq 0
-        expect(task.correct_on_time_exercise_steps_count).to eq 0
-
-        task.update_attributes(due_at: 1.day.from_now)
-        task.reload
-
-        expect(task.completed_on_time_steps_count).to eq 1
-        expect(task.completed_on_time_exercise_steps_count).to eq 1
-        expect(task.correct_on_time_exercise_steps_count).to eq 1
-      end
-
       it 'updates counts after any change to the task' do
         tasked_to = [ FactoryBot.create(:entity_role) ]
         task = FactoryBot.create :tasks_task, tasked_to: tasked_to, step_types: [
@@ -691,193 +669,200 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         expect(task.correct_exercise_steps_count).to eq 3
       end
     end
+  end
 
-    it 'is hidden only if it has been hidden after being deleted for the last time' do
-      expect(task).not_to be_hidden
+  it 'is hidden only if it has been hidden after being deleted for the last time' do
+    expect(task).not_to be_hidden
 
-      task_plan.destroy!
-      expect(task.reload).not_to be_hidden
+    task_plan.destroy!
+    expect(task.reload).not_to be_hidden
 
-      task.hide.save!
-      expect(task).to be_hidden
+    task.hide.save!
+    expect(task).to be_hidden
 
-      task_plan.reload.restore!(recursive: true)
-      expect(task.reload).not_to be_hidden
+    task_plan.reload.restore!(recursive: true)
+    expect(task.reload).not_to be_hidden
 
-      task_plan.destroy!
-      expect(task.reload).not_to be_hidden
+    task_plan.destroy!
+    expect(task.reload).not_to be_hidden
 
-      task.hide.save!
-      expect(task).to be_hidden
+    task.hide.save!
+    expect(task).to be_hidden
+  end
+
+  it 'calculates points and scores with and without lateness penalties' do
+    task = FactoryBot.create(
+      :tasks_task, step_types: [
+        :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_exercise
+      ]
+    )
+    task.grading_template.late_work_penalty_applied = :immediately
+    task.grading_template.late_work_penalty = 0.5
+    task.grading_template.save!
+
+    due_at = task.due_at
+
+    Timecop.freeze(due_at - 1.day) do
+      Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
+      task.reload
+
+      expect(task.correct_exercise_count).to eq 1
+      expect(task.completed_exercise_count).to eq 1
+      expect(task.completion).to eq 1/3.0
+      expect(task.correctness).to eq 1/3.0
+      expect(task.points_without_lateness).to eq 1.0
+      expect(task.points).to eq 1.0
+      expect(task.score_without_lateness).to eq 1.0
+      expect(task.score).to eq 1.0
     end
 
-    context '#score' do
-      it 'calculates the score with lateness penalties' do
-        task = FactoryBot.create(
-          :tasks_task, step_types: [
-            :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_exercise
-          ]
-        )
-        task.grading_template.late_work_penalty_applied = :immediately
-        task.grading_template.late_work_penalty = 0.5
-        task.grading_template.save!
+    Timecop.freeze(due_at + 1.hour) do
+      Preview::AnswerExercise[task_step: task.task_steps.second, is_correct: true]
+      task.reload
 
-        due_at = task.due_at
+      expect(task.correct_exercise_count).to eq 2
+      expect(task.completed_exercise_count).to eq 2
+      expect(task.completion).to eq 2/3.0
+      expect(task.correctness).to eq 2/3.0
+      expect(task.points_without_lateness).to eq 2.0
+      expect(task.points).to eq 1.0
+      expect(task.score_without_lateness).to eq 2/3.0
+      expect(task.score).to eq 1/3.0
 
-        Timecop.freeze(due_at - 1.day) do
-          Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
-          task.reload
+      task.task_plan.extended_task_ids = [ task.id ]
+      task.task_plan.extended_due_at = task_plan.time_zone.to_tz.now
+      task.task_plan.save!
 
-          expect(task.correct_exercise_count).to eq 1
-          expect(task.completed_exercise_count).to eq 1
-          expect(task.completed_on_time_exercise_count).to eq 1
-          expect(task.correct_on_time_exercise_count).to eq 1
-          expect(task.completion).to eq 1/3.0
-          expect(task.correctness).to eq 1/3.0
-          expect(task.score).to eq 1/3.0
-        end
-
-        Timecop.freeze(due_at + 1.hour) do
-          Preview::AnswerExercise[task_step: task.task_steps.second, is_correct: true]
-          task.reload
-
-          expect(task.correct_exercise_count).to eq 2
-          expect(task.completed_exercise_count).to eq 2
-          expect(task.completed_on_time_exercise_count).to eq 1
-          expect(task.correct_on_time_exercise_count).to eq 1
-          expect(task.completion).to eq 2/3.0
-          expect(task.correctness).to eq 2/3.0
-          expect(task.score).to eq 1/3.0
-
-          task_plan.extended_task_ids = [ task.id ]
-          task_plan.extended_due_at = Time.current
-          task_plan.save!
-
-          expect(task.correct_exercise_count).to eq 2
-          expect(task.completed_exercise_count).to eq 2
-          expect(task.completed_on_time_exercise_count).to eq 1
-          expect(task.correct_on_time_exercise_count).to eq 1
-          expect(task.completion).to eq 2/3.0
-          expect(task.correctness).to eq 2/3.0
-          expect(task.score).to eq 2/3.0
-          expect(task.extended_due_at).not_to be_nil
-        end
-
-        Timecop.freeze(due_at + 25.hours) do
-          Preview::AnswerExercise[task_step: task.task_steps.third, is_correct: true]
-          task.reload
-
-          expect(task.correct_exercise_count).to eq 3
-          expect(task.completed_exercise_count).to eq 3
-          expect(task.completed_on_time_exercise_count).to eq 1
-          expect(task.correct_on_time_exercise_count).to eq 1
-          expect(task.completion).to eq 1.0
-          expect(task.correctness).to eq 1.0
-          expect(task.score).to eq 0.5
-
-          task.grading_template.late_work_penalty_applied = :daily
-          task.grading_template.late_work_penalty = 0.3
-          task.grading_template.save!
-
-          expect(task.correct_exercise_count).to eq 3
-          expect(task.completed_exercise_count).to eq 3
-          expect(task.completed_on_time_exercise_count).to eq 1
-          expect(task.correct_on_time_exercise_count).to eq 1
-          expect(task.completion).to eq 1.0
-          expect(task.correctness).to eq 1.0
-          expect(task.score).to eq 0.7
-
-          task_plan.extended_task_ids = [ task.id ]
-          task_plan.extended_due_at = Time.current
-          task_plan.save!
-
-          expect(task.correct_exercise_count).to eq 3
-          expect(task.completed_exercise_count).to eq 3
-          expect(task.completed_on_time_exercise_count).to eq 1
-          expect(task.correct_on_time_exercise_count).to eq 1
-          expect(task.completion).to eq 1.0
-          expect(task.correctness).to eq 1.0
-          expect(task.score).to eq 1.0
-
-          task.due_at = due_at + 3.days
-          task.save!
-
-          expect(task.correct_exercise_count).to eq 3
-          expect(task.completed_exercise_count).to eq 3
-          expect(task.completed_on_time_exercise_count).to eq 3
-          expect(task.correct_on_time_exercise_count).to eq 3
-          expect(task.completion).to eq 1.0
-          expect(task.correctness).to eq 1.0
-          expect(task.score).to eq 1.0
-
-          task.due_at = due_at
-          task.save!
-
-          expect(task.correct_exercise_count).to eq 3
-          expect(task.completed_exercise_count).to eq 3
-          expect(task.completed_on_time_exercise_count).to eq 1
-          expect(task.correct_on_time_exercise_count).to eq 1
-          expect(task.completion).to eq 1.0
-          expect(task.correctness).to eq 1.0
-          expect(task.score).to eq 1.0
-
-          task_plan.extended_task_ids = []
-          task_plan.save!
-
-          expect(task.correct_exercise_count).to eq 3
-          expect(task.completed_exercise_count).to eq 3
-          expect(task.completed_on_time_exercise_count).to eq 1
-          expect(task.correct_on_time_exercise_count).to eq 1
-          expect(task.completion).to eq 1.0
-          expect(task.correctness).to eq 1.0
-          expect(task.score).to eq 0.4
-          expect(task.extended_due_at).to be_nil
-        end
-      end
-
-      it 'uses teacher-chosen points for homework assignments' do
-        course = task_plan.owner
-        period = FactoryBot.create :course_membership_period, course: course
-        FactoryBot.create :course_membership_student, period: period
-
-        simple_exercise = FactoryBot.create :content_exercise
-        page = simple_exercise.page
-        multipart_exercise = FactoryBot.create :content_exercise, page: page, num_questions: 3
-
-        task_plan.grading_template.update_attribute :task_plan_type, 'homework'
-        task_plan.update_attributes!(
-          ecosystem: page.ecosystem,
-          type: 'homework',
-          assistant: FactoryBot.create(
-            :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
-          ),
-          settings: {
-            page_ids: [ page.id.to_s ],
-            exercises: [
-              { id: simple_exercise.id.to_s, points: [ 1 ] },
-              { id: multipart_exercise.id.to_s, points: [ 2, 3, 4 ] }
-            ],
-            exercises_count_dynamic: 0
-          }
-        )
-        task_plan.tasks.delete_all
-        DistributeTasks[task_plan: task_plan]
-
-        task = task_plan.tasks.first
-        expect(task.score).to eq 0.0
-
-        Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
-        expect(task.score).to eq 0.1
-
-        Preview::AnswerExercise[task_step: task.task_steps.second, is_correct: true]
-        expect(task.score).to eq 0.3
-
-        Preview::AnswerExercise[task_step: task.task_steps.third, is_correct: true]
-        expect(task.score).to eq 0.6
-
-        Preview::AnswerExercise[task_step: task.task_steps.fourth, is_correct: true]
-        expect(task.score).to eq 1.0
-      end
+      expect(task.correct_exercise_count).to eq 2
+      expect(task.completed_exercise_count).to eq 2
+      expect(task.completion).to eq 2/3.0
+      expect(task.correctness).to eq 2/3.0
+      expect(task.points_without_lateness).to eq 2.0
+      expect(task.points).to eq 2.0
+      expect(task.score_without_lateness).to eq 1.0
+      expect(task.score).to eq 1.0
+      expect(task.extended_due_at).not_to be_nil
     end
+
+    Timecop.freeze(due_at + 25.hours) do
+      Preview::AnswerExercise[task_step: task.task_steps.third, is_correct: true]
+      task.reload
+
+      expect(task.correct_exercise_count).to eq 3
+      expect(task.completed_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
+      expect(task.points_without_lateness).to eq 3.0
+      expect(task.points).to eq 1.5
+      expect(task.score_without_lateness).to eq 1.0
+      expect(task.score).to eq 0.5
+
+      task.grading_template.late_work_penalty_applied = :daily
+      task.grading_template.late_work_penalty = 0.3
+      task.grading_template.save!
+
+      expect(task.correct_exercise_count).to eq 3
+      expect(task.completed_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
+      expect(task.points_without_lateness).to eq 3.0
+      expect(task.points).to be_within(1e-6).of(2.1)
+      expect(task.score_without_lateness).to eq 1.0
+      expect(task.score).to eq 0.7
+
+      task.task_plan.extended_task_ids = [ task.id ]
+      task.task_plan.extended_due_at = task_plan.time_zone.to_tz.now
+      task.task_plan.save!
+
+      expect(task.correct_exercise_count).to eq 3
+      expect(task.completed_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
+      expect(task.points_without_lateness).to eq 3.0
+      expect(task.points).to eq 3.0
+      expect(task.score_without_lateness).to eq 1.0
+      expect(task.score).to eq 1.0
+
+      task.due_at = due_at + 3.days
+      task.save!
+
+      expect(task.correct_exercise_count).to eq 3
+      expect(task.completed_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
+      expect(task.points_without_lateness).to eq 3.0
+      expect(task.points).to eq 3.0
+      expect(task.score_without_lateness).to eq 1.0
+      expect(task.score).to eq 1.0
+
+      task.due_at = due_at
+      task.save!
+
+      expect(task.correct_exercise_count).to eq 3
+      expect(task.completed_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
+      expect(task.points_without_lateness).to eq 3.0
+      expect(task.points).to eq 3.0
+      expect(task.score_without_lateness).to eq 1.0
+      expect(task.score).to eq 1.0
+
+      task.task_plan.extended_task_ids = []
+      task.task_plan.save!
+
+      expect(task.correct_exercise_count).to eq 3
+      expect(task.completed_exercise_count).to eq 3
+      expect(task.completion).to eq 1.0
+      expect(task.correctness).to eq 1.0
+      expect(task.points_without_lateness).to eq 3.0
+      expect(task.points).to be_within(1e-6).of(1.2)
+      expect(task.score_without_lateness).to eq 1.0
+      expect(task.score).to eq 0.4
+      expect(task.extended_due_at).to be_nil
+    end
+  end
+
+  it 'uses teacher-chosen points for homework assignments' do
+    course = task_plan.owner
+    period = FactoryBot.create :course_membership_period, course: course
+    FactoryBot.create :course_membership_student, period: period
+
+    simple_exercise = FactoryBot.create :content_exercise
+    page = simple_exercise.page
+    multipart_exercise = FactoryBot.create :content_exercise, page: page, num_questions: 3
+
+    task_plan.grading_template.update_attribute :task_plan_type, 'homework'
+    task_plan.update_attributes!(
+      ecosystem: page.ecosystem,
+      type: 'homework',
+      assistant: FactoryBot.create(
+        :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
+      ),
+      settings: {
+        page_ids: [ page.id.to_s ],
+        exercises: [
+          { id: simple_exercise.id.to_s, points: [ 1.0 ] },
+          { id: multipart_exercise.id.to_s, points: [ 2.0, 3.0, 4.0 ] }
+        ],
+        exercises_count_dynamic: 0
+      }
+    )
+    task_plan.tasks.delete_all
+    DistributeTasks[task_plan: task_plan]
+
+    task = task_plan.tasks.first
+    expect(task.points).to eq 0.0
+
+    Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
+    expect(task.points).to eq 1.0
+
+    Preview::AnswerExercise[task_step: task.task_steps.second, is_correct: true]
+    expect(task.points).to eq 3.0
+
+    Preview::AnswerExercise[task_step: task.task_steps.third, is_correct: true]
+    expect(task.points).to eq 6.0
+
+    Preview::AnswerExercise[task_step: task.task_steps.fourth, is_correct: true]
+    expect(task.points).to eq 10.0
   end
 end

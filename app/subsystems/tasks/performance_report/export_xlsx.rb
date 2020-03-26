@@ -1,7 +1,6 @@
 module Tasks
   module PerformanceReport
     class ExportXlsx
-
       lev_routine transaction: :no_transaction
 
       include ::XlsxUtils
@@ -630,16 +629,8 @@ module Tasks
           steps_count = data[:step_count]
           exercise_steps_count = data[:actual_and_placeholder_exercise_count]
 
-          on_time_correct_count = data[:correct_on_time_exercise_count]
-          on_time_completed_count = data[:completed_on_time_exercise_count]
-
-          correct_count = data[:correct_on_time_exercise_count]
-          completed_count = data[:completed_on_time_step_count]
-
-          pending_late_correct_count = data[:correct_exercise_count]
-          pending_late_completed_count = data[:completed_step_count]
-
-          has_pending_late_work = pending_late_completed_count != completed_count
+          correct_count = data[:correct_exercise_count]
+          completed_count = data[:completed_step_count]
 
           correct_pct = correct_count * 1.0 / exercise_steps_count
           completed_pct = completed_count * 1.0 / steps_count
@@ -650,13 +641,7 @@ module Tasks
             ])
             columns.push(completed_count)
 
-            if has_pending_late_work
-              columns.push(pending_late_correct_count)
-              columns.push(pending_late_completed_count)
-              columns.push([data[:last_worked_at], style: @last_worked_at])
-            else
-              columns.push("","",["", style: @last_worked_at])
-            end
+            columns.push("","",[data[:last_worked_at], style: @last_worked_at])
           else
             columns.push([
               correct_count * 1.0 / exercise_steps_count,
@@ -664,17 +649,10 @@ module Tasks
             ])
             columns.push([completed_count * 1.0 / steps_count, style: @pct])
 
-            if has_pending_late_work
-              columns.push([pending_late_correct_count * 1.0 / exercise_steps_count, style: @pct])
-              columns.push([pending_late_completed_count * 1.0 / steps_count, style: @pct])
-              columns.push([data[:last_worked_at], style: @last_worked_at])
-            else
-              columns.push("","",["", style: @last_worked_at])
-            end
+            columns.push("","",[data[:last_worked_at], style: @last_worked_at])
           end
         end
       end
-
     end
   end
 end

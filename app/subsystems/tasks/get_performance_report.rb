@@ -290,6 +290,7 @@ module Tasks
         show_score = is_teacher || tt.auto_grading_feedback_available?(
           current_time_ntz: current_time_ntz
         )
+
         OpenStruct.new(
           {
             task: tt,
@@ -305,18 +306,14 @@ module Tasks
             )
           }.tap do |data|
             correct_exercise_count = show_score ? tt.correct_exercise_count : nil
-            correct_on_time_exercise_count = show_score ? tt.correct_on_time_exercise_count : nil
-            score = show_score ? tt.score : nil
+            score = (tt.reading? || tt.homework?) && show_score ? tt.score || 0.0 : nil
 
             data.merge!(
               step_count:                             tt.steps_count,
               completed_step_count:                   tt.completed_steps_count,
-              completed_on_time_step_count:           tt.completed_on_time_steps_count,
               actual_and_placeholder_exercise_count:  tt.actual_and_placeholder_exercise_count,
               completed_exercise_count:               tt.completed_exercise_count,
-              completed_on_time_exercise_count:       tt.completed_on_time_exercise_count,
               correct_exercise_count:                 correct_exercise_count,
-              correct_on_time_exercise_count:         correct_on_time_exercise_count,
               recovered_exercise_count:               tt.recovered_exercise_steps_count,
               score:                                  score,
               progress:                               tt.completion

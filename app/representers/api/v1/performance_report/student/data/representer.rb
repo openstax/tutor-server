@@ -27,11 +27,6 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :completed_on_time_step_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
     property :actual_and_placeholder_exercise_count,
              as: :exercise_count,
              type: Integer,
@@ -43,17 +38,7 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :completed_on_time_exercise_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
     property :correct_exercise_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :correct_on_time_exercise_count,
              type: Integer,
              readable: true,
              writeable: false

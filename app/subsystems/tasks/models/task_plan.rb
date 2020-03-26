@@ -84,6 +84,20 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     Jobba.find(publish_job_uuid) if publish_job_uuid.present?
   end
 
+  def available_points_per_question_index
+    @available_points_per_question_index ||= Hash.new(1.0).tap do |available|
+      next if type != 'homework'
+
+      question_index = 0
+      settings['exercises'].each do |exercise|
+        exercise['points'].each do |points|
+          available[question_index] = points
+          question_index += 1
+        end
+      end
+    end
+  end
+
   protected
 
   def set_time_zone

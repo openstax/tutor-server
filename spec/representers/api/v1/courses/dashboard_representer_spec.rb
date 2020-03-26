@@ -83,9 +83,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           actual_and_placeholder_exercise_count: 5,
           completed_exercise_count: 4,
           correct_exercise_count: 3,
-          completed_on_time_exercise_count: 2,
           completed_steps_count: 4,
-          completed_on_time_steps_count: 2,
           withdrawn?: true
         ),
         OpenStruct.new(
@@ -190,9 +188,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'due_at' => api_due_at,
           'closes_at' => api_closes_at,
           'last_worked_at' => api_last_worked_at,
-          'completed_on_time_exercise_count' => 2,
           'completed_steps_count' => 4,
-          'completed_on_time_steps_count' => 2,
           'type' => 'homework',
           'complete' => false,
           'exercise_count' => 5,

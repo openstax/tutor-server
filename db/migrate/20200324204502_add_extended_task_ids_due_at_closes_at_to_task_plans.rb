@@ -50,6 +50,9 @@ class AddExtendedTaskIdsDueAtClosesAtToTaskPlans < ActiveRecord::Migration[5.2]
     )
 
     remove_column :tasks_tasks, :accepted_late_at
+    remove_column :tasks_tasks, :completed_on_time_steps_count
+    remove_column :tasks_tasks, :completed_on_time_exercise_steps_count
+    remove_column :tasks_tasks, :correct_on_time_exercise_steps_count
     remove_column :tasks_tasks, :completed_accepted_late_steps_count
     remove_column :tasks_tasks, :completed_accepted_late_exercise_steps_count
     remove_column :tasks_tasks, :correct_accepted_late_exercise_steps_count

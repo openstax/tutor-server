@@ -77,21 +77,17 @@ class CalculateTaskPlanScores
 
         role = task.taskings.first.role
 
-        exercise_steps = task.task_steps.filter { |step| step.exercise? || step.placeholder? }
+        exercise_steps = task.exercise_and_placeholder_steps
         next if exercise_steps.empty?
 
         is_dropped = student.dropped? || student.period.archived?
-
-        available_points = exercise_steps.size.times.map do |index|
-          available_points_per_question_index[index]
-        end.sum
 
         student_questions = exercise_steps.each_with_index.map do |task_step, index|
           if task_step.exercise?
             points = if task_step.completed?
               task_step.tasked.is_correct? ? available_points_per_question_index[index] : 0.0
             else
-              task.late? ? 0.0 : nil
+              task.past_due?(current_time: current_time) ? 0.0 : nil
             end
 
             {
@@ -105,24 +101,10 @@ class CalculateTaskPlanScores
           else
             {
              is_completed: false,
-             points: task.late? ? 0.0 : nil
+             points: task.past_due?(current_time: current_time) ? 0.0 : nil
             }
           end
         end
-
-        total_points_without_lateness = student_questions.map { |sq| sq[:points] }.compact.sum
-
-        late_work_fraction_penalty = task.late_work_penalty
-        late_work_point_penalty = late_work_fraction_penalty * total_points_without_lateness
-
-        total_points = total_points_without_lateness - late_work_point_penalty
-
-        worked_points = 0.0
-        student_questions.each_with_index do |sq, index|
-          worked_points += available_points_per_question_index[index] unless sq[:points].nil?
-        end
-
-        total_fraction = worked_points == 0.0 ? 0.0 : total_points/worked_points
 
         {
           role_id: role.id,
@@ -131,11 +113,11 @@ class CalculateTaskPlanScores
           is_dropped: is_dropped,
           is_late: task.late?,
           student_identifier: role.student.student_identifier,
-          available_points: available_points,
-          total_points: total_points,
-          total_fraction: total_fraction,
-          late_work_point_penalty: late_work_point_penalty,
-          late_work_fraction_penalty: late_work_fraction_penalty,
+          available_points: task.available_points,
+          total_points: task.points,
+          total_fraction: task.score,
+          late_work_point_penalty: task.late_work_point_penalty,
+          late_work_fraction_penalty: task.late_work_penalty,
           questions: student_questions
         }
       end.compact.sort_by { |student| [ student[:last_name], student[:first_name] ] }
@@ -147,7 +129,7 @@ class CalculateTaskPlanScores
         late_work_fraction_penalty: task_plan.grading_template.late_work_penalty,
         num_questions_dropped: num_questions_dropped,
         points_dropped: points_dropped,
-        students: students_array,
+        students: students_array
       }
     end
   end

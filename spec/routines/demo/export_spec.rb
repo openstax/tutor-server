@@ -253,8 +253,7 @@ RSpec.describe Demo::Export, type: :routine do
                           first_name: "Spec Student #{index + 1} First name",
                           last_name: "Spec Student #{index + 1} Last name"
                         },
-                        progress: 0.0,
-                        score: 0.0
+                        progress: 0.0
                       }
                     end
                   )
