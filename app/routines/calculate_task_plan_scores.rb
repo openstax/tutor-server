@@ -131,6 +131,7 @@ class CalculateTaskPlanScores
         total_fraction = total_points/worked_points if worked_points != 0.0
 
         {
+          id: role.student.id,
           first_name: role.profile.first_name,
           last_name: role.profile.last_name,
           is_dropped: is_dropped,
