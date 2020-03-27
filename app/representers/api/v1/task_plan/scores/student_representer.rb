@@ -2,7 +2,7 @@ class Api::V1::TaskPlan::Scores::StudentRepresenter < Roar::Decorator
   include Roar::JSON
   include Representable::Coercion
 
-  property :id,
+  property :role_id,
            type: Integer,
            readable: true,
            writeable: false
