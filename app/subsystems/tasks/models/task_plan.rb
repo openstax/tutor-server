@@ -21,11 +21,10 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   belongs_to :ecosystem, subsystem: :content
   belongs_to :grading_template, optional: true, inverse_of: :task_plans
 
-  belongs_to_time_zone :extended_due_at, :extended_closes_at, suffix: :ntz
-
-  # These associations to not have dependent: :destroy because the task_plan is soft-deleted
+  # These associations do not have dependent: :destroy because the task_plan is soft-deleted
   has_many :tasking_plans, inverse_of: :task_plan
   has_many :tasks, inverse_of: :task_plan
+  has_many :extensions, inverse_of: :task_plan
 
   json_serialize :settings, Hash
 
@@ -43,8 +42,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
            :changes_allowed,
            :not_past_due_when_publishing,
            :correct_num_points_for_homework
-
-  before_validation :set_time_zone, on: :create
 
   scope :tasked_to_period_id, ->(period_id) do
     joins(:tasking_plans).where(
@@ -99,10 +96,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   protected
-
-  def set_time_zone
-    self.time_zone ||= owner.try(:time_zone)
-  end
 
   def get_ecosystems_from_exercise_ids
     ecosystems = Content::Models::Ecosystem.distinct.joins(:exercises).where(

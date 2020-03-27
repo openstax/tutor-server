@@ -19,6 +19,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it { is_expected.to have_many(:tasking_plans) }
   it { is_expected.to have_many(:tasks) }
+  it { is_expected.to have_many(:extensions) }
 
   it { is_expected.to validate_presence_of(:title) }
 

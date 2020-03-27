@@ -33,6 +33,8 @@ class Tasks::Models::Task < ApplicationRecord
 
   belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
 
+  belongs_to :extension, optional: true, inverse_of: :task
+
   sortable_has_many :task_steps, on: :number, inverse_of: :task do
     # Because we update task_step counts in the middle of the following methods,
     # we cause the task_steps to reload and these methods behave oddly (giving us duplicate records)
@@ -63,7 +65,8 @@ class Tasks::Models::Task < ApplicationRecord
 
   # Concept Coach and Practice Widget tasks have no open, due or close dates
   # We already validate dates for teacher-created assignments in the TaskingPlan
-  validates :opens_at_ntz, :due_at_ntz, :closes_at_ntz, timeliness: { type: :date }, allow_nil: true
+  validates :opens_at_ntz, :due_at_ntz, :closes_at_ntz, timeliness: { type: :date },
+            allow_nil: true
 
   validate :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at
 
@@ -74,20 +77,16 @@ class Tasks::Models::Task < ApplicationRecord
   alias_method :due_at_without_extension, :due_at
   alias_method :closes_at_without_extension, :closes_at
 
-  def extended_due_at
-    task_plan&.extended_task_ids&.include?(id.to_s) ? task_plan.extended_due_at : nil
-  end
-
-  def extended_closes_at
-    task_plan&.extended_task_ids&.include?(id.to_s) ? task_plan.extended_due_at : nil
+  def extended?
+    !extension.nil?
   end
 
   def due_at
-    [ due_at_without_extension, extended_due_at ].compact.max
+    [ due_at_without_extension, extension&.due_at ].compact.max
   end
 
   def closes_at
-    [ closes_at_without_extension, extended_closes_at ].compact.max
+    [ closes_at_without_extension, extension&.closes_at ].compact.max
   end
 
   def grading_template

@@ -14,6 +14,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   let(:grading_template) { task_plan.grading_template }
 
   it { is_expected.to belong_to(:task_plan).optional }
+  it { is_expected.to belong_to(:extension).optional }
 
   it { is_expected.to belong_to(:time_zone).optional }
 
@@ -696,6 +697,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         :tasks_tasked_exercise, :tasks_tasked_exercise, :tasks_tasked_exercise
       ]
     )
+    task.taskings << FactoryBot.build(:tasks_tasking)
     task.grading_template.late_work_penalty_applied = :immediately
     task.grading_template.late_work_penalty = 0.5
     task.grading_template.save!
@@ -729,9 +731,13 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.score_without_lateness).to eq 2/3.0
       expect(task.score).to eq 1/3.0
 
-      task.task_plan.extended_task_ids = [ task.id ]
-      task.task_plan.extended_due_at = task_plan.time_zone.to_tz.now
-      task.task_plan.save!
+      extension = Tasks::Models::Extension.new(
+        entity_role_id: task.taskings.first.entity_role_id,
+        due_at: task.time_zone.to_tz.now,
+        closes_at: task.time_zone.to_tz.now
+      )
+      task.task_plan.extensions << extension
+      task.update_attribute :extension, extension
 
       expect(task.correct_exercise_count).to eq 2
       expect(task.completed_exercise_count).to eq 2
@@ -741,7 +747,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.points).to eq 2.0
       expect(task.score_without_lateness).to eq 1.0
       expect(task.score).to eq 1.0
-      expect(task.extended_due_at).not_to be_nil
     end
 
     Timecop.freeze(due_at + 25.hours) do
@@ -770,9 +775,9 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.score_without_lateness).to eq 1.0
       expect(task.score).to eq 0.7
 
-      task.task_plan.extended_task_ids = [ task.id ]
-      task.task_plan.extended_due_at = task_plan.time_zone.to_tz.now
-      task.task_plan.save!
+      task.extension.due_at = task.time_zone.to_tz.now
+      task.extension.closes_at = task.time_zone.to_tz.now
+      task.extension.save!
 
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3
@@ -807,8 +812,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.score_without_lateness).to eq 1.0
       expect(task.score).to eq 1.0
 
-      task.task_plan.extended_task_ids = []
-      task.task_plan.save!
+      task.extension.destroy!
+      task.reload
 
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3
@@ -818,7 +823,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.points).to be_within(1e-6).of(1.2)
       expect(task.score_without_lateness).to eq 1.0
       expect(task.score).to eq 0.4
-      expect(task.extended_due_at).to be_nil
     end
   end
 

@@ -9,7 +9,7 @@ FactoryBot.define do
       tasking_plan.target ||= tasking_plan.task_plan.owner
       tasking_plan.task_plan.tasking_plans << tasking_plan
 
-      tasking_plan.time_zone ||= tasking_plan.task_plan.time_zone
+      tasking_plan.time_zone ||= tasking_plan.task_plan.owner.try(:time_zone)
       tasking_plan.opens_at ||= tasking_plan.time_zone.to_tz.now
       tasking_plan.due_at ||= tasking_plan.opens_at + evaluator.duration
       tasking_plan.closes_at ||= tasking_plan.task_plan.owner.ends_at - 1.day

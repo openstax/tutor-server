@@ -299,7 +299,7 @@ module Tasks
             type: type,
             id: tt.id,
             due_at: due_at,
-            is_late_work_accepted: tt.extended_due_at.present?,
+            is_late_work_accepted: tt.extended?,
             last_worked_at: tt.last_worked_at&.in_time_zone(tz),
             is_included_in_averages: included_in_progress_averages?(
               task: tt, current_time_ntz: current_time_ntz

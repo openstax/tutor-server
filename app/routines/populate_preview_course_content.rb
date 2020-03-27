@@ -98,7 +98,6 @@ class PopulatePreviewCourseContent
       reading_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.book_location.join('.')} Reading (Sample)",
         owner: course,
-        time_zone: time_zone,
         is_preview: true,
         ecosystem: ecosystem,
         type: 'reading',
@@ -127,7 +126,6 @@ class PopulatePreviewCourseContent
       homework_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.book_location.join('.')} Homework (Sample)",
         owner: course,
-        time_zone: time_zone,
         is_preview: true,
         ecosystem: ecosystem,
         type: 'homework',

@@ -108,26 +108,16 @@ class Api::V1::TaskPlan::Representer < Roar::Decorator
            getter: ->(*) { "/api/jobs/#{publish_job_uuid}" if publish_job_uuid.present? }
 
   collection :tasking_plans,
-             instance: ->(*) { Tasks::Models::TaskingPlan.new },
+             class: Tasks::Models::TaskingPlan,
              extend: Api::V1::TaskPlan::TaskingPlanRepresenter,
-             setter: RailsCollectionSetter,
+             setter: Api::V1::RailsCollectionSetter,
              readable: true,
              writeable: true
 
-  collection :extended_task_ids,
-             type: String,
+  collection :extensions,
+             class: Tasks::Models::Extension,
+             extend: Api::V1::TaskPlan::ExtensionRepresenter,
+             setter: Api::V1::RailsCollectionSetter,
              readable: true,
              writeable: true
-
-  property :extended_due_at,
-           type: String,
-           readable: true,
-           writeable: true,
-           getter: ->(*) { DateTimeUtilities.to_api_s(extended_due_at) }
-
-  property :extended_closes_at,
-           type: String,
-           readable: true,
-           writeable: true,
-           getter: ->(*) { DateTimeUtilities.to_api_s(extended_closes_at) }
 end

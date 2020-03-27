@@ -11,7 +11,7 @@ RSpec.describe Api::V1::TaskPlan::Representer, type: :representer do
 
       allow(dbl).to receive(:publish_job).and_return(job)
       allow(dbl).to receive(:tasking_plans).and_return([])
-      allow(dbl).to receive(:extended_task_ids).and_return([])
+      allow(dbl).to receive(:extensions).and_return([])
     end
   end
 
@@ -87,58 +87,6 @@ RSpec.describe Api::V1::TaskPlan::Representer, type: :representer do
     it 'can be written' do
       described_class.new(task_plan).from_json({'description' => 'New description'}.to_json)
       expect(task_plan).to have_received(:description=).with('New description')
-    end
-  end
-
-  context 'extended_task_ids' do
-    it 'can be read' do
-      allow(task_plan).to receive(:extended_task_ids).and_return(['21'])
-      expect(representation).to include 'extended_task_ids' => ['21']
-    end
-
-    it 'can be written' do
-      described_class.new(task_plan).from_json({'extended_task_ids' => ['42']}.to_json)
-      expect(task_plan).to have_received(:extended_task_ids=).with(['42'])
-    end
-  end
-
-  context 'extended_due_at' do
-    it 'can be read' do
-      extended_due_at = Time.current
-      allow(task_plan).to receive(:extended_due_at).and_return(extended_due_at)
-      expect(representation).to(
-        include 'extended_due_at' => DateTimeUtilities.to_api_s(extended_due_at)
-      )
-    end
-
-    it 'can be written' do
-      extended_due_at = DateTimeUtilities.to_api_s(Time.current)
-      described_class.new(task_plan).from_json(
-        { 'extended_due_at' => extended_due_at }.to_json
-      )
-      expect(task_plan).to have_received(:extended_due_at=).with(
-        DateTime.parse(extended_due_at)
-      )
-    end
-  end
-
-  context 'extended_closes_at' do
-    it 'can be read' do
-      extended_closes_at = Time.current
-      allow(task_plan).to receive(:extended_closes_at).and_return(extended_closes_at)
-      expect(representation).to(
-        include 'extended_closes_at' => DateTimeUtilities.to_api_s(extended_closes_at)
-      )
-    end
-
-    it 'can be written' do
-      extended_closes_at = DateTimeUtilities.to_api_s(Time.current)
-      described_class.new(task_plan).from_json(
-        { 'extended_closes_at' => extended_closes_at }.to_json
-      )
-      expect(task_plan).to have_received(:extended_closes_at=).with(
-        DateTime.parse(extended_closes_at)
-      )
     end
   end
 

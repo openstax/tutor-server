@@ -1,6 +1,5 @@
 module Api::V1
   class TaskRepresenter < Roar::Decorator
-
     include Roar::JSON
     include Representable::Coercion
 
@@ -25,19 +24,37 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :due_at_without_extension,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(due_at_without_extension) },
+             schema_info: {
+               description: 'When the task was due before any extensions (nil means never due)'
+             }
+
     property :due_at,
              type: String,
              writeable: false,
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
-             schema_info: { description: "When the task is due (nil means never due)" }
+             schema_info: { description: 'When the task is due (nil means never due)' }
+
+    property :closes_at_without_extension,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(closes_at_without_extension) },
+             schema_info: {
+               description: 'When the task closed before any extensions (nil means never due)'
+             }
 
     property :closes_at,
              type: String,
              writeable: false,
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) },
-             schema_info: { description: "When the task closes (nil means never closes)" }
+             schema_info: { description: 'When the task closes (nil means never closes)' }
 
     property :auto_grading_feedback_on,
              type: String,
