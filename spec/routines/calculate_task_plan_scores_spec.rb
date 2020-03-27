@@ -55,6 +55,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           tasks.map do |task|
             student = task.taskings.first.role.student
             {
+               role_id: task.taskings.first.entity_role_id,
                available_points: 8.0,
                late_work_fraction_penalty: late_work_penalty,
                first_name: student.first_name,
@@ -113,6 +114,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           tasks[0..0].map do |task|
             student = task.taskings.first.role.student
             {
+              role_id: task.taskings.first.entity_role_id,
               available_points: 8.0,
               late_work_fraction_penalty: late_work_penalty,
               first_name: student.first_name,
@@ -171,6 +173,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
             student = task.taskings.first.role.student
             points = [ 0, 2, 3 ].include?(index) ? 1.0 : 0.0
             {
+              role_id: task.taskings.first.entity_role_id,
               available_points: 8.0,
               late_work_fraction_penalty: late_work_penalty,
               first_name: student.first_name,
