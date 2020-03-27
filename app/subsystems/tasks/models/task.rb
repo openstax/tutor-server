@@ -287,6 +287,7 @@ class Tasks::Models::Task < ApplicationRecord
 
   def handle_task_step_completion(completed_at: Time.current)
     self.last_worked_at = completed_at
+    self
   end
 
   def handle_task_step_completion!(completed_at: Time.current)
