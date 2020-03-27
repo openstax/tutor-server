@@ -34,6 +34,10 @@ class Content::Models::Exercise < IndestructibleRecord
     )
   end
 
+  def parser
+    @parser ||= OpenStax::Exercises::V1::Exercise.new content: content
+  end
+
   def units
     books.flat_map(&:units)
   end
@@ -70,20 +74,14 @@ class Content::Models::Exercise < IndestructibleRecord
     @content_hash ||= JSON.parse(content)
   end
 
-  def content_as_independent_questions
-    @content_as_independent_questions ||= begin
-      exercise_hash = content_hash
-      questions = exercise_hash['questions']
-      questions.map do |question|
-        content = exercise_hash.merge('questions' => [question]).to_json
-
-        { id: question['id'], content: content }
-      end
-    end
-  end
-
   def questions_hash
     content_hash['questions']
+  end
+
+  def content_as_independent_questions
+    @content_as_independent_questions ||= questions_hash.map do |question|
+      { id: question['id'], content: content_hash.merge('questions' => [question]).to_json }
+    end
   end
 
   def number_of_parts

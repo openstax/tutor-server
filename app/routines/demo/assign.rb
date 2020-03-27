@@ -2,8 +2,7 @@
 class Demo::Assign < Demo::Base
   lev_routine transaction: :read_committed, use_jobba: true
 
-  uses_routine DistributeTasks, as: :distribute_tasks,
-                                translations: { outputs: { type: :verbatim } }
+  uses_routine DistributeTasks, as: :distribute_tasks
 
   protected
 
@@ -155,13 +154,11 @@ class Demo::Assign < Demo::Base
 
           "One task looks like: Task #{task.id}: #{task.task_type}\n#{steps.join("\n")}"
         end if tasks.any?
-
-        # Clear outputs from DistributeTasks so they can be GC'd
-        outputs.tasks = nil
-        outputs.tasking_plans = nil
       else
         log { "  Is a draft, skipping distributing" }
       end
+
+      task_plan_model.tasks.reset
 
       task_plan_model
     end

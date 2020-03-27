@@ -26,26 +26,38 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       # This is a subclass of Fragment::Exercise so it needs to come first
       when OpenStax::Cnx::V1::Fragment::OptionalExercise
         store_related_exercises(
-          exercise_fragment: fragment, page: page, title: title, previous_step: previous_step
+          exercise_fragment: fragment,
+          page: page,
+          title: title,
+          previous_step: previous_step
         ) unless previous_step.nil?
       when OpenStax::Cnx::V1::Fragment::Exercise
         task_exercise(
-          exercise_fragment: fragment, page: page, task: task, title: title,
-          previous_step: previous_step, fragment_index: index
+          exercise_fragment: fragment,
+          page: page,
+          task: task,
+          title: title,
+          previous_step: previous_step,
+          fragment_index: index
         )
       when OpenStax::Cnx::V1::Fragment::Video
         task_video(
-          video_fragment: fragment, step: build_task_step(task, page, fragment, index), title: title
+          video_fragment: fragment,
+          step: build_task_step(task, page, fragment, index),
+          title: title
         )
       when OpenStax::Cnx::V1::Fragment::Interactive
         task_interactive(
           interactive_fragment: fragment,
-          step: build_task_step(task, page, fragment, index), title: title
+          step: build_task_step(task, page, fragment, index),
+          title: title
         )
       else
         task_reading(
-          reading_fragment: fragment, page: page,
-          step: build_task_step(task, page, fragment, index), title: title
+          page: page,
+          step: build_task_step(task, page, fragment, index),
+          fragment_index: index,
+          title: title
         )
       end
 
@@ -54,12 +66,14 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     end
   end
 
-  def task_reading(reading_fragment:, page:, step:, title: nil)
-    Tasks::Models::TaskedReading.new(task_step: step,
-                                     url: page.url,
-                                     book_location: page.book_location,
-                                     title: title,
-                                     content: reading_fragment.to_html)
+  def task_reading(page:, step:, fragment_index:, title: nil)
+    Tasks::Models::TaskedReading.new(
+      task_step: step,
+      url: page.url,
+      book_location: page.book_location,
+      fragment_index: fragment_index,
+      title: title
+    )
   end
 
   # Exercise exclusions are ignored here

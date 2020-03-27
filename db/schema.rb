@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_16_162341) do
+ActiveRecord::Schema.define(version: 2020_03_20_203024) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -100,6 +100,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.uuid "uuid", null: false
     t.uuid "group_uuid", null: false
     t.string "nickname"
+    t.jsonb "question_answer_ids", null: false
     t.index ["content_page_id"], name: "index_content_exercises_on_content_page_id"
     t.index ["group_uuid", "version"], name: "index_content_exercises_on_group_uuid_and_version"
     t.index ["number", "version"], name: "index_content_exercises_on_number_and_version"
@@ -850,7 +851,6 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
   create_table "tasks_tasked_exercises", id: :serial, force: :cascade do |t|
     t.integer "content_exercise_id", null: false
     t.string "url", null: false
-    t.text "content", null: false
     t.string "title"
     t.text "free_response"
     t.string "answer_id"
@@ -859,10 +859,12 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.string "correct_answer_id", null: false
     t.boolean "is_in_multipart", default: false, null: false
     t.string "question_id", null: false
-    t.text "context"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "question_index", null: false
     t.jsonb "response_validation"
+    t.text "content"
+    t.text "context"
+    t.string "answer_ids", null: false, array: true
     t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"
@@ -893,11 +895,12 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
 
   create_table "tasks_tasked_readings", id: :serial, force: :cascade do |t|
     t.string "url", null: false
-    t.text "content", null: false
+    t.text "content"
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "book_location", default: "[]", null: false
+    t.integer "fragment_index", null: false
   end
 
   create_table "tasks_tasked_videos", id: :serial, force: :cascade do |t|

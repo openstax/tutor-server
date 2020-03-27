@@ -75,6 +75,37 @@ class Tasks::Models::Task < ApplicationRecord
   after_create :update_caches_now
   after_touch :update_caches_later
 
+  def preload_taskeds
+    ActiveRecord::Associations::Preloader.new.preload task_steps.to_a, :tasked
+
+    self
+  end
+
+  def preload_exercise_content(preload_taskeds: true)
+    self.preload_taskeds if preload_taskeds
+
+    tasked_exercises = task_steps.filter(&:exercise?).map(&:tasked)
+    ActiveRecord::Associations::Preloader.new.preload tasked_exercises, :exercise
+
+    self
+  end
+
+  def preload_reading_content(preload_taskeds: false)
+    self.preload_taskeds if preload_taskeds
+
+    ActiveRecord::Associations::Preloader.new.preload task_steps.filter(&:reading?), :page
+
+    self
+  end
+
+  def preload_content
+    preload_exercise_content
+
+    preload_reading_content
+
+    self
+  end
+
   def goal_num_pes
     if practice?
       FindOrCreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES
@@ -92,7 +123,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def update_cached_attributes(steps: nil, current_time: Time.current)
-    steps ||= persisted? && !task_steps.loaded? ? task_steps.preload(:tasked) : task_steps
+    steps ||= preload_taskeds.task_steps
     steps = steps.to_a
 
     completed_steps = steps.select(&:completed?)
@@ -224,34 +255,43 @@ class Tasks::Models::Task < ApplicationRecord
     taskings.none? { |tasking| tasking.role&.student? }
   end
 
-  def core_task_steps(preload_tasked: false)
-    task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
+  def exercise_steps(preload_taskeds: false)
+    self.preload_taskeds if preload_taskeds
+    task_steps.filter(&:exercise?)
+  end
+
+  def core_task_steps(preload_taskeds: false)
+    self.preload_taskeds if preload_taskeds
     task_steps.filter(&:is_core?)
   end
 
-  def dynamic_task_steps(preload_tasked: false)
-    task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
+  def dynamic_task_steps(preload_taskeds: false)
+    self.preload_taskeds if preload_taskeds
     task_steps.to_a.reject(&:is_core?)
   end
 
-  def fixed_task_steps(preload_tasked: false)
-    task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
+  def fixed_task_steps(preload_taskeds: false)
+    self.preload_taskeds if preload_taskeds
     task_steps.filter(&:fixed_group?)
   end
 
-  def personalized_task_steps(preload_tasked: false)
-    task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
+  def personalized_task_steps(preload_taskeds: false)
+    self.preload_taskeds if preload_taskeds
     task_steps.filter(&:personalized_group?)
   end
 
-  def spaced_practice_task_steps(preload_tasked: false)
-    task_steps = preload_tasked ? self.task_steps.preload(:tasked) : self.task_steps
+  def spaced_practice_task_steps(preload_taskeds: false)
+    self.preload_taskeds if preload_taskeds
     task_steps.filter(&:spaced_practice_group?)
   end
 
-  def handle_task_step_completion!(completed_at: Time.current)
+  def handle_task_step_completion(completed_at: Time.current)
     self.last_worked_at = completed_at
-    save!
+    self
+  end
+
+  def handle_task_step_completion!(completed_at: Time.current)
+    handle_task_step_completion(completed_at: completed_at).save!
   end
 
   def exercise_count
@@ -284,10 +324,6 @@ class Tasks::Models::Task < ApplicationRecord
 
   def correct_accepted_late_exercise_count
     correct_accepted_late_exercise_steps_count
-  end
-
-  def exercise_steps
-    task_steps.preload(:tasked).select(&:exercise?)
   end
 
   def effective_correct_exercise_count

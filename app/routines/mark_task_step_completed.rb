@@ -17,7 +17,10 @@ class MarkTaskStepCompleted
 
     return unless errors.empty?
 
-    task_step.save! if save
+    if save
+      task_step.save!
+      task.save!
+    end
 
     run(:populate_placeholders, task: task, lock_task: false) if task.core_task_steps_completed?
 

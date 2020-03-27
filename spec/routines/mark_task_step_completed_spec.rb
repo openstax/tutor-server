@@ -29,7 +29,7 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
     expect(task_step).to receive(:save!)
     allow(task_step).to receive(:task).and_return(task)
 
-    expect(task).to receive(:handle_task_step_completion!)
+    expect(task).to receive(:handle_task_step_completion)
 
     result = MarkTaskStepCompleted.call(task_step: task_step)
 

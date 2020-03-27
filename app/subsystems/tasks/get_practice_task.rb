@@ -10,6 +10,7 @@ class Tasks::GetPracticeTask
                      .where(taskings: { entity_role_id: role.id },
                             task_type: task_type, core_page_ids: page_ids)
                      .where('completed_steps_count < steps_count')
-                     .order(:created_at).first
+                     .order(:created_at)
+                     .first
   end
 end

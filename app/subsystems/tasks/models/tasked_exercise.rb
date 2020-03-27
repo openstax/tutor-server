@@ -19,13 +19,34 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     where('tasks_tasked_exercises.answer_id != tasks_tasked_exercises.correct_answer_id')
   end
 
-  delegate :uid, :questions, :question_formats, :question_answers,
+  # Fields shared by all parts of a multipart exercise
+  delegate :uid, :tags, :los, :aplos, to: :exercise
+
+  # Fields specific to each part of a multipart exercise
+  delegate :questions, :question_formats, :question_answers,
            :question_answer_ids, :question_formats_for_students,
            :correct_question_answers, :correct_question_answer_ids,
-           :feedback_map, :solutions, :content_hash_for_students,
-           :tags, :los, :aplos, to: :parser
+           :feedback_map, :solutions, :content_hash_for_students, to: :parser
 
-  # We depend on the parser because we do not save the parsed content
+  def context
+    super || exercise.context
+  end
+
+  def content
+    cont = super
+    return cont unless cont.nil?
+
+    return if question_index.nil?
+
+    questions = exercise&.content_as_independent_questions
+    return if questions.nil?
+
+    question = questions[question_index]
+    return if question.nil?
+
+    question[:content]
+  end
+
   def parser
     @parser ||= OpenStax::Exercises::V1::Exercise.new(content: content)
   end
@@ -75,12 +96,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     self.content = json_hash.to_json
   end
 
-  # The following 3 methods assume only 1 Question; this is OK for TaskedExercise,
+  # The following 2 methods assume only 1 Question; this is OK for TaskedExercise,
   # because each TE contains at most 1 part of a multipart exercise.
-  def answer_ids
-    question_answer_ids[0]
-  end
-
   def solution
     solutions[0].try(:first)
   end
@@ -107,9 +124,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   protected
 
   def free_response_required
-    if parser.question_formats_for_students.include?('free-response') && free_response.blank?
-      errors.add(:free_response, 'is required')
-    end
+    errors.add(:free_response, 'is required') if is_two_step? && free_response.blank?
   end
 
   def answer_id_required
@@ -131,7 +146,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     # Cannot change the answer after feedback is available
     # Feedback is available immediately for iReadings, or at the due date for HW,
     # but waits until the step is marked as completed
-    return unless task_step.try!(:feedback_available?)
+    return unless task_step&.feedback_available?
 
     [:answer_id, :free_response].each do |attr|
       errors.add(

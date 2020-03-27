@@ -3,8 +3,19 @@ class Tasks::Models::TaskedReading < IndestructibleRecord
 
   json_serialize :book_location, Integer, array: true
 
-  validates :url, presence: true
-  validates :content, presence: true
+  validates :url, :fragment_index, presence: true
+
+  def content
+    cont = super
+    return cont unless cont.nil?
+
+    return if fragment_index.nil?
+
+    fragments = task_step&.page&.fragments
+    return if fragments.nil?
+
+    fragments[fragment_index]&.to_html
+  end
 
   def has_content?
     true
