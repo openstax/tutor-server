@@ -60,7 +60,6 @@ class CourseProfile::BuildPreviewCourses
         end
       end
 
-      # This routine needs to run outside the transaction above so Biglearn receives data
       PopulatePreviewCourseContent.perform_later(course: course)
     end
   end
@@ -69,9 +68,25 @@ class CourseProfile::BuildPreviewCourses
     # is_preview_ready: false prevents the course from being claimed
     # but it still counts for the total here
     course_counts_sql = CourseProfile::Models::Course
-      .select([:catalog_offering_id, 'COUNT(*) as "preview_course_count"'])
+      .select(
+        :catalog_offering_id,
+        'COUNT(*) as "preview_course_count"',
+        '"initial_course_ecosystem"."content_ecosystem_id"'
+      )
+      .joins(
+        <<~JOIN_SQL
+          CROSS JOIN LATERAL (
+            SELECT "course_content_course_ecosystems"."content_ecosystem_id"
+            FROM "course_content_course_ecosystems"
+            WHERE "course_content_course_ecosystems"."course_profile_course_id" =
+              "course_profile_courses"."id"
+            ORDER BY "course_content_course_ecosystems"."created_at"
+            LIMIT 1
+          ) AS "initial_course_ecosystem"
+        JOIN_SQL
+      )
       .where(is_preview: true, preview_claimed_at: nil)
-      .group(:catalog_offering_id)
+      .group(:catalog_offering_id, '"initial_course_ecosystem"."content_ecosystem_id"')
       .to_sql
 
     of = Catalog::Models::Offering.arel_table
@@ -89,6 +104,7 @@ class CourseProfile::BuildPreviewCourses
           LEFT OUTER JOIN (#{course_counts_sql})
             AS "course_counts"
             ON #{cc[:catalog_offering_id].eq(of[:id]).to_sql}
+              AND #{cc[:content_ecosystem_id].eq(of[:content_ecosystem_id]).to_sql}
         JOIN_SQL
       )
       .where(is_preview_available: true)

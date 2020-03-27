@@ -178,15 +178,6 @@ class Tasks::Assistants::GenericAssistant
     end
   end
 
-  def filter_and_choose_exercises(exercises:, course:, count:, history:)
-    filtered_exercises = FilterExcludedExercises[
-      exercises: exercises, course: course,
-      additional_excluded_numbers: @used_exercise_numbers
-    ]
-
-    ChooseExercises[exercises: filtered_exercises, count: count, history: history]
-  end
-
   def add_placeholder_steps!(task:, group_type:, is_core:, count:, labels: [], page: nil)
     count.times do
       task_step = Tasks::Models::TaskStep.new(task: task, labels: labels, page: page)

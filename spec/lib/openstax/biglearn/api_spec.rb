@@ -24,6 +24,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       @page = @ecosystem_1.pages.first
       @exercises = @page.exercises
       @course = reading_task_plan.owner
+      @course.update_attribute :is_preview, true
       @reading_task = reading_task_plan.tasks.first
       @tasked_exercise = @reading_task.tasked_exercises.first
       tasking = @reading_task.taskings.first
@@ -34,9 +35,12 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
 
     after(:all) { DatabaseCleaner.clean }
 
-    before(:each) do
+    before do
       @course.reload
       @ecosystem_1.reload
+
+      allow(described_class).to receive(:use_fake_client) { |&block| block.call }
+      expect(described_class).not_to receive(:use_real_client)
     end
 
     let(:max_num_exercises) { 5 }
@@ -182,6 +186,13 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
           sequence_number = sequence_number_record.sequence_number \
             if sequence_number_record.present?
 
+          if method != :create_ecosystem && @course.is_preview
+            expect(described_class).to receive(:use_fake_client).at_least(:once) do |&block|
+              block.call
+            end
+          else
+            expect(described_class).not_to receive(:use_fake_client)
+          end
           expect(described_class.client).to receive(method).and_call_original
 
           results = options.nil? ? described_class.send(method, requests) :

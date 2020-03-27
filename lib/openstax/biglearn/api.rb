@@ -298,6 +298,9 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_assignment_pes(*requests)
       requests, options = extract_options requests, OPTION_KEYS
+      client = [ requests ].flatten.all? do |request|
+        request[:task].taskings.first.role.course_member.course.is_preview
+      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -307,7 +310,8 @@ module OpenStax::Biglearn::Api
           optional_keys: :max_num_exercises,
           perform_later: false,
           response_status_key: :assignment_status,
-          accepted_response_status: 'assignment_ready'
+          accepted_response_status: 'assignment_ready',
+          client: client
         )
       ) do |request, response, accepted|
         # If no valid response was received from Biglearn, fallback to random personalized exercises
@@ -333,6 +337,9 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_assignment_spes(*requests)
       requests, options = extract_options requests, OPTION_KEYS
+      client = [ requests ].flatten.all? do |request|
+        request[:task].taskings.first.role.course_member.course.is_preview
+      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -342,7 +349,8 @@ module OpenStax::Biglearn::Api
           optional_keys: :max_num_exercises,
           perform_later: false,
           response_status_key: :assignment_status,
-          accepted_response_status: 'assignment_ready'
+          accepted_response_status: 'assignment_ready',
+          client: client
         )
       ) do |request, response, accepted|
         # If no valid response was received from Biglearn, fallback to random personalized exercises
@@ -368,6 +376,9 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_practice_worst_areas_exercises(*requests)
       requests, options = extract_options requests, OPTION_KEYS
+      client = [ requests ].flatten.all? do |request|
+        request[:student].course.is_preview
+      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -377,7 +388,8 @@ module OpenStax::Biglearn::Api
           optional_keys: :max_num_exercises,
           perform_later: false,
           response_status_key: :student_status,
-          accepted_response_status: 'student_ready'
+          accepted_response_status: 'student_ready',
+          client: client
         )
       ) do |request, response, _|
         # Return the last response received from Biglearn regardless of what it was
@@ -398,13 +410,17 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to a CLUe hash
     def fetch_student_clues(*requests)
       requests, options = extract_options requests, OPTION_KEYS
+      client = [ requests ].flatten.all? do |request|
+        request[:student].course.is_preview
+      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
           method: :fetch_student_clues,
           requests: requests,
           keys: [:book_container_uuid, :student],
-          perform_later: false
+          perform_later: false,
+          client: client
         )
       ) do |_, response, _|
         # Return the last response received from Biglearn regardless of what it was
@@ -417,13 +433,17 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to a CLUe hash
     def fetch_teacher_clues(*requests)
       requests, options = extract_options requests, OPTION_KEYS
+      client = requests.all? do |request|
+        request[:course_container].course.is_preview
+      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
           method: :fetch_teacher_clues,
           requests: requests,
           keys: [:book_container_uuid, :course_container],
-          perform_later: false
+          perform_later: false,
+          client: client
         )
       ) do |_, response, _|
         # Return the last response received from Biglearn regardless of what it was
@@ -437,12 +457,17 @@ module OpenStax::Biglearn::Api
       OpenStax::Biglearn::Api::Configuration.new
     end
 
-    def new_client
-      client_class = configuration.stub ? OpenStax::Biglearn::Api::FakeClient :
-                                          OpenStax::Biglearn::Api::RealClient
-
+    def new_fake_client
       begin
-        client_class.new(configuration)
+        OpenStax::Biglearn::Api::FakeClient.new(configuration)
+      rescue StandardError => e
+        raise "Biglearn API client initialization error: #{e.message}"
+      end
+    end
+
+    def new_real_client
+      begin
+        OpenStax::Biglearn::Api::RealClient.new(configuration)
       rescue StandardError => e
         raise "Biglearn API client initialization error: #{e.message}"
       end
@@ -456,7 +481,8 @@ module OpenStax::Biglearn::Api
                            sequence_number_model_key: nil, sequence_number_model_class: nil,
                            create: false, perform_later: true,
                            response_status_key: nil, accepted_response_status: [],
-                           inline_max_attempts: 1, inline_sleep_interval: 0, enable_warnings: true)
+                           inline_max_attempts: 1, inline_sleep_interval: 0,
+                           enable_warnings: true, client: nil)
       include_sequence_number = sequence_number_model_key.present? &&
                                 sequence_number_model_class.present?
 
@@ -471,12 +497,14 @@ module OpenStax::Biglearn::Api
 
       args = {
         requests: request_with_uuid,
-        create: create
+        create: create,
+        client: client
       }
 
       job_class = if include_sequence_number
         is_preview = request[sequence_number_model_key.to_sym].try(:is_preview)
         args[:queue] = is_preview ? 'preview' : 'biglearn'
+        args[:client] = 'fake' if client.nil? && is_preview
 
         OpenStax::Biglearn::Api::JobWithSequenceNumber
       else
@@ -531,7 +559,8 @@ module OpenStax::Biglearn::Api
                          sequence_number_model_key: nil, sequence_number_model_class: nil,
                          create: false, perform_later: false,
                          response_status_key: nil, accepted_response_status: [],
-                         inline_max_attempts: 1, inline_sleep_interval: 0, enable_warnings: true)
+                         inline_max_attempts: 1, inline_sleep_interval: 0,
+                         enable_warnings: true, client: nil)
       include_sequence_numbers = sequence_number_model_key.present? &&
                                  sequence_number_model_class.present?
 
@@ -556,7 +585,8 @@ module OpenStax::Biglearn::Api
 
       args = {
         requests: requests_array,
-        create: create
+        create: create,
+        client: client
       }
 
       job_class = if include_sequence_numbers
@@ -564,6 +594,7 @@ module OpenStax::Biglearn::Api
           request[sequence_number_model_key.to_sym].try(:is_preview)
         end : requests[sequence_number_model_key.to_sym].try(:is_preview)
         args[:queue] = is_preview ? 'preview' : 'biglearn'
+        args[:client] = 'fake' if client.nil? && is_preview
 
         OpenStax::Biglearn::Api::JobWithSequenceNumber
       else

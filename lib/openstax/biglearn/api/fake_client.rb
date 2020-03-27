@@ -1,4 +1,17 @@
 class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
+  NON_RANDOM_K_AGOS = [ 1, 3, 5 ]
+  RANDOM_K_AGOS = [ 2, 4 ]
+
+  DEFAULT_NUM_SPES_PER_K_AGO = 1
+
+  MIN_HISTORY_SIZE_FOR_RANDOM_AGO = 5
+
+  CLUE_MIN_NUM_RESPONSES = 3 # Must be 2 or more to prevent division by 0
+  CLUE_Z_ALPHA = 0.68
+  CLUE_Z_ALPHA_SQUARED = CLUE_Z_ALPHA**2
+
+  PRACTICE_WORST_NUM_EXERCISES = 5
+
   include OpenStax::Biglearn::Api::Client
 
   attr_reader :store
@@ -78,69 +91,9 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   end
 
   # Creates or updates tasks in Biglearn
-  # In FakeClient, stores the (correct) list of PEs for the task for later use
   def create_update_assignments(requests)
-    tasks_without_core_page_ids_override = []
-    task_id_to_core_page_ids_overrides = {}
-    requests.each do |request|
-      task = request[:task]
-
-      if request.has_key?(:core_page_ids)
-        task_id_to_core_page_ids_overrides[task.id] = request[:core_page_ids]
-      else
-        tasks_without_core_page_ids_override << task
-      end
-    end
-
-    task_id_to_core_page_ids_map = GetTaskCorePageIds[tasks: tasks_without_core_page_ids_override]
-                                     .merge(task_id_to_core_page_ids_overrides)
-    all_core_page_ids = task_id_to_core_page_ids_map.values.flatten
-    page_id_to_page_map = Content::Models::Page.where(id: all_core_page_ids).index_by(&:id)
-
-    # Do some queries to get the dynamic exercises for each assignment type
-    task_to_pe_ids_map = {}
-    requests.each do |request|
-      task = request[:task]
-
-      pe_pool_method = case task.task_type&.to_sym
-      when :reading
-        :reading_dynamic_exercise_ids
-      when :homework
-        :homework_dynamic_exercise_ids
-      else # Assuming it is one of the different types of practice tasks
-        :practice_widget_exercise_ids
-      end
-
-      core_page_ids = task_id_to_core_page_ids_map[task.id]
-
-      task_to_pe_ids_map[task] = core_page_ids.flat_map do |page_id|
-        page = page_id_to_page_map[page_id]
-
-        page.send(pe_pool_method)
-      end
-    end
-
-    all_pe_ids = task_to_pe_ids_map.values.flatten
-
-    # Get the uuids for each dynamic exercise id
-    pe_id_to_pe_uuid_map = Content::Models::Exercise.where(id: all_pe_ids).pluck(:id, :uuid).to_h
-
-    task_to_pe_ids_map.each do |task, pe_ids|
-      task_key = "tasks/#{task.uuid}/pe_uuids"
-
-      pe_uuids = pe_ids.map { |pe_id| pe_id_to_pe_uuid_map[pe_id] }
-
-      store.write task_key, pe_uuids.to_json
-    end
-
     requests.map do |request|
-      course = request[:course]
-      task = request[:task]
-
-      {
-        request_uuid: request[:request_uuid],
-        updated_assignment_uuid: task.uuid
-      }
+      { request_uuid: request[:request_uuid], updated_assignment_uuid: request[:task].uuid }
     end
   end
 
@@ -150,71 +103,216 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   end
 
   # Returns a number of recommended personalized exercises for the given tasks
-  # In the FakeClient, always returns random PEs from the (correct) list of possible PEs
+  # The FakeClient returns random PEs from the same pages as the task
   def fetch_assignment_pes(requests)
-    request_task_keys_map = {}
-    requests.each do |request|
-      request_task_keys_map[request] = "tasks/#{request[:task].uuid}/pe_uuids"
+    tasks = requests.map { |request| request[:task] }
+
+    ActiveRecord::Associations::Preloader.new.preload(
+      tasks, [
+        :task_steps, taskings: { role: [ { student: :course }, { teacher_student: :course } ] }
+      ]
+    )
+
+    pool_exercises_by_task_id = {}
+    tasks.group_by(&:task_type).each do |task_type, tasks|
+      case task_type
+      when 'reading', 'homework'
+        pool_method = "#{task_type}_dynamic_exercise_ids".to_sym
+      when 'chapter_practice', 'page_practice', 'mixed_practice', 'practice_worst_topics'
+        pool_method = :practice_widget_exercise_ids
+      else
+        tasks.map(&:id).each { |task_id| pool_exercise_ids_by_task_id[task_id] = [] }
+        next
+      end
+
+      page_ids_by_task_id = tasks.map do |task|
+        [ task.id, task.task_steps.map(&:content_page_id).uniq ]
+      end.to_h
+      exercise_ids_by_page_id = Content::Models::Page.where(
+        id: page_ids_by_task_id.values.flatten.uniq
+      ).pluck(:id, pool_method).to_h
+      exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
+        id: exercise_ids_by_page_id.values.flatten
+      ).index_by(&:id)
+
+      page_ids_by_task_id.each do |task_id, page_ids|
+        exercise_ids = exercise_ids_by_page_id.values_at(*page_ids).flatten
+        pool_exercises_by_task_id[task_id] = exercises_by_id.values_at(*exercise_ids).compact
+      end
     end
 
-    exercise_uuids_map = store.read_multi(*request_task_keys_map.values)
-
+    current_time = Time.current
     requests.map do |request|
-      request_uuid = request[:request_uuid]
       task = request[:task]
+      count = request.fetch(:max_num_exercises) { task.goal_num_pes }
+      request_uuid = request[:request_uuid]
 
-      num_exercise_uuids = request[:max_num_exercises] || (task.practice? ? 5 : 3)
+      exercises = filter_and_choose_exercises(
+        exercises: pool_exercises_by_task_id[task.id],
+        task: task,
+        count: count,
+        current_time: current_time
+      )
 
-      if num_exercise_uuids == 0
-        {
-          request_uuid: request_uuid,
-          assignment_uuid: task.uuid,
-          exercise_uuids: [],
-          assignment_status: 'assignment_ready',
-          spy_info: {}
-        }
-      else
-        task_key = request_task_keys_map[request]
-        all_exercise_uuids_json = exercise_uuids_map[task_key]
-
-        if all_exercise_uuids_json.nil?
-          {
-            request_uuid: request_uuid,
-            assignment_uuid: task.uuid,
-            exercise_uuids: [],
-            assignment_status: 'assignment_unknown',
-            spy_info: {}
-          }
-        else
-          all_exercise_uuids = JSON.parse all_exercise_uuids_json
-          candidate_exercise_uuids = \
-            all_exercise_uuids - task.exercise_steps.map { |ts| ts.tasked.exercise.uuid }
-
-          {
-            request_uuid: request_uuid,
-            assignment_uuid: task.uuid,
-            exercise_uuids: candidate_exercise_uuids.sample(num_exercise_uuids),
-            assignment_status: 'assignment_ready',
-            spy_info: {}
-          }
-        end
-      end
+      {
+        request_uuid: request_uuid,
+        assignment_uuid: task.uuid,
+        exercise_uuids: exercises.map(&:uuid),
+        assignment_status: 'assignment_ready',
+        spy_info: {}
+      }
     end
   end
 
   # Returns a number of recommended spaced practice exercises for the given tasks
-  # In the FakeClient, we pretend there are no Spaced Practice exercises,
-  # which causes us to return Personalized exercises instead
+  # In the FakeClient returns random SPEs from those allowed by our spaced practice rules
   def fetch_assignment_spes(requests)
-    fetch_assignment_pes(requests)
+    tasks = requests.map { |request| request[:task] }
+
+    ActiveRecord::Associations::Preloader.new.preload(
+      tasks, [ taskings: { role: [ { student: :course }, { teacher_student: :course } ] } ]
+    )
+
+    current_time = Time.current
+    spaced_exercises_by_task_id = {}
+    tasks.group_by(&:task_type).each do |task_type, tasks|
+      case task_type
+      when 'reading', 'homework'
+        pool_type = "#{task_type}_dynamic".to_sym
+      when 'chapter_practice', 'page_practice', 'mixed_practice', 'practice_worst_topics'
+        pool_type = :practice_widget
+      else
+        tasks.map(&:id).each { |task_id| pool_exercise_ids_by_task_id[task_id] = [] }
+        next
+      end
+
+      tasks.each do |task|
+        student_history = (
+          [ task ] + Tasks::Models::Task.select(
+            :id, :content_ecosystem_id, :core_page_ids
+          ).joins(:taskings).where(
+            taskings: { entity_role_id: task.taskings.map(&:entity_role_id) },
+            task_type: task.task_type
+          ).order(student_history_at: :desc).preload(:ecosystem).first(6)
+        ).uniq
+
+        spaced_tasks_num_exercises = get_k_ago_map(
+          task: task, include_random_ago: student_history.size > MIN_HISTORY_SIZE_FOR_RANDOM_AGO
+        ).map do |k_ago, num_exercises|
+          [ student_history[k_ago || RANDOM_K_AGOS.sample] || task, num_exercises ]
+        end
+
+        spaced_tasks = spaced_tasks_num_exercises.map(&:first).compact
+        ecosystem_map = Content::Map.find_or_create_by(
+          from_ecosystems: spaced_tasks.map(&:ecosystem).uniq,
+          to_ecosystem: task.ecosystem
+        )
+
+        page_ids = (task.core_page_ids + spaced_tasks.flat_map(&:core_page_ids)).uniq
+        exercise_ids_by_page_id = ecosystem_map.map_page_ids_to_exercise_ids(
+          page_ids: page_ids, pool_type: pool_type
+        )
+        exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
+          id: exercise_ids_by_page_id.values.flatten
+        ).index_by(&:id)
+
+        spaced_exercises_by_task_id[task.id] =
+          spaced_tasks_num_exercises.flat_map do |task, num_exercises|
+          exercise_ids = exercise_ids_by_page_id.values_at(*task.core_page_ids).compact.flatten
+
+          spaced_exercises = filter_and_choose_exercises(
+            exercises: exercises_by_id.values_at(*exercise_ids),
+            task: task,
+            count: num_exercises,
+            current_time: current_time
+          )
+
+          remainder = num_exercises - spaced_exercises.size
+          next spaced_exercises unless remainder > 0
+
+          # Use personalized exercises if not enough spaced practice exercises available
+          exercise_ids = exercise_ids_by_page_id.values_at(*task.core_page_ids).compact.flatten
+
+          spaced_exercises + filter_and_choose_exercises(
+            exercises: exercises_by_id.values_at(*exercise_ids),
+            task: task,
+            count: remainder,
+            current_time: current_time
+          )
+        end
+      end
+    end
+
+    requests.map do |request|
+      task = request[:task]
+      count = request.fetch(:max_num_exercises) { task.goal_num_spes }
+      request_uuid = request[:request_uuid]
+
+      {
+        request_uuid: request_uuid,
+        assignment_uuid: task.uuid,
+        exercise_uuids: spaced_exercises_by_task_id[task.id].first(count).map(&:uuid),
+        assignment_status: 'assignment_ready',
+        spy_info: {}
+      }
+    end
   end
 
   # Returns a number of recommended personalized exercises for the student's worst topics
-  # Always returns 5 random exercises from the correct ecosystem in the FakeClient
+  # The FakeClient returns a random personalized exercise from the student's 5 worst topics
   def fetch_practice_worst_areas_exercises(requests)
+    current_time = Time.current
+
     requests.map do |request|
-      ecosystem = request.fetch(:student).course.ecosystem
-      exercises = ecosystem.nil? ? [] : ecosystem.exercises.sample(5)
+      student = request.fetch(:student)
+      role = student.role
+      ecosystem = student.course.ecosystem
+      exercises = []
+
+      unless ecosystem.nil?
+        responses_by_page_id = Hash.new { |hash, key| hash[key] = [] }
+        Tasks::Models::TaskedExercise.select(:id, :answer_id, :correct_answer_id).joins(
+          task_step: { task: :taskings }
+        ).where(
+          task_step: {
+            task: { ecosystem: ecosystem, taskings: { entity_role_id: role.id } }
+          }
+        ).preload(task_step: :task).filter do |tasked_exercise|
+          tasked_exercise.task_step.task.feedback_available?(current_time: current_time)
+        end.each do |tasked_exercise|
+          responses_by_page_id[tasked_exercise.task_step.content_page_id] <<
+            tasked_exercise.is_correct?
+        end
+
+        page_ids = responses_by_page_id.sort_by do |_, responses|
+          clue = calculate_clue(responses: responses)
+          clue[:is_real] ? clue[:most_likely] : 1.5
+        end.first(PRACTICE_WORST_NUM_EXERCISES).map(&:first)
+
+        pools = Content::Models::Page.where(
+          id: page_ids
+        ).pluck(:practice_widget_exercise_ids)
+        num_pools = pools.size
+
+        if num_pools > 0
+          exercises_per_pool, remainder = PRACTICE_WORST_NUM_EXERCISES.divmod(num_pools)
+          exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
+            id: pools.flatten
+          ).index_by(&:id)
+          pools.each_with_index do |pool, index|
+            ex = filter_and_choose_exercises(
+              exercises: exercises_by_id.values_at(*pool),
+              role: role,
+              count: exercises_per_pool + (remainder.to_f/(num_pools - index)).ceil,
+              current_time: current_time
+            )
+
+            remainder += exercises_per_pool - ex.size
+
+            exercises.concat ex
+          end
+        end
+      end
 
       {
         request_uuid: request[:request_uuid],
@@ -227,39 +325,166 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   end
 
   # Returns the CLUes for the given book containers and students (for students)
-  # Always returns randomized CLUes in the FakeClient
+  # The FakeClient performs the same calculation as biglearn-local-query
   def fetch_student_clues(requests)
+    current_time = Time.current
+
     requests.map do |request|
-      ecosystem = request.fetch(:student).course.ecosystem
+      student = request.fetch(:student)
+      course = student.course
+      pages = get_pages course: course, book_container_uuid: request.fetch(:book_container_uuid)
+      ecosystem = course.ecosystem
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: random_clue(ecosystem_uuid: ecosystem.tutor_uuid),
+        clue_data: calculate_clue_for_students_and_pages(
+          students: student, pages: pages, ecosystem: ecosystem, current_time: current_time
+        ),
         clue_status: 'clue_ready'
       }
     end
   end
 
   # Returns the CLUes for the given book containers and periods (for teachers)
-  # Always returns randomized CLUes in the FakeClient
+  # The FakeClient performs the same calculation as biglearn-local-query
   def fetch_teacher_clues(requests)
+    current_time = Time.current
+
     requests.map do |request|
-      ecosystem = request.fetch(:course_container).course.ecosystem
+      period = request.fetch(:course_container)
+      course = period.course
+      pages = get_pages course: course, book_container_uuid: request.fetch(:book_container_uuid)
+      ecosystem = course.ecosystem
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: random_clue(ecosystem_uuid: ecosystem.tutor_uuid),
+        clue_data: calculate_clue_for_students_and_pages(
+          students: period.students, pages: pages, ecosystem: ecosystem, current_time: current_time
+        ),
         clue_status: 'clue_ready'
       }
     end
   end
 
-  def random_clue(options = {})
-    options[:most_likely] ||= rand
-    options[:minimum]     ||= rand * options[:most_likely]
-    options[:maximum]     ||= 1 - rand * (1 - options[:most_likely])
-    options[:is_real]     ||= [true, false].sample
+  protected
 
-    options.slice(:minimum, :most_likely, :maximum, :is_real, :ecosystem_uuid)
+  def filter_and_choose_exercises(
+    exercises:, task: nil, role: nil, count:, current_time: Time.current
+  )
+    outs = FilterExcludedExercises.call(
+      exercises: exercises, task: task, role: role, current_time: current_time
+    ).outputs
+
+    ChooseExercises[
+      exercises: outs.exercises,
+      count: count,
+      already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
+    ]
+  end
+
+  def get_pages(course:, book_container_uuid:)
+    course.ecosystems.each do |ecosystem|
+      ecosystem.books.each do |book|
+        toc = book.as_toc
+        return toc.pages if toc.unmapped_tutor_uuids.include? book_container_uuid
+
+        # No need to check the units, since we don't currently request unit CLUes
+        toc.chapters.each do |chapter|
+          return chapter.pages if chapter.unmapped_tutor_uuids.include? book_container_uuid
+
+          chapter.pages.each do |page|
+            return [ page ] if page.unmapped_tutor_uuids.include? book_container_uuid
+          end
+        end
+      end
+    end
+
+    []
+  end
+
+  def get_k_ago_map(task:, include_random_ago: false)
+    # Entries in the list have the form: [from-this-many-tasks-ago, pick-this-many-exercises]
+    num_spes = task.goal_num_spes
+
+    case num_spes
+    when Integer
+      # Tutor decides
+      return [] if num_spes == 0
+
+      # Subtract 1 for random-ago/personalized
+      num_spes -= 1
+      num_spes_per_k_ago, remainder = num_spes.divmod NON_RANDOM_K_AGOS.size
+
+      [].tap do |k_ago_map|
+        NON_RANDOM_K_AGOS.each_with_index do |k_ago, index|
+          num_k_ago_spes = index < remainder ? num_spes_per_k_ago + 1 : num_spes_per_k_ago
+
+          k_ago_map << [k_ago, num_k_ago_spes] if num_k_ago_spes > 0
+        end
+
+        k_ago_map << [(include_random_ago ? nil : 0), 1]
+      end
+    when NilClass
+      # Biglearn decides
+      NON_RANDOM_K_AGOS.map do |k_ago|
+        [k_ago, DEFAULT_NUM_SPES_PER_K_AGO]
+      end.compact.tap do |k_ago_map|
+        k_ago_map << [(include_random_ago ? nil : 0), 1]
+      end
+    else
+      raise ArgumentError, "Invalid assignment num_spes: #{num_spes.inspect}", caller
+    end
+  end
+
+  def calculate_clue(responses:, ecosystem: nil)
+    num_responses = responses.size
+
+    clue = if num_responses >= CLUE_MIN_NUM_RESPONSES
+      num_correct = responses.count { |bool| bool }
+
+      p_hat = (num_correct + 0.5 * CLUE_Z_ALPHA_SQUARED) / (num_responses + CLUE_Z_ALPHA_SQUARED)
+
+      variance = responses.map do |correct|
+        (p_hat - (correct ? 1 : 0))**2
+      end.sum / (num_responses - 1)
+
+      interval_delta = (
+        CLUE_Z_ALPHA * Math.sqrt(p_hat * (1 - p_hat)/(num_responses + CLUE_Z_ALPHA_SQUARED)) +
+        0.1 * Math.sqrt(variance) + 0.05
+      )
+
+      {
+        minimum: [p_hat - interval_delta, 0].max,
+        most_likely: p_hat,
+        maximum: [p_hat + interval_delta, 1].min,
+        is_real: true
+      }
+    else
+      {
+        minimum: 0,
+        most_likely: 0.5,
+        maximum: 1,
+        is_real: false
+      }
+    end
+
+    ecosystem.nil? ? clue : clue.merge(ecosystem_uuid: ecosystem.tutor_uuid)
+  end
+
+  def calculate_clue_for_students_and_pages(
+    students:, pages:, ecosystem:, current_time: Time.current
+  )
+    students = [ students ].flatten
+    role_ids = students.map(&:entity_role_id)
+    page_ids = [ pages ].flatten.map(&:id)
+    responses = Tasks::Models::TaskedExercise.select(:id, :answer_id, :correct_answer_id).joins(
+      task_step: { task: :taskings }
+    ).where(
+      task_step: { content_page_id: page_ids, task: { taskings: { entity_role_id: role_ids } } }
+    ).preload(task_step: :task).filter do |tasked_exercise|
+      tasked_exercise.task_step.task.feedback_available?(current_time: current_time)
+    end.map(&:is_correct?)
+
+    calculate_clue responses: responses, ecosystem: ecosystem
   end
 end

@@ -22,7 +22,7 @@ every 1.day, at: '10:30 AM' do
   runner "OpenStax::RescueFrom.this { Lms::Models::TrustedLaunchData.cleanup }"
 end
 
-every 1.hour do
+every 10.minutes do
   runner "OpenStax::RescueFrom.this { CourseProfile::BuildPreviewCourses.call }"
 end
 

@@ -13,7 +13,7 @@ class CreateCourse
                                                   translations: { outputs: { type: :verbatim } }
 
   def exec(name:, is_preview:, is_test:, is_college: nil, is_concept_coach: nil, term: nil,
-           year: nil, num_sections: 0, catalog_offering: nil, appearance_code: nil, starts_at: nil,
+           year: nil, num_sections: 1, catalog_offering: nil, appearance_code: nil, starts_at: nil,
            ends_at: nil, school: nil, time_zone: nil, cloned_from: nil, default_open_time: nil,
            default_due_time: nil, estimated_student_count: nil, does_cost: nil,
            homework_score_weight: nil, homework_progress_weight: nil,

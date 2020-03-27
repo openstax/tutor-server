@@ -1,7 +1,46 @@
 class OpenStax::Biglearn::Api::Job < ApplicationJob
   queue_as :biglearn
 
-  def perform(method:, requests:, response_status_key: nil, accepted_response_status: [], **ignored)
+  def perform(
+    method:,
+    requests:,
+    response_status_key: nil,
+    accepted_response_status: [],
+    client: nil,
+    **ignored
+  )
+    case client.to_s.downcase
+    when 'real'
+      OpenStax::Biglearn::Api.use_real_client do
+        send_request(
+          method: method,
+          requests: requests,
+          response_status_key: response_status_key,
+          accepted_response_status: accepted_response_status
+        )
+      end
+    when 'fake'
+      OpenStax::Biglearn::Api.use_fake_client do
+        send_request(
+          method: method,
+          requests: requests,
+          response_status_key: response_status_key,
+          accepted_response_status: accepted_response_status
+        )
+      end
+    else
+      send_request(
+        method: method,
+        requests: requests,
+        response_status_key: response_status_key,
+        accepted_response_status: accepted_response_status
+      )
+    end
+  end
+
+  protected
+
+  def send_request(method:, requests:, response_status_key: nil, accepted_response_status: [])
     OpenStax::Biglearn::Api.client.public_send(method, requests).tap do |response|
       next if response_status_key.nil?
 

@@ -2,7 +2,6 @@ require 'rails_helper'
 require_relative 'shared_examples_for_create_practice_task_routines'
 
 RSpec.describe FindOrCreatePracticeSpecificTopicsTask, type: :routine do
-  
   include_examples 'a routine that creates practice tasks',
                    -> { described_class.call course: course, role: role, page_ids: [ page.id ] }
 
@@ -21,7 +20,7 @@ RSpec.describe FindOrCreatePracticeSpecificTopicsTask, type: :routine do
       .and not_change { Tasks::Models::TaskedPlaceholder.count }
       .and change { course.reload.sequence_number }.by(2)
 
-  
+
   end
 
   it 'non-fatal errors when Biglearn does not return an accepted response after max attempts' do

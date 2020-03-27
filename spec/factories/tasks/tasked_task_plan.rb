@@ -54,7 +54,7 @@ FactoryBot.define do
       number_of_students { 10 }
     end
 
-    owner      { FactoryBot.build :course_profile_course, offering: nil }
+    owner     { FactoryBot.build :course_profile_course, offering: nil }
 
     ecosystem do
       FactoryBot.create(:content_ecosystem).tap do |ecosystem|
@@ -88,7 +88,9 @@ FactoryBot.define do
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.owner
-      period = course.periods.first || FactoryBot.create(:course_membership_period, course: course)
+      period = course.periods.first || FactoryBot.create(
+        :course_membership_period, course: course
+      )
 
       evaluator.number_of_students.times do
         AddUserAsPeriodStudent.call(user: create(:user_profile), period: period)
