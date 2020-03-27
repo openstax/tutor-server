@@ -12,7 +12,7 @@ RSpec.describe 'demo', type: :rake do
       '02040312-72c8-441e-a685-20e9333f3e1d'
     ]
     reading_processing_instructions = book[:reading_processing_instructions]
-    expect(reading_processing_instructions.size).to be_in [1, 2, 4]
+    expect(reading_processing_instructions.size).to be_in [1, 3, 5]
     reading_processing_instructions.each do |reading_processing_instruction|
       expect(reading_processing_instruction[:css]).not_to be_blank
       expect(reading_processing_instruction[:fragments]).to be_a Array
