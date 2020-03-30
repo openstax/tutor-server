@@ -89,15 +89,15 @@ class Tasks::Models::TaskPlan < ApplicationRecord
                        owner.try(:ecosystems)&.first
   end
 
-  def available_points_per_question_index
-    @available_points_per_question_index ||= Hash.new(1.0).tap do |available|
-      next if type != 'homework'
-
-      question_index = 0
-      settings['exercises'].each do |exercise|
-        exercise['points'].each do |points|
-          available[question_index] = points
-          question_index += 1
+  def available_points_without_dropped_questions_per_question_index
+    @available_points_without_dropped_questions_per_question_index ||= Hash.new(1.0).tap do |hash|
+      if type == 'homework'
+        question_index = 0
+        settings['exercises'].each do |exercise|
+          exercise['points'].each do |points|
+            hash[question_index] = points
+            question_index += 1
+          end
         end
       end
     end
