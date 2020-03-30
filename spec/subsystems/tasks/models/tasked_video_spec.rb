@@ -1,13 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::Models::TaskedReading, type: :model do
+RSpec.describe Tasks::Models::TaskedVideo, type: :model do
+  subject(:tasked_video) { FactoryBot.build :tasks_tasked_video }
+
   it { is_expected.to validate_presence_of(:url) }
 
-  describe '#content_preview' do
-    subject(:tasked_video) do
-      FactoryBot.build(:tasks_tasked_video)
-    end
-
+  context '#content_preview' do
     let(:default_content_preview) { "External Reading step ##{tasked_video.id}" }
 
     it "parses the content for the content preview" do

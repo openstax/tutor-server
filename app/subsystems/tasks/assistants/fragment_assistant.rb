@@ -53,12 +53,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
           title: title
         )
       else
-        task_reading(
-          page: page,
-          step: build_task_step(task, page, fragment, index),
-          fragment_index: index,
-          title: title
-        )
+        task_reading(page: page, step: build_task_step(task, page, fragment, index), title: title)
       end
 
       # The page title applies only to the first step in the set of fragments given
@@ -66,12 +61,11 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     end
   end
 
-  def task_reading(page:, step:, fragment_index:, title: nil)
+  def task_reading(page:, step:, title: nil)
     Tasks::Models::TaskedReading.new(
       task_step: step,
       url: page.url,
       book_location: page.book_location,
-      fragment_index: fragment_index,
       title: title
     )
   end
