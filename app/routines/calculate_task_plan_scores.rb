@@ -31,27 +31,16 @@ class CalculateTaskPlanScores
       periods.first
     end
 
-    available_points_per_question_index = Hash.new 1.0
-    if task_plan.type == 'homework'
-      question_index = 0
-      task_plan.settings.fetch('exercises', []).each do |exercise|
-        exercise['points'].each do |points|
-          available_points_per_question_index[question_index] = points
-          question_index += 1
-        end
-      end
-    end
-
     outputs.scores = tasks_by_period.sort_by { |period, _| period.name }.map do |period, tasks|
       no_placeholder_tasks = tasks.select { |task| task.placeholder_steps_count == 0 }
       representative_tasks = no_placeholder_tasks.empty? ? tasks : no_placeholder_tasks
       most_common_tasks = representative_tasks.group_by(
         &:actual_and_placeholder_exercise_count
       ).max_by { |_, tasks| tasks.size }.second
+      most_common_task = most_common_tasks.first
 
-      exercise_steps = most_common_tasks.first.task_steps.filter do |step|
-        step.exercise? || step.placeholder?
-      end
+      available_points_per_question_index = most_common_task.available_points_per_question_index
+      exercise_steps = most_common_task.exercise_and_placeholder_steps
       question_headings_array = exercise_steps.each_with_index.map do |step, index|
         {
          title: "Q#{index + 1}",
