@@ -4,6 +4,8 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   belongs_to :task_plan, inverse_of: :tasking_plans, touch: true
   belongs_to :target, polymorphic: true
 
+  before_validation :set_time_zone
+
   validates :task_plan, uniqueness: { scope: [ :target_type, :target_id ] }
 
   validates :opens_at_ntz, :due_at_ntz, :closes_at_ntz, presence: true, timeliness: { type: :date }
@@ -24,6 +26,10 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   end
 
   protected
+
+  def set_time_zone
+    self.time_zone ||= task_plan.owner.try(:time_zone)
+  end
 
   def due_at_in_the_future
     return if task_plan.try(:is_draft?) ||

@@ -35,41 +35,6 @@ class Api::V1::TasksController < Api::V1::ApiController
     standard_read ::Research::ModifiedTask[task: @task], Api::V1::TaskRepresenter
   end
 
-  api :PUT, '/tasks/:id/accept_late_work', 'Accept late work in the task score'
-  description <<-EOS
-    Changes the Task so that it is marked as late work being accepted, and changes
-    the `score` that it computes.  Does not change the underlying counts in any way.
-  EOS
-  def accept_late_work
-    OSU::AccessPolicy.require_action_allowed! :accept_or_reject_late_work, current_api_user, @task
-
-    @task.accept_late_work
-
-    if @task.save
-      head :no_content
-    else
-      render_api_errors @task.errors
-    end
-  end
-
-
-  api :PUT, '/tasks/:id/reject_late_work', 'Reject late work in the task score'
-  description <<-EOS
-    Changes the Task so that it is marked as late work being not included, and changes
-    the `score` that it computes.  Does not change the underlying counts in any way.
-  EOS
-  def reject_late_work
-    OSU::AccessPolicy.require_action_allowed! :accept_or_reject_late_work, current_api_user, @task
-
-    @task.reject_late_work
-
-    if @task.save
-      head :no_content
-    else
-      render_api_errors @task.errors
-    end
-  end
-
   api :DELETE, '/tasks/:id', 'Hide the task from the student\'s dashboard'
   description <<-EOS
     Hides the Task from the student's dashboard

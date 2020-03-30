@@ -21,9 +21,10 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   belongs_to :ecosystem, subsystem: :content
   belongs_to :grading_template, optional: true, inverse_of: :task_plans
 
-  # These associations to not have dependent: :destroy because the task_plan is soft-deleted
+  # These associations do not have dependent: :destroy because the task_plan is soft-deleted
   has_many :tasking_plans, inverse_of: :task_plan
   has_many :tasks, inverse_of: :task_plan
+  has_many :extensions, inverse_of: :task_plan
 
   json_serialize :settings, Hash
 
@@ -78,6 +79,20 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   def publish_job
     Jobba.find(publish_job_uuid) if publish_job_uuid.present?
+  end
+
+  def available_points_per_question_index
+    @available_points_per_question_index ||= Hash.new(1.0).tap do |available|
+      next if type != 'homework'
+
+      question_index = 0
+      settings['exercises'].each do |exercise|
+        exercise['points'].each do |points|
+          available[question_index] = points
+          question_index += 1
+        end
+      end
+    end
   end
 
   protected

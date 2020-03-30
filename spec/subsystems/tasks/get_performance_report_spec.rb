@@ -313,15 +313,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
           expect(data.step_count).to be_a Integer
           expect(data.completed_step_count).to be_a Integer
-          expect(data.completed_on_time_step_count).to be_a Integer
-          expect(data.completed_accepted_late_step_count).to be_a Integer
           expect(data.actual_and_placeholder_exercise_count).to be_a Integer
           expect(data.completed_exercise_count).to be_a Integer
-          expect(data.completed_on_time_exercise_count).to be_a Integer
-          expect(data.completed_accepted_late_exercise_count).to be_a Integer
           expect(data.correct_exercise_count).to be_a Integer
-          expect(data.correct_on_time_exercise_count).to be_a Integer
-          expect(data.correct_accepted_late_exercise_count).to be_a Integer
           expect(data.recovered_exercise_count).to be_a Integer
           expect(data.score).to be_a data.type == 'external' ? NilClass : Float
           expect(data.progress).to be_a Float
@@ -487,15 +481,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
         expect(data.step_count).to be_a Integer
         expect(data.completed_step_count).to be_a Integer
-        expect(data.completed_on_time_step_count).to be_a Integer
-        expect(data.completed_accepted_late_step_count).to be_a Integer
         expect(data.actual_and_placeholder_exercise_count).to be_a Integer
         expect(data.completed_exercise_count).to be_a Integer
-        expect(data.completed_on_time_exercise_count).to be_a Integer
-        expect(data.completed_accepted_late_exercise_count).to be_a Integer
         expect(data.correct_exercise_count).to be_a Integer
-        expect(data.correct_on_time_exercise_count).to be_a Integer
-        expect(data.correct_accepted_late_exercise_count).to be_a Integer
         expect(data.recovered_exercise_count).to be_a Integer
         expect(data.score).to be_a data.type == 'external' ? NilClass : Float
         expect(data.progress).to be_a Float
@@ -573,12 +561,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
         expect(data.step_count).to be_a Integer
         expect(data.completed_step_count).to be_a Integer
-        expect(data.completed_on_time_step_count).to be_a Integer
-        expect(data.completed_accepted_late_step_count).to be_a Integer
         expect(data.actual_and_placeholder_exercise_count).to be_a Integer
         expect(data.completed_exercise_count).to be_a Integer
-        expect(data.completed_on_time_exercise_count).to be_a Integer
-        expect(data.completed_accepted_late_exercise_count).to be_a Integer
         expect(data.recovered_exercise_count).to be_a Integer
         expect(data.progress).to be_a Float
         expect(data.due_at).to be_a Time

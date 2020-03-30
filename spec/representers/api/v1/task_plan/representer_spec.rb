@@ -11,6 +11,7 @@ RSpec.describe Api::V1::TaskPlan::Representer, type: :representer do
 
       allow(dbl).to receive(:publish_job).and_return(job)
       allow(dbl).to receive(:tasking_plans).and_return([])
+      allow(dbl).to receive(:extensions).and_return([])
     end
   end
 

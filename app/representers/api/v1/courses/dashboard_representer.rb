@@ -86,27 +86,6 @@ module Api::V1::Courses
                type: Integer,
                readable: true,
                writeable: false
-      property :accepted_late_at,
-             type: String,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { DateTimeUtilities.to_api_s(accepted_late_at) }
-
-      property :completed_accepted_late_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_on_time_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :correct_on_time_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false,
-               if: ->(*) { auto_grading_feedback_available? }
 
       property :correct_exercise_count,
                type: Integer,
@@ -120,16 +99,6 @@ module Api::V1::Courses
                writeable: false
 
       property :completed_steps_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_on_time_steps_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_accepted_late_steps_count,
                type: Integer,
                readable: true,
                writeable: false

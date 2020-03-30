@@ -1,17 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::TaskPlan::TaskingPlanRepresenter, type: :representer do
-  let(:tasking_plan) {
+  let(:tasking_plan) do
     instance_spy(Tasks::Models::TaskingPlan).tap do |dbl|
       ## bug work-around, see:
       ##   https://github.com/rspec/rspec-rails/issues/1309#issuecomment-118971828
       allow(dbl).to receive(:as_json).and_return(dbl)
     end
-  }
+  end
 
-  let(:representation) { ## NOTE: This is lazily-evaluated on purpose!
-    Api::V1::TaskPlan::TaskingPlanRepresenter.new(tasking_plan).as_json
-  }
+  let(:representation) do ## NOTE: This is lazily-evaluated on purpose!
+    described_class.new(tasking_plan).as_json
+  end
 
   context "target_id" do
     it "can be read" do
@@ -20,7 +20,7 @@ RSpec.describe Api::V1::TaskPlan::TaskingPlanRepresenter, type: :representer do
     end
 
     it "cannot be written (attempts are silently ignored)" do
-      Api::V1::TaskPlan::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_id" => 42}.to_json)
+      described_class.new(tasking_plan).from_json({ target_id: 42 }.to_json)
       expect(tasking_plan).to have_received(:target_id=).with('42')
     end
   end
@@ -37,12 +37,12 @@ RSpec.describe Api::V1::TaskPlan::TaskingPlanRepresenter, type: :representer do
     end
 
     it "can be written ('period' => 'CourseMembership::Models::Period')" do
-      rep = Api::V1::TaskPlan::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_type" => "period"}.to_json)
+      rep = described_class.new(tasking_plan).from_json({"target_type" => "period"}.to_json)
       expect(tasking_plan).to have_received(:target_type=).with('CourseMembership::Models::Period')
     end
 
     it "can be written ('course' => 'CourseProfile::Models::Course')" do
-      Api::V1::TaskPlan::TaskingPlanRepresenter.new(tasking_plan).from_json({"target_type" => "course"}.to_json)
+      described_class.new(tasking_plan).from_json({"target_type" => "course"}.to_json)
       expect(tasking_plan).to have_received(:target_type=).with('CourseProfile::Models::Course')
     end
   end

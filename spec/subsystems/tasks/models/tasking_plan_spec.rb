@@ -10,8 +10,6 @@ RSpec.describe Tasks::Models::TaskingPlan, type: :model do
   it { is_expected.to belong_to(:target) }
   it { is_expected.to belong_to(:task_plan) }
 
-  it { is_expected.to belong_to(:time_zone) }
-
   it { is_expected.to validate_presence_of(:opens_at_ntz) }
   it { is_expected.to validate_presence_of(:due_at_ntz) }
   it { is_expected.to validate_presence_of(:closes_at_ntz) }

@@ -130,8 +130,7 @@ class Demo::Assign < Demo::Base
           target: period,
           opens_at: assigned_to[:opens_at],
           due_at: assigned_to[:due_at],
-          closes_at: assigned_to[:closes_at] || course_model.ends_at - 1.day,
-          time_zone: course_model.time_zone
+          closes_at: assigned_to[:closes_at] || course_model.ends_at - 1.day
         )
       end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_16_162341) do
+ActiveRecord::Schema.define(version: 2020_03_24_204502) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -735,6 +735,18 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.index ["tasks_assistant_id", "course_profile_course_id"], name: "index_tasks_course_assistants_on_assistant_id_and_course_id"
   end
 
+  create_table "tasks_extensions", force: :cascade do |t|
+    t.bigint "tasks_task_plan_id", null: false
+    t.bigint "entity_role_id", null: false
+    t.bigint "time_zone_id", null: false
+    t.datetime "due_at_ntz", null: false
+    t.datetime "closes_at_ntz", null: false
+    t.index ["entity_role_id"], name: "index_tasks_extensions_on_entity_role_id"
+    t.index ["tasks_task_plan_id", "entity_role_id"], name: "index_tasks_extensions_on_tasks_task_plan_id_and_entity_role_id", unique: true
+    t.index ["tasks_task_plan_id"], name: "index_tasks_extensions_on_tasks_task_plan_id"
+    t.index ["time_zone_id"], name: "index_tasks_extensions_on_time_zone_id"
+  end
+
   create_table "tasks_grading_templates", force: :cascade do |t|
     t.bigint "course_profile_course_id", null: false
     t.integer "task_plan_type", null: false
@@ -976,13 +988,6 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "spy", default: "{}", null: false
-    t.integer "correct_on_time_exercise_steps_count", default: 0, null: false
-    t.integer "completed_on_time_exercise_steps_count", default: 0, null: false
-    t.integer "completed_on_time_steps_count", default: 0, null: false
-    t.datetime "accepted_late_at"
-    t.integer "correct_accepted_late_exercise_steps_count", default: 0, null: false
-    t.integer "completed_accepted_late_exercise_steps_count", default: 0, null: false
-    t.integer "completed_accepted_late_steps_count", default: 0, null: false
     t.integer "time_zone_id"
     t.datetime "hidden_at"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
@@ -996,12 +1001,14 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
     t.uuid "spe_ecosystem_matrix_uuid"
     t.datetime "closes_at_ntz"
     t.integer "core_page_ids", default: [], null: false, array: true
+    t.bigint "tasks_extension_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"
     t.index ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at"
     t.index ["opens_at_ntz"], name: "index_tasks_tasks_on_opens_at_ntz"
     t.index ["task_type", "created_at"], name: "index_tasks_tasks_on_task_type_and_created_at"
+    t.index ["tasks_extension_id"], name: "index_tasks_tasks_on_tasks_extension_id"
     t.index ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id"
     t.index ["time_zone_id"], name: "index_tasks_tasks_on_time_zone_id"
     t.index ["uuid"], name: "index_tasks_tasks_on_uuid", unique: true
@@ -1126,6 +1133,8 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
   add_foreign_key "tasks_concept_coach_tasks", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_extensions", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_extensions", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_grading_templates", "tasks_grading_templates", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
@@ -1147,6 +1156,7 @@ ActiveRecord::Schema.define(version: 2020_03_16_162341) do
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_tasks", "tasks_extensions", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "user_administrators", "user_profiles", on_update: :cascade, on_delete: :cascade
