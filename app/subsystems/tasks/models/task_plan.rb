@@ -25,6 +25,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   has_many :tasking_plans, inverse_of: :task_plan
   has_many :tasks, inverse_of: :task_plan
   has_many :extensions, inverse_of: :task_plan
+  has_many :dropped_questions, inverse_of: :task_plan
 
   delegate :timezone, :time_zone, to: :course
 
