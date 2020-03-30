@@ -120,4 +120,11 @@ class Api::V1::TaskPlan::Representer < Roar::Decorator
              setter: Api::V1::RailsCollectionSetter,
              readable: true,
              writeable: true
+
+  collection :dropped_questions,
+             class: ::Tasks::Models::DroppedQuestion,
+             extend: Api::V1::TaskPlan::DroppedQuestionRepresenter,
+             setter: Api::V1::RailsCollectionSetter,
+             readable: true,
+             writeable: true
 end
