@@ -6,7 +6,6 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
   end
 
   it { is_expected.to validate_presence_of(:url) }
-  it { is_expected.to validate_presence_of(:fragment_index) }
 
   context '#content_preview' do
     before do

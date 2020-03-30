@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_20_203024) do
+ActiveRecord::Schema.define(version: 2020_03_30_145448) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -900,7 +900,6 @@ ActiveRecord::Schema.define(version: 2020_03_20_203024) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "book_location", default: "[]", null: false
-    t.integer "fragment_index", null: false
   end
 
   create_table "tasks_tasked_videos", id: :serial, force: :cascade do |t|
