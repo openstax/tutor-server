@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::Models::TaskedInteractive, type: :model do
+  subject(:tasked_interactive) do
+    FactoryBot.build(:tasks_tasked_interactive)
+  end
+
   it { is_expected.to validate_presence_of(:url) }
 
-  describe '#content_preview' do
-    subject(:tasked_interactive) do
-      FactoryBot.build(:tasks_tasked_interactive)
-    end
-
+  context '#content_preview' do
     let(:default_content_preview) { "External Interactive step ##{tasked_interactive.id}" }
 
     it "parses the content for the content preview" do
