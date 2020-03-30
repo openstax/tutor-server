@@ -70,6 +70,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
             points_dropped: 0.0,
             students: [
               {
+                role_id: students.first.entity_role_id,
                 first_name: students.first.first_name,
                 last_name: students.first.last_name,
                 is_dropped: false,
@@ -97,6 +98,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 ] * 4 + [ { is_completed: false } ] * 3
               },
               {
+                role_id: students.second.entity_role_id,
                 first_name: students.second.first_name,
                 last_name: students.second.last_name,
                 is_dropped: false,
@@ -175,6 +177,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
             points_dropped: 0.0,
             students: [
               {
+                role_id: students.first.entity_role_id,
                 first_name: students.first.first_name,
                 last_name: students.first.last_name,
                 is_dropped: false,
@@ -203,6 +206,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 ] * 4 + [ { is_completed: false, points: 0.0 } ] * 3
               },
               {
+                role_id: students.second.entity_role_id,
                 first_name: students.second.first_name,
                 last_name: students.second.last_name,
                 is_dropped: false,
