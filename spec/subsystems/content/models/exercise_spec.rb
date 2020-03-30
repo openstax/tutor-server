@@ -20,7 +20,7 @@ RSpec.describe Content::Models::Exercise, type: :model do
 
     expect(first['questions']).to be_kind_of(Array)
 
-    expect(first['questions'][0]['stem_html']).to match("(0)")
-    expect(second['questions'][0]['stem_html']).to match("(1)")
+    expect(first['questions'].first['stem_html']).to match('(0)')
+    expect(second['questions'].first['stem_html']).to match('(1)')
   end
 end

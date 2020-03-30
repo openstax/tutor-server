@@ -1,9 +1,9 @@
 class CreateTasksExtensions < ActiveRecord::Migration[5.2]
   def up
     create_table :tasks_extensions do |t|
-      t.references :tasks_task_plan, null: false,
+      t.references :tasks_task_plan, null: false, index: false,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
-      t.references :entity_role, null: false, index: true,
+      t.references :entity_role, null: false,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.references :time_zone, null: false
 
