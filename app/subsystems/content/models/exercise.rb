@@ -38,10 +38,6 @@ class Content::Models::Exercise < IndestructibleRecord
     @parser ||= OpenStax::Exercises::V1::Exercise.new content: content
   end
 
-  def question_answer_ids
-    super || parser.question_answer_ids
-  end
-
   def units
     books.flat_map(&:units)
   end
