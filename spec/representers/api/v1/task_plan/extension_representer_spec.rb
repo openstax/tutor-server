@@ -15,7 +15,7 @@ RSpec.describe Api::V1::TaskPlan::ExtensionRepresenter, type: :representer do
 
   context 'role_id' do
     it 'can be read' do
-      allow(extension).to receive(:entity_role_id).and_return(12)
+      expect(extension).to receive(:entity_role_id).and_return(12)
       expect(representation).to include('role_id' => '12')
     end
 
@@ -29,7 +29,7 @@ RSpec.describe Api::V1::TaskPlan::ExtensionRepresenter, type: :representer do
     context field.to_s do
       it 'can be read (date coerced to String)' do
         datetime = Time.current
-        allow(extension).to receive(field).and_return(datetime)
+        expect(extension).to receive(field).and_return(datetime)
         expect(representation).to include(field.to_s => DateTimeUtilities::to_api_s(datetime))
       end
 
