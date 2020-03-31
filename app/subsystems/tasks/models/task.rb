@@ -213,17 +213,23 @@ class Tasks::Models::Task < ApplicationRecord
     ).sum
   end
 
-  def points_without_lateness
+  def points_per_question_index_without_lateness(incomplete_value: 0.0)
     full_credit_question_ids = Set.new(
       task_plan&.dropped_questions&.filter(&:full_credit?)&.map(&:question_id) || []
     )
 
     exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
-      task_step.exercise? && (
-        task_step.tasked.is_correct? ||
-        full_credit_question_ids.include?(task_step.tasked.question_id)
-      ) ? available_points_per_question_index[index] : 0.0
-    end.sum
+      task_step.completed? ? (
+        task_step.exercise? && (
+          task_step.tasked.is_correct? ||
+          full_credit_question_ids.include?(task_step.tasked.question_id)
+        ) ? available_points_per_question_index[index] : 0.0
+      ) : incomplete_value
+    end
+  end
+
+  def points_without_lateness
+    points_per_question_index_without_lateness.sum
   end
 
   def late_work_point_penalty

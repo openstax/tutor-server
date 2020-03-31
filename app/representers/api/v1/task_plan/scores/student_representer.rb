@@ -55,7 +55,7 @@ class Api::V1::TaskPlan::Scores::StudentRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
-         collection :questions,
+  collection :questions,
              extend: Api::V1::TaskPlan::Scores::StudentQuestionRepresenter,
              readable: true,
              writeable: false
