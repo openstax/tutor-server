@@ -31,5 +31,4 @@ class Api::V1::TaskPlan::Scores::StudentQuestionRepresenter < Roar::Decorator
            type: String,
            readable: true,
            writeable: false
-
 end

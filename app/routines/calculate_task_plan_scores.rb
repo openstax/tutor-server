@@ -73,14 +73,13 @@ class CalculateTaskPlanScores
 
         is_dropped = student.dropped? || student.period.archived?
 
+        points_per_question_index = task.points_per_question_index_without_lateness(
+          incomplete_value: task.past_due?(current_time: current_time) ? 0.0 : nil
+        )
         student_questions = exercise_steps.each_with_index.map do |task_step, index|
-          if task_step.exercise?
-            points = if task_step.completed?
-              task_step.tasked.is_correct? ? available_points_per_question_index[index] : 0.0
-            else
-              task.past_due?(current_time: current_time) ? 0.0 : nil
-            end
+          points = points_per_question_index[index]
 
+          if task_step.exercise?
             {
               id: task_step.tasked.question_id,
               exercise_id: task_step.tasked.content_exercise_id,
@@ -90,10 +89,7 @@ class CalculateTaskPlanScores
               free_response: task_step.tasked.free_response
             }
           else
-            {
-             is_completed: false,
-             points: task.past_due?(current_time: current_time) ? 0.0 : nil
-            }
+            { is_completed: false, points: points }
           end
         end
 

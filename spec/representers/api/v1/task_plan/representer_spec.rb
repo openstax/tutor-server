@@ -256,4 +256,56 @@ RSpec.describe Api::V1::TaskPlan::Representer, type: :representer do
       end
     end
   end
+
+  context 'extensions' do
+    let(:extension)  do
+      Hashie::Mash.new(
+        entity_role_id: 42, due_at: Time.current + 1.hour, closes_at: Time.current + 1.day
+      )
+    end
+    let(:extension_representation) do
+      Api::V1::TaskPlan::ExtensionRepresenter.new(extension).to_hash
+    end
+
+    it 'can be read' do
+      expect(task_plan).to receive(:extensions).and_return([ extension ])
+      expect(representation).to include 'extensions' => [ extension_representation ]
+    end
+
+    it 'can be written' do
+      extensions = spy
+      expect(task_plan).to receive(:extensions).and_return(extensions)
+
+      described_class.new(task_plan).from_hash({ 'extensions' => [ extension_representation ] })
+
+      expect(extensions).to have_received(:delete_all).with(:delete_all)
+      expect(extensions).to have_received(:<<)
+    end
+  end
+
+  context 'dropped_questions' do
+    let(:dropped_question)  do
+      Hashie::Mash.new question_id: '42', drop_method: [ :zeroed, :full_credit ].sample
+    end
+    let(:dropped_question_representation) do
+      Api::V1::TaskPlan::DroppedQuestionRepresenter.new(dropped_question).to_hash
+    end
+
+    it 'can be read' do
+      expect(task_plan).to receive(:dropped_questions).and_return([ dropped_question ])
+      expect(representation).to include 'dropped_questions' => [ dropped_question_representation ]
+    end
+
+    it 'can be written' do
+      dropped_questions = spy
+      expect(task_plan).to receive(:dropped_questions).and_return(dropped_questions)
+
+      described_class.new(task_plan).from_hash(
+        { 'dropped_questions' => [ dropped_question_representation ] }
+      )
+
+      expect(dropped_questions).to have_received(:delete_all).with(:delete_all)
+      expect(dropped_questions).to have_received(:<<)
+    end
+  end
 end
