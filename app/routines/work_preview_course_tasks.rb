@@ -35,20 +35,6 @@ class WorkPreviewCourseTasks
         }
       end.compact
 
-      pe_responses = OpenStax::Biglearn::Api.client.fetch_assignment_pes(pe_requests)
-
-      pe_responses.each do |response|
-        status = response[:assignment_status]
-        next if status == 'assignment_ready'
-
-        req = pe_requests.find { |request| request[:request_uuid] == response[:request_uuid] }
-
-        raise(
-          OpenStax::Biglearn::Api::JobFailed,
-          "Biglearn failed to return SPEs for task with ID #{req[:task].id} (status: #{status})"
-        )
-      end
-
       spe_requests = all_tasks.map do |task|
         max_num_exercises =
           task.task_steps.select(&:placeholder?).select(&:spaced_practice_group?).size
@@ -62,20 +48,6 @@ class WorkPreviewCourseTasks
           inline_sleep_interval: 1.second
         }
       end.compact
-
-      spe_responses = OpenStax::Biglearn::Api.client.fetch_assignment_spes(spe_requests)
-
-      spe_responses.each do |response|
-        status = response[:assignment_status]
-        next if status == 'assignment_ready'
-
-        req = spe_requests.find { |request| request[:request_uuid] == response[:request_uuid] }
-
-        raise(
-          OpenStax::Biglearn::Api::JobFailed,
-          "Biglearn failed to return SPEs for task with ID #{req[:task].id} (status: #{status})"
-        )
-      end
 
       great_student_role = student_roles.first
       current_time = Time.current
