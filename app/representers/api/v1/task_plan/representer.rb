@@ -108,14 +108,14 @@ class Api::V1::TaskPlan::Representer < Roar::Decorator
            getter: ->(*) { "/api/jobs/#{publish_job_uuid}" if publish_job_uuid.present? }
 
   collection :tasking_plans,
-             class: Tasks::Models::TaskingPlan,
+             class: ::Tasks::Models::TaskingPlan,
              extend: Api::V1::TaskPlan::TaskingPlanRepresenter,
              setter: Api::V1::RailsCollectionSetter,
              readable: true,
              writeable: true
 
   collection :extensions,
-             class: Tasks::Models::Extension,
+             class: ::Tasks::Models::Extension,
              extend: Api::V1::TaskPlan::ExtensionRepresenter,
              setter: Api::V1::RailsCollectionSetter,
              readable: true,

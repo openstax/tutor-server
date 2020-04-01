@@ -8,7 +8,7 @@ class Tasks::GetTaskPlans
                                    .distinct
                                    .joins(:tasking_plans)
                                    .where(owner: owner)
-                                   .preload(:tasking_plans)
+                                   .preload(tasking_plans: :time_zone)
 
     tgp = Tasks::Models::TaskingPlan.arel_table
     query = query.where(tgp[:due_at_ntz].gteq(start_at_ntz)) unless start_at_ntz.nil?
