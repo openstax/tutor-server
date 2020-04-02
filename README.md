@@ -211,51 +211,41 @@ Before running the task you should reset the database:
 
 `bin/rake db:reset demo`
 
-The courses that are set up in the demo are determined by the YAML files in the
-[lib/tasks/demo](https://github.com/openstax/tutor-server/tree/master/lib/tasks/demo) directory.
+The courses that are set up in the demo are determined by the YAML files in the directories
+under the [config/demo](https://github.com/openstax/tutor-server/tree/master/config/demo) directory.
+
+Each directory under `demo` represents an entire course,  as a set of YAML files.
+
 It is in these files that you can configure different periods, student membership in periods,
 CNX book UUID and version, assignments and progress on those assignments, etc.
 
-By default, all YAML files in that directory are run (with the exception of `people.yml`).
-If you want to only run one, you can specify its name in the rake call,
-e.g. to load only the Biology course you would say:
+By default, all YAML files in the directories under the
+[review](https://github.com/openstax/tutor-server/tree/master/config/demo/review)
+directory are run, in the order `import', `users`, `course`, `assign`, `work`. 
 
-`bin/rake db:reset demo[biology]`
+You can run a single step as a separate rake task, as so:
 
-One or more of the The YAML files can be copied to a different directory and customized.
-They can then be run like so:
+`bin/rake demo:import`
 
-`CONFIG=../custom-config bin/rake db:reset demo`
+or `bin/rake demo:course`
 
-Working the assignments may be skipped if the NOWORK variable is set:
+If you want to only run a diffent whole suite, you can specify its name in
+the rake call, e.g. to load the "test" suit you would say:
 
-`NOWORK=t bin/rake db:reset demo`
+`bin/rake db:reset demo[test]`
 
-The book version can also be set:
-
-`bin/rake db:reset demo[biology, latest]`
-
-The course can be set to `all` to import all the available content,
-and latest can be substituted with an explicit version, e.g. `4.4`.
 
 As an admin you can search for the various users set up by the demo scripts
-(or you can check out the demo YAML files in `/lib/tasks`).
-For your convenience, here are a few of the student usernames and the courses they are setup with:
+(or you can check out the demo YAML files in `config/demo/review/users`).
 
-  * student01 - biology and physics
-  * student02 - biology and physics
-  * student03 - biology and physics
-  * student08 - physics only
-  * student09 - biology only
-  * student31 - biology only
-  * student33 - physics only
-
-A teacher is setup with the `teacher01` username.
+A teacher is setup with the `reviewteacher` username.
 
 The full list of teachers and students can be
-[found here](https://github.com/openstax/tutor-server/blob/master/lib/tasks/demo/people.yml).
+[found here](https://github.com/openstax/tutor-server/blob/master/config/demo/review/users/_users.yml).
 
-Fastest way to get started `rake db:reset demo:content[mini]`.
+
+Additional courses can be created by dumping existing courses (from a production server) and copying
+the created YAML file tree into config/demo
 
 ## Profiling
 
