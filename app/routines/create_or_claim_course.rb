@@ -14,12 +14,17 @@ class CreateOrClaimCourse
 
   def exec(attributes)
     user = attributes[:teacher]
+    attributes[:is_college] ||= case user.school_type
+    when 'college'
+      true
+    when 'other_school_type'
+      false
+    else
+      nil
+    end
 
     if attributes[:is_preview]
-      run(:claim_preview_course, {
-            name: attributes[:name],
-            catalog_offering: attributes[:catalog_offering]
-      })
+      run(:claim_preview_course, attributes.slice(:catalog_offering, :name, :is_college))
     else
       run(:create_course, attributes.except(:teacher).merge(is_test: !!user.is_test))
     end

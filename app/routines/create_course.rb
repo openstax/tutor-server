@@ -9,8 +9,6 @@ class CreateCourse
   uses_routine Tasks::CreateCourseAssistants, as: :create_course_assistants
 
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
-  uses_routine CourseProfile::ClaimPreviewCourse, as: :claim_preview_course,
-                                                  translations: { outputs: { type: :verbatim } }
 
   def exec(name:, is_preview:, is_test:, is_college: nil, is_concept_coach: nil, term: nil,
            year: nil, num_sections: 1, catalog_offering: nil, appearance_code: nil, starts_at: nil,
