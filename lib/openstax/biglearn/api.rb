@@ -298,9 +298,6 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_assignment_pes(*requests)
       requests, options = extract_options requests, OPTION_KEYS
-      client = [ requests ].flatten.all? do |request|
-        request[:task].taskings.first.role.course_member.course.is_preview
-      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -311,7 +308,7 @@ module OpenStax::Biglearn::Api
           perform_later: false,
           response_status_key: :assignment_status,
           accepted_response_status: 'assignment_ready',
-          client: client
+          client: 'fake'
         )
       ) do |request, response, accepted|
         # If no valid response was received from Biglearn, fallback to random personalized exercises
@@ -337,9 +334,6 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_assignment_spes(*requests)
       requests, options = extract_options requests, OPTION_KEYS
-      client = [ requests ].flatten.all? do |request|
-        request[:task].taskings.first.role.course_member.course.is_preview
-      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -350,7 +344,7 @@ module OpenStax::Biglearn::Api
           perform_later: false,
           response_status_key: :assignment_status,
           accepted_response_status: 'assignment_ready',
-          client: client
+          client: 'fake'
         )
       ) do |request, response, accepted|
         # If no valid response was received from Biglearn, fallback to random personalized exercises
@@ -376,9 +370,6 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to Content::Models::Exercises
     def fetch_practice_worst_areas_exercises(*requests)
       requests, options = extract_options requests, OPTION_KEYS
-      client = [ requests ].flatten.all? do |request|
-        request[:student].course.is_preview
-      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -389,7 +380,7 @@ module OpenStax::Biglearn::Api
           perform_later: false,
           response_status_key: :student_status,
           accepted_response_status: 'student_ready',
-          client: client
+          client: 'fake'
         )
       ) do |request, response, _|
         # Return the last response received from Biglearn regardless of what it was
@@ -410,9 +401,6 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to a CLUe hash
     def fetch_student_clues(*requests)
       requests, options = extract_options requests, OPTION_KEYS
-      client = [ requests ].flatten.all? do |request|
-        request[:student].course.is_preview
-      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -420,7 +408,7 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: [:book_container_uuid, :student],
           perform_later: false,
-          client: client
+          client: 'fake'
         )
       ) do |_, response, _|
         # Return the last response received from Biglearn regardless of what it was
@@ -433,9 +421,6 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to a CLUe hash
     def fetch_teacher_clues(*requests)
       requests, options = extract_options requests, OPTION_KEYS
-      client = requests.all? do |request|
-        request[:course_container].course.is_preview
-      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -443,7 +428,7 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: [:book_container_uuid, :course_container],
           perform_later: false,
-          client: client
+          client: 'fake'
         )
       ) do |_, response, _|
         # Return the last response received from Biglearn regardless of what it was
