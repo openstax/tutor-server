@@ -62,8 +62,15 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
           {
             id: task_plan.owner.periods.first.id.to_s,
             name: '1st',
-            question_headings: 8.times.map do |index|
-              { title: "Q#{index + 1}", type: index < 5 ? 'MCQ' : 'Tutor', points: 1.0 }
+            question_headings: student_tasks.first.task_steps.each_with_index.map do |task_step, index|
+              {
+               title: "Q#{index + 1}",
+               points: 1.0,
+               type: task_step.is_core? ? 'MCQ' : 'Tutor',
+              }.merge(task_step.is_core? ?
+                      { question_id:  task_step.tasked.question_id.to_i,
+                       exercise_id: task_step.tasked.content_exercise_id.to_i } : {},
+            )
             end,
             late_work_fraction_penalty: late_work_penalty,
             num_questions_dropped: 0,
@@ -169,8 +176,15 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
           {
             id: task_plan.owner.periods.first.id.to_s,
             name: '1st',
-            question_headings: 8.times.map do |index|
-              { title: "Q#{index + 1}", type: index < 5 ? 'MCQ' : 'Tutor', points: 1.0 }
+            question_headings: student_tasks.first.task_steps.each_with_index.map do |task_step, index|
+              {
+               title: "Q#{index + 1}",
+               points: 1.0,
+               type: task_step.is_core? ? 'MCQ' : 'Tutor',
+              }.merge(task_step.is_core? ?
+                      { question_id:  task_step.tasked.question_id.to_i,
+                       exercise_id: task_step.tasked.content_exercise_id.to_i } : {},
+            )
             end,
             late_work_fraction_penalty: late_work_penalty,
             num_questions_dropped: 0,
