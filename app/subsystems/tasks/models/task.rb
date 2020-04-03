@@ -162,7 +162,9 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def update_caches_now(update_cached_attributes: false)
-    Tasks::UpdateTaskCaches.call(task_ids: id, update_cached_attributes: update_cached_attributes)
+    Tasks::UpdateTaskCaches.call(
+      task_ids: id, update_cached_attributes: update_cached_attributes, background: false
+    )
   end
 
   def update_caches_later(update_cached_attributes: true)
