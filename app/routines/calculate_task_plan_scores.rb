@@ -126,7 +126,7 @@ class CalculateTaskPlanScores
         id: period.id,
         name: period.name,
         question_headings: question_headings_array,
-        late_work_fraction_penalty: task_plan.grading_template.late_work_penalty,
+        late_work_fraction_penalty: task_plan.grading_template&.late_work_penalty,
         num_questions_dropped: num_questions_dropped,
         points_dropped: points_dropped,
         students: students_array
