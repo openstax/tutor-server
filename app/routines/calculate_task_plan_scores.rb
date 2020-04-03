@@ -57,8 +57,8 @@ class CalculateTaskPlanScores
          title: "Q#{index + 1}",
          points: available_points_per_question_index[index],
          type: step.is_core ? 'MCQ' : 'Tutor', # TODO: actually check if exercise is MCQ
-         question_id: step.is_core ? step.tasked.question_id : nil,
-         exercise_id: step.is_core ? step.tasked.content_exercise_id : nil,
+         question_id: step.exercise? && step.is_core? ? step.tasked.question_id : nil,
+         exercise_id: step.exercise? && step.is_core? ? step.tasked.content_exercise_id : nil,
         }
       end
       if task_plan.type == 'homework'
