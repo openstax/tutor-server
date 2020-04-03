@@ -64,8 +64,14 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map do |index|
-            { title: "Q#{index + 1}", points: 1.0, type: index < 5 ? 'MCQ' : 'Tutor' }
+          tasks.first.task_steps.each_with_index.map do |task_step, index|
+            {
+             title: "Q#{index + 1}",
+             points: 1.0,
+             type: task_step.is_core? ? 'MCQ' : 'Tutor',
+             question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
+             exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
+            }
           end
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
@@ -126,8 +132,14 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map do |index|
-            { title: "Q#{index + 1}", points: 1.0, type: index < 5 ? 'MCQ' : 'Tutor' }
+          tasks.first.task_steps.each_with_index.map do |task_step, index|
+            {
+             title: "Q#{index + 1}",
+             points: 1.0,
+             type: task_step.is_core? ? 'MCQ' : 'Tutor',
+             question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
+             exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
+            }
           end
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
@@ -187,8 +199,14 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.id).to eq period.id
         expect(period_output.name).to eq period.name
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
-          8.times.map do |index|
-            { title: "Q#{index + 1}", points: 1.0, type: index < 5 ? 'MCQ' : 'Tutor' }
+          tasks.first.task_steps.each_with_index.map do |task_step, index|
+            {
+             title: "Q#{index + 1}",
+             points: 1.0,
+             type: task_step.is_core? ? 'MCQ' : 'Tutor',
+             question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
+             exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
+            }
           end
         )
         expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
