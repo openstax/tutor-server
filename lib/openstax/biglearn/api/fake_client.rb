@@ -8,6 +8,8 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
   # The Z-score of the desired alpha, i.e. the tail of the interval with the desired confidence
   # Reference a Z-score table to adjust this
+  # In this case we want a 50% confidence interval (which is pretty bad)
+  # So alpha = 0.5 => 1 - alpha/2 = 0.75 => z = 0.68 (from the table)
   CLUE_Z_ALPHA = 0.68
   CLUE_Z_ALPHA_SQUARED = CLUE_Z_ALPHA**2
   CLUE_MIN_NUM_RESPONSES = 3
