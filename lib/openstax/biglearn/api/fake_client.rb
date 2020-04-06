@@ -6,11 +6,11 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
   MIN_HISTORY_SIZE_FOR_RANDOM_AGO = 5
 
-  CLUE_MIN_NUM_RESPONSES = 3 # Must be 2 or more to prevent division by 0
   # The Z-score of the desired alpha, i.e. the tail of the interval with the desired confidence
   # Reference a Z-score table to adjust this
   CLUE_Z_ALPHA = 0.68
   CLUE_Z_ALPHA_SQUARED = CLUE_Z_ALPHA**2
+  CLUE_MIN_NUM_RESPONSES = 3
 
   PRACTICE_WORST_NUM_EXERCISES = 5
 
@@ -452,20 +452,20 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       p_hat = (num_correct + 0.5 * CLUE_Z_ALPHA_SQUARED)/n_hat
 
       # Agresti-Coull confidence interval
-      interval_delta = CLUE_Z_ALPHA * Math.sqrt(p_hat*(1 - p_hat)/n_hat)
+      interval_delta = CLUE_Z_ALPHA * Math.sqrt(p_hat*(1.0 - p_hat)/n_hat)
 
       # The Agresti-Coull confidence interval can apparently go outside [0, 1], so we fix that
       {
-        minimum: [p_hat - interval_delta, 0].max,
+        minimum: [p_hat - interval_delta, 0.0].max,
         most_likely: p_hat,
-        maximum: [p_hat + interval_delta, 1].min,
+        maximum: [p_hat + interval_delta, 1.0].min,
         is_real: true
       }
     else
       {
-        minimum: 0,
+        minimum: 0.0,
         most_likely: 0.5,
-        maximum: 1,
+        maximum: 1.0,
         is_real: false
       }
     end
