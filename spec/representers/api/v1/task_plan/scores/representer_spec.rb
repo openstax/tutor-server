@@ -58,6 +58,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         id: task_plan.id.to_s,
         title: task_plan.title,
         type: 'homework',
+        dropped_questions: [],
         periods: [
           {
             id: task_plan.owner.periods.first.id.to_s,
@@ -172,6 +173,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         id: task_plan.id.to_s,
         title: task_plan.title,
         type: 'homework',
+        dropped_questions: [],
         periods: [
           {
             id: task_plan.owner.periods.first.id.to_s,
