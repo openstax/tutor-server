@@ -27,11 +27,16 @@ class Api::V1::TaskPlan::Scores::Representer < ::Roar::Decorator
            readable: true,
            writeable: false
 
+  collection :dropped_questions,
+             class: ::Tasks::Models::DroppedQuestion,
+             extend: Api::V1::TaskPlan::DroppedQuestionRepresenter,
+             readable: true,
+             writeable: false
+
   collection :tasking_plans,
              extend: Api::V1::TaskPlan::TaskingPlanRepresenter,
              readable: true,
-             writeable: false,
-             getter: ->(*) { tasking_plans }
+             writeable: false
 
   collection :periods,
              extend: Api::V1::TaskPlan::Scores::PeriodRepresenter,
