@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_30_145448) do
+ActiveRecord::Schema.define(version: 2020_03_30_205829) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -736,6 +736,15 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.index ["tasks_assistant_id", "course_profile_course_id"], name: "index_tasks_course_assistants_on_assistant_id_and_course_id"
   end
 
+  create_table "tasks_dropped_questions", force: :cascade do |t|
+    t.bigint "tasks_task_plan_id", null: false
+    t.string "question_id", null: false
+    t.integer "drop_method", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tasks_task_plan_id", "question_id"], name: "index_dropped_questions_on_task_plan_and_question_id", unique: true
+  end
+
   create_table "tasks_extensions", force: :cascade do |t|
     t.bigint "tasks_task_plan_id", null: false
     t.bigint "entity_role_id", null: false
@@ -744,7 +753,6 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
     t.datetime "closes_at_ntz", null: false
     t.index ["entity_role_id"], name: "index_tasks_extensions_on_entity_role_id"
     t.index ["tasks_task_plan_id", "entity_role_id"], name: "index_tasks_extensions_on_tasks_task_plan_id_and_entity_role_id", unique: true
-    t.index ["tasks_task_plan_id"], name: "index_tasks_extensions_on_tasks_task_plan_id"
     t.index ["time_zone_id"], name: "index_tasks_extensions_on_time_zone_id"
   end
 
@@ -1136,6 +1144,7 @@ ActiveRecord::Schema.define(version: 2020_03_30_145448) do
   add_foreign_key "tasks_concept_coach_tasks", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_course_assistants", "tasks_assistants", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_dropped_questions", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_extensions", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_extensions", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_grading_templates", "tasks_grading_templates", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
