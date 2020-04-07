@@ -165,7 +165,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         end
 
         # Call Roar's consume! but force the TaskingPlans that were already open
-        # to the old open date in order to prevent their open dates from changing
+        # to the old open date in order to prevent their iopen dates from changing
         consume!(task_plan, represent_with: Api::V1::TaskPlan::Representer).tap do |result|
           task_plan.tasking_plans.each do |tp|
             tp.update_attribute(:opens_at_ntz, opens_at_ntzs[tp.target_type][tp.target_id]) \
