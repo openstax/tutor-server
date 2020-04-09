@@ -6,11 +6,9 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine do
     # Need some preexisting work to determine the worst areas
     book = FactoryBot.create :content_book, :standard_contents_1, ecosystem: ecosystem
     worked_pages = (
-      2 * OpenStax::Biglearn::Api::FakeClient::PRACTICE_WORST_NUM_EXERCISES
+      2 * FindOrCreatePracticeTaskRoutine::NUM_EXERCISES
     ).times.map { FactoryBot.create :content_page, book: book }
-    @worst_pages = worked_pages.sample(
-      OpenStax::Biglearn::Api::FakeClient::PRACTICE_WORST_NUM_EXERCISES
-    )
+    @worst_pages = worked_pages.sample FindOrCreatePracticeTaskRoutine::NUM_EXERCISES
 
     worked_pages.each do |page|
       is_correct = !@worst_pages.include?(page)

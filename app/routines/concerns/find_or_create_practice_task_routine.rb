@@ -1,5 +1,5 @@
 module FindOrCreatePracticeTaskRoutine
-  NUM_BIGLEARN_EXERCISES = 5
+  NUM_EXERCISES = 5
 
   extend ActiveSupport::Concern
 

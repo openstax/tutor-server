@@ -63,6 +63,7 @@ class Content::Routines::ImportExercises
           preview: wrapper.preview,
           context: wrapper.context,
           content: wrapper.content,
+          number_of_questions: wrapper.questions.size,
           question_answer_ids: wrapper.question_answer_ids,
           has_interactive: wrapper.has_interactive?,
           has_video: wrapper.has_video?

@@ -338,13 +338,9 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
 
       goal_num_tutor_assigned_pes = request[:goal_num_tutor_assigned_pes]
       if goal_num_tutor_assigned_pes.nil?
-        if task.practice?
-          goal_num_tutor_assigned_pes = FindOrCreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES
-        else
-          p_steps = task.task_steps.personalized_group.to_a
-          pe_steps = p_steps.select { |step| step.exercise? || step.placeholder? }
-          goal_num_tutor_assigned_pes = pe_steps.size
-        end
+        p_steps = task.task_steps.personalized_group.to_a
+        pe_steps = p_steps.select { |step| step.exercise? || step.placeholder? }
+        goal_num_tutor_assigned_pes = pe_steps.size
       end
 
       {

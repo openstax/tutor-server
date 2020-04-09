@@ -19,24 +19,33 @@ class FindOrCreatePracticeWorstTopicsTask
     result = OpenStax::Biglearn::Api.fetch_practice_worst_areas_exercises(
       student: @role.course_member
     )
-    exercises = result[:exercises].first FindOrCreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES
-    spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
 
     fatal_error(
       code: :no_exercises,
       message: "No exercises were returned from Biglearn to build the Practice Widget." +
                " [Course: #{@course.id} - Role: #{@role.id}" +
                " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
-    ) if exercises.empty?
+    ) if result[:exercises].empty?
+
+    # It's probably fine to give students slightly bigger practice tasks
+    # if that means they get whole MPQ questions
+    remaining = FindOrCreatePracticeTaskRoutine::NUM_EXERCISES
+    exercises = result[:exercises].select do |exercise|
+      (remaining > 0).tap { remaining -= exercise.number_of_questions }
+    end
+    spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
 
     # Add the exercises as task steps
     exercise_spy_info = spy_info.fetch('exercises', {})
     exercises.each do |exercise|
-      run(:task_exercise, exercise: exercise, task: @task) do |step|
-        step.group_type = :personalized_group
-        step.is_core = true
-        step.spy = exercise_spy_info.fetch(exercise.uuid, {})
-      end
+      run(
+        :task_exercise,
+        exercise: exercise,
+        task: @task,
+        group_type: :personalized_group,
+        is_core: true,
+        spy: exercise_spy_info.fetch(exercise.uuid, {})
+      )
     end.tap do
       @task.pes_are_assigned = true
       @task.spy = @task.spy.merge spy_info.except('exercises')

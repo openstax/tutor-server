@@ -88,12 +88,8 @@ class Content::Models::Exercise < IndestructibleRecord
     end
   end
 
-  def number_of_parts
-    questions_hash.size
-  end
-
   def is_multipart?
-    number_of_parts > 1
+    number_of_questions > 1
   end
 
   def feature_ids
