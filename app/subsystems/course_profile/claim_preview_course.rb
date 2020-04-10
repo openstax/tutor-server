@@ -1,10 +1,9 @@
 class CourseProfile::ClaimPreviewCourse
-
   lev_routine express_output: :course
 
   protected
 
-  def exec(catalog_offering:, name:, current_time: Time.current)
+  def exec(catalog_offering:, name:, is_college:, current_time: Time.current)
     course = CourseProfile::Models::Course
                .lock
                .joins(
@@ -52,7 +51,8 @@ class CourseProfile::ClaimPreviewCourse
       term: :preview,
       year: year,
       starts_at: term_year.starts_at,
-      ends_at: term_year.ends_at
+      ends_at: term_year.ends_at,
+      is_college: is_college
     )
 
     interval = "interval '#{(current_time - course.created_at).seconds.to_i} seconds'"
@@ -71,5 +71,4 @@ class CourseProfile::ClaimPreviewCourse
 
     outputs.course = course
   end
-
 end
