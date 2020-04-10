@@ -83,7 +83,7 @@ class WorkPreviewCourseTasks
       end
 
       Tasks::UpdateTaskCaches.call(
-        task_ids: all_tasks.map(&:id), update_cached_attributes: true, queue: 'preview'
+        task_ids: all_tasks.map(&:id), update_cached_attributes: true, background: false
       )
     end
 

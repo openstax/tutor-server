@@ -68,7 +68,8 @@ class Preview::WorkTask
       conflict_target: [ :id ], columns: [ :first_completed_at, :last_completed_at ]
     }
 
-    task.update_caches_later if update_caches
+    task.save!
+    task.update_caches_now if update_caches
 
     course = task.taskings.first&.role&.student&.course
     return if course.nil?

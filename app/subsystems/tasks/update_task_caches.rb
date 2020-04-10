@@ -7,7 +7,7 @@ class Tasks::UpdateTaskCaches
 
   protected
 
-  def exec(task_ids:, update_cached_attributes: false, queue: 'dashboard')
+  def exec(task_ids:, update_cached_attributes: false, background: true, queue: 'dashboard')
     ScoutHelper.ignore!(0.995)
 
     task_ids = [task_ids].flatten
@@ -222,7 +222,12 @@ class Tasks::UpdateTaskCaches
     }
 
     # Update the PeriodCaches
-    Tasks::UpdatePeriodCaches.set(queue: queue.to_sym).perform_later(period_ids: period_ids.uniq)
+    period_ids = period_ids.uniq
+    if background
+      Tasks::UpdatePeriodCaches.set(queue: queue.to_sym).perform_later(period_ids: period_ids)
+    else
+      Tasks::UpdatePeriodCaches.call(period_ids: period_ids)
+    end
   end
 
   def build_task_cache(
