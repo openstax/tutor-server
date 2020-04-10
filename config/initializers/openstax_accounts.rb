@@ -19,6 +19,9 @@ OpenStax::Accounts.configure do |config|
   config.logout_redirect_url = ->(request) do
     LogoutRedirectChooser.new(request.url).choose(default: config.default_logout_redirect_url)
   end
+  config.forwardable_login_param_keys = [
+    :return_to, :sp,
+  ]
   config.return_to_url_approver = ->(url) do
     begin
       uri = Addressable::URI.parse(url)
