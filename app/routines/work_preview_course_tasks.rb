@@ -1,7 +1,7 @@
 class WorkPreviewCourseTasks
   GREAT_STUDENT_CORRECT_PROBABILITY = 0.95
   AVERAGE_STUDENT_CORRECT_PROBABILITY = 0.8
-  STRUGGLING_STUDENT_CORRECT_PROBABILITY = 0.5
+  STRUGGLING_STUDENT_CORRECT_PROBABILITY = 0.65
 
   FREE_RESPONSE = 'This is where you can see each student’s answer in his or her own words.'
 
