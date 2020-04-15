@@ -4,13 +4,16 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   auto_uuid
 
   belongs_to :exercise, subsystem: :content, inverse_of: :tasked_exercises
+
+  has_one :grading, inverse_of: :tasked_exercise, dependent: :destroy
+
   before_validation :set_correct_answer_id, on: :create
 
   validates :url, :question_id, :question_index, :content, :correct_answer_id, presence: true
   validates :free_response, length: { maximum: 10000 }
 
   validate :free_response_required, on: :update
-  validate :valid_answer, :no_feedback
+  validate :valid_answer, :no_feedback, :not_graded
 
   scope :correct, -> do
     where('tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id')
@@ -156,6 +159,17 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
       errors.add(
         attr, 'cannot be updated after feedback becomes available'
       ) if changes[attr].present?
+    end
+
+    throw(:abort) if errors.any?
+  end
+
+  def not_graded
+    # Cannot change the answer after the due date has passed and the exercise has been graded
+    return if !task_step&.task&.past_due? || grading.nil?
+
+    [:answer_id, :free_response].each do |attr|
+      errors.add(attr, 'cannot be updated after graded') if changes[attr].present?
     end
 
     throw(:abort) if errors.any?
