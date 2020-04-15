@@ -23,7 +23,7 @@ class Api::V1::GradingTemplatesController < Api::V1::ApiController
     #{json_schema(Api::V1::GradingTemplateRepresenter, include: :writeable)}
   DESCRIPTION
   def create
-    standard_nested_create Tasks::Models::GradingTemplate.new,
+    standard_nested_create ::Tasks::Models::GradingTemplate.new,
                            :course,
                            course,
                            Api::V1::GradingTemplateRepresenter
