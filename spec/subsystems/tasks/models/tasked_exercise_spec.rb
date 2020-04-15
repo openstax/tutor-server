@@ -6,6 +6,8 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     FactoryBot.create :tasks_tasked_exercise, exercise: content_exercise
   end
 
+  it { is_expected.to have_one(:grading) }
+
   it { is_expected.to validate_presence_of(:url) }
   it { is_expected.to validate_presence_of(:question_id) }
   it { is_expected.to validate_presence_of(:question_index) }
@@ -65,7 +67,6 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
     expect(tasked_exercise.reload).to be_valid
 
-    expect(tasked_exercise.reload).to be_valid
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     expect(tasked_exercise).not_to be_valid
 
@@ -82,6 +83,19 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect(tasked_exercise.reload).to be_valid
     tasked_exercise.free_response = 'some new thing'
     expect(tasked_exercise).to be_valid
+  end
+
+  it 'cannot be answered after graded' do
+    FactoryBot.create :tasks_grading, tasked_exercise: tasked_exercise
+
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+
+    expect(tasked_exercise).to be_valid
+
+    tasked_exercise.task_step.task.update_attribute :due_at_ntz, Time.current - 1.day
+
+    expect(tasked_exercise).not_to be_valid
   end
 
   it "invalidates task's cache when updated" do
