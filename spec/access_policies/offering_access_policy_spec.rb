@@ -65,7 +65,7 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
       context test_action.to_s do
         let(:action) { test_action }
 
-        it { should eq false }
+        it { should eq true }
       end
     end
   end
