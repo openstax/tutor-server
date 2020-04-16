@@ -33,17 +33,7 @@ class Content::Routines::PopulateExercisePools
 
         # Homework Dynamic
         page.homework_dynamic_exercise_ids << exercise.id \
-          if (
-              tags.include?('apbio') && tags.include?('ost-chapter-review') && (
-                 tags.include?('critical-thinking') ||
-                   tags.include?('ap-test-prep') || (
-                     tags.include?('review') && (
-                       tags.include?('time:medium') || tags.include?('time:long') ||
-                       tags.include?('time-medium') || tags.include?('time-long')
-                     )
-                   )
-               )
-          ) || tags.include?('type:practice')
+          if tags.include?('type:practice')
 
         # Practice Widget
         page.practice_widget_exercise_ids << exercise.id \
