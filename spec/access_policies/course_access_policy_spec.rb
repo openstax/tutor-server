@@ -121,14 +121,8 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     context 'verified non-college teacher' do
       context 'in original course' do
         let(:requestor) { @teacher }
-
-        context 'create' do
-          let(:action) { :create }
-          it { should eq false }
-        end
-
         [
-          :index, :read, :create_practice, :performance, :read_task_plans,
+          :create, :index, :read, :create_practice, :performance, :read_task_plans,
           :export, :roster, :add_period, :update, :stats, :exercises, :clone
         ].each do |test_action|
           context "#{test_action}" do
@@ -141,7 +135,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
       context 'in cloned course' do
         let(:requestor) { @clone_teacher }
 
-        [:index, :read_task_plans].each do |test_action|
+        [:create, :index, :read_task_plans].each do |test_action|
           context "#{test_action}" do
             let(:action) { test_action }
             it { should eq true }
@@ -149,7 +143,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
 
         [
-          :create, :read, :create_practice, :performance, :export,
+          :read, :create_practice, :performance, :export,
           :roster, :add_period, :update, :stats, :exercises, :clone
         ].each do |test_action|
           context "#{test_action}" do
@@ -308,12 +302,19 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
 
         [
-          :create, :read, :create_practice, :performance, :read_task_plans,
-          :export, :roster, :add_period, :update, :stats, :exercises, :clone
+          :read, :create_practice, :performance, :read_task_plans,
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone,
          ].each do |test_action|
           context "#{test_action}" do
             let(:action) { test_action }
             it { should eq false }
+          end
+        end
+
+        [:create].each do |test_action|
+          context "#{test_action}" do
+            let(:action) { test_action }
+            it { should eq true }
           end
         end
       end
@@ -323,7 +324,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
         context 'create' do
           let(:action) { :create }
-          it { should eq false }
+          it { should eq true }
         end
 
         [
