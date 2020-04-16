@@ -16,6 +16,8 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
     :default_close_date_offset_days
   ].each { |field| it { is_expected.to validate_presence_of(field) } }
 
+  it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_profile_course_id) }
+
   [ :completion_weight, :correctness_weight, :late_work_penalty ].each do |field|
     it do
       is_expected.to(
