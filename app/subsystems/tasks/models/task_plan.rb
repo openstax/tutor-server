@@ -97,6 +97,18 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     end
   end
 
+  def num_completed_tasks
+    tasks.to_a.count { |task| task.completed? use_cache: true }
+  end
+
+  def num_in_progress_tasks
+    tasks.to_a.count { |task| task.in_progress? use_cache: true }
+  end
+
+  def num_not_started_tasks
+    tasks.to_a.count { |task| !task.started? use_cache: true }
+  end
+
   protected
 
   def get_ecosystems_from_exercise_ids
