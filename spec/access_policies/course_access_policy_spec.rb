@@ -329,7 +329,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
         [
           :index, :read, :create_practice, :performance, :read_task_plans,
-          :export, :roster, :add_period, :update, :stats, :exercises, #:clone
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone
         ].each do |test_action|
           context "#{test_action}" do
             let(:action) { test_action }
@@ -352,7 +352,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
         [
           :read, :create_practice, :performance, :read_task_plans, :export,
-          :roster, :add_period, :update, :stats, :exercises,# :clone
+          :roster, :add_period, :update, :stats, :exercises, :clone
         ].each do |test_action|
           context "#{test_action}" do
             let(:action) { test_action }
@@ -366,7 +366,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
         [
           :index, :create, :read, :create_practice, :performance, :read_task_plans,
-          :export, :roster, :add_period, :update, :stats, :exercises, #:clone
+          :export, :roster, :add_period, :update, :stats, :exercises, :clone
         ].each do |test_action|
           context "#{test_action}" do
             let(:action) { test_action }
@@ -387,7 +387,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
         [
           :read, :create_practice, :performance, :read_task_plans, :export,
-          :roster, :add_period, :update, :stats, :exercises, # :clone
+          :roster, :add_period, :update, :stats, :exercises, :clone
         ].each do |test_action|
           context "#{test_action}" do
             let(:action) { test_action }
