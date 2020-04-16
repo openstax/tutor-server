@@ -160,7 +160,13 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
     end
 
     it 'imports simple practice exercises into the homework dynamic pool' do
-      expect(page.homework_dynamic_exercise_ids).to eq [practice_exercise.id]
+      expect(page.homework_dynamic_exercise_ids).to eq [
+        apbio_hw_dyn_exercise_1.id,
+        apbio_hw_dyn_exercise_2.id,
+        apbio_hw_dyn_exercise_3.id,
+        apbio_hw_dyn_exercise_4.id,
+        practice_exercise.id
+      ]
     end
   end
 end
