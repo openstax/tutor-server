@@ -30,6 +30,8 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
             :late_work_penalty,
             presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
 
+  validates :name, uniqueness: { scope: :course_profile_course_id }
+
   validate :weights_add_up, :default_times_have_good_values
 
   before_update  :no_task_plans_when_changing_task_plan_type
