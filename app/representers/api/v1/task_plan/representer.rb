@@ -107,6 +107,21 @@ class Api::V1::TaskPlan::Representer < Roar::Decorator
            writeable: false,
            getter: ->(*) { "/api/jobs/#{publish_job_uuid}" if publish_job_uuid.present? }
 
+  property :num_completed_tasks,
+           type: Integer,
+           readable: true,
+           writeable: false
+
+  property :num_in_progress_tasks,
+           type: Integer,
+           readable: true,
+           writeable: false
+
+  property :num_not_started_tasks,
+           type: Integer,
+           readable: true,
+           writeable: false
+
   collection :tasking_plans,
              class: ::Tasks::Models::TaskingPlan,
              extend: Api::V1::TaskPlan::TaskingPlanRepresenter,
