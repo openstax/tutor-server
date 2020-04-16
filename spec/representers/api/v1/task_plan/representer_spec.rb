@@ -257,6 +257,51 @@ RSpec.describe Api::V1::TaskPlan::Representer, type: :representer do
     end
   end
 
+  context 'num_completed_tasks' do
+    let(:num_completed_tasks) { rand(10) }
+
+    it 'can be read' do
+      expect(task_plan).to receive(:num_completed_tasks).and_return(num_completed_tasks)
+      expect(representation).to include 'num_completed_tasks' => num_completed_tasks
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect do
+        described_class.new(task_plan).from_hash('num_completed_tasks' => num_completed_tasks)
+      end.not_to raise_error
+    end
+  end
+
+  context 'num_in_progress_tasks' do
+    let(:num_in_progress_tasks) { rand(10) }
+
+    it 'can be read' do
+      expect(task_plan).to receive(:num_in_progress_tasks).and_return(num_in_progress_tasks)
+      expect(representation).to include 'num_in_progress_tasks' => num_in_progress_tasks
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect do
+        described_class.new(task_plan).from_hash('num_in_progress_tasks' => num_in_progress_tasks)
+      end.not_to raise_error
+    end
+  end
+
+  context 'num_not_started_tasks' do
+    let(:num_not_started_tasks) { rand(10) }
+
+    it 'can be read' do
+      expect(task_plan).to receive(:num_not_started_tasks).and_return(num_not_started_tasks)
+      expect(representation).to include 'num_not_started_tasks' => num_not_started_tasks
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      expect do
+        described_class.new(task_plan).from_hash('num_not_started_tasks' => num_not_started_tasks)
+      end.not_to raise_error
+    end
+  end
+
   context 'extensions' do
     let(:extension)  do
       Hashie::Mash.new(

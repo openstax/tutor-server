@@ -294,9 +294,10 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       it 'allows a teacher to publish a task_plan for their course' do
         sign_in! @teacher
         start_time = Time.current
-        expect { api_post api_course_task_plans_url(@course.id), nil,
-                          params: valid_json_hash.to_json }
-          .to change { Tasks::Models::TaskPlan.count }.by(1)
+        expect do
+          api_post api_course_task_plans_url(@course.id), nil, params: valid_json_hash.to_json
+        end.to  change { Tasks::Models::TaskPlan.count }.by(1)
+           .and change { Tasks::Models::Task.count     }.by(2)
         end_time = Time.current
         expect(response).to have_http_status(:success)
         new_task_plan = Tasks::Models::TaskPlan.find(response.body_as_hash[:id])
@@ -305,10 +306,11 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
         expect(new_task_plan.first_published_at).to be < end_time
         expect(new_task_plan.last_published_at).to eq new_task_plan.first_published_at
 
-        # Revert task_plan to its state when the job was queued
+        # Revert task_plan to its state when the job was queued so we can check the representation
         new_task_plan.is_publish_requested = true
         new_task_plan.first_published_at = nil
         new_task_plan.last_published_at = nil
+        new_task_plan.tasks = []
         expect(response.body).to eq Api::V1::TaskPlan::Representer.new(new_task_plan).to_json
 
         expect(response.body_as_hash[:publish_job_url]).to include('/api/jobs/')
@@ -439,6 +441,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       it 'allows a teacher to publish a task_plan for their course' do
         sign_in! @teacher
         start_time = Time.current
+
+        tasks = @task_plan.tasks
         api_put api_task_plan_url(@task_plan.id), nil, params: valid_json_hash.to_json
         end_time = Time.current
         expect(response).to have_http_status(:accepted)
@@ -450,9 +454,10 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
         expect(@task_plan.first_published_at).to be < end_time
         expect(@task_plan.last_published_at).to eq @task_plan.first_published_at
 
-        # Revert task_plan to its state when the job was queued
+        # Revert task_plan to its state when the job was queued so we can check the representation
         @task_plan.first_published_at = nil
         @task_plan.last_published_at = nil
+        @task_plan.tasks = tasks
         expect(response.body).to eq Api::V1::TaskPlan::Representer.new(@task_plan).to_json
 
         expect(response.body_as_hash[:publish_job_url]).to include('/api/jobs/')
@@ -487,6 +492,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
         new_opens_at = time_zone.now.yesterday
         valid_json_hash['tasking_plans'].first['opens_at'] = new_opens_at
 
+        tasks = @task_plan.tasks
         api_put api_task_plan_url(@task_plan.id), nil, params: valid_json_hash.to_json
 
         expect(response).to have_http_status(:accepted)
@@ -501,9 +507,10 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
 
         @task_plan.tasks.each { |task| expect(task.opens_at).to be_within(1).of(new_opens_at) }
 
-        # Revert task_plan to its state when the job was queued
+        # Revert task_plan to its state when the job was queued so we can check the representation
         @task_plan.first_published_at = published_at
         @task_plan.last_published_at = published_at
+        @task_plan.tasks = tasks
         expect(response.body).to eq Api::V1::TaskPlan::Representer.new(@task_plan).to_json
 
         expect(response.body_as_hash[:publish_job_url]).to include('/api/jobs/')
