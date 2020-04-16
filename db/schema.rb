@@ -777,6 +777,7 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
     t.integer "late_work_penalty_applied", null: false
     t.bigint "cloned_from_id"
     t.index ["cloned_from_id"], name: "index_tasks_grading_templates_on_cloned_from_id"
+    t.index ["course_profile_course_id", "name"], name: "index_tasks_grading_templates_on_course_and_name", unique: true
     t.index ["course_profile_course_id", "task_plan_type", "deleted_at"], name: "index_tasks_grading_templates_on_course_type_and_deleted"
   end
 
