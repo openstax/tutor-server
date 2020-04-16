@@ -5,12 +5,11 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   belongs_to :exercise, subsystem: :content, inverse_of: :tasked_exercises
 
-  has_one :grading, inverse_of: :tasked_exercise, dependent: :destroy
-
   before_validation :set_correct_answer_id, on: :create
 
   validates :url, :question_id, :question_index, :content, :correct_answer_id, presence: true
   validates :free_response, length: { maximum: 10000 }
+  validates :grader_points, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
 
   validate :free_response_required, on: :update
   validate :valid_answer, :no_feedback, :not_graded
@@ -124,6 +123,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     content_preview_from_json || "Exercise step ##{id}"
   end
 
+  def manually_graded?
+    !grader_points.nil?
+  end
+
   protected
 
   def free_response_required
@@ -162,7 +165,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   def not_graded
     # Cannot change the answer after the due date has passed and the exercise has been graded
-    return if !task_step&.task&.past_due? || grading.nil?
+    return unless task_step&.task&.past_due? && manually_graded?
 
     [:answer_id, :free_response].each do |attr|
       errors.add(attr, 'cannot be updated after graded') if changes[attr].present?

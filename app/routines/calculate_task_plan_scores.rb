@@ -80,13 +80,17 @@ class CalculateTaskPlanScores
           points = points_per_question_index[index]
 
           if task_step.exercise?
+            tasked = task_step.tasked
+
             {
               id: task_step.tasked.question_id,
               exercise_id: task_step.tasked.content_exercise_id,
               is_completed: task_step.completed?,
-              selected_answer_id: task_step.tasked.answer_id,
+              selected_answer_id: tasked.answer_id,
               points: points,
-              free_response: task_step.tasked.free_response
+              free_response: tasked.free_response,
+              grader_points: tasked.grader_points,
+              grader_comments: tasked.grader_comments
             }
           else
             { is_completed: false, points: points }
