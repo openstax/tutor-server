@@ -323,7 +323,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
         context 'create' do
           let(:action) { :create }
-          it { should eq false }
+          it { should eq true }
         end
 
         [
