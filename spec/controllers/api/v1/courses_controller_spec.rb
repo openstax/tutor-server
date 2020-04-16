@@ -1029,6 +1029,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       before { AddUserAsCourseTeacher.call course: @course, user: @user_1 }
 
       it 'clones the course for the user' do
+        @user_1.account.confirmed_faculty!
         api_post :clone, @user_1_token, params: valid_params, body: valid_body
 
         expect(response).to have_http_status(:success)
