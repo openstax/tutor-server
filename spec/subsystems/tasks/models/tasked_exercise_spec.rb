@@ -6,13 +6,12 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     FactoryBot.create :tasks_tasked_exercise, exercise: content_exercise
   end
 
-  it { is_expected.to have_one(:grading) }
-
   it { is_expected.to validate_presence_of(:url) }
   it { is_expected.to validate_presence_of(:question_id) }
   it { is_expected.to validate_presence_of(:question_index) }
   it { is_expected.to validate_presence_of(:correct_answer_id) }
   it { is_expected.to validate_length_of(:free_response).is_at_most(10000) }
+  it { is_expected.to validate_numericality_of(:grader_points).is_greater_than_or_equal_to(0.0) }
 
   it 'auto assigns the correct_answer_id on create' do
     expect(tasked_exercise.correct_answer_id).to(
@@ -85,11 +84,17 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect(tasked_exercise).to be_valid
   end
 
-  it 'cannot be answered after graded' do
-    FactoryBot.create :tasks_grading, tasked_exercise: tasked_exercise
-
-    tasked_exercise.free_response = 'abc'
+  it 'cannot be answered after due and graded' do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.save!
+
+    tasked_exercise.manually_graded_at = Time.current
+    tasked_exercise.grader_points = 0.0
+    tasked_exercise.save!
+
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
+    tasked_exercise.free_response = 'def'
 
     expect(tasked_exercise).to be_valid
 

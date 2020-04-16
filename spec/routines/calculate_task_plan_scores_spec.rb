@@ -66,11 +66,11 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
           tasks.first.task_steps.each_with_index.map do |task_step, index|
             {
-             title: "Q#{index + 1}",
-             points: 1.0,
-             type: task_step.is_core? ? 'MCQ' : 'Tutor',
-             question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
-             exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
+              title: "Q#{index + 1}",
+              points: 1.0,
+              type: task_step.is_core? ? 'MCQ' : 'Tutor',
+              question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
+              exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil
             }
           end
         )
@@ -83,34 +83,36 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
             student = task.taskings.first.role.student
 
             {
-               role_id: task.taskings.first.entity_role_id,
-               available_points: 8.0,
-               late_work_fraction_penalty: task.late_work_penalty,
-               first_name: student.first_name,
-               last_name: student.last_name,
-               late_work_point_penalty: 0.0,
-               is_dropped: false,
-               is_late: task.late?,
-               student_identifier: student.student_identifier,
-               total_fraction: nil,
-               total_points: 0.0,
-               questions: task.task_steps.map do |ts|
-                 if ts.exercise?
-                   {
+              role_id: task.taskings.first.entity_role_id,
+              available_points: 8.0,
+              late_work_fraction_penalty: task.late_work_penalty,
+              first_name: student.first_name,
+              last_name: student.last_name,
+              late_work_point_penalty: 0.0,
+              is_dropped: false,
+              is_late: task.late?,
+              student_identifier: student.student_identifier,
+              total_fraction: nil,
+              total_points: 0.0,
+              questions: task.task_steps.map do |ts|
+                if ts.exercise?
+                  {
                     id: ts.tasked.question_id,
                     exercise_id: ts.tasked.content_exercise_id,
                     is_completed: false,
                     selected_answer_id: ts.tasked.answer_id,
                     points: ts.completed? || task.past_due? ? 0.0 : nil,
-                    free_response: nil
-                   }
-                 else
-                   {
+                    free_response: nil,
+                    grader_points: nil,
+                    grader_comments: nil
+                  }
+                else
+                  {
                     is_completed: false,
                     points: task.past_due? ? 0.0 : nil
-                   }
-                 end
-               end.compact
+                  }
+                end
+              end.compact
             }
           end
         )
@@ -134,11 +136,11 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
           tasks.first.task_steps.each_with_index.map do |task_step, index|
             {
-             title: "Q#{index + 1}",
-             points: 1.0,
-             type: task_step.is_core? ? 'MCQ' : 'Tutor',
-             question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
-             exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
+              title: "Q#{index + 1}",
+              points: 1.0,
+              type: task_step.is_core? ? 'MCQ' : 'Tutor',
+              question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
+              exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
             }
           end
         )
@@ -165,17 +167,19 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               questions: task.task_steps.map do |ts|
                 if ts.exercise?
                   {
-                   id: ts.tasked.question_id,
-                   exercise_id: ts.tasked.content_exercise_id,
-                   is_completed: ts.completed?,
-                   selected_answer_id: ts.tasked.answer_id,
-                   points: ts.completed? || task.past_due? ? 0.0 : nil,
-                   free_response: ts.tasked.free_response
+                    id: ts.tasked.question_id,
+                    exercise_id: ts.tasked.content_exercise_id,
+                    is_completed: ts.completed?,
+                    selected_answer_id: ts.tasked.answer_id,
+                    points: ts.completed? || task.past_due? ? 0.0 : nil,
+                    free_response: ts.tasked.free_response,
+                    grader_points: nil,
+                    grader_comments: nil
                   }
                 else
                   {
-                   is_completed: false,
-                   points: task.past_due? ? 0.0 : nil
+                    is_completed: false,
+                    points: task.past_due? ? 0.0 : nil
                   }
                 end
               end.compact
@@ -201,11 +205,11 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
           tasks.first.task_steps.each_with_index.map do |task_step, index|
             {
-             title: "Q#{index + 1}",
-             points: 1.0,
-             type: task_step.is_core? ? 'MCQ' : 'Tutor',
-             question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
-             exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
+              title: "Q#{index + 1}",
+              points: 1.0,
+              type: task_step.is_core? ? 'MCQ' : 'Tutor',
+              question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
+              exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
             }
           end
         )
@@ -233,17 +237,19 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               questions: task.task_steps.map do |ts|
                 if ts.exercise?
                   {
-                   id: ts.tasked.question_id,
-                   exercise_id: ts.tasked.content_exercise_id,
-                   is_completed: ts.completed?,
-                   selected_answer_id: ts.tasked.answer_id,
-                   points: ts.completed? || task.past_due? ? (is_correct ? 1.0 : 0.0) : nil,
-                   free_response: ts.tasked.free_response
+                    id: ts.tasked.question_id,
+                    exercise_id: ts.tasked.content_exercise_id,
+                    is_completed: ts.completed?,
+                    selected_answer_id: ts.tasked.answer_id,
+                    points: ts.completed? || task.past_due? ? (is_correct ? 1.0 : 0.0) : nil,
+                    free_response: ts.tasked.free_response,
+                    grader_points: nil,
+                    grader_comments: nil
                   }
                 else
                   {
-                   is_completed: false,
-                   points: task.past_due? ? 0.0 : nil
+                    is_completed: false,
+                    points: task.past_due? ? 0.0 : nil
                   }
                 end
               end.compact
