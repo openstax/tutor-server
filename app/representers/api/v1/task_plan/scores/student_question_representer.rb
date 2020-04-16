@@ -31,4 +31,14 @@ class Api::V1::TaskPlan::Scores::StudentQuestionRepresenter < Roar::Decorator
            type: String,
            readable: true,
            writeable: false
+
+  property :grader_points,
+           type: Float,
+           readable: true,
+           writeable: false
+
+  property :grader_comments,
+           type: String,
+           readable: true,
+           writeable: false
 end

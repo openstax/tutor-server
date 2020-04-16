@@ -781,15 +781,6 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
     t.index ["course_profile_course_id", "task_plan_type", "deleted_at"], name: "index_tasks_grading_templates_on_course_type_and_deleted"
   end
 
-  create_table "tasks_gradings", force: :cascade do |t|
-    t.bigint "tasks_tasked_exercise_id"
-    t.float "points", null: false
-    t.text "comments", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["tasks_tasked_exercise_id"], name: "index_tasks_gradings_on_tasks_tasked_exercise_id"
-  end
-
   create_table "tasks_performance_report_exports", id: :serial, force: :cascade do |t|
     t.integer "course_profile_course_id", null: false
     t.integer "entity_role_id", null: false
@@ -916,6 +907,9 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
     t.text "content"
     t.text "context"
     t.string "answer_ids", null: false, array: true
+    t.float "grader_points"
+    t.float "grader_comments"
+    t.datetime "manually_graded_at"
     t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"
@@ -1160,7 +1154,6 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
   add_foreign_key "tasks_extensions", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_extensions", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_grading_templates", "tasks_grading_templates", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "tasks_gradings", "tasks_tasked_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_period_caches", "content_ecosystems", on_update: :cascade, on_delete: :cascade
