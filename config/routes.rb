@@ -86,7 +86,9 @@ Rails.application.routes.draw do
     end
 
     resources :tasks, only: [ :show, :destroy ] do
-      resources :steps, controller: :task_steps, shallow: true, only: [ :show, :update ]
+      resources :steps, controller: :task_steps, shallow: true, only: [ :show, :update ] do
+        put :grade, on: :member
+      end
     end
 
     resources :research_surveys, only: :update
@@ -126,6 +128,10 @@ Rails.application.routes.draw do
           get :review
           get :scores
           put :restore
+        end
+
+        resources :tasking_plans, shallow: true, only: [] do
+          put :grade, on: :member
         end
       end
 

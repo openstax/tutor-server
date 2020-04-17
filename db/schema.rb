@@ -907,6 +907,8 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
     t.text "content"
     t.text "context"
     t.string "answer_ids", null: false, array: true
+    t.float "pending_points"
+    t.float "pending_comments"
     t.float "grader_points"
     t.float "grader_comments"
     t.datetime "manually_graded_at"
@@ -965,6 +967,7 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
     t.datetime "updated_at", null: false
     t.integer "time_zone_id", null: false
     t.datetime "closes_at_ntz", null: false
+    t.datetime "grades_published_at"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasking_plans_on_due_at_ntz_and_opens_at_ntz"
     t.index ["opens_at_ntz"], name: "index_tasks_tasking_plans_on_opens_at_ntz"
     t.index ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true

@@ -1,5 +1,5 @@
 class TaskPlanAccessPolicy
-  TEACHER_ACTIONS = [:index, :read, :create, :update, :destroy, :restore]
+  TEACHER_ACTIONS = [ :index, :read, :create, :update, :destroy, :restore ]
 
   def self.action_allowed?(action, requestor, task_plan)
     return false if requestor.is_anonymous? || !requestor.is_human?

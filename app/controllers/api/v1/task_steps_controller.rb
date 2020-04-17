@@ -1,5 +1,4 @@
 class Api::V1::TaskStepsController < Api::V1::ApiController
-
   around_action :with_task_step_and_tasked, except: :show
   before_action :fetch_step, only: :show
   before_action :error_if_student_and_needs_to_pay
@@ -15,6 +14,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   ###############################################################
   # show
   ###############################################################
+
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
     standard_read(
@@ -51,6 +51,25 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     )
   end
 
+  ###############################################################
+  # grade
+  ###############################################################
+
+  api :PUT, '/steps/:step_id/grade', 'Grades the specified TaskStep'
+  def grade
+    OSU::AccessPolicy.require_action_allowed!(:grade, current_api_user, @tasked)
+
+    consume! @tasked, represent_with: Api::V1::GradingRepresenter
+    @tasked.save
+    raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
+
+    respond_with(
+      @tasked,
+      represent_with: Api::V1::GradingRepresenter,
+      responder: ResponderWithPutPatchDeleteContent
+    )
+  end
+
   protected
 
   def fetch_step
@@ -75,5 +94,4 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       yield
     end
   end
-
 end
