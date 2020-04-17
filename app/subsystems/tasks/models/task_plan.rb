@@ -42,6 +42,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
            :grading_template_type_matches,
            :changes_allowed,
            :not_past_due_when_publishing,
+           :settings_valid_for_publishing,
            :correct_num_points_for_homework
 
   scope :tasked_to_period_id, ->(period_id) do
@@ -135,6 +136,18 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     throw :abort
   end
 
+  def reading?
+    return type == 'reading'
+  end
+
+  def homework?
+    return type == 'homework'
+  end
+
+  def gradable?
+    return homework? || reading?
+  end
+
   def same_ecosystem
     return if ecosystem.nil?
 
@@ -153,7 +166,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def has_grading_template_if_gradable
-    return unless [ 'reading', 'homework' ].include?(type) && grading_template.nil?
+    return unless gradable? && grading_template.nil?
 
     errors.add :grading_template, 'must be present for readings and homeworks'
     throw :abort
@@ -182,6 +195,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     forbidden_attributes.each { |key, value| errors.add key.to_sym, 'cannot be updated after open' }
 
     throw :abort
+  end
+
+  def settings_valid_for_publishing
+    return unless is_publish_requested
+    errors.add(:settings, 'must have at least one exercise') if homework? && settings['exercises'].blank?
+    errors.add(:settings, 'must have at least one page') if reading? && settings['page_ids'].blank?
   end
 
   def not_past_due_when_publishing
