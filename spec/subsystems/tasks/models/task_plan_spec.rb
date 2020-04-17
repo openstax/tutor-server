@@ -3,8 +3,11 @@ require 'rails_helper'
 RSpec.describe Tasks::Models::TaskPlan, type: :model do
   subject(:task_plan) { FactoryBot.create :tasks_task_plan }
 
-  let(:new_task)      { FactoryBot.build :tasks_task, opens_at: Time.current.yesterday }
-
+  let(:new_task)  { FactoryBot.build :tasks_task, opens_at: Time.current.yesterday }
+  let(:ecosystem) { task_plan.ecosystem }
+  let(:book)      { FactoryBot.create :content_book, ecosystem: ecosystem }
+  let(:page)      { FactoryBot.create :content_page, book: book }
+  let(:exercise)  { FactoryBot.create :content_exercise, page: page }
   it { is_expected.to belong_to(:assistant) }
   it { is_expected.to belong_to(:owner) }
 
@@ -31,40 +34,46 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
   end
 
+  it "validates settings are present when publishing" do
+    expect(task_plan).to be_valid
+#    task_plan.is_publish_requested = true
+  end
+
   it "validates settings against the assistant's schema" do
-    book = FactoryBot.create :content_book, ecosystem: task_plan.ecosystem
-    page = FactoryBot.create :content_page, book: book
-    exercise = FactoryBot.create :content_exercise, page: page
     task_plan.reload
 
     task_plan.assistant = FactoryBot.create(
       :tasks_assistant, code_class_name: '::Tasks::Assistants::IReadingAssistant'
     )
-    task_plan.settings = {
-      exercises: [ { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions } ]
-    }
-    expect(task_plan).not_to be_valid
-
     task_plan.settings = { page_ids: [] }
-    expect(task_plan).not_to be_valid
-
-    task_plan.settings = { page_ids: [page.id.to_s] }
     expect(task_plan).to be_valid
+    task_plan.is_publish_requested = true
+    expect(task_plan).not_to be_valid
+    expect(task_plan.errors.full_messages.first).to include 'must have at least one page'
+
+    task_plan.is_publish_requested = false
+    task_plan.type = 'homework'
+    task_plan.assistant = FactoryBot.create(
+      :tasks_assistant, code_class_name: '::Tasks::Assistants::HomeworkAssistant'
+    )
+    task_plan.settings = {
+      exercises_count_dynamic: 1,
+      exercises: []
+    }
+    task_plan.grading_template = FactoryBot.create :tasks_grading_template, task_plan_type: :homework, course: task_plan.owner
+    expect(task_plan).to be_valid
+    task_plan.is_publish_requested = true
+    expect(task_plan).not_to be_valid
+    expect(task_plan.errors.full_messages.first).to include 'must have at least one exercise'
   end
 
   it 'automatically infers the ecosystem from the settings or owner' do
-    ecosystem = task_plan.ecosystem
-    book = FactoryBot.create :content_book, ecosystem: ecosystem
-    page = FactoryBot.create :content_page, book: book
-    exercise = FactoryBot.create :content_exercise, page: page
-
     task_plan.owner.course_ecosystems.delete_all :delete_all
+    ex = exercise
     task_plan.ecosystem = nil
-    expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil
-
     task_plan.settings = {
-      exercises: [ { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions } ]
+      exercises: [ { id: ex.id.to_s, points: [ 1 ] * ex.num_questions } ]
     }
     # Not valid because the course does not have the ecosystem
     expect(task_plan).not_to be_valid
@@ -91,9 +100,6 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   end
 
   it "requires that any exercises or page_ids be in the task_plan's ecosystem" do
-    book = FactoryBot.create :content_book, ecosystem: task_plan.ecosystem
-    page = FactoryBot.create :content_page, book: book
-    exercise = FactoryBot.create :content_exercise, page: page
     task_plan.reload
 
     task_plan.assistant = FactoryBot.create(
@@ -108,13 +114,13 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
     task_plan.settings = {
       page_ids: [page.id.to_s], exercises: [
-        { id: '1', points: [ 1 ] }, { id: '2', points: [ 1 ] }
+        { id: '111', points: [ 1 ] }, { id: '2222', points: [ 1 ] }
       ], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
-
+    expect(task_plan.ecosystem).not_to be_nil
     task_plan.settings = {
-      page_ids: ['1', '2'], exercises: [
+      page_ids: ['333', '222'], exercises: [
         { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
       ], exercises_count_dynamic: 2
     }
@@ -163,6 +169,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it 'requires all tasking_plan due_ats to be in the future when publishing' do
     task_plan.is_publish_requested = true
+    task_plan.settings['page_ids'] = [ page.id.to_s ];
     expect(task_plan).to be_valid
 
     task_plan.tasking_plans.first.due_at = Time.current.yesterday
