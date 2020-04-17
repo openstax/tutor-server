@@ -39,6 +39,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
            :valid_ecosystem,
            :ecosystem_matches,
            :changes_allowed,
+           :settings_valid_for_publishing,
            :not_past_due_when_publishing,
            :has_grading_template_if_gradable,
            :grading_template_same_course,
@@ -83,15 +84,21 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     Jobba.find(publish_job_uuid) if publish_job_uuid.present?
   end
 
-  def set_and_return_ecosystem
-    self.ecosystem ||= cloned_from&.ecosystem ||
-                       get_ecosystems_from_settings&.first ||
-                       owner.try(:ecosystems)&.first
+  def reading?
+    type == 'reading'
+  end
+
+  def homework?
+    type == 'homework'
+  end
+
+  def gradable?
+    homework? || reading?
   end
 
   def available_points_without_dropped_questions_per_question_index
     @available_points_without_dropped_questions_per_question_index ||= Hash.new(1.0).tap do |hash|
-      if type == 'homework'
+      if homework?
         question_index = 0
         settings['exercises'].each do |exercise|
           exercise['points'].each do |points|
@@ -101,6 +108,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
         end
       end
     end
+  end
+
+  def set_and_return_ecosystem
+    self.ecosystem ||= cloned_from&.ecosystem ||
+                       get_ecosystems_from_settings&.first ||
+                       owner.try(:ecosystems)&.first
   end
 
   protected
@@ -163,7 +176,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def has_grading_template_if_gradable
-    return unless [ 'reading', 'homework' ].include?(type) && grading_template.nil?
+    return unless gradable? && grading_template.nil?
 
     errors.add :grading_template, 'must be present for readings and homeworks'
     throw :abort
@@ -192,6 +205,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     forbidden_attributes.each { |key, value| errors.add key.to_sym, 'cannot be updated after open' }
 
     throw :abort
+  end
+
+  def settings_valid_for_publishing
+    return unless is_publish_requested
+    errors.add(:settings, 'must have at least one exercise') if homework? && settings['exercises'].blank?
+    errors.add(:settings, 'must have at least one page') if reading? && settings['page_ids'].blank?
   end
 
   def not_past_due_when_publishing
