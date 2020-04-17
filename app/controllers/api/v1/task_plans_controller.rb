@@ -1,6 +1,6 @@
 class Api::V1::TaskPlansController < Api::V1::ApiController
   resource_description do
-    api_versions "v1"
+    api_versions 'v1'
     short_description 'Represents a plan for a Task'
     description <<-EOS
       TaskPlans store information that assistants can use to generate Tasks.
@@ -399,6 +399,10 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       send_to_biglearn task_plan
     end
   end
+
+  ###############################################################
+  # restore
+  ###############################################################
 
   api :PUT, '/plans/:id/restore', 'Restores the specified TaskPlan'
   description <<-EOS

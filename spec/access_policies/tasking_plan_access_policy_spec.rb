@@ -1,16 +1,25 @@
 require 'rails_helper'
 
-RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
+RSpec.describe TaskingPlanAccessPolicy, type: :access_policy do
   before(:all) do
     @course = FactoryBot.create :course_profile_course
     @period = FactoryBot.create :course_membership_period, course: @course
 
     @task_plan = FactoryBot.create(:tasks_task_plan, owner: @course)
+    @tasking_plan = @task_plan.tasking_plans.first
+    @tasking_plan.update_attribute :due_at_ntz, Time.current - 1.day
+    @not_due_tasking_plan = FactoryBot.create(
+      :tasks_tasking_plan,
+      task_plan: @task_plan,
+      target: FactoryBot.create(:course_membership_period, course: @course)
+    )
 
     @clone_course = FactoryBot.create :course_profile_course, cloned_from: @course
     @clone_period = FactoryBot.create :course_membership_period, course: @clone_course
 
     @clone_task_plan = FactoryBot.create(:tasks_task_plan, owner: @clone_course)
+    @clone_tasking_plan = @clone_task_plan.tasking_plans.first
+    @clone_tasking_plan.update_attribute :due_at_ntz, Time.current - 1.day
 
     @anonymous = User::Models::Profile.anonymous
     @user = FactoryBot.create(:user_profile)
@@ -23,6 +32,8 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     # NotYetImplemented, but we can kid of simulate it by creating a task_plan and then updating it
     @owned_task_plan = FactoryBot.create(:tasks_task_plan)
     @owned_task_plan.update_attribute :owner, @owner
+    @owned_tasking_plan = @owned_task_plan.tasking_plans.first
+    @owned_tasking_plan.update_attribute :due_at_ntz, Time.current - 1.day
 
     AddUserAsPeriodStudent[user: @student, period: @period]
     AddUserAsCourseTeacher[user: @teacher, course: @course]
@@ -33,12 +44,12 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
   context 'original task plans' do
     context 'owned by the course' do
       # action, requestor are set in contexts
-      subject(:allowed) { described_class.action_allowed?(action, requestor, @task_plan) }
+      subject(:allowed) { described_class.action_allowed?(action, requestor, @tasking_plan) }
 
       context 'anonymous users' do
         let(:requestor) { @anonymous }
 
-        [ :index, :read, :create, :update, :destroy ].each do |test_action|
+        [ :grade ].each do |test_action|
           context test_action.to_s do
             let(:action) { test_action }
 
@@ -50,13 +61,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       context 'random users' do
         let(:requestor) { @user }
 
-        context 'index' do
-          let(:action) { :index }
-
-          it { should eq true }
-        end
-
-        [ :read, :create, :update, :destroy, :restore ].each do |test_action|
+        [ :grade ].each do |test_action|
           context test_action.to_s do
             let(:action) { test_action }
 
@@ -68,13 +73,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       context 'students in the original course' do
         let(:requestor) { @student }
 
-        context 'index' do
-          let(:action) { :index }
-
-          it { should eq true }
-        end
-
-        [ :read, :create, :update, :destroy, :restore ].each do |test_action|
+        [ :grade ].each do |test_action|
           context test_action.to_s do
             let(:action) { test_action }
 
@@ -86,13 +85,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       context 'students in the cloned course' do
         let(:requestor) { @clone_student }
 
-        context 'index' do
-          let(:action) { :index }
-
-          it { should eq true }
-        end
-
-        [ :read, :create, :update, :destroy, :restore ].each do |test_action|
+        [ :grade ].each do |test_action|
           context test_action.to_s do
             let(:action) { test_action }
 
@@ -104,7 +97,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       context 'teachers in the original course' do
         let(:requestor) { @teacher }
 
-        [ :index, :read, :create, :update, :destroy, :restore ].each do |test_action|
+        [ :grade ].each do |test_action|
           context test_action.to_s do
             let(:action) { test_action }
 
@@ -116,15 +109,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       context 'teachers in the cloned course' do
         let(:requestor) { @clone_teacher }
 
-        [ :index, :read ].each do |test_action|
-          context test_action.to_s do
-            let(:action) { test_action }
-
-            it { should eq true }
-          end
-        end
-
-        [ :create, :update, :destroy, :restore ].each do |test_action|
+        [ :grade ].each do |test_action|
           context test_action.to_s do
             let(:action) { test_action }
 
@@ -136,12 +121,12 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
 
     context 'owned by the user' do
       # action, requestor are set in contexts
-      subject(:allowed) { described_class.action_allowed?(action, requestor, @owned_task_plan) }
+      subject(:allowed) { described_class.action_allowed?(action, requestor, @owned_tasking_plan) }
 
       context 'anonymous users' do
         let(:requestor) { @anonymous }
 
-        [ :index, :read, :create, :update, :destroy ].each do |test_action|
+        [ :grade ].each do |test_action|
           context test_action.to_s do
             let(:action) { test_action }
 
@@ -153,13 +138,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       context 'random users' do
         let(:requestor) { @user }
 
-        context 'index' do
-          let(:action) { :index }
-
-          it { should eq true }
-        end
-
-        [ :read, :create, :update, :destroy, :restore ].each do |test_action|
+        [ :grade ].each do |test_action|
           context test_action.to_s do
             let(:action) { test_action }
 
@@ -171,7 +150,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       context 'task plan owners' do
         let(:requestor) { @owner }
 
-        [ :index, :read, :create, :update, :destroy, :restore ].each do |test_action|
+        [ :grade ].each do |test_action|
           context test_action.to_s do
             let(:action) { test_action }
 
@@ -184,12 +163,12 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
 
   context 'cloned task plans' do
     # action, requestor are set in contexts
-    subject(:allowed) { described_class.action_allowed?(action, requestor, @clone_task_plan) }
+    subject(:allowed) { described_class.action_allowed?(action, requestor, @clone_tasking_plan) }
 
     context 'anonymous users' do
       let(:requestor) { @anonymous }
 
-      [ :index, :read, :create, :update, :destroy ].each do |test_action|
+      [ :grade ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -201,13 +180,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     context 'random users' do
       let(:requestor) { @user }
 
-      context 'index' do
-        let(:action) { :index }
-
-        it { should eq true }
-      end
-
-      [ :read, :create, :update, :destroy, :restore ].each do |test_action|
+      [ :grade ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -219,13 +192,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     context 'students in the original course' do
       let(:requestor) { @student }
 
-      context 'index' do
-        let(:action) { :index }
-
-        it { should eq true }
-      end
-
-      [ :read, :create, :update, :destroy, :restore ].each do |test_action|
+      [ :grade ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -237,13 +204,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     context 'students in the cloned course' do
       let(:requestor) { @clone_student }
 
-      context 'index' do
-        let(:action) { :index }
-
-        it { should eq true }
-      end
-
-      [ :read, :create, :update, :destroy, :restore ].each do |test_action|
+      [ :grade ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -255,13 +216,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     context 'teachers in the original course' do
       let(:requestor) { @teacher }
 
-      context 'index' do
-        let(:action) { :index }
-
-        it { should eq true }
-      end
-
-      [ :read, :create, :update, :destroy, :restore ].each do |test_action|
+      [ :grade ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -273,12 +228,24 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     context 'teachers in the cloned course' do
       let(:requestor) { @clone_teacher }
 
-      [ :index, :read, :create, :update, :destroy, :restore ].each do |test_action|
+      [ :grade ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
           it { should eq true }
         end
+      end
+    end
+  end
+
+  context 'not yet due tasking plan' do
+    subject(:allowed) { described_class.action_allowed?(action, @teacher, @not_due_tasking_plan) }
+
+    [ :grade ].each do |test_action|
+      context test_action.to_s do
+        let(:action) { test_action }
+
+        it { should eq false }
       end
     end
   end
