@@ -274,8 +274,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
   context 'exercise update progression' do
     before do
-      @tasked_exercise.task_step.task.feedback_at = Time.current + 1.week
-      @tasked_exercise.task_step.task.save!
+      @tasked_exercise.task_step.task.task_plan.grading_template.auto_grading_feedback_on_due!
     end
 
     it 'only shows feedback and correct answer id after completed and feedback available' do

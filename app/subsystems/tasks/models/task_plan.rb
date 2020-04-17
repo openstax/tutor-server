@@ -195,7 +195,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def grading_template_same_course
-    return if grading_template.nil? || grading_template.course == owner
+    return if grading_template.nil? || grading_template.course == course
 
     errors.add :grading_template, 'must belong to the same course'
     throw :abort

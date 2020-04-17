@@ -10,6 +10,7 @@ FactoryBot.define do
       target                    { nil }
       opens_at                  { nil }
       due_at                    { nil }
+      closes_at                 { nil }
     end
 
     title                       { 'A task' }
@@ -29,7 +30,7 @@ FactoryBot.define do
       task_plan.ecosystem ||= task_plan.course.ecosystem
       AddEcosystemToCourse.call(ecosystem: task_plan.ecosystem, course: task_plan.course) \
         unless task_plan.ecosystem.nil? || task_plan.course.ecosystem == task_plan.ecosystem
-      task_plan.grading_template ||= task_plan.owner.grading_templates.detect do |grading_template|
+      task_plan.grading_template ||= task_plan.course.grading_templates.detect do |grading_template|
         grading_template.task_plan_type.to_s == task_plan.type
       end
       task_plan.grading_template ||= build(

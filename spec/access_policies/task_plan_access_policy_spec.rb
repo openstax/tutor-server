@@ -135,7 +135,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     context 'anonymous users' do
       let(:requestor) { @anonymous }
 
-      [:index, :read, :create, :update, :destroy].each do |test_action|
+      [ :index, :read, :create, :update, :destroy ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -153,7 +153,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
         it { should eq true }
       end
 
-      [:read, :create, :update, :destroy, :restore].each do |test_action|
+      [ :read, :create, :update, :destroy, :restore ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -171,7 +171,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
         it { should eq true }
       end
 
-      [:read, :create, :update, :destroy, :restore].each do |test_action|
+      [ :read, :create, :update, :destroy, :restore ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -189,7 +189,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
         it { should eq true }
       end
 
-      [:read, :create, :update, :destroy, :restore].each do |test_action|
+      [ :read, :create, :update, :destroy, :restore ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -207,7 +207,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
         it { should eq true }
       end
 
-      [:read, :create, :update, :destroy, :restore].each do |test_action|
+      [ :read, :create, :update, :destroy, :restore ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -219,7 +219,7 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
     context 'teachers in the cloned course' do
       let(:requestor) { @clone_teacher }
 
-      [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
+      [ :index, :read, :create, :update, :destroy, :restore ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
