@@ -11,7 +11,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
           "items": {
             "type": "string"
           },
-          "minItems": 1,
+          "minItems": 0,
           "uniqueItems": true
         }
       },
