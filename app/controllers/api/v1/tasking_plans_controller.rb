@@ -20,7 +20,24 @@ class Api::V1::TaskingPlansController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:grade, current_api_user, tasking_plan)
 
-    tasking_plan.update_attribute :grades_published_at, Time.current
+    tasks = case tasking_plan.target_type
+    when 'CourseMembership::Models::Period'
+      tasking_plan.task_plan.tasks.joins(taskings: { role: :student }).where(
+        taskings: {
+          role: { student: { course_membership_period_id: tasking_plan.target_id } }
+        }
+      )
+    when 'CourseProfile::Models::Course'
+      tasking_plan.task_plan.owner == tasking_plan.target ? tasking_plan.task_plan.tasks : []
+    else
+      raise NotImplementedError
+    end
+
+    Tasks::Models::TaskedExercise.joins(:task_step).where(
+      task_step: { tasks_task_id: tasks.map(&:id) }
+    ).update_all '"published_points" = "grader_points", "published_comments" = "grader_comments"'
+
+    tasks.update_all grades_last_published_at: Time.current
 
     respond_with(
       tasking_plan,

@@ -56,16 +56,20 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   ###############################################################
 
   api :PUT, '/steps/:step_id/grade', 'Grades the specified TaskStep'
+  description <<-EOS
+    #{json_schema(Api::V1::Tasks::TaskedExerciseGradingRepresenter, include: :writeable)}
+  EOS
   def grade
     OSU::AccessPolicy.require_action_allowed!(:grade, current_api_user, @tasked)
 
-    consume! @tasked, represent_with: Api::V1::GradingRepresenter
+    consume! @tasked, represent_with: Api::V1::Tasks::TaskedExerciseGradingRepresenter
+    @tasked.last_graded_at = Time.current
     @tasked.save
     raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
 
     respond_with(
       @tasked,
-      represent_with: Api::V1::GradingRepresenter,
+      represent_with: Api::V1::Tasks::TaskedExerciseGradingRepresenter,
       responder: ResponderWithPutPatchDeleteContent
     )
   end
