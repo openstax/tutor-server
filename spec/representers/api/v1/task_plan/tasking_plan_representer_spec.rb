@@ -71,21 +71,6 @@ RSpec.describe Api::V1::TaskPlan::TaskingPlanRepresenter, type: :representer do
     end
   end
 
-  context 'grades_published_at' do
-    it 'can be read' do
-      datetime = Time.zone.now
-      allow(tasking_plan).to receive(:grades_published_at).and_return(datetime)
-      expect(representation).to include(
-        'grades_published_at' => DateTimeUtilities.to_api_s(datetime)
-      )
-    end
-
-    it 'cannot be written (attempts are silently ignored)' do
-      described_class.new(tasking_plan).from_json({ grades_published_at: date_time_str }.to_json)
-      expect(tasking_plan).not_to have_received(:grades_published_at=)
-    end
-  end
-
   # A helper for reading input (json or hash) into a TaskingPlan.
   def consume(input:, to: tasking_plan)
     described_class.new(to).from_json(

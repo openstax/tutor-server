@@ -34,13 +34,8 @@ class Api::V1::TaskPlan::Scores::Representer < ::Roar::Decorator
              writeable: false
 
   collection :tasking_plans,
-             extend: Api::V1::TaskPlan::TaskingPlanRepresenter,
+             extend: Api::V1::TaskPlan::Scores::TaskingPlanRepresenter,
              readable: true,
-             writeable: false
-
-  collection :periods,
-             extend: Api::V1::TaskPlan::Scores::PeriodRepresenter,
-             readable: true,
-             writable: false,
+             writeable: false,
              getter: ->(*) { CalculateTaskPlanScores[task_plan: self] }
 end

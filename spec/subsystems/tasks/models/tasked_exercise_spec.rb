@@ -89,7 +89,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise.free_response = 'abc'
     tasked_exercise.save!
 
-    tasked_exercise.manually_graded_at = Time.current
+    tasked_exercise.last_graded_at = Time.current
     tasked_exercise.grader_points = 0.0
     tasked_exercise.save!
 
