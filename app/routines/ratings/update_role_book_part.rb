@@ -26,7 +26,7 @@ class Ratings::UpdateRoleBookPart
       )
       .where.not(answer_id: nil)
       .filter do |tasked_exercise|
-      tasked_exercise.task_step.task.feedback_available?(current_time: feedback_before)
+      tasked_exercise.task_step.task.auto_grading_feedback_available?(current_time: feedback_before)
     end.map(&:is_correct?)
 
     role_book_part = Ratings::RoleBookPart.new(

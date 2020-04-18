@@ -2,9 +2,9 @@ class Tasks::Models::Extension < ApplicationRecord
   belongs_to :task_plan, inverse_of: :extensions
   belongs_to :role, subsystem: :entity, inverse_of: :extensions
 
-  belongs_to_time_zone :due_at, :closes_at, suffix: :ntz
-
   has_one :task, inverse_of: :extension
+
+  has_timezone :due_at, :closes_at, suffix: :ntz
 
   before_validation :set_time_zone
 

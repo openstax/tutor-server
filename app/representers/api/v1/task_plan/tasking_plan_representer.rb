@@ -49,10 +49,4 @@ class Api::V1::TaskPlan::TaskingPlanRepresenter < Roar::Decorator
            writeable: true,
            getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) },
            schema_info: { required: true }
-
-  property :grades_published_at,
-           type: String,
-           readable: true,
-           writeable: false,
-           getter: ->(*) { DateTimeUtilities.to_api_s(grades_published_at) }
 end

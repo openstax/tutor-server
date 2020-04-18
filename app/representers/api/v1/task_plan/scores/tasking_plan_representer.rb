@@ -1,13 +1,10 @@
-class Api::V1::TaskPlan::Scores::PeriodRepresenter < Roar::Decorator
-  include Roar::JSON
-  include Representable::Coercion
-
-  property :id,
+class Api::V1::TaskPlan::Scores::TaskingPlanRepresenter < Api::V1::TaskPlan::TaskingPlanRepresenter
+  property :period_id,
            type: String,
            readable: true,
            writeable: false
 
-  property :name,
+  property :period_name,
            type: String,
            readable: true,
            writeable: false
@@ -36,4 +33,14 @@ class Api::V1::TaskPlan::Scores::PeriodRepresenter < Roar::Decorator
              readable: true,
              writeable: false,
              extend: Api::V1::TaskPlan::Scores::StudentRepresenter
+
+  property :questions_need_grading,
+           readable: true,
+           writeable: false,
+           schema_info: { type: 'boolean' }
+
+  property :grades_need_publishing,
+           readable: true,
+           writeable: false,
+           schema_info: { type: 'boolean' }
 end

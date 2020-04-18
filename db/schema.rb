@@ -932,11 +932,11 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.text "content"
     t.text "context"
     t.string "answer_ids", null: false, array: true
-    t.float "pending_points"
-    t.float "pending_comments"
     t.float "grader_points"
-    t.float "grader_comments"
-    t.datetime "manually_graded_at"
+    t.text "grader_comments"
+    t.datetime "last_graded_at"
+    t.float "published_points"
+    t.text "published_comments"
     t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"
@@ -991,7 +991,6 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "closes_at_ntz", null: false
-    t.datetime "grades_published_at"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasking_plans_on_due_at_ntz_and_opens_at_ntz"
     t.index ["opens_at_ntz"], name: "index_tasks_tasking_plans_on_opens_at_ntz"
     t.index ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true
@@ -1044,6 +1043,7 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.integer "core_page_ids", default: [], null: false, array: true
     t.datetime "core_steps_completed_at"
     t.bigint "tasks_extension_id"
+    t.datetime "grades_last_published_at"
     t.bigint "course_profile_course_id", null: false
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["course_profile_course_id"], name: "index_tasks_tasks_on_course_profile_course_id"

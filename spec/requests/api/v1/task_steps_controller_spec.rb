@@ -239,42 +239,86 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
         expect(response).to have_http_status(:success)
       end
     end
+
+    context 'practice task' do
+      let(:step) do
+        page = @tasked_exercise.exercise.page
+
+        FactoryBot.create :content_exercise, page: page
+
+        Content::Routines::PopulateExercisePools[book: page.book]
+
+        AddEcosystemToCourse[course: @course, ecosystem: page.ecosystem]
+
+        FindOrCreatePracticeSpecificTopicsTask[
+          course: @course, role: @user_1_role, page_ids: [page.id]
+        ].task_steps.first
+      end
+
+      it 'allows updating of a step' do
+        api_put api_step_url(step.id), @user_1_token, params: {
+                  free_response: 'Ipsum lorem', answer_id: step.tasked.answer_ids.first
+                }.to_json
+
+        expect(response).to have_http_status(:success)
+      end
+
+      it "422's if needs to pay" do
+        make_payment_required_and_expect_422(course: @course, user: @user_1) {
+          api_put api_step_url(step.id), @user_1_token,
+                  params: { free_response: 'Ipsum lorem' }.to_json
+        }
+      end
+    end
   end
 
-  context 'practice task update step' do
-    let(:step) do
-      page = @tasked_exercise.exercise.page
+  context '#grade' do
+    let(:tasked) do
+      FactoryBot.create(:tasks_tasked_exercise).tap do |tasked|
+        FactoryBot.create :tasks_tasking, role: @user_1_role, task: tasked.task_step.task
 
-      FactoryBot.create :content_exercise, page: page
-
-      Content::Routines::PopulateExercisePools[book: page.book]
-
-      AddEcosystemToCourse[course: @course, ecosystem: page.ecosystem]
-
-      FindOrCreatePracticeSpecificTopicsTask[
-        course: @course, role: @user_1_role, page_ids: [page.id]
-      ].task_steps.first
+        tasked.update_attribute :free_response, 'A sentence explaining all the things!'
+      end
     end
 
-    it 'allows updating of a step' do
-      api_put api_step_url(step.id), @user_1_token, params: {
-        free_response: 'Ipsum lorem', answer_id: step.tasked.answer_ids.first
-      }.to_json
-
-      expect(response).to have_http_status(:success)
+    context 'task not yet due' do
+      it 'raises SecurityTransgression' do
+        expect do
+          api_put grade_api_step_url(tasked.task_step.id), @teacher_user_token,
+                  params: { grader_points: 1.0, grader_comments: 'Test' }.to_json
+        end.to  raise_error(SecurityTransgression)
+           .and not_change { tasked.reload.grader_points }
+           .and not_change { tasked.grader_comments }
+           .and not_change { tasked.last_graded_at }
+           .and not_change { tasked.published_points }
+           .and not_change { tasked.published_comments }
+      end
     end
 
-    it "422's if needs to pay" do
-      make_payment_required_and_expect_422(course: @course, user: @user_1) {
-        api_put api_step_url(step.tasked.task_step.id), @user_1_token,
-                params: { free_response: 'Ipsum lorem' }.to_json
-      }
+    context 'task past-due' do
+      before { tasked.task_step.task.update_attribute :due_at_ntz, Time.current - 1.day }
+
+      it 'grades the exercise step' do
+        expect do
+          api_put grade_api_step_url(tasked.task_step.id), @teacher_user_token,
+                  params: { grader_points: 1.0, grader_comments: 'Test' }.to_json
+        end.to  change     { tasked.reload.grader_points }.from(nil).to(1.0)
+           .and change     { tasked.grader_comments }.from(nil).to('Test')
+           .and change     { tasked.last_graded_at }.from(nil)
+           .and not_change { tasked.published_points }
+           .and not_change { tasked.published_comments }
+        expect(response).to have_http_status(:success)
+
+        expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')
+      end
     end
   end
 
   context 'exercise update progression' do
     before do
       @tasked_exercise.task_step.task.task_plan.grading_template.auto_grading_feedback_on_due!
+
+      @tasked_exercise.task_step.task.update_attribute :opens_at, Time.current.yesterday - 1.day
     end
 
     it 'only shows feedback and correct answer id after completed and feedback available' do
@@ -317,8 +361,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
       # Get it again after feedback is available
-      @tasked_exercise.task_step.task.feedback_at = Time.current.yesterday
-      @tasked_exercise.task_step.task.save!
+      @tasked_exercise.task_step.task.update_attribute :due_at, Time.current.yesterday
 
       api_get(api_step_url(@tasked_exercise.task_step.id), @user_1_token)
 
@@ -353,8 +396,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(response).to have_http_status(:success)
 
       # The feedback date arrives
-      @tasked_exercise.task_step.task.feedback_at = Time.current.yesterday
-      @tasked_exercise.task_step.task.save!
+      @tasked_exercise.task_step.task.update_attribute :due_at, Time.current.yesterday
 
       # Free response cannot be changed
       api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,

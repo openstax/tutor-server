@@ -12,7 +12,6 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
     @user = FactoryBot.create(:user_profile)
     @teacher = FactoryBot.create(:user_profile)
     student = FactoryBot.create(:user_profile)
-    @unaffiliated_teacher = FactoryBot.create(:user_profile)
 
     @published_task_plan = FactoryBot.create(
       :tasked_task_plan,
@@ -194,17 +193,12 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
   end
 
   context '#show' do
-    it 'cannot be requested by anonymous users' do
+    it 'does not allow an anonymous user to view the task_plan' do
       expect { api_get api_task_plan_url(@task_plan.id), nil }.to raise_error(SecurityTransgression)
     end
 
-    it 'cannot be requested by unauthorized users' do
+    it 'does not allow an unauthorized user to view the task_plan' do
       sign_in! @user
-      expect { api_get api_task_plan_url(@task_plan.id), nil }.to raise_error(SecurityTransgression)
-    end
-
-    it 'cannot be requested by unrelated teachers' do
-      sign_in! @unaffiliated_teacher
       expect { api_get api_task_plan_url(@task_plan.id), nil }.to raise_error(SecurityTransgression)
     end
 
@@ -228,6 +222,21 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
 
   context '#create' do
     let(:valid_json_hash) { Api::V1::TaskPlan::Representer.new(@task_plan).to_hash }
+
+    it 'does not allow an anonymous user to create a task_plan' do
+      expect {
+        api_post api_course_task_plans_url(@course.id), nil,
+                 params: Api::V1::TaskPlan::Representer.new(@task_plan).to_json
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'does not allow an unauthorized user to create a task_plan' do
+      sign_in! @user
+      expect {
+        api_post api_course_task_plans_url(@course.id), nil,
+                 params: Api::V1::TaskPlan::Representer.new(@task_plan).to_json
+      }.to raise_error(SecurityTransgression)
+    end
 
     it 'allows a teacher to create a task_plan for their course' do
       sign_in! @teacher
@@ -262,27 +271,12 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       expect(response.body_as_hash[:errors].first[:code]).to eq 'tasking_plans_cant_be_blank'
     end
 
-    it 'does not allow an unauthorized user to create a task_plan' do
-      sign_in! @user
-      expect {
-        api_post api_course_task_plans_url(@course.id), nil,
-                 params: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
-      }.to raise_error(SecurityTransgression)
-    end
-
-    it 'does not allow an anonymous user to create a task_plan' do
-      expect {
-        api_post api_course_task_plans_url(@course.id), nil,
-                 params: Api::V1::TaskPlanRepresenter.new(@task_plan).to_json
-      }.to raise_error(SecurityTransgression)
-    end
-
     it 'fails if no Assistant found' do
       sign_in! @teacher
 
       expect {
         api_post api_course_task_plans_url(@course.id), nil,
-                 params: Api::V1::TaskPlanRepresenter.new(@task_plan).to_hash.except('type').to_json
+                 params: Api::V1::TaskPlan::Representer.new(@task_plan).to_hash.except('type').to_json
       }.to raise_error(IllegalState).and not_change { Tasks::Models::TaskPlan.count }
     end
 
@@ -340,7 +334,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
         )
       end
       let(:valid_json)         do
-        Api::V1::TaskPlanRepresenter.new(original_task_plan).to_hash.merge(
+        Api::V1::TaskPlan::Representer.new(original_task_plan).to_hash.merge(
           'cloned_from_id' => original_task_plan.id.to_s
         ).tap do |hash|
           hash['tasking_plans'].each_with_index do |tasking_plan, index|
@@ -386,6 +380,17 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
   context '#update' do
     let(:valid_json_hash) { Api::V1::TaskPlan::Representer.new(@task_plan).to_hash }
 
+    it 'does not allow an anonymous user to update a task_plan' do
+      expect { api_put api_task_plan_url(@task_plan.id), nil, params: valid_json_hash.to_json }
+        .to raise_error(SecurityTransgression)
+    end
+
+    it 'does not allow an unauthorized user to update a task_plan' do
+      sign_in! @user
+      expect { api_put api_task_plan_url(@task_plan.id), nil, params: valid_json_hash.to_json }
+        .to raise_error(SecurityTransgression)
+    end
+
     it 'allows a teacher to update a task_plan for their course' do
       sign_in! @teacher
       api_put api_task_plan_url(@task_plan.id), nil, params: valid_json_hash.to_json
@@ -420,17 +425,6 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body_as_hash[:errors].first[:code]).to eq 'tasking_plans_cant_be_blank'
       expect(@task_plan.tasking_plans.reload).not_to be_empty
-    end
-
-    it 'does not allow an unauthorized user to update a task_plan' do
-      sign_in! @user
-      expect { api_put api_task_plan_url(@task_plan.id), nil, params: valid_json_hash.to_json }
-        .to raise_error(SecurityTransgression)
-    end
-
-    it 'does not allow an anonymous user to update a task_plan' do
-      expect { api_put api_task_plan_url(@task_plan.id), nil, params: valid_json_hash.to_json }
-        .to raise_error(SecurityTransgression)
     end
 
     context 'when is_publish_requested is set' do
@@ -587,12 +581,23 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
         api_put api_task_plan_url(@task_plan.id), nil, params: invalid_json_hash.to_json
         expect(response).to have_http_status(:unprocessable_entity)
         error = response.body_as_hash[:errors].first
-        expect(error[:message]).to include "Tasking plans is invalid"
+        expect(error[:message]).to include 'Tasking plans is invalid'
       end
     end
   end
 
   context '#destroy' do
+    it 'does not allow an anonymous user to destroy a task_plan' do
+      expect { api_delete api_task_plan_url(@task_plan.id), nil }
+        .to raise_error(SecurityTransgression)
+    end
+
+    it 'does not allow an unauthorized user to destroy a task_plan' do
+      sign_in! @user
+      expect { api_delete api_task_plan_url(@task_plan.id), nil }
+        .to raise_error(SecurityTransgression)
+    end
+
     it 'allows a teacher to destroy a task_plan for their course and sends it to Biglearn' do
       expect(OpenStax::Biglearn::Api).to receive(:create_update_assignments).with(
         @task_plan.tasks.map { |task| { course: @course, task: task } }
@@ -613,21 +618,21 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body_as_hash[:errors].first[:code]).to eq('task_plan_is_already_deleted')
     end
-
-    it 'does not allow an unauthorized user to destroy a task_plan' do
-      sign_in! @user
-      expect { api_delete api_task_plan_url(@task_plan.id), nil }
-        .to raise_error(SecurityTransgression)
-    end
-
-    it 'does not allow an anonymous user to destroy a task_plan' do
-      expect { api_delete api_task_plan_url(@task_plan.id), nil }
-        .to raise_error(SecurityTransgression)
-    end
   end
 
   context '#restore' do
     before(:each) { @task_plan.destroy! }
+
+    it 'does not allow an anonymous user to restore a task_plan' do
+      expect { api_put restore_api_task_plan_url(@task_plan.id), nil }
+        .to raise_error(SecurityTransgression)
+    end
+
+    it 'does not allow an unauthorized user to restore a task_plan' do
+      sign_in! @user
+      expect { api_put restore_api_task_plan_url(@task_plan.id), nil }
+        .to raise_error(SecurityTransgression)
+    end
 
     it 'allows a teacher to restore a task_plan for their course and sends it to Biglearn' do
       expect(OpenStax::Biglearn::Api).to receive(:create_update_assignments).with(
@@ -649,22 +654,17 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       expect(response).to have_http_status(:unprocessable_entity)
       expect(response.body_as_hash[:errors].first[:code]).to eq('task_plan_is_not_deleted')
     end
-
-    it 'does not allow an unauthorized user to restore a task_plan' do
-      sign_in! @user
-      expect { api_put restore_api_task_plan_url(@task_plan.id), nil }
-        .to raise_error(SecurityTransgression)
-    end
-
-    it 'does not allow an anonymous user to restore a task_plan' do
-      expect { api_put restore_api_task_plan_url(@task_plan.id), nil }
-        .to raise_error(SecurityTransgression)
-    end
   end
 
   context '#stats' do
-    it 'cannot be requested by unrelated teachers' do
-      sign_in! @unaffiliated_teacher
+    it 'cannot be requested by anonymous users' do
+      expect {
+        api_get stats_api_task_plan_url(@published_task_plan.id), nil
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'cannot be requested by unauthorized users' do
+      sign_in! @user
       expect {
         api_get stats_api_task_plan_url(@published_task_plan.id), nil
       }.to raise_error(SecurityTransgression)
@@ -686,8 +686,14 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
   end
 
   context '#review' do
-    it 'cannot be requested by unrelated teachers' do
-      sign_in! @unaffiliated_teacher
+    it 'cannot be requested by anonymous users' do
+      expect {
+        api_get review_api_task_plan_url(@published_task_plan.id), nil
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'cannot be requested by unauthorized users' do
+      sign_in! @user
       expect {
         api_get review_api_task_plan_url(@published_task_plan.id), nil
       }.to raise_error(SecurityTransgression)
@@ -709,25 +715,31 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
   end
 
   context '#scores' do
-    it 'cannot be requested by unrelated teachers' do
-      controller.sign_in @unaffiliated_teacher
+    it 'cannot be requested by anonymous users' do
       expect {
-        api_get :scores, nil, params: { id: @published_task_plan.id }
+        api_get scores_api_task_plan_url(@published_task_plan.id), nil
+      }.to raise_error(SecurityTransgression)
+    end
+
+    it 'cannot be requested by unauthorized users' do
+      sign_in! @user
+      expect {
+        api_get scores_api_task_plan_url(@published_task_plan.id), nil
       }.to raise_error(SecurityTransgression)
     end
 
     it "can be requested by the course's teacher" do
-      controller.sign_in @teacher
+      sign_in! @teacher
       expect {
-        api_get :scores, nil, params: { id: @published_task_plan.id }
+        api_get scores_api_task_plan_url(@published_task_plan.id), nil
       }.to_not raise_error
     end
 
     it 'includes the scores' do
-      controller.sign_in @teacher
-      api_get :scores, nil, params: { id: @published_task_plan.id }
+      sign_in! @teacher
+      api_get scores_api_task_plan_url(@published_task_plan.id), nil
       # The representer spec does validate the json so we'll rely on it and just check presense
-      expect(response.body_as_hash[:periods]).to be_a(Array)
+      expect(response.body_as_hash[:tasking_plans]).to be_a(Array)
     end
   end
 end
