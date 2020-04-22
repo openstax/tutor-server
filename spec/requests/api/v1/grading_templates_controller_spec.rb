@@ -21,6 +21,8 @@ RSpec.describe Api::V1::GradingTemplatesController, type: :request, api: true, v
   end
 
   context 'POST /api/courses/1/grading_templates' do
+    before { grading_template.really_delete }
+
     it 'creates a new grading template for the course' do
       expect do
         api_post api_course_grading_templates_path(course), teacher_token,

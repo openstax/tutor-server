@@ -1,10 +1,13 @@
 require 'rails_helper'
 require_relative 'shared_examples_for_create_practice_task_routines'
 
-RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine do
-  before do
+RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine, speed: :medium do
+  include_examples 'a routine that creates practice tasks',
+                   -> { described_class.call course: @course, role: @role }
+
+  before(:all) do
     # Need some preexisting work to determine the worst areas
-    book = FactoryBot.create :content_book, :standard_contents_1, ecosystem: ecosystem
+    book = FactoryBot.create :content_book, :standard_contents_1, ecosystem: @ecosystem
     worked_pages = (
       2 * FindOrCreatePracticeTaskRoutine::NUM_EXERCISES
     ).times.map { FactoryBot.create :content_page, book: book }
@@ -12,7 +15,7 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine do
 
     worked_pages.each do |page|
       is_correct = !@worst_pages.include?(page)
-      task = FactoryBot.create :tasks_task, ecosystem: ecosystem, tasked_to: role
+      task = FactoryBot.create :tasks_task, ecosystem: @ecosystem, tasked_to: @role
       task.grading_template.auto_grading_feedback_on_answer!
 
       CalculateClue::CLUE_MIN_NUM_RESPONSES.times do
@@ -27,9 +30,6 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine do
       page.save!
     end
   end
-
-  include_examples 'a routine that creates practice tasks',
-                   -> { described_class.call course: course, role: role }
 
   it 'returns the expected pages' do
     expect(Set.new(result.outputs.task.task_steps.map(&:content_page_id))).to(
@@ -51,7 +51,7 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine do
       .and not_change { Tasks::Models::Tasking.count }
       .and not_change { Tasks::Models::TaskStep.count }
       .and not_change { Tasks::Models::TaskedExercise.count }
-      .and not_change { course.reload.sequence_number }
+      .and not_change { @course.reload.sequence_number }
     expect(result.errors.first.code).to eq :no_exercises
   end
 end
