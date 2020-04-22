@@ -1,37 +1,43 @@
 require 'rails_helper'
 
 RSpec.shared_examples 'a routine that creates practice tasks' do |result_proc|
-  let(:student)       { FactoryBot.create :course_membership_student }
-  let(:course)        { student.course }
-  let(:role)          { student.role }
+  before(:all) do
+    DatabaseCleaner.start
 
-  let(:page)          { FactoryBot.create :content_page }
+    student = FactoryBot.create :course_membership_student
+    @course = student.course
+    @role = student.role
 
-  let(:ecosystem)     { page.ecosystem }
+    @page = FactoryBot.create :content_page
+    @ecosystem = @page.ecosystem
 
-  (1..5).each do |n|
-    let!("exercise_#{n}".to_sym) do
-      FactoryBot.create(:content_exercise, page: page).tap do |exercise|
-        new_exercise_ids = page.practice_widget_exercise_ids + [exercise.id]
-        page.update_attribute :practice_widget_exercise_ids, new_exercise_ids
-      end
-    end
+    exercises = 5.times.map { FactoryBot.create(:content_exercise, page: @page) }
+
+    new_exercise_ids = @page.practice_widget_exercise_ids + exercises.map(&:id)
+    @page.update_attribute :practice_widget_exercise_ids, new_exercise_ids
+
+    @course.course_ecosystems.delete_all :delete_all
+    AddEcosystemToCourse[course: @course, ecosystem: @ecosystem]
+  end
+
+  after(:all) { DatabaseCleaner.clean }
+
+  before do
+    @course.reload
+    @role.reload
+    @page.reload
+    @ecosystem.reload
   end
 
   let(:result)        { instance_exec &result_proc }
   let(:practice_task) { result.outputs.task }
   let(:errors)        { result.errors }
 
-  before              do
-    course.course_ecosystems.delete_all :delete_all
-    AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-  end
-
   it 'errors when the course has ended' do
     current_time = Time.current
-    course.starts_at = current_time.last_month
-    course.ends_at = current_time.yesterday
-    course.save!
+    @course.starts_at = current_time.last_month
+    @course.ends_at = current_time.yesterday
+    @course.save!
 
     expect(errors.first.code).to eq :course_ended
   end
