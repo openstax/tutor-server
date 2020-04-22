@@ -3,7 +3,7 @@ FactoryBot.define do
     association :course, factory: :course_profile_course
 
     task_plan_type                 { [ :reading, :homework ].sample }
-    name                           { Faker::App.name }
+    name                           { SecureRandom.hex }
     completion_weight              { rand.round(1) }
     correctness_weight             { (1 - completion_weight).round(1) }
     auto_grading_feedback_on       { [ :answer, :due, :publish ].sample }

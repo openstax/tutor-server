@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe GradingTemplateAccessPolicy, type: :access_policy, speed: :medium do
+RSpec.describe GradingTemplateAccessPolicy, type: :access_policy do
   let(:grading_template)   { FactoryBot.create :tasks_grading_template }
   let(:course)             { grading_template.course }
 
