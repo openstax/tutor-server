@@ -1,5 +1,4 @@
 class CreateOrClaimCourse
-
   lev_routine express_output: :course
 
   uses_routine CreateCourse, as: :create_course,
@@ -22,6 +21,7 @@ class CreateOrClaimCourse
     else
       false
     end
+    attributes[:does_cost] ||= false if user.is_kip
 
     if attributes[:is_preview]
       run(:claim_preview_course, attributes.slice(:catalog_offering, :name, :is_college))
@@ -39,6 +39,4 @@ class CreateOrClaimCourse
       )
     end
   end
-
-
 end
