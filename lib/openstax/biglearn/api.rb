@@ -401,6 +401,9 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to a CLUe hash
     def fetch_student_clues(*requests)
       requests, options = extract_options requests, OPTION_KEYS
+      client = [ requests ].flatten.all? do |request|
+        request[:student].course.is_preview
+      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -408,7 +411,7 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: [:book_container_uuid, :student],
           perform_later: false,
-          client: 'fake'
+          client: client
         )
       ) do |_, response, _|
         # Return the last response received from Biglearn regardless of what it was
@@ -421,6 +424,9 @@ module OpenStax::Biglearn::Api
     # Returns a hash mapping request objects to a CLUe hash
     def fetch_teacher_clues(*requests)
       requests, options = extract_options requests, OPTION_KEYS
+      client = [ requests ].flatten.all? do |request|
+        request[:course_container].course.is_preview
+      end ? 'fake' : nil
 
       bulk_api_request(
         options.merge(
@@ -428,7 +434,7 @@ module OpenStax::Biglearn::Api
           requests: requests,
           keys: [:book_container_uuid, :course_container],
           perform_later: false,
-          client: 'fake'
+          client: client
         )
       ) do |_, response, _|
         # Return the last response received from Biglearn regardless of what it was
