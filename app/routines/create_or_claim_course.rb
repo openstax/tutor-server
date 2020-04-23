@@ -17,10 +17,10 @@ class CreateOrClaimCourse
     attributes[:is_college] ||= case user.school_type
     when 'college'
       true
-    when 'other_school_type'
-      false
-    else
+    when 'unknown_school_type'
       nil
+    else
+      false
     end
 
     if attributes[:is_preview]

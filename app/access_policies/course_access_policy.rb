@@ -14,7 +14,11 @@ class CourseAccessPolicy
     when :export, :roster, :add_period, :update, :stats, :exercises
       UserIsCourseTeacher[user: requestor, course: course]
     when :create
-      requestor.account.confirmed_faculty?
+      requestor.account.confirmed_faculty? && (
+        requestor.account.college? ||
+        requestor.account.high_school? ||
+        requestor.account.k12_school?
+      )
     when :clone
       requestor.account.confirmed_faculty? && UserIsCourseTeacher[user: requestor, course: course] && course.offering&.is_available
     when :lms_connection_info, :lms_sync_scores, :lms_course_pair
