@@ -14,8 +14,6 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   CLUE_Z_ALPHA_SQUARED = CLUE_Z_ALPHA**2
   CLUE_MIN_NUM_RESPONSES = 3
 
-  PRACTICE_WORST_NUM_EXERCISES = 5
-
   include OpenStax::Biglearn::Api::Client
 
   attr_reader :store
@@ -135,9 +133,9 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       exercise_ids_by_page_id = Content::Models::Page.where(
         id: page_ids_by_task_id.values.flatten.uniq
       ).pluck(:id, pool_method).to_h
-      exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
-        id: exercise_ids_by_page_id.values.flatten
-      ).index_by(&:id)
+      exercises_by_id = Content::Models::Exercise.select(
+        :id, :uuid, :number, :version, :number_of_questions
+      ).where(id: exercise_ids_by_page_id.values.flatten).index_by(&:id)
 
       page_ids_by_task_id.each do |task_id, page_ids|
         exercise_ids = exercise_ids_by_page_id.values_at(*page_ids).flatten
@@ -207,6 +205,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         end
 
         spaced_tasks = spaced_tasks_num_exercises.map(&:first).compact
+
         ecosystem_map = Content::Map.find_or_create_by(
           from_ecosystems: spaced_tasks.map(&:ecosystem).uniq,
           to_ecosystem: task.ecosystem
@@ -216,31 +215,31 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         exercise_ids_by_page_id = ecosystem_map.map_page_ids_to_exercise_ids(
           page_ids: page_ids, pool_type: pool_type
         )
-        exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
-          id: exercise_ids_by_page_id.values.flatten
-        ).index_by(&:id)
+        exercises_by_id = Content::Models::Exercise.select(
+          :id, :uuid, :number, :version, :number_of_questions
+        ).where(id: exercise_ids_by_page_id.values.flatten).index_by(&:id)
 
+        remaining = spaced_tasks_num_exercises.map(&:second).sum
         spaced_exercises_by_task_id[task.id] =
           spaced_tasks_num_exercises.flat_map do |task, num_exercises|
           exercise_ids = exercise_ids_by_page_id.values_at(*task.core_page_ids).compact.flatten
 
-          spaced_exercises = filter_and_choose_exercises(
+          filter_and_choose_exercises(
             exercises: exercises_by_id.values_at(*exercise_ids),
             task: task,
             count: num_exercises,
             current_time: current_time
-          )
+          ).tap { |exercises| remaining -= exercises.size }
+        end
 
-          remainder = num_exercises - spaced_exercises.size
-          next spaced_exercises unless remainder > 0
-
+        if remaining > 0
           # Use personalized exercises if not enough spaced practice exercises available
           exercise_ids = exercise_ids_by_page_id.values_at(*task.core_page_ids).compact.flatten
 
-          spaced_exercises + filter_and_choose_exercises(
+          spaced_exercises_by_task_id[task.id] += filter_and_choose_exercises(
             exercises: exercises_by_id.values_at(*exercise_ids),
             task: task,
-            count: remainder,
+            count: remaining,
             current_time: current_time
           )
         end
@@ -291,7 +290,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         page_ids = responses_by_page_id.sort_by do |_, responses|
           clue = calculate_clue(responses: responses)
           clue[:is_real] ? clue[:most_likely] : 1.5
-        end.first(PRACTICE_WORST_NUM_EXERCISES).map(&:first)
+        end.first(FindOrCreatePracticeTaskRoutine::NUM_EXERCISES).map(&:first)
 
         pools = Content::Models::Page.where(
           id: page_ids
@@ -299,10 +298,12 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         num_pools = pools.size
 
         if num_pools > 0
-          exercises_per_pool, remainder = PRACTICE_WORST_NUM_EXERCISES.divmod(num_pools)
-          exercises_by_id = Content::Models::Exercise.select(:id, :uuid, :number, :version).where(
-            id: pools.flatten
-          ).index_by(&:id)
+          exercises_per_pool, remainder = FindOrCreatePracticeTaskRoutine::NUM_EXERCISES.divmod(
+            num_pools
+          )
+          exercises_by_id = Content::Models::Exercise.select(
+            :id, :uuid, :number, :version, :number_of_questions
+          ).where(id: pools.flatten).index_by(&:id)
           pools.each_with_index do |pool, index|
             ex = filter_and_choose_exercises(
               exercises: exercises_by_id.values_at(*pool),

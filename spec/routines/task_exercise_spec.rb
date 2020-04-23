@@ -7,13 +7,20 @@ RSpec.describe TaskExercise, type: :routine do
     FactoryBot.create(:content_exercise, num_parts: 2, context: 'Some context')
   end
 
-  let(:task_step) { FactoryBot.build(:tasks_task_step) }
+  let(:task) { FactoryBot.create :tasks_task }
 
   it 'builds a TaskedExercise for the given exercise and task_step (and saves when task saved)' do
-    task_step.save!
+    expect do
+      described_class[exercise: exercise, task: task, group_type: :fixed_group, is_core: true]
+    end.to change { task.task_steps.count }.from(0).to(1)
 
-    TaskExercise[exercise: exercise, task_step: task_step]
+    task_step = task.task_steps.last
 
+    expect(task_step.page).to eq exercise.page
+    expect(task_step.fixed_group?).to eq true
+    expect(task_step.is_core).to eq true
+    expect(task_step.labels).to eq []
+    expect(task_step.spy).to eq({})
     expect(task_step.tasked).to be_a(Tasks::Models::TaskedExercise)
     expect(task_step.tasked).to be_persisted
     expect(task_step.tasked.is_in_multipart).to eq false
@@ -27,65 +34,55 @@ RSpec.describe TaskExercise, type: :routine do
   end
 
   it 'builds two TaskedExercises for a multipart' do
-    task = task_step.task
-
-    TaskExercise[exercise: multipart_exercise, task_step: task_step, task: task]
-
-    question_ids = multipart_exercise.content_as_independent_questions.map { |qq| qq[:id] }
-
-    expect(task.task_steps.length).to eq 2
-
-    task.task_steps.each do |ts|
-      expect(ts.tasked).to be_a Tasks::Models::TaskedExercise
-      expect(ts.tasked.is_in_multipart).to eq true
-      expect(ts.tasked.context).to eq 'Some context'
-      expect(ts.group_type).to eq task_step.group_type
-      expect(ts.page).to eq multipart_exercise.page
-      expect(ts.labels).to eq []
-    end
-    expect(task.task_steps[0].tasked.question_index).to eq 0
-    expect(task.task_steps[0].tasked.question_id).to eq question_ids[0]
-    expect(task.task_steps[0].tasked.content).to match("(0)")
-    expect(task.task_steps[1].tasked.question_index).to eq 1
-    expect(task.task_steps[1].tasked.question_id).to eq question_ids[1]
-    expect(task.task_steps[1].tasked.content).to match("(1)")
-  end
-
-  it 'can insert multiple exercise steps in order for a single placeholder step' do
-    task = FactoryBot.create :tasks_task, step_types: [
-      :tasks_tasked_reading, :tasks_tasked_placeholder, :tasks_tasked_exercise
-    ]
-    reading_step = task.task_steps.first
-    placeholder_step = task.task_steps.second
-    exercise_step = task.task_steps.third
-
-    placeholder_step.update_attributes group_type: :personalized_group, labels: ['test']
-
-    TaskExercise[exercise: multipart_exercise, task_step: placeholder_step, task: task]
+    expect do
+      TaskExercise[
+        exercise: multipart_exercise, task: task, group_type: :personalized_group, is_core: true
+      ]
+    end.to change { task.task_steps.count }.from(0).to(2)
 
     question_ids = multipart_exercise.content_as_independent_questions.map { |qq| qq[:id] }
 
-    expect(task.task_steps.length).to eq 4
-    expect(task.task_steps[0]).to eq reading_step
+    expect(task.task_steps.size).to eq 2
 
-    expect(task.task_steps[1]).to eq placeholder_step
-    task.task_steps[1..2].each do |task_step|
+    task.task_steps.each_with_index do |task_step, index|
       expect(task_step.tasked).to be_a Tasks::Models::TaskedExercise
       expect(task_step.tasked.is_in_multipart).to eq true
       expect(task_step.tasked.context).to eq 'Some context'
-      expect(task_step.group_type).to eq 'personalized_group'
       expect(task_step.page).to eq multipart_exercise.page
-      expect(task_step.labels).to eq ['test']
+      expect(task_step.personalized_group?).to eq true
+      expect(task_step.is_core).to eq true
+      expect(task_step.labels).to eq []
+      expect(task_step.spy).to eq({})
+      expect(task_step.tasked.question_index).to eq index
+      expect(task_step.tasked.question_id).to eq question_ids[index]
+      expect(task_step.tasked.content).to match("(#{index})")
     end
-    expect(task.task_steps[1].tasked.question_index).to eq 0
-    expect(task.task_steps[1].tasked.question_id).to eq question_ids[0]
-    expect(task.task_steps[1].tasked.content).to match("(0)")
-    expect(task.task_steps[2].tasked.question_index).to eq 1
-    expect(task.task_steps[2].tasked.question_id).to eq question_ids[1]
-    expect(task.task_steps[2].tasked.content).to match("(1)")
+  end
 
-    expect(task.task_steps[3]).to eq exercise_step
-    expect(task.task_steps[3].tasked.is_in_multipart).to eq false
-    expect(task.task_steps[3].page).not_to eq multipart_exercise.page
+  it 'can build just some parts of a multipart' do
+    task_step = FactoryBot.create(:tasks_tasked_placeholder).task_step
+    task = task_step.task
+
+    expect do
+      TaskExercise[exercise: multipart_exercise, task_steps: [ task_step ]]
+    end.to  not_change { task.task_steps.count }
+       .and not_change { task_step.reload.group_type }
+       .and not_change { task_step.is_core }
+       .and not_change { task_step.labels }
+       .and not_change { task_step.spy }
+
+    question_id = multipart_exercise.content_as_independent_questions.first[:id]
+
+    expect(task.task_steps.reload.size).to eq 1
+
+    task_step = task.task_steps.first
+
+    expect(task_step.tasked).to be_a Tasks::Models::TaskedExercise
+    expect(task_step.tasked.is_in_multipart).to eq true
+    expect(task_step.tasked.context).to eq 'Some context'
+    expect(task_step.page).to eq multipart_exercise.page
+    expect(task_step.tasked.question_index).to eq 0
+    expect(task_step.tasked.question_id).to eq question_id
+    expect(task_step.tasked.content).to match("(0)")
   end
 end

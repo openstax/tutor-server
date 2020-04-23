@@ -50,17 +50,22 @@ class Tasks::Assistants::GenericAssistant
   end
 
   def add_exercise_step!(
-    task:, exercise:, group_type:, is_core:, title: nil, labels: nil, fragment_index: nil
+    task:, exercise:, group_type:, is_core:, title: nil, labels: nil, spy: nil, fragment_index: nil
   )
     labels ||= []
+    spy ||= {}
     @used_exercise_numbers << exercise.number
 
-    TaskExercise.call(task: task, exercise: exercise, title: title) do |step|
-      step.group_type = group_type
-      step.is_core = is_core
-      step.labels = labels
-      step.fragment_index = fragment_index
-    end.outputs.task_step
+    TaskExercise.call(
+      task: task,
+      exercise: exercise,
+      title: title,
+      group_type: group_type,
+      is_core: is_core,
+      labels: labels,
+      spy: spy,
+      fragment_index: fragment_index
+    ).outputs.task_step
   end
 
   def get_all_page_exercises_with_queries(page:, queries:)

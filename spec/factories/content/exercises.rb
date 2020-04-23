@@ -17,6 +17,7 @@ FactoryBot.define do
         number: number, version: version, uid: uid, tags: tags, num_parts: num_parts
       ).to_json
     end
+    number_of_questions { wrapper.questions.size }
     question_answer_ids { wrapper.question_answer_ids }
 
     uuid                { wrapper.uuid       }

@@ -3,44 +3,49 @@ class TaskExercise
 
   protected
 
-  def exec(exercise:, task: nil, task_step: nil, title: nil, allow_save: true)
+  def exec(
+    exercise:, task: nil, task_steps: nil, title: nil, allow_save: true,
+    group_type: nil, is_core: nil, labels: nil, spy: nil, fragment_index: nil
+  )
     # This routine will make one step per exercise part.
-    # If provided, the incoming `task_step` will be used as the first step.
+    # If provided, the incoming `task_steps` will be used.
 
-    task ||= task_step&.task
-    fatal_error(code: :cannot_get_task) if task.nil?
+    if task_steps.nil?
+      raise ArgumentError if task.nil? || group_type.nil? || is_core.nil?
 
-    if task_step.nil?
-      current_step = Tasks::Models::TaskStep.new
-      is_new_step = true
+      max_num_questions = nil
     else
-      current_step = task_step
-      is_new_step = !task.task_steps.include?(task_step)
+      task ||= task_steps.first&.task
+      raise ArgumentError if task.nil?
+
+      max_num_questions = task_steps.size
     end
 
-    page = exercise.page
-    current_step.page = page
-
-    group_type = current_step.group_type
-    is_core = current_step.is_core
-    labels = current_step.labels
-    spy = current_step.spy
-
     questions = exercise.content_as_independent_questions
+    is_in_multipart = exercise.is_multipart?
+    questions = questions.first(max_num_questions) unless max_num_questions.nil?
     outputs.task_steps = questions.each_with_index.map do |question, question_index|
-      # Make sure that all steps after the first exercise part get their own new step
-      if question_index > 0
+      # Make sure that all exercise parts get their own step
+      if task_steps.nil?
         current_step = Tasks::Models::TaskStep.new(
           task: task,
-          number: current_step.number.nil? ? nil : current_step.number + 1,
+          number: current_step.nil? ? nil : current_step.number + 1,
+          page: exercise.page,
           group_type: group_type,
-          is_core: is_core,
-          page: page,
-          labels: labels,
-          spy: spy
+          is_core: is_core
         )
         is_new_step = true
+      else
+        current_step = task_steps[question_index]
+        current_step.page = exercise.page
+        current_step.group_type = group_type unless group_type.nil?
+        current_step.is_core = is_core unless is_core.nil?
+        is_new_step = !task.task_steps.include?(current_step)
       end
+
+      current_step.fragment_index = fragment_index unless fragment_index.nil?
+      current_step.labels = labels unless labels.nil?
+      current_step.spy = spy unless spy.nil?
 
       # Mark the step as incomplete just in case it had been marked as complete before
       current_step.first_completed_at = nil
@@ -53,7 +58,7 @@ class TaskExercise
         question_id: question[:id],
         question_index: question_index,
         answer_ids: exercise.question_answer_ids[question_index],
-        is_in_multipart: questions.size > 1
+        is_in_multipart: is_in_multipart
       )
 
       current_step.tasked.set_correct_answer_id
@@ -76,6 +81,6 @@ class TaskExercise
     outputs.tasked_exercises = outputs.task_steps.map(&:tasked)
 
     # Task was already saved and we added more steps, so need to reload steps from DB
-    task.task_steps.reset if task.persisted? && current_step != task_step
+    task.task_steps.reset if task.persisted? && task_steps.nil?
   end
 end

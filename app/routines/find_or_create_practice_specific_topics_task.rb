@@ -18,12 +18,16 @@ class FindOrCreatePracticeSpecificTopicsTask
 
   def add_task_steps
     # Need at least 1 placeholder per page so we know where to place the exercise steps
-    @pages.each do |page|
+    # But we don't really need to keep track of more pages than we can handle
+    pages = @pages.shuffle
+    num_pages = pages.size
+
+    FindOrCreatePracticeTaskRoutine::NUM_EXERCISES.times.map do |index|
       task_step = Tasks::Models::TaskStep.new(
         tasked: Tasks::Models::TaskedPlaceholder.exercise_type.new,
         group_type: :personalized_group,
         is_core: true,
-        page: page
+        page: pages[index % num_pages]
       )
 
       @task.task_steps << task_step

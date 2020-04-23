@@ -25,10 +25,6 @@ class Tasks::PopulatePlaceholderSteps
     # Lock the task_steps to ensure they don't get updated without us noticing
     task.task_steps.lock('FOR NO KEY UPDATE').reload
 
-    # If the task is a practice widget, we give Biglearn control of the number of PE slots
-    biglearn_controls_pe_slots = task.practice?
-    biglearn_controls_spe_slots = false
-
     pes_populated = false
     unless task.pes_are_assigned
       # Populate PEs
@@ -36,7 +32,6 @@ class Tasks::PopulatePlaceholderSteps
         task: task,
         group_type: :personalized_group,
         exercise_type: :pe,
-        biglearn_controls_slots: biglearn_controls_pe_slots,
         background: background,
         skip_unready: skip_unready
       )
@@ -55,7 +50,6 @@ class Tasks::PopulatePlaceholderSteps
         task: task,
         group_type: :spaced_practice_group,
         exercise_type: :spe,
-        biglearn_controls_slots: biglearn_controls_spe_slots,
         background: background,
         skip_unready: skip_unready
       )
@@ -83,9 +77,7 @@ class Tasks::PopulatePlaceholderSteps
     task.pes_are_assigned && (!populate_spes || task.spes_are_assigned)
   end
 
-  def populate_placeholder_steps(
-    task:, group_type:, exercise_type:, biglearn_controls_slots:, background:, skip_unready:
-  )
+  def populate_placeholder_steps(task:, group_type:, exercise_type:, background:, skip_unready:)
     # Get the task core_page_ids (only necessary for spaced_practice_group)
     core_page_ids = run(:get_task_core_page_ids, tasks: task)
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
@@ -99,143 +91,56 @@ class Tasks::PopulatePlaceholderSteps
     tasked_placeholder_ids_to_delete = []
     calculation_uuid = nil
 
-    if biglearn_controls_slots
-      # Biglearn controls how many PEs/SPEs
-      result = OpenStax::Biglearn::Api.public_send biglearn_api_method,
-                                                   task: task,
-                                                   inline_max_attempts: max_attempts,
-                                                   inline_sleep_interval: BIGLEARN_SLEEP_INTERVAL,
-                                                   enable_warnings: !skip_unready
-      # Bail if we are supposed to retry this in the background
-      return if !result[:accepted] && skip_unready
+    placeholder_steps = task.task_steps.filter do |task_step|
+      task_step.placeholder? && task_step.group_type == group_type.to_s
+    end
+    if placeholder_steps.empty?
+      task.update_attribute boolean_attribute, true
+      return
+    end
 
-      chosen_exercises = result[:exercises]
-      spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
-      exercise_spy_info = spy_info.fetch('exercises', {})
+    ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
-      # Group steps and exercises by content_page_id; Spaced Practice uses nil content_page_ids
-      task_steps_by_page_id = task.task_steps.group_by(&:content_page_id)
-      exercises_by_page_id = group_type == :personalized_group ?
-                               chosen_exercises.group_by(&:content_page_id) :
-                               { nil => chosen_exercises }
+    result = OpenStax::Biglearn::Api.public_send(
+      biglearn_api_method,
+      task: task,
+      max_num_exercises: placeholder_steps.size,
+      inline_max_attempts: max_attempts,
+      inline_sleep_interval: BIGLEARN_SLEEP_INTERVAL,
+      enable_warnings: !skip_unready
+    )
+    # Bail if we are supposed to retry this in the background
+    return if !result[:accepted] && skip_unready
 
-      # Keep track of the number of steps we added to the task
-      num_added_steps = 0
+    chosen_exercises = result[:exercises]
+    spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
+    exercise_spy_info = spy_info.fetch('exercises', {})
 
-      # Populate each page one at a time to ensure we get the correct number of steps for each
-      task_steps_by_page_id.each do |page_id, page_task_steps|
-        exercises = exercises_by_page_id[page_id] || []
-        placeholder_steps = page_task_steps.select do |task_step|
-          task_step.placeholder? && task_step.group_type == group_type.to_s
-        end
-        ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
+    # Group placeholder steps and exercises by content_page_id
+    # Spaced Practice uses nil content_page_ids
+    placeholder_steps_by_page_id = placeholder_steps.group_by(&:content_page_id)
+    exercises_by_page_id = group_type == :personalized_group ?
+                             chosen_exercises.group_by(&:content_page_id) :
+                             { nil => chosen_exercises }
+    placeholder_steps_by_page_id.each do |page_id, page_placeholder_steps|
+      # Always delete TaskedPlaceholders
+      tasked_placeholder_ids_to_delete.concat page_placeholder_steps.map(&:tasked_id)
 
-        last_step = page_task_steps.last
-        max_page_step_number = last_step&.number || 0
-        labels = last_step&.labels
-        is_core = last_step&.is_core || false
+      exercises = exercises_by_page_id[page_id] || []
 
-        # Iterate through all the exercises and steps
-        # Add/remove steps as needed
-        [exercises.size, placeholder_steps.size].max.times do |index|
-          exercise = exercises[index]
-          task_step = placeholder_steps[index]
+      exercises.each do |exercise|
+        break if page_placeholder_steps.empty?
 
-          if exercise.nil? || exercise.questions_hash.blank?
-            # Extra step: Remove it
-            # We don't compact the task steps (gaps are ok) so we don't decrement num_added_steps
-            task_step_ids_to_delete << task_step.id
-            tasked_placeholder_ids_to_delete << task_step.tasked_id
-          else
-            if task_step.nil?
-              # Need a new step for this exercise
-              next_step_number = max_page_step_number + num_added_steps + 1
-              task_step = Tasks::Models::TaskStep.new(
-                task: task,
-                number: next_step_number,
-                group_type: group_type,
-                is_core: is_core,
-                content_page_id: exercise.content_page_id,
-                labels: labels
-              )
+        # Assign the exercise (handles multipart questions, etc)
+        out = run(
+          :task_exercise,
+          task_steps: page_placeholder_steps,
+          exercise: exercise,
+          allow_save: false
+        ).outputs
+        task_steps = out.task_steps
 
-              num_added_steps += exercise.number_of_parts
-            else
-              # Reuse a placeholder step
-              tasked_placeholder_ids_to_delete << task_step.tasked_id
-
-              # Adjust the step number to be correct based on how many steps we've added
-              # since we are avoiding reloading
-              task_step.number += num_added_steps
-              task_step.changes_applied
-
-              num_added_steps += exercise.number_of_parts - 1
-            end
-
-            # Detect PEs being used as SPEs and set the step type to :personalized_group
-            # So they are displayed as personalized exercises
-            task_step.group_type = :personalized_group \
-              if group_type == :spaced_practice_group &&
-                 core_page_ids.include?(exercise.content_page_id)
-
-            task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
-
-            # Assign the exercise (handles multipart questions, etc)
-            out = run(
-              :task_exercise, task_step: task_step, exercise: exercise, allow_save: false
-            ).outputs
-            task_steps_to_upsert.concat out.task_steps
-            tasked_exercises_to_import.concat out.tasked_exercises
-          end
-        end
-      end
-    else
-      # Tutor controls how many PEs/SPEs
-      placeholder_steps = task.task_steps.filter do |task_step|
-        task_step.placeholder? && task_step.group_type == group_type.to_s
-      end
-      if placeholder_steps.empty?
-        task.update_attribute boolean_attribute, true
-        return
-      end
-
-      ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
-
-      # max_num_exercises ensures we don't get more exercises than the number of placeholders
-      result = OpenStax::Biglearn::Api.public_send(
-        biglearn_api_method,
-        task: task,
-        max_num_exercises: placeholder_steps.size,
-        inline_max_attempts: max_attempts,
-        inline_sleep_interval: BIGLEARN_SLEEP_INTERVAL,
-        enable_warnings: !skip_unready
-      )
-      # Bail if we are supposed to retry this in the background
-      return if !result[:accepted] && skip_unready
-
-      chosen_exercises = result[:exercises]
-      spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
-      exercise_spy_info = spy_info.fetch('exercises', {})
-
-      # This code is much simpler because it doesn't have to account for steps being added
-      # Group placeholder steps and exercises by content_page_id
-      # Spaced Practice uses nil content_page_ids
-      placeholder_steps_by_page_id = placeholder_steps.group_by(&:content_page_id)
-      exercises_by_page_id = group_type == :personalized_group ?
-                               chosen_exercises.group_by(&:content_page_id) :
-                               { nil => chosen_exercises }
-      placeholder_steps_by_page_id.each do |page_id, page_placeholder_steps|
-        exercises = exercises_by_page_id[page_id] || []
-
-        page_placeholder_steps.each_with_index do |task_step, index|
-          exercise = exercises[index]
-
-          # Always delete the TaskedPlaceholder
-          tasked_placeholder_ids_to_delete << task_step.tasked_id
-
-          # If no exercise available, also hard-delete the Placeholder TaskStep
-          next task_step_ids_to_delete << task_step.id if exercise.nil?
-
+        task_steps.each do |task_step|
           # Detect PEs being used as SPEs and set the step type to :personalized_group
           # So they are displayed as personalized exercises
           task_step.group_type = :personalized_group \
@@ -243,15 +148,15 @@ class Tasks::PopulatePlaceholderSteps
                core_page_ids.include?(exercise.content_page_id)
 
           task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
-
-          # Assign the exercise (handles multipart questions, etc)
-          out = run(
-            :task_exercise, task_step: task_step, exercise: exercise, allow_save: false
-          ).outputs
-          task_steps_to_upsert.concat out.task_steps
-          tasked_exercises_to_import.concat out.tasked_exercises
         end
+
+        task_steps_to_upsert.concat task_steps
+        tasked_exercises_to_import.concat out.tasked_exercises
+        page_placeholder_steps -= task_steps
       end
+
+      # If not enough exercises available, hard-delete any remaining Placeholder TaskSteps
+      task_step_ids_to_delete.concat page_placeholder_steps.map(&:id)
     end
 
     Tasks::Models::TaskedPlaceholder.where(id: tasked_placeholder_ids_to_delete).delete_all \

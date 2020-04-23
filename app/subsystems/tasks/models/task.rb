@@ -107,11 +107,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def goal_num_pes
-    if practice?
-      FindOrCreatePracticeTaskRoutine::NUM_BIGLEARN_EXERCISES
-    else
-      task_steps.personalized_group.to_a.count { |step| step.exercise? || step.placeholder? }
-    end
+    task_steps.personalized_group.to_a.count { |step| step.exercise? || step.placeholder? }
   end
 
   def goal_num_spes

@@ -1,4 +1,7 @@
 class Content::Routines::PopulateExercisePools
+  DYNAMIC_MPQ_UUIDS = [
+    '0a621f27-abe1-4c17-8f1c-d80d07958977'
+  ]
 
   lev_routine
 
@@ -7,6 +10,8 @@ class Content::Routines::PopulateExercisePools
   def exec(book:, pages: nil, save: true)
     pages ||= book.pages.to_a
     ActiveRecord::Associations::Preloader.new.preload(pages, exercises: :tags)
+
+    dynamic_multipart = DYNAMIC_MPQ_UUIDS.include?(book.uuid)
 
     pages.each do |page|
       page.exercises.each do |exercise|
@@ -19,8 +24,8 @@ class Content::Routines::PopulateExercisePools
         page.homework_core_exercise_ids << exercise.id \
           if tags.include?('type:practice')
 
-        # Multiparts can only be in the All Exercises and Homework Core pools
-        next if exercise.is_multipart?
+        # Except for APUSH, multiparts can only be in the All Exercises and Homework Core pools
+        next if !dynamic_multipart && exercise.is_multipart?
 
         # Reading Dynamic (Concept Coach)
         page.reading_dynamic_exercise_ids << exercise.id \
