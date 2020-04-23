@@ -93,8 +93,9 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 late_work_fraction_penalty: 0.0,
                 questions: [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: true,
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
@@ -103,12 +104,15 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                   }
                 ] + [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: false,
                     needs_grading: false
                   }
-                ] * 4 + [ { is_completed: false, needs_grading: false } ] * 3,
+                ] * 4 + [
+                  { task_step_id: kind_of(String), is_completed: false, needs_grading: false }
+                ] * 3,
                 questions_need_grading: false,
                 grades_need_publishing: false
               },
@@ -125,8 +129,9 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 late_work_fraction_penalty: 0.0,
                 questions: [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: true,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
@@ -135,12 +140,15 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                   }
                 ] + [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: false,
                     needs_grading: false
                   }
-                ] * 4 + [ { is_completed: false, needs_grading: false } ] * 3,
+                ] * 4 + [
+                  { task_step_id: kind_of(String), is_completed: false, needs_grading: false }
+                ] * 3,
                 questions_need_grading: false,
                 grades_need_publishing: false
               }
@@ -219,8 +227,9 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 late_work_fraction_penalty: late_work_penalty,
                 questions: [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: true,
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
@@ -229,13 +238,21 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                   }
                 ] + [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: false,
                     points: 0.0,
                     needs_grading: false
                   }
-                ] * 4 + [ { is_completed: false, points: 0.0, needs_grading: false } ] * 3,
+                ] * 4 + [
+                  {
+                    task_step_id: kind_of(String),
+                    is_completed: false,
+                    points: 0.0,
+                    needs_grading: false
+                  }
+                ] * 3,
                 questions_need_grading: false,
                 grades_need_publishing: false
               },
@@ -252,8 +269,9 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 late_work_fraction_penalty: late_work_penalty,
                 questions: [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: true,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
@@ -262,13 +280,21 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                   }
                 ] + [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: false,
                     points: 0.0,
                     needs_grading: false
                   }
-                ] * 4 + [ { is_completed: false, points: 0.0, needs_grading: false } ] * 3,
+                ] * 4 + [
+                  {
+                    task_step_id: kind_of(String),
+                    is_completed: false,
+                    points: 0.0,
+                    needs_grading: false
+                  }
+                ] * 3,
                 questions_need_grading: false,
                 grades_need_publishing: false
               }

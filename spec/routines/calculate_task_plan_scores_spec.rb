@@ -105,11 +105,14 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               total_points: 0.0,
               questions: task.task_steps.map do |ts|
                 if ts.exercise?
+                  tasked = ts.tasked
+
                   {
-                    id: ts.tasked.question_id,
-                    exercise_id: ts.tasked.content_exercise_id,
+                    task_step_id: ts.id,
+                    exercise_id: tasked.content_exercise_id,
+                    question_id: tasked.question_id,
                     is_completed: false,
-                    selected_answer_id: ts.tasked.answer_id,
+                    selected_answer_id: tasked.answer_id,
                     points: ts.completed? || task.past_due? ? 0.0 : nil,
                     free_response: nil,
                     grader_points: nil,
@@ -118,6 +121,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                   }
                 else
                   {
+                    task_step_id: ts.id,
                     is_completed: false,
                     points: task.past_due? ? 0.0 : nil,
                     needs_grading: false
@@ -183,19 +187,23 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               total_points: 0.0,
               questions: task.task_steps.map do |ts|
                 if ts.exercise?
+                  tasked = ts.tasked
+
                   {
-                    id: ts.tasked.question_id,
-                    exercise_id: ts.tasked.content_exercise_id,
+                    task_step_id: ts.id,
+                    exercise_id: tasked.content_exercise_id,
+                    question_id: tasked.question_id,
                     is_completed: ts.completed?,
-                    selected_answer_id: ts.tasked.answer_id,
+                    selected_answer_id: tasked.answer_id,
                     points: ts.completed? || task.past_due? ? 0.0 : nil,
-                    free_response: ts.tasked.free_response,
+                    free_response: tasked.free_response,
                     grader_points: nil,
                     grader_comments: nil,
                     needs_grading: false
                   }
                 else
                   {
+                    task_step_id: ts.id,
                     is_completed: false,
                     points: task.past_due? ? 0.0 : nil,
                     needs_grading: false
@@ -261,19 +269,23 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               total_points: is_correct ? 8.0 * task.late_work_multiplier : 0.0,
               questions: task.task_steps.map do |ts|
                 if ts.exercise?
+                  tasked = ts.tasked
+
                   {
-                    id: ts.tasked.question_id,
-                    exercise_id: ts.tasked.content_exercise_id,
+                    task_step_id: ts.id,
+                    exercise_id: tasked.content_exercise_id,
+                    question_id: tasked.question_id,
                     is_completed: ts.completed?,
-                    selected_answer_id: ts.tasked.answer_id,
+                    selected_answer_id: tasked.answer_id,
                     points: ts.completed? || task.past_due? ? (is_correct ? 1.0 : 0.0) : nil,
-                    free_response: ts.tasked.free_response,
+                    free_response: tasked.free_response,
                     grader_points: nil,
                     grader_comments: nil,
                     needs_grading: false
                   }
                 else
                   {
+                    task_step_id: ts.id,
                     is_completed: false,
                     points: task.past_due? ? 0.0 : nil,
                     needs_grading: false
