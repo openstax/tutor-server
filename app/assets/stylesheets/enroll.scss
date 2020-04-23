@@ -49,10 +49,6 @@ body#enroll {
 
         &.signup { background-image: image-url("student-onboarding/key.svg"); }
         &.enter-id { background-image: image-url("student-onboarding/student-id.svg"); }
-        &.payment {
-          background-image: image-url("student-onboarding/cost.svg");
-          background-position-y: 10px;
-        }
       }
 
     }
