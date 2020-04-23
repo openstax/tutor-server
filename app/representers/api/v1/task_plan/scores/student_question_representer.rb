@@ -2,12 +2,17 @@ class Api::V1::TaskPlan::Scores::StudentQuestionRepresenter < Roar::Decorator
   include Roar::JSON
   include Representable::Coercion
 
-  property :id,
+  property :task_step_id,
            type: String,
            readable: true,
            writeable: false
 
   property :exercise_id,
+           type: String,
+           readable: true,
+           writeable: false
+
+  property :question_id,
            type: String,
            readable: true,
            writeable: false

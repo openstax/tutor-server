@@ -91,8 +91,9 @@ class CalculateTaskPlanScores
             tasked = task_step.tasked
 
             {
-              id: task_step.tasked.question_id,
-              exercise_id: task_step.tasked.content_exercise_id,
+              task_step_id: task_step.id,
+              exercise_id: tasked.content_exercise_id,
+              question_id: tasked.question_id,
               is_completed: task_step.completed?,
               selected_answer_id: tasked.answer_id,
               points: points,
@@ -102,7 +103,12 @@ class CalculateTaskPlanScores
               needs_grading: tasked.needs_grading?
             }
           else
-            { is_completed: false, points: points, needs_grading: false }
+            {
+              task_step_id: task_step.id,
+              is_completed: false,
+              points: points,
+              needs_grading: false
+            }
           end
         end
 
