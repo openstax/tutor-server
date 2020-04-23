@@ -52,7 +52,7 @@ module Settings
     field :biglearn_assignment_pes_algorithm_name, type: :symbol, default: :biglearn_sparfa
     field :biglearn_practice_worst_areas_algorithm_name, type: :symbol, default: :biglearn_sparfa
 
-    field :default_is_lms_enabling_allowed, type: :boolean, default: false
+    field :default_is_lms_enabling_allowed, type: :boolean, default: true
 
     field :prebuilt_preview_course_count, type: :integer, default: 10
 
