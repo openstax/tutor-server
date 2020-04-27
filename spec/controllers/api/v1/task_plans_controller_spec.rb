@@ -26,7 +26,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       owner: @course,
       assistant: get_assistant(course: @course, task_plan_type: 'reading'),
       content_ecosystem_id: @ecosystem.id,
-      settings: { page_ids: [@page.id.to_s] },
+      settings: { page_ids: [ @page.id.to_s ] },
       type: 'reading',
       num_tasking_plans: 0
     )
@@ -69,6 +69,9 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         cc.year = @course.year
         cc.starts_at = @course.starts_at
         cc.ends_at = @course.ends_at
+        cc.save!
+
+        AddEcosystemToCourse.call ecosystem: @ecosystem, course: cc
       end
     end
 
@@ -378,19 +381,29 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     end
 
     context 'when cloned_from_id is set' do
-      let!(:source_task_plan) { FactoryBot.create :tasks_task_plan, ecosystem: @ecosystem }
-      let(:valid_json)        do
-        Api::V1::TaskPlanRepresenter.new(@task_plan).to_hash
-                                    .merge('cloned_from_id' => source_task_plan.id.to_s).to_json
+      let!(:original_task_plan) do
+        FactoryBot.create(
+          :tasked_task_plan,
+          number_of_students: 0,
+          published_at: Time.current
+        )
+      end
+      let(:valid_json)         do
+        Api::V1::TaskPlanRepresenter.new(original_task_plan).to_hash.merge(
+          'cloned_from_id' => original_task_plan.id.to_s
+        ).tap do |hash|
+          hash['tasking_plans'].each_with_index do |tasking_plan, index|
+            tasking_plan['target_id'] = @course.periods.to_a[index].id
+          end
+        end.to_json
       end
 
-      it 'calls UpdateTaskPlanEcosystem' do
+      it 'calls UpdateTaskPlanEcosystem and creates a valid cloned TaskPlan' do
         controller.sign_in @teacher
         expect(UpdateTaskPlanEcosystem).to receive(:call).and_call_original
         expect do
-          api_post :create, nil, params: { course_id: @course.id },
-                                 body: valid_json
-        end.to change{ Tasks::Models::TaskPlan.count }.by(1)
+          api_post :create, nil, params: { course_id: @course.id }, body: valid_json
+        end.to change { Tasks::Models::TaskPlan.count }.by(1)
         expect(response).to have_http_status(:success)
 
         expect(response.body).to(

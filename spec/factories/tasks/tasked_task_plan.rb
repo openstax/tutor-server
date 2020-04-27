@@ -1,5 +1,8 @@
 # To allow use in the development environment
-require_relative '../../support/fake_exercise_uuids'
+if Rails.env.development?
+  require_relative '../../vcr_helper'
+  require_relative '../../support/fake_exercise_uuids'
+end
 
 FactoryBot.define do
   factory :tasked_task_plan, parent: :tasks_task_plan do
@@ -58,19 +61,7 @@ FactoryBot.define do
 
     ecosystem do
       FactoryBot.create(:content_ecosystem).tap do |ecosystem|
-        if Rails.env.test?
-          require File.expand_path('../../../vcr_helper', __FILE__)
-
-          VCR.use_cassette('TaskedTaskPlan/with_inertia', VCR_OPTS) do
-            OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
-              Content::ImportBook[
-                cnx_book: cnx_book,
-                ecosystem: ecosystem,
-                reading_processing_instructions: reading_processing_instructions
-              ]
-            end
-          end
-        else
+        VCR.use_cassette('TaskedTaskPlan/with_inertia', VCR_OPTS) do
           OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
             Content::ImportBook[
               cnx_book: cnx_book,

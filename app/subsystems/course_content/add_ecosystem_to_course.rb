@@ -11,10 +11,10 @@ class CourseContent::AddEcosystemToCourse
       if course.lock!.ecosystem&.id == ecosystem.id
 
     course_ecosystem = CourseContent::Models::CourseEcosystem.new(
-      course: course, content_ecosystem_id: ecosystem.id
+      course: course, ecosystem: ecosystem
     )
     course.course_ecosystems << course_ecosystem
-    transfer_errors_from(course_ecosystem, {type: :verbatim}, true)
+    transfer_errors_from(course_ecosystem, { type: :verbatim }, true)
 
     # Create a mapping from the old course ecosystems to the new one and validate it
     outputs.ecosystem_map = ::Content::Map.find_or_create_by!(

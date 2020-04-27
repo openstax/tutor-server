@@ -35,9 +35,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         num_tasking_plans: 0
       )
 
-      course = @task_plan.owner.tap do |course|
-        AddEcosystemToCourse[course: course, ecosystem: @ecosystem]
-      end
+      course = @task_plan.owner
 
       period = FactoryBot.create :course_membership_period, course: course
 

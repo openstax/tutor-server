@@ -49,6 +49,8 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         )
 
         generate_homework_test_exercise_content
+
+        AddEcosystemToCourse.call ecosystem: @ecosystem, course: course
       end
 
       it 'distributes the steps' do
@@ -81,6 +83,8 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         )
 
         generate_homework_test_exercise_content
+
+        AddEcosystemToCourse.call ecosystem: @ecosystem, course: course
       end
 
       it 'creates a preview and distributes the steps' do

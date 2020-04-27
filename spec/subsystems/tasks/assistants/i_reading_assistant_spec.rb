@@ -91,11 +91,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       )
     end
 
-    let(:course) do
-      task_plan.owner.tap do |course|
-        AddEcosystemToCourse[course: course, ecosystem: @ecosystem]
-      end
-    end
+    let(:course) { task_plan.owner }
 
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 
@@ -295,11 +291,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       )
     end
 
-    let(:course) do
-      task_plan.owner.tap do |course|
-        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-      end
-    end
+    let(:course) { task_plan.owner }
 
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 
@@ -383,11 +375,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       )
     end
 
-    let(:course) do
-      task_plan.owner.tap do |course|
-        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-      end
-    end
+    let(:course) { task_plan.owner }
 
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 
@@ -566,9 +554,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       )
     end
 
-    let(:course) do
-      task_plan.owner.tap{ |course| AddEcosystemToCourse[course: course, ecosystem: ecosystem] }
-    end
+    let(:course) { task_plan.owner }
 
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 
