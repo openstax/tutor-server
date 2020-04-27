@@ -51,10 +51,6 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     @parser ||= OpenStax::Exercises::V1::Exercise.new(content: content)
   end
 
-  def answer_ids
-    super || parser.question_answer_ids.first
-  end
-
   def has_correctness?
     true
   end
