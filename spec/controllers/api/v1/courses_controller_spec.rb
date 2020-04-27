@@ -303,7 +303,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:status]).to eq 422
         Api::V1::CoursesController::CREATE_REQUIRED_ATTRIBUTES.each do |required_attr|
           expect(response.body_as_hash[:errors]).to include(
-            {code: "missing_attribute", message: "The #{required_attr} attribute must be provided"}
+            {code: 'missing_attribute', message: "The #{required_attr} attribute must be provided"}
           )
         end
       end
@@ -463,8 +463,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         due_at = time_zone.now + 2.months
 
         # User time-zone-less strings to update the open/due dates
-        opens_at_str = opens_at.strftime "%Y-%m-%d %H:%M:%S"
-        due_at_str = due_at.strftime "%Y-%m-%d %H:%M:%S"
+        opens_at_str = opens_at.strftime '%Y-%m-%d %H:%M:%S'
+        due_at_str = due_at.strftime '%Y-%m-%d %H:%M:%S'
 
         task_plan = FactoryBot.build :tasks_task_plan, owner: @course, num_tasking_plans: 0
         tasking_plan = FactoryBot.create :tasks_tasking_plan, task_plan: task_plan,
@@ -649,7 +649,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:errors].first[:code]).to eq 'cc_course'
       end
 
-      it "works without a role specified" do
+      it 'works without a role specified' do
         Preview::AnswerExercise[task_step: @hw1_task.task_steps[0], is_correct: true]
         Preview::AnswerExercise[task_step: @hw1_task.task_steps[2], is_correct: false]
 
@@ -726,7 +726,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         )
       end
 
-      it "allows the start_at and end_at dates to be specified" do
+      it 'allows the start_at and end_at dates to be specified' do
         api_get :dashboard, @student_token, params: {
           id: @course.id, start_at: @time_zone.now + 1.day, end_at: @time_zone.now + 1.week
         }
@@ -734,7 +734,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:tasks].size).to eq 1
       end
 
-      it "allows the start_at date to be specified alone" do
+      it 'allows the start_at date to be specified alone' do
         api_get :dashboard, @student_token, params: {
           id: @course.id, start_at: @time_zone.now + 1.day
         }
@@ -742,7 +742,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:tasks].size).to eq 1
       end
 
-      it "allows the end_at date to be specified alone" do
+      it 'allows the end_at date to be specified alone' do
         api_get :dashboard, @student_token, params: {
           id: @course.id, end_at: @time_zone.now - 2.weeks
         }
@@ -759,7 +759,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:errors].first[:code]).to eq 'cc_course'
       end
 
-      it "works without a role specified" do
+      it 'works without a role specified' do
         api_get :dashboard, @teacher_token, params: { id: @course.id }
 
         expect(response.body_as_hash).to match(
@@ -802,7 +802,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         )
       end
 
-      it "allows the start_at and end_at dates to be specified" do
+      it 'allows the start_at and end_at dates to be specified' do
         api_get :dashboard, @teacher_token, params: {
           id: @course.id, start_at: @time_zone.now - 2.hours, end_at: @time_zone.now - 1.hour
         }
@@ -810,7 +810,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:plans]).to be_empty
       end
 
-      it "allows the start_at date to be specified alone" do
+      it 'allows the start_at date to be specified alone' do
         api_get :dashboard, @teacher_token, params: {
           id: @course.id, start_at: @time_zone.now - 2.hours
         }
@@ -818,7 +818,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(response.body_as_hash[:plans].size).to eq 5
       end
 
-      it "allows the end_at date to be specified alone" do
+      it 'allows the end_at date to be specified alone' do
         api_get :dashboard, @teacher_token, params: {
           id: @course.id, end_at: @time_zone.now - 1.hours
         }

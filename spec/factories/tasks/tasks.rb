@@ -10,10 +10,12 @@ FactoryBot.define do
 
     task_type { :reading }
 
-    ecosystem { FactoryBot.create :content_ecosystem }
-
     after(:build) do |task, evaluator|
       tasked_to = [ evaluator.tasked_to ].flatten
+
+      period = tasked_to.first&.course_member&.period
+
+      task.ecosystem ||= period&.course&.ecosystem || FactoryBot.build(:content_ecosystem)
 
       task.task_plan ||= build(
         :tasks_task_plan,

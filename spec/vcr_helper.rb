@@ -21,7 +21,7 @@ VCR::Configuration.class_exec do
 
 
       # If the secret value is inside a URL, it will be URL encoded which means it
-      # may be different from value.  Handle this.
+      # may be different from value. Handle this.
       url_secret_value = CGI::escape(secret_value)
       if secret_value != url_secret_value
         filter_sensitive_data("<#{secret_name}_url>") { url_secret_value }
@@ -36,6 +36,8 @@ VCR.configure do |c|
   c.configure_rspec_metadata!
   c.allow_http_connections_when_no_cassette = false
   c.ignore_localhost = true
+  c.ignore_request { |request| Addressable::URI.parse(request.uri).path == '/oauth/token' } \
+    if Rails.env.development?
   c.preserve_exact_body_bytes { |http_message| !http_message.body.valid_encoding? }
 
   # Turn on debug logging, works in Travis too tho in full runs results
@@ -76,5 +78,5 @@ end
 VCR_OPTS = {
   # This should default to :none
   record: ENV.fetch('VCR_OPTS_RECORD', :none).to_sym,
-  allow_unused_http_interactions: false
+  allow_unused_http_interactions: Rails.env.development?
 }

@@ -14,12 +14,10 @@ class UpdateTaskPlanEcosystem
   end
 
   def update_task_plan(task_plan:, ecosystem:)
-    # Lock the plan to prevent concurrent publication
-    outputs.task_plan = task_plan.lock!
+    # No need to lock the plan because it should not be saved yet
+    outputs.task_plan = task_plan
 
-    return unless outputs.task_plan.valid?
-
-    old_ecosystem = outputs.task_plan.ecosystem
+    old_ecosystem = outputs.task_plan.set_and_return_ecosystem
 
     return if old_ecosystem == ecosystem
 

@@ -1,5 +1,4 @@
 class CourseProfile::Models::Course < ApplicationRecord
-
   acts_as_paranoid without_default_scope: true
 
   include DefaultTimeValidations
@@ -65,14 +64,14 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   def ecosystems
     # Keep the ecosystems in order
-    ce = course_ecosystems.to_a
-    ActiveRecord::Associations::Preloader.new.preload(ce, :ecosystem)
-    ce.map(&:ecosystem)
+    course_ecosystems.to_a.tap do |course_ecosystems|
+      ActiveRecord::Associations::Preloader.new.preload(course_ecosystems, :ecosystem)
+    end.map(&:ecosystem)
   end
 
   def ecosystem
     # Slightly more efficient than .ecosystems.first
-    course_ecosystems.first.try!(:ecosystem)
+    course_ecosystems.first&.ecosystem
   end
 
   def default_due_time
@@ -169,5 +168,4 @@ class CourseProfile::Models::Course < ApplicationRecord
     errors.add(:base, 'weights must add up to exactly 1')
     throw :abort
   end
-
 end

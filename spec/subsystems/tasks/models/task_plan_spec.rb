@@ -15,7 +15,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it { is_expected.to validate_presence_of(:title) }
 
-  it "requires at least one tasking_plan" do
+  it 'requires at least one tasking_plan' do
     expect(task_plan).to be_valid
 
     task_plan.tasking_plans.destroy_all
@@ -41,7 +41,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to be_valid
   end
 
-  it "automatically infers the ecosystem from the settings or owner" do
+  it 'automatically infers the ecosystem from the settings or owner' do
     ecosystem = task_plan.ecosystem
     book = FactoryBot.create :content_book, ecosystem: ecosystem
     page = FactoryBot.create :content_page, book: book
@@ -53,7 +53,8 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan.ecosystem).to be_nil
 
     task_plan.settings = { exercise_ids: [exercise.id.to_s] }
-    expect(task_plan).to be_valid
+    # Not valid because the course does not have the ecosystem
+    expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
 
     task_plan.settings = {}
@@ -62,7 +63,8 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan.ecosystem).to be_nil
 
     task_plan.settings = { page_ids: [page.id.to_s] }
-    expect(task_plan).to be_valid
+    # Not valid because the course does not have the ecosystem
+    expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
 
     task_plan.settings = {}
@@ -133,7 +135,9 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   it "automatically sets its ecosystem to the original's if cloned_from is specified" do
     clone = FactoryBot.build :tasks_task_plan, cloned_from: task_plan
     clone.ecosystem = nil
-    expect(clone.valid?).to eq true
+
+    # Need to run UpdateTaskPlanEcosystem to be valid
+    expect(clone).not_to be_valid
     expect(clone.ecosystem).to eq task_plan.ecosystem
   end
 
@@ -143,7 +147,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
     new_task_plan = FactoryBot.build :tasks_task_plan, owner: course
     new_task_plan.ecosystem = nil
-    expect(new_task_plan.valid?).to eq true
+    expect(new_task_plan).to be_valid
     expect(new_task_plan.ecosystem).to eq ecosystem
   end
 

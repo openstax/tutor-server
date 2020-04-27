@@ -1,7 +1,6 @@
 require 'json-schema'
 
 class Tasks::Models::TaskPlan < ApplicationRecord
-
   acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
   UPDATEABLE_ATTRIBUTES_AFTER_OPEN = [
@@ -27,13 +26,17 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   json_serialize :settings, Hash
 
-  before_validation :trim_text, :set_ecosystem
+  before_validation :trim_text, :set_and_return_ecosystem
 
   validates :title, presence: true
   validates :type, presence: true
   validates :tasking_plans, presence: true
 
-  validate :valid_settings, :same_ecosystem, :changes_allowed, :not_past_due_when_publishing
+  validate :valid_settings,
+           :valid_ecosystem,
+           :ecosystem_matches,
+           :changes_allowed,
+           :not_past_due_when_publishing
 
   scope :tasked_to_period_id, ->(period_id) do
     joins(:tasking_plans).where(
@@ -73,6 +76,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     Jobba.find(publish_job_uuid) if publish_job_uuid.present?
   end
 
+  def set_and_return_ecosystem
+    self.ecosystem ||= cloned_from&.ecosystem ||
+                       get_ecosystems_from_settings&.first ||
+                       owner.try(:ecosystems)&.first
+  end
+
   protected
 
   def get_ecosystems_from_exercise_ids
@@ -95,12 +104,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     end
   end
 
-  def set_ecosystem
-    self.ecosystem ||= cloned_from&.ecosystem ||
-                       get_ecosystems_from_settings&.first ||
-                       owner.try(:ecosystems)&.first
-  end
-
   def valid_settings
     schema = assistant.try(:schema)
     return if schema.blank?
@@ -112,7 +115,16 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     throw :abort
   end
 
-  def same_ecosystem
+  def valid_ecosystem
+    valid_ecosystems = owner.try(:ecosystems)
+    # Remove nil check if we remove polymorphism.
+    return if valid_ecosystems.nil? || valid_ecosystems.include?(ecosystem)
+
+    errors.add(:ecosystem, 'is not valid for this course')
+    throw :abort
+  end
+
+  def ecosystem_matches
     return if ecosystem.nil?
 
     # Special checks for the page_ids and exercise_ids settings
@@ -147,5 +159,4 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     self.title&.strip!
     self.description&.strip!
   end
-
 end
