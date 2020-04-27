@@ -17,7 +17,7 @@ class UpdateTaskPlanEcosystem
     # No need to lock the plan because it should not be saved yet
     outputs.task_plan = task_plan
 
-    old_ecosystem = outputs.task_plan.set_ecosystem
+    old_ecosystem = outputs.task_plan.set_and_return_ecosystem
 
     return if old_ecosystem == ecosystem
 

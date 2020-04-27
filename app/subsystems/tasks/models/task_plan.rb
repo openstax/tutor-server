@@ -26,7 +26,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   json_serialize :settings, Hash
 
-  before_validation :trim_text, :set_ecosystem
+  before_validation :trim_text, :set_and_return_ecosystem
 
   validates :title, presence: true
   validates :type, presence: true
@@ -76,7 +76,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     Jobba.find(publish_job_uuid) if publish_job_uuid.present?
   end
 
-  def set_ecosystem
+  def set_and_return_ecosystem
     self.ecosystem ||= cloned_from&.ecosystem ||
                        get_ecosystems_from_settings&.first ||
                        owner.try(:ecosystems)&.first
