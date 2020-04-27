@@ -6,17 +6,8 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
   let(:anon)        { User::Models::Profile.anonymous }
   let(:user)        { FactoryBot.create(:user_profile) }
   let(:application) { FactoryBot.create(:doorkeeper_application) }
-  let(:teacher)     do
-    FactoryBot.create(:user_profile).tap do |user|
-      user.account.confirmed_faculty!
-      user.account.other_school_type!
-    end
-  end
   let(:faculty)     do
-    FactoryBot.create(:user_profile).tap do |user|
-      user.account.confirmed_faculty!
-      user.account.college!
-    end
+    FactoryBot.create(:user_profile).tap { |user| user.account.confirmed_faculty! }
   end
 
   # action, requestor are set in contexts
@@ -58,54 +49,60 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
     end
   end
 
-  context 'verified non-college teacher' do
-    let(:requestor) { teacher }
-
-    [:index, :read, :create_course].each do |test_action|
-      context test_action.to_s do
-        let(:action) { test_action }
-
-        it { should eq true }
-      end
-    end
-  end
-
   context 'verified faculty' do
     let(:requestor) { faculty }
 
-    context 'index' do
-      let(:action) { :index }
+    [ :college, :high_school, :k12_school ].each do |school_type|
+      context school_type.to_s do
+        before { requestor.account.update_attribute :school_type, school_type }
 
-      it { should eq true }
-    end
-
-    context 'available offering' do
-      [ :read, :create_preview, :create_course ].each do |test_action|
-        context test_action.to_s do
-          let(:action) { test_action }
+        context 'index' do
+          let(:action) { :index }
 
           it { should eq true }
+        end
+
+        context 'available offering' do
+          [ :read, :create_preview, :create_course ].each do |test_action|
+            context test_action.to_s do
+              let(:action) { test_action }
+
+              it { should eq true }
+            end
+          end
+        end
+
+        context 'unavailable preview' do
+          before { offering.update_attribute :is_preview_available, false }
+
+          context 'create_preview' do
+            let(:action) { :create_preview }
+
+            it { should eq false }
+          end
+        end
+
+        context 'unavailable offering' do
+          before { offering.update_attribute :is_available, false }
+
+          context 'create_course' do
+            let(:action) { :create_course }
+
+            it { should eq false }
+          end
         end
       end
     end
 
-    context 'unavailable preview' do
-      before { offering.update_attribute :is_preview_available, false }
+    context 'other_school_type' do
+      before { requestor.account.other_school_type! }
 
-      context 'create_preview' do
-        let(:action) { :create_preview }
+      [ :index, :read, :create_course ].each do |test_action|
+        context test_action.to_s do
+          let(:action) { test_action }
 
-        it { should eq false }
-      end
-    end
-
-    context 'unavailable offering' do
-      before { offering.update_attribute :is_available, false }
-
-      context 'create_course' do
-        let(:action) { :create_course }
-
-        it { should eq false }
+          it { should eq false }
+        end
       end
     end
   end

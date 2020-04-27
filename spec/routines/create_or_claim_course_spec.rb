@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CreateOrClaimCourse, type: :routine do
-  let(:user)        { OpenStruct.new(is_test: is_test) }
+  let(:user)        { OpenStruct.new(is_test: is_test, school_type: 'college', is_kip: true) }
   let(:mock_course) { OpenStruct.new(id: 42, is_preview?: is_preview, is_test?: is_test) }
 
   context 'a preview course' do
@@ -10,7 +10,7 @@ RSpec.describe CreateOrClaimCourse, type: :routine do
 
     it 'claims an existing preview' do
       expect_any_instance_of(CourseProfile::ClaimPreviewCourse)
-        .to receive(:call).with(catalog_offering: 123, name: 'TEST', is_college: nil) do
+        .to receive(:call).with(catalog_offering: 123, name: 'TEST', is_college: true) do
         Lev::Routine::Result.new(Lev::Outputs.new(course: mock_course), Lev::Errors.new)
       end
 
@@ -31,9 +31,11 @@ RSpec.describe CreateOrClaimCourse, type: :routine do
     let(:is_preview) { false }
     let(:is_test)    { true }
 
-    it 'creates a new course' do
+    it 'creates a new course, setting is_college and does_cost' do
+      expect_any_instance_of(CreateCourse).to receive(:call) do |**options|
+        expect(options[:is_college]).to eq true
+        expect(options[:does_cost]).to eq false
 
-      expect_any_instance_of(CreateCourse).to receive(:call) do
         Lev::Routine::Result.new(Lev::Outputs.new(course: mock_course), Lev::Errors.new)
       end
 
