@@ -33,7 +33,7 @@ class CreateStudentHistory
       answer_correctly(practice_task, 5) # 5 out of 5
 
       create_practice_widget(
-        course: course, role: role, page_ids: [ecosystem.chapters[3].pages.map(&:id)]
+        course: course, role: role, page_ids: [ecosystem.pages.map(&:id)]
       ) # Not started
     end
   end

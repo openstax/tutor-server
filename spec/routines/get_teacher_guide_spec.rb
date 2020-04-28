@@ -136,7 +136,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
         title: 'Acceleration',
         book_location: [],
         student_count: 1,
-        questions_answered_count: 1,
+        questions_answered_count: 2,
         clue: clue_matcher,
         page_ids: [kind_of(Integer)]*2,
         children: [kind_of(Hash)]*2
@@ -147,7 +147,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
         title: "Force and Newton's Laws of Motion",
         book_location: [],
         student_count: 1,
-        questions_answered_count: 8,
+        questions_answered_count: 7,
         clue: clue_matcher,
         page_ids: [kind_of(Integer)]*4,
         children: [kind_of(Hash)]*4
@@ -158,7 +158,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
         title: 'Acceleration',
         book_location: [],
         student_count: 1,
-        questions_answered_count: 4,
+        questions_answered_count: 5,
         clue: clue_matcher,
         page_ids: [kind_of(Integer)]*2,
         children: [kind_of(Hash)]*2
@@ -169,7 +169,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
         title: "Force and Newton's Laws of Motion",
         book_location: [],
         student_count: 1,
-        questions_answered_count: 6,
+        questions_answered_count: 5,
         clue: clue_matcher,
         page_ids: [kind_of(Integer)]*4,
         children: [kind_of(Hash)]*4
@@ -183,7 +183,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
           title: 'Acceleration',
           book_location: [],
           student_count: 1,
-          questions_answered_count: 1,
+          questions_answered_count: 2,
           clue: clue_matcher,
           page_ids: [kind_of(Integer)]
         },
@@ -211,7 +211,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
           title: "Newton's First Law of Motion: Inertia",
           book_location: [],
           student_count: 1,
-          questions_answered_count: 6,
+          questions_answered_count: 5,
           clue: clue_matcher,
           page_ids: [kind_of(Integer)]
         },
@@ -239,7 +239,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
           title: 'Acceleration',
           book_location: [],
           student_count: 1,
-          questions_answered_count: 4,
+          questions_answered_count: 5,
           clue: clue_matcher,
           page_ids: [kind_of(Integer)]
         },
@@ -267,7 +267,7 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
           title: "Newton's First Law of Motion: Inertia",
           book_location: [],
           student_count: 1,
-          questions_answered_count: 6,
+          questions_answered_count: 5,
           clue: clue_matcher,
           page_ids: [kind_of(Integer)]
         },

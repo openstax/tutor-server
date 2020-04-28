@@ -190,12 +190,16 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
       tasks.each do |task|
         student_history = (
-          [ task ] + Tasks::Models::Task.select(
-            :id, :content_ecosystem_id, :core_page_ids
-          ).joins(:taskings).where(
+          [ task ] + Tasks::Models::Task.select(:id, :content_ecosystem_id, :core_page_ids)
+          .joins(:taskings)
+          .where(
             taskings: { entity_role_id: task.taskings.map(&:entity_role_id) },
             task_type: task.task_type
-          ).order(student_history_at: :desc).preload(:ecosystem).first(6)
+          )
+          .where.not(student_history_at: nil)
+          .order(student_history_at: :desc)
+          .preload(:ecosystem)
+          .first(6)
         ).uniq
 
         spaced_tasks_num_exercises = get_k_ago_map(
