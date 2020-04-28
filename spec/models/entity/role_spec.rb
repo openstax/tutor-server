@@ -5,6 +5,8 @@ RSpec.describe Entity::Role, type: :model do
 
   it { is_expected.to have_many(:taskings).dependent(:destroy) }
 
+  it { is_expected.to have_many(:role_book_parts).dependent(:destroy) }
+
   it { is_expected.to have_one(:student).dependent(:destroy) }
   it { is_expected.to have_one(:teacher).dependent(:destroy) }
   it { is_expected.to have_one(:teacher_student).dependent(:destroy) }

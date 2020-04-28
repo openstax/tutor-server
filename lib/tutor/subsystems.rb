@@ -1,7 +1,6 @@
 require_relative 'subsystems/association_extensions'
 
 module Tutor
-
   module SubSystems
     mattr_accessor :valid_namespaces
 
@@ -12,5 +11,4 @@ module Tutor
   end
 
   SubSystems.valid_namespaces = []
-
 end

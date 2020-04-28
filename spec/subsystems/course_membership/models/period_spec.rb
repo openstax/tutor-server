@@ -10,6 +10,8 @@ RSpec.describe CourseMembership::Models::Period, type: :model do
 
   it { is_expected.to have_many(:enrollments) }
 
+  it { is_expected.to have_many(:period_book_parts) }
+
   it { is_expected.to validate_presence_of(:name) }
 
   it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_profile_course_id) }

@@ -11,7 +11,9 @@ class ApplicationRecord < ActiveRecord::Base
   def self.table_name
     base = base_class
     if self == base
-      parts=self.to_s.split("::")
+      parts = self.to_s.split("::")
+      return super if parts.size == 1
+
       parts.first.underscore + "_" + parts.last.tableize
     else
       # STI subclass should use superclass' table
@@ -23,7 +25,6 @@ end
 # https://github.com/rails/rails/issues/32374#issuecomment-378122738
 module ActiveRecord
   class TableMetadata
-
     def associated_table(table_name)
       association = klass._reflect_on_association(table_name) || klass._reflect_on_association(table_name.to_s.singularize)
 
@@ -40,6 +41,5 @@ module ActiveRecord
 
       TableMetadata.new(association_klass, arel_table, association)
     end
-
   end
 end
