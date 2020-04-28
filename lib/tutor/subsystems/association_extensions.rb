@@ -31,20 +31,24 @@ module Tutor::SubSystems
         # Don't try to do subsystem stuff when the association is polymorphic and SS name unset
         return if subsystem_name.blank? && (options[:polymorphic] || options[:as])
 
-        return if ['none','ignore'].include?(subsystem_name)
+        return if ['none', 'ignore'].include?(subsystem_name)
 
         # Find the string before the first ::, thats the subsystem module
-        my_subsystem_name = self.name.to_s[/(\w+?)::/,1].underscore
+        my_subsystem_name = self.name.to_s[/(\w+?)::/, 1]&.underscore
 
-        # Only extend subsystem's that are listed as valid.
-        return unless Tutor::SubSystems.valid_name?(my_subsystem_name)
+        # Only extend subsystems that are listed as valid.
+        return unless my_subsystem_name.blank? || Tutor::SubSystems.valid_name?(my_subsystem_name)
 
         # If the :subsystem wasn't specified, default to the current model's subsystem
         subsystem_name = my_subsystem_name if subsystem_name.blank?
 
+        return if subsystem_name.blank?
+
         model_name = association_name.to_s.camelize.singularize
 
-        if subsystem_name == 'entity'
+        # We're trying to move away from the Models:: namespace
+        # Add subsystems that don't use Models:: here
+        if [ 'entity', 'cache' ].include?(subsystem_name)
           options[:class_name] ||= "::#{subsystem_name.camelize}::#{model_name}"
         else
           options[:class_name] ||= "::#{subsystem_name.camelize}::Models::#{model_name}"
@@ -54,7 +58,8 @@ module Tutor::SubSystems
           options[:foreign_key] ||= "#{subsystem_name}_#{association_name.to_s.underscore}_id"
         elsif options[:as].blank?
           klass_name = self.name.demodulize.underscore
-          options[:foreign_key] ||= "#{my_subsystem_name}_#{klass_name}_id"
+          options[:foreign_key] ||= my_subsystem_name.blank? ?
+            "#{klass_name}_id" : "#{my_subsystem_name}_#{klass_name}_id"
         end
         options
       end
