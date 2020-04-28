@@ -5,13 +5,14 @@ class FindOrCreatePracticeSpecificTopicsTask
 
   def setup(page_ids:)
     @task_type = :page_practice
-    @pages = Content::Models::Page.where(id: page_ids).order(:id).preload(:ecosystem)
-    @page_ids = @pages.map(&:id)
-    ecosystems = @pages.map(&:ecosystem).uniq
+    pages = Content::Models::Page.where(id: page_ids).order(:id).preload(:ecosystem)
+    ecosystems = pages.map(&:ecosystem).uniq
     fatal_error(
       code: :different_ecosystems, message: 'All page_ids given must belong to the same Ecosystem'
     ) if ecosystems.size > 1
     @ecosystem = ecosystems.first
+    @pages = pages.reject { |page| page.practice_widget_exercise_ids.empty? }
+    @page_ids = @pages.map(&:id)
 
     fatal_error(code: :invalid_page_ids) unless @course.ecosystems.include?(@ecosystem)
   end
