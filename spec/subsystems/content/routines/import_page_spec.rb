@@ -3,13 +3,14 @@ require 'vcr_helper'
 
 RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
   let(:book) { FactoryBot.create :content_book }
+  let(:parent_book_part_uuid) { SecureRandom.uuid }
 
   context 'tutor page' do
     let(:cnx_page)  do
       OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a', title: 'Force')
     end
-    let(:archive_url)  { OpenStax::Cnx::V1.archive_url_base }
-    let(:book_indices) { [4, 1] }
+    let(:archive_url)           { OpenStax::Cnx::V1.archive_url_base }
+    let(:book_indices)          { [4, 1] }
 
     it 'creates a new Page' do
       result = nil
@@ -146,7 +147,10 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
   def import_page
     OpenStax::Cnx::V1.with_archive_url(archive_url) do
       Content::Routines::ImportPage.call(
-        cnx_page: cnx_page, book: book, book_indices: book_indices
+        cnx_page: cnx_page,
+        book: book,
+        book_indices: book_indices,
+        parent_book_part_uuid: parent_book_part_uuid
       )
     end
   end

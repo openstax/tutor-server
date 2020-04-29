@@ -7,6 +7,7 @@ class CreateCacheRoleBookParts < ActiveRecord::Migration[5.2]
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.uuid :book_part_uuid, null: false, index: true
       t.jsonb :clue, null: false
+      t.boolean :is_cached_for_period, default: false, null: false
 
       t.timestamps
     end

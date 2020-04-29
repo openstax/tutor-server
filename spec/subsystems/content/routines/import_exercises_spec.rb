@@ -117,7 +117,12 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
-        Content::Routines::ImportPage[cnx_page: cnx_page, book: book, book_indices: [3, 1]]
+        Content::Routines::ImportPage[
+          cnx_page: cnx_page,
+          book: book,
+          book_indices: [3, 1],
+          parent_book_part_uuid: SecureRandom.uuid
+        ]
       end
 
       Content::Routines::TransformAndCachePageContent.call book: book
@@ -167,7 +172,12 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
-        Content::Routines::ImportPage[cnx_page: cnx_page, book: book, book_indices: [3, 1]]
+        Content::Routines::ImportPage[
+          cnx_page: cnx_page,
+          book: book,
+          book_indices: [3, 1],
+          parent_book_part_uuid: SecureRandom.uuid
+        ]
       end
     end
 

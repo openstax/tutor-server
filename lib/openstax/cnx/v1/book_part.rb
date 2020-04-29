@@ -20,8 +20,13 @@ module OpenStax::Cnx::V1
       @title ||= parsed_title.text
     end
 
+    # Old content used to have id == "subcol" for units and chapters
+    # If we encounter that, just assign a random UUID to them
     def uuid
-      @uuid ||= hash.fetch('id')
+      @uuid ||= begin
+        uuid = hash['id']
+        uuid.nil? || uuid == 'subcol' ? SecureRandom.uuid : uuid.split('@').first
+      end
     end
 
     def contents
@@ -36,11 +41,6 @@ module OpenStax::Cnx::V1
           OpenStax::Cnx::V1::Page.new(hash: hash, book: book)
         end
       end
-    end
-
-    def is_chapter?
-      # A BookPart is a chapter if none of its children are BookParts
-      @is_chapter ||= parts.none? { |part| part.is_a?(self.class) }
     end
   end
 end
