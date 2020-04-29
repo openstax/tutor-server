@@ -16,6 +16,7 @@ class Content::ImportBook
           book: book,
           book_indices: book_indices + [ index ],
           cnx_page: part,
+          parent_book_part_uuid: book_part.uuid,
           save: false,
           all_tags: all_tags
         ).outputs
@@ -36,13 +37,13 @@ class Content::ImportBook
     tree = []
 
     book_part.parts.each do |part|
-      hash = { title: part.title, book_location: part.book_location }
+      hash = { uuid: part.uuid, title: part.title, book_location: part.book_location }
 
       if part.is_a? OpenStax::Cnx::V1::Page
         hash[:type] = 'Page'
         page = ordered_pages[page_index]
         hash.merge!(
-          page.attributes.symbolize_keys.slice :id, :uuid, :version, :short_id, :tutor_uuid
+          page.attributes.symbolize_keys.slice :id, :version, :short_id, :tutor_uuid
         )
         Content::Models::Page::EXERCISE_ID_FIELDS.each do |field|
           hash[field] = page.public_send field

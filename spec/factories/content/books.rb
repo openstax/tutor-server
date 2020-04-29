@@ -63,11 +63,14 @@ FactoryBot.define do
     content { tree.to_json }
 
     after(:build) do |book, evaluator|
+      parent_book_part_uuid = book.uuid
       children = book.children.reverse
       while !children.empty? do
         child = children.pop
         if child.is_a?(Content::Page)
-          attributes = { book: book, book_location: [] }
+          attributes = {
+            book: book, book_location: [], parent_book_part_uuid: parent_book_part_uuid
+          }
           [ :id, :uuid, :version, :tutor_uuid, :title, :book_location ].each do |attr|
             val = child.public_send(attr)
             attributes[attr] = val unless val.nil?
@@ -75,6 +78,7 @@ FactoryBot.define do
 
           book.pages << build(:content_page, attributes)
         else
+          parent_book_part_uuid = child.uuid
           children.concat child.children.reverse
         end
       end

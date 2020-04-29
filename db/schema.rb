@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.bigint "entity_role_id", null: false
     t.uuid "book_part_uuid", null: false
     t.jsonb "clue", null: false
+    t.boolean "is_cached_for_period", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["book_part_uuid"], name: "index_cache_role_book_parts_on_book_part_uuid"
@@ -194,7 +195,9 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.integer "homework_dynamic_exercise_ids", default: [], null: false, array: true
     t.integer "practice_widget_exercise_ids", default: [], null: false, array: true
     t.integer "book_indices", null: false, array: true
+    t.uuid "parent_book_part_uuid", null: false
     t.index ["content_book_id"], name: "index_content_pages_on_content_book_id"
+    t.index ["parent_book_part_uuid"], name: "index_content_pages_on_parent_book_part_uuid"
     t.index ["title"], name: "index_content_pages_on_title"
     t.index ["tutor_uuid"], name: "index_content_pages_on_tutor_uuid", unique: true
     t.index ["url"], name: "index_content_pages_on_url"
