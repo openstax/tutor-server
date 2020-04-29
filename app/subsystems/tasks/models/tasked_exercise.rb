@@ -74,7 +74,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def before_completion
-    answer_id_required
+    if has_answer_missing?
+      errors.add(:answer_id, 'is required')
+      throw :abort
+    end
   end
 
   def make_correct!
@@ -147,19 +150,15 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   def grade_needs_publishing?
     was_manually_graded? && !grade_published?
+
+  def has_answer_missing?
+    return answer_id.blank? && answer_ids.any?
   end
 
   protected
 
   def free_response_required
     errors.add(:free_response, 'is required') if allows_free_response? && free_response.blank?
-  end
-
-  def answer_id_required
-    return unless answer_id.blank?
-
-    errors.add(:answer_id, 'is required')
-    throw :abort
   end
 
   def valid_answer

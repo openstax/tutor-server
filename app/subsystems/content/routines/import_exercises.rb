@@ -24,10 +24,6 @@ class Content::Routines::ImportExercises
         # This could happen, for example, if a manifest for a different environment is imported
         next if exercise_page.nil?
 
-        # Skip exercises that have any free response questions, as we can't handle them.
-        # Could use `free-response` format, but let's cut to chase and look for no M/C answers.
-        next if wrapper.content_hash["questions"].any? { |qq| qq["answers"].empty? }
-
         # Assign exercise context if required
         if wrapper.requires_context?
           feature_ids = wrapper.feature_ids(exercise_page.uuid)
