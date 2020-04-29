@@ -82,7 +82,7 @@ File.open('.webdrivers_update', File::RDWR|File::CREAT, 0640) do |file|
   update_time = Time.parse(file.read) rescue nil
   current_time = Time.current
 
-  if update_time.nil? || current_time - update_time > 1.day
+  if update_time.nil? || current_time - update_time > 5.minutes
     Webdrivers::Chromedriver.update
 
     file.rewind
