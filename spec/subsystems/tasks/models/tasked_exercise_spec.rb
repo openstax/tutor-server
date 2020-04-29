@@ -37,6 +37,15 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect(tasked_exercise).to be_valid
   end
 
+  it 'requires answer_id if the exercise has answers' do
+    tasked_exercise.answer_id = 1
+    expect(tasked_exercise).not_to have_answer_missing
+    tasked_exercise.answer_id = nil
+    expect(tasked_exercise).to have_answer_missing
+    tasked_exercise.answer_ids.clear # simulate a WRM question with no answers
+    expect(tasked_exercise).not_to have_answer_missing
+  end
+
   it 'does not accept a blank free response if the free-response format is present' do
     tasked_exercise.free_response = ' '
     expect(tasked_exercise).not_to be_valid
