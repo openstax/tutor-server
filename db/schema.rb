@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_16_191842) do
+ActiveRecord::Schema.define(version: 2020_04_29_221115) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -896,7 +896,7 @@ ActiveRecord::Schema.define(version: 2020_04_16_191842) do
     t.string "answer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "correct_answer_id", null: false
+    t.string "correct_answer_id"
     t.boolean "is_in_multipart", default: false, null: false
     t.string "question_id", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
