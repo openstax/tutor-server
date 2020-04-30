@@ -13,7 +13,7 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine do
     worked_pages.each do |page|
       is_correct = !@worst_pages.include?(page)
       task = FactoryBot.create :tasks_task, ecosystem: ecosystem, tasked_to: role
-      OpenStax::Biglearn::Api::FakeClient::CLUE_MIN_NUM_RESPONSES.times do
+      CalculateClue::CLUE_MIN_NUM_RESPONSES.times do
         exercise = FactoryBot.create :content_exercise, page: page
         task_step = FactoryBot.create :tasks_task_step, task: task, page: page
         FactoryBot.create :tasks_tasked_exercise, exercise: exercise, task_step: task_step

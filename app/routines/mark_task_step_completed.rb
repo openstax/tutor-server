@@ -36,6 +36,8 @@ class MarkTaskStepCompleted
     book_part_uuids = Content::Models::Page
       .where(id: task_step.content_page_id)
       .pluck(:parent_book_part_uuid, :uuid)
+      .flatten
+      .compact
     book_part_uuids.each do |book_part_uuid|
       Cache::UpdateRoleBookPart.set(queue: queue, run_at: run_at).perform_later(
         role: role, book_part_uuid: book_part_uuid, queue: queue
