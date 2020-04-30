@@ -632,6 +632,71 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         expect(error[:message]).to include "Tasking plans is invalid"
       end
     end
+
+    context 'out to students' do
+      before(:all) do
+        DatabaseCleaner.start
+
+        @task_plan.tasking_plans.each do |tasking_plan|
+          tasking_plan.update_attribute :opens_at_ntz, Time.current - 1.day
+        end
+
+        DistributeTasks.call task_plan: @task_plan
+      end
+      after(:all)  { DatabaseCleaner.clean }
+
+      let(:new_grading_template) do
+        FactoryBot.create(
+          :tasks_grading_template, course: @task_plan.owner, task_plan_type: @task_plan.type
+        )
+      end
+
+      let(:valid_json_hash) do
+        Api::V1::TaskPlan::Representer.new(@task_plan).to_hash.merge(
+          'title' => 'Something new',
+          'description' => 'Changed everything',
+          'grading_template_id' => new_grading_template.id.to_s
+        )
+      end
+
+      it 'allows the teacher to change title, description, and grading_template_id' do
+        controller.sign_in @teacher
+        expect do
+          api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                  body: valid_json_hash.to_json
+        end.to change  { @task_plan.reload.title }
+           .and change { @task_plan.description }
+           .and change { @task_plan.grading_template }
+        expect(response).to have_http_status(:success)
+        expect(response.body_as_hash.except(:last_published_at)).to eq(
+          Api::V1::TaskPlan::Representer.new(
+            @task_plan
+          ).as_json.deep_symbolize_keys.except(:last_published_at)
+        )
+      end
+
+      it 'does not allow the teacher to change opens_at (update is silently ignored)' do
+        invalid_json_hash = valid_json_hash.dup
+        invalid_json_hash['tasking_plans'].each do |tasking_plan|
+          tasking_plan['opens_at'] = (Time.current + 1.day).iso8601
+        end
+
+        controller.sign_in @teacher
+        expect do
+          api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                  body: valid_json_hash.to_json
+        end.to  change     { @task_plan.reload.title }
+           .and change     { @task_plan.description }
+           .and change     { @task_plan.grading_template }
+           .and not_change { @task_plan.tasking_plans.first.opens_at }
+        expect(response).to have_http_status(:success)
+        expect(response.body_as_hash.except(:last_published_at)).to eq(
+          Api::V1::TaskPlan::Representer.new(
+            @task_plan
+          ).as_json.deep_symbolize_keys.except(:last_published_at)
+        )
+      end
+    end
   end
 
   context '#destroy' do
