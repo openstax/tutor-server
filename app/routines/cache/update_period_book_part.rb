@@ -2,15 +2,35 @@
 class Cache::UpdatePeriodBookPart
   lev_routine
 
-  def exec(period:, book_part_uuid:, queue: 'dashboard')
-    tasked_exercises = Tasks::Models::TaskedExercise.joins(
-      task_step: [ :page, task: { taskings: { role: :student } } ]
-    ).where(task_step: { task: { taskings: { role: { student: { period: period } } } } })
+  uses_routine :calculate_clue
 
-    tasked_exercises = tasked_exercises.where(task_step: { page: { uuid: book_part_uuid } }).or(
+  def exec(period:, book_part_uuid:, queue: 'dashboard')
+    return if period.archived?
+
+    student_role_ids = period.students.map(&:entity_role_id)
+
+    uncached_role_book_part_ids = Cache::RoleBookPart.where(
+      entity_role_id: student_role_ids, book_part_uuid: book_part_uuid, is_cached_for_period: false
+    ).pluck(:id)
+
+    return if uncached_role_book_part_ids.empty?
+
+    tasked_exercises = Tasks::Models::TaskedExercise.joins(
+      task_step: [ :page, task: :taskings ]
+    ).where(task_step: { task: { taskings: { entity_role_id: student_role_ids } } })
+
+    responses = tasked_exercises.where(task_step: { page: { uuid: book_part_uuid } }).or(
       tasked_exercise.where(task_step: { page: { parent_book_part_uuid: book_part_uuid } })
+    ).map(&:is_correct?)
+
+    period_book_part = Cache::PeriodBookPart.new(
+      period: period,
+      book_part_uuid: book_part_uuid,
+      clue: run(:calculate_clue, responses: responses).outputs.clue
     )
 
-    
+    Cache::PeriodBookPart.import [ period_book_part ], validate: false, on_duplicate_key_update: {
+      conflict_target: [ :course_membership_period_id, :book_part_uuid ], columns: [ :clue ]
+    }
   end
 end

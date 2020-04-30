@@ -6,14 +6,6 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
   MIN_HISTORY_SIZE_FOR_RANDOM_AGO = 5
 
-  # The Z-score of the desired alpha, i.e. the tail of the interval with the desired confidence
-  # Reference a Z-score table to adjust this
-  # In this case we want a 50% confidence interval (which is pretty bad)
-  # So alpha = 0.5 => 1 - alpha/2 = 0.75 => z = 0.68 (from the table)
-  CLUE_Z_ALPHA = 0.68
-  CLUE_Z_ALPHA_SQUARED = CLUE_Z_ALPHA**2
-  CLUE_MIN_NUM_RESPONSES = 3
-
   include OpenStax::Biglearn::Api::Client
 
   attr_reader :store
@@ -272,42 +264,46 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
     requests.map do |request|
       student = request.fetch(:student)
-      role = student.role
       ecosystem = student.course.ecosystem
-      exercises = []
 
       unless ecosystem.nil?
-        responses_by_page_id = Hash.new { |hash, key| hash[key] = [] }
-        Tasks::Models::TaskedExercise.select(:id, :answer_id, :correct_answer_id).joins(
-          task_step: { task: :taskings }
-        ).where(
-          task_step: {
-            task: { ecosystem: ecosystem, taskings: { entity_role_id: role.id } }
-          }
-        ).preload(task_step: { task: :time_zone }).filter do |tasked_exercise|
-          tasked_exercise.task_step.task.feedback_available?(current_time: current_time)
-        end.each do |tasked_exercise|
-          responses_by_page_id[tasked_exercise.task_step.content_page_id] <<
-            tasked_exercise.is_correct?
+        role_id = student.entity_role_id
+        book_part_uuids = Cache::RoleBookPart.where(entity_role_id: role_id).sort_by do |rbp|
+          rbp.clue[:is_real] ? clue[:most_likely] : 1.5
+        end.first(FindOrCreatePracticeTaskRoutine::NUM_EXERCISES).map(&:book_part_uuid)
+
+        exercise_ids_by_page_uuid = ecosystem
+          .pages
+          .where(uuid: book_part_uuids)
+          .pluck(:uuid, :practice_widget_exercise_ids)
+          .to_h
+
+        exercise_ids_by_chapter_uuid = Hash.new { |hash, key| hash[key] = [] }
+        ecosystem
+          .pages
+          .select(:parent_book_part_uuid, :practice_widget_exercise_ids)
+          .where(parent_book_part_uuid: book_part_uuids)
+          .each do |page|
+          exercise_ids_by_chapter_uuid[page.parent_book_part_uuid].concat(
+            page.practice_widget_exercise_ids
+          )
         end
 
-        page_ids = responses_by_page_id.sort_by do |_, responses|
-          clue = calculate_clue(responses: responses)
-          clue[:is_real] ? clue[:most_likely] : 1.5
-        end.first(FindOrCreatePracticeTaskRoutine::NUM_EXERCISES).map(&:first)
-
-        pools = Content::Models::Page.where(
-          id: page_ids
-        ).pluck(:practice_widget_exercise_ids)
+        pools = book_part_uuids.map do |book_part_uuid|
+          (exercise_ids_by_page_uuid[book_part_uuid] || []) +
+          exercise_ids_by_chapter_uuid[book_part_uuid]
+        end.reject(&:empty?)
         num_pools = pools.size
 
         if num_pools > 0
           exercises_per_pool, remainder = FindOrCreatePracticeTaskRoutine::NUM_EXERCISES.divmod(
             num_pools
           )
+
           exercises_by_id = Content::Models::Exercise.select(
             :id, :uuid, :number, :version, :number_of_questions
           ).where(id: pools.flatten).index_by(&:id)
+
           pools.each_with_index do |pool, index|
             ex = filter_and_choose_exercises(
               exercises: exercises_by_id.values_at(*pool),
@@ -338,18 +334,44 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   def fetch_student_clues(requests)
     current_time = Time.current
 
+    values = requests.map do |request|
+      [ request.fetch(:student).entity_role_id, request.fetch(:book_container_uuid) ]
+    end
+    role_book_part_join_query = <<-JOIN_SQL.strip_heredoc
+      INNER JOIN (#{ValuesTable.new(values)}) AS "values" ("role_id", "book_part_uuid")
+        ON "cache_role_book_parts"."entity_role_id" = "values"."role_id"
+          AND "cache_role_book_parts"."book_part_uuid" = "values"."book_part_uuid"
+    JOIN_SQL
+
+    clues_by_role_id_and_book_part_uuid = Hash.new { |hash, key| hash[key] = {} }
+    Cache::RoleBookPart.joins(role_book_part_join_query).each do |role_book_part|
+      role_id = role_book_part.entity_role_id
+      book_part_uuid = role_book_part.book_part_uuid
+
+      clues_by_role_id_and_book_part_uuid[role_id][book_part_uuid] = role_book_part.clue
+    end
+
     requests.map do |request|
-      student = request.fetch(:student)
-      course = student.course
-      pages = get_pages course: course, book_container_uuid: request.fetch(:book_container_uuid)
-      ecosystem = course.ecosystem
+      role_id = request.fetch(:student).entity_role_id
+      book_part_uuid = request.fetch(:book_container_uuid)
+      clue = clues_by_role_id_and_book_part_uuid[role_id][book_part_uuid]
+
+      if clue.nil?
+        clue = {
+          minimum: 0.0,
+          most_likely: 0.5,
+          maximum: 1.0,
+          is_real: false
+        }
+        clue_status = 'clue_unready'
+      else
+        clue_status = 'clue_ready'
+      end
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: calculate_clue_for_students_and_pages(
-          students: student, pages: pages, ecosystem: ecosystem, current_time: current_time
-        ),
-        clue_status: 'clue_ready'
+        clue_data: clue,
+        clue_status: clue_status
       }
     end
   end
@@ -359,18 +381,44 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   def fetch_teacher_clues(requests)
     current_time = Time.current
 
+    values = requests.map do |request|
+      [ request.fetch(:course_container).id, request.fetch(:book_container_uuid) ]
+    end
+    period_book_part_join_query = <<-JOIN_SQL.strip_heredoc
+      INNER JOIN (#{ValuesTable.new(values)}) AS "values" ("period_id", "book_part_uuid")
+        ON "cache_period_book_parts"."course_membership_period_id" = "values"."period_id"
+          AND "cache_period_book_parts"."book_part_uuid" = "values"."book_part_uuid"
+    JOIN_SQL
+
+    clues_by_period_id_and_book_part_uuid = Hash.new { |hash, key| hash[key] = {} }
+    Cache::PeriodBookPart.joins(period_book_part_join_query).each do |period_book_part|
+      period_id = period_book_part.course_membership_period_id
+      book_part_uuid = period_book_part.book_part_uuid
+
+      clues_by_period_id_and_book_part_uuid[period_id][book_part_uuid] = period_book_part.clue
+    end
+
     requests.map do |request|
-      period = request.fetch(:course_container)
-      course = period.course
-      pages = get_pages course: course, book_container_uuid: request.fetch(:book_container_uuid)
-      ecosystem = course.ecosystem
+      period_id = request.fetch(:course_container).id
+      book_part_uuid = request.fetch(:book_container_uuid)
+      clue = clues_by_period_id_and_book_part_uuid[period_id][book_part_uuid]
+
+      if clue.nil?
+        clue = {
+          minimum: 0.0,
+          most_likely: 0.5,
+          maximum: 1.0,
+          is_real: false
+        }
+        clue_status = 'clue_unready'
+      else
+        clue_status = 'clue_ready'
+      end
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: calculate_clue_for_students_and_pages(
-          students: period.students, pages: pages, ecosystem: ecosystem, current_time: current_time
-        ),
-        clue_status: 'clue_ready'
+        clue_data: clue,
+        clue_status: clue_status
       }
     end
   end
@@ -389,26 +437,6 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       count: count,
       already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
     ]
-  end
-
-  def get_pages(course:, book_container_uuid:)
-    course.ecosystems.each do |ecosystem|
-      ecosystem.books.each do |book|
-        toc = book.as_toc
-        return toc.pages if toc.unmapped_tutor_uuids.include? book_container_uuid
-
-        # No need to check the units, since we don't currently request unit CLUes
-        toc.chapters.each do |chapter|
-          return chapter.pages if chapter.unmapped_tutor_uuids.include? book_container_uuid
-
-          chapter.pages.each do |page|
-            return [ page ] if page.unmapped_tutor_uuids.include? book_container_uuid
-          end
-        end
-      end
-    end
-
-    []
   end
 
   def get_k_ago_map(task:, include_random_ago: false)
@@ -443,57 +471,5 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     else
       raise ArgumentError, "Invalid assignment num_spes: #{num_spes.inspect}", caller
     end
-  end
-
-  def calculate_clue(responses:, ecosystem: nil)
-    num_responses = responses.size
-
-    clue = if num_responses >= CLUE_MIN_NUM_RESPONSES
-      num_correct = responses.count { |bool| bool }
-
-      # Agresti-Coull method of statistical inference for the binomial distribution
-
-      # n_hat is the modified number of trials
-      n_hat = num_responses + CLUE_Z_ALPHA_SQUARED
-      # p_hat is the modified estimate of the probability of success
-      p_hat = (num_correct + 0.5 * CLUE_Z_ALPHA_SQUARED)/n_hat
-
-      # Agresti-Coull confidence interval
-      interval_delta = CLUE_Z_ALPHA * Math.sqrt(p_hat*(1.0 - p_hat)/n_hat)
-
-      # The Agresti-Coull confidence interval can apparently go outside [0, 1], so we fix that
-      {
-        minimum: [p_hat - interval_delta, 0.0].max,
-        most_likely: p_hat,
-        maximum: [p_hat + interval_delta, 1.0].min,
-        is_real: true
-      }
-    else
-      {
-        minimum: 0.0,
-        most_likely: 0.5,
-        maximum: 1.0,
-        is_real: false
-      }
-    end
-
-    ecosystem.nil? ? clue : clue.merge(ecosystem_uuid: ecosystem.tutor_uuid)
-  end
-
-  def calculate_clue_for_students_and_pages(
-    students:, pages:, ecosystem:, current_time: Time.current
-  )
-    students = [ students ].flatten
-    role_ids = students.map(&:entity_role_id)
-    page_ids = [ pages ].flatten.map(&:id)
-    responses = Tasks::Models::TaskedExercise.select(:id, :answer_id, :correct_answer_id).joins(
-      task_step: { task: :taskings }
-    ).where(
-      task_step: { content_page_id: page_ids, task: { taskings: { entity_role_id: role_ids } } }
-    ).preload(task_step: { task: :time_zone }).filter do |tasked_exercise|
-      tasked_exercise.task_step.task.feedback_available?(current_time: current_time)
-    end.map(&:is_correct?)
-
-    calculate_clue responses: responses, ecosystem: ecosystem
   end
 end
