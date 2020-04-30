@@ -2,7 +2,7 @@
 class Cache::UpdatePeriodBookPart
   lev_routine
 
-  uses_routine :calculate_clue
+  uses_routine CalculateClue
 
   def exec(period:, book_part_uuid:, queue: 'dashboard')
     return if period.archived?
@@ -20,7 +20,7 @@ class Cache::UpdatePeriodBookPart
     ).where(task_step: { task: { taskings: { entity_role_id: student_role_ids } } })
 
     responses = tasked_exercises.where(task_step: { page: { uuid: book_part_uuid } }).or(
-      tasked_exercise.where(task_step: { page: { parent_book_part_uuid: book_part_uuid } })
+      tasked_exercises.where(task_step: { page: { parent_book_part_uuid: book_part_uuid } })
     ).map(&:is_correct?)
 
     period_book_part = Cache::PeriodBookPart.new(

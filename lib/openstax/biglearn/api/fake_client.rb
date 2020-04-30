@@ -265,11 +265,12 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     requests.map do |request|
       student = request.fetch(:student)
       ecosystem = student.course.ecosystem
+      exercises = []
 
       unless ecosystem.nil?
-        role_id = student.entity_role_id
-        book_part_uuids = Cache::RoleBookPart.where(entity_role_id: role_id).sort_by do |rbp|
-          rbp.clue[:is_real] ? clue[:most_likely] : 1.5
+        role = student.role
+        book_part_uuids = Cache::RoleBookPart.where(role: role).sort_by do |role_book_part|
+          role_book_part.clue['is_real'] ? role_book_part.clue['most_likely'] : 1.5
         end.first(FindOrCreatePracticeTaskRoutine::NUM_EXERCISES).map(&:book_part_uuid)
 
         exercise_ids_by_page_uuid = ecosystem
@@ -321,7 +322,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
       {
         request_uuid: request[:request_uuid],
-        student_uuid: request[:student].uuid,
+        student_uuid: student.uuid,
         exercise_uuids: exercises.map(&:uuid),
         student_status: 'student_ready',
         spy_info: {}

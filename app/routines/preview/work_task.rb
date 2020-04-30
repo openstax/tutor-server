@@ -83,6 +83,7 @@ class Preview::WorkTask
       .where(id: exercise_steps.map(&:content_page_id))
       .pluck(:parent_book_part_uuid, :uuid)
       .flatten
+      .compact
       .uniq
     book_part_uuids.each do |book_part_uuid|
       Cache::UpdateRoleBookPart.set(queue: queue, run_at: run_at).perform_later(
