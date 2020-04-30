@@ -898,7 +898,7 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.string "answer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "correct_answer_id", null: false
+    t.string "correct_answer_id"
     t.boolean "is_in_multipart", default: false, null: false
     t.string "question_id", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
