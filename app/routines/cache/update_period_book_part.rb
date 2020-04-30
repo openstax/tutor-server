@@ -11,7 +11,7 @@ class Cache::UpdatePeriodBookPart
 
     uncached_role_book_part_ids = Cache::RoleBookPart.where(
       entity_role_id: student_role_ids, book_part_uuid: book_part_uuid, is_cached_for_period: false
-    ).pluck(:id)
+    ).lock.pluck(:id)
 
     return if uncached_role_book_part_ids.empty?
 
@@ -28,6 +28,10 @@ class Cache::UpdatePeriodBookPart
       book_part_uuid: book_part_uuid,
       clue: run(:calculate_clue, responses: responses).outputs.clue
     )
+
+    Cache::RoleBookPart.where(
+      id: uncached_role_book_part_ids
+    ).update_all(is_cached_for_period: true)
 
     Cache::PeriodBookPart.import [ period_book_part ], validate: false, on_duplicate_key_update: {
       conflict_target: [ :course_membership_period_id, :book_part_uuid ], columns: [ :clue ]

@@ -58,7 +58,8 @@ class Preview::WorkTask
       end
     end
 
-    tasked_exercises = task_steps.select(&:exercise?).map(&:tasked)
+    exercise_steps = task_steps.select(&:exercise?)
+    tasked_exercises = exercise_steps.map(&:tasked)
     Tasks::Models::TaskedExercise.import tasked_exercises, validate: false,
                                                            on_duplicate_key_update: {
       conflict_target: [ :id ], columns: [ :free_response, :answer_id ]
@@ -71,8 +72,23 @@ class Preview::WorkTask
     task.save!
     task.update_caches_now if update_caches
 
-    course = task.taskings.first&.role&.student&.course
+    role = task.taskings.first&.role
+    course = role&.student&.course
     return if course.nil?
+
+    queue = task.is_preview ? 'preview' : 'dashboard'
+    run_at = task.feedback_available? ? Time.current : task.feedback_at
+
+    book_part_uuids = Content::Models::Page
+      .where(id: exercise_steps.map(&:content_page_id))
+      .pluck(:parent_book_part_uuid, :uuid)
+      .flatten
+      .uniq
+    book_part_uuids.each do |book_part_uuid|
+      Cache::UpdateRoleBookPart.set(queue: queue, run_at: run_at).perform_later(
+        role: role, book_part_uuid: book_part_uuid, queue: queue
+      )
+    end
 
     requests = tasked_exercises.map do |tasked_exercise|
       { course: course, tasked_exercise: tasked_exercise }
