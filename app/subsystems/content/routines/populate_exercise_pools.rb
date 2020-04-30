@@ -1,6 +1,7 @@
 class Content::Routines::PopulateExercisePools
   DYNAMIC_MPQ_UUIDS = [
-    '0a621f27-abe1-4c17-8f1c-d80d07958977'
+    '0a621f27-abe1-4c17-8f1c-d80d07958977',
+    '36004586-651c-4ded-af87-203aca22d946'
   ]
 
   lev_routine
