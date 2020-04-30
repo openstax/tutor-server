@@ -7,7 +7,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   before_validation :set_correct_answer_id, on: :create
 
-  validates :url, :question_id, :question_index, :content, :correct_answer_id, presence: true
+  validates :url, :question_id, :question_index, :content, presence: true
+  validates :correct_answer_id, presence: true, if: :has_answers?
   validates :free_response, length: { maximum: 10000 }
   validates :grader_points, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
 
@@ -121,6 +122,14 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     return parser.question_formats_for_students.include?('free-response')
   end
 
+  def has_answers?
+    question_answers.any?
+  end
+
+  def is_two_step?
+    return parser.question_formats_for_students.include?('free-response') && has_answers?
+  end
+
   def content_preview
     content_preview_from_json = JSON(content)["questions"].try(:first).try(:[], "stem_html")
     content_preview_from_json || "Exercise step ##{id}"
@@ -146,9 +155,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   def grade_needs_publishing?
     was_manually_graded? && !grade_published?
+  end
 
   def has_answer_missing?
-    return answer_id.blank? && answer_ids.any?
+    answer_id.blank? && answer_ids.any?
   end
 
   protected
