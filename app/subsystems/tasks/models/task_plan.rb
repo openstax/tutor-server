@@ -4,7 +4,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
   UPDATEABLE_ATTRIBUTES_AFTER_OPEN = [
-    'title', 'description', 'first_published_at', 'last_published_at'
+    'title', 'description', 'last_published_at', 'tasks_grading_template_id'
   ]
 
   attr_accessor :is_publish_requested
