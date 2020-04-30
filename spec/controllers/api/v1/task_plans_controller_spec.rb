@@ -687,7 +687,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
         controller.sign_in @teacher
         expect do
           api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
-                  body: valid_json_hash.to_json
+                  body: invalid_json_hash.to_json
         end.to  change     { @task_plan.reload.title }
            .and change     { @task_plan.description }
            .and change     { @task_plan.grading_template }
@@ -698,6 +698,23 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
             @task_plan
           ).as_json.deep_symbolize_keys.except(:last_published_at)
         )
+      end
+
+      it 'does not allow the teacher to change settings (update is rejected)' do
+        invalid_json_hash = valid_json_hash.dup
+        invalid_json_hash['settings'] = {
+          'page_ids' => FactoryBot.create(:content_page, ecosystem: @course.ecosystem).id.to_s
+        }
+
+        controller.sign_in @teacher
+        expect do
+          api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
+                  body: invalid_json_hash.to_json
+        end.to  not_change { @task_plan.reload.title }
+           .and not_change { @task_plan.description }
+           .and not_change { @task_plan.grading_template }
+           .and not_change { @task_plan.settings }
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
