@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.bigint "course_membership_period_id", null: false
     t.uuid "book_part_uuid", null: false
     t.boolean "is_page", null: false
+    t.integer "num_students", null: false
+    t.integer "num_responses", null: false
     t.jsonb "clue", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -32,6 +34,7 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.bigint "entity_role_id", null: false
     t.uuid "book_part_uuid", null: false
     t.boolean "is_page", null: false
+    t.integer "num_responses", null: false
     t.jsonb "clue", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
