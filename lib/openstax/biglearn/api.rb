@@ -442,12 +442,6 @@ module OpenStax::Biglearn::Api
       end
     end
 
-    protected
-
-    def new_configuration
-      OpenStax::Biglearn::Api::Configuration.new
-    end
-
     def new_fake_client
       begin
         OpenStax::Biglearn::Api::FakeClient.new(configuration)
@@ -462,6 +456,12 @@ module OpenStax::Biglearn::Api
       rescue StandardError => e
         raise "Biglearn API client initialization error: #{e.message}"
       end
+    end
+
+    protected
+
+    def new_configuration
+      OpenStax::Biglearn::Api::Configuration.new
     end
 
     # Inline (perform_later: false) sequence_number requests are not recommended
