@@ -269,31 +269,19 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
       unless ecosystem.nil?
         role = student.role
-        book_part_uuids = Cache::RoleBookPart.where(role: role).sort_by do |role_book_part|
+        page_uuids = Cache::RoleBookPart.where(
+          role: role, is_page: true
+        ).sort_by do |role_book_part|
           role_book_part.clue['is_real'] ? role_book_part.clue['most_likely'] : 1.5
         end.first(FindOrCreatePracticeTaskRoutine::NUM_EXERCISES).map(&:book_part_uuid)
 
         exercise_ids_by_page_uuid = ecosystem
           .pages
-          .where(uuid: book_part_uuids)
+          .where(uuid: page_uuids)
           .pluck(:uuid, :practice_widget_exercise_ids)
           .to_h
 
-        exercise_ids_by_chapter_uuid = Hash.new { |hash, key| hash[key] = [] }
-        ecosystem
-          .pages
-          .select(:parent_book_part_uuid, :practice_widget_exercise_ids)
-          .where(parent_book_part_uuid: book_part_uuids)
-          .each do |page|
-          exercise_ids_by_chapter_uuid[page.parent_book_part_uuid].concat(
-            page.practice_widget_exercise_ids
-          )
-        end
-
-        pools = book_part_uuids.map do |book_part_uuid|
-          (exercise_ids_by_page_uuid[book_part_uuid] || []) +
-          exercise_ids_by_chapter_uuid[book_part_uuid]
-        end.reject(&:empty?)
+        pools = page_uuids.map { |page_uuid| exercise_ids_by_page_uuid[page_uuid] }.reject(&:blank?)
         num_pools = pools.size
 
         if num_pools > 0

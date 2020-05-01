@@ -15,17 +15,22 @@ class Cache::UpdatePeriodBookPart
 
     return if uncached_role_book_part_ids.empty?
 
-    tasked_exercises = Tasks::Models::TaskedExercise.joins(
-      task_step: [ :page, task: :taskings ]
-    ).where(task_step: { task: { taskings: { entity_role_id: student_role_ids } } })
+    is_page = Content::Models::Page.where(uuid: book_part_uuid).exists?
+    page_key = is_page ? :uuid : :parent_book_part_uuid
 
-    responses = tasked_exercises.where(task_step: { page: { uuid: book_part_uuid } }).or(
-      tasked_exercises.where(task_step: { page: { parent_book_part_uuid: book_part_uuid } })
+    responses = Tasks::Models::TaskedExercise.joins(
+      task_step: [ :page, task: :taskings ]
+    ).where(
+      task_step: {
+        task: { taskings: { entity_role_id: student_role_ids } },
+        page: { page_key => book_part_uuid }
+      }
     ).map(&:is_correct?)
 
     period_book_part = Cache::PeriodBookPart.new(
       period: period,
       book_part_uuid: book_part_uuid,
+      is_page: is_page,
       clue: run(:calculate_clue, responses: responses).outputs.clue
     )
 

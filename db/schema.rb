@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 2020_04_29_165357) do
   create_table "cache_period_book_parts", force: :cascade do |t|
     t.bigint "course_membership_period_id", null: false
     t.uuid "book_part_uuid", null: false
+    t.boolean "is_page", null: false
     t.jsonb "clue", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -30,6 +31,7 @@ ActiveRecord::Schema.define(version: 2020_04_29_165357) do
   create_table "cache_role_book_parts", force: :cascade do |t|
     t.bigint "entity_role_id", null: false
     t.uuid "book_part_uuid", null: false
+    t.boolean "is_page", null: false
     t.jsonb "clue", null: false
     t.boolean "is_cached_for_period", default: false, null: false
     t.datetime "created_at", null: false
