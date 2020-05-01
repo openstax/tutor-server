@@ -4,6 +4,9 @@ FactoryBot.define do
 
     book_part_uuid { SecureRandom.uuid }
     is_page { [ true, false ].sample }
+
+    num_responses { rand(10) + 1 }
+
     clue do
       {
         minimum: 0.0,

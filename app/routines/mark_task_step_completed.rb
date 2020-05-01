@@ -27,7 +27,7 @@ class MarkTaskStepCompleted
     return unless save && task_step.exercise?
 
     role = task.taskings.first&.role
-    period = role&.course_member.period
+    period = role&.course_member&.period
     course = period&.course
     return if course.nil?
 
