@@ -39,11 +39,13 @@ en:
         labels:
           biglearn_sparfa: SPARFA
           local_query: Local Query
+          fake: Fake
       biglearn_teacher_clues_algorithm_name:
         name: 'Biglearn algorithm for calculating Teacher CLUes'
         labels:
           biglearn_sparfa: SPARFA
           local_query: Local Query
+          fake: Fake
       biglearn_assignment_spes_algorithm_name:
         name: 'Biglearn algorithm for choosing Spaced Practice exercises'
         labels:
