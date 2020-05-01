@@ -480,7 +480,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
   # Returns the CLUes for the given book containers and students (for students)
   def fetch_student_clues(requests)
     if Settings::Biglearn.student_clues_algorithm_name.to_s.downcase == 'fake'
-      OpenStax::Biglearn::Api::FakeClient.new.fetch_student_clues(requests)
+      OpenStax::Biglearn::Api.new_fake_client.fetch_student_clues(requests)
     else
       biglearn_requests = requests.map do |request|
         student = request.fetch(:student)
@@ -503,7 +503,7 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
   # Returns the CLUes for the given book containers and periods (for teachers)
   def fetch_teacher_clues(requests)
     if Settings::Biglearn.teacher_clues_algorithm_name.to_s.downcase == 'fake'
-      OpenStax::Biglearn::Api::FakeClient.new.fetch_teacher_clues(requests)
+      OpenStax::Biglearn::Api.new_fake_client.fetch_teacher_clues(requests)
     else
       biglearn_requests = requests.map do |request|
         course_container = request.fetch(:course_container)
