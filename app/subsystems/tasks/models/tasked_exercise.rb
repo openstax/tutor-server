@@ -71,10 +71,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def before_completion
-    if has_answer_missing?
-      errors.add(:answer_id, 'is required')
-      throw :abort
-    end
+      if has_answer_missing?
+          errors.add(:answer_id, 'is required')
+          throw :abort
+      end
   end
 
   def make_correct!
@@ -122,14 +122,6 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     return parser.question_formats_for_students.include?('free-response')
   end
 
-  def has_answers?
-    question_answers.any?
-  end
-
-  def is_two_step?
-    return parser.question_formats_for_students.include?('free-response') && has_answers?
-  end
-
   def content_preview
     content_preview_from_json = JSON(content)["questions"].try(:first).try(:[], "stem_html")
     content_preview_from_json || "Exercise step ##{id}"
@@ -157,6 +149,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     was_manually_graded? && !grade_published?
   end
 
+  def has_answers?
+    question_answers.any?
+  end
+
   def has_answer_missing?
     answer_id.blank? && answer_ids.any?
   end
@@ -165,6 +161,13 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   def free_response_required
     errors.add(:free_response, 'is required') if allows_free_response? && free_response.blank?
+  end
+
+  def answer_id_required
+    return unless answer_id.blank?
+
+    errors.add(:answer_id, 'is required')
+    throw :abort
   end
 
   def valid_answer
