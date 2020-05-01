@@ -25,8 +25,9 @@ class Content::Routines::PopulateExercisePools
         page.homework_core_exercise_ids << exercise.id \
           if tags.include?('type:practice')
 
-        # Except for APUSH, multiparts can only be in the All Exercises and Homework Core pools
-        next if !dynamic_multipart && exercise.is_multipart?
+        # Multiparts (except for APUSH) and tree response only exercises are
+        # limited to the All Exercises and Homework Core pools
+        next if (!dynamic_multipart && exercise.is_multipart?) || exercise.is_free_response_only?
 
         # Reading Dynamic (Concept Coach)
         page.reading_dynamic_exercise_ids << exercise.id \

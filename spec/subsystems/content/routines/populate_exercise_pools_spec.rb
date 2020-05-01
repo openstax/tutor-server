@@ -73,8 +73,8 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
   let(:recall_exercise)           { FactoryBot.create :content_exercise, page: page }
   let(:conc_recall_exercise)      { FactoryBot.create :content_exercise, page: page }
   let(:practice_exercise)         { FactoryBot.create :content_exercise, page: page }
-
   let(:requires_context_exercise) { FactoryBot.create :content_exercise, page: page }
+  let(:fr_only_exercise)          { FactoryBot.create :content_exercise, :free_response_only, page: page }
 
   let(:concept_coach_exercise)    { FactoryBot.create :content_exercise, page: page }
 
@@ -125,13 +125,17 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       recall_multi_exercise     => [type_recall_tag],
       c_or_r_multi_exercise     => [type_conc_recall_tag],
       practice_multi_exercise   => [type_practice_tag],
+      fr_only_exercise          => [type_practice_tag],
       cc_multi_exercise         => [concept_coach_tag]
     }
   end
 
   let(:all_exercises)           { exercise_tags.keys }
   let(:all_exercise_ids_set)    { Set.new all_exercises.map(&:id) }
-  let(:simple_exercise_ids_set) { Set.new all_exercises.reject(&:is_multipart?).map(&:id) }
+  let(:simple_exercise_ids_set) {
+    Set.new all_exercises
+      .reject{|ex| ex.is_multipart? || ex.is_free_response_only? }.map(&:id)
+  }
 
   before do
     exercise_tags.each { |exercise, tags| exercise.tags = tags }
@@ -146,7 +150,7 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       page.reload
     end
 
-    it "imports simple exercises that don't require context into the practice widget pool" do
+    it "imports simple exercises that don't require context into the practice wiget pool" do
       expect(Set.new page.practice_widget_exercise_ids).to eq(
         simple_exercise_ids_set - [requires_context_exercise.id]
       )
@@ -167,6 +171,7 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
     it 'imports practice exercises into the homework core pool' do
       expect(Set.new page.homework_core_exercise_ids).to eq Set[
         practice_exercise.id,
+        fr_only_exercise.id,
         practice_multi_exercise.id
       ]
     end
