@@ -30,8 +30,8 @@ class Content::Routines::PopulateExercisePools
           if (hs_logic && tags.include?('ost-chapter-review')) ||
              (college_logic && tags.include?('type:practice'))
 
-        # Multiparts can only be in the All Exercises and Homework Core pools
-        next if exercise.is_multipart?
+        # Multiparts and free response only are limted to the All Exercises and Homework Core pools
+        next if exercise.is_multipart? || exercise.is_free_response_only?
 
         # Reading Dynamic (Concept Coach)
         page.reading_dynamic_exercise_ids << exercise.id \

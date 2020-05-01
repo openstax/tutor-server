@@ -8,7 +8,6 @@ FactoryBot.define do
     transient           do
       uid               { nil }
       tags              { nil }
-
       num_questions     { 1 }
 
       wrapper           { OpenStax::Exercises::V1::Exercise.new(content: content) }
@@ -25,5 +24,12 @@ FactoryBot.define do
     group_uuid          { wrapper.group_uuid }
     url                 { wrapper.url        }
     title               { wrapper.title      }
+
+    trait :free_response_only do
+      after(:build) do |exercise, evaluator|
+        exercise.parser.questions.each{|q| q['answers'].clear }
+        exercise.question_answer_ids.each{|a| a.clear }
+      end
+    end
   end
 end

@@ -98,6 +98,10 @@ class Content::Models::Exercise < IndestructibleRecord
     num_questions > 1
   end
 
+  def is_free_response_only?
+    question_answer_ids.any? { |answer_ids| answer_ids.empty? }
+  end
+
   def feature_ids
     cnxfeatures.map(&:data)
   end
