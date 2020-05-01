@@ -75,6 +75,7 @@ class Preview::WorkTask
     role = task.taskings.first&.role
     period = role&.course_member&.period
     course = period&.course
+    # course will only be set if role and period were found
     return if course.nil?
 
     queue = task.is_preview ? 'preview' : 'dashboard'
