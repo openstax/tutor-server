@@ -115,7 +115,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       when 'chapter_practice', 'page_practice', 'mixed_practice', 'practice_worst_topics'
         pool_method = :practice_widget_exercise_ids
       else
-        tasks.map(&:id).each { |task_id| pool_exercise_ids_by_task_id[task_id] = [] }
+        tasks.map(&:id).each { |task_id| pool_exercises_by_task_id[task_id] = [] }
         next
       end
 
@@ -141,7 +141,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       count = request.fetch(:max_num_exercises) { task.goal_num_pes }
       request_uuid = request[:request_uuid]
 
-      exercises = filter_and_choose_exercises(
+      chosen_exercises = filter_and_choose_exercises(
         exercises: pool_exercises_by_task_id[task.id],
         task: task,
         count: count,
@@ -151,7 +151,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       {
         request_uuid: request_uuid,
         assignment_uuid: task.uuid,
-        exercise_uuids: exercises.map(&:uuid),
+        exercise_uuids: chosen_exercises.map(&:uuid),
         assignment_status: 'assignment_ready',
         spy_info: {}
       }
@@ -177,7 +177,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       when 'chapter_practice', 'page_practice', 'mixed_practice', 'practice_worst_topics'
         pool_type = :practice_widget
       else
-        tasks.map(&:id).each { |task_id| pool_exercise_ids_by_task_id[task_id] = [] }
+        tasks.map(&:id).each { |task_id| spaced_exercises_by_task_id[task_id] = [] }
         next
       end
 
@@ -185,16 +185,17 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       tasks.each do |task|
         tz = task.time_zone&.to_tz || Time.zone
         current_time_ntz = DateTimeUtilities.remove_tz(tz.now)
-        student_history_tasks = Tasks::Models::Task.select(:id, :content_ecosystem_id, :core_page_ids)
-        .joins(:taskings)
-        .where(
-          taskings: { entity_role_id: task.taskings.map(&:entity_role_id) },
-          task_type: task.task_type
-        )
+        student_history_tasks = Tasks::Models::Task
+          .select(:id, :content_ecosystem_id, :core_page_ids)
+          .joins(:taskings)
+          .where(
+            taskings: { entity_role_id: task.taskings.map(&:entity_role_id) },
+            task_type: task.task_type
+          )
         student_history_tasks = student_history_tasks.where.not(student_history_at: nil).or(
           student_history_tasks.where(tt[:due_at_ntz].lteq(current_time_ntz))
         ).order(
-          Arel.sql('LEAST("tasks_tasks"."student_history_at", "tasks_tasks"."due_at_ntz")')
+          Arel.sql('LEAST("tasks_tasks"."student_history_at", "tasks_tasks"."due_at_ntz") DESC')
         ).preload(:ecosystem).first(6)
 
         student_history = ([ task ] + student_history_tasks).uniq
@@ -208,7 +209,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         spaced_tasks = spaced_tasks_num_exercises.map(&:first).compact
 
         ecosystem_map = Content::Map.find_or_create_by(
-          from_ecosystems: spaced_tasks.map(&:ecosystem).uniq,
+          from_ecosystems: ([ task.ecosystem ] + spaced_tasks.map(&:ecosystem)).uniq,
           to_ecosystem: task.ecosystem
         )
 
@@ -221,29 +222,37 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         ).where(id: exercise_ids_by_page_id.values.flatten).index_by(&:id)
 
         remaining = spaced_tasks_num_exercises.map(&:second).sum
-        spaced_exercises_by_task_id[task.id] =
-          spaced_tasks_num_exercises.flat_map do |task, num_exercises|
-          exercise_ids = exercise_ids_by_page_id.values_at(*task.core_page_ids).compact.flatten
-
-          filter_and_choose_exercises(
+        chosen_exercises = []
+        spaced_tasks_num_exercises.each do |spaced_task, num_exercises|
+          exercise_ids = exercise_ids_by_page_id.values_at(
+            *spaced_task.core_page_ids
+          ).compact.flatten
+          exercises = filter_and_choose_exercises(
             exercises: exercises_by_id.values_at(*exercise_ids),
             task: task,
             count: num_exercises,
+            additional_excluded_numbers: chosen_exercises.map(&:number),
             current_time: current_time
-          ).tap { |exercises| remaining -= exercises.size }
+          )
+
+          remaining -= exercises.size
+
+          chosen_exercises.concat exercises
         end
 
         if remaining > 0
           # Use personalized exercises if not enough spaced practice exercises available
           exercise_ids = exercise_ids_by_page_id.values_at(*task.core_page_ids).compact.flatten
-
-          spaced_exercises_by_task_id[task.id] += filter_and_choose_exercises(
+          chosen_exercises.concat filter_and_choose_exercises(
             exercises: exercises_by_id.values_at(*exercise_ids),
             task: task,
             count: remaining,
+            additional_excluded_numbers: chosen_exercises.map(&:number),
             current_time: current_time
           )
         end
+
+        spaced_exercises_by_task_id[task.id] = chosen_exercises
       end
     end
 
@@ -270,7 +279,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     requests.map do |request|
       student = request.fetch(:student)
       ecosystem = student.course.ecosystem
-      exercises = []
+      chosen_exercises = []
 
       unless ecosystem.nil?
         role = student.role
@@ -299,16 +308,17 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
           ).where(id: pools.flatten).index_by(&:id)
 
           pools.each_with_index do |pool, index|
-            ex = filter_and_choose_exercises(
+            exercises = filter_and_choose_exercises(
               exercises: exercises_by_id.values_at(*pool),
               role: role,
               count: exercises_per_pool + (remainder.to_f/(num_pools - index)).ceil,
+              additional_excluded_numbers: chosen_exercises.map(&:number),
               current_time: current_time
             )
 
-            remainder += exercises_per_pool - ex.size
+            remainder += exercises_per_pool - exercises.size
 
-            exercises.concat ex
+            chosen_exercises.concat exercises
           end
         end
       end
@@ -316,7 +326,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       {
         request_uuid: request[:request_uuid],
         student_uuid: student.uuid,
-        exercise_uuids: exercises.map(&:uuid),
+        exercise_uuids: chosen_exercises.map(&:uuid),
         student_status: 'student_ready',
         spy_info: {}
       }
@@ -420,10 +430,30 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
   protected
 
   def filter_and_choose_exercises(
-    exercises:, task: nil, role: nil, count:, current_time: Time.current
+    exercises:,
+    task: nil,
+    role: nil,
+    count:,
+    additional_excluded_numbers: [],
+    current_time: Time.current
   )
+    unless task.nil?
+      # Always exclude all exercises already assigned to the current task
+      excluded_exercise_ids = task.exercise_steps(preload_taskeds: true)
+                                  .map(&:tasked)
+                                  .map(&:content_exercise_id)
+
+      additional_excluded_numbers += Content::Models::Exercise.where(
+        id: excluded_exercise_ids
+      ).pluck(:number)
+    end
+
     outs = FilterExcludedExercises.call(
-      exercises: exercises, task: task, role: role, current_time: current_time
+      exercises: exercises,
+      task: task,
+      role: role,
+      additional_excluded_numbers: additional_excluded_numbers,
+      current_time: current_time
     ).outputs
 
     ChooseExercises[
