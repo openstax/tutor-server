@@ -6,6 +6,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
 
   let(:reading)   { FactoryBot.create :tasked_task_plan, number_of_students: number_of_students }
   let(:course)    { reading.owner }
+  let(:period)    { course.periods.first }
   let(:task_plan) do
     reading_pages = Content::Models::Page.where(id: reading.settings['page_ids'])
 
@@ -14,7 +15,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
       type: :homework,
       owner: course,
       assistant_code_class_name: 'Tasks::Assistants::HomeworkAssistant',
-      target: course.periods.first,
+      target: period,
       settings: {
         page_ids: reading_pages.map(&:id).map(&:to_s),
         exercises: reading_pages.first.exercises.first(5).map do |exercise|
@@ -26,6 +27,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
       task_plan.grading_template.update_attribute :late_work_penalty_applied, :immediately
     end
   end
+  let(:tasking_plan)         { task_plan.tasking_plans.first }
   let(:student_tasks)        { task_plan.tasks.joins(taskings: { role: :student }).to_a }
   let(:students)             { student_tasks.map { |task| task.taskings.first.role.student } }
   let(:late_work_penalty)    { task_plan.grading_template.late_work_penalty }
@@ -59,19 +61,20 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         title: task_plan.title,
         type: 'homework',
         dropped_questions: [],
-        periods: [
+        tasking_plans: [
           {
-            id: task_plan.owner.periods.first.id.to_s,
-            name: '1st',
-            question_headings: student_tasks.first.task_steps.each_with_index.map do |task_step, index|
+            id: tasking_plan.id.to_s,
+            period_id: period.id.to_s,
+            period_name: period.name,
+            question_headings: student_tasks.first.task_steps.each_with_index.map do |ts, index|
               {
                title: "Q#{index + 1}",
                points: 1.0,
-               type: task_step.is_core? ? 'MCQ' : 'Tutor',
-              }.merge(task_step.is_core? ?
-                      { question_id:  task_step.tasked.question_id.to_i,
-                       exercise_id: task_step.tasked.content_exercise_id.to_i } : {},
-            )
+               type: ts.is_core? ? 'MCQ' : 'Tutor',
+              }.merge(
+                ts.is_core? ? { question_id:  ts.tasked.question_id.to_i,
+                                exercise_id: ts.tasked.content_exercise_id.to_i } : {}
+              )
             end,
             late_work_fraction_penalty: late_work_penalty,
             num_questions_dropped: 0,
@@ -90,20 +93,28 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 late_work_fraction_penalty: 0.0,
                 questions: [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: true,
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
-                    points: 1.0
+                    points: 1.0,
+                    needs_grading: false
                   }
                 ] + [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
-                    is_completed: false
+                    question_id: kind_of(String),
+                    is_completed: false,
+                    needs_grading: false
                   }
-                ] * 4 + [ { is_completed: false } ] * 3
+                ] * 4 + [
+                  { task_step_id: kind_of(String), is_completed: false, needs_grading: false }
+                ] * 3,
+                questions_need_grading: false,
+                grades_need_publishing: false
               },
               {
                 role_id: students.second.entity_role_id,
@@ -118,22 +129,32 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 late_work_fraction_penalty: 0.0,
                 questions: [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: true,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
-                    points: 0.0
+                    points: 0.0,
+                    needs_grading: false
                   }
                 ] + [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
-                    is_completed: false
+                    question_id: kind_of(String),
+                    is_completed: false,
+                    needs_grading: false
                   }
-                ] * 4 + [ { is_completed: false } ] * 3
+                ] * 4 + [
+                  { task_step_id: kind_of(String), is_completed: false, needs_grading: false }
+                ] * 3,
+                questions_need_grading: false,
+                grades_need_publishing: false
               }
-            ].sort_by { |student| [ student[:last_name], student[:first_name] ] }
+            ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
+            questions_need_grading: false,
+            grades_need_publishing: false
           }
         ]
       )
@@ -174,19 +195,20 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         title: task_plan.title,
         type: 'homework',
         dropped_questions: [],
-        periods: [
+        tasking_plans: [
           {
-            id: task_plan.owner.periods.first.id.to_s,
-            name: '1st',
-            question_headings: student_tasks.first.task_steps.each_with_index.map do |task_step, index|
+            id: tasking_plan.id.to_s,
+            period_id: period.id.to_s,
+            period_name: period.name,
+            question_headings: student_tasks.first.task_steps.each_with_index.map do |ts, index|
               {
                title: "Q#{index + 1}",
                points: 1.0,
-               type: task_step.is_core? ? 'MCQ' : 'Tutor',
-              }.merge(task_step.is_core? ?
-                      { question_id:  task_step.tasked.question_id.to_i,
-                       exercise_id: task_step.tasked.content_exercise_id.to_i } : {},
-            )
+               type: ts.is_core? ? 'MCQ' : 'Tutor',
+              }.merge(
+                ts.is_core? ? { question_id: ts.tasked.question_id.to_i,
+                                exercise_id: ts.tasked.content_exercise_id.to_i } : {}
+              )
             end,
             late_work_fraction_penalty: late_work_penalty,
             num_questions_dropped: 0,
@@ -205,21 +227,34 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 late_work_fraction_penalty: late_work_penalty,
                 questions: [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: true,
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
-                    points: 1.0
+                    points: 1.0,
+                    needs_grading: false
                   }
                 ] + [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: false,
-                    points: 0.0
+                    points: 0.0,
+                    needs_grading: false
                   }
-                ] * 4 + [ { is_completed: false, points: 0.0 } ] * 3
+                ] * 4 + [
+                  {
+                    task_step_id: kind_of(String),
+                    is_completed: false,
+                    points: 0.0,
+                    needs_grading: false
+                  }
+                ] * 3,
+                questions_need_grading: false,
+                grades_need_publishing: false
               },
               {
                 role_id: students.second.entity_role_id,
@@ -234,23 +269,38 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 late_work_fraction_penalty: late_work_penalty,
                 questions: [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: true,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
-                    points: 0.0
+                    points: 0.0,
+                    needs_grading: false
                   }
                 ] + [
                   {
-                    id: kind_of(String),
+                    task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
+                    question_id: kind_of(String),
                     is_completed: false,
-                    points: 0.0
+                    points: 0.0,
+                    needs_grading: false
                   }
-                ] * 4 + [ { is_completed: false, points: 0.0 } ] * 3
+                ] * 4 + [
+                  {
+                    task_step_id: kind_of(String),
+                    is_completed: false,
+                    points: 0.0,
+                    needs_grading: false
+                  }
+                ] * 3,
+                questions_need_grading: false,
+                grades_need_publishing: false
               }
-            ].sort_by { |student| [ student[:last_name], student[:first_name] ] }
+            ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
+            questions_need_grading: false,
+            grades_need_publishing: false
           }
         ]
       )

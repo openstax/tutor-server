@@ -20,10 +20,11 @@ RSpec.describe Api::V1::TaskedRepresenterMapper, type: :routine do
   context '.representers' do
     it 'returns all tasked representers' do
       # Get all the Tasked.*Representer classes
-      expected_tasked_representers = Set.new Dir[
-        'app/representers/api/v1/tasks/tasked*_representer.rb'
-      ].map{ |f| f.remove('app/representers/api/v1/tasks/')
-                  .remove('.rb').classify }
+      expected_tasked_representers = Set.new(
+        [ :exercise, :external_url, :interactive, :placeholder, :reading, :video ].map do |type|
+          "Tasked#{type.to_s.classify}Representer"
+        end
+      )
 
       # Get all the representers in the mapper
       registered_tasked_representers = Set.new(

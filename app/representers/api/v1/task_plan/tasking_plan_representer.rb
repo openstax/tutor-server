@@ -7,6 +7,12 @@ class Api::V1::TaskPlan::TaskingPlanRepresenter < Roar::Decorator
   TARGET_TYPE_TO_CLASS_MAP = { 'period' => 'CourseMembership::Models::Period',
                                'course' => 'CourseProfile::Models::Course' }
 
+  property :id,
+           type: String,
+           readable: true,
+           writeable: false,
+           schema_info: { required: true }
+
   property :target_id,
            type: String,
            readable: true,

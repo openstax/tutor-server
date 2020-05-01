@@ -59,4 +59,14 @@ class Api::V1::TaskPlan::Scores::StudentRepresenter < Roar::Decorator
              extend: Api::V1::TaskPlan::Scores::StudentQuestionRepresenter,
              readable: true,
              writeable: false
+
+  property :questions_need_grading,
+           readable: true,
+           writeable: false,
+           schema_info: { type: 'boolean' }
+
+  property :grades_need_publishing,
+           readable: true,
+           writeable: false,
+           schema_info: { type: 'boolean' }
 end

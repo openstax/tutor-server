@@ -7,31 +7,39 @@ class CalculateTaskPlanScores
     current_time = Time.current
 
     # Preload each task's student and period
-    tasks = task_plan.tasks.preload(
-      :time_zone, taskings: [ :period, role: :student ]
-    ).reject do |task|
-      task.taskings.all? do |tasking|
-        period = tasking.period
-        student = tasking.role.student
-
-        period.nil? || period.archived? || student.nil?
-      end
-    end
+    tasks = task_plan.tasks.preload(:time_zone, taskings: { role: :student })
 
     ActiveRecord::Associations::Preloader.new.preload tasks, task_steps: :tasked
 
-    # Group tasks by period
-    tasks_by_period = tasks.group_by do |task|
-      periods = task.taskings.map(&:period).uniq
+    # Group tasking_plans and tasks by period
+    period_tasking_plans = task_plan.tasking_plans.filter do |tasking_plan|
+      tasking_plan.target_type == 'CourseMembership::Models::Period'
+    end
+
+    ActiveRecord::Associations::Preloader.new.preload period_tasking_plans, :target
+
+    period_tasking_plans = period_tasking_plans.reject do |tasking_plan|
+      tasking_plan.target.archived?
+    end.sort_by { |tasking_plan| tasking_plan.target.name }
+
+    tasks_by_period_id = tasks.filter do |task|
+      task.taskings.all? { |tasking| tasking.role.student? }
+    end.group_by do |task|
+      period_ids = task.taskings.map do |tasking|
+        tasking.role.student.course_membership_period_id
+      end.uniq
       raise(
         NotImplementedError,
         'Each task in CalculateTaskPlanScores must belong to exactly 1 period'
-      ) if periods.size != 1
+      ) if period_ids.size != 1
 
-      periods.first
+      period_ids.first
     end
 
-    outputs.scores = tasks_by_period.sort_by { |period, _| period.name }.map do |period, tasks|
+    outputs.scores = period_tasking_plans.map do |tasking_plan|
+      tasks = tasks_by_period_id[tasking_plan.target_id]
+      next if tasks.nil?
+
       no_placeholder_tasks = tasks.select { |task| task.placeholder_steps_count == 0 }
       representative_tasks = no_placeholder_tasks.empty? ? tasks : no_placeholder_tasks
       most_common_tasks = representative_tasks.group_by(
@@ -80,17 +88,35 @@ class CalculateTaskPlanScores
           points = points_per_question_index[index]
 
           if task_step.exercise?
+            tasked = task_step.tasked
+
             {
-              id: task_step.tasked.question_id,
-              exercise_id: task_step.tasked.content_exercise_id,
+              task_step_id: task_step.id,
+              exercise_id: tasked.content_exercise_id,
+              question_id: tasked.question_id,
               is_completed: task_step.completed?,
-              selected_answer_id: task_step.tasked.answer_id,
+              selected_answer_id: tasked.answer_id,
               points: points,
-              free_response: task_step.tasked.free_response
+              free_response: tasked.free_response,
+              grader_points: tasked.grader_points,
+              grader_comments: tasked.grader_comments,
+              needs_grading: tasked.needs_grading?
             }
           else
-            { is_completed: false, points: points }
+            {
+              task_step_id: task_step.id,
+              is_completed: false,
+              points: points,
+              needs_grading: false
+            }
           end
+        end
+
+        completed_questions = student_questions.filter { |question| question[:is_completed] }
+        questions_need_grading = completed_questions.any? { |question| question[:needs_grading] }
+        grades_need_publishing = task.grading_template&.manual_grading_feedback_on_publish? &&
+                                 exercise_steps.filter(&:exercise?).any? do |task_step|
+          task_step.tasked.grade_needs_publishing?
         end
 
         {
@@ -105,19 +131,24 @@ class CalculateTaskPlanScores
           total_fraction: task.score,
           late_work_point_penalty: task.late_work_point_penalty,
           late_work_fraction_penalty: task.late_work_penalty,
-          questions: student_questions
+          questions: student_questions,
+          questions_need_grading: questions_need_grading,
+          grades_need_publishing: grades_need_publishing
         }
       end.compact.sort_by { |student| [ student[:last_name], student[:first_name] ] }
 
       {
-        id: period.id,
-        name: period.name,
+        id: tasking_plan.id,
+        period_id: tasking_plan.target_id,
+        period_name: tasking_plan.target.name,
         question_headings: question_headings_array,
         late_work_fraction_penalty: task_plan.grading_template&.late_work_penalty || 0,
         num_questions_dropped: num_questions_dropped,
         points_dropped: points_dropped,
-        students: students_array
+        students: students_array,
+        questions_need_grading: students_array.any? { |student| student[:questions_need_grading] },
+        grades_need_publishing: students_array.any? { |student| student[:grades_need_publishing] }
       }
-    end
+    end.compact
   end
 end

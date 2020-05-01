@@ -26,11 +26,16 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           exercises_count_dynamic: 3
         }
       )
+      @tasking_plan = @task_plan.tasking_plans.first
       @period = @task_plan.owner.periods.first
       @period_2 = FactoryBot.create :course_membership_period, course: @period.course
-      FactoryBot.create :tasks_tasking_plan, task_plan: @task_plan, target: @period_2,
-                                             opens_at: Time.current - 1.day,
-                                             due_at: Time.current - 1.day
+      @tasking_plan_2 = FactoryBot.create(
+        :tasks_tasking_plan,
+        task_plan: @task_plan,
+        target: @period_2,
+        opens_at: Time.current - 1.day,
+        due_at: Time.current - 1.day
+      )
       DistributeTasks.call task_plan: @task_plan
     ensure
       RSpec::Mocks.teardown
@@ -42,7 +47,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
   # after the transaction rollback that happens in-between spec examples
   before(:each)       { @task_plan.tasks.each(&:touch).each(&:reload) }
 
-  let(:periods)       { [ @period, @period_2 ].sort_by(&:name) }
+  let(:tasking_plans) { [ @tasking_plan, @tasking_plan_2 ].sort_by { |tp| tp.target.name } }
   let(:tasks)         do
     @task_plan.tasks.joins(
       taskings: { role: :student }
@@ -58,59 +63,73 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
 
   context 'with an unworked plan' do
     it 'shows available points but no scores' do
-      scores.each_with_index do |period_output, index|
-        period = periods[index]
+      scores.each_with_index do |tasking_plan_output, index|
+        tasking_plan = tasking_plans[index]
+        period = tasking_plan.target
 
-        expect(period_output.id).to eq period.id
-        expect(period_output.name).to eq period.name
-        expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
+        expect(tasking_plan_output.id).to eq tasking_plan.id
+        expect(tasking_plan_output.period_id).to eq period.id
+        expect(tasking_plan_output.period_name).to eq period.name
+        expect(tasking_plan_output.question_headings.map(&:symbolize_keys)).to eq(
           tasks.first.task_steps.each_with_index.map do |task_step, index|
             {
-             title: "Q#{index + 1}",
-             points: 1.0,
-             type: task_step.is_core? ? 'MCQ' : 'Tutor',
-             question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
-             exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
+              title: "Q#{index + 1}",
+              points: 1.0,
+              type: task_step.is_core? ? 'MCQ' : 'Tutor',
+              question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
+              exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil
             }
           end
         )
-        expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
-        expect(period_output.num_questions_dropped).to eq 0
-        expect(period_output.points_dropped).to eq 0.0
+        expect(tasking_plan_output.late_work_fraction_penalty).to eq late_work_penalty
+        expect(tasking_plan_output.num_questions_dropped).to eq 0
+        expect(tasking_plan_output.points_dropped).to eq 0.0
+        expect(tasking_plan_output.questions_need_grading).to eq false
+        expect(tasking_plan_output.grades_need_publishing).to eq false
 
-        expect(period_output.students.map(&:deep_symbolize_keys)).to eq(
+        expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
           tasks.map do |task|
             student = task.taskings.first.role.student
 
             {
-               role_id: task.taskings.first.entity_role_id,
-               available_points: 8.0,
-               late_work_fraction_penalty: task.late_work_penalty,
-               first_name: student.first_name,
-               last_name: student.last_name,
-               late_work_point_penalty: 0.0,
-               is_dropped: false,
-               is_late: task.late?,
-               student_identifier: student.student_identifier,
-               total_fraction: nil,
-               total_points: 0.0,
-               questions: task.task_steps.map do |ts|
-                 if ts.exercise?
-                   {
-                    id: ts.tasked.question_id,
-                    exercise_id: ts.tasked.content_exercise_id,
+              role_id: task.taskings.first.entity_role_id,
+              available_points: 8.0,
+              late_work_fraction_penalty: task.late_work_penalty,
+              first_name: student.first_name,
+              last_name: student.last_name,
+              late_work_point_penalty: 0.0,
+              is_dropped: false,
+              is_late: task.late?,
+              student_identifier: student.student_identifier,
+              total_fraction: nil,
+              total_points: 0.0,
+              questions: task.task_steps.map do |ts|
+                if ts.exercise?
+                  tasked = ts.tasked
+
+                  {
+                    task_step_id: ts.id,
+                    exercise_id: tasked.content_exercise_id,
+                    question_id: tasked.question_id,
                     is_completed: false,
-                    selected_answer_id: ts.tasked.answer_id,
+                    selected_answer_id: tasked.answer_id,
                     points: ts.completed? || task.past_due? ? 0.0 : nil,
-                    free_response: nil
-                   }
-                 else
-                   {
+                    free_response: nil,
+                    grader_points: nil,
+                    grader_comments: nil,
+                    needs_grading: false
+                  }
+                else
+                  {
+                    task_step_id: ts.id,
                     is_completed: false,
-                    points: task.past_due? ? 0.0 : nil
-                   }
-                 end
-               end.compact
+                    points: task.past_due? ? 0.0 : nil,
+                    needs_grading: false
+                  }
+                end
+              end.compact,
+              questions_need_grading: false,
+              grades_need_publishing: false
             }
           end
         )
@@ -126,27 +145,31 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         task_step: tasks.second.task_steps.select(&:exercise?).first, is_correct: false
       )
 
-      scores.each_with_index do |period_output, index|
-        period = periods[index]
+      scores.each_with_index do |tasking_plan_output, index|
+        tasking_plan = tasking_plans[index]
+        period = tasking_plan.target
 
-        expect(period_output.id).to eq period.id
-        expect(period_output.name).to eq period.name
-        expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
+        expect(tasking_plan_output.id).to eq tasking_plan.id
+        expect(tasking_plan_output.period_id).to eq period.id
+        expect(tasking_plan_output.period_name).to eq period.name
+        expect(tasking_plan_output.question_headings.map(&:symbolize_keys)).to eq(
           tasks.first.task_steps.each_with_index.map do |task_step, index|
             {
-             title: "Q#{index + 1}",
-             points: 1.0,
-             type: task_step.is_core? ? 'MCQ' : 'Tutor',
-             question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
-             exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
+              title: "Q#{index + 1}",
+              points: 1.0,
+              type: task_step.is_core? ? 'MCQ' : 'Tutor',
+              question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
+              exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
             }
           end
         )
-        expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
-        expect(period_output.num_questions_dropped).to eq 0
-        expect(period_output.points_dropped).to eq 0.0
+        expect(tasking_plan_output.late_work_fraction_penalty).to eq late_work_penalty
+        expect(tasking_plan_output.num_questions_dropped).to eq 0
+        expect(tasking_plan_output.points_dropped).to eq 0.0
+        expect(tasking_plan_output.questions_need_grading).to eq false
+        expect(tasking_plan_output.grades_need_publishing).to eq false
 
-        expect(period_output.students.map(&:deep_symbolize_keys)).to eq(
+        expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
           tasks.map do |task|
             student = task.taskings.first.role.student
 
@@ -164,21 +187,31 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               total_points: 0.0,
               questions: task.task_steps.map do |ts|
                 if ts.exercise?
+                  tasked = ts.tasked
+
                   {
-                   id: ts.tasked.question_id,
-                   exercise_id: ts.tasked.content_exercise_id,
-                   is_completed: ts.completed?,
-                   selected_answer_id: ts.tasked.answer_id,
-                   points: ts.completed? || task.past_due? ? 0.0 : nil,
-                   free_response: ts.tasked.free_response
+                    task_step_id: ts.id,
+                    exercise_id: tasked.content_exercise_id,
+                    question_id: tasked.question_id,
+                    is_completed: ts.completed?,
+                    selected_answer_id: tasked.answer_id,
+                    points: ts.completed? || task.past_due? ? 0.0 : nil,
+                    free_response: tasked.free_response,
+                    grader_points: nil,
+                    grader_comments: nil,
+                    needs_grading: false
                   }
                 else
                   {
-                   is_completed: false,
-                   points: task.past_due? ? 0.0 : nil
+                    task_step_id: ts.id,
+                    is_completed: false,
+                    points: task.past_due? ? 0.0 : nil,
+                    needs_grading: false
                   }
                 end
-              end.compact
+              end.compact,
+              questions_need_grading: false,
+              grades_need_publishing: false
             }
           end
         )
@@ -193,27 +226,31 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
       work_task(task: tasks.third, is_correct: true)
       work_task(task: tasks.fourth, is_correct: true)
 
-      scores.each_with_index do |period_output, index|
-        period = periods[index]
+      scores.each_with_index do |tasking_plan_output, index|
+        tasking_plan = tasking_plans[index]
+        period = tasking_plan.target
 
-        expect(period_output.id).to eq period.id
-        expect(period_output.name).to eq period.name
-        expect(period_output.question_headings.map(&:symbolize_keys)).to eq(
+        expect(tasking_plan_output.id).to eq tasking_plan.id
+        expect(tasking_plan_output.period_id).to eq period.id
+        expect(tasking_plan_output.period_name).to eq period.name
+        expect(tasking_plan_output.question_headings.map(&:symbolize_keys)).to eq(
           tasks.first.task_steps.each_with_index.map do |task_step, index|
             {
-             title: "Q#{index + 1}",
-             points: 1.0,
-             type: task_step.is_core? ? 'MCQ' : 'Tutor',
-             question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
-             exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil,
+              title: "Q#{index + 1}",
+              points: 1.0,
+              type: task_step.is_core? ? 'MCQ' : 'Tutor',
+              question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
+              exercise_id: task_step.is_core? ? task_step.tasked.content_exercise_id : nil
             }
           end
         )
-        expect(period_output.late_work_fraction_penalty).to eq late_work_penalty
-        expect(period_output.num_questions_dropped).to eq 0
-        expect(period_output.points_dropped).to eq 0.0
+        expect(tasking_plan_output.late_work_fraction_penalty).to eq late_work_penalty
+        expect(tasking_plan_output.num_questions_dropped).to eq 0
+        expect(tasking_plan_output.points_dropped).to eq 0.0
+        expect(tasking_plan_output.questions_need_grading).to eq false
+        expect(tasking_plan_output.grades_need_publishing).to eq false
 
-        expect(period_output.students.map(&:deep_symbolize_keys)).to eq(
+        expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
           tasks.each_with_index.map do |task, index|
             student = task.taskings.first.role.student
             is_correct = [ 0, 2, 3 ].include?(index)
@@ -232,21 +269,31 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               total_points: is_correct ? 8.0 * task.late_work_multiplier : 0.0,
               questions: task.task_steps.map do |ts|
                 if ts.exercise?
+                  tasked = ts.tasked
+
                   {
-                   id: ts.tasked.question_id,
-                   exercise_id: ts.tasked.content_exercise_id,
-                   is_completed: ts.completed?,
-                   selected_answer_id: ts.tasked.answer_id,
-                   points: ts.completed? || task.past_due? ? (is_correct ? 1.0 : 0.0) : nil,
-                   free_response: ts.tasked.free_response
+                    task_step_id: ts.id,
+                    exercise_id: tasked.content_exercise_id,
+                    question_id: tasked.question_id,
+                    is_completed: ts.completed?,
+                    selected_answer_id: tasked.answer_id,
+                    points: ts.completed? || task.past_due? ? (is_correct ? 1.0 : 0.0) : nil,
+                    free_response: tasked.free_response,
+                    grader_points: nil,
+                    grader_comments: nil,
+                    needs_grading: false
                   }
                 else
                   {
-                   is_completed: false,
-                   points: task.past_due? ? 0.0 : nil
+                    task_step_id: ts.id,
+                    is_completed: false,
+                    points: task.past_due? ? 0.0 : nil,
+                    needs_grading: false
                   }
                 end
-              end.compact
+              end.compact,
+              questions_need_grading: false,
+              grades_need_publishing: false
             }
           end
         )

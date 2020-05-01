@@ -26,5 +26,4 @@ class Api::V1::TaskPlan::Scores::QuestionHeadingRepresenter < Roar::Decorator
            type: Integer,
            readable: true,
            writeable: false
-
 end

@@ -11,6 +11,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   it { is_expected.to validate_presence_of(:question_index) }
   it { is_expected.to validate_presence_of(:correct_answer_id) }
   it { is_expected.to validate_length_of(:free_response).is_at_most(10000) }
+  it { is_expected.to validate_numericality_of(:grader_points).is_greater_than_or_equal_to(0.0) }
 
   it 'auto assigns the correct_answer_id on create' do
     expect(tasked_exercise.correct_answer_id).to(
@@ -65,7 +66,6 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
     expect(tasked_exercise.reload).to be_valid
 
-    expect(tasked_exercise.reload).to be_valid
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     expect(tasked_exercise).not_to be_valid
 
@@ -82,6 +82,25 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect(tasked_exercise.reload).to be_valid
     tasked_exercise.free_response = 'some new thing'
     expect(tasked_exercise).to be_valid
+  end
+
+  it 'cannot be answered after due and graded' do
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.save!
+
+    tasked_exercise.last_graded_at = Time.current
+    tasked_exercise.grader_points = 0.0
+    tasked_exercise.save!
+
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
+    tasked_exercise.free_response = 'def'
+
+    expect(tasked_exercise).to be_valid
+
+    tasked_exercise.task_step.task.update_attribute :due_at_ntz, Time.current - 1.day
+
+    expect(tasked_exercise).not_to be_valid
   end
 
   it "invalidates task's cache when updated" do

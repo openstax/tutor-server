@@ -2,12 +2,17 @@ class Api::V1::TaskPlan::Scores::StudentQuestionRepresenter < Roar::Decorator
   include Roar::JSON
   include Representable::Coercion
 
-  property :id,
+  property :task_step_id,
            type: String,
            readable: true,
            writeable: false
 
   property :exercise_id,
+           type: String,
+           readable: true,
+           writeable: false
+
+  property :question_id,
            type: String,
            readable: true,
            writeable: false
@@ -31,4 +36,19 @@ class Api::V1::TaskPlan::Scores::StudentQuestionRepresenter < Roar::Decorator
            type: String,
            readable: true,
            writeable: false
+
+  property :grader_points,
+           type: Float,
+           readable: true,
+           writeable: false
+
+  property :grader_comments,
+           type: String,
+           readable: true,
+           writeable: false
+
+  property :needs_grading,
+           readable: true,
+           writeable: false,
+           schema_info: { type: 'boolean' }
 end

@@ -129,8 +129,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     end
   end
 
-  context 'PATCH update' do
-
+  context '#update' do
     let(:tasked)        { create_tasked(:tasked_exercise, @user_1_role) }
     let(:id_parameters) { { task_id: tasked.task_step.task.id, id: tasked.task_step.id } }
 
@@ -239,38 +238,77 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
 
         expect(response).to have_http_status(:success)
       end
-
     end
 
+    context 'practice task' do
+      let(:step) do
+        page = @tasked_exercise.exercise.page
+
+        FactoryBot.create :content_exercise, page: page
+
+        Content::Routines::PopulateExercisePools[book: page.book]
+
+        AddEcosystemToCourse[course: @course, ecosystem: page.ecosystem]
+
+        FindOrCreatePracticeSpecificTopicsTask[
+          course: @course, role: @user_1_role, page_ids: [page.id]
+        ].task_steps.first
+      end
+
+      it 'allows updating of a step' do
+        api_put :update, @user_1_token, params: { id: step.id },
+                body: { free_response: 'Ipsum lorem', answer_id: step.tasked.answer_ids.first }
+
+        expect(response).to have_http_status(:success)
+      end
+
+      it "422's if needs to pay" do
+        make_payment_required_and_expect_422(course: @course, user: @user_1) {
+          api_put :update, @user_1_token, params: { id: step.id },
+                  body: { free_response: 'Ipsum lorem' }
+        }
+      end
+    end
   end
 
-  context 'practice task update step' do
-    let(:step) do
-      page = @tasked_exercise.exercise.page
+  context '#grade' do
+    let(:tasked) do
+      create_tasked(:tasked_exercise, @user_1_role).tap do |tasked|
+        tasked.update_attribute :free_response, 'A sentence explaining all the things!'
+      end
+    end
+    let(:params) { { id: tasked.task_step.id } }
 
-      FactoryBot.create :content_exercise, page: page
-
-      Content::Routines::PopulateExercisePools[book: page.book]
-
-      AddEcosystemToCourse[course: @course, ecosystem: page.ecosystem]
-
-      FindOrCreatePracticeSpecificTopicsTask[
-        course: @course, role: @user_1_role, page_ids: [page.id]
-      ].task_steps.first
+    context 'task not yet due' do
+      it 'raises SecurityTransgression' do
+        expect do
+          api_put :grade, @teacher_user_token, params: params,
+                                               body: { grader_points: 1.0, grader_comments: 'Test' }
+        end.to  raise_error(SecurityTransgression)
+           .and not_change { tasked.reload.grader_points }
+           .and not_change { tasked.grader_comments }
+           .and not_change { tasked.last_graded_at }
+           .and not_change { tasked.published_points }
+           .and not_change { tasked.published_comments }
+      end
     end
 
-    it 'allows updating of a step' do
-      api_put :update, @user_1_token, params: { id: step.id },
-              body: { free_response: 'Ipsum lorem', answer_id: step.tasked.answer_ids.first }
+    context 'task past-due' do
+      before { tasked.task_step.task.update_attribute :due_at_ntz, Time.current - 1.day }
 
-      expect(response).to have_http_status(:success)
-    end
+      it 'grades the exercise step' do
+        expect do
+          api_put :grade, @teacher_user_token, params: params,
+                                               body: { grader_points: 1.0, grader_comments: 'Test' }
+        end.to  change     { tasked.reload.grader_points }.from(nil).to(1.0)
+           .and change     { tasked.grader_comments }.from(nil).to('Test')
+           .and change     { tasked.last_graded_at }.from(nil)
+           .and not_change { tasked.published_points }
+           .and not_change { tasked.published_comments }
+        expect(response).to have_http_status(:success)
 
-    it "422's if needs to pay" do
-      make_payment_required_and_expect_422(course: @course, user: @user_1) {
-        api_put :update, @user_1_token, params: { id: step.id },
-                body: { free_response: 'Ipsum lorem' }
-      }
+        expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')
+      end
     end
   end
 
@@ -279,7 +317,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     # Make sure the type has the tasks_ prefix
     type = type.to_s.starts_with?('tasks_') ? type : "tasks_#{type}".to_sym
     tasked = FactoryBot.create(type)
-    tasking = FactoryBot.create(:tasks_tasking, role: owner, task: tasked.task_step.task)
+    tasking = FactoryBot.create(
+      :tasks_tasking, role: owner, period: owner.course_member.period, task: tasked.task_step.task
+    )
     tasked
   end
 end

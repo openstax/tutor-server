@@ -905,6 +905,11 @@ ActiveRecord::Schema.define(version: 2020_04_16_191842) do
     t.text "content"
     t.text "context"
     t.string "answer_ids", null: false, array: true
+    t.float "grader_points"
+    t.text "grader_comments"
+    t.datetime "last_graded_at"
+    t.float "published_points"
+    t.text "published_comments"
     t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"
@@ -1014,6 +1019,7 @@ ActiveRecord::Schema.define(version: 2020_04_16_191842) do
     t.integer "core_page_ids", default: [], null: false, array: true
     t.datetime "student_history_at"
     t.bigint "tasks_extension_id"
+    t.datetime "grades_last_published_at"
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"

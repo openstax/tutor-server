@@ -221,12 +221,18 @@ class Tasks::Models::Task < ApplicationRecord
     )
 
     exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
-      task_step.completed? ? (
-        task_step.exercise? && (
-          task_step.tasked.is_correct? ||
-          full_credit_question_ids.include?(task_step.tasked.question_id)
-        ) ? available_points_per_question_index[index] : 0.0
-      ) : incomplete_value
+      next incomplete_value unless task_step.completed? && task_step.exercise?
+
+      tasked = task_step.tasked
+      next incomplete_value if !task_step.tasked.was_manually_graded? && !tasked.can_be_auto_graded?
+
+      next available_points_per_question_index[index] \
+        if full_credit_question_ids.include?(tasked.question_id)
+
+      next tasked.grader_points || incomplete_value \
+        if tasked.was_manually_graded? || !tasked.can_be_auto_graded?
+
+      tasked.is_correct? ? available_points_per_question_index[index] : 0.0
     end
   end
 
@@ -338,7 +344,7 @@ class Tasks::Models::Task < ApplicationRecord
         !due_at_ntz.nil? && current_time_ntz >= due_at_ntz
       end
     when 'publish'
-      false
+      !grades_last_published_at.nil?
     else
       false
     end
@@ -347,9 +353,11 @@ class Tasks::Models::Task < ApplicationRecord
   def manual_grading_feedback_available?
     case manual_grading_feedback_on
     when 'grade'
-      false
+      exercise_steps(preload_taskeds: true).any? do |task_step|
+        task_step.tasked.was_manually_graded?
+      end
     when 'publish'
-      false
+      !grades_last_published_at.nil?
     else
       false
     end
