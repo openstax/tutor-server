@@ -172,7 +172,8 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     tasks = requests.map { |request| request[:task] }
 
     ActiveRecord::Associations::Preloader.new.preload(
-      tasks, [ taskings: { role: [ { student: :course }, { teacher_student: :course } ] } ]
+      tasks,
+      [ :time_zone, taskings: { role: [ { student: :course }, { teacher_student: :course } ] } ]
     )
 
     current_time = Time.current
@@ -188,19 +189,23 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         next
       end
 
+      tt = Tasks::Models::Task.arel_table
       tasks.each do |task|
-        student_history = (
-          [ task ] + Tasks::Models::Task.select(:id, :content_ecosystem_id, :core_page_ids)
-          .joins(:taskings)
-          .where(
-            taskings: { entity_role_id: task.taskings.map(&:entity_role_id) },
-            task_type: task.task_type
-          )
-          .where.not(student_history_at: nil)
-          .order(student_history_at: :desc)
-          .preload(:ecosystem)
-          .first(6)
-        ).uniq
+        tz = task.time_zone&.to_tz || Time.zone
+        current_time_ntz = DateTimeUtilities.remove_tz(tz.now)
+        student_history_tasks = Tasks::Models::Task.select(:id, :content_ecosystem_id, :core_page_ids)
+        .joins(:taskings)
+        .where(
+          taskings: { entity_role_id: task.taskings.map(&:entity_role_id) },
+          task_type: task.task_type
+        )
+        student_history_tasks = student_history_tasks.where.not(student_history_at: nil).or(
+          student_history_tasks.where(tt[:due_at_ntz].lteq(current_time_ntz))
+        ).order(
+          Arel.sql('LEAST("tasks_tasks"."student_history_at", "tasks_tasks"."due_at_ntz")')
+        ).preload(:ecosystem).first(6)
+
+        student_history = ([ task ] + student_history_tasks).uniq
 
         spaced_tasks_num_exercises = get_k_ago_map(
           task: task, include_random_ago: student_history.size > MIN_HISTORY_SIZE_FOR_RANDOM_AGO
