@@ -73,22 +73,36 @@ class Preview::WorkTask
     task.update_caches_now if update_caches
 
     role = task.taskings.first&.role
-    course = role&.student&.course
+    period = role&.course_member&.period
+    course = period&.course
     return if course.nil?
 
     queue = task.is_preview ? 'preview' : 'dashboard'
-    run_at = task.feedback_available? ? Time.current : task.feedback_at
+    role_run_at = task.feedback_available? ? completed_at :
+                                             [ task.feedback_at, completed_at ].compact.max
 
-    book_part_uuids = Content::Models::Page
+    page_uuid_book_part_uuids = Content::Models::Page
       .where(id: exercise_steps.map(&:content_page_id))
-      .pluck(:parent_book_part_uuid, :uuid)
-      .flatten
-      .compact
-      .uniq
-    book_part_uuids.each do |book_part_uuid|
-      Cache::UpdateRoleBookPart.set(queue: queue, run_at: run_at).perform_later(
-        role: role, book_part_uuid: book_part_uuid, queue: queue
+      .pluck(:uuid, :parent_book_part_uuid)
+
+    page_uuid_book_part_uuids.map(&:first).uniq.each do |page_uuid|
+      Cache::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+        role: role, book_part_uuid: page_uuid, is_page: true
       )
+
+      Cache::UpdatePeriodBookPart.set(queue: queue).perform_later(
+        period: period, book_part_uuid: page_uuid, is_page: true
+      ) if role.student?
+    end
+
+    page_uuid_book_part_uuids.map(&:second).uniq.each do |book_part_uuid|
+      Cache::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+        role: role, book_part_uuid: book_part_uuid, is_page: false
+      )
+
+      Cache::UpdatePeriodBookPart.set(queue: queue).perform_later(
+        period: period, book_part_uuid: book_part_uuid, is_page: false
+      ) if role.student?
     end
 
     requests = tasked_exercises.map do |tasked_exercise|

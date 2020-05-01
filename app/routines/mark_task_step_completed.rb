@@ -27,21 +27,34 @@ class MarkTaskStepCompleted
     return unless save && task_step.exercise?
 
     role = task.taskings.first&.role
-    course = role&.student&.course
+    period = role&.course_member.period
+    course = period&.course
     return if course.nil?
 
     queue = task.is_preview ? 'preview' : 'dashboard'
-    run_at = task.feedback_available? ? completed_at : task.feedback_at
+    role_run_at = task.feedback_available? ? completed_at :
+                                             [ task.feedback_at, completed_at ].compact.max
 
-    book_part_uuids = Content::Models::Page
-      .where(id: task_step.content_page_id)
-      .pluck(:parent_book_part_uuid, :uuid)
-      .flatten
-      .compact
-    book_part_uuids.each do |book_part_uuid|
-      Cache::UpdateRoleBookPart.set(queue: queue, run_at: run_at).perform_later(
-        role: role, book_part_uuid: book_part_uuid, queue: queue
+    page = Content::Models::Page
+      .select(:uuid, :parent_book_part_uuid)
+      .find_by(id: task_step.content_page_id)
+
+    unless page.nil?
+      Cache::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+        role: role, book_part_uuid: page.uuid, is_page: true
       )
+
+      Cache::UpdatePeriodBookPart.set(queue: queue).perform_later(
+        period: period, book_part_uuid: page.uuid, is_page: true
+      ) if role.student?
+
+      Cache::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+        role: role, book_part_uuid: page.parent_book_part_uuid, is_page: false
+      )
+
+      Cache::UpdatePeriodBookPart.set(queue: queue).perform_later(
+        period: period, book_part_uuid: page.parent_book_part_uuid, is_page: false
+      ) if role.student?
     end
 
     OpenStax::Biglearn::Api.record_responses course: course, tasked_exercise: task_step.tasked

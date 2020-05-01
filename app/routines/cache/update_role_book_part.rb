@@ -4,7 +4,9 @@ class Cache::UpdateRoleBookPart
 
   uses_routine CalculateClue
 
-  def exec(role:, book_part_uuid:, current_time: Time.current, queue: 'dashboard')
+  def exec(role:, book_part_uuid:, is_page: nil, current_time: Time.current)
+    current_time = Time.parse(current_time) if current_time.is_a?(String)
+
     course_member = role.course_member
     return if course_member.nil? || course_member.deleted?
 
@@ -15,7 +17,7 @@ class Cache::UpdateRoleBookPart
       task_step: [ :page, task: :taskings ]
     ).where(task_step: { task: { taskings: { entity_role_id: role.id } } })
 
-    is_page = Content::Models::Page.where(uuid: book_part_uuid).exists?
+    is_page = Content::Models::Page.where(uuid: book_part_uuid).exists? if is_page.nil?
     page_key = is_page ? :uuid : :parent_book_part_uuid
 
     responses = Tasks::Models::TaskedExercise.joins(
@@ -32,17 +34,11 @@ class Cache::UpdateRoleBookPart
       role: role,
       book_part_uuid: book_part_uuid,
       is_page: is_page,
-      clue: run(:calculate_clue, responses: responses).outputs.clue,
-      is_cached_for_period: false
+      clue: run(:calculate_clue, responses: responses).outputs.clue
     )
 
     Cache::RoleBookPart.import [ role_book_part ], validate: false, on_duplicate_key_update: {
-      conflict_target: [ :entity_role_id, :book_part_uuid ],
-      columns: [ :clue, :is_cached_for_period ]
+      conflict_target: [ :entity_role_id, :book_part_uuid ], columns: [ :clue ]
     }
-
-    Cache::UpdatePeriodBookPart.set(queue: queue).perform_later(
-      period: period, book_part_uuid: book_part_uuid
-    )
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_165357) do
+ActiveRecord::Schema.define(version: 2020_05_01_125646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -33,7 +33,6 @@ ActiveRecord::Schema.define(version: 2020_04_29_165357) do
     t.uuid "book_part_uuid", null: false
     t.boolean "is_page", null: false
     t.jsonb "clue", null: false
-    t.boolean "is_cached_for_period", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["book_part_uuid"], name: "index_cache_role_book_parts_on_book_part_uuid"
