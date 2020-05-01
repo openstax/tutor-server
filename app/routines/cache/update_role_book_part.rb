@@ -15,15 +15,23 @@ class Cache::UpdateRoleBookPart
       task_step: [ :page, task: :taskings ]
     ).where(task_step: { task: { taskings: { entity_role_id: role.id } } })
 
-    responses = tasked_exercises.where(task_step: { page: { uuid: book_part_uuid } }).or(
-      tasked_exercises.where(task_step: { page: { parent_book_part_uuid: book_part_uuid } })
-    ).preload(task_step: { task: :time_zone }).filter do |tasked_exercise|
+    is_page = Content::Models::Page.where(uuid: book_part_uuid).exists?
+    page_key = is_page ? :uuid : :parent_book_part_uuid
+
+    responses = Tasks::Models::TaskedExercise.joins(
+      task_step: [ :page, task: :taskings ]
+    ).where(
+      task_step: {
+        task: { taskings: { entity_role_id: role.id } }, page: { page_key => book_part_uuid }
+      }
+    ).filter do |tasked_exercise|
       tasked_exercise.task_step.task.feedback_available?(current_time: current_time)
     end.map(&:is_correct?)
 
     role_book_part = Cache::RoleBookPart.new(
       role: role,
       book_part_uuid: book_part_uuid,
+      is_page: is_page,
       clue: run(:calculate_clue, responses: responses).outputs.clue,
       is_cached_for_period: false
     )

@@ -3,6 +3,7 @@ FactoryBot.define do
     association :role, factory: :entity_role
 
     book_part_uuid { SecureRandom.uuid }
+    is_page { [ true, false ].sample }
     clue do
       {
         minimum: 0.0,

@@ -6,6 +6,7 @@ class CreateCachePeriodBookParts < ActiveRecord::Migration[5.2]
                    index: false,
                    foreign_key: { on_update: :cascade, on_delete: :cascade }
       t.uuid :book_part_uuid, null: false, index: true
+      t.boolean :is_page, null: false
       t.jsonb :clue, null: false
 
       t.timestamps
