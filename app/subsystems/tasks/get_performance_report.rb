@@ -25,7 +25,7 @@ module Tasks
         periods = [ member.period ]
       end
 
-      tz = course.time_zone.try!(:to_tz) || Time.zone
+      tz = course.time_zone
       current_time_ntz = DateTimeUtilities.remove_tz(tz.now)
 
       tasks = get_course_tasks(course, role, is_teacher, current_time_ntz)
@@ -221,7 +221,7 @@ module Tasks
         .joins(task_plan: :tasking_plans)
         .where(task_type: task_types,task_plan: { withdrawn_at: nil })
         .where(tt[:opens_at_ntz].eq(nil).or tt[:opens_at_ntz].lteq(current_time_ntz))
-        .preload(:taskings, :time_zone, task_plan: [ :tasking_plans, :extensions])
+        .preload(:taskings, :course, task_plan: [ :tasking_plans, :course, :extensions ])
         .reorder(nil).distinct
 
       if is_teacher

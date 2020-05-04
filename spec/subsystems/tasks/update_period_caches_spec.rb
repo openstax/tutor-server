@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
-  let(:course)                  { @task_plan.owner }
+  let(:course)                  { @task_plan.course }
   let(:periods)                 { course.periods.to_a }
   let(:period_ids)              { periods.map(&:id) }
   let(:first_period)            { periods.first }

@@ -12,7 +12,7 @@ class CreateCourse
 
   def exec(name:, is_preview:, is_test:, is_college: nil, is_concept_coach: nil, term: nil,
            year: nil, num_sections: 1, catalog_offering: nil, appearance_code: nil, starts_at: nil,
-           ends_at: nil, school: nil, time_zone: nil, cloned_from: nil,
+           ends_at: nil, school: nil, timezone: nil, cloned_from: nil,
            estimated_student_count: nil, does_cost: nil, reading_weight: nil, homework_weight: nil,
            grading_templates: Tasks::Models::GradingTemplate.default,
            past_due_unattempted_ungraded_wrq_are_zero: true)
@@ -39,17 +39,6 @@ class CreateCourse
                ':is_concept_coach or :catalog_offering'
     ) if is_concept_coach.nil?
 
-    # Convert time_zone to a model
-    # if it already is and has an associated course,
-    #   make a copy to avoid linking the 2 courses' time_zones to the same record
-    if time_zone.present?
-      if time_zone.is_a?(TimeZone)
-        time_zone = time_zone.dup if time_zone.course&.persisted?
-      else
-        time_zone = TimeZone.new(name: time_zone)
-      end
-    end
-
     run(
       :create_course,
       name: name,
@@ -65,7 +54,7 @@ class CreateCourse
       offering: catalog_offering,
       appearance_code: appearance_code,
       school: school,
-      time_zone: time_zone,
+      timezone: timezone || 'US/Central',
       cloned_from: cloned_from,
       estimated_student_count: estimated_student_count,
       reading_weight: reading_weight,

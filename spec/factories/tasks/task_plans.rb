@@ -4,14 +4,13 @@ FactoryBot.define do
   factory :tasks_task_plan, class: '::Tasks::Models::TaskPlan' do
     transient do
       duration                  { 1.week }
-      time_zone                 { owner.try(:time_zone)&.to_tz || Time.zone }
-      opens_at                  { time_zone.now }
-      due_at                    { opens_at + duration }
-      closes_at                 { owner.try(:ends_at) - 1.day }
       num_tasking_plans         { 1 }
       assistant_code_class_name { 'DummyAssistant' }
       published_at              { nil }
       target                    { nil }
+      opens_at                  { nil }
+      due_at                    { nil }
+      closes_at                 { nil }
     end
 
     title                       { 'A task' }
@@ -29,25 +28,24 @@ FactoryBot.define do
       task_plan.assistant ||= Tasks::Models::Assistant.find_by(code_class_name_hash) ||
                               build(:tasks_assistant, code_class_name_hash)
 
-      task_plan.owner ||= evaluator.target.try(:course) ||
-                          build(:course_profile_course).tap do |course|
-        AddEcosystemToCourse.call(ecosystem: task_plan.ecosystem, course: course) \
-          unless task_plan.ecosystem.nil? || course.ecosystem == task_plan.ecosystem
-      end
-      task_plan.ecosystem ||= task_plan.owner.ecosystem
-      task_plan.grading_template ||= task_plan.owner.grading_templates.detect do |grading_template|
+      task_plan.course ||= evaluator.target.try(:course) || build(:course_profile_course)
+      task_plan.ecosystem ||= task_plan.course.ecosystem
+      AddEcosystemToCourse.call(ecosystem: task_plan.ecosystem, course: task_plan.course) \
+        unless task_plan.ecosystem.nil? || task_plan.course.ecosystem == task_plan.ecosystem
+      task_plan.grading_template ||= task_plan.course.grading_templates.detect do |grading_template|
         grading_template.task_plan_type.to_s == task_plan.type
       end
       task_plan.grading_template ||= build(
-        :tasks_grading_template, course: task_plan.owner, task_plan_type: task_plan.type.to_sym
+        :tasks_grading_template, course: task_plan.course, task_plan_type: task_plan.type.to_sym
       ) if [ 'reading', 'homework' ].include? task_plan.type
 
+      now = task_plan.time_zone.now
       task_plan.tasking_plans += evaluator.num_tasking_plans.times.map do
         args = {
           task_plan: task_plan,
-          opens_at: evaluator.opens_at,
-          due_at: evaluator.due_at,
-          closes_at: evaluator.closes_at
+          opens_at: evaluator.opens_at || now,
+          due_at: evaluator.due_at || now + evaluator.duration,
+          closes_at: evaluator.closes_at || task_plan.course.ends_at - 1.day
         }
         args[:target] = evaluator.target unless evaluator.target.nil?
 

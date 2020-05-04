@@ -44,7 +44,7 @@ class Demo::Base
     {}.tap do |task_plans_by_hash|
       task_plan_hashes_by_title = task_plans.reject { |task_plan| task_plan[:title].blank? }
                                             .index_by { |task_plan| task_plan[:title] }
-      Tasks::Models::TaskPlan.where(owner: course, title: task_plan_hashes_by_title.keys)
+      Tasks::Models::TaskPlan.where(course: course, title: task_plan_hashes_by_title.keys)
                              .group_by(&:title)
                              .each do |title, task_plans|
         task_plans_by_hash[task_plan_hashes_by_title[title]] = task_plans.max_by(&:created_at)
@@ -52,7 +52,7 @@ class Demo::Base
 
       task_plan_hashes_by_id = task_plans.reject { |task_plan| task_plan[:id].blank? }
                                          .index_by { |task_plan| task_plan[:id] }
-      Tasks::Models::TaskPlan.where(owner: course, id: task_plan_hashes_by_id.keys)
+      Tasks::Models::TaskPlan.where(course: course, id: task_plan_hashes_by_id.keys)
                              .index_by(&:id)
                              .each do |id, task_plan|
         task_plans_by_hash[task_plan_hashes_by_id[id]] = task_plan

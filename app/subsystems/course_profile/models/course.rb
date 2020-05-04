@@ -1,10 +1,19 @@
 class CourseProfile::Models::Course < ApplicationRecord
-  acts_as_paranoid without_default_scope: true
-
   MIN_YEAR = 2015
   MAX_FUTURE_YEARS = 2
+  VALID_TIMEZONES = [
+    'US/Central',
+    'US/Pacific',
+    'US/Eastern',
+    'US/Mountain',
+    'US/Arizona',
+    'US/Hawaii',
+    'US/Alaska',
+    'US/East-Indiana',
+    'Canada/Atlantic'
+  ]
 
-  belongs_to_time_zone default: 'Central Time (US & Canada)', autosave: true
+  acts_as_paranoid without_default_scope: true
 
   belongs_to :cloned_from, foreign_key: 'cloned_from_id',
                            class_name: 'CourseProfile::Models::Course',
@@ -28,7 +37,9 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   has_many :course_assistants, subsystem: :tasks
 
-  has_many :task_plans, as: :owner, subsystem: :tasks
+  has_many :task_plans, subsystem: :tasks, inverse_of: :course
+
+  has_many :tasks, subsystem: :tasks, inverse_of: :course
 
   has_many :taskings, through: :periods, subsystem: :tasks
 
@@ -44,7 +55,7 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   enum term: [ :legacy, :demo, :spring, :summer, :fall, :winter, :preview ]
 
-  validates :time_zone, uniqueness: true
+  validates :timezone, presence: true, inclusion: { in: VALID_TIMEZONES }
   validates :name, :term, :year, :starts_at, :ends_at, presence: true
   validates :homework_weight,
             :reading_weight,
@@ -59,6 +70,11 @@ class CourseProfile::Models::Course < ApplicationRecord
   before_validation :set_starts_at_and_ends_at, :set_weights
 
   scope :not_ended, -> { where(arel_table[:ends_at].gt(Time.now)) }
+
+  # Reads the timezone attribute as an ActiveSupport::TimeZone, defaulting to US/Central
+  def time_zone
+    ActiveSupport::TimeZone[timezone] || ActiveSupport::TimeZone['US/Central']
+  end
 
   def ecosystems
     # Keep the ecosystems in order

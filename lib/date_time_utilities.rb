@@ -12,16 +12,16 @@ module DateTimeUtilities
     DateTime.parse(string.to_s) rescue nil
   end
 
-  # Apply a time_zone to the given DateTime object (without offset)
+  # Apply a timezone to the given DateTime object (without offset)
   # Example: 2 PM UTC -> 2 PM EST
-  def self.apply_tz(date_time, time_zone = Time.zone)
+  def self.apply_tz(date_time, timezone)
     return if date_time.nil?
 
-    date_time = date_time.in_time_zone(time_zone)
+    date_time = date_time.in_time_zone(timezone)
     date_time - date_time.utc_offset
   end
 
-  # Removes the time_zone from DateTime object (removing its offset)
+  # Removes the timezone from DateTime object (removing its offset)
   # Example: 2 PM EST -> 2 PM UTC
   def self.remove_tz(date_time)
     date_time.try(:to_datetime).try(:change, offset: 0).try(:in_time_zone, 'UTC')
@@ -32,7 +32,7 @@ module DateTimeUtilities
 
     begin
       if zone.present?
-        original_time_zone = Time.zone
+        original_timezone = Time.zone
         original_chronic_time_class = Chronic.time_class
 
         Time.zone = zone
@@ -42,7 +42,7 @@ module DateTimeUtilities
       datetime = Chronic.parse(string)
     ensure
       if zone.present?
-        Time.zone = original_time_zone
+        Time.zone = original_timezone
         Chronic.time_class = original_chronic_time_class
       end
     end

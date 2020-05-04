@@ -5,9 +5,7 @@ class IndividualizeTaskingPlans
   protected
 
   def exec(task_plan:, role_type: nil)
-    tasking_plans = task_plan.tasking_plans
-    tasking_plans = tasking_plans.preload(:time_zone) if task_plan.persisted?
-    outputs[:tasking_plans] = tasking_plans.flat_map do |tasking_plan|
+    outputs[:tasking_plans] = task_plan.tasking_plans.flat_map do |tasking_plan|
       target = tasking_plan.target
 
       # For example, a deleted period
@@ -39,8 +37,7 @@ class IndividualizeTaskingPlans
           target: role,
           opens_at: tasking_plan.opens_at,
           due_at: tasking_plan.due_at,
-          closes_at: tasking_plan.closes_at,
-          time_zone: tasking_plan.time_zone
+          closes_at: tasking_plan.closes_at
         )
       end
     end.uniq(&:target)

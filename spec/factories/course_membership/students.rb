@@ -4,7 +4,7 @@ FactoryBot.define do
     association :period, factory: :course_membership_period
 
     payment_due_at do
-      (period.course.time_zone || build(:time_zone)).to_tz.now.midnight + 1.day - 1.second +
+      period.course.time_zone.now.midnight + 1.day - 1.second +
       Settings::Payments.student_grace_period_days.days
     end
 

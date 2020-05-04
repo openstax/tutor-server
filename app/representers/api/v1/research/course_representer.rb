@@ -64,11 +64,10 @@ class Api::V1::Research::CourseRepresenter < Roar::Decorator
              type: 'boolean'
            }
 
-  property :time_zone,
+  property :timezone,
            type: String,
            readable: true,
-           writeable: false,
-           getter: ->(*) { time_zone.is_a?(::TimeZone) ? time_zone.name : time_zone }
+           writeable: false
 
   property :salesforce_book_name,
            type: String,
@@ -186,7 +185,7 @@ class Api::V1::Research::CourseRepresenter < Roar::Decorator
 
   collection :task_plans,
              extend: Api::V1::Research::TaskPlanRepresenter,
-             getter: ->(*) { Tasks::Models::TaskPlan.where(owner: self).preload(:tasking_plans) },
+             getter: ->(*) { Tasks::Models::TaskPlan.where(course: self).preload(:tasking_plans) },
              readable: true,
              writeable: false,
              schema_info: { required: true }

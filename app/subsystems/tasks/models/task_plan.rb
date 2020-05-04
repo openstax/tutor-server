@@ -22,7 +22,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
                            optional: true
 
   belongs_to :assistant
-  belongs_to :owner, polymorphic: true
+  belongs_to :course, subsystem: :course_profile, inverse_of: :task_plans
   belongs_to :ecosystem, subsystem: :content
   belongs_to :grading_template, optional: true, inverse_of: :task_plans
 
@@ -31,6 +31,8 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   has_many :tasks, inverse_of: :task_plan
   has_many :extensions, inverse_of: :task_plan
   has_many :dropped_questions, inverse_of: :task_plan
+
+  delegate :timezone, :time_zone, to: :course
 
   json_serialize :settings, Hash
 
@@ -60,9 +62,9 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   scope :published,     -> { where.not first_published_at: nil }
   scope :non_withdrawn, -> { where withdrawn_at: nil }
 
-  scope :preload_tasking_plans, -> { preload(tasking_plans: :time_zone) }
+  scope :preload_tasking_plans, -> { preload(:tasking_plans, :course) }
 
-  scope :preload_tasks, -> { preload(tasks: :time_zone) }
+  scope :preload_tasks, -> { preload(tasks: :course) }
 
   def reload(*args)
     @available_points_without_dropping_per_question_index = nil
@@ -142,7 +144,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   def set_and_return_ecosystem
     self.ecosystem ||= cloned_from&.ecosystem ||
                        get_ecosystems_from_settings&.first ||
-                       owner.try(:ecosystems)&.first
+                       course&.ecosystems&.first
   end
 
   def update_gradable_step_counts!
@@ -226,9 +228,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def valid_ecosystem
-    valid_ecosystems = owner.try(:ecosystems)
-    # Remove nil check if we remove polymorphism.
-    return if valid_ecosystems.nil? || valid_ecosystems.include?(ecosystem)
+    return if course.nil? || course.ecosystems.include?(ecosystem)
 
     errors.add(:ecosystem, 'is not valid for this course')
     throw :abort
@@ -259,7 +259,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def grading_template_same_course
-    return if grading_template.nil? || grading_template.course == owner
+    return if grading_template.nil? || grading_template.course == course
 
     errors.add :grading_template, 'must belong to the same course'
     throw :abort

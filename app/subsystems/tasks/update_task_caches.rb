@@ -16,7 +16,7 @@ class Tasks::UpdateTaskCaches
     tasks = Tasks::Models::Task
       .where(id: task_ids)
       .lock('FOR NO KEY UPDATE SKIP LOCKED')
-      .preload(:task_plan, :ecosystem, :time_zone, taskings: { role: { student: :period } })
+      .preload(:task_plan, :ecosystem, :course, taskings: { role: { student: :period } })
       .to_a
     tasks_by_id = tasks.index_by(&:id)
     locked_task_ids = tasks_by_id.keys

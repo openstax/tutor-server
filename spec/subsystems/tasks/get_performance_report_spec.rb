@@ -38,7 +38,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     external_task_plan = FactoryBot.build(
       :tasks_task_plan,
       title: 'External assignment',
-      owner: @course,
+      course: @course,
       type: 'external',
       assistant: external_assistant,
       content_ecosystem_id: @ecosystem.id,
@@ -50,10 +50,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       :tasks_tasking_plan,
       target: @course,
       task_plan: external_task_plan,
-      opens_at: @course.time_zone.to_tz.now - 4.weeks,
-      due_at: @course.time_zone.to_tz.now - 3.weeks,
-      closes_at: @course.time_zone.to_tz.now - 2.weeks,
-      time_zone: @course.time_zone
+      opens_at: @course.time_zone.now - 4.weeks,
+      due_at: @course.time_zone.now - 3.weeks,
+      closes_at: @course.time_zone.now - 2.weeks
     )
 
     external_task_plan.save!
@@ -68,7 +67,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     event_task_plan = FactoryBot.build(
       :tasks_task_plan,
       title: 'Event',
-      owner: @course,
+      course: @course,
       type: 'event',
       assistant: event_assistant,
       content_ecosystem_id: @ecosystem.id,
@@ -79,10 +78,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       :tasks_tasking_plan,
       target: @course,
       task_plan: event_task_plan,
-      opens_at: @course.time_zone.to_tz.now - 1.week,
-      due_at: @course.time_zone.to_tz.now,
-      closes_at: @course.time_zone.to_tz.now + 1.week,
-      time_zone: @course.time_zone
+      opens_at: @course.time_zone.now - 1.week,
+      due_at: @course.time_zone.now,
+      closes_at: @course.time_zone.now + 1.week
     )
 
     event_task_plan.save!
@@ -97,7 +95,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     draft_task_plan = FactoryBot.build(
       :tasks_task_plan,
       title: 'Draft task plan',
-      owner: @course,
+      course: @course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: @ecosystem.id,
@@ -109,10 +107,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       :tasks_tasking_plan,
       target: @course,
       task_plan: draft_task_plan,
-      opens_at: @course.time_zone.to_tz.now,
-      due_at: @course.time_zone.to_tz.now + 1.week,
-      closes_at: @course.time_zone.to_tz.now + 2.weeks,
-      time_zone: @course.time_zone
+      opens_at: @course.time_zone.now,
+      due_at: @course.time_zone.now + 1.week,
+      closes_at: @course.time_zone.now + 2.weeks
     )
 
     draft_task_plan.save!

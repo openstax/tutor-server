@@ -25,7 +25,7 @@ class Tasks::UpdatePeriodCaches
       task_plan_query = task_plan_query.where(is_cached_for_period: false) unless force
       tt = Tasks::Models::Task.arel_table
       task_plan_ids = task_plan_query.distinct.pluck(:tasks_task_plan_id)
-      task_plans = Tasks::Models::TaskPlan.select(:id)
+      task_plans = Tasks::Models::TaskPlan.select(:id, :course_profile_course_id)
                                           .where(id: task_plan_ids)
                                           .preload(:tasking_plans)
                                           .to_a

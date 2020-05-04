@@ -61,7 +61,7 @@ RSpec.describe Demo::Assign, type: :routine do
 
       matches = title_regex.match task_plan.title
       expect(matches).not_to be_nil
-      expect(task_plan.owner).to eq course
+      expect(task_plan.course).to eq course
       expect(task_plan.ecosystem).to eq course.ecosystems.first
       expect(task_plan.assistant).not_to be_blank
       expect(task_plan.grading_template).to(be_in course.grading_templates) \
@@ -92,7 +92,7 @@ RSpec.describe Demo::Assign, type: :routine do
         expect(tasking_plan.closes_at).to be_within(4.5.days).of(
           DateTime.parse('2019-08-04 19:00:00 -0500')
         )
-        expect(tasking_plan.time_zone).to eq course.time_zone
+        expect(tasking_plan.timezone).to eq course.timezone
       end
 
       expected_num_steps = case task_plan.type

@@ -25,11 +25,11 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
       expect { result = described_class.call(course: @course) }
         .to  change { @course.students.reload.size }.by(6)
         .and change { @course.periods.reload.size }.from(0).to(1)
-        .and change { Tasks::Models::TaskPlan.where(owner: @course).size }.by(4)
-        .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(24)
+        .and change { Tasks::Models::TaskPlan.where(course: @course).size }.by(4)
+        .and change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }.by(24)
 
       # all task plans should be marked as "is_preview"
-      Tasks::Models::TaskPlan.where(owner: @course).each { |tp| expect(tp.is_preview).to eq(true) }
+      Tasks::Models::TaskPlan.where(course: @course).each { |tp| expect(tp.is_preview).to eq(true) }
 
       @course.periods.each do |period|
         student_roles = period.student_roles.sort_by(&:created_at)
@@ -71,8 +71,10 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
         result = described_class.call(course: @course)
       end.to not_change { @course.periods.count }
          .and change { @course.students.count }.by(6)
-         .and change { Tasks::Models::TaskPlan.where(owner: @course).size }.by(4)
-         .and change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }.by(24)
+         .and change { Tasks::Models::TaskPlan.where(course: @course).size }.by(4)
+         .and(
+           change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }.by(24)
+         )
 
       @course.periods.each do |period|
         student_roles = period.student_roles.sort_by(&:created_at)

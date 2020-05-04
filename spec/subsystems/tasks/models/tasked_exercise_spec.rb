@@ -124,7 +124,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise.answer_ids = []
 
     task = tasked_exercise.task_step.task
-    task.due_at = task.time_zone.to_tz.now - 1.minute
+    task.due_at = task.time_zone.now - 1.minute
     task.course.past_due_unattempted_ungraded_wrq_are_zero = true
 
     expect(tasked_exercise.grader_points).to eq 0.0

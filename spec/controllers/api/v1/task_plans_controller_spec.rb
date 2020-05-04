@@ -12,7 +12,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     @published_task_plan = FactoryBot.build(
       :tasked_task_plan,
       number_of_students: 0,
-      owner: @course,
+      course: @course,
       assistant: get_assistant(course: @course, task_plan_type: 'reading'),
       published_at: Time.current
     )
@@ -27,7 +27,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
 
     @task_plan = FactoryBot.build(
       :tasks_task_plan,
-      owner: @course,
+      course: @course,
       assistant: get_assistant(course: @course, task_plan_type: 'reading'),
       content_ecosystem_id: @ecosystem.id,
       settings: { page_ids: [ @page.id.to_s ] },
@@ -47,7 +47,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
 
     FactoryBot.create :tasks_task, task_plan: @task_plan, tasked_to: [ @teacher_student_role ]
 
-    @course.time_zone.update_attribute(:name, 'Pacific Time (US & Canada)')
+    @course.update_attribute :timezone, 'US/Pacific'
 
     AddUserAsCourseTeacher.call(course: @course, user: @teacher)
     AddUserAsPeriodStudent.call(period: period, user: student)
@@ -83,30 +83,30 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
 
     let!(:orig_task_plan_2) do
       FactoryBot.create(:tasks_task_plan,
-                         owner: orig_course,
-                         assistant: get_assistant(course: orig_course, task_plan_type: 'reading'),
-                         content_ecosystem_id: @ecosystem.id,
-                         settings: { page_ids: [@page.id.to_s] },
-                         type: 'reading')
+                        course: orig_course,
+                        assistant: get_assistant(course: orig_course, task_plan_type: 'reading'),
+                        content_ecosystem_id: @ecosystem.id,
+                        settings: { page_ids: [@page.id.to_s] },
+                        type: 'reading')
     end
 
     let!(:cloned_task_plan) do
       FactoryBot.create(:tasks_task_plan,
-                         owner: cloned_course,
-                         assistant: get_assistant(course: cloned_course, task_plan_type: 'reading'),
-                         content_ecosystem_id: @ecosystem.id,
-                         settings: { page_ids: [@page.id.to_s] },
-                         type: 'reading',
-                         cloned_from: orig_task_plan_1)
+                        course: cloned_course,
+                        assistant: get_assistant(course: cloned_course, task_plan_type: 'reading'),
+                        content_ecosystem_id: @ecosystem.id,
+                        settings: { page_ids: [@page.id.to_s] },
+                        type: 'reading',
+                        cloned_from: orig_task_plan_1)
     end
 
     let!(:orig_task_plan_3) do
       FactoryBot.create(:tasks_task_plan,
-                         owner: cloned_course,
-                         assistant: get_assistant(course: cloned_course, task_plan_type: 'reading'),
-                         content_ecosystem_id: @ecosystem.id,
-                         settings: { page_ids: [@page.id.to_s] },
-                         type: 'reading')
+                        course: cloned_course,
+                        assistant: get_assistant(course: cloned_course, task_plan_type: 'reading'),
+                        content_ecosystem_id: @ecosystem.id,
+                        settings: { page_ids: [@page.id.to_s] },
+                        type: 'reading')
     end
 
     context 'clone_status == used_source' do
@@ -613,7 +613,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       it 'does not update first_published_at for task_plans that are already published' do
         controller.sign_in @teacher
 
-        time_zone = @task_plan.tasking_plans.first.time_zone.to_tz
+        time_zone = @task_plan.tasking_plans.first.time_zone
 
         publish_last_requested_at = Time.current
         published_at = Time.current
@@ -658,7 +658,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       it 'does not allow the open date to be changed after the assignment is open' do
         controller.sign_in @teacher
 
-        time_zone = @task_plan.tasking_plans.first.time_zone.to_tz
+        time_zone = @task_plan.tasking_plans.first.time_zone
 
         opens_at = time_zone.now
 
@@ -747,7 +747,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
 
       let(:new_grading_template) do
         FactoryBot.create(
-          :tasks_grading_template, course: @task_plan.owner, task_plan_type: @task_plan.type
+          :tasks_grading_template, course: @task_plan.course, task_plan_type: @task_plan.type
         )
       end
 

@@ -11,13 +11,13 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
       @reading_task_plan = FactoryBot.create(
         :tasked_task_plan, number_of_students: @number_of_students
       )
-      course = @reading_task_plan.owner
+      course = @reading_task_plan.course
       reading_pages = Content::Models::Page.where(id: @reading_task_plan.settings['page_ids'])
 
       @homework_task_plan = FactoryBot.create(
         :tasks_task_plan,
         type: :homework,
-        owner: course,
+        course: course,
         assistant_code_class_name: 'Tasks::Assistants::HomeworkAssistant',
         target: course.periods.first,
         settings: {
@@ -28,7 +28,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           exercises_count_dynamic: 3
         }
       )
-      @period = @homework_task_plan.owner.periods.first
+      @period = @homework_task_plan.course.periods.first
       @period_2 = FactoryBot.create :course_membership_period, course: @period.course
       FactoryBot.create(
         :tasks_tasking_plan,
@@ -42,7 +42,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
       @external_task_plan = FactoryBot.create(
         :tasks_task_plan,
         type: :external,
-        owner: course,
+        course: course,
         assistant_code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant',
         target: course.periods.first,
         settings: { external_url: 'https://www.example.com' }

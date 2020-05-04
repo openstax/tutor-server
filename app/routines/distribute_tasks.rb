@@ -119,7 +119,7 @@ class DistributeTasks
 
       changed_tasks = updated_tasks + new_tasks
       OpenStax::Biglearn::Api.create_update_assignments(
-        changed_tasks.map { |task| { course: task_plan.owner, task: task } }
+        changed_tasks.map { |task| { course: task_plan.course, task: task } }
       ) unless changed_tasks.empty?
     end
 

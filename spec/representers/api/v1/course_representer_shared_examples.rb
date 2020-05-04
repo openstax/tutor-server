@@ -35,8 +35,8 @@ module Api::V1
       expect(represented['name']).to eq 'Test course'
     end
 
-    it 'shows the course time_zone' do
-      expect(represented['time_zone']).to eq 'Central Time (US & Canada)'
+    it 'shows the course timezone' do
+      expect(represented['timezone']).to eq 'US/Central'
     end
 
     it 'shows the offering salesforce_book_name' do

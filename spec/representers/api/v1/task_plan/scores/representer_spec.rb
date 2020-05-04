@@ -5,7 +5,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
   let(:number_of_students) { 2 }
 
   let(:reading)   { FactoryBot.create :tasked_task_plan, number_of_students: number_of_students }
-  let(:course)    { reading.owner }
+  let(:course)    { reading.course }
   let(:period)    { course.periods.first }
   let(:task_plan) do
     reading_pages = Content::Models::Page.where(id: reading.settings['page_ids'])
@@ -13,7 +13,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
     FactoryBot.create(
       :tasks_task_plan,
       type: :homework,
-      owner: course,
+      course: course,
       assistant_code_class_name: 'Tasks::Assistants::HomeworkAssistant',
       target: period,
       settings: {

@@ -13,7 +13,7 @@ class CloneCourse
 
   def exec(course:, teacher_user:, copy_question_library:,
            name: nil, is_college: nil, term: nil, year: nil, num_sections: nil,
-           time_zone: nil, estimated_student_count: nil)
+           timezone: nil, estimated_student_count: nil)
     grading_templates = course.pre_wrm_scores? ?
       Tasks::Models::GradingTemplate.default :
       course.grading_templates.without_deleted.map do |grading_template|
@@ -33,7 +33,7 @@ class CloneCourse
       # because that course may not have cost but this one should
       does_cost: course.offering.does_cost,
       appearance_code: course.appearance_code,
-      time_zone: time_zone || course.time_zone,
+      timezone: timezone || course.timezone,
       cloned_from: course,
       estimated_student_count: estimated_student_count,
       is_preview: false,

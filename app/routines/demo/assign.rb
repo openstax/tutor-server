@@ -70,7 +70,7 @@ class Demo::Assign < Demo::Base
       attrs = {
         title: title,
         type: type,
-        owner: course_model,
+        course: course_model,
         content_ecosystem_id: ecosystem.id,
         assistant: assistants_by_task_plan_type[type],
         settings: {},

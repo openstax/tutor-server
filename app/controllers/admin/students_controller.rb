@@ -8,7 +8,7 @@ class Admin::StudentsController < Admin::BaseController
 
     if local_params[:payment_due_at].present?
       local_params[:payment_due_at] = DateTimeUtilities.parse_in_zone(
-        string: local_params[:payment_due_at], zone: student.course.time_zone.name
+        string: local_params[:payment_due_at], zone: student.course.timezone
       ).midnight + 1.day - 1.second
     end
 

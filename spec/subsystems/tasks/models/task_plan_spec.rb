@@ -10,7 +10,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   let(:exercise)  { FactoryBot.create :content_exercise, page: page }
 
   it { is_expected.to belong_to(:assistant) }
-  it { is_expected.to belong_to(:owner) }
+  it { is_expected.to belong_to(:course) }
 
   it { is_expected.to belong_to(:cloned_from).optional }
 
@@ -61,15 +61,17 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       exercises_count_dynamic: 1,
       exercises: []
     }
-    task_plan.grading_template = FactoryBot.create :tasks_grading_template, task_plan_type: :homework, course: task_plan.owner
+    task_plan.grading_template = FactoryBot.create(
+      :tasks_grading_template, task_plan_type: :homework, course: task_plan.course
+    )
     expect(task_plan).to be_valid
     task_plan.is_publish_requested = true
     expect(task_plan).not_to be_valid
     expect(task_plan.errors.full_messages.first).to include 'must have at least one exercise'
   end
 
-  it 'automatically infers the ecosystem from the settings or owner' do
-    task_plan.owner.course_ecosystems.delete_all :delete_all
+  it 'automatically infers the ecosystem from the settings or course' do
+    task_plan.course.course_ecosystems.delete_all :delete_all
     task_plan.settings = {
       exercises: [ { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions } ]
     }
@@ -94,7 +96,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil
 
-    AddEcosystemToCourse.call(course: task_plan.owner, ecosystem: ecosystem)
+    AddEcosystemToCourse.call(course: task_plan.course, ecosystem: ecosystem)
     expect(task_plan).to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
   end
@@ -202,11 +204,11 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(clone.ecosystem).to eq task_plan.ecosystem
   end
 
-  it "automatically sets its ecosystem to the owner's if cloned_from is not specified" do
-    course = task_plan.owner
+  it "automatically sets its ecosystem to the course's if cloned_from is not specified" do
+    course = task_plan.course
     ecosystem = FactoryBot.create :content_ecosystem
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
-    new_task_plan = FactoryBot.build :tasks_task_plan, owner: course
+    new_task_plan = FactoryBot.build :tasks_task_plan, course: course
     new_task_plan.ecosystem = nil
     expect(new_task_plan).to be_valid
     expect(new_task_plan.ecosystem).to eq ecosystem
@@ -233,7 +235,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   end
 
   context 'with tasks assigned to students' do
-    let(:period) { FactoryBot.create :course_membership_period, course: task_plan.owner }
+    let(:period) { FactoryBot.create :course_membership_period, course: task_plan.course }
     let(:teacher_student_role) do
       FactoryBot.create(:course_membership_teacher_student, period: period).role
     end

@@ -3,12 +3,12 @@ require 'vcr_helper'
 
 RSpec.describe Tasks::GetTaskPlans, type: :routine do
   let!(:task_plan_1) { FactoryBot.create :tasked_task_plan }
-  let(:course)       { task_plan_1.owner }
-  let!(:task_plan_2) { FactoryBot.create :tasks_task_plan, owner: course }
-  let!(:task_plan_3) { FactoryBot.create :tasks_task_plan, owner: course }
+  let(:course)       { task_plan_1.course }
+  let!(:task_plan_2) { FactoryBot.create :tasks_task_plan, course: course }
+  let!(:task_plan_3) { FactoryBot.create :tasks_task_plan, course: course }
 
   it 'gets all task_plans in a course' do
-    out = described_class.call(owner: course).outputs
+    out = described_class.call(course: course).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_nil
@@ -16,7 +16,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
   # TODO: Move to GetDashboard spec
   xit 'can return the task_plan ids for which there is trouble' do
-    out = described_class.call(owner: course, include_trouble_flags: true).outputs
+    out = described_class.call(course: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
@@ -37,7 +37,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     student_tasks.first(2).each { |task| Preview::WorkTask[task: task, is_correct: false] }
 
     # Not enough tasks completed: no trouble
-    out = described_class.call(owner: course, include_trouble_flags: true).outputs
+    out = described_class.call(course: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
@@ -45,7 +45,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     Preview::WorkTask[task: student_tasks[2], is_correct: false]
 
     # >25% completed: trouble
-    out = described_class.call(owner: course, include_trouble_flags: true).outputs
+    out = described_class.call(course: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to include(task_plan_1.id)
@@ -53,7 +53,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     student_tasks[3..5].each { |task| Preview::WorkTask[task: task, is_correct: true] }
 
     # 50% correct: no trouble
-    out = described_class.call(owner: course, include_trouble_flags: true).outputs
+    out = described_class.call(course: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
@@ -61,7 +61,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     Preview::WorkTask[task: student_tasks[6], is_correct: false]
 
     # Less than 50% correct: trouble
-    out = described_class.call(owner: course, include_trouble_flags: true).outputs
+    out = described_class.call(course: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to include(task_plan_1.id)
@@ -69,7 +69,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     Preview::WorkTask[task: student_tasks[7], is_correct: true]
 
     # 50% correct: no trouble
-    out = described_class.call(owner: course, include_trouble_flags: true).outputs
+    out = described_class.call(course: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
@@ -77,7 +77,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     Preview::WorkTask[task: student_tasks[8], is_correct: false]
 
     # Less than 50% correct: trouble
-    out = described_class.call(owner: course, include_trouble_flags: true).outputs
+    out = described_class.call(course: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to include(task_plan_1.id)
@@ -85,7 +85,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
     Preview::WorkTask[task: student_tasks[9], is_correct: true]
 
     # 50% correct: no trouble
-    out = described_class.call(owner: course, include_trouble_flags: true).outputs
+    out = described_class.call(course: course, include_trouble_flags: true).outputs
     expect(out[:plans].length).to eq 3
     expect(out[:plans]).to include(task_plan_1, task_plan_2, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_empty
@@ -93,7 +93,7 @@ RSpec.describe Tasks::GetTaskPlans, type: :routine do
 
   it 'does not return withdrawn task_plans' do
     task_plan_2.destroy
-    out = described_class.call(owner: course).outputs
+    out = described_class.call(course: course).outputs
     expect(out[:plans].length).to eq 2
     expect(out[:plans]).to include(task_plan_1, task_plan_3)
     expect(out[:trouble_plan_ids]).to be_nil

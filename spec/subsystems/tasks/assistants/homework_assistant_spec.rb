@@ -35,7 +35,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         num_tasking_plans: 0
       )
 
-      course = @task_plan.owner
+      course = @task_plan.course
 
       period = FactoryBot.create :course_membership_period, course: course
 

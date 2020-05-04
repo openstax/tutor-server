@@ -12,7 +12,7 @@ class CalculateTaskPlanScores
     task_plan.extensions.load
 
     # Preload each task's student and period
-    tasks = task_plan.tasks.preload(:time_zone, taskings: { role: :student })
+    tasks = task_plan.tasks.preload(:course, taskings: { role: :student })
 
     ActiveRecord::Associations::Preloader.new.preload tasks, task_steps: :tasked
 

@@ -66,12 +66,12 @@ class SetupPerformanceReportData
     ).pluck(:homework_core_exercise_ids).flatten
     exercises = Content::Models::Exercise.where(id: exercise_ids)
 
-    time_zone = course.time_zone.to_tz
+    time_zone = course.time_zone
 
     reading_taskplan = FactoryBot.build(
       :tasks_task_plan,
       title: 'Reading task plan',
-      owner: course,
+      course: course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: ecosystem.id,
@@ -85,8 +85,7 @@ class SetupPerformanceReportData
       task_plan: reading_taskplan,
       opens_at: time_zone.now,
       due_at: time_zone.now + 1.week,
-      closes_at: time_zone.now + 2.weeks,
-      time_zone: course.time_zone
+      closes_at: time_zone.now + 2.weeks
     )
 
     reading_taskplan.save!
@@ -96,7 +95,7 @@ class SetupPerformanceReportData
     homework_taskplan = FactoryBot.build(
       :tasks_task_plan,
       title: 'Homework task plan',
-      owner: course,
+      course: course,
       type: 'homework',
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
@@ -114,8 +113,7 @@ class SetupPerformanceReportData
       target: course, task_plan: homework_taskplan,
       opens_at: time_zone.now,
       due_at: time_zone.now.tomorrow,
-      closes_at: time_zone.now.tomorrow + 1.day,
-      time_zone: course.time_zone
+      closes_at: time_zone.now.tomorrow + 1.day
     )
 
     homework_taskplan.save!
@@ -125,7 +123,7 @@ class SetupPerformanceReportData
     homework2_taskplan = FactoryBot.build(
       :tasks_task_plan,
       title: 'Homework 2 task plan',
-      owner: course,
+      course: course,
       type: 'homework',
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
@@ -143,8 +141,7 @@ class SetupPerformanceReportData
       target: course, task_plan: homework2_taskplan,
       opens_at: time_zone.now,
       due_at: time_zone.now + 2.weeks,
-      closes_at: time_zone.now + 4.weeks,
-      time_zone: course.time_zone
+      closes_at: time_zone.now + 4.weeks
     )
 
     homework2_taskplan.save!
@@ -154,7 +151,7 @@ class SetupPerformanceReportData
     future_homework_taskplan = FactoryBot.build(
       :tasks_task_plan,
       title: 'Future Homework task plan',
-      owner: course,
+      course: course,
       type: 'homework',
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
@@ -173,8 +170,7 @@ class SetupPerformanceReportData
       task_plan: future_homework_taskplan,
       opens_at: time_zone.now + 1.5.days,
       due_at: time_zone.now + 2.days,
-      closes_at: time_zone.now + 2.5.days,
-      time_zone: course.time_zone
+      closes_at: time_zone.now + 2.5.days
     )
 
     future_homework_taskplan.save!

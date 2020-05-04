@@ -80,7 +80,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
   description <<-EOS
     Update course details and return information about the updated course
     Possible error codes:
-      - invalid_time_zone
+      - inclusion (invalid timezone)
 
     #{json_schema(Api::V1::CourseRepresenter, include: :readable)}
   EOS
@@ -156,7 +156,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
       :term,
       :year,
       :num_sections,
-      :time_zone,
+      :timezone,
       :estimated_student_count
     ).merge(course: @course, teacher_user: current_human_user)
 

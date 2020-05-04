@@ -35,7 +35,7 @@ RSpec.describe Api::V1::TaskPlan::Stats::DetailedRepresenter, type: :representer
       type: 'reading',
       stats: [
         {
-          period_id: task_plan.owner.periods.first.id.to_s,
+          period_id: task_plan.course.periods.first.id.to_s,
           name: '1st',
           mean_grade_percent: 50,
           total_count: 2,

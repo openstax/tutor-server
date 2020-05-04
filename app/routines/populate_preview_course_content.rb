@@ -82,7 +82,7 @@ class PopulatePreviewCourseContent
     ends_at = course.ends_at
     closes_at = course.ends_at - 1.day
     preview_chapters.each_with_index do |chapter, index|
-      reading_opens_at = [time_zone.to_tz.now.monday - 20.days + index.weeks, starts_at].max
+      reading_opens_at = [time_zone.now.monday - 20.days + index.weeks, starts_at].max
       reading_due_at = [reading_opens_at + 7.days, ends_at].min
       homework_opens_at = [reading_opens_at + 3.days, starts_at].max
       homework_due_at = [homework_opens_at + 7.days, ends_at].min
@@ -97,7 +97,7 @@ class PopulatePreviewCourseContent
 
       reading_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.book_location.join('.')} Reading (Sample)",
-        owner: course,
+        course: course,
         is_preview: true,
         ecosystem: ecosystem,
         type: 'reading',
@@ -111,7 +111,6 @@ class PopulatePreviewCourseContent
         Tasks::Models::TaskingPlan.new(
           task_plan: reading_tp,
           target: period,
-          time_zone: time_zone,
           opens_at: reading_opens_at,
           due_at: reading_due_at,
           closes_at: closes_at
@@ -125,7 +124,7 @@ class PopulatePreviewCourseContent
 
       homework_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.book_location.join('.')} Homework (Sample)",
-        owner: course,
+        course: course,
         is_preview: true,
         ecosystem: ecosystem,
         type: 'homework',
@@ -143,7 +142,6 @@ class PopulatePreviewCourseContent
         Tasks::Models::TaskingPlan.new(
           task_plan: homework_tp,
           target: period,
-          time_zone: time_zone,
           opens_at: homework_opens_at,
           due_at: homework_due_at,
           closes_at: closes_at

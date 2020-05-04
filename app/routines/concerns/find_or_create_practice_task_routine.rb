@@ -40,8 +40,6 @@ module FindOrCreatePracticeTaskRoutine
     raise 'Invalid @task_type' unless Tasks::Models::Task.task_types.keys.include?(@task_type.to_s)
     raise '@ecosystem cannot be blank' if @ecosystem.blank?
 
-    time_zone = course.time_zone
-
     # Find a not completed practice task
     @task = Tasks::GetPracticeTask[
       role: @role,
@@ -53,7 +51,6 @@ module FindOrCreatePracticeTaskRoutine
       # Create the new practice widget task
       @task = Tasks::Models::Task.new(
         task_type: @task_type,
-        time_zone: time_zone,
         title: 'Practice',
         course: @course,
         ecosystem: @ecosystem

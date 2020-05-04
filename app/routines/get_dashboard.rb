@@ -28,7 +28,7 @@ class GetDashboard
 
   def load_plans(course, start_at_ntz, end_at_ntz, current_time = Time.current)
     result = run(
-      :get_plans, owner: course, start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz
+      :get_plans, course: course, start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz
     ).outputs
     task_plan_ids = result.plans.map(&:id)
     period_caches_by_task_plan_id = Tasks::Models::PeriodCache

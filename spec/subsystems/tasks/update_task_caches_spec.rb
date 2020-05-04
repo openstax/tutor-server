@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
-  let(:course)                  { @task_plan.owner }
+  let(:course)                  { @task_plan.course }
   let(:tasks)                   { @task_plan.tasks.to_a }
   let(:task_ids)                { tasks.map(&:id) }
   let(:student_tasks)           do

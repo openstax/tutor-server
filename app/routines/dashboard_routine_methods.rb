@@ -25,9 +25,7 @@ module DashboardRoutineMethods
   def load_tasks(role, start_at_ntz = nil, end_at_ntz = nil, current_time = Time.current)
     all_tasks = run(
       :get_tasks, roles: role, start_at_ntz: start_at_ntz, end_at_ntz: end_at_ntz
-    ).outputs.tasks.preload(
-      :time_zone, :task_plan, :task_steps, taskings: { role: :extensions }
-    ).to_a
+    ).outputs.tasks.preload(:course, :task_plan, :task_steps, taskings: { role: :extensions }).to_a
 
     visible_tasks = all_tasks.reject(&:hidden?)
 

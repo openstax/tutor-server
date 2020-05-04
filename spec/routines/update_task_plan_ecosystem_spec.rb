@@ -15,6 +15,17 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
     AddEcosystemToCourse.call ecosystem: @ecosystem, course: @course
   end
 
+  before do
+    @old_ecosystem.reload
+    @old_pages.reload
+
+    @ecosystem.reload
+    @pages.reload
+
+    @old_course.reload
+    @course.reload
+  end
+
   context 'reading task plan' do
     let(:page_ids) { @old_pages[0..2].map(&:id) }
 
@@ -23,7 +34,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         :tasks_task_plan,
         type: 'reading',
         ecosystem: @old_ecosystem,
-        owner: @old_course,
+        course: @old_course,
         settings: { page_ids: page_ids }
       )
     end
@@ -35,9 +46,11 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         :tasks_task_plan,
         type: 'reading',
         ecosystem: @old_ecosystem,
-        owner: @course,
+        course: @course,
         settings: { page_ids: page_ids }
       )
+      cloned_reading_plan.course.course_ecosystems.where(ecosystem: @old_ecosystem).delete_all
+      cloned_reading_plan.course.course_ecosystems.reload
       expect(cloned_reading_plan).not_to be_valid
 
       updated_reading_plan = described_class[task_plan: cloned_reading_plan, ecosystem: @ecosystem]
@@ -60,10 +73,10 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         :tasks_task_plan,
         type: 'homework',
         ecosystem: @old_ecosystem,
-        owner: @old_course,
+        course: @old_course,
         settings: {
           exercises: exercises.map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+            { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
           end,
           exercises_count_dynamic: 3
         }
@@ -77,14 +90,16 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         :tasks_task_plan,
         type: 'homework',
         ecosystem: @old_ecosystem,
-        owner: @course,
+        course: @course,
         settings: {
           exercises: exercises.map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+            { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
           end,
           exercises_count_dynamic: 3
         }
       )
+      cloned_homework_plan.course.course_ecosystems.where(ecosystem: @old_ecosystem).delete_all
+      cloned_homework_plan.course.course_ecosystems.reload
       expect(cloned_homework_plan).not_to be_valid
 
       updated_homework_plan = described_class[
@@ -111,7 +126,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         :tasks_task_plan,
         type: 'extra',
         ecosystem: @old_ecosystem,
-        owner: @old_course,
+        course: @old_course,
         settings: { snap_lab_ids: snap_lab_ids }
       )
     end
@@ -123,9 +138,11 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         :tasks_task_plan,
         type: 'extra',
         ecosystem: @old_ecosystem,
-        owner: @course,
+        course: @course,
         settings: { snap_lab_ids: snap_lab_ids }
       )
+      cloned_extra_plan.course.course_ecosystems.where(ecosystem: @old_ecosystem).delete_all
+      cloned_extra_plan.course.course_ecosystems.reload
       expect(cloned_extra_plan).not_to be_valid
 
       updated_extra_plan = described_class[task_plan: cloned_extra_plan, ecosystem: @ecosystem]
@@ -148,7 +165,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         :tasks_task_plan,
         type: 'external',
         ecosystem: @old_ecosystem,
-        owner: @old_course
+        course: @old_course
       )
     end
 
@@ -159,8 +176,10 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         :tasks_task_plan,
         type: 'external',
         ecosystem: @old_ecosystem,
-        owner: @course
+        course: @course
       )
+      cloned_external_plan.course.course_ecosystems.where(ecosystem: @old_ecosystem).delete_all
+      cloned_external_plan.course.course_ecosystems.reload
       expect(cloned_external_plan).not_to be_valid
 
       updated_external_plan = described_class[

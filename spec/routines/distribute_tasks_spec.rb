@@ -14,7 +14,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
     end
   end
   let(:reading_plan) do
-    FactoryBot.build(:tasks_task_plan, owner: course).tap do |reading_plan|
+    FactoryBot.build(:tasks_task_plan, course: course).tap do |reading_plan|
       reading_plan.tasking_plans.first.target = period
       reading_plan.save!
     end
@@ -30,7 +30,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       assistant: FactoryBot.create(
         :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
       ),
-      owner: course,
+      course: course,
       type: 'homework',
       ecosystem: @ecosystem,
       settings: {
@@ -118,8 +118,8 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
       it 'updating due dates causes student scores to change' do
         homework_plan.grading_template.update_column :late_work_penalty, 1.0
-        homework_tasking_plan.opens_at = homework_tasking_plan.time_zone.to_tz.now - 2.hours
-        homework_tasking_plan.due_at = homework_tasking_plan.time_zone.to_tz.now - 1.hour
+        homework_tasking_plan.opens_at = homework_tasking_plan.time_zone.now - 2.hours
+        homework_tasking_plan.due_at = homework_tasking_plan.time_zone.now - 1.hour
         homework_tasking_plan.save validate: false
         result = described_class.call(task_plan: homework_plan)
 
@@ -149,7 +149,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         end
 
         homework_tasking_plan.update_attribute(
-          :due_at, homework_tasking_plan.time_zone.to_tz.now + 1.hour
+          :due_at, homework_tasking_plan.time_zone.now + 1.hour
         )
         result = described_class.call(task_plan: homework_plan)
 
@@ -196,7 +196,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
 
             reading_tasking_plan.update_attribute(
-              :opens_at, reading_tasking_plan.time_zone.to_tz.now + 1.hour
+              :opens_at, reading_tasking_plan.time_zone.now + 1.hour
             )
             result = described_class.call(task_plan: reading_plan, preview: true)
 
@@ -218,7 +218,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
         it 'can create or update normal and preview tasks' do
           reading_tasking_plan.update_attribute(
-            :opens_at, reading_tasking_plan.time_zone.to_tz.now + 1.hour
+            :opens_at, reading_tasking_plan.time_zone.now + 1.hour
           )
           result = described_class.call(task_plan: reading_plan)
 
@@ -262,7 +262,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
         it 'can create or update normal and preview tasks' do
           reading_tasking_plan.update_attribute(
-            :opens_at, reading_tasking_plan.time_zone.to_tz.now - 1.hour
+            :opens_at, reading_tasking_plan.time_zone.now - 1.hour
           )
           result = described_class.call(task_plan: reading_plan)
 
@@ -274,7 +274,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           end
 
           reading_tasking_plan.update_attribute(
-            :due_at, reading_tasking_plan.time_zone.to_tz.now + 1.hour
+            :due_at, reading_tasking_plan.time_zone.now + 1.hour
           )
           result = described_class.call(task_plan: reading_plan)
 
@@ -326,7 +326,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
         it 'can create or update normal and preview tasks' do
           reading_tasking_plan.update_attribute(
-            :opens_at, reading_tasking_plan.time_zone.to_tz.now + 1.hour
+            :opens_at, reading_tasking_plan.time_zone.now + 1.hour
           )
           result = described_class.call(task_plan: reading_plan)
 
@@ -352,9 +352,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       context 'after the open date' do
         let(:new_title)       { 'New Title' }
         let(:new_description) { 'New Description' }
-        let(:new_opens_at)    { reading_tasking_plan.time_zone.to_tz.now.yesterday }
-        let(:new_due_at)      { reading_tasking_plan.time_zone.to_tz.now.tomorrow }
-        let(:new_closes_at)   { reading_tasking_plan.time_zone.to_tz.now.tomorrow + 1.week }
+        let(:new_opens_at)    { reading_tasking_plan.time_zone.now.yesterday }
+        let(:new_due_at)      { reading_tasking_plan.time_zone.now.tomorrow }
+        let(:new_closes_at)   { reading_tasking_plan.time_zone.now.tomorrow + 1.week }
 
         context 'homework' do
           before do

@@ -15,7 +15,6 @@ module Tasks
           opens_at: base_tasking_plan.opens_at,
           due_at: base_tasking_plan.due_at,
           closes_at: base_tasking_plan.closes_at,
-          time_zone: base_tasking_plan.time_zone,
           tasks_task_plan_id: task_plan.id
         )
       end

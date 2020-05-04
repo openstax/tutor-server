@@ -25,7 +25,7 @@ RSpec.describe GetDashboard, type: :routine do
 
         @role = role_type == :teacher_student ? @teacher_student_role : @student_role
 
-        @current_time = @course.time_zone.to_tz.now
+        @current_time = @course.time_zone.now
 
         @deleted_reading_task = FactoryBot.create(
           :tasks_task,
@@ -155,11 +155,11 @@ RSpec.describe GetDashboard, type: :routine do
         )
 
         @unpublished_reading_plan = FactoryBot.create(
-          :tasks_task_plan, owner: @course, type: :reading
+          :tasks_task_plan, course: @course, type: :reading
         )
 
         @unpublished_homework_plan = FactoryBot.create(
-          :tasks_task_plan, owner: @course, type: :reading
+          :tasks_task_plan, course: @course, type: :reading
         )
       end
       after(:all)  { DatabaseCleaner.clean }

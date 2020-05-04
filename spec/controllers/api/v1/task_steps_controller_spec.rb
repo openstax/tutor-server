@@ -414,12 +414,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
   end
 
   # TODO: could replace with FactoryBot calls like in TaskedExercise factory examples
-  def create_tasked(type, owner)
+  def create_tasked(type, role)
     # Make sure the type has the tasks_ prefix
     type = type.to_s.starts_with?('tasks_') ? type : "tasks_#{type}".to_sym
     tasked = FactoryBot.create(type)
     FactoryBot.create(
-      :tasks_tasking, role: owner, period: owner.course_member.period, task: tasked.task_step.task
+      :tasks_tasking, role: role, period: role.course_member.period, task: tasked.task_step.task
     )
     tasked
   end

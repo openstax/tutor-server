@@ -91,7 +91,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       )
     end
 
-    let(:course) { task_plan.owner }
+    let(:course) { task_plan.course }
 
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 
@@ -295,7 +295,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       )
     end
 
-    let(:course) { task_plan.owner }
+    let(:course) { task_plan.course }
 
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 
@@ -381,7 +381,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       )
     end
 
-    let(:course) { task_plan.owner }
+    let(:course) { task_plan.course }
 
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 
@@ -562,7 +562,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       )
     end
 
-    let(:course) { task_plan.owner }
+    let(:course) { task_plan.course }
 
     let(:period) { FactoryBot.create :course_membership_period, course: course }
 

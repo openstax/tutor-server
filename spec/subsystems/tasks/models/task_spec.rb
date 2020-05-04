@@ -18,7 +18,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
 
   it { is_expected.to belong_to(:task_plan).optional }
 
-  it { is_expected.to belong_to(:time_zone).optional }
+  it { is_expected.to belong_to(:course) }
 
   it { is_expected.to have_many(:task_steps) }
   it { is_expected.to have_many(:taskings) }
@@ -260,7 +260,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     grading_template.auto_grading_feedback_on = :due
     expect(task.auto_grading_feedback_available?).to eq false
 
-    task.due_at = task.time_zone.to_tz.now
+    task.due_at = task.time_zone.now
     expect(task.auto_grading_feedback_available?).to eq true
 
     grading_template.auto_grading_feedback_on = :publish
@@ -803,8 +803,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
 
       extension = Tasks::Models::Extension.new(
         entity_role_id: task.taskings.first.entity_role_id,
-        due_at: task.time_zone.to_tz.now + 1.minute,
-        closes_at: task.time_zone.to_tz.now + 1.minute
+        due_at: task.time_zone.now + 1.minute,
+        closes_at: task.time_zone.now + 1.minute
       )
       task.task_plan.extensions << extension
       expect(task.reload.extension).to eq extension
@@ -851,8 +851,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.score_without_lateness).to eq 1.0
       expect(task.score).to eq 0.9
 
-      task.extension.due_at = task.time_zone.to_tz.now
-      task.extension.closes_at = task.time_zone.to_tz.now
+      task.extension.due_at = task.time_zone.now
+      task.extension.closes_at = task.time_zone.now
       task.extension.save!
       task.reload
 
@@ -928,8 +928,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   end
 
   it 'uses teacher-chosen points for homework assignments' do
-    course = task_plan.owner
-    period = FactoryBot.create :course_membership_period, course: course
+    course = task_plan.course
+    period = task_plan.tasking_plans.first.target
     FactoryBot.create :course_membership_student, period: period
 
     simple_exercise = FactoryBot.create :content_exercise

@@ -17,7 +17,7 @@ RSpec.describe Api::V1::TaskPlan::Stats::Representer, type: :representer do
       type: 'reading',
       stats: [
         {
-          period_id: task_plan.owner.periods.first.id.to_s,
+          period_id: task_plan.course.periods.first.id.to_s,
           name: '1st',
           total_count: 2,
           complete_count: 0,

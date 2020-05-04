@@ -23,7 +23,7 @@ RSpec.describe 'Task plan reassignment works', type: :request, api: true, versio
   end
 
   let(:task_plan_1) do
-    FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
+    FactoryBot.build(:tasks_task_plan, course: course).tap do |task_plan|
       task_plan.tasking_plans.first.target = period
       task_plan.save!
     end

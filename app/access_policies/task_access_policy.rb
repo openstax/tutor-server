@@ -14,9 +14,8 @@ class TaskAccessPolicy
   end
 
   def self.get_course(task)
-    course = task.task_plan.try(:owner) ||  # normal course
-             task.concept_coach_task.try(:task).try(:taskings).try(:first)
-                                    .try(:period).try(:course) # cc course
+    course = task.task_plan&.course ||  # normal course
+             task.concept_coach_task&.task&.taskings&.first&.period&.course # cc course
     course.is_a?(CourseProfile::Models::Course) ? course : nil
   end
 

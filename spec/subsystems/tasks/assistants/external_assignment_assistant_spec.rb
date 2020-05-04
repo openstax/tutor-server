@@ -19,14 +19,14 @@ RSpec.describe Tasks::Assistants::ExternalAssignmentAssistant, type: :assistant 
     FactoryBot.create(:tasks_task_plan,
                        assistant: assistant,
                        settings: { external_url: url },
-                       owner: course)
+                       course: course)
   end
 
   let(:task_plan_2)    do
     FactoryBot.create(:tasks_task_plan,
                        assistant: assistant,
                        settings: { external_url: templatized_url },
-                       owner: course)
+                       course: course)
   end
 
   let!(:students)       do
