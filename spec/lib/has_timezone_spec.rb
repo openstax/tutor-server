@@ -69,7 +69,7 @@ context 'timezone updates' do
       end.to change { task.reload.closes_at.zone }
 
       # The zone changes but the numbers remain the same
-      expect(task.closes_at.year).to eq task_time.year
+      expect(task.reload.closes_at.year).to eq task_time.year
       expect(task.closes_at.month).to eq task_time.month
       expect(task.closes_at.day).to eq task_time.day
       expect(task.closes_at.hour).to eq task_time.hour

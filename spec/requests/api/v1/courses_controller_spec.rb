@@ -476,8 +476,8 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
 
       it 'updates the timezone' do
         time_zone = @course.time_zone
-        opens_at = time_zone.now - 2.months
-        due_at = time_zone.now + 2.months
+        opens_at = time_zone.now - 1.months
+        due_at = time_zone.now + 1.months
         closes_at = time_zone.now + 2.months
 
         # Use time-zone-less strings to update the open/due dates
@@ -496,7 +496,7 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
         expect(tasking_plan.due_at).to be_within(1).of(due_at)
         expect(tasking_plan.closes_at).to be_within(1).of(closes_at)
 
-        # Change course TimeZone to Edinburgh
+        # Change course TimeZone to Arizona
         course_name = @course.name
         api_patch api_course_url(@course.id), @user_1_token,
                   params: { name: course_name, timezone: 'US/Arizona' }.to_json
@@ -506,19 +506,19 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
         expect(@course.reload.name).to eq course_name
         expect(@course.timezone).to eq 'US/Arizona'
 
-        edinburgh_tz = @course.time_zone
+        arizona_tz = @course.time_zone
 
         # Reinterpret the time-zone-less strings as being in the Edingburgh time zone
-        new_opens_at = edinburgh_tz.parse(opens_at_str)
-        new_due_at = edinburgh_tz.parse(due_at_str)
-        new_closes_at = edinburgh_tz.parse(closes_at_str)
+        new_opens_at = arizona_tz.parse(opens_at_str)
+        new_due_at = arizona_tz.parse(due_at_str)
+        new_closes_at = arizona_tz.parse(closes_at_str)
 
         # The open/due/close dates changed
         expect(tasking_plan.reload.opens_at).not_to be_within(1).of(opens_at)
         expect(tasking_plan.due_at).not_to be_within(1).of(due_at)
         expect(tasking_plan.closes_at).not_to be_within(1).of(closes_at)
 
-        # They now act as if they were specified in the Edinburgh time zone
+        # They now act as if they were specified in the Arizona time zone
         expect(tasking_plan.opens_at).to be_within(1).of(new_opens_at)
         expect(tasking_plan.due_at).to be_within(1).of(new_due_at)
         expect(tasking_plan.closes_at).to be_within(1).of(new_closes_at)

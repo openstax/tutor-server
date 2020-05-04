@@ -26,7 +26,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
       number_of_students: 0,
       settings: {
         exercises: homework_exercises_1.map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 2
       }
@@ -45,7 +45,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
       number_of_students: 0,
       settings: {
         exercises: homework_exercises_2.map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+            { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 3
       }
@@ -64,24 +64,24 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
       number_of_students: 0,
       settings: {
         exercises: homework_exercises_3.map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 4
       }
     )
 
     @reading_task_1 = reading_plan_1.tasks.joins(:taskings)
-                                          .find_by(taskings: {entity_role_id: @role.id})
+                                          .find_by(taskings: { entity_role_id: @role.id })
     @reading_task_2 = reading_plan_2.tasks.joins(:taskings)
-                                          .find_by(taskings: {entity_role_id: @role.id})
+                                          .find_by(taskings: { entity_role_id: @role.id })
     @reading_task_3 = reading_plan_3.tasks.joins(:taskings)
-                                          .find_by(taskings: {entity_role_id: @role.id})
+                                          .find_by(taskings: { entity_role_id: @role.id })
     @homework_task_1 = homework_plan_1.tasks.joins(:taskings)
-                                            .find_by(taskings: {entity_role_id: @role.id})
+                                            .find_by(taskings: { entity_role_id: @role.id })
     @homework_task_2 = homework_plan_2.tasks.joins(:taskings)
-                                            .find_by(taskings: {entity_role_id: @role.id})
+                                            .find_by(taskings: { entity_role_id: @role.id })
     @homework_task_3 = homework_plan_3.tasks.joins(:taskings)
-                                            .find_by(taskings: {entity_role_id: @role.id})
+                                            .find_by(taskings: { entity_role_id: @role.id })
   end
 
   let(:reading_tasks)  { [@reading_task_1,   @reading_task_2,    @reading_task_3] }

@@ -76,7 +76,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         course: @old_course,
         settings: {
           exercises: exercises.map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+            { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
           end,
           exercises_count_dynamic: 3
         }
@@ -93,7 +93,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         course: @course,
         settings: {
           exercises: exercises.map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+            { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
           end,
           exercises_count_dynamic: 3
         }

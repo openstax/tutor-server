@@ -169,15 +169,15 @@ class Tasks::Assistants::GenericAssistant
     role = individualized_tasking_plan.target
 
     Tasks::Models::Task.new(
-      task_plan: task_plan,
-      course: task_plan.course,
-      ecosystem: task_plan.ecosystem,
-      task_type: type,
-      title: task_plan.title || default_title,
+      task_plan:   task_plan,
+      course:      task_plan.course,
+      ecosystem:   ecosystem,
+      task_type:   type,
+      title:       task_plan.title || default_title,
       description: task_plan.description,
-      opens_at: individualized_tasking_plan.opens_at,
-      due_at: individualized_tasking_plan.due_at,
-      closes_at: individualized_tasking_plan.closes_at
+      opens_at:    individualized_tasking_plan.opens_at,
+      due_at:      individualized_tasking_plan.due_at,
+      closes_at:   individualized_tasking_plan.closes_at
     ).tap do |task|
       task.taskings << Tasks::Models::Tasking.new(
         task: task, role: role, period: @periods_by_role_id[role.id]

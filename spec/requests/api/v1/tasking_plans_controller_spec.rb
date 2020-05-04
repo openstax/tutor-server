@@ -6,7 +6,7 @@ RSpec.describe Api::V1::TaskingPlansController, type: :request, api: true, versi
     @teacher = FactoryBot.create(:user_profile)
 
     @course = FactoryBot.create :course_profile_course, :with_assistants
-    @course.update_attribute(:timezone, 'US/Pacific')
+    @course.update_attribute :timezone, 'US/Pacific'
 
     AddUserAsCourseTeacher.call course: @course, user: @teacher
 
