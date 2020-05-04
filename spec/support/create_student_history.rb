@@ -93,7 +93,7 @@ class CreateStudentHistory
     page_ids = ecosystem.pages.map { |pg| pg.id.to_s }
     task_plan = FactoryBot.build(
       :tasks_task_plan,
-      owner: course,
+      course: course,
       assistant: ireading_assistant,
       content_ecosystem_id: ecosystem.id,
       title: 'Reading',
@@ -132,7 +132,7 @@ class CreateStudentHistory
 
     task_plan = FactoryBot.build(
       :tasks_task_plan,
-      owner: course,
+      course: course,
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
       title: 'Homework',

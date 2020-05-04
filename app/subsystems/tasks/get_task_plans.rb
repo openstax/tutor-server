@@ -3,12 +3,12 @@ class Tasks::GetTaskPlans
 
   protected
 
-  def exec(owner:, start_at_ntz: nil, end_at_ntz: nil)
+  def exec(course:, start_at_ntz: nil, end_at_ntz: nil)
     query = Tasks::Models::TaskPlan.without_deleted
                                    .distinct
                                    .joins(:tasking_plans)
-                                   .where(owner: owner)
-                                   .preload(tasking_plans: :time_zone)
+                                   .where(course: course)
+                                   .preload(:tasking_plans, :course)
 
     tgp = Tasks::Models::TaskingPlan.arel_table
     query = query.where(

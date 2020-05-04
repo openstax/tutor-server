@@ -1,5 +1,4 @@
 class Api::V1::TaskPlanRepresenter < Roar::Decorator
-
   include Roar::JSON
   include Representable::Coercion
 
@@ -109,10 +108,9 @@ class Api::V1::TaskPlanRepresenter < Roar::Decorator
            getter: ->(*) { "/api/jobs/#{publish_job_uuid}" if publish_job_uuid.present? }
 
   collection :tasking_plans,
-             instance: ->(*) { ::Tasks::Models::TaskingPlan.new(time_zone: owner.time_zone) },
+             instance: ->(*) { ::Tasks::Models::TaskingPlan.new },
              extend: Api::V1::TaskingPlanRepresenter,
              setter: RailsCollectionSetter,
              readable: true,
              writeable: true
-
 end

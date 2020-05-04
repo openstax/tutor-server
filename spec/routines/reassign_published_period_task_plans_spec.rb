@@ -16,13 +16,13 @@ RSpec.describe ReassignPublishedPeriodTaskPlans, type: :routine do
   end
   let!(:teacher_student) { FactoryBot.create :course_membership_teacher_student, period: period }
   let!(:task_plan_1) do
-    FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
+    FactoryBot.build(:tasks_task_plan, course: course).tap do |task_plan|
       task_plan.tasking_plans.first.target = period
       task_plan.save!
     end
   end
   let!(:task_plan_2) do
-    FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
+    FactoryBot.build(:tasks_task_plan, course: course).tap do |task_plan|
       task_plan.tasking_plans.first.target = period
       task_plan.save!
     end

@@ -9,7 +9,7 @@ RSpec.describe ShortCodesController, type: :controller do
   let(:course) { FactoryBot.create :course_profile_course }
   let(:period) { FactoryBot.create :course_membership_period, course: course }
 
-  let(:task_plan) { FactoryBot.create(:tasks_task_plan, owner: course) }
+  let(:task_plan) { FactoryBot.create(:tasks_task_plan, course: course) }
   let(:task_plan_gid) { task_plan.to_global_id.to_s }
 
   let(:task) { FactoryBot.create(:tasks_task, task_plan: task_plan) }

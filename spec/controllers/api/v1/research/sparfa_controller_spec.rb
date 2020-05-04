@@ -6,7 +6,7 @@ RSpec.describe Api::V1::Research::SparfaController, type: :controller,
                                                     version: :v1,
                                                     speed: :slow do
   let(:task_plan)        { FactoryBot.create :tasked_task_plan, number_of_students: 2 }
-  let(:course_1)         { task_plan.owner }
+  let(:course_1)         { task_plan.course }
   let(:period)           { task_plan.tasking_plans.first.target }
   let(:student)          { period.students.to_a.first }
   let!(:teacher_student) { FactoryBot.create :course_membership_teacher_student, period: period }

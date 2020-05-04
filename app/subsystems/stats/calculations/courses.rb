@@ -14,10 +14,7 @@ class Stats::Calculations::Courses
 
     interval.courses.active = CourseProfile::Models::Course
       .where(is_test: false, is_preview: false)
-      .where(
-        co[:starts_at].lteq(interval.starts_at),
-        co[:ends_at].gteq(interval.ends_at),
-      )
+      .where(co[:starts_at].lteq(interval.starts_at).and(co[:ends_at].gteq(interval.ends_at)))
 
     interval.stats['active_courses'] = interval.courses.active.dup.count
 
@@ -30,5 +27,4 @@ class Stats::Calculations::Courses
 
     interval.stats['active_populated_courses'] = interval.courses.populated.dup.length
   end
-
 end

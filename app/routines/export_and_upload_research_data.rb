@@ -160,7 +160,7 @@ class ExportAndUploadResearchData
           exercise_ids.concat sts.map(&:exercise_id)
 
           task_ids = sts.map(&:tasks_task_id)
-          tasks_by_id = Tasks::Models::Task.where(id: task_ids).preload(:time_zone).index_by(&:id)
+          tasks_by_id = Tasks::Models::Task.where(id: task_ids).preload(:course).index_by(&:id)
 
           sts.each do |step|
             begin

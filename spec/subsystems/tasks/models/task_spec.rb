@@ -7,7 +7,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
 
   it { is_expected.to belong_to(:task_plan).optional }
 
-  it { is_expected.to belong_to(:time_zone).optional }
+  it { is_expected.to belong_to(:course) }
 
   it { is_expected.to have_many(:task_steps) }
   it { is_expected.to have_many(:taskings) }

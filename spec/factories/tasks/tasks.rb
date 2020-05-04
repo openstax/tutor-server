@@ -5,7 +5,6 @@ FactoryBot.define do
       step_types          { [] }
       tasked_to           { [] }
       num_random_taskings { 0 }
-      current_time        { Time.current }
     end
 
     task_type { :reading }
@@ -20,17 +19,17 @@ FactoryBot.define do
       AddEcosystemToCourse.call(ecosystem: task.ecosystem, course: task.course) \
         unless task.ecosystem.nil? || task.course.ecosystem == task.ecosystem
 
-      task.task_plan ||= build(
+      now ||= task.time_zone.now
+      task.task_plan ||= create(
         :tasks_task_plan,
-        owner: task.course,
+        course: task.course,
         ecosystem: task.ecosystem,
         target: period,
-        published_at: evaluator.current_time
+        published_at: now
       )
       task.title ||= task.task_plan.title
       task.description ||= task.task_plan.description
-      task.time_zone ||= task.task_plan.owner&.time_zone
-      task.opens_at ||= task.time_zone&.to_tz&.now || evaluator.current_time
+      task.opens_at ||= now
       task.due_at ||= task.opens_at + evaluator.duration
 
       AddSpyInfo[to: task, from: task.ecosystem]

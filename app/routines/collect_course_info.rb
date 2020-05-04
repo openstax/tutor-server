@@ -33,7 +33,7 @@ class CollectCourseInfo
         starts_at: course.starts_at,
         ends_at: course.ends_at,
         active?: course.active?,
-        time_zone: course.time_zone.name,
+        timezone: course.timezone,
         default_open_time: course.default_open_time,
         default_due_time: course.default_due_time,
         offering: offering,
@@ -68,9 +68,7 @@ class CollectCourseInfo
   def get_courses(courses:, user:)
     return [courses].flatten unless courses.nil?
 
-    preloads = [
-      :time_zone, :offering, :studies, periods: :students, course_ecosystems: { ecosystem: :books }
-    ]
+    preloads = [ :offering, :studies, periods: :students, course_ecosystems: { ecosystem: :books } ]
     return run(:get_user_courses, user: user, preload: preloads).outputs.courses unless user.nil?
 
     CourseProfile::Models::Course.preload(*preloads)

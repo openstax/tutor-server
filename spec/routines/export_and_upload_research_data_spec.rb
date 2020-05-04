@@ -4,9 +4,7 @@ require 'database_cleaner'
 
 RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
   before(:all) do
-    @course = FactoryBot.create :course_profile_course,
-                                :with_assistants,
-                                time_zone: ::TimeZone.new(name: 'Central Time (US & Canada)')
+    @course = FactoryBot.create :course_profile_course, :with_assistants, timezone: 'US/Central'
 
     @teacher = FactoryBot.create :user_profile
 
@@ -64,7 +62,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
           step_ids = rows.map { |row| row[step_id_index] }
           steps_by_id = Tasks::Models::TaskStep
             .where(id: step_ids)
-            .preload(:tasked, task: [ :time_zone, taskings: :role ])
+            .preload(:tasked, task: [ :course, taskings: :role ])
             .index_by(&:id)
 
           period_ids = @course.periods.map { |period| period.id.to_s }

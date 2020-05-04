@@ -168,7 +168,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
           name: 'Unclaimed',
           term: @term,
           year: @year,
-          time_zone: 'Indiana (East)',
+          timezone: 'US/East-Indiana',
           is_preview: true,
           is_college: true,
           is_test: false,
@@ -435,9 +435,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                           body: { name: 'Renamed' }.to_json
 
         expect(response.body_as_hash[:name]).to eq 'Renamed'
-        expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
+        expect(response.body_as_hash[:timezone]).to eq 'US/Central'
         expect(@course.reload.name).to eq 'Renamed'
-        expect(@course.time_zone.name).to eq 'Central Time (US & Canada)'
+        expect(@course.timezone).to eq 'US/Central'
       end
 
       it 'turns on LMS integration when allowed' do
@@ -457,8 +457,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(@course.reload.is_lms_enabled).to eq nil
       end
 
-      it 'updates the time_zone' do
-        time_zone = @course.time_zone.to_tz
+      it 'updates the timezone' do
+        time_zone = @course.time_zone
         opens_at = time_zone.now - 2.months
         due_at = time_zone.now + 2.months
 
@@ -466,7 +466,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         opens_at_str = opens_at.strftime '%Y-%m-%d %H:%M:%S'
         due_at_str = due_at.strftime '%Y-%m-%d %H:%M:%S'
 
-        task_plan = FactoryBot.build :tasks_task_plan, owner: @course, num_tasking_plans: 0
+        task_plan = FactoryBot.build :tasks_task_plan, course: @course, num_tasking_plans: 0
         tasking_plan = FactoryBot.create :tasks_tasking_plan, task_plan: task_plan,
                                                                opens_at: opens_at_str,
                                                                due_at: due_at_str
@@ -477,16 +477,16 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         # Change course TimeZone to Edinburgh
         course_name = @course.name
-        api_patch :update, @user_1_token, params: { id: @course.id },
-                                          body: { name: course_name,
-                                                           time_zone: 'Edinburgh' }.to_json
+        api_patch :update, @user_1_token, params: { id: @course.id }, body: {
+          name: course_name, timezone: 'US/Arizona'
+        }.to_json
 
         expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:time_zone]).to eq 'Edinburgh'
+        expect(response.body_as_hash[:timezone]).to eq 'US/Arizona'
         expect(@course.reload.name).to eq course_name
-        expect(@course.time_zone.name).to eq 'Edinburgh'
+        expect(@course.timezone).to eq 'US/Arizona'
 
-        edinburgh_tz = @course.time_zone.to_tz
+        edinburgh_tz = @course.time_zone
 
         # Reinterpret the time-zone-less strings as being in the Edingburgh time zone
         new_opens_at = edinburgh_tz.parse(opens_at_str)
@@ -507,10 +507,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                           body: { default_open_time: '01:02' }.to_json
 
         expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
+        expect(response.body_as_hash[:timezone]).to eq 'US/Central'
         expect(response.body_as_hash[:default_open_time]).to eq '01:02'
         expect(@course.reload.name).to eq course_name
-        expect(@course.time_zone.name).to eq 'Central Time (US & Canada)'
+        expect(@course.timezone).to eq 'US/Central'
         expect(@course.default_open_time).to eq '01:02'
       end
 
@@ -530,10 +530,10 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                                           body: { default_due_time: '02:02' }.to_json
 
         expect(@course.reload.name).to eq course_name
-        expect(@course.time_zone.name).to eq 'Central Time (US & Canada)'
+        expect(@course.timezone).to eq 'US/Central'
         expect(@course.reload.default_due_time).to eq '02:02'
         expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:time_zone]).to eq 'Central Time (US & Canada)'
+        expect(response.body_as_hash[:timezone]).to eq 'US/Central'
         expect(response.body_as_hash[:default_due_time]).to eq '02:02'
       end
 
@@ -574,7 +574,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
       @teacher_token = FactoryBot.create :doorkeeper_access_token,
                                          resource_owner_id: teacher_user.id
 
-      @time_zone = @course.time_zone.to_tz
+      @time_zone = @course.time_zone
 
       @reading_task = FactoryBot.create(
         :tasks_task, task_type: :reading,
@@ -613,7 +613,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
                      tasked_to: @student_role
       )
       @plan = FactoryBot.create(
-        :tasks_task_plan, owner: @course,
+        :tasks_task_plan, course: @course,
                           published_at: @time_zone.now - 1.week,
                           publish_job_uuid: SecureRandom.uuid
       )
@@ -790,8 +790,8 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
               tasking_plans: [
                 a_hash_including(
                   {
-                    target_id: @course.id.to_s,
-                    target_type: 'course',
+                    target_id: @course.periods.first.id.to_s,
+                    target_type: 'period',
                     opens_at: DateTimeUtilities.to_api_s(@plan.tasking_plans.first.opens_at),
                     due_at: DateTimeUtilities.to_api_s(@plan.tasking_plans.first.due_at)
                   }

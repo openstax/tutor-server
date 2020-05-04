@@ -13,7 +13,7 @@ RSpec.describe Api::V1::DemoController, type: :request, api: true, version: :v1 
     FactoryBot.create :course_profile_course, num_teachers: 1, num_students: 2
   end
 
-  let(:task_plans)       { 2.times.map { FactoryBot.create :tasks_task_plan, owner: course } }
+  let(:task_plans)       { 2.times.map { FactoryBot.create :tasks_task_plan, course: course } }
 
   let(:current_time)     { Time.current }
 

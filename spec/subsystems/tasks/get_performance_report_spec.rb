@@ -34,7 +34,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
 
     external_task_plan = Tasks::Models::TaskPlan.new(
       title: 'External assignment',
-      owner: @course,
+      course: @course,
       type: 'external',
       assistant: external_assistant,
       content_ecosystem_id: @ecosystem.id,
@@ -44,9 +44,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     external_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
       target: @course,
       task_plan: external_task_plan,
-      opens_at: @course.time_zone.to_tz.now - 4.weeks,
-      due_at: @course.time_zone.to_tz.now - 3.weeks,
-      time_zone: @course.time_zone
+      opens_at: @course.time_zone.now - 4.weeks,
+      due_at: @course.time_zone.now - 3.weeks
     )
 
     external_task_plan.save!
@@ -60,7 +59,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
 
     event_task_plan = Tasks::Models::TaskPlan.new(
       title: 'Event',
-      owner: @course,
+      course: @course,
       type: 'event',
       assistant: event_assistant,
       content_ecosystem_id: @ecosystem.id
@@ -69,9 +68,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     event_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
       target: @course,
       task_plan: event_task_plan,
-      opens_at: @course.time_zone.to_tz.now - 1.week,
-      due_at: @course.time_zone.to_tz.now,
-      time_zone: @course.time_zone
+      opens_at: @course.time_zone.now - 1.week,
+      due_at: @course.time_zone.now
     )
 
     event_task_plan.save!
@@ -85,7 +83,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
 
     draft_task_plan = Tasks::Models::TaskPlan.new(
       title: 'Draft task plan',
-      owner: @course,
+      course: @course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: @ecosystem.id,
@@ -95,9 +93,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     draft_task_plan.tasking_plans << Tasks::Models::TaskingPlan.new(
       target: @course,
       task_plan: draft_task_plan,
-      opens_at: @course.time_zone.to_tz.now,
-      due_at: @course.time_zone.to_tz.now + 1.week,
-      time_zone: @course.time_zone
+      opens_at: @course.time_zone.now,
+      due_at: @course.time_zone.now + 1.week
     )
 
     draft_task_plan.save!
@@ -159,7 +156,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     it 'returns the proper numbers (feedback_at does not matter)' do
       tasks = Tasks::Models::Task.where(title: 'Homework task plan')
       tasks.each do |task|
-        task.feedback_at = task.time_zone.to_tz.now + 1.2.days
+        task.feedback_at = task.time_zone.now + 1.2.days
         task.save!
       end
 
@@ -497,7 +494,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         taskings: { entity_role_id: @student_1.roles.first.id },
         title: 'Homework task plan'
       )
-      task.feedback_at = task.time_zone.to_tz.now + 1.2.days
+      task.feedback_at = task.time_zone.now + 1.2.days
       task.save!
 
       expect(report.data_headings.size).to eq expected_tasks

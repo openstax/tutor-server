@@ -3,8 +3,6 @@ require 'rails_helper'
 RSpec.describe CourseProfile::Models::Course, type: :model do
   subject(:course) { FactoryBot.create :course_profile_course }
 
-  it { is_expected.to belong_to(:time_zone).autosave(true).optional }
-
   it { is_expected.to belong_to(:school).optional }
   it { is_expected.to belong_to(:offering).optional }
 
@@ -18,13 +16,21 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
 
   it { is_expected.to have_many(:course_assistants) }
 
+  it { is_expected.to have_many(:task_plans) }
+  it { is_expected.to have_many(:tasks) }
   it { is_expected.to have_many(:taskings) }
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:term) }
   it { is_expected.to validate_presence_of(:year) }
 
-  it { is_expected.to validate_uniqueness_of(:time_zone) }
+  it { is_expected.to validate_presence_of(:timezone) }
+
+  it do
+    is_expected.to(
+      validate_inclusion_of(:timezone).in_array CourseProfile::Models::Course::VALID_TIMEZONES
+    )
+  end
 
   it do
     is_expected.to(

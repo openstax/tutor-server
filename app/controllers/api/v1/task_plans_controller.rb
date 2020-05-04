@@ -34,7 +34,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     case params[:clone_status]
     when 'unused_source', 'used_source'
       source_course = course.cloned_from
-      cloned_task_plan_ids = Tasks::Models::TaskPlan.where(owner: course).pluck(:cloned_from_id)
+      cloned_task_plan_ids = Tasks::Models::TaskPlan.where(course: course).pluck(:cloned_from_id)
     else
       source_course = course
     end
@@ -42,7 +42,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     if source_course.nil?
       task_plans = Tasks::Models::TaskPlan.none
     else
-      tps = Tasks::Models::TaskPlan.where(owner: source_course)
+      tps = Tasks::Models::TaskPlan.where(course: source_course)
                                    .without_deleted
                                    .preload_tasking_plans
 
@@ -115,7 +115,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
     # Modified standard_create code
     Tasks::Models::TaskPlan.transaction do
       course = CourseProfile::Models::Course.find(params[:course_id])
-      task_plan = Tasks::Models::TaskPlan.new(owner: course)
+      task_plan = Tasks::Models::TaskPlan.new(course: course)
       consume!(task_plan, represent_with: Api::V1::TaskPlanRepresenter)
       task_plan.assistant = Tasks::GetAssistant[course: course, task_plan: task_plan]
 
@@ -154,7 +154,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       # Modified standard_update code
       task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload_tasks.lock.find(params[:id])
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
-      course = task_plan.owner
+      course = task_plan.course
 
       if task_plan.out_to_students?
         # Store current open dates for all TaskingPlans that are already open
@@ -429,7 +429,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def send_to_biglearn(task_plan)
     return if task_plan.tasks.empty?
 
-    requests = task_plan.tasks.map { |task| { course: task_plan.owner, task: task } }
+    requests = task_plan.tasks.map { |task| { course: task_plan.course, task: task } }
 
     OpenStax::Biglearn::Api.create_update_assignments requests
   end

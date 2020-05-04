@@ -23,7 +23,7 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       @ecosystem_2 = FactoryBot.create :content_ecosystem
       @page = @ecosystem_1.pages.first
       @exercises = @page.exercises
-      @course = reading_task_plan.owner
+      @course = reading_task_plan.course
       @course.update_attribute :is_preview, true
       @reading_task = reading_task_plan.tasks.first
       @tasked_exercise = @reading_task.tasked_exercises.first

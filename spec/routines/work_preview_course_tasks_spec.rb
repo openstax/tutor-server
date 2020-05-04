@@ -25,8 +25,8 @@ RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :slow do
       result = described_class.call(course: @course)
     end.to  not_change { @course.periods.count }
        .and not_change { @course.students.count }
-       .and not_change { Tasks::Models::TaskPlan.where(owner: @course).size }
-       .and not_change { Tasks::Models::TaskPlan.where(owner: @course).flat_map(&:tasks).size }
+       .and not_change { Tasks::Models::TaskPlan.where(course: @course).size }
+       .and not_change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }
 
     @course.periods.each do |period|
       student_roles = period.student_roles.sort_by(&:created_at)

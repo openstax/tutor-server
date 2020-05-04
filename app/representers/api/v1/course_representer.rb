@@ -66,11 +66,10 @@ module Api::V1
                type: 'boolean'
              }
 
-    property :time_zone,
+    property :timezone,
              type: String,
              readable: true,
-             writeable: true,
-             getter: ->(*) { time_zone.is_a?(::TimeZone) ? time_zone.name : time_zone }
+             writeable: true
 
     property :default_open_time,
              type: String,

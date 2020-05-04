@@ -10,7 +10,7 @@ class GetCourseEcosystemsMap
 
     course_ecosystems = course.ecosystems.to_a
     tp_ecosystem_ids = Tasks::Models::TaskPlan.distinct
-                                              .where(owner: course)
+                                              .where(course: course)
                                               .pluck(:content_ecosystem_id)
     tp_ecosystems = Content::Models::Ecosystem.where(id: tp_ecosystem_ids).to_a
 

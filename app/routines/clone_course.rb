@@ -14,7 +14,8 @@ class CloneCourse
 
   def exec(course:, teacher_user:, copy_question_library:,
            name: nil, is_college: nil, term: nil, year: nil, num_sections: nil,
-           time_zone: nil, default_open_time: nil, default_due_time: nil, estimated_student_count: nil)
+           timezone: nil, default_open_time: nil, default_due_time: nil,
+           estimated_student_count: nil)
 
     attrs = {
       name: name || course.name,
@@ -30,7 +31,7 @@ class CloneCourse
       # because that course may not have cost but this one should
       does_cost: course.offering.does_cost,
       appearance_code: course.appearance_code,
-      time_zone: time_zone || course.time_zone,
+      timezone: timezone || course.timezone,
       default_open_time: default_open_time || course.default_open_time,
       default_due_time: default_due_time || course.default_due_time,
       cloned_from: course,
