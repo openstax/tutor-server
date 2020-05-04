@@ -17,6 +17,8 @@ FactoryBot.define do
     term                  { (CourseProfile::Models::Course.terms.keys - [ 'preview' ]).sample }
     year                  { Time.current.year }
 
+    timezone              { 'US/Central' }
+
     starts_at             { consistent_times ? term_year.starts_at : Time.current - 3.months }
     ends_at               { consistent_times ? term_year.ends_at : Time.current + 3.months }
 

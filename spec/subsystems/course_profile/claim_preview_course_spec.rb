@@ -13,7 +13,7 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
       name: 'Unclaimed',
       term: term,
       year: year,
-      time_zone: 'Indiana (East)',
+      timezone: 'US/East-Indiana',
       is_preview: true,
       is_college: true,
       is_test: false,
@@ -33,7 +33,7 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
         name: 'Unclaimed',
         term: term,
         year: year,
-        time_zone: 'Indiana (East)',
+        timezone: 'US/East-Indiana',
         is_preview: true,
         is_college: true,
         is_test: false,
@@ -44,7 +44,7 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
         course.update_attribute :is_preview_ready, true
       end
     end
-    let!(:task_plan) { FactoryBot.create :tasked_task_plan, owner: course }
+    let!(:task_plan) { FactoryBot.create :tasked_task_plan, course: course }
 
     before { offering.update_attribute :ecosystem, task_plan.ecosystem }
 
@@ -61,7 +61,7 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
       expect(claimed_course.ends_at).to eq current_time + 8.weeks - 1.second
       expect(claimed_course.is_college).to eq is_college
 
-      task_plan.tasking_plans.each do |tasking_plan|
+      task_plan.reload.tasking_plans.each do |tasking_plan|
         # In case Daylight Savings Time ended less than 3 months ago
         expect(tasking_plan.opens_at).to be_within(1.hour + 1.second).of(current_time)
         # In case Daylight Savings Time starts next week
@@ -84,7 +84,7 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
           name: 'Unclaimed',
           term: term,
           year: year,
-          time_zone: 'Indiana (East)',
+          timezone: 'US/East-Indiana',
           is_preview: true,
           is_college: true,
           is_test: false,

@@ -77,8 +77,7 @@ class PopulatePreviewCourseContent
     return if preview_chapters.blank?
 
     # Assign tasks
-    opens_at = [course.time_zone.to_tz.now.monday - 2.weeks, course.starts_at.utc].max
-    time_zone = course.time_zone
+    opens_at = [course.time_zone.now.monday - 2.weeks, course.starts_at.utc].max
     preview_chapters.each_with_index do |chapter, index|
       reading_due_at = [opens_at + index.weeks + 1.day, course.ends_at].min
       homework_due_at = [reading_due_at + 3.days, course.ends_at].min
@@ -89,7 +88,7 @@ class PopulatePreviewCourseContent
 
       reading_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.book_location.join('.')} Reading (Sample)",
-        owner: course,
+        course: course,
         is_preview: true,
         ecosystem: ecosystem,
         type: 'reading',
@@ -99,8 +98,7 @@ class PopulatePreviewCourseContent
                                .outputs.assistant
       reading_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
-          task_plan: reading_tp, target: period,
-          time_zone: time_zone, opens_at: opens_at, due_at: reading_due_at
+          task_plan: reading_tp, target: period, opens_at: opens_at, due_at: reading_due_at
         )
       end
       reading_tp.save!
@@ -111,7 +109,7 @@ class PopulatePreviewCourseContent
 
       homework_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.book_location.join('.')} Homework (Sample)",
-        owner: course,
+        course: course,
         is_preview: true,
         ecosystem: ecosystem,
         type: 'homework',
@@ -123,8 +121,7 @@ class PopulatePreviewCourseContent
                                 .outputs.assistant
       homework_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
-          task_plan: homework_tp, target: period,
-          time_zone: time_zone, opens_at: opens_at, due_at: homework_due_at
+          task_plan: homework_tp, target: period, opens_at: opens_at, due_at: homework_due_at
         )
       end
       homework_tp.save!

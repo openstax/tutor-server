@@ -31,14 +31,14 @@ RSpec.describe OpenStax::Biglearn::Api::FakeClient, type: :external do
       task_plans = book.pages.map do |page|
         FactoryBot.create(
           :tasks_task_plan,
-          owner: @course,
+          course: @course,
           target: period,
           settings: { 'page_ids' => [ page.id.to_s ] },
           assistant: assistant
         ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }
       end
 
-      current_time = @course.time_zone.to_tz.now
+      current_time = @course.time_zone.now
 
       @page_1_exercise_uuids = book.pages.first.exercises.map(&:uuid)
       task_plan_1 = task_plans.first
@@ -174,7 +174,7 @@ RSpec.describe OpenStax::Biglearn::Api::FakeClient, type: :external do
     end
 
     context 'when an assignment is past-due' do
-      before { @course.time_zone.update_attribute :name, 'Eastern Time (US & Canada)' }
+      before { @course.update_attribute :timezone, 'US/Eastern' }
 
       context 'when worked in order' do
         it 'returns spaced practice exercises from the correct sections' do

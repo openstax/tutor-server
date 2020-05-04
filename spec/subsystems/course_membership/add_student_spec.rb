@@ -24,7 +24,7 @@ RSpec.describe CourseMembership::AddStudent, type: :routine do
         grace_days = Settings::Payments.student_grace_period_days
 
         expect(student.payment_due_at - Time.now).to be_within(1.day).of(Settings::Payments.student_grace_period_days.days)
-        expect(student.payment_due_at.in_time_zone(course.time_zone.to_tz).to_s).to include("23:59:59")
+        expect(student.payment_due_at.in_time_zone(course.timezone).to_s).to include("23:59:59")
       end
     end
 

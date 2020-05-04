@@ -13,7 +13,7 @@
   </thead>
   <tbody>
   <% @students.each do |student| %>
-    <% @time_zone ||= student.course.time_zone.to_tz %>
+    <% @timezone ||= student.course.timezone %>
     <% user_id = student.role.profile.id %>
 
     <tr>
@@ -51,7 +51,7 @@
                 as: :date,
                 url: admin_student_path(student),
                 display_with: ->(val) do
-                  val.in_time_zone(@time_zone).strftime("%b %-d, %Y %l:%M:%S %p %Z")
+                  val.in_time_zone(@timezone).strftime("%b %-d, %Y %l:%M:%S %p %Z")
                 end %>
           </a>
         </td>

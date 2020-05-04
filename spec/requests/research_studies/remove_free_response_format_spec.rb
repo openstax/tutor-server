@@ -17,8 +17,7 @@ RSpec.describe 'Task steps without free response field', type: :request,
     Research::AddCourseToStudy[course: @course, study: @study]
 
     task_plan = FactoryBot.create :tasks_task_plan,
-      owner: @course, ecosystem: @course.ecosystem,
-      settings: { page_ids:  page_ids }
+      course: @course, settings: { page_ids:  page_ids }
 
     @task = FactoryBot.create :tasks_task, task_plan: task_plan,
                               step_types: [:tasks_tasked_exercise]

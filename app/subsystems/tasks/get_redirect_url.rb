@@ -12,7 +12,7 @@ class Tasks::GetRedirectUrl
     fatal_error(code: :plan_not_found) if task_plan.nil?
     fatal_error(code: :authentication_required) if user.is_anonymous?
 
-    course = task_plan.owner
+    course = task_plan.course
 
     run(:user_is_course_teacher, user: user, course: course)
 

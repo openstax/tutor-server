@@ -23,7 +23,7 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
                                      assistant: event_assistant,
                                      title: 'No class',
                                      description: 'No class today, kiddos',
-                                     owner: course)
+                                     course: course)
 
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
 
@@ -42,7 +42,7 @@ RSpec.describe Tasks::Assistants::EventAssistant, type: :assistant do
                                      assistant: event_assistant,
                                      title: 'No class',
                                      description: 'No class today, kiddos',
-                                     owner: course)
+                                     course: course)
 
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
 

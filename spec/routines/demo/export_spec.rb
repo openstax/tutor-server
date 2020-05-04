@@ -2,14 +2,14 @@ require 'rails_helper'
 
 RSpec.describe Demo::Export, type: :routine do
   let(:reading)   { FactoryBot.create :tasked_task_plan, type: :reading }
-  let(:course)    { reading.owner }
+  let(:course)    { reading.course }
   let!(:homework) do
     reading_pages = Content::Models::Page.where(id: reading.settings['page_ids'])
 
     FactoryBot.create(
       :tasks_task_plan,
       type: :homework,
-      owner: course,
+      course: course,
       assistant_code_class_name: 'Tasks::Assistants::HomeworkAssistant',
       target: course.periods.first,
       settings: {
@@ -23,7 +23,7 @@ RSpec.describe Demo::Export, type: :routine do
     FactoryBot.create(
       :tasks_task_plan,
       type: :external,
-      owner: course,
+      course: course,
       assistant_code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant',
       target: course.periods.first,
       settings: { external_url: Faker::Internet.url }

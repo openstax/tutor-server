@@ -5,9 +5,6 @@ module User
                            subsystem: 'none',
                            inverse_of: :profile
 
-      has_many :groups_as_member, through: :account, subsystem: 'none'
-      has_many :groups_as_owner, through: :account, subsystem: 'none'
-
       has_many :roles, subsystem: :entity, dependent: :destroy, inverse_of: :profile
 
       has_many :enrollment_changes, subsystem: :course_membership

@@ -14,7 +14,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
     end
   end
   let(:task_plan) do
-    FactoryBot.build(:tasks_task_plan, owner: course).tap do |task_plan|
+    FactoryBot.build(:tasks_task_plan, course: course).tap do |task_plan|
       task_plan.tasking_plans.first.target = period
       task_plan.save!
     end
@@ -30,7 +30,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       assistant: FactoryBot.create(
         :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
       ),
-      owner: course,
+      course: course,
       type: 'homework',
       ecosystem: @ecosystem,
       settings: { exercise_ids: exercise_ids[0..5], exercises_count_dynamic: 3}
@@ -134,7 +134,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(task.taskings.first.role).to eq teacher_student_role
             expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
 
-            tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.to_tz.now + 1.hour
+            tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.now + 1.hour
             result = described_class.call(task_plan: task_plan, preview: true)
 
             expect(result.errors).to be_empty
@@ -154,7 +154,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         end
 
         it 'can create or update normal and preview tasks' do
-          tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.to_tz.now + 1.hour
+          tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.now + 1.hour
           result = described_class.call(task_plan: task_plan)
 
           expect(result.errors).to be_empty
@@ -196,7 +196,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         end
 
         it 'can create or update normal and preview tasks' do
-          tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.to_tz.now - 1.hour
+          tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.now - 1.hour
           result = described_class.call(task_plan: task_plan)
 
           expect(result.errors).to be_empty
@@ -246,7 +246,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         end
 
         it 'can create or update normal and preview tasks' do
-          tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.to_tz.now + 1.hour
+          tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.now + 1.hour
           result = described_class.call(task_plan: task_plan)
 
           expect(result.errors).to be_empty
@@ -271,8 +271,8 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       context 'after the open date' do
         let(:new_title)       { 'New Title' }
         let(:new_description) { 'New Description' }
-        let(:new_opens_at)    { tasking_plan.time_zone.to_tz.now.yesterday }
-        let(:new_due_at)      { tasking_plan.time_zone.to_tz.now.tomorrow }
+        let(:new_opens_at)    { tasking_plan.time_zone.now.yesterday }
+        let(:new_due_at)      { tasking_plan.time_zone.now.tomorrow }
 
         before do
           task_plan.title = new_title

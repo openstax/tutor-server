@@ -3,7 +3,7 @@ class Api::V1::Demo::Work::Course::Representer < Api::V1::Demo::CourseRepresente
              extend: Api::V1::Demo::Work::Course::TaskPlan::Representer,
              class: Demo::Mash,
              getter: ->(*) do
-               Tasks::Models::TaskPlan.where(owner: self).where.not(
+               Tasks::Models::TaskPlan.where(course: self).where.not(
                  type: 'event'
                ).preload(:tasking_plans)
              end,

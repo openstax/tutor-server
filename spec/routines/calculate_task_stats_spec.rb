@@ -9,7 +9,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       RSpec::Mocks.setup
 
       @task_plan = FactoryBot.create :tasked_task_plan, number_of_students: @number_of_students
-      @period = @task_plan.owner.periods.first
+      @period = @task_plan.course.periods.first
     ensure
       RSpec::Mocks.teardown
     end
@@ -90,7 +90,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
 
       task_plan = FactoryBot.create(
         :tasks_task_plan,
-        owner: course,
+        course: course,
         ecosystem: @ecosystem,
         settings: { 'page_ids' => [ @book.pages.first.id.to_s ] },
         assistant: get_assistant(course: course, task_plan_type: 'reading')
@@ -328,7 +328,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
   end
 
   context 'with multiple course periods' do
-    let(:course)   { @task_plan.owner }
+    let(:course)   { @task_plan.course }
     let(:period_2) { FactoryBot.create :course_membership_period, course: course }
     let(:stats)    { described_class.call(tasks: @task_plan.tasks).outputs.stats }
 

@@ -24,7 +24,7 @@ class FilterExcludedExercises
       outputs.already_assigned_exercise_numbers = []
       []
     else
-      tasks = role.taskings.preload(task: :time_zone).map(&:task)
+      tasks = role.taskings.preload(task: :course).map(&:task)
 
       exercise_numbers_by_task_id = Hash.new { |hash, key| hash[key] = [] }
       Content::Models::Exercise
