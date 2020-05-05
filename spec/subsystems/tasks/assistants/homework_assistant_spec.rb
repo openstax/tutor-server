@@ -28,7 +28,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         description: "Hello!",
         settings: {
           exercises: @teacher_selected_exercises.map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
           end,
           exercises_count_dynamic: @exercises_count_dynamic
         },

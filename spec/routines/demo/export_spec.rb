@@ -15,7 +15,7 @@ RSpec.describe Demo::Export, type: :routine do
       settings: {
         page_ids: reading_pages.map(&:id).map(&:to_s),
         exercises: reading_pages.first.exercises.first(5).map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 4
       }

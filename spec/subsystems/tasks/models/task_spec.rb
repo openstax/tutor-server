@@ -590,7 +590,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         ]
         exercise = task.tasked_exercises.first.exercise
         exercises = [
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
         ]
         task.task_plan.update_attribute :settings, exercises: exercises
         task.task_steps.first(4).each { |ts| ts.update_attribute :is_core, true }
@@ -837,9 +837,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     page = simple_exercise.page
     multipart_exercise = FactoryBot.create :content_exercise, page: page, num_questions: 3
 
+    ecosystem = page.ecosystem
+    AddEcosystemToCourse.call ecosystem: ecosystem, course: course
+
     task_plan.grading_template.update_attribute :task_plan_type, 'homework'
     task_plan.update_attributes!(
-      ecosystem: page.ecosystem,
+      ecosystem: ecosystem,
       type: 'homework',
       assistant: FactoryBot.create(
         :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
