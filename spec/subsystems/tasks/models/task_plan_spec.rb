@@ -69,12 +69,11 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
   it 'automatically infers the ecosystem from the settings or course' do
     task_plan.course.course_ecosystems.delete_all :delete_all
-    ex = exercise
+    task_plan.settings = {
+      exercises: [ { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions } ]
+    }
     task_plan.ecosystem = nil
     expect(task_plan.ecosystem).to be_nil
-    task_plan.settings = {
-      exercises: [ { id: ex.id.to_s, points: [ 1 ] * ex.num_questions } ]
-    }
     # Not valid because the course does not have the ecosystem
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
@@ -121,14 +120,14 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan.ecosystem).not_to be_nil
     task_plan.settings = {
       page_ids: ['333', '222'], exercises: [
-        { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
       ], exercises_count_dynamic: 2
     }
     expect(task_plan).not_to be_valid
 
     task_plan.settings = {
       page_ids: [page.id.to_s], exercises: [
-        { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
       ], exercises_count_dynamic: 2
     }
     expect(task_plan).to be_valid

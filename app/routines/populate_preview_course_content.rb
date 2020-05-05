@@ -90,9 +90,9 @@ class PopulatePreviewCourseContent
       pages = chapter.pages
       page_ids = pages.map { |page| page.id.to_s }
       exercise_ids = pages.flat_map { |page| page.homework_core_exercise_ids.sample }.compact
-      ex = Content::Models::Exercise.where(id: exercise_ids).select(:id, :content)
+      ex = Content::Models::Exercise.select(:id, :number_of_questions).where(id: exercise_ids)
       exercises = ex.map do |exercise|
-        { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+        { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
       end
 
       reading_tp = Tasks::Models::TaskPlan.new(

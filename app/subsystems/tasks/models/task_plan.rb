@@ -237,8 +237,10 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
     exercise_ids = settings['exercises'].map { |ex| ex['id'] }
     num_questions_by_exercise_id = {}
-    Content::Models::Exercise.where(id: exercise_ids).select(:id, :content).each do |exercise|
-      num_questions_by_exercise_id[exercise.id.to_s] = exercise.num_questions
+    Content::Models::Exercise.select(:id, :number_of_questions)
+                             .where(id: exercise_ids)
+                             .each do |exercise|
+      num_questions_by_exercise_id[exercise.id.to_s] = exercise.number_of_questions
     end
 
     settings['exercises'].each do |exercise|

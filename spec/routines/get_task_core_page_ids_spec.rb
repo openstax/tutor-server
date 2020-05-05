@@ -26,7 +26,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
       number_of_students: 0,
       settings: {
         exercises: homework_exercises_1.map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 2
       }
@@ -45,7 +45,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
       number_of_students: 0,
       settings: {
         exercises: homework_exercises_2.map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 3
       }
@@ -64,7 +64,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
       number_of_students: 0,
       settings: {
         exercises: homework_exercises_3.map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 4
       }

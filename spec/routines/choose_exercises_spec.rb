@@ -158,10 +158,10 @@ RSpec.describe ChooseExercises, type: :routine do
   end
 
   context 'with multiparts' do
-    let(:triple_multipart) { FactoryBot.create :content_exercise, num_parts: 3         }
-    let(:double_multipart) { FactoryBot.create :content_exercise, num_parts: 2         }
-    let(:simple_exercises) { 2.times.map { FactoryBot.create :content_exercise }       }
-    let(:exercises)        { [ triple_multipart, double_multipart ] + simple_exercises }
+    let(:triple_multipart) { FactoryBot.create :content_exercise, number_of_questions: 3 }
+    let(:double_multipart) { FactoryBot.create :content_exercise, number_of_questions: 2 }
+    let(:simple_exercises) { 2.times.map { FactoryBot.create :content_exercise }         }
+    let(:exercises)        { [ triple_multipart, double_multipart ] + simple_exercises   }
 
     context 'no exercises already assigned' do
       let(:already_assigned_exercise_numbers) { [] }

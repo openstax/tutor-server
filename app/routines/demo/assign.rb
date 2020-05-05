@@ -92,11 +92,12 @@ class Demo::Assign < Demo::Base
           "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"
         ) if exercise_ids.size < task_plan[:exercises_count_core]
 
-        exercises = Content::Models::Exercise.where(id: exercise_ids).select(:id, :content)
+        exercises = Content::Models::Exercise.select(:id, :number_of_questions)
+                                             .where(id: exercise_ids)
         attrs[:settings].merge!(
           page_ids: page_ids,
           exercises: exercises.shuffle.take(task_plan[:exercises_count_core]).map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.num_questions }
+            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
           end,
           exercises_count_dynamic: task_plan[:exercises_count_dynamic]
         )
