@@ -19,7 +19,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
       settings: {
         page_ids: reading_pages.map(&:id).map(&:to_s),
         exercises: reading_pages.first.exercises.first(5).map do |exercise|
-          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.num_questions }
+          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 3
       }

@@ -128,7 +128,7 @@ class CreateStudentHistory
   def create_homework_task_plan(ecosystem, course, periods, chapter, page, exercise)
     exercise_id = ecosystem.chapters[chapter].pages[page].homework_core_exercise_ids[exercise]
     exercise = Content::Models::Exercise.find(exercise_id)
-    exercises = [ { id: exercise_id.to_s, points: [ 1 ] * exercise.num_questions } ]
+    exercises = [ { id: exercise_id.to_s, points: [ 1 ] * exercise.number_of_questions } ]
 
     task_plan = FactoryBot.build(
       :tasks_task_plan,

@@ -374,12 +374,24 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
           published_at: Time.current
         )
       end
-      let(:valid_json)         do
-        Api::V1::TaskPlanRepresenter.new(original_task_plan).to_hash.merge(
+      let(:new_grading_template) do
+        FactoryBot.create(
+          :tasks_grading_template,
+          course: @course,
+          task_plan_type: original_task_plan.type,
+          cloned_from: original_task_plan.grading_template
+        )
+      end
+
+      # The FE is responsible for updating the tasking_plans to point to the new course's periods
+      # and the grading templates so that's what we emulate here
+      let(:valid_json) do
+        Api::V1::TaskPlan::Representer.new(original_task_plan).to_hash.merge(
+          'grading_template_id' => new_grading_template.id.to_s,
           'cloned_from_id' => original_task_plan.id.to_s
         ).tap do |hash|
           hash['tasking_plans'].each_with_index do |tasking_plan, index|
-            tasking_plan['target_id'] = @course.periods.to_a[index].id
+            tasking_plan['target_id'] = @course.periods.to_a[index].id.to_s
           end
         end.to_json
       end
