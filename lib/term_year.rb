@@ -12,7 +12,7 @@ TermYear = Struct.new(:term, :year) do
     preview: ->(year) { DateTime.current.monday - 2.weeks }, # 2 weeks before the previous monday
     winter:  ->(year) { DateTime.new(year    , 11)        }, # November 1st of given year
     spring:  ->(year) { DateTime.new(year        )        }, # January 1st of given year
-    summer:  ->(year) { DateTime.new(year    , 5 )        }, # May 1st of given year
+    summer:  ->(year) { DateTime.new(year    , 4 )        }, # April 1st of given year
     fall:    ->(year) { DateTime.new(year    , 7 )        }  # July 1st of given year
   }
 
