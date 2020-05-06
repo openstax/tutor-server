@@ -1,4 +1,14 @@
 module SigninHelper
+  def sign_in!(user)
+    post openstax_accounts.become_dev_account_url(user.account_id)
+    follow_redirect!
+  end
+
+  def sign_out!
+    delete openstax_accounts.logout_url
+    follow_redirect!
+  end
+
   def stub_current_user(user, recipient=ApplicationController)
     allow_any_instance_of(recipient)
       .to receive(:current_account)

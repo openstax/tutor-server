@@ -28,12 +28,4 @@ RSpec.describe Api::V1::CourseExercisesController, type: :routing, api: true, ve
       end
     end
   end
-
-  context 'PATCH /api/courses/:course_id/exercises' do
-    it 'routes to #update' do
-      expect(patch '/api/courses/42/exercises').to route_to(
-        'api/v1/course_exercises#update', format: 'json', course_id: '42'
-      )
-    end
-  end
 end

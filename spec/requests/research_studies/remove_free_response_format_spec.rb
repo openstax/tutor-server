@@ -3,7 +3,6 @@ require "rails_helper"
 RSpec.describe 'Task steps without free response field', type: :request,
                                                          api: true,
                                                          version: :v1 do
-
   before(:all) do
     @course = FactoryBot.create :course_profile_course
     @course.ecosystem.books << FactoryBot.create(:content_book, :standard_contents_1 )
@@ -31,7 +30,6 @@ RSpec.describe 'Task steps without free response field', type: :request,
   before(:each) { @study.deactivate! }
 
   it "can hide free-response formats when displaying a task" do
-
     brain = FactoryBot.create :research_modified_task,
                               study: @study,
                               name: 'no free-response for alternating sections',
@@ -68,7 +66,7 @@ RSpec.describe 'Task steps without free response field', type: :request,
     @study.activate!
 
     expect do
-      api_get "/api/tasks/#{@task.id}", @token
+      api_get api_task_url(@task.id), @token
     end.to change { Research::Models::Manipulation.count }.by 1
     formats = response.body_as_hash[:steps].flat_map do |ts|
       ts.dig(:content, :questions, 0, :formats)
@@ -104,12 +102,10 @@ RSpec.describe 'Task steps without free response field', type: :request,
     @study.activate!
 
     expect do
-      api_put "/api/steps/#{@task.task_steps.first.id}",
-              @token,
+      api_put api_step_url(@task.task_steps.first.id), @token,
               params: { answer_id: @task.task_steps.first.tasked.question_answer_ids[0][0] }.to_json
     end.to change { Research::Models::Manipulation.count }.by 1
 
     expect(response.body_as_hash[:errors]).to be_nil
   end
-
 end
