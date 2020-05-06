@@ -94,8 +94,8 @@ RSpec.describe TermYear, type: :lib do
       context year.to_s do
         let(:year) { year }
 
-        it "returns May 1st, #{year} 00:00:00 AM as the start date" do
-          start_date = DateTime.parse("May 1st, #{year} 00:00:00 AM")
+        it "returns April 1st, #{year} 00:00:00 AM as the start date" do
+          start_date = DateTime.parse("April 1st, #{year} 00:00:00 AM")
           expect(term_year.starts_at).to eq start_date
         end
 
