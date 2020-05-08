@@ -26,8 +26,37 @@ class MarkTaskStepCompleted
 
     return unless save && task_step.exercise?
 
-    course = task.taskings.first&.role&.student&.course
+    role = task.taskings.first&.role
+    period = role&.course_member&.period
+    course = period&.course
+    # course will only be set if role and period were found
     return if course.nil?
+
+    queue = task.is_preview ? 'preview' : 'dashboard'
+    role_run_at = task.feedback_available? ? completed_at :
+                                             [ task.feedback_at, completed_at ].compact.max
+
+    page = Content::Models::Page
+      .select(:uuid, :parent_book_part_uuid)
+      .find_by(id: task_step.content_page_id)
+
+    unless page.nil?
+      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+        role: role, book_part_uuid: page.uuid, is_page: true
+      )
+
+      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
+        period: period, book_part_uuid: page.uuid, is_page: true
+      ) if role.student?
+
+      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+        role: role, book_part_uuid: page.parent_book_part_uuid, is_page: false
+      )
+
+      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
+        period: period, book_part_uuid: page.parent_book_part_uuid, is_page: false
+      ) if role.student?
+    end
 
     OpenStax::Biglearn::Api.record_responses course: course, tasked_exercise: task_step.tasked
   end

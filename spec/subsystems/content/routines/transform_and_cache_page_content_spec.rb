@@ -17,8 +17,18 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
     @pages = OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
       VCR.use_cassette("Content_Routines_TransformAndCachePageContent/with_book", VCR_OPTS) do
         [
-          Content::Routines::ImportPage[cnx_page: cnx_page_1, book: @book, book_indices: [1, 2]],
-          Content::Routines::ImportPage[cnx_page: cnx_page_2, book: @book, book_indices: [20, 0]]
+          Content::Routines::ImportPage[
+            cnx_page: cnx_page_1,
+            book: @book,
+            book_indices: [1, 2],
+            parent_book_part_uuid: SecureRandom.uuid
+          ],
+          Content::Routines::ImportPage[
+            cnx_page: cnx_page_2,
+            book: @book,
+            book_indices: [20, 0],
+            parent_book_part_uuid: SecureRandom.uuid
+          ]
         ]
       end
     end

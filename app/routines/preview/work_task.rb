@@ -58,7 +58,8 @@ class Preview::WorkTask
       end
     end
 
-    tasked_exercises = task_steps.select(&:exercise?).map(&:tasked)
+    exercise_steps = task_steps.select(&:exercise?)
+    tasked_exercises = exercise_steps.map(&:tasked)
     Tasks::Models::TaskedExercise.import tasked_exercises, validate: false,
                                                            on_duplicate_key_update: {
       conflict_target: [ :id ], columns: [ :free_response, :answer_id ]
@@ -71,8 +72,39 @@ class Preview::WorkTask
     task.save!
     task.update_caches_now if update_caches
 
-    course = task.taskings.first&.role&.student&.course
+    role = task.taskings.first&.role
+    period = role&.course_member&.period
+    course = period&.course
+    # course will only be set if role and period were found
     return if course.nil?
+
+    queue = task.is_preview ? 'preview' : 'dashboard'
+    role_run_at = task.feedback_available? ? completed_at :
+                                             [ task.feedback_at, completed_at ].compact.max
+
+    page_uuid_book_part_uuids = Content::Models::Page
+      .where(id: exercise_steps.map(&:content_page_id))
+      .pluck(:uuid, :parent_book_part_uuid)
+
+    page_uuid_book_part_uuids.map(&:first).uniq.each do |page_uuid|
+      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+        role: role, book_part_uuid: page_uuid, is_page: true
+      )
+
+      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
+        period: period, book_part_uuid: page_uuid, is_page: true
+      ) if role.student?
+    end
+
+    page_uuid_book_part_uuids.map(&:second).uniq.each do |book_part_uuid|
+      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+        role: role, book_part_uuid: book_part_uuid, is_page: false
+      )
+
+      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
+        period: period, book_part_uuid: book_part_uuid, is_page: false
+      ) if role.student?
+    end
 
     requests = tasked_exercises.map do |tasked_exercise|
       { course: course, tasked_exercise: tasked_exercise }

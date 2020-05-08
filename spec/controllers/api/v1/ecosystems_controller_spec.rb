@@ -288,11 +288,15 @@ RSpec.describe Api::V1::EcosystemsController, type: :controller, api: true,
                 },
                 *book.units.each_with_index.map do |unit, unit_index|
                   {
+                    uuid: unit.uuid,
+                    cnx_id: unit.uuid,
                     title: "Unit #{unit_index + 1}",
                     type: 'unit',
                     chapter_section: [],
                     children: unit.chapters.each.map do |chapter|
                       {
+                        uuid: chapter.uuid,
+                        cnx_id: chapter.uuid,
                         title: chapter.title,
                         type: 'chapter',
                         chapter_section: [chapter_index += 1],

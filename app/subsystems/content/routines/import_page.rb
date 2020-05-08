@@ -8,7 +8,7 @@ class Content::Routines::ImportPage
 
   # Imports and saves a Cnx::Page as a Content::Models::Page into the given book's tree
   # Returns the Content::Models::Page object
-  def exec(cnx_page:, book:, book_indices:, save: true, all_tags: nil)
+  def exec(cnx_page:, book:, book_indices:, parent_book_part_uuid:, save: true, all_tags: nil)
     ecosystem = book.ecosystem
 
     cnx_page.convert_content!
@@ -22,7 +22,8 @@ class Content::Routines::ImportPage
       book_location: cnx_page.book_location || [],
       uuid: cnx_page.uuid,
       version: cnx_page.version,
-      short_id: cnx_page.short_id
+      short_id: cnx_page.short_id,
+      parent_book_part_uuid: parent_book_part_uuid
     )
     book.pages << outputs.page
     outputs.page.save if save

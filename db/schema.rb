@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_27_121628) do
+ActiveRecord::Schema.define(version: 2020_05_01_125646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -174,7 +174,9 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
     t.integer "homework_dynamic_exercise_ids", default: [], null: false, array: true
     t.integer "practice_widget_exercise_ids", default: [], null: false, array: true
     t.integer "book_indices", null: false, array: true
+    t.uuid "parent_book_part_uuid", null: false
     t.index ["content_book_id"], name: "index_content_pages_on_content_book_id"
+    t.index ["parent_book_part_uuid"], name: "index_content_pages_on_parent_book_part_uuid"
     t.index ["title"], name: "index_content_pages_on_title"
     t.index ["tutor_uuid"], name: "index_content_pages_on_tutor_uuid", unique: true
     t.index ["url"], name: "index_content_pages_on_url"
@@ -575,6 +577,31 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
     t.string "instance_url", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "ratings_period_book_parts", force: :cascade do |t|
+    t.bigint "course_membership_period_id", null: false
+    t.uuid "book_part_uuid", null: false
+    t.boolean "is_page", null: false
+    t.integer "num_students", null: false
+    t.integer "num_responses", null: false
+    t.jsonb "clue", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_part_uuid"], name: "index_ratings_period_book_parts_on_book_part_uuid"
+    t.index ["course_membership_period_id", "book_part_uuid"], name: "index_period_book_parts_on_period_id_and_book_part_uuid", unique: true
+  end
+
+  create_table "ratings_role_book_parts", force: :cascade do |t|
+    t.bigint "entity_role_id", null: false
+    t.uuid "book_part_uuid", null: false
+    t.boolean "is_page", null: false
+    t.integer "num_responses", null: false
+    t.jsonb "clue", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_part_uuid"], name: "index_ratings_role_book_parts_on_book_part_uuid"
+    t.index ["entity_role_id", "book_part_uuid"], name: "index_role_book_parts_on_role_id_and_book_part_uuid", unique: true
   end
 
   create_table "research_cohort_members", id: :serial, force: :cascade do |t|
@@ -1093,6 +1120,8 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "ratings_period_book_parts", "course_membership_periods", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "ratings_role_book_parts", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohorts", "research_studies", on_update: :cascade, on_delete: :cascade

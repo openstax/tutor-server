@@ -479,40 +479,48 @@ class OpenStax::Biglearn::Api::RealClient < OpenStax::Biglearn::RealClient
 
   # Returns the CLUes for the given book containers and students (for students)
   def fetch_student_clues(requests)
-    biglearn_requests = requests.map do |request|
-      student = request.fetch(:student)
-      course = student.course
-      algorithm_name = course.biglearn_student_clues_algorithm_name ||
-                       Settings::Biglearn.student_clues_algorithm_name.to_s
-      {
-        request_uuid: request.fetch(:request_uuid),
-        student_uuid: student.uuid,
-        book_container_uuid: request.fetch(:book_container_uuid),
-        algorithm_name: algorithm_name
-      }
-    end
+    if Settings::Biglearn.student_clues_algorithm_name.to_s.downcase == 'fake'
+      OpenStax::Biglearn::Api.new_fake_client.fetch_student_clues(requests)
+    else
+      biglearn_requests = requests.map do |request|
+        student = request.fetch(:student)
+        course = student.course
+        algorithm_name = course.biglearn_student_clues_algorithm_name ||
+                         Settings::Biglearn.student_clues_algorithm_name.to_s
+        {
+          request_uuid: request.fetch(:request_uuid),
+          student_uuid: student.uuid,
+          book_container_uuid: request.fetch(:book_container_uuid),
+          algorithm_name: algorithm_name
+        }
+      end
 
-    bulk_api_request url: :fetch_student_clues, requests: biglearn_requests,
-                     requests_key: :student_clue_requests, responses_key: :student_clue_responses
+      bulk_api_request url: :fetch_student_clues, requests: biglearn_requests,
+                       requests_key: :student_clue_requests, responses_key: :student_clue_responses
+    end
   end
 
   # Returns the CLUes for the given book containers and periods (for teachers)
   def fetch_teacher_clues(requests)
-    biglearn_requests = requests.map do |request|
-      course_container = request.fetch(:course_container)
-      course = course_container.course
-      algorithm_name = course.biglearn_teacher_clues_algorithm_name ||
-                       Settings::Biglearn.teacher_clues_algorithm_name.to_s
-      {
-        request_uuid: request.fetch(:request_uuid),
-        course_container_uuid: course_container.uuid,
-        book_container_uuid: request.fetch(:book_container_uuid),
-        algorithm_name: algorithm_name
-      }
-    end
+    if Settings::Biglearn.teacher_clues_algorithm_name.to_s.downcase == 'fake'
+      OpenStax::Biglearn::Api.new_fake_client.fetch_teacher_clues(requests)
+    else
+      biglearn_requests = requests.map do |request|
+        course_container = request.fetch(:course_container)
+        course = course_container.course
+        algorithm_name = course.biglearn_teacher_clues_algorithm_name ||
+                         Settings::Biglearn.teacher_clues_algorithm_name.to_s
+        {
+          request_uuid: request.fetch(:request_uuid),
+          course_container_uuid: course_container.uuid,
+          book_container_uuid: request.fetch(:book_container_uuid),
+          algorithm_name: algorithm_name
+        }
+      end
 
-    bulk_api_request url: :fetch_teacher_clues, requests: biglearn_requests,
-                     requests_key: :teacher_clue_requests, responses_key: :teacher_clue_responses
+      bulk_api_request url: :fetch_teacher_clues, requests: biglearn_requests,
+                       requests_key: :teacher_clue_requests, responses_key: :teacher_clue_responses
+    end
   end
 
   protected
