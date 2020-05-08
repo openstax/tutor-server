@@ -6,7 +6,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   let(:new_task)      { FactoryBot.build :tasks_task, opens_at: Time.current.yesterday }
 
   it { is_expected.to belong_to(:assistant) }
-  it { is_expected.to belong_to(:owner) }
+  it { is_expected.to belong_to(:course) }
 
   it { is_expected.to belong_to(:cloned_from).optional }
 
@@ -41,13 +41,13 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).to be_valid
   end
 
-  it 'automatically infers the ecosystem from the settings or owner' do
+  it 'automatically infers the ecosystem from the settings or course' do
     ecosystem = task_plan.ecosystem
     book = FactoryBot.create :content_book, ecosystem: ecosystem
     page = FactoryBot.create :content_page, book: book
     exercise = FactoryBot.create :content_exercise, page: page
 
-    task_plan.owner.course_ecosystems.delete_all :delete_all
+    task_plan.course.course_ecosystems.delete_all :delete_all
     task_plan.ecosystem = nil
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil
@@ -72,7 +72,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(task_plan).not_to be_valid
     expect(task_plan.ecosystem).to be_nil
 
-    AddEcosystemToCourse.call(course: task_plan.owner, ecosystem: ecosystem)
+    AddEcosystemToCourse.call(course: task_plan.course, ecosystem: ecosystem)
     expect(task_plan).to be_valid
     expect(task_plan.ecosystem).to eq ecosystem
   end
@@ -141,11 +141,11 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(clone.ecosystem).to eq task_plan.ecosystem
   end
 
-  it "automatically sets its ecosystem to the owner's if cloned_from is not specified" do
-    course = task_plan.owner
+  it "automatically sets its ecosystem to the course's if cloned_from is not specified" do
+    course = task_plan.course
     ecosystem = FactoryBot.create :content_ecosystem
     AddEcosystemToCourse[ecosystem: ecosystem, course: course]
-    new_task_plan = FactoryBot.build :tasks_task_plan, owner: course
+    new_task_plan = FactoryBot.build :tasks_task_plan, course: course
     new_task_plan.ecosystem = nil
     expect(new_task_plan).to be_valid
     expect(new_task_plan.ecosystem).to eq ecosystem

@@ -10,8 +10,7 @@ class Stats::Calculations::Exercises
         .where(:first_completed_at => interval.range,
                tasked_type: "Tasks::Models::Tasked#{task_type.classify}",
                task: { task_plan: {
-                 owner_type: CourseProfile::Models::Course.to_s,
-                 owner_id: interval.courses.populated.map(&:id)
+                 course_profile_course_id: interval.courses.populated.map(&:id)
                } })
         .count
     end

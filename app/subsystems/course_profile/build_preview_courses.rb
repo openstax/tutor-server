@@ -49,7 +49,7 @@ class CourseProfile::BuildPreviewCourses
           is_test: false,
           is_college: true,
           num_sections: 2,
-          time_zone: "Central Time (US & Canada)",
+          timezone: 'US/Central',
           catalog_offering: offering
         ].tap do |course|
           offering_title = offering.title

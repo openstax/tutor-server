@@ -11,7 +11,7 @@ RSpec.describe CreateCourse, type: :routine do
       name: 'Unnamed',
       term: term,
       year: year,
-      time_zone: 'Indiana (East)',
+      timezone: 'US/East-Indiana',
       is_preview: false,
       is_college: is_college,
       is_test: true,
@@ -21,7 +21,7 @@ RSpec.describe CreateCourse, type: :routine do
     expect(result.errors).to be_empty
 
     course = result.outputs.course
-    expect(course.time_zone.name).to eq 'Indiana (East)'
+    expect(course.timezone).to eq 'US/East-Indiana'
     expect(course).to be_a CourseProfile::Models::Course
     expect(course.course_assistants.count).to eq 4
     expect(course.is_preview).to eq false
@@ -40,7 +40,7 @@ RSpec.describe CreateCourse, type: :routine do
   it "creates a new preview course" do
     result = described_class.call(
       name: 'Unnamed',
-      time_zone: 'Indiana (East)',
+      timezone: 'US/East-Indiana',
       is_preview: true,
       is_college: is_college,
       is_test: false,
@@ -61,7 +61,7 @@ RSpec.describe CreateCourse, type: :routine do
   it "requires the term and year attributes for non-preview courses" do
     result = described_class.call(
       name: 'Unnamed',
-      time_zone: 'Indiana (East)',
+      timezone: 'US/East-Indiana',
       is_preview: false,
       is_college: is_college,
       is_test: true,
@@ -78,7 +78,7 @@ RSpec.describe CreateCourse, type: :routine do
       name: 'Reg Code Course',
       term: term,
       year: year,
-      time_zone: 'Indiana (East)',
+      timezone: 'US/East-Indiana',
       is_preview: false,
       is_college: is_college,
       is_test: true,

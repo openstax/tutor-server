@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CreatePeriod, type: :routine do
   let(:course)        { FactoryBot.create :course_profile_course }
-  let(:time_zone)     { course.time_zone.to_tz }
+  let(:time_zone)     { course.time_zone }
   let!(:period)       { described_class[course: course, name: 'Original period'] }
   let!(:other_period) { described_class[course: course, name: 'Other period'] }
 
@@ -17,7 +17,7 @@ RSpec.describe CreatePeriod, type: :routine do
 
   it 'copies existing "coursewide" task plans to the new period' do
     Timecop.freeze do
-      expected = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+      expected = FactoryBot.build(:tasks_task_plan, course: course, num_tasking_plans: 0)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: expected,
                                               opens_at: time_zone.now,
@@ -35,7 +35,7 @@ RSpec.describe CreatePeriod, type: :routine do
 
   it 'does not copy task plans not applied to all periods' do
     Timecop.freeze do
-      single_period = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+      single_period = FactoryBot.build(:tasks_task_plan, course: course, num_tasking_plans: 0)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: single_period, target: period)
 
@@ -45,7 +45,7 @@ RSpec.describe CreatePeriod, type: :routine do
 
   it 'does not copy task plans across all periods with mismatching due dates' do
     Timecop.freeze do
-      diff_due_dates = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+      diff_due_dates = FactoryBot.build(:tasks_task_plan, course: course, num_tasking_plans: 0)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: diff_due_dates,
                                               opens_at: time_zone.now,
@@ -63,7 +63,7 @@ RSpec.describe CreatePeriod, type: :routine do
 
   it 'does not copy task plans across all periods with mismatching open dates' do
     Timecop.freeze do
-      diff_open_dates = FactoryBot.build(:tasks_task_plan, owner: course, num_tasking_plans: 0)
+      diff_open_dates = FactoryBot.build(:tasks_task_plan, course: course, num_tasking_plans: 0)
 
       FactoryBot.create(:tasks_tasking_plan, task_plan: diff_open_dates,
                                               opens_at: time_zone.now,

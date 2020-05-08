@@ -6,7 +6,7 @@ RSpec.describe "short codes", type: :feature do
     let(:course)           { FactoryBot.create :course_profile_course }
     let(:period)           { FactoryBot.create :course_membership_period, course: course }
 
-    let(:task_plan_1)      { FactoryBot.create(:tasks_task_plan, owner: course) }
+    let(:task_plan_1)      { FactoryBot.create(:tasks_task_plan, course: course) }
     let(:task_1)           do
       FactoryBot.create(:tasks_task, task_plan: task_plan_1, opens_at: 1.day.from_now)
     end
@@ -14,7 +14,7 @@ RSpec.describe "short codes", type: :feature do
     let(:task_plan_1_code) { FactoryBot.create(:short_code_short_code,
                                                 uri: task_plan_1.to_global_id.to_s).code }
 
-    let(:task_plan_2)      { FactoryBot.create(:tasks_task_plan, owner: course) }
+    let(:task_plan_2)      { FactoryBot.create(:tasks_task_plan, course: course) }
     let(:task_plan_2_code) { FactoryBot.create(:short_code_short_code,
                                                  uri: task_plan_2.to_global_id.to_s).code }
 

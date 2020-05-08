@@ -5,7 +5,7 @@ RSpec.describe Api::V1::TasksController, type: :controller, api: true, version: 
   let(:course)             { FactoryBot.create :course_profile_course }
   let(:period)             { FactoryBot.create :course_membership_period, course: course }
 
-  let(:task_plan_1)        { FactoryBot.create :tasks_task_plan, owner: course }
+  let(:task_plan_1)        { FactoryBot.create :tasks_task_plan, course: course }
   let(:task_1)             do
     FactoryBot.create :tasks_task, title: 'A Task Title',
                                    task_plan: task_plan_1,

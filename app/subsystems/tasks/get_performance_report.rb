@@ -25,7 +25,7 @@ module Tasks
         periods = [ member.period ]
       end
 
-      tz = course.time_zone.try!(:to_tz) || Time.zone
+      tz = course.time_zone
       current_time_ntz = DateTimeUtilities.remove_tz(tz.now)
 
       tasks = get_course_tasks(course, role, is_teacher, current_time_ntz)
@@ -312,9 +312,9 @@ module Tasks
             type: type,
             id: tt.id,
             due_at: due_at,
-            last_worked_at: tt.last_worked_at.try!(:in_time_zone, tz),
+            last_worked_at: tt.last_worked_at&.in_time_zone(tz),
             is_late_work_accepted: tt.accepted_late_at.present?,
-            accepted_late_at: tt.accepted_late_at.try!(:in_time_zone, tz),
+            accepted_late_at: tt.accepted_late_at&.in_time_zone(tz),
             is_included_in_averages: included_in_progress_averages?(
               task: tt, current_time_ntz: current_time_ntz
             )

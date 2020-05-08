@@ -16,7 +16,7 @@ class WorkPreviewCourseTasks
       next if student_roles.empty?
 
       ActiveRecord::Associations::Preloader.new.preload(
-        student_roles, taskings: { task: [ :time_zone, { task_steps: :tasked } ] }
+        student_roles, taskings: { task: [ :course, { task_steps: :tasked } ] }
       )
 
       all_tasks = student_roles.flat_map { |role| role.taskings.map(&:task) }

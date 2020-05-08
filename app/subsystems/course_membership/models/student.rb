@@ -37,7 +37,7 @@ class CourseMembership::Models::Student < ApplicationRecord
 
   def new_payment_due_at
     # Give the student til midnight after configurable days from now
-    course.time_zone.to_tz.now.midnight + 1.day - 1.second +
+    course.time_zone.now.midnight + 1.day - 1.second +
       Settings::Payments.student_grace_period_days.days
   end
 

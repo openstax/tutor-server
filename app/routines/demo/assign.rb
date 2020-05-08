@@ -71,7 +71,7 @@ class Demo::Assign < Demo::Base
       attrs = {
         title: task_plan[:title],
         type: task_plan[:type],
-        owner: course_model,
+        course: course_model,
         content_ecosystem_id: ecosystem.id,
         assistant: assistants_by_task_plan_type[task_plan[:type]],
         settings: {},
@@ -125,8 +125,7 @@ class Demo::Assign < Demo::Base
         Tasks::Models::TaskingPlan.new(
           target: period,
           opens_at: assigned_to[:opens_at],
-          due_at: assigned_to[:due_at],
-          time_zone: course_model.time_zone
+          due_at: assigned_to[:due_at]
         )
       end
 

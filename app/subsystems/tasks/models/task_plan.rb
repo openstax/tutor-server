@@ -17,12 +17,14 @@ class Tasks::Models::TaskPlan < ApplicationRecord
                            optional: true
 
   belongs_to :assistant
-  belongs_to :owner, polymorphic: true
+  belongs_to :course, subsystem: :course_profile, inverse_of: :task_plans
   belongs_to :ecosystem, subsystem: :content
 
   # These associations to not have dependent: :destroy because the task_plan is soft-deleted
   has_many :tasking_plans, inverse_of: :task_plan
   has_many :tasks, inverse_of: :task_plan
+
+  delegate :timezone, :time_zone, to: :course
 
   json_serialize :settings, Hash
 
@@ -47,9 +49,9 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   scope :published,     -> { where.not first_published_at: nil }
   scope :non_withdrawn, -> { where withdrawn_at: nil }
 
-  scope :preload_tasking_plans, -> { preload(tasking_plans: :time_zone) }
+  scope :preload_tasking_plans, -> { preload(:tasking_plans, :course) }
 
-  scope :preload_tasks, -> { preload(tasks: :time_zone) }
+  scope :preload_tasks, -> { preload(tasks: :course) }
 
   def withdrawn?
     deleted?
@@ -79,7 +81,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   def set_and_return_ecosystem
     self.ecosystem ||= cloned_from&.ecosystem ||
                        get_ecosystems_from_settings&.first ||
-                       owner.try(:ecosystems)&.first
+                       course&.ecosystems&.first
   end
 
   protected
@@ -116,9 +118,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def valid_ecosystem
-    valid_ecosystems = owner.try(:ecosystems)
-    # Remove nil check if we remove polymorphism.
-    return if valid_ecosystems.nil? || valid_ecosystems.include?(ecosystem)
+    return if course.nil? || course.ecosystems.include?(ecosystem)
 
     errors.add(:ecosystem, 'is not valid for this course')
     throw :abort

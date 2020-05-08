@@ -29,7 +29,7 @@ class Demo::Work < Demo::Base
         .joins(taskings: { role: { profile: :account } })
         .where(taskings: { role: { profile: { account: { username: usernames } } } })
         .preload(
-          :time_zone, taskings: { role: { profile: :account } }, task_steps: [ :tasked, :task ]
+          :course, taskings: { role: { profile: :account } }, task_steps: [ :tasked, :task ]
         )
         .index_by { |task| task.taskings.first.role.username }
       missing_usernames = usernames - tasks_by_username.keys

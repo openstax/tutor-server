@@ -66,11 +66,11 @@ class SetupPerformanceReportData
       id: page_ids
     ).pluck(:homework_core_exercise_ids).flatten.map(&:to_s)
 
-    time_zone = course.time_zone.to_tz
+    time_zone = course.time_zone
 
     reading_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Reading task plan',
-      owner: course,
+      course: course,
       type: 'reading',
       assistant: reading_assistant,
       content_ecosystem_id: ecosystem.id,
@@ -81,8 +81,7 @@ class SetupPerformanceReportData
       target: course,
       task_plan: reading_taskplan,
       opens_at: time_zone.now,
-      due_at: time_zone.now + 1.week,
-      time_zone: course.time_zone
+      due_at: time_zone.now + 1.week
     )
 
     reading_taskplan.save!
@@ -91,7 +90,7 @@ class SetupPerformanceReportData
 
     homework_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Homework task plan',
-      owner: course,
+      course: course,
       type: 'homework',
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
@@ -103,8 +102,7 @@ class SetupPerformanceReportData
 
     homework_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
       target: course, task_plan: homework_taskplan,
-      opens_at: time_zone.now, due_at: time_zone.now.tomorrow,
-      time_zone: course.time_zone
+      opens_at: time_zone.now, due_at: time_zone.now.tomorrow
     )
 
     homework_taskplan.save!
@@ -113,7 +111,7 @@ class SetupPerformanceReportData
 
     homework2_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Homework 2 task plan',
-      owner: course,
+      course: course,
       type: 'homework',
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
@@ -125,8 +123,7 @@ class SetupPerformanceReportData
 
     homework2_taskplan.tasking_plans << Tasks::Models::TaskingPlan.new(
       target: course, task_plan: homework2_taskplan,
-      opens_at: time_zone.now, due_at: time_zone.now + 2.weeks,
-      time_zone: course.time_zone
+      opens_at: time_zone.now, due_at: time_zone.now + 2.weeks
     )
 
     homework2_taskplan.save!
@@ -135,7 +132,7 @@ class SetupPerformanceReportData
 
     future_homework_taskplan = Tasks::Models::TaskPlan.new(
       title: 'Future Homework task plan',
-      owner: course,
+      course: course,
       type: 'homework',
       assistant: homework_assistant,
       content_ecosystem_id: ecosystem.id,
@@ -149,8 +146,7 @@ class SetupPerformanceReportData
       target: course,
       task_plan: future_homework_taskplan,
       opens_at: time_zone.now + 1.5.days,
-      due_at: time_zone.now + 2.days,
-      time_zone: course.time_zone
+      due_at: time_zone.now + 2.days
     )
 
     future_homework_taskplan.save!

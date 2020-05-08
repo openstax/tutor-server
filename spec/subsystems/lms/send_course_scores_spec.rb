@@ -9,7 +9,7 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
     student = callback.profile
     AddUserAsPeriodStudent[period: period, user: student]
 
-    FactoryBot.create :tasked_task_plan, owner: @course
+    FactoryBot.create :tasked_task_plan, course: @course
 
     teacher = FactoryBot.create :user_profile
     @teacher_role = AddUserAsCourseTeacher[course: @course, user: teacher]

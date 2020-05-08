@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe Api::V1::Research::RootController, type: :controller, api: true, version: :v1 do
   let(:task_plan)     { FactoryBot.create :tasked_task_plan, number_of_students: 2 }
-  let(:course_1)      { task_plan.owner }
+  let(:course_1)      { task_plan.course }
   let(:period)        { task_plan.tasking_plans.first.target }
   let(:student_1)     { period.students.to_a.first }
   let(:student_2)     { period.students.to_a.last }

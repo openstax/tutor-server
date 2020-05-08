@@ -30,11 +30,14 @@ class Tasks::Models::Task < ApplicationRecord
 
   json_serialize :spy, Hash
 
-  belongs_to_time_zone :opens_at, :due_at, :feedback_at, suffix: :ntz, optional: true
+  belongs_to :course, subsystem: :course_profile, inverse_of: :tasks
 
   belongs_to :task_plan, inverse_of: :tasks, optional: true
 
   belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
+
+  delegate :timezone, :time_zone, to: :course
+  has_timezone :opens_at, :due_at, :feedback_at, suffix: :ntz
 
   sortable_has_many :task_steps, on: :number, inverse_of: :task do
     # Because we update task_step counts in the middle of the following methods,
@@ -152,7 +155,7 @@ class Tasks::Models::Task < ApplicationRecord
     self.placeholder_exercise_steps_count = placeholder_exercise_steps.count
     self.core_placeholder_exercise_steps_count = placeholder_exercise_steps.count(&:is_core?)
 
-    self.student_history_at ||= current_time if completed_core_steps_count == core_steps_count
+    self.core_steps_completed_at ||= current_time if completed_core_steps_count == core_steps_count
 
     self
   end
@@ -358,7 +361,7 @@ class Tasks::Models::Task < ApplicationRecord
   protected
 
   def due_at_on_or_after_opens_at
-    return if due_at.nil? || opens_at.nil? || due_at >= opens_at
+    return if course.nil? || due_at.nil? || opens_at.nil? || due_at >= opens_at
 
     errors.add(:due_at, 'must be on or after opens_at')
     throw :abort
