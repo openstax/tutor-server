@@ -17,31 +17,6 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "cache_period_book_parts", force: :cascade do |t|
-    t.bigint "course_membership_period_id", null: false
-    t.uuid "book_part_uuid", null: false
-    t.boolean "is_page", null: false
-    t.integer "num_students", null: false
-    t.integer "num_responses", null: false
-    t.jsonb "clue", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["book_part_uuid"], name: "index_cache_period_book_parts_on_book_part_uuid"
-    t.index ["course_membership_period_id", "book_part_uuid"], name: "index_period_book_parts_on_period_id_and_book_part_uuid", unique: true
-  end
-
-  create_table "cache_role_book_parts", force: :cascade do |t|
-    t.bigint "entity_role_id", null: false
-    t.uuid "book_part_uuid", null: false
-    t.boolean "is_page", null: false
-    t.integer "num_responses", null: false
-    t.jsonb "clue", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["book_part_uuid"], name: "index_cache_role_book_parts_on_book_part_uuid"
-    t.index ["entity_role_id", "book_part_uuid"], name: "index_role_book_parts_on_role_id_and_book_part_uuid", unique: true
-  end
-
   create_table "catalog_offerings", id: :serial, force: :cascade do |t|
     t.string "salesforce_book_name", null: false
     t.integer "content_ecosystem_id"
@@ -604,6 +579,31 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.datetime "updated_at"
   end
 
+  create_table "ratings_period_book_parts", force: :cascade do |t|
+    t.bigint "course_membership_period_id", null: false
+    t.uuid "book_part_uuid", null: false
+    t.boolean "is_page", null: false
+    t.integer "num_students", null: false
+    t.integer "num_responses", null: false
+    t.jsonb "clue", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_part_uuid"], name: "index_ratings_period_book_parts_on_book_part_uuid"
+    t.index ["course_membership_period_id", "book_part_uuid"], name: "index_period_book_parts_on_period_id_and_book_part_uuid", unique: true
+  end
+
+  create_table "ratings_role_book_parts", force: :cascade do |t|
+    t.bigint "entity_role_id", null: false
+    t.uuid "book_part_uuid", null: false
+    t.boolean "is_page", null: false
+    t.integer "num_responses", null: false
+    t.jsonb "clue", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_part_uuid"], name: "index_ratings_role_book_parts_on_book_part_uuid"
+    t.index ["entity_role_id", "book_part_uuid"], name: "index_role_book_parts_on_role_id_and_book_part_uuid", unique: true
+  end
+
   create_table "research_cohort_members", id: :serial, force: :cascade do |t|
     t.integer "research_cohort_id", null: false
     t.integer "course_membership_student_id", null: false
@@ -1079,8 +1079,6 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.index ["identifier"], name: "index_user_tours_on_identifier", unique: true
   end
 
-  add_foreign_key "cache_period_book_parts", "course_membership_periods", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "cache_role_book_parts", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "catalog_offerings", "content_ecosystems", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
@@ -1124,6 +1122,8 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "ratings_period_book_parts", "course_membership_periods", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "ratings_role_book_parts", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "course_membership_students", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohort_members", "research_cohorts", on_update: :cascade, on_delete: :cascade
   add_foreign_key "research_cohorts", "research_studies", on_update: :cascade, on_delete: :cascade

@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :cache_period_book_part, class: '::Cache::PeriodBookPart' do
+  factory :ratings_period_book_part, class: '::Ratings::PeriodBookPart' do
     association :period, factory: :course_membership_period
 
     book_part_uuid { SecureRandom.uuid }

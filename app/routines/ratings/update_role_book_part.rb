@@ -1,5 +1,5 @@
 # NOTE: We currently do not support CLUes for Units because we only search for pages 1 level down
-class Cache::UpdateRoleBookPart
+class Ratings::UpdateRoleBookPart
   lev_routine
 
   uses_routine CalculateClue
@@ -29,7 +29,7 @@ class Cache::UpdateRoleBookPart
       tasked_exercise.task_step.task.feedback_available?(current_time: feedback_before)
     end.map(&:is_correct?)
 
-    role_book_part = Cache::RoleBookPart.new(
+    role_book_part = Ratings::RoleBookPart.new(
       role: role,
       book_part_uuid: book_part_uuid,
       is_page: is_page,
@@ -37,7 +37,7 @@ class Cache::UpdateRoleBookPart
       clue: run(:calculate_clue, responses: responses).outputs.clue
     )
 
-    Cache::RoleBookPart.import [ role_book_part ], validate: false, on_duplicate_key_update: {
+    Ratings::RoleBookPart.import [ role_book_part ], validate: false, on_duplicate_key_update: {
       conflict_target: [ :entity_role_id, :book_part_uuid ], columns: [ :num_responses, :clue ]
     }
   end

@@ -1,4 +1,4 @@
-class InitializeClueCaches < ActiveRecord::Migration[5.2]
+class InitializeRatings < ActiveRecord::Migration[5.2]
   def up
     current_time = Time.current
 
@@ -14,29 +14,29 @@ class InitializeClueCaches < ActiveRecord::Migration[5.2]
         ).distinct.pluck(:uuid, :parent_book_part_uuid)
 
         page_uuids_book_part_uuids.map(&:first).uniq.each do |page_uuid|
-          Cache::UpdateRoleBookPart.set(queue: 'maintenance').perform_later(
+          Ratings::UpdateRoleBookPart.set(queue: 'maintenance').perform_later(
             role: role, book_part_uuid: page_uuid, is_page: true
           )
 
-          Cache::UpdateRoleBookPart.set(queue: 'maintenance', run_at: feedback_at).perform_later(
+          Ratings::UpdateRoleBookPart.set(queue: 'maintenance', run_at: feedback_at).perform_later(
             role: role, book_part_uuid: page_uuid, is_page: true
           ) if no_feedback_yet
 
-          Cache::UpdatePeriodBookPart.set(queue: 'maintenance').perform_later(
+          Ratings::UpdatePeriodBookPart.set(queue: 'maintenance').perform_later(
             period: role.student.period, book_part_uuid: page_uuid, is_page: true
           ) if role.student?
         end
 
         page_uuids_book_part_uuids.map(&:second).uniq.each do |book_part_uuid|
-          Cache::UpdateRoleBookPart.set(queue: 'maintenance').perform_later(
+          Ratings::UpdateRoleBookPart.set(queue: 'maintenance').perform_later(
             role: role, book_part_uuid: book_part_uuid, is_page: false
           )
 
-          Cache::UpdateRoleBookPart.set(queue: 'maintenance', run_at: feedback_at).perform_later(
+          Ratings::UpdateRoleBookPart.set(queue: 'maintenance', run_at: feedback_at).perform_later(
             role: role, book_part_uuid: book_part_uuid, is_page: false
           ) if no_feedback_yet
 
-          Cache::UpdatePeriodBookPart.set(queue: 'maintenance').perform_later(
+          Ratings::UpdatePeriodBookPart.set(queue: 'maintenance').perform_later(
             period: role.student.period, book_part_uuid: book_part_uuid, is_page: false
           ) if role.student?
         end

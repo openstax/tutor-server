@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Cache::RoleBookPart, type: :model do
-  subject(:role_book_part) { FactoryBot.create :cache_role_book_part }
+RSpec.describe Ratings::RoleBookPart, type: :model do
+  subject(:role_book_part) { FactoryBot.create :ratings_role_book_part }
 
   it { is_expected.to belong_to(:role) }
 

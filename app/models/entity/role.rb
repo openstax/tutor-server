@@ -10,7 +10,7 @@ module Entity
 
     has_many :notes, subsystem: :content, dependent: :destroy, inverse_of: :role
 
-    has_many :role_book_parts, subsystem: :cache, dependent: :destroy, inverse_of: :role
+    has_many :role_book_parts, subsystem: :ratings, dependent: :destroy, inverse_of: :role
 
     belongs_to :profile, subsystem: :user, inverse_of: :roles
 
