@@ -87,21 +87,21 @@ class Preview::WorkTask
       .pluck(:uuid, :parent_book_part_uuid)
 
     page_uuid_book_part_uuids.map(&:first).uniq.each do |page_uuid|
-      Cache::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
         role: role, book_part_uuid: page_uuid, is_page: true
       )
 
-      Cache::UpdatePeriodBookPart.set(queue: queue).perform_later(
+      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
         period: period, book_part_uuid: page_uuid, is_page: true
       ) if role.student?
     end
 
     page_uuid_book_part_uuids.map(&:second).uniq.each do |book_part_uuid|
-      Cache::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
         role: role, book_part_uuid: book_part_uuid, is_page: false
       )
 
-      Cache::UpdatePeriodBookPart.set(queue: queue).perform_later(
+      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
         period: period, book_part_uuid: book_part_uuid, is_page: false
       ) if role.student?
     end

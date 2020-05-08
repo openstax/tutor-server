@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :cache_role_book_part, class: '::Cache::RoleBookPart' do
+  factory :ratings_role_book_part, class: '::Ratings::RoleBookPart' do
     association :role, factory: :entity_role
 
     book_part_uuid { SecureRandom.uuid }

@@ -41,19 +41,19 @@ class MarkTaskStepCompleted
       .find_by(id: task_step.content_page_id)
 
     unless page.nil?
-      Cache::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
         role: role, book_part_uuid: page.uuid, is_page: true
       )
 
-      Cache::UpdatePeriodBookPart.set(queue: queue).perform_later(
+      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
         period: period, book_part_uuid: page.uuid, is_page: true
       ) if role.student?
 
-      Cache::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
+      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
         role: role, book_part_uuid: page.parent_book_part_uuid, is_page: false
       )
 
-      Cache::UpdatePeriodBookPart.set(queue: queue).perform_later(
+      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
         period: period, book_part_uuid: page.parent_book_part_uuid, is_page: false
       ) if role.student?
     end

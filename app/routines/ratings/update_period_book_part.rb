@@ -1,5 +1,5 @@
 # NOTE: We currently do not support CLUes for Units because we only search for pages 1 level down
-class Cache::UpdatePeriodBookPart
+class Ratings::UpdatePeriodBookPart
   lev_routine
 
   uses_routine CalculateClue
@@ -24,7 +24,7 @@ class Cache::UpdatePeriodBookPart
       .where.not(answer_id: nil)
       .to_a
 
-    period_book_part = Cache::PeriodBookPart.new(
+    period_book_part = Ratings::PeriodBookPart.new(
       period: period,
       book_part_uuid: book_part_uuid,
       is_page: is_page,
@@ -33,7 +33,7 @@ class Cache::UpdatePeriodBookPart
       clue: run(:calculate_clue, responses: tasked_exercises.map(&:is_correct?)).outputs.clue
     )
 
-    Cache::PeriodBookPart.import [ period_book_part ], validate: false, on_duplicate_key_update: {
+    Ratings::PeriodBookPart.import [ period_book_part ], validate: false, on_duplicate_key_update: {
       conflict_target: [ :course_membership_period_id, :book_part_uuid ],
       columns: [ :num_students, :num_responses, :clue ]
     }

@@ -269,7 +269,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
       unless ecosystem.nil?
         role = student.role
-        page_uuids = Cache::RoleBookPart.where(
+        page_uuids = Ratings::RoleBookPart.where(
           role: role, is_page: true
         ).sort_by do |role_book_part|
           role_book_part.clue['is_real'] ? role_book_part.clue['most_likely'] : 1.5
@@ -328,12 +328,12 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     end
     role_book_part_join_query = <<-JOIN_SQL.strip_heredoc
       INNER JOIN (#{ValuesTable.new(values)}) AS "values" ("role_id", "book_part_uuid")
-        ON "cache_role_book_parts"."entity_role_id" = "values"."role_id"
-          AND "cache_role_book_parts"."book_part_uuid" = "values"."book_part_uuid"
+        ON "ratings_role_book_parts"."entity_role_id" = "values"."role_id"
+          AND "ratings_role_book_parts"."book_part_uuid" = "values"."book_part_uuid"
     JOIN_SQL
 
     clues_by_role_id_and_book_part_uuid = Hash.new { |hash, key| hash[key] = {} }
-    Cache::RoleBookPart.joins(role_book_part_join_query).each do |role_book_part|
+    Ratings::RoleBookPart.joins(role_book_part_join_query).each do |role_book_part|
       role_id = role_book_part.entity_role_id
       book_part_uuid = role_book_part.book_part_uuid
 
@@ -375,12 +375,12 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     end
     period_book_part_join_query = <<-JOIN_SQL.strip_heredoc
       INNER JOIN (#{ValuesTable.new(values)}) AS "values" ("period_id", "book_part_uuid")
-        ON "cache_period_book_parts"."course_membership_period_id" = "values"."period_id"
-          AND "cache_period_book_parts"."book_part_uuid" = "values"."book_part_uuid"
+        ON "ratings_period_book_parts"."course_membership_period_id" = "values"."period_id"
+          AND "ratings_period_book_parts"."book_part_uuid" = "values"."book_part_uuid"
     JOIN_SQL
 
     clues_by_period_id_and_book_part_uuid = Hash.new { |hash, key| hash[key] = {} }
-    Cache::PeriodBookPart.joins(period_book_part_join_query).each do |period_book_part|
+    Ratings::PeriodBookPart.joins(period_book_part_join_query).each do |period_book_part|
       period_id = period_book_part.course_membership_period_id
       book_part_uuid = period_book_part.book_part_uuid
 

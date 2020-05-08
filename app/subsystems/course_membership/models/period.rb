@@ -26,7 +26,7 @@ class CourseMembership::Models::Period < ApplicationRecord
   has_many :tasks, through: :taskings
   has_many :tasking_plans, as: :target, class_name: 'Tasks::Models::TaskingPlan'
 
-  has_many :period_book_parts, subsystem: :cache, inverse_of: :period
+  has_many :period_book_parts, subsystem: :ratings, inverse_of: :period
 
   unique_token :enrollment_code, mode: :random_number, length: 6
 

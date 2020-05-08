@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Cache::PeriodBookPart, type: :model do
-  subject(:period_book_part) { FactoryBot.create :cache_period_book_part }
+RSpec.describe Ratings::PeriodBookPart, type: :model do
+  subject(:period_book_part) { FactoryBot.create :ratings_period_book_part }
 
   it { is_expected.to belong_to(:period) }
 

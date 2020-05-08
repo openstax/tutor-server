@@ -1,6 +1,6 @@
-class CreateCacheRoleBookParts < ActiveRecord::Migration[5.2]
+class CreateRatingsRoleBookParts < ActiveRecord::Migration[5.2]
   def change
-    create_table :cache_role_book_parts do |t|
+    create_table :ratings_role_book_parts do |t|
       t.references :entity_role,
                    null: false,
                    index: false,
@@ -13,7 +13,7 @@ class CreateCacheRoleBookParts < ActiveRecord::Migration[5.2]
       t.timestamps
     end
 
-    add_index :cache_role_book_parts, [ :entity_role_id, :book_part_uuid ], unique: true,
+    add_index :ratings_role_book_parts, [ :entity_role_id, :book_part_uuid ], unique: true,
               unique: true, name: 'index_role_book_parts_on_role_id_and_book_part_uuid'
 
     reversible do |dir|

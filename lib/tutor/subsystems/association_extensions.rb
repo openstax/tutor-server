@@ -48,7 +48,7 @@ module Tutor::SubSystems
 
         # We're trying to move away from the Models:: namespace
         # Add subsystems that don't use Models:: here
-        if [ 'entity', 'cache' ].include?(subsystem_name)
+        if [ 'entity', 'ratings' ].include?(subsystem_name)
           options[:class_name] ||= "::#{subsystem_name.camelize}::#{model_name}"
         else
           options[:class_name] ||= "::#{subsystem_name.camelize}::Models::#{model_name}"
