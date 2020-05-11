@@ -22,7 +22,11 @@ RSpec.describe 'Task steps without free response field', type: :request,
     @task = FactoryBot.create :tasks_task, task_plan: task_plan,
                               step_types: [:tasks_tasked_exercise]
 
-    @task.task_steps.each { |ts| ts.update_attributes(content_page_id: page_ids.first) }
+    @task.task_steps.each do |ts|
+      ts.update_attribute :content_page_id, page_ids.first
+      ts.tasked.exercise.update_attribute :content_page_id, page_ids.first
+    end
+
     FactoryBot.create :tasks_tasking, role: user_role, task: @task
 
     @token = FactoryBot.create :doorkeeper_access_token, resource_owner_id: user.id

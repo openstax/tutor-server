@@ -15,5 +15,9 @@ FactoryBot.define do
         is_real: false
       }
     end
+
+    glicko_mu { 1.5 }
+    glicko_phi { 1.5 }
+    glicko_sigma { 1.5 }
   end
 end

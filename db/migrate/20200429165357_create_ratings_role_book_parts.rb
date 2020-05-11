@@ -13,7 +13,7 @@ class CreateRatingsRoleBookParts < ActiveRecord::Migration[5.2]
       t.timestamps
     end
 
-    add_index :ratings_role_book_parts, [ :entity_role_id, :book_part_uuid ], unique: true,
+    add_index :ratings_role_book_parts, [ :entity_role_id, :book_part_uuid ],
               unique: true, name: 'index_role_book_parts_on_role_id_and_book_part_uuid'
 
     reversible do |dir|

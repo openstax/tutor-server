@@ -578,6 +578,20 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.datetime "updated_at"
   end
 
+  create_table "ratings_exercise_group_book_parts", force: :cascade do |t|
+    t.uuid "exercise_group_uuid", null: false
+    t.uuid "book_part_uuid", null: false
+    t.boolean "is_page", null: false
+    t.integer "num_responses", null: false
+    t.float "glicko_mu", null: false
+    t.float "glicko_phi", null: false
+    t.float "glicko_sigma", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_part_uuid"], name: "index_ratings_exercise_group_book_parts_on_book_part_uuid"
+    t.index ["exercise_group_uuid", "book_part_uuid"], name: "index_ex_group_book_parts_on_ex_group_uuid_and_book_part_uuid", unique: true
+  end
+
   create_table "ratings_period_book_parts", force: :cascade do |t|
     t.bigint "course_membership_period_id", null: false
     t.uuid "book_part_uuid", null: false
@@ -587,6 +601,9 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.jsonb "clue", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "glicko_mu"
+    t.float "glicko_phi"
+    t.float "glicko_sigma"
     t.index ["book_part_uuid"], name: "index_ratings_period_book_parts_on_book_part_uuid"
     t.index ["course_membership_period_id", "book_part_uuid"], name: "index_period_book_parts_on_period_id_and_book_part_uuid", unique: true
   end
@@ -599,6 +616,9 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.jsonb "clue", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "glicko_mu"
+    t.float "glicko_phi"
+    t.float "glicko_sigma"
     t.index ["book_part_uuid"], name: "index_ratings_role_book_parts_on_book_part_uuid"
     t.index ["entity_role_id", "book_part_uuid"], name: "index_role_book_parts_on_role_id_and_book_part_uuid", unique: true
   end
