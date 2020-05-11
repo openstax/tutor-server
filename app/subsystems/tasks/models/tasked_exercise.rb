@@ -5,7 +5,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   belongs_to :exercise, subsystem: :content, inverse_of: :tasked_exercises
 
-  before_validation :set_correct_answer_id, on: :create
+  before_validation :set_correct_answer_id, on: :create, if: :has_answers?
 
   validates :url, :question_id, :question_index, :content, presence: true
   validates :correct_answer_id, presence: true, if: :has_answers?
@@ -150,7 +150,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def has_answers?
-    question_answers.any?
+    question_answers.flatten.any?
   end
 
   def has_answer_missing?
