@@ -8,6 +8,10 @@ RSpec.describe Ratings::RoleBookPart, type: :model do
   it { is_expected.to validate_presence_of(:book_part_uuid) }
   it { is_expected.to validate_presence_of(:clue) }
 
+  it { is_expected.to validate_presence_of(:glicko_mu) }
+  it { is_expected.to validate_presence_of(:glicko_phi) }
+  it { is_expected.to validate_presence_of(:glicko_sigma) }
+
   it do
     is_expected.to(
       validate_uniqueness_of(:book_part_uuid).scoped_to(:entity_role_id).case_insensitive

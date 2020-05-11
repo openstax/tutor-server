@@ -290,7 +290,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         role = student.role
         page_uuids = Ratings::RoleBookPart.where(
           role: role, is_page: true
-        ).sort_by do |role_book_part|
+        ).order(:updated_at).sort_by do |role_book_part|
           role_book_part.clue['is_real'] ? role_book_part.clue['most_likely'] : 1.5
         end.first(FindOrCreatePracticeTaskRoutine::NUM_EXERCISES).map(&:book_part_uuid)
 

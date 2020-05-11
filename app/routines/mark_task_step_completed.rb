@@ -40,21 +40,19 @@ class MarkTaskStepCompleted
       .select(:uuid, :parent_book_part_uuid)
       .find_by(id: task_step.content_page_id)
 
-    unless page.nil?
-      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
-        role: role, book_part_uuid: page.uuid, is_page: true
+    if task.completed?(use_cache: true)
+      page_uuid_book_part_uuids = Content::Models::Page.where(
+        id: task.task_steps.map(&:content_page_id).uniq
+      ).pluck(:uuid, :parent_book_part_uuid)
+      page_uuids = page_uuid_book_part_uuids.map(&:first)
+      parent_book_part_uuids = page_uuid_book_part_uuids.map(&:second).uniq
+
+      Ratings::UpdateRoleBookParts.set(queue: queue, run_at: role_run_at).perform_later(
+        role: role, task: task, is_page: true
       )
 
-      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
-        period: period, book_part_uuid: page.uuid, is_page: true
-      ) if role.student?
-
-      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
-        role: role, book_part_uuid: page.parent_book_part_uuid, is_page: false
-      )
-
-      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
-        period: period, book_part_uuid: page.parent_book_part_uuid, is_page: false
+      Ratings::UpdatePeriodBookParts.set(queue: queue).perform_later(
+        period: period, task: task, is_page: true
       ) if role.student?
     end
 

@@ -16,30 +16,30 @@ class InitializeRatings < ActiveRecord::Migration[5.2]
         ).distinct.pluck(:uuid, :parent_book_part_uuid)
 
         page_uuids_book_part_uuids.map(&:first).uniq.each do |page_uuid|
-          Ratings::UpdateRoleBookPart.set(queue: 'maintenance').perform_later(
-            role: role, book_part_uuid: page_uuid, is_page: true
+          Ratings::UpdateRoleBookParts.set(queue: 'maintenance').perform_later(
+            role: role, book_part_uuids: page_uuid, is_page: true
           )
 
-          Ratings::UpdateRoleBookPart.set(queue: 'maintenance', run_at: feedback_at).perform_later(
-            role: role, book_part_uuid: page_uuid, is_page: true
+          Ratings::UpdateRoleBookParts.set(queue: 'maintenance', run_at: feedback_at).perform_later(
+            role: role, book_part_uuids: page_uuid, is_page: true
           ) unless feedback_available
 
-          Ratings::UpdatePeriodBookPart.set(queue: 'maintenance').perform_later(
-            period: role.student.period, book_part_uuid: page_uuid, is_page: true
+          Ratings::UpdatePeriodBookParts.set(queue: 'maintenance').perform_later(
+            period: role.student.period, book_part_uuids: page_uuid, is_page: true
           ) if role.student?
         end
 
         page_uuids_book_part_uuids.map(&:second).uniq.each do |book_part_uuid|
-          Ratings::UpdateRoleBookPart.set(queue: 'maintenance').perform_later(
-            role: role, book_part_uuid: book_part_uuid, is_page: false
+          Ratings::UpdateRoleBookParts.set(queue: 'maintenance').perform_later(
+            role: role, book_part_uuids: book_part_uuid, is_page: false
           )
 
-          Ratings::UpdateRoleBookPart.set(queue: 'maintenance', run_at: feedback_at).perform_later(
-            role: role, book_part_uuid: book_part_uuid, is_page: false
+          Ratings::UpdateRoleBookParts.set(queue: 'maintenance', run_at: feedback_at).perform_later(
+            role: role, book_part_uuids: book_part_uuid, is_page: false
           ) unless feedback_available
 
-          Ratings::UpdatePeriodBookPart.set(queue: 'maintenance').perform_later(
-            period: role.student.period, book_part_uuid: book_part_uuid, is_page: false
+          Ratings::UpdatePeriodBookParts.set(queue: 'maintenance').perform_later(
+            period: role.student.period, book_part_uuids: book_part_uuid, is_page: false
           ) if role.student?
         end
       end
