@@ -96,11 +96,11 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
 
         it 'gets the completed task step counts for the role' do
           total_count = chapters.map { |cc| cc['questions_answered_count'] }.sum
-          expect(total_count).to eq 9
+          expect(total_count).to eq 5
 
           guide2 = described_class[role: @second_role]
           total_count = guide2['children'].map { |cc| cc['questions_answered_count'] }.sum
-          expect(total_count).to eq 10
+          expect(total_count).to eq 5
         end
 
         it 'returns the period course guide for a student' do
