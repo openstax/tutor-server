@@ -219,6 +219,7 @@ module Tasks
           plan_id: task_plan_id,
           title: task_plan.title,
           type: task_plan.type,
+          available_points: task_plan.homework? ? task_plan.settings['exercises'].sum{ |ex| ex['points'].sum } : 0,
           due_at: DateTimeUtilities.apply_tz(tasking_plan.due_at_ntz, tz),
           average_score: average_score(
             tasks: tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
