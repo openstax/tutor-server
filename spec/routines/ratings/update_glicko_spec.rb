@@ -24,8 +24,8 @@ RSpec.describe Ratings::UpdateGlicko, type: :routine do
   let(:expected_mu)               { -0.2069  }
 
   it 'returns expected values' do
-    expect(outputs.sigma).to be_within(0.00001).of(expected_sigma)
-    expect(outputs.phi).to be_within(0.0001).of(expected_phi)
-    expect(outputs.mu).to be_within(0.0001).of(expected_mu)
+    expect(outputs.glicko_sigma).to be_within(0.00001).of(expected_sigma)
+    expect(outputs.glicko_phi).to be_within(0.0001).of(expected_phi)
+    expect(outputs.glicko_mu).to be_within(0.0001).of(expected_mu)
   end
 end
