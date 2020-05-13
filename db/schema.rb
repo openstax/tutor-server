@@ -860,6 +860,7 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.integer "cloned_from_id"
     t.boolean "is_preview", default: false
     t.integer "tasks_grading_template_id"
+    t.boolean "is_auto_gradable"
     t.index ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id"
     t.index ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type"
