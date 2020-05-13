@@ -23,6 +23,11 @@ module Api::V1::PerformanceReport::Student::Data
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
 
+    property :available_points,
+             type: Float,
+             readable: true,
+             writeable: false
+
     property :average_score,
              type: Float,
              readable: true,
