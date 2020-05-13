@@ -8,6 +8,10 @@ FactoryBot.define do
     num_students  { rand(10) + 1 }
     num_responses { rand(10) + 1 }
 
+    glicko_mu    { 0.0   }
+    glicko_phi   { 2.015 }
+    glicko_sigma { 0.06  }
+
     clue do
       {
         minimum: 0.0,

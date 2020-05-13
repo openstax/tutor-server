@@ -7,8 +7,8 @@ FactoryBot.define do
 
     num_responses { rand(10) + 1 }
 
-    glicko_mu { 1.5 }
-    glicko_phi { 1.5 }
-    glicko_sigma { 1.5 }
+    glicko_mu    { 0.0   }
+    glicko_phi   { 2.015 }
+    glicko_sigma { 0.06  }
   end
 end

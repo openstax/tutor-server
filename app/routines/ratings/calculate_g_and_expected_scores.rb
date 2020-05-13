@@ -3,7 +3,7 @@ class Ratings::CalculateGAndExpectedScores
 
   def exec(record:, exercise_group_book_parts:)
     outputs.g_array = exercise_group_book_parts.map do |exercise_group_book_part|
-      1.0/Math.sqrt(1.0 + 3.0*(exercise_group_book_part.glicko_phi)**2/(Math::PI**2))
+      1.0/Math.sqrt(1.0 + 3.0*(exercise_group_book_part.glicko_phi**2)/(Math::PI**2))
     end
 
     outputs.expected_score_array =
