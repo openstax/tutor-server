@@ -44,14 +44,14 @@ class Ratings::UpdateGlicko
 
     phi_squared = record.glicko_phi**2
     gradient = estimated_improvement**2 - phi_squared - estimated_variance
-    a = Math.log(record.glicko_sigma**2)
+    a = a_init = Math.log(record.glicko_sigma**2)
 
     f = ->(x) do
       exp_x = Math.exp(x)
 
       (
         exp_x * (gradient - exp_x)/(2.0 * (phi_squared + estimated_variance + exp_x)**2)
-      ) - (x - a)/TAU**2
+      ) - (x - a_init)/TAU**2
     end
 
     if gradient > 0
@@ -59,10 +59,10 @@ class Ratings::UpdateGlicko
       f_b = f.call(b)
     else
       k = 1
-      k += 1 while (f_b = f.call(b = a - k*TAU)) < 0
+      k += 1 while (f_b = f.call(b = a_init - k*TAU)) < 0
     end
 
-    f_a = f.call(a)
+    f_a = f.call(a_init)
 
     while (b - a).abs > EPSILON do
       c = a + (a - b)*f_a/(f_b - f_a)
