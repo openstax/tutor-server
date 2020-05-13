@@ -6,6 +6,9 @@ class Ratings::UpdateRoleBookParts
 
   MIN_NUM_RESPONSES = 3
 
+  # The z-score of the desired confidence interval
+  Z_SCORE = 1.96
+
   lev_routine
 
   uses_routine Ratings::UpdateGlicko, as: :update_glicko
@@ -29,7 +32,7 @@ class Ratings::UpdateRoleBookParts
 
     exercise_group_book_parts_by_group_uuid = Ratings::ExerciseGroupBookPart.where(
       book_part_uuid: book_part_uuid
-    ).index_by(&:group_uuid)
+    ).index_by(&:exercise_group_uuid)
     exercise_group_uuids.each do |exercise_group_uuid|
       exercise_group_book_parts_by_group_uuid[exercise_group_uuid] ||=
         Ratings::ExerciseGroupBookPart.new(
@@ -72,9 +75,9 @@ class Ratings::UpdateRoleBookParts
       current_time: current_time
     ).outputs
 
-    role_book_part.glicko_mu = out.mu
-    role_book_part.glicko_phi = out.phi
-    role_book_part.glicko_sigma = out.sigma
+    role_book_part.glicko_mu = out.glicko_mu
+    role_book_part.glicko_phi = out.glicko_phi
+    role_book_part.glicko_sigma = out.glicko_sigma
 
     role_book_part.clue = if role_book_part.num_responses < MIN_NUM_RESPONSES
       {
@@ -92,7 +95,7 @@ class Ratings::UpdateRoleBookParts
 
       num_scores = out.expected_score_array.size
       mean = out.expected_score_array.sum/num_scores
-      confidence_delta = 1.96 * role_book_part.glicko_phi
+      confidence_delta = Z_SCORE * role_book_part.glicko_phi
 
       {
         minimum: [ mean - confidence_delta, 0.0 ].max,

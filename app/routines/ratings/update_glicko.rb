@@ -80,12 +80,12 @@ class Ratings::UpdateGlicko
       f_b = f_c
     end
 
-    outputs.sigma = Math.exp(a/2.0)
+    outputs.glicko_sigma = Math.exp(a/2.0)
 
-    phi_star = Math.sqrt(phi_squared + outputs.sigma**2)
+    phi_star = Math.sqrt(phi_squared + outputs.glicko_sigma**2)
 
-    outputs.phi = 1.0/Math.sqrt(1.0/(phi_star**2) + 1.0/estimated_variance)
+    outputs.glicko_phi = 1.0/Math.sqrt(1.0/(phi_star**2) + 1.0/estimated_variance)
 
-    outputs.mu = record.glicko_mu + outputs.phi**2 * scaled_response_deviation
+    outputs.glicko_mu = record.glicko_mu + outputs.glicko_phi**2 * scaled_response_deviation
   end
 end
