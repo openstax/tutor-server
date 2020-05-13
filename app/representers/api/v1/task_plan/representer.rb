@@ -122,6 +122,11 @@ class Api::V1::TaskPlan::Representer < Roar::Decorator
            readable: true,
            writeable: false
 
+  property :is_auto_gradable,
+           readable: true,
+           writeable: false,
+           schema_info: { type: 'boolean' }
+
   collection :tasking_plans,
              class: ::Tasks::Models::TaskingPlan,
              extend: Api::V1::TaskPlan::TaskingPlanRepresenter,
