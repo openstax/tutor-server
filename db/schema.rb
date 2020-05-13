@@ -1070,8 +1070,6 @@ ActiveRecord::Schema.define(version: 2020_06_17_142820) do
     t.datetime "core_steps_completed_at"
     t.datetime "grades_last_published_at"
     t.bigint "course_profile_course_id", null: false
-    t.integer "role_book_part_job_id"
-    t.integer "period_book_part_job_id"
     t.integer "ungraded_step_count", default: 0, null: false
     t.integer "gradable_step_count", default: 0, null: false
     t.float "available_points", default: 0.0, null: false
