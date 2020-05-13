@@ -1,3 +1,4 @@
+# http://www.glicko.net/glicko/glicko2.pdf
 class Ratings::UpdateGlicko
   RATING_PERIOD = 1.week
 
@@ -10,7 +11,7 @@ class Ratings::UpdateGlicko
 
   lev_routine
 
-  uses_routine Ratings::CalculateGAndExpectedScores, as: :calculate_g_and_e
+  uses_routine Ratings::CalculateGAndE, as: :calculate_g_and_e
 
   def exec(record:, exercise_group_book_parts:, current_time: Time.current)
     unless record.updated_at.nil?
@@ -25,33 +26,33 @@ class Ratings::UpdateGlicko
       :calculate_g_and_e, record: record, exercise_group_book_parts: exercise_group_book_parts
     ).outputs
 
-    estimated_variance = 1.0/(
-      out.expected_score_array.each_with_index.map do |expected_score, index|
+    v = 1.0/(
+      out.e_array.each_with_index.map do |expected_score, index|
         (out.g_array[index]**2) * expected_score * (1 - expected_score)
       end.sum
     )
 
     index = 0
-    scaled_response_deviation = exercise_group_book_parts.map do |exercise_group_book_part|
+    delta_over_v = exercise_group_book_parts.map do |exercise_group_book_part|
       g = out.g_array[index]
-      expected_score = out.expected_score_array[index]
+      expected_score = out.e_array[index]
       index += 1
 
       g * ((exercise_group_book_part.response ? 1.0 : 0.0) - expected_score)
     end.sum
 
-    estimated_improvement = estimated_variance * scaled_response_deviation
+    delta = v * delta_over_v
 
     phi_squared = record.glicko_phi**2
-    gradient = estimated_improvement**2 - phi_squared - estimated_variance
-    a = a_init = Math.log(record.glicko_sigma**2)
+    gradient = delta**2 - phi_squared - v
+    a = initial_a = Math.log(record.glicko_sigma**2)
 
     f = ->(x) do
       exp_x = Math.exp(x)
 
       (
-        exp_x * (gradient - exp_x)/(2.0 * (phi_squared + estimated_variance + exp_x)**2)
-      ) - (x - a_init)/TAU**2
+        exp_x * (gradient - exp_x)/(2.0 * (phi_squared + v + exp_x)**2)
+      ) - (x - initial_a)/TAU**2
     end
 
     if gradient > 0
@@ -59,10 +60,10 @@ class Ratings::UpdateGlicko
       f_b = f.call(b)
     else
       k = 1
-      k += 1 while (f_b = f.call(b = a_init - k*TAU)) < 0
+      k += 1 while (f_b = f.call(b = initial_a - k*TAU)) < 0
     end
 
-    f_a = f.call(a_init)
+    f_a = f.call(initial_a)
 
     while (b - a).abs > EPSILON do
       c = a + (a - b)*f_a/(f_b - f_a)
@@ -84,8 +85,8 @@ class Ratings::UpdateGlicko
 
     phi_star = Math.sqrt(phi_squared + outputs.glicko_sigma**2)
 
-    outputs.glicko_phi = 1.0/Math.sqrt(1.0/(phi_star**2) + 1.0/estimated_variance)
+    outputs.glicko_phi = 1.0/Math.sqrt(1.0/(phi_star**2) + 1.0/v)
 
-    outputs.glicko_mu = record.glicko_mu + outputs.glicko_phi**2 * scaled_response_deviation
+    outputs.glicko_mu = record.glicko_mu + outputs.glicko_phi**2 * delta_over_v
   end
 end

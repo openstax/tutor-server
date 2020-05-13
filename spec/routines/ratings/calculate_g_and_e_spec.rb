@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Ratings::CalculateGAndExpectedScores, type: :routine do
+RSpec.describe Ratings::CalculateGAndE, type: :routine do
   let(:record)                    do
     FactoryBot.create :ratings_role_book_part,
                       glicko_mu: 0.0,
@@ -27,8 +27,8 @@ RSpec.describe Ratings::CalculateGAndExpectedScores, type: :routine do
       expect(g).to be_within(0.0001).of(expected_g_array[index])
     end
 
-    outputs.expected_score_array.each_with_index do |expected_score, index|
-      expect(expected_score).to be_within(0.001).of(expected_e_array[index])
+    outputs.e_array.each_with_index do |e, index|
+      expect(e).to be_within(0.001).of(expected_e_array[index])
     end
   end
 end
