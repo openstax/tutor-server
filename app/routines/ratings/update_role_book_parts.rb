@@ -6,13 +6,10 @@ class Ratings::UpdateRoleBookParts
 
   MIN_NUM_RESPONSES = 3
 
-  # The z-score of the desired confidence interval
-  Z_SCORE = 1.96
-
   lev_routine
 
   uses_routine Ratings::UpdateGlicko, as: :update_glicko
-  uses_routine Ratings::CalculateGAndExpectedScores, as: :calculate_g_and_e
+  uses_routine Ratings::CalculateGAndE, as: :calculate_g_and_e
 
   protected
 
@@ -93,14 +90,13 @@ class Ratings::UpdateRoleBookParts
         exercise_group_book_parts: exercise_group_book_parts_by_group_uuid.values
       ).outputs
 
-      num_scores = out.expected_score_array.size
-      mean = out.expected_score_array.sum/num_scores
-      confidence_delta = Z_SCORE * role_book_part.glicko_phi
+      num_scores = out.e_array.size
+      mean = out.e_array.sum/num_scores
 
       {
-        minimum: [ mean - confidence_delta, 0.0 ].max,
+        minimum: 0.0,
         most_likely: mean,
-        maximum: [ mean + confidence_delta, 1.0 ].min,
+        maximum: 1.0,
         is_real: true
       }
     end
