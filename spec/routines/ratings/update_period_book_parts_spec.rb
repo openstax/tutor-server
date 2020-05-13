@@ -15,7 +15,6 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
     FactoryBot.create :ratings_period_book_part,
                       period: period,
                       book_part_uuid: page.uuid,
-                      num_responses: 0,
                       glicko_mu: 0.0,
                       glicko_phi: 1.1513,
                       glicko_sigma: 0.06
@@ -32,7 +31,6 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
         :ratings_exercise_group_book_part,
         exercise_group_uuid: exercise.group_uuid,
         book_part_uuid: page.uuid,
-        num_responses: 0,
         glicko_mu: glicko_mus[index],
         glicko_phi: glicko_phis[index]
       )

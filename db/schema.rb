@@ -582,7 +582,7 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.uuid "exercise_group_uuid", null: false
     t.uuid "book_part_uuid", null: false
     t.boolean "is_page", null: false
-    t.integer "num_responses", null: false
+    t.integer "tasked_exercise_ids", null: false, array: true
     t.float "glicko_mu", null: false
     t.float "glicko_phi", null: false
     t.float "glicko_sigma", null: false
@@ -597,10 +597,10 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.uuid "book_part_uuid", null: false
     t.boolean "is_page", null: false
     t.integer "num_students", null: false
-    t.integer "num_responses", null: false
     t.jsonb "clue", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "tasked_exercise_ids", array: true
     t.float "glicko_mu"
     t.float "glicko_phi"
     t.float "glicko_sigma"
@@ -612,10 +612,10 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.bigint "entity_role_id", null: false
     t.uuid "book_part_uuid", null: false
     t.boolean "is_page", null: false
-    t.integer "num_responses", null: false
     t.jsonb "clue", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "tasked_exercise_ids", array: true
     t.float "glicko_mu"
     t.float "glicko_phi"
     t.float "glicko_sigma"
