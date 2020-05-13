@@ -12,6 +12,8 @@ class MarkTaskStepCompleted
       task.lock!
     end
 
+    task_was_completed = task.completed?(use_cache: true)
+
     task_step.complete completed_at: completed_at
     transfer_errors_from task_step, { type: :verbatim }, true
 
@@ -32,7 +34,7 @@ class MarkTaskStepCompleted
     # course will only be set if role and period were found
     return if course.nil?
 
-    if task.completed?(use_cache: true)
+    if !task_was_completed && task.completed?(use_cache: true)
       queue = task.preview_course? ? 'preview' : 'dashboard'
       role_run_at = task.auto_grading_feedback_available? ?
         completed_at : [ task.due_at, completed_at ].compact.max
