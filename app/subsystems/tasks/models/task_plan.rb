@@ -29,6 +29,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   json_serialize :settings, Hash
 
+  before_save :set_is_auto_gradable
   before_validation :trim_text, :set_and_return_ecosystem
 
   validates :title, presence: true
@@ -108,6 +109,10 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     homework? || reading?
   end
 
+  def available_points_without_dropped_questions
+    available_points_without_dropped_questions_per_question_index.values.sum
+  end
+
   def available_points_without_dropped_questions_per_question_index
     @available_points_without_dropped_questions_per_question_index ||= Hash.new(1.0).tap do |hash|
       if homework?
@@ -127,12 +132,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
                        get_ecosystems_from_settings&.first ||
                        owner.try(:ecosystems)&.first
   end
-
+  
   protected
 
   def get_ecosystems_from_exercise_ids
     ecosystems = Content::Models::Ecosystem.distinct.joins(:exercises).where(
-      exercises: { id: settings['exercises'].map { |ex| ex['id'] } }
+      exercises: { id: exercise_ids }
     ).to_a
   end
 
@@ -232,10 +237,13 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     throw :abort
   end
 
+  def exercise_ids
+    settings['exercises']&.map { |ex| ex['id'] } || []
+  end
+  
   def correct_num_points_for_homework
     return if type != 'homework' || settings.blank? || settings['exercises'].blank?
 
-    exercise_ids = settings['exercises'].map { |ex| ex['id'] }
     num_questions_by_exercise_id = {}
     Content::Models::Exercise.select(:id, :number_of_questions)
                              .where(id: exercise_ids)
@@ -261,4 +269,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     self.title&.strip!
     self.description&.strip!
   end
+
+  def set_is_auto_gradable
+    self.is_auto_gradable = homework? && Content::Models::Exercise
+                                               .select(:id, :question_answer_ids)
+                                               .where(id: exercise_ids)
+                                               .none?(&:is_free_response_only?)
+  end
+
 end
