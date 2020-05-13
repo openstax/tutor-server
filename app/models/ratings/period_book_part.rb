@@ -4,4 +4,8 @@ class Ratings::PeriodBookPart < ApplicationRecord
   validates :book_part_uuid, presence: true, uniqueness: { scope: :course_membership_period_id }
 
   validates :clue, presence: true
+
+  def num_responses
+    tasked_exercise_ids.size
+  end
 end

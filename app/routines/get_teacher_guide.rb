@@ -5,7 +5,7 @@ class GetTeacherGuide
 
   def exec(role:, current_time: Time.current)
     course = role.teacher.course
-    periods = course.periods
+    periods = course.periods.reject(&:archived?)
     ecosystem = course.ecosystem
     book = ecosystem.books.first
 
@@ -14,7 +14,7 @@ class GetTeacherGuide
     ).group_by(&:course_membership_period_id)
 
     outputs.teacher_guide = periods.map do |period|
-      period_book_parts = period_book_parts_by_period_id[period.id]
+      period_book_parts = period_book_parts_by_period_id[period.id] || []
       period_book_parts_by_book_part_uuid = period_book_parts.index_by(&:book_part_uuid)
 
       chapter_guides = book.chapters.map do |chapter|

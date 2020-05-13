@@ -14,8 +14,23 @@ class Ratings::UpdatePeriodBookParts
   protected
 
   def update_period_book_part(period:, book_part_uuid:, tasked_exercises:, is_page:, current_time:)
+    period_book_part = Ratings::PeriodBookPart.find_or_initialize_by(
+      period: period, book_part_uuid: book_part_uuid
+    ) do |period_book_part|
+      period_book_part.is_page = is_page
+      period_book_part.tasked_exercise_ids = []
+      period_book_part.glicko_mu = INITIAL_MU
+      period_book_part.glicko_phi = INITIAL_PHI
+      period_book_part.glicko_sigma = INITIAL_SIGMA
+    end
+
+    used_tasked_exercise_ids = Set.new period_book_part.tasked_exercise_ids
+    new_tasked_exercises = tasked_exercises.reject do |tasked_exercise|
+      used_tasked_exercise_ids.include? tasked_exercise.id
+    end
+
     response_by_group_uuid = {}
-    tasked_exercises.each do |tasked_exercise|
+    new_tasked_exercises.each do |tasked_exercise|
       response_by_group_uuid[tasked_exercise.group_uuid] = tasked_exercise.is_correct?
     end
 
@@ -24,7 +39,7 @@ class Ratings::UpdatePeriodBookParts
       Content::Models::Exercise
         .joins(:page)
         .where(page: { page_key => book_part_uuid })
-        .pluck(:group_uuid) + tasked_exercises.map(&:group_uuid)
+        .pluck(:group_uuid) + new_tasked_exercises.map(&:group_uuid)
     ).uniq
 
     exercise_group_book_parts_by_group_uuid = Ratings::ExerciseGroupBookPart.where(
@@ -52,25 +67,6 @@ class Ratings::UpdatePeriodBookParts
       end
     end
 
-    period_book_part = Ratings::PeriodBookPart.find_or_initialize_by(
-      period: period, book_part_uuid: book_part_uuid
-    ) do |period_book_part|
-      period_book_part.is_page = is_page
-      period_book_part.num_responses = 0
-      period_book_part.glicko_mu = INITIAL_MU
-      period_book_part.glicko_phi = INITIAL_PHI
-      period_book_part.glicko_sigma = INITIAL_SIGMA
-    end
-
-    period_book_part.num_students = CourseMembership::Models::Student
-      .joins(role: { taskings: { task: { task_steps: :page } } })
-      .where(course_membership_period_id: period.id)
-      .where(role: { taskings: { task: { task_steps: { page: { page_key => book_part_uuid } } } } })
-      .distinct
-      .pluck(:entity_role_id)
-      .size
-    period_book_part.num_responses += response_by_group_uuid.size
-
     out = run(
       :update_glicko,
       record: period_book_part,
@@ -81,6 +77,15 @@ class Ratings::UpdatePeriodBookParts
     period_book_part.glicko_mu = out.glicko_mu
     period_book_part.glicko_phi = out.glicko_phi
     period_book_part.glicko_sigma = out.glicko_sigma
+
+    period_book_part.num_students = CourseMembership::Models::Student
+      .joins(role: { taskings: { task: { task_steps: :page } } })
+      .where(course_membership_period_id: period.id)
+      .where(role: { taskings: { task: { task_steps: { page: { page_key => book_part_uuid } } } } })
+      .distinct
+      .pluck(:entity_role_id)
+      .size
+    period_book_part.tasked_exercise_ids += new_tasked_exercises.map(&:id)
 
     period_book_part.clue = if period_book_part.num_responses < MIN_NUM_RESPONSES
       {
@@ -116,14 +121,15 @@ class Ratings::UpdatePeriodBookParts
     current_time = Time.parse(current_time) if current_time.is_a?(String)
 
     exercise_steps = task.exercise_steps
-    tasked_exercises_by_id = Tasks::Models::TaskedExercise
-      .select(:id, :answer_id, :correct_answer_id, '"content_exercises"."group_uuid"')
-      .joins(:exercise)
-      .where(id: exercise_steps.map(&:tasked_id))
-      .index_by(&:id)
     pages_by_id = Content::Models::Page.select(:id, :uuid, :parent_book_part_uuid)
                                        .where(id: exercise_steps.map(&:content_page_id).uniq)
                                        .index_by(&:id)
+    completed_exercise_steps = exercise_steps.filter(&:completed?)
+    tasked_exercises_by_id = Tasks::Models::TaskedExercise
+      .select(:id, :answer_id, :correct_answer_id, '"content_exercises"."group_uuid"')
+      .joins(:exercise)
+      .where(id: completed_exercise_steps.map(&:tasked_id))
+      .index_by(&:id)
 
     exercise_steps_by_page_uuid = Hash.new { |hash, key| hash[key] = [] }
     exercise_steps_by_parent_book_part_uuid = Hash.new { |hash, key| hash[key] = [] }
@@ -155,7 +161,14 @@ class Ratings::UpdatePeriodBookParts
 
     Ratings::PeriodBookPart.import period_book_parts, validate: false, on_duplicate_key_update: {
       conflict_target: [ :course_membership_period_id, :book_part_uuid ],
-      columns: [ :num_students, :num_responses, :glicko_mu, :glicko_phi, :glicko_sigma, :clue ]
+      columns: [
+        :glicko_mu,
+        :glicko_phi,
+        :glicko_sigma,
+        :num_students,
+        :tasked_exercise_ids,
+        :clue
+      ]
     }
   end
 end

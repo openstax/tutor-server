@@ -4,7 +4,7 @@ class CreateRatingsExerciseGroupBookParts < ActiveRecord::Migration[5.2]
       t.uuid :exercise_group_uuid, null: false
       t.uuid :book_part_uuid, null: false, index: true
       t.boolean :is_page, null: false
-      t.integer :num_responses, null: false
+      t.integer :tasked_exercise_ids, array: true, null: false
       t.float :glicko_mu, null: false
       t.float :glicko_phi, null: false
       t.float :glicko_sigma, null: false
