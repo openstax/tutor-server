@@ -41,29 +41,46 @@ class Ratings::UpdateRoleBookParts
       exercise_steps_by_parent_book_part_uuid[page.parent_book_part_uuid] << exercise_step
     end
 
-    role_book_parts = exercise_steps_by_page_uuid.map do |page_uuid, exercise_steps|
+    role_book_parts = []
+    exercise_group_book_parts = []
+    exercise_steps_by_page_uuid.each do |page_uuid, exercise_steps|
       tasked_exercises = tasked_exercises_by_id.values_at(*exercise_steps.map(&:tasked_id)).compact
-      update_role_book_part(
+
+      new_role_book_part, new_exercise_group_book_parts = update_role_book_part(
         role: role,
         book_part_uuid: page_uuid,
         tasked_exercises: tasked_exercises,
         is_page: true,
         current_time: current_time
       )
-    end + exercise_steps_by_parent_book_part_uuid.map do |parent_book_part_uuid, exercise_steps|
+
+      role_book_parts << new_role_book_part
+      exercise_group_book_parts.concat new_exercise_group_book_parts
+    end
+    exercise_steps_by_parent_book_part_uuid.each do |parent_book_part_uuid, exercise_steps|
       tasked_exercises = tasked_exercises_by_id.values_at(*exercise_steps.map(&:tasked_id)).compact
-      update_role_book_part(
+
+      new_role_book_part, new_exercise_group_book_parts = update_role_book_part(
         role: role,
         book_part_uuid: parent_book_part_uuid,
         tasked_exercises: tasked_exercises,
         is_page: false,
         current_time: current_time
       )
+
+      role_book_parts << new_role_book_part
+      exercise_group_book_parts.concat new_exercise_group_book_parts
     end
 
     Ratings::RoleBookPart.import role_book_parts, validate: false, on_duplicate_key_update: {
       conflict_target: [ :entity_role_id, :book_part_uuid ],
       columns: [ :glicko_mu, :glicko_phi, :glicko_sigma, :tasked_exercise_ids, :clue ]
+    }
+
+    Ratings::ExerciseGroupBookPart.import exercise_group_book_parts, validate: false,
+                                                                     on_duplicate_key_update: {
+      conflict_target: [ :exercise_group_uuid, :book_part_uuid ],
+      columns: [ :glicko_mu, :glicko_phi, :glicko_sigma, :tasked_exercise_ids ]
     }
   end
 
@@ -104,6 +121,8 @@ class Ratings::UpdateRoleBookParts
         Ratings::ExerciseGroupBookPart.new(
           exercise_group_uuid: exercise_group_uuid,
           book_part_uuid: book_part_uuid,
+          is_page: is_page,
+          tasked_exercise_ids: [], # TODO: Update
           glicko_mu: INITIAL_MU,
           glicko_phi: INITIAL_PHI,
           glicko_sigma: INITIAL_SIGMA
@@ -113,25 +132,18 @@ class Ratings::UpdateRoleBookParts
     task_exercise_group_book_parts = exercise_group_book_parts_by_group_uuid.values_at(
       *response_by_group_uuid.keys
     )
-
-    task_exercise_group_responses = task_exercise_group_book_parts.map do |exercise_group_book_part|
-      Hashie::Mash.new(
-        exercise_group_book_part.attributes.slice('glicko_mu', 'glicko_phi', 'glicko_sigma')
-      ).tap do |mash|
-        mash.response = response_by_group_uuid[exercise_group_book_part.exercise_group_uuid]
-      end
+    task_exercise_group_book_parts.each do |exercise_group_book_part|
+      exercise_group_book_part.response =
+        response_by_group_uuid[exercise_group_book_part.exercise_group_uuid]
     end
 
-    out = run(
+    run(
       :update_glicko,
       record: role_book_part,
-      exercise_group_book_parts: task_exercise_group_responses,
+      opponents: task_exercise_group_book_parts,
+      update_opponents: true,
       current_time: current_time
-    ).outputs
-
-    role_book_part.glicko_mu = out.glicko_mu
-    role_book_part.glicko_phi = out.glicko_phi
-    role_book_part.glicko_sigma = out.glicko_sigma
+    )
 
     role_book_part.tasked_exercise_ids += new_tasked_exercises.map(&:id)
 
@@ -146,7 +158,7 @@ class Ratings::UpdateRoleBookParts
       out = run(
         :calculate_g_and_e,
         record: role_book_part,
-        exercise_group_book_parts: exercise_group_book_parts_by_group_uuid.values
+        opponents: exercise_group_book_parts_by_group_uuid.values
       ).outputs
 
       num_scores = out.e_array.size
@@ -160,6 +172,6 @@ class Ratings::UpdateRoleBookParts
       }
     end
 
-    role_book_part
+    [ role_book_part, task_exercise_group_book_parts ]
   end
 end

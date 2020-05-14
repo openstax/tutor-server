@@ -13,7 +13,7 @@ class Ratings::UpdateGlicko
 
   uses_routine Ratings::CalculateGAndE, as: :calculate_g_and_e
 
-  def exec(record:, exercise_group_book_parts:, current_time: Time.current)
+  def exec(record:, opponents:, update_opponents:, current_time: Time.current)
     unless record.updated_at.nil?
       num_ratings_periods = ((current_time - record.updated_at)/RATING_PERIOD).floor
 
@@ -22,9 +22,23 @@ class Ratings::UpdateGlicko
       end
     end
 
-    out = run(
-      :calculate_g_and_e, record: record, exercise_group_book_parts: exercise_group_book_parts
-    ).outputs
+    record_dup = record.dup if update_opponents
+
+    update_glicko record: record, opponents: opponents, responses: opponents.map(&:response)
+
+    return unless update_opponents
+
+    opponents.each do |opponent|
+      update_glicko(
+        record: opponent,
+        opponents: [ record_dup ],
+        responses: [ !opponent.response ]
+      )
+    end
+  end
+
+  def update_glicko(record:, opponents:, responses:)
+    out = run(:calculate_g_and_e, record: record, opponents: opponents).outputs
 
     v = 1.0/(
       out.e_array.each_with_index.map do |expected_score, index|
@@ -33,19 +47,24 @@ class Ratings::UpdateGlicko
     )
 
     index = 0
-    delta_over_v = exercise_group_book_parts.map do |exercise_group_book_part|
+    delta_over_v = opponents.map do |opponent|
       g = out.g_array[index]
       expected_score = out.e_array[index]
+      match_response = responses[index]
       index += 1
 
-      g * ((exercise_group_book_part.response ? 1.0 : 0.0) - expected_score)
+      g * ((match_response ? 1.0 : 0.0) - expected_score)
     end.sum
 
     delta = v * delta_over_v
 
-    phi_squared = record.glicko_phi**2
+    previous_sigma = record.glicko_sigma
+    previous_phi = record.glicko_phi
+    previous_mu = record.glicko_mu
+
+    phi_squared = previous_phi**2
     gradient = delta**2 - phi_squared - v
-    a = initial_a = Math.log(record.glicko_sigma**2)
+    a = initial_a = Math.log(previous_sigma**2)
 
     f = ->(x) do
       exp_x = Math.exp(x)
@@ -81,12 +100,12 @@ class Ratings::UpdateGlicko
       f_b = f_c
     end
 
-    outputs.glicko_sigma = Math.exp(a/2.0)
+    record.glicko_sigma = Math.exp(a/2.0)
 
-    phi_star = Math.sqrt(phi_squared + outputs.glicko_sigma**2)
+    phi_star = Math.sqrt(phi_squared + record.glicko_sigma**2)
 
-    outputs.glicko_phi = 1.0/Math.sqrt(1.0/(phi_star**2) + 1.0/v)
+    record.glicko_phi = 1.0/Math.sqrt(1.0/(phi_star**2) + 1.0/v)
 
-    outputs.glicko_mu = record.glicko_mu + outputs.glicko_phi**2 * delta_over_v
+    record.glicko_mu = record.glicko_mu + record.glicko_phi**2 * delta_over_v
   end
 end

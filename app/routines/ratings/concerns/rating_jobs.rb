@@ -41,12 +41,14 @@ module Ratings::Concerns::RatingJobs
 
     queue = task.is_preview ? 'preview' : 'dashboard'
 
-    Ratings::UpdateRoleBookParts.set(queue: queue, run_at: role_run_at).perform_later(
-      role: role, task: task
-    ) if should_queue_role_job
-
+    # We determined that the period update normally runs first
+    # so we queue it first here to keep the order consistent in specs
     Ratings::UpdatePeriodBookParts.set(queue: queue).perform_later(
       period: period, task: task
     ) if should_queue_period_job && role.student?
+
+    Ratings::UpdateRoleBookParts.set(queue: queue, run_at: role_run_at).perform_later(
+      role: role, task: task
+    ) if should_queue_role_job
   end
 end
