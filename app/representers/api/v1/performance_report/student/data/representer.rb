@@ -77,5 +77,14 @@ module Api::V1::PerformanceReport::Student::Data
     property :is_included_in_averages,
              readable: true,
              writeable: false
+
+    property :available_points,
+             readable: true,
+             writeable: false
+
+    property :points,
+             readable: true,
+             writeable: false
+
   end
 end
