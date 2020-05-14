@@ -860,7 +860,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_175819) do
     t.integer "cloned_from_id"
     t.boolean "is_preview", default: false
     t.integer "tasks_grading_template_id"
-    t.boolean "is_auto_gradable"
+    t.integer "ungraded_step_count", default: 0, null: false
     t.index ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id"
     t.index ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type"
@@ -1018,11 +1018,12 @@ ActiveRecord::Schema.define(version: 2020_05_13_175819) do
     t.uuid "pe_ecosystem_matrix_uuid"
     t.uuid "spe_calculation_uuid"
     t.uuid "spe_ecosystem_matrix_uuid"
-    t.datetime "closes_at_ntz"
     t.integer "core_page_ids", default: [], null: false, array: true
     t.datetime "student_history_at"
+    t.datetime "closes_at_ntz"
     t.bigint "tasks_extension_id"
     t.datetime "grades_last_published_at"
+    t.integer "ungraded_step_count", default: 0, null: false
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"

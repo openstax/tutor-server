@@ -122,10 +122,10 @@ class Api::V1::TaskPlan::Representer < Roar::Decorator
            readable: true,
            writeable: false
 
-  property :is_auto_gradable,
+  property :ungraded_step_count,
+           type: Integer,
            readable: true,
-           writeable: false,
-           schema_info: { type: 'boolean' }
+           writeable: false
 
   collection :tasking_plans,
              class: ::Tasks::Models::TaskingPlan,

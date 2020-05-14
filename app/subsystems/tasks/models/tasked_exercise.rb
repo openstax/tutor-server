@@ -14,12 +14,16 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   validate :free_response_required, on: :update
   validate :valid_answer, :no_feedback, :not_graded
-
+  after_update :notify_task_plan_when_graded
+  
   scope :correct, -> do
     where('tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id')
   end
   scope :incorrect, -> do
     where('tasks_tasked_exercises.answer_id != tasks_tasked_exercises.correct_answer_id')
+  end
+  scope :manually_graded, -> do
+    where('array_length(answer_ids, 1) is null') # arr_len = null will match both 0 length and null values
   end
 
   # Fields shared by all parts of a multipart exercise
@@ -203,4 +207,11 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
     throw(:abort) if errors.any?
   end
+
+  def notify_task_plan_when_graded
+    if previous_changes['last_graded_at']
+      task_step.task.task_plan.update_ungraded_step_count!
+    end
+  end
+
 end
