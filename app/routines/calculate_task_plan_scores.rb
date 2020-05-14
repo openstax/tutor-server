@@ -53,7 +53,7 @@ class CalculateTaskPlanScores
         {
          title: "Q#{index + 1}",
          points: available_points_per_question_index[index],
-         type: step.is_core ? 'MCQ' : 'Tutor', # TODO: actually check if exercise is MCQ
+         type: step.is_core ? (step.tasked.can_be_auto_graded? ? 'MCQ' : 'FR') : 'Tutor',
          question_id: step.exercise? && step.is_core? ? step.tasked.question_id : nil,
          exercise_id: step.exercise? && step.is_core? ? step.tasked.content_exercise_id : nil,
         }
