@@ -294,8 +294,8 @@ class Tasks::Models::Task < ApplicationRecord
     self.placeholder_steps_count = placeholder_steps.count
     self.placeholder_exercise_steps_count = placeholder_exercise_steps.count
     self.core_placeholder_exercise_steps_count = placeholder_exercise_steps.count(&:is_core?)
-
     self.student_history_at ||= current_time if completed_core_steps_count == core_steps_count
+    self.ungraded_step_count = tasked_exercises.manually_graded.where(last_graded_at: nil).count
 
     self
   end

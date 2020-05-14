@@ -4,7 +4,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
   UPDATEABLE_ATTRIBUTES_AFTER_OPEN = [
-    'title', 'description', 'last_published_at', 'tasks_grading_template_id'
+    'title', 'description', 'last_published_at', 'tasks_grading_template_id', 'ungraded_step_count'
   ]
 
   attr_accessor :is_publish_requested
@@ -29,7 +29,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   json_serialize :settings, Hash
 
-  before_save :set_is_auto_gradable
   before_validation :trim_text, :set_and_return_ecosystem
 
   validates :title, presence: true
@@ -131,6 +130,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     self.ecosystem ||= cloned_from&.ecosystem ||
                        get_ecosystems_from_settings&.first ||
                        owner.try(:ecosystems)&.first
+  end
+
+  def update_ungraded_step_count!
+    update_attributes(
+      ungraded_step_count: tasks.sum(:ungraded_step_count)
+    )
   end
   
   protected
@@ -268,13 +273,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   def trim_text
     self.title&.strip!
     self.description&.strip!
-  end
-
-  def set_is_auto_gradable
-    self.is_auto_gradable = homework? && Content::Models::Exercise
-                                               .select(:id, :question_answer_ids)
-                                               .where(id: exercise_ids)
-                                               .none?(&:is_free_response_only?)
   end
 
 end
