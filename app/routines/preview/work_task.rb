@@ -5,6 +5,8 @@ class Preview::WorkTask
   uses_routine MarkTaskStepCompleted, as: :mark_completed
   uses_routine Preview::AnswerExercise, as: :answer_exercise
 
+  include Ratings::Concerns::RatingJobs
+
   protected
 
   def exec(
@@ -16,6 +18,8 @@ class Preview::WorkTask
     update_caches: true
   )
     task.preload_taskeds
+
+    task_was_completed = task.completed?(use_cache: true)
 
     run :populate_placeholders, task: task, force: true, background: true
 
@@ -78,29 +82,13 @@ class Preview::WorkTask
     # course will only be set if role and period were found
     return if course.nil?
 
-    if task.completed?(use_cache: true)
-      queue = task.is_preview ? 'preview' : 'dashboard'
-      role_run_at = task.feedback_available? ? completed_at :
-                                               [ task.feedback_at, completed_at ].compact.max
-
-      page_uuid_book_part_uuids = Content::Models::Page.where(
-        id: task.task_steps.map(&:content_page_id).uniq
-      ).pluck(:uuid, :parent_book_part_uuid)
-      page_uuids = page_uuid_book_part_uuids.map(&:first)
-      book_part_uuids = page_uuid_book_part_uuids.map(&:second).uniq
-
-      Ratings::UpdateRoleBookParts.set(queue: queue, run_at: role_run_at).perform_later(
-        role: role, task: task, is_page: true
-      )
-
-      Ratings::UpdatePeriodBookParts.set(queue: queue).perform_later(
-        period: period, task: task, is_page: true
-      ) if role.student?
-    end
-
     requests = tasked_exercises.map do |tasked_exercise|
       { course: course, tasked_exercise: tasked_exercise }
     end
     OpenStax::Biglearn::Api.record_responses requests
+
+    return if task_was_completed
+
+    perform_rating_jobs_later task: task, role: role, period: period, current_time: completed_at
   end
 end

@@ -13,6 +13,63 @@ class Ratings::UpdatePeriodBookParts
 
   protected
 
+  def exec(period:, task:, current_time: Time.current)
+    return if period.nil? || period.archived?
+
+    current_time = Time.parse(current_time) if current_time.is_a?(String)
+
+    exercise_steps = task.exercise_steps
+    pages_by_id = Content::Models::Page.select(:id, :uuid, :parent_book_part_uuid)
+                                       .where(id: exercise_steps.map(&:content_page_id).uniq)
+                                       .index_by(&:id)
+    completed_exercise_steps = exercise_steps.filter(&:completed?)
+    tasked_exercises_by_id = Tasks::Models::TaskedExercise
+      .select(:id, :answer_id, :correct_answer_id, '"content_exercises"."group_uuid"')
+      .joins(:exercise)
+      .where(id: completed_exercise_steps.map(&:tasked_id))
+      .index_by(&:id)
+
+    exercise_steps_by_page_uuid = Hash.new { |hash, key| hash[key] = [] }
+    exercise_steps_by_parent_book_part_uuid = Hash.new { |hash, key| hash[key] = [] }
+    exercise_steps.each do |exercise_step|
+      page = pages_by_id[exercise_step.content_page_id]
+      exercise_steps_by_page_uuid[page.uuid] << exercise_step
+      exercise_steps_by_parent_book_part_uuid[page.parent_book_part_uuid] << exercise_step
+    end
+
+    period_book_parts = exercise_steps_by_page_uuid.map do |page_uuid, exercise_steps|
+      tasked_exercises = tasked_exercises_by_id.values_at(*exercise_steps.map(&:tasked_id)).compact
+      update_period_book_part(
+        period: period,
+        book_part_uuid: page_uuid,
+        tasked_exercises: tasked_exercises,
+        is_page: true,
+        current_time: current_time
+      )
+    end + exercise_steps_by_parent_book_part_uuid.map do |parent_book_part_uuid, exercise_steps|
+      tasked_exercises = tasked_exercises_by_id.values_at(*exercise_steps.map(&:tasked_id)).compact
+      update_period_book_part(
+        period: period,
+        book_part_uuid: parent_book_part_uuid,
+        tasked_exercises: tasked_exercises,
+        is_page: false,
+        current_time: current_time
+      )
+    end
+
+    Ratings::PeriodBookPart.import period_book_parts, validate: false, on_duplicate_key_update: {
+      conflict_target: [ :course_membership_period_id, :book_part_uuid ],
+      columns: [
+        :glicko_mu,
+        :glicko_phi,
+        :glicko_sigma,
+        :num_students,
+        :tasked_exercise_ids,
+        :clue
+      ]
+    }
+  end
+
   def update_period_book_part(period:, book_part_uuid:, tasked_exercises:, is_page:, current_time:)
     period_book_part = Ratings::PeriodBookPart.find_or_initialize_by(
       period: period, book_part_uuid: book_part_uuid
@@ -113,62 +170,5 @@ class Ratings::UpdatePeriodBookParts
     end
 
     period_book_part
-  end
-
-  def exec(period:, task:, is_page: nil, current_time: Time.current)
-    return if period.nil? || period.archived?
-
-    current_time = Time.parse(current_time) if current_time.is_a?(String)
-
-    exercise_steps = task.exercise_steps
-    pages_by_id = Content::Models::Page.select(:id, :uuid, :parent_book_part_uuid)
-                                       .where(id: exercise_steps.map(&:content_page_id).uniq)
-                                       .index_by(&:id)
-    completed_exercise_steps = exercise_steps.filter(&:completed?)
-    tasked_exercises_by_id = Tasks::Models::TaskedExercise
-      .select(:id, :answer_id, :correct_answer_id, '"content_exercises"."group_uuid"')
-      .joins(:exercise)
-      .where(id: completed_exercise_steps.map(&:tasked_id))
-      .index_by(&:id)
-
-    exercise_steps_by_page_uuid = Hash.new { |hash, key| hash[key] = [] }
-    exercise_steps_by_parent_book_part_uuid = Hash.new { |hash, key| hash[key] = [] }
-    exercise_steps.each do |exercise_step|
-      page = pages_by_id[exercise_step.content_page_id]
-      exercise_steps_by_page_uuid[page.uuid] << exercise_step
-      exercise_steps_by_parent_book_part_uuid[page.parent_book_part_uuid] << exercise_step
-    end
-
-    period_book_parts = exercise_steps_by_page_uuid.map do |page_uuid, exercise_steps|
-      tasked_exercises = tasked_exercises_by_id.values_at(*exercise_steps.map(&:tasked_id))
-      update_period_book_part(
-        period: period,
-        book_part_uuid: page_uuid,
-        tasked_exercises: tasked_exercises,
-        is_page: true,
-        current_time: current_time
-      )
-    end + exercise_steps_by_parent_book_part_uuid.map do |parent_book_part_uuid, exercise_steps|
-      tasked_exercises = tasked_exercises_by_id.values_at(*exercise_steps.map(&:tasked_id))
-      update_period_book_part(
-        period: period,
-        book_part_uuid: parent_book_part_uuid,
-        tasked_exercises: tasked_exercises,
-        is_page: false,
-        current_time: current_time
-      )
-    end
-
-    Ratings::PeriodBookPart.import period_book_parts, validate: false, on_duplicate_key_update: {
-      conflict_target: [ :course_membership_period_id, :book_part_uuid ],
-      columns: [
-        :glicko_mu,
-        :glicko_phi,
-        :glicko_sigma,
-        :num_students,
-        :tasked_exercise_ids,
-        :clue
-      ]
-    }
   end
 end

@@ -1024,6 +1024,8 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.integer "core_page_ids", default: [], null: false, array: true
     t.datetime "core_steps_completed_at"
     t.bigint "course_profile_course_id", null: false
+    t.integer "role_book_part_job_id"
+    t.integer "period_book_part_job_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["course_profile_course_id"], name: "index_tasks_tasks_on_course_profile_course_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"

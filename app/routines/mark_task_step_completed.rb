@@ -3,9 +3,12 @@ class MarkTaskStepCompleted
 
   uses_routine Tasks::PopulatePlaceholderSteps, as: :populate_placeholders
 
+  include Ratings::Concerns::RatingJobs
+
   protected
 
   def exec(task_step:, completed_at: Time.current, lock_task: true, save: true)
+    step_completed_at = completed_at
     task = task_step.task
     if lock_task && task.persisted?
       task.save!
@@ -14,7 +17,7 @@ class MarkTaskStepCompleted
 
     task_was_completed = task.completed?(use_cache: true)
 
-    task_step.complete completed_at: completed_at
+    task_step.complete completed_at: step_completed_at
     transfer_errors_from task_step, { type: :verbatim }, true
 
     return unless errors.empty?
@@ -34,30 +37,10 @@ class MarkTaskStepCompleted
     # course will only be set if role and period were found
     return if course.nil?
 
-    if !task_was_completed && task.completed?(use_cache: true)
-      queue = task.is_preview ? 'preview' : 'dashboard'
-      role_run_at = task.feedback_available? ? completed_at :
-                                               [ task.feedback_at, completed_at ].compact.max
-
-      page = Content::Models::Page
-        .select(:uuid, :parent_book_part_uuid)
-        .find_by(id: task_step.content_page_id)
-
-      page_uuid_book_part_uuids = Content::Models::Page.where(
-        id: task.task_steps.map(&:content_page_id).uniq
-      ).pluck(:uuid, :parent_book_part_uuid)
-      page_uuids = page_uuid_book_part_uuids.map(&:first)
-      parent_book_part_uuids = page_uuid_book_part_uuids.map(&:second).uniq
-
-      Ratings::UpdateRoleBookParts.set(queue: queue, run_at: role_run_at).perform_later(
-        role: role, task: task, is_page: true
-      )
-
-      Ratings::UpdatePeriodBookParts.set(queue: queue).perform_later(
-        period: period, task: task, is_page: true
-      ) if role.student?
-    end
-
     OpenStax::Biglearn::Api.record_responses course: course, tasked_exercise: task_step.tasked
+
+    return if task_was_completed
+
+    perform_rating_jobs_later task: task, role: role, period: period, current_time: completed_at
   end
 end
