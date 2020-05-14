@@ -1,5 +1,8 @@
 class AddGlickoColumns < ActiveRecord::Migration[5.2]
   def up
+    add_column :tasks_tasks, :role_book_part_job_id, :integer
+    add_column :tasks_tasks, :period_book_part_job_id, :integer
+
     add_column :ratings_role_book_parts, :tasked_exercise_ids, :integer, array: true
     add_column :ratings_role_book_parts, :glicko_mu, :float
     add_column :ratings_role_book_parts, :glicko_phi, :float
