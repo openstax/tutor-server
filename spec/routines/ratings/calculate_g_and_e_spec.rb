@@ -15,7 +15,7 @@ RSpec.describe Ratings::CalculateGAndE, type: :routine do
     ]
   end
   subject                         do
-    described_class.call record: record, exercise_group_book_parts: exercise_group_book_parts
+    described_class.call record: record, opponents: exercise_group_book_parts
   end
   let(:outputs)                   { subject.outputs            }
 

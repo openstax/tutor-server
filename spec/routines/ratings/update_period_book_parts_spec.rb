@@ -62,8 +62,12 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
 
   let(:responses)                 { [ true, false, false ] }
 
-  it 'updates the role_book_part with the expected values' do
+  it 'updates the period_book_part with the expected values' do
     tasks.each_with_index do |task, index|
+      exercise_group_book_parts[index].update_attributes(
+        glicko_mu: glicko_mus[index], glicko_phi: glicko_phis[index]
+      )
+
       Preview::WorkTask.call task: task, is_correct: responses[index]
     end
 
@@ -73,7 +77,7 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
     expect(period_book_part.glicko_mu).to be_within(0.0001).of(expected_mu)
     expect(period_book_part.clue.deep_symbolize_keys).to match(
       minimum: 0.0,
-      most_likely: be_within(1e-6).of(0.415406),
+      most_likely: be_within(1e-6).of(0.408808),
       maximum: 1.0,
       is_real: true
     )

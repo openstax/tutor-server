@@ -116,24 +116,18 @@ class Ratings::UpdatePeriodBookParts
     task_exercise_group_book_parts = exercise_group_book_parts_by_group_uuid.values_at(
       *response_by_group_uuid.keys
     )
-    task_exercise_group_responses = task_exercise_group_book_parts.map do |exercise_group_book_part|
-      Hashie::Mash.new(
-        exercise_group_book_part.attributes.slice('glicko_mu', 'glicko_phi', 'glicko_sigma')
-      ).tap do |mash|
-        mash.response = response_by_group_uuid[exercise_group_book_part.exercise_group_uuid]
-      end
+    task_exercise_group_book_parts.each do |exercise_group_book_part|
+      exercise_group_book_part.response =
+        response_by_group_uuid[exercise_group_book_part.exercise_group_uuid]
     end
 
-    out = run(
+    run(
       :update_glicko,
       record: period_book_part,
-      exercise_group_book_parts: task_exercise_group_responses,
+      opponents: task_exercise_group_book_parts,
+      update_opponents: false,
       current_time: current_time
-    ).outputs
-
-    period_book_part.glicko_mu = out.glicko_mu
-    period_book_part.glicko_phi = out.glicko_phi
-    period_book_part.glicko_sigma = out.glicko_sigma
+    )
 
     period_book_part.num_students = CourseMembership::Models::Student
       .joins(role: { taskings: { task: { task_steps: :page } } })
@@ -155,7 +149,7 @@ class Ratings::UpdatePeriodBookParts
       out = run(
         :calculate_g_and_e,
         record: period_book_part,
-        exercise_group_book_parts: exercise_group_book_parts_by_group_uuid.values
+        opponents: exercise_group_book_parts_by_group_uuid.values
       ).outputs
 
       num_scores = out.e_array.size

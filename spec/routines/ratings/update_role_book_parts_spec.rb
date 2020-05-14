@@ -67,7 +67,7 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
     expect(role_book_part.glicko_mu).to be_within(0.0001).of(expected_mu)
     expect(role_book_part.clue.deep_symbolize_keys).to match(
       minimum: 0.0,
-      most_likely: be_within(1e-6).of(0.415713),
+      most_likely: be_within(1e-6).of(0.380825),
       maximum: 1.0,
       is_real: true
     )
