@@ -379,7 +379,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: clue,
+        clue_data: clue.deep_symbolize_keys,
         clue_status: clue_status
       }
     end
@@ -426,7 +426,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
       {
         request_uuid: request[:request_uuid],
-        clue_data: clue,
+        clue_data: clue.deep_symbolize_keys,
         clue_status: clue_status
       }
     end
