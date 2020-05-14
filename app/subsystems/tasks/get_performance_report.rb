@@ -297,6 +297,7 @@ module Tasks
             task: tt,
             late: late,
             status: tt.status(use_cache: true),
+
             type: type,
             id: tt.id,
             due_at: due_at,
@@ -317,7 +318,9 @@ module Tasks
               correct_exercise_count:                 correct_exercise_count,
               recovered_exercise_count:               tt.recovered_exercise_steps_count,
               score:                                  score,
-              progress:                               tt.completion
+              progress:                               tt.completion,
+              points:                                 tt.points_without_lateness,
+              available_points:                       tt.available_points,
             )
           end
         )
