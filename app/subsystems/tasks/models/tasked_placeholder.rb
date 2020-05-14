@@ -16,4 +16,8 @@ class Tasks::Models::TaskedPlaceholder < ApplicationRecord
   def completed?
     false
   end
+
+  def can_be_auto_graded?
+    true
+  end
 end
