@@ -9,8 +9,19 @@ class GetTeacherGuide
     ecosystem = course.ecosystem
     book = ecosystem.books.first
 
+    core_page_ids = Tasks::Models::TaskPlan
+      .where(course: course)
+      .pluck(:settings)
+      .map { |settings| settings['page_ids'] }
+    chapter_uuid_page_uuids = Content::Models::Page
+      .where(id: core_page_ids)
+      .pluck(:parent_book_part_uuid, :uuid)
+    chapter_uuids, page_uuids = chapter_uuid_page_uuids.transpose
+    chapter_uuids = Set.new chapter_uuids
+    page_uuids = Set.new page_uuids
+
     period_book_parts_by_period_id = Ratings::PeriodBookPart.where(
-      period: periods
+      period: periods, book_part_uuid: (chapter_uuids + page_uuids).to_a
     ).group_by(&:course_membership_period_id)
 
     outputs.teacher_guide = periods.map do |period|
@@ -18,12 +29,32 @@ class GetTeacherGuide
       period_book_parts_by_book_part_uuid = period_book_parts.index_by(&:book_part_uuid)
 
       chapter_guides = book.chapters.map do |chapter|
-        chapter_period_book_part = period_book_parts_by_book_part_uuid[chapter.uuid]
-        next if chapter_period_book_part.nil?
+        next unless chapter_uuids.include? chapter.uuid
+        chapter_period_book_part = period_book_parts_by_book_part_uuid[chapter.uuid] ||
+                                   Ratings::PeriodBookPart.new(
+          num_students: 0,
+          tasked_exercise_ids: [],
+          clue: {
+            minimum: 0.0,
+            most_likely: 0.5,
+            maximum: 1.0,
+            is_real: false
+          }
+        )
 
         page_guides = chapter.pages.map do |page|
-          page_period_book_part = period_book_parts_by_book_part_uuid[page.uuid]
-          next if page_period_book_part.nil?
+          next unless page_uuids.include? page.uuid
+          page_period_book_part = period_book_parts_by_book_part_uuid[page.uuid] ||
+                                Ratings::PeriodBookPart.new(
+            num_students: 0,
+            tasked_exercise_ids: [],
+            clue: {
+              minimum: 0.0,
+              most_likely: 0.5,
+              maximum: 1.0,
+              is_real: false
+            }
+          )
 
           {
             title: page.title,
