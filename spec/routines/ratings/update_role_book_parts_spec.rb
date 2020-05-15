@@ -59,7 +59,20 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
   let(:responses)                 { [ true, false, false ] }
 
   it 'updates the role_book_part with the expected values' do
-    Preview::WorkTask.call task: task, is_correct: ->(_, index) { responses[index] }
+    expect do
+      Preview::WorkTask.call task: task, is_correct: ->(_, index) { responses[index] }
+    end.to  change { exercise_group_book_parts.first.reload.num_responses }.from(0).to(1)
+       .and change { exercise_group_book_parts.second.reload.num_responses }.from(0).to(1)
+       .and change { exercise_group_book_parts.third.reload.num_responses }.from(0).to(1)
+       .and change { exercise_group_book_parts.first.glicko_sigma }
+       .and change { exercise_group_book_parts.second.glicko_sigma }
+       .and change { exercise_group_book_parts.third.glicko_sigma }
+       .and change { exercise_group_book_parts.first.glicko_phi }
+       .and change { exercise_group_book_parts.second.glicko_phi }
+       .and change { exercise_group_book_parts.third.glicko_phi }
+       .and change { exercise_group_book_parts.first.glicko_mu }
+       .and change { exercise_group_book_parts.second.glicko_mu }
+       .and change { exercise_group_book_parts.third.glicko_mu }
 
     expect(role_book_part.reload.num_responses).to eq 3
     expect(role_book_part.glicko_sigma).to be_within(0.00001).of(expected_sigma)
@@ -71,5 +84,9 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
       maximum: 1.0,
       is_real: true
     )
+
+    exercise_group_book_parts.each do |exercise_group_book_part|
+      expect(exercise_group_book_part.reload.num_responses).to eq 1
+    end
   end
 end

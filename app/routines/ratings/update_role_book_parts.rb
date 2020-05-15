@@ -122,7 +122,7 @@ class Ratings::UpdateRoleBookParts
           exercise_group_uuid: exercise_group_uuid,
           book_part_uuid: book_part_uuid,
           is_page: is_page,
-          tasked_exercise_ids: [], # TODO: Update
+          tasked_exercise_ids: [],
           glicko_mu: INITIAL_MU,
           glicko_phi: INITIAL_PHI,
           glicko_sigma: INITIAL_SIGMA
@@ -146,6 +146,11 @@ class Ratings::UpdateRoleBookParts
     )
 
     role_book_part.tasked_exercise_ids += new_tasked_exercises.map(&:id)
+    new_tasked_exercises.group_by(&:group_uuid).each do |exercise_group_uuid, tasked_exercises|
+      exercise_group_book_parts_by_group_uuid[
+        exercise_group_uuid
+      ].tasked_exercise_ids += tasked_exercises.map(&:id)
+    end
 
     role_book_part.clue = if role_book_part.num_responses < MIN_NUM_RESPONSES
       {
