@@ -126,7 +126,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
         id: page_ids_by_task_id.values.flatten.uniq
       ).pluck(:id, pool_method).to_h
       exercises_by_id = Content::Models::Exercise.select(
-        :id, :uuid, :number, :version, :number_of_questions
+        :id, :content_page_id, :uuid, :group_uuid, :number, :version, :number_of_questions
       ).where(id: exercise_ids_by_page_id.values.flatten).index_by(&:id)
 
       page_ids_by_task_id.each do |task_id, page_ids|
@@ -223,7 +223,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
           page_ids: page_ids, pool_type: pool_type
         )
         exercises_by_id = Content::Models::Exercise.select(
-          :id, :uuid, :number, :version, :number_of_questions
+          :id, :content_page_id, :uuid, :group_uuid, :number, :version, :number_of_questions
         ).where(id: exercise_ids_by_page_id.values.flatten).index_by(&:id)
 
         remaining = spaced_tasks_num_exercises.map(&:second).sum
@@ -309,7 +309,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
           )
 
           exercises_by_id = Content::Models::Exercise.select(
-            :id, :uuid, :number, :version, :number_of_questions
+            :id, :content_page_id, :uuid, :group_uuid, :number, :version, :number_of_questions
           ).where(id: pools.flatten).index_by(&:id)
 
           pools.each_with_index do |pool, index|
@@ -442,7 +442,12 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     additional_excluded_numbers: [],
     current_time: Time.current
   )
-    unless task.nil?
+    if task.nil?
+      raise ArgumentError if role.nil?
+    else
+      # Assumes tasks only have 1 tasking
+      role ||= task&.taskings&.first&.role
+
       # Always exclude all exercises already assigned to the current task
       excluded_exercise_ids = task.exercise_steps(preload_taskeds: true)
                                   .map(&:tasked)
@@ -463,6 +468,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
     ChooseExercises[
       exercises: outs.exercises,
+      role: role,
       count: count,
       already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
     ]

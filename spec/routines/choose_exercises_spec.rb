@@ -1,9 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe ChooseExercises, type: :routine do
-  let(:args)                 do
+  let(:role) { FactoryBot.create :entity_role }
+  let(:args) do
     {
       exercises: exercises,
+      role: role,
       count: count,
       already_assigned_exercise_numbers: assigned_exercises.map(&:number),
       randomize_exercises: randomize_exercises,
@@ -170,6 +172,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 7,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -180,6 +183,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 6,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -190,6 +194,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 5,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -200,6 +205,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 4,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -210,6 +216,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 3,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -220,6 +227,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 2,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -230,6 +238,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 1,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -246,6 +255,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 7,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -256,6 +266,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 6,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -266,6 +277,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 5,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -276,6 +288,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 4,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -286,6 +299,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 3,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -296,6 +310,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 2,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
@@ -306,6 +321,7 @@ RSpec.describe ChooseExercises, type: :routine do
         expect(
           described_class[
             exercises: exercises,
+            role: role,
             count: 1,
             already_assigned_exercise_numbers: already_assigned_exercise_numbers,
             randomize_exercises: false,
