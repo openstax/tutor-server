@@ -15,15 +15,5 @@ class CreateRatingsRoleBookParts < ActiveRecord::Migration[5.2]
 
     add_index :ratings_role_book_parts, [ :entity_role_id, :book_part_uuid ],
               unique: true, name: 'index_role_book_parts_on_role_id_and_book_part_uuid'
-
-    reversible do |dir|
-      dir.up do
-        BackgroundMigrate.perform_later 'up', 20200501125646
-      end
-
-      dir.down do
-        BackgroundMigrate.perform_later 'down', 20200501125646
-      end
-    end
   end
 end
