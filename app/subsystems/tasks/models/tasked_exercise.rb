@@ -14,7 +14,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   validate :free_response_required, on: :update
   validate :valid_answer, :no_feedback, :not_graded
-  after_update :notify_task_plan_when_graded
+  after_update :notify_task_plan_ungraded_status
   
   scope :correct, -> do
     where('tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id')
@@ -164,6 +164,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   protected
 
   def free_response_required
+    return if changes['grader_points'] # allow updates if it's being graded
     errors.add(:free_response, 'is required') if allows_free_response? && free_response.blank?
   end
 
@@ -208,8 +209,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     throw(:abort) if errors.any?
   end
 
-  def notify_task_plan_when_graded
-    if previous_changes['last_graded_at']
+  def notify_task_plan_ungraded_status
+    # was graded or free response completed on a FR only exercise
+    if previous_changes['last_graded_at'] || (!has_answers? && previous_changes['free_response'])
       task_step.task.task_plan.update_ungraded_step_count!
     end
   end
