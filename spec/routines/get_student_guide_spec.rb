@@ -29,10 +29,10 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
     @teacher_role.reload
   end
 
-  subject(:guide) { described_class[role: @role] }
+  subject(:guide) { described_class[role: @role].deep_symbolize_keys }
 
-  let(:chapters)        { guide['children'] }
-  let(:worked_chapters) { chapters.select { |ch| ch['questions_answered_count'] > 0 } }
+  let(:chapters)        { guide[:children] }
+  let(:worked_chapters) { chapters.select { |ch| ch[:questions_answered_count] > 0 } }
 
   let(:clue_matcher) do
     a_hash_including(
@@ -95,11 +95,11 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
         after(:all) { DatabaseCleaner.clean }
 
         it 'gets the completed task step counts for the role' do
-          total_count = chapters.map { |cc| cc['questions_answered_count'] }.sum
+          total_count = chapters.map { |cc| cc[:questions_answered_count] }.sum
           expect(total_count).to eq 5
 
           guide2 = described_class[role: @second_role]
-          total_count = guide2['children'].map { |cc| cc['questions_answered_count'] }.sum
+          total_count = guide2[:children].map { |cc| cc[:questions_answered_count] }.sum
           expect(total_count).to eq 5
         end
 
@@ -107,78 +107,31 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           expect(guide).to match(
             period_id: @period.id,
             title: 'Physics (Demo)',
-            page_ids: [kind_of(Integer)]*6,
-            children: [kind_of(Hash)]*2
+            page_ids: [kind_of(Integer)],
+            children: [kind_of(Hash)]
           )
         end
 
         it 'includes chapter stats for the student only' do
           expect(worked_chapters).to eq chapters
 
-          chapter_1 = chapters.first
-          expect(chapter_1).to match(
-            title: 'Acceleration',
-            book_location: [],
-            student_count: 1,
-            questions_answered_count: 2,
-            clue: clue_matcher,
-            page_ids: [kind_of(Integer)]*2,
-            first_worked_at: kind_of(String),
-            last_worked_at: kind_of(String),
-            children: [kind_of(Hash)]*2
-          )
-
-          chapter_2 = chapters.second
+          chapter_2 = chapters.first
           expect(chapter_2).to match(
             title: "Force and Newton's Laws of Motion",
             book_location: [],
             student_count: 1,
-            questions_answered_count: 7,
+            questions_answered_count: 5,
             clue: clue_matcher,
-            page_ids: [kind_of(Integer)]*4,
-            first_worked_at: kind_of(String),
-            last_worked_at: kind_of(String),
-            children: [kind_of(Hash)]*4
+            page_ids: [kind_of(Integer)],
+            first_worked_at: kind_of(Time),
+            last_worked_at: kind_of(Time),
+            children: [kind_of(Hash)]
           )
         end
 
         it 'includes page stats for the student only' do
-          chapter_1_pages = chapters.first['children']
-          expect(chapter_1_pages).to match [
-            {
-              title: 'Acceleration',
-              book_location: [],
-              student_count: 1,
-              questions_answered_count: 2,
-              clue: clue_matcher,
-              page_ids: [kind_of(Integer)],
-              first_worked_at: kind_of(String),
-              last_worked_at: kind_of(String)
-            },
-            {
-              title: 'Representing Acceleration with Equations and Graphs',
-              book_location: [],
-              student_count: 1,
-              questions_answered_count: 0,
-              clue: clue_matcher,
-              page_ids: [kind_of(Integer)],
-              first_worked_at: nil,
-              last_worked_at: nil
-            }
-          ]
-
-          chapter_2_pages = chapters.second['children']
+          chapter_2_pages = chapters.first[:children]
           expect(chapter_2_pages).to match [
-            {
-              title: 'Force',
-              book_location: [],
-              student_count: 1,
-              questions_answered_count: 2,
-              clue: clue_matcher,
-              page_ids: [kind_of(Integer)],
-              first_worked_at: kind_of(String),
-              last_worked_at: kind_of(String)
-            },
             {
               title: "Newton's First Law of Motion: Inertia",
               book_location: [],
@@ -186,28 +139,8 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               questions_answered_count: 5,
               clue: clue_matcher,
               page_ids: [kind_of(Integer)],
-              first_worked_at: kind_of(String),
-              last_worked_at: kind_of(String)
-            },
-            {
-              title: "Newton's Second Law of Motion",
-              book_location: [],
-              student_count: 1,
-              questions_answered_count: 0,
-              clue: clue_matcher,
-              page_ids: [kind_of(Integer)],
-              first_worked_at: nil,
-              last_worked_at: nil
-            },
-            {
-              title: "Newton's Third Law of Motion",
-              book_location: [],
-              student_count: 1,
-              questions_answered_count: 0,
-              clue: clue_matcher,
-              page_ids: [kind_of(Integer)],
-              first_worked_at: nil,
-              last_worked_at: nil
+              first_worked_at: kind_of(Time),
+              last_worked_at: kind_of(Time)
             }
           ]
         end
@@ -237,7 +170,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
         it 'displays unworked chapters and ignores units' do
           expect(worked_chapters).not_to eq chapters
 
-          chapter_1_pages = chapters.first['children']
+          chapter_1_pages = chapters.first[:children]
           expect(chapter_1_pages).to match [
             {
               title: 'The Science of Biology',
@@ -261,7 +194,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
             }
           ]
 
-          chapter_2_pages = chapters.second['children']
+          chapter_2_pages = chapters.second[:children]
           expect(chapter_2_pages).to match [
             {
               title: 'Atoms, Isotopes, Ions, and Molecules: The Building Blocks',
@@ -296,7 +229,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           ]
 
           expect(chapters.third).to eq worked_chapters.first
-          chapter_3_pages = chapters.third['children']
+          chapter_3_pages = chapters.third[:children]
           expect(chapter_3_pages).to match [
             {
               title: 'Synthesis of Biological Macromolecules',
@@ -305,8 +238,8 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               questions_answered_count: 1,
               clue: clue_matcher,
               page_ids: [kind_of(Integer)],
-              first_worked_at: kind_of(String),
-              last_worked_at: kind_of(String)
+              first_worked_at: kind_of(Time),
+              last_worked_at: kind_of(Time)
             },
             {
               title: 'Carbohydrates',
@@ -351,17 +284,17 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           ]
 
           expect(chapters.fourth).to eq worked_chapters.second
-          chapter_4_pages = chapters.fourth['children']
+          chapter_4_pages = chapters.fourth[:children]
           expect(chapter_4_pages).to match [
             {
               title: 'Studying Cells',
               book_location: [4, 1],
               student_count: 1,
-              questions_answered_count: 2,
+              questions_answered_count: 0,
               clue: clue_matcher,
               page_ids: [kind_of(Integer)],
-              first_worked_at: kind_of(String),
-              last_worked_at: kind_of(String)
+              first_worked_at: nil,
+              last_worked_at: nil
             },
             {
               title: 'Prokaryotic Cells',
@@ -370,8 +303,8 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               questions_answered_count: 5,
               clue: clue_matcher,
               page_ids: [kind_of(Integer)],
-              first_worked_at: kind_of(String),
-              last_worked_at: kind_of(String)
+              first_worked_at: kind_of(Time),
+              last_worked_at: kind_of(Time)
             },
             {
               title: 'Eukaryotic Cells',

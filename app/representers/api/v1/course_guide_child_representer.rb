@@ -44,12 +44,14 @@ module Api::V1
     property :first_worked_at,
              type: String,
              readable: true,
-             writeable: false
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(first_worked_at) }    
 
     property :last_worked_at,
              type: String,
              readable: true,
-             writeable: false
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) }
 
     collection :children,
                readable: true,

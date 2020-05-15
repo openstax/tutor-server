@@ -77,7 +77,7 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
     expect(period_book_part.glicko_mu).to be_within(0.0001).of(expected_mu)
     expect(period_book_part.clue.deep_symbolize_keys).to match(
       minimum: 0.0,
-      most_likely: be_within(1e-6).of(0.408808),
+      most_likely: be_within(0.01).of(0.40),
       maximum: 1.0,
       is_real: true
     )
