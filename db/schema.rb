@@ -596,10 +596,10 @@ ActiveRecord::Schema.define(version: 2020_06_17_142820) do
     t.jsonb "clue", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "tasked_exercise_ids", array: true
-    t.float "glicko_mu"
-    t.float "glicko_phi"
-    t.float "glicko_sigma"
+    t.integer "tasked_exercise_ids", null: false, array: true
+    t.float "glicko_mu", null: false
+    t.float "glicko_phi", null: false
+    t.float "glicko_sigma", null: false
     t.index ["book_part_uuid"], name: "index_ratings_period_book_parts_on_book_part_uuid"
     t.index ["course_membership_period_id", "book_part_uuid"], name: "index_period_book_parts_on_period_id_and_book_part_uuid", unique: true
   end
@@ -611,10 +611,10 @@ ActiveRecord::Schema.define(version: 2020_06_17_142820) do
     t.jsonb "clue", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "tasked_exercise_ids", array: true
-    t.float "glicko_mu"
-    t.float "glicko_phi"
-    t.float "glicko_sigma"
+    t.integer "tasked_exercise_ids", null: false, array: true
+    t.float "glicko_mu", null: false
+    t.float "glicko_phi", null: false
+    t.float "glicko_sigma", null: false
     t.index ["book_part_uuid"], name: "index_ratings_role_book_parts_on_book_part_uuid"
     t.index ["entity_role_id", "book_part_uuid"], name: "index_role_book_parts_on_role_id_and_book_part_uuid", unique: true
   end

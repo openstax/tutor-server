@@ -1,5 +1,5 @@
 module Ratings::Concerns::RatingJobs
-  def perform_rating_jobs_later(task:, role:, period:, current_time: Time.current)
+  def perform_rating_jobs_later(task:, role:, period:, current_time: Time.current, queue: nil)
     anti_cheating_date = [ current_time, task.due_at, task.feedback_at ].compact.max
     is_past_anti_cheating_date = anti_cheating_date <= current_time
     task_is_completed = task.completed?(use_cache: true)
@@ -39,7 +39,7 @@ module Ratings::Concerns::RatingJobs
       end
     end
 
-    queue = task.is_preview ? 'preview' : 'dashboard'
+    queue ||= task.is_preview ? 'preview' : 'dashboard'
 
     # We determined that the period update normally runs first
     # so we queue it first here to keep the order consistent in specs

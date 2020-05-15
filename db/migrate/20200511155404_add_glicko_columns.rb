@@ -3,20 +3,28 @@ class AddGlickoColumns < ActiveRecord::Migration[5.2]
     add_column :tasks_tasks, :role_book_part_job_id, :integer
     add_column :tasks_tasks, :period_book_part_job_id, :integer
 
-    add_column :ratings_role_book_parts, :tasked_exercise_ids, :integer, array: true
-    add_column :ratings_role_book_parts, :glicko_mu, :float
-    add_column :ratings_role_book_parts, :glicko_phi, :float
-    add_column :ratings_role_book_parts, :glicko_sigma, :float
+    Delayed::Job.where("handler ILIKE '%UpdateRoleBookParts%'").delete_all
+    Delayed::Job.where("handler ILIKE '%UpdatePeriodBookParts%'").delete_all
 
-    add_column :ratings_period_book_parts, :tasked_exercise_ids, :integer, array: true
-    add_column :ratings_period_book_parts, :glicko_mu, :float
-    add_column :ratings_period_book_parts, :glicko_phi, :float
-    add_column :ratings_period_book_parts, :glicko_sigma, :float
+    Ratings::RoleBookPart.delete_all
 
-    # TODO: Migrate data
+    add_column :ratings_role_book_parts, :tasked_exercise_ids, :integer, array: true, null: false
+    add_column :ratings_role_book_parts, :glicko_mu, :float, null: false
+    add_column :ratings_role_book_parts, :glicko_phi, :float, null: false
+    add_column :ratings_role_book_parts, :glicko_sigma, :float, null: false
 
     remove_column :ratings_role_book_parts, :num_responses
+
+    Ratings::PeriodBookPart.delete_all
+
+    add_column :ratings_period_book_parts, :tasked_exercise_ids, :integer, array: true, null: false
+    add_column :ratings_period_book_parts, :glicko_mu, :float, null: false
+    add_column :ratings_period_book_parts, :glicko_phi, :float, null: false
+    add_column :ratings_period_book_parts, :glicko_sigma, :float, null: false
+
     remove_column :ratings_period_book_parts, :num_responses
+
+    BackgroundMigrate.perform_later 'up', 20200515140524
   end
 
   def down
