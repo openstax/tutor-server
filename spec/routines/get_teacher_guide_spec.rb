@@ -310,6 +310,8 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
 
     after(:all)  { DatabaseCleaner.clean }
 
+    before { Tasks::Models::Task.update_all due_at_ntz: Time.current - 1.day }
+
     it 'displays unworked chapters and ignores units' do
       expect(period_1_worked_chapters).not_to eq period_1_chapters
       expect(period_2_worked_chapters).not_to eq period_2_chapters
