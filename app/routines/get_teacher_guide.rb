@@ -15,6 +15,7 @@ class GetTeacherGuide
       .map { |settings| settings['page_ids'] }
     chapter_uuid_page_uuids = Content::Models::Page
       .where(id: core_page_ids)
+      .where('CARDINALITY("content_pages"."all_exercise_ids") > 0')
       .pluck(:parent_book_part_uuid, :uuid)
     chapter_uuids, page_uuids = chapter_uuid_page_uuids.transpose
     chapter_uuids = Set.new chapter_uuids
