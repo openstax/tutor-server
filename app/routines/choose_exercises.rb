@@ -3,19 +3,69 @@ class ChooseExercises
   # This corresponds to how many numbers above the given count we need to search
   MAX_DROPPED_QUESTION_PARTS = 4
 
+  INITIAL_GLICKO_MU = 0.0
+  INITIAL_GLICKO_PHI = 2.015
+  DESIRED_EXPECTED_SCORE = 0.5
+
   lev_routine express_output: :exercises
 
   def exec(
     exercises:,
+    role:,
     count:,
     already_assigned_exercise_numbers: [],
-    randomize_exercises: true,
-    randomize_order: true
+    randomize_exercises: false,
+    randomize_order: false
   )
     already_assigned_exercise_numbers_set = Set.new already_assigned_exercise_numbers
 
     exercises = exercises.uniq
-    exercises = exercises.shuffle if randomize_exercises
+    exercises = if randomize_exercises
+      exercises.shuffle
+    else
+      page_uuid_by_page_id = Content::Models::Page.where(
+        id: exercises.map(&:content_page_id).uniq
+      ).pluck(:id, :uuid).to_h
+      page_uuids = page_uuid_by_page_id.values
+
+      role_book_parts_by_page_uuid = Ratings::RoleBookPart.where(
+        role: role, book_part_uuid: page_uuids
+      ).index_by(&:book_part_uuid)
+
+      exercise_book_parts_by_exercise_group_uuid_and_page_uuid = Hash.new do |hash, key|
+        hash[key] = {}
+      end
+      Ratings::ExerciseGroupBookPart.where(
+        exercise_group_uuid: exercises.map(&:group_uuid), book_part_uuid: page_uuids
+      ).each do |exercise_group_book_part|
+        exercise_book_parts_by_exercise_group_uuid_and_page_uuid[
+          exercise_group_book_part.exercise_group_uuid
+        ][
+          exercise_group_book_part.book_part_uuid
+        ] = exercise_group_book_part
+      end
+
+      exercises.sort_by do |exercise|
+        page_uuid = page_uuid_by_page_id[exercise.content_page_id]
+
+        role_book_part = role_book_parts_by_page_uuid[page_uuid] || Ratings::RoleBookPart.new(
+          glicko_mu: INITIAL_GLICKO_MU
+        )
+        exercise_group_book_part = exercise_book_parts_by_exercise_group_uuid_and_page_uuid[
+          exercise.group_uuid
+        ][
+          page_uuid
+        ] || Ratings::ExerciseGroupBookPart.new(
+          glicko_mu: INITIAL_GLICKO_MU, glicko_phi: INITIAL_GLICKO_PHI
+        )
+
+        (
+          Ratings::CalculateGAndE.call(
+            record: role_book_part, opponents: [ exercise_group_book_part ]
+          ).outputs.e_array.first - DESIRED_EXPECTED_SCORE
+        ).abs
+      end
+    end
 
     new_exercises = exercises.reject do |ex|
       already_assigned_exercise_numbers_set.include?(ex.number)
