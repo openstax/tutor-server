@@ -22,6 +22,12 @@ class Api::V1::TaskPlan::Scores::Representer < ::Roar::Decorator
            readable: true,
            writeable: true
 
+  property :content_ecosystem_id,
+           as: :ecosystem_id,
+           type: String,
+           readable: true,
+           writeable: true
+
   property :grading_template,
            extend: Api::V1::GradingTemplateRepresenter,
            readable: true,
