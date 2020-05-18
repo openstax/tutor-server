@@ -713,7 +713,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_exercise_count).to eq 1
       expect(task.completed_exercise_count).to eq 1
       expect(task.completion).to eq 1/3.0
-      expect(task.correctness).to eq 1/3.0
       expect(task.points_without_lateness).to eq 1.0
       expect(task.points).to eq 1.0
       expect(task.score_without_lateness).to eq 1.0
@@ -727,7 +726,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_exercise_count).to eq 2
       expect(task.completed_exercise_count).to eq 2
       expect(task.completion).to eq 2/3.0
-      expect(task.correctness).to eq 2/3.0
       expect(task.points_without_lateness).to eq 2.0
       expect(task.points).to eq 1.0
       expect(task.score_without_lateness).to eq 2/3.0
@@ -744,7 +742,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_exercise_count).to eq 2
       expect(task.completed_exercise_count).to eq 2
       expect(task.completion).to eq 2/3.0
-      expect(task.correctness).to eq 2/3.0
       expect(task.points_without_lateness).to eq 2.0
       expect(task.points).to eq 2.0
       expect(task.score_without_lateness).to eq 1.0
@@ -758,7 +755,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3
       expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
       expect(task.points_without_lateness).to eq 3.0
       expect(task.points).to eq 1.5
       expect(task.score_without_lateness).to eq 1.0
@@ -771,7 +767,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3
       expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
       expect(task.points_without_lateness).to eq 3.0
       expect(task.points).to be_within(1e-6).of(2.1)
       expect(task.score_without_lateness).to eq 1.0
@@ -784,7 +779,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3
       expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
       expect(task.points_without_lateness).to eq 3.0
       expect(task.points).to eq 3.0
       expect(task.score_without_lateness).to eq 1.0
@@ -796,7 +790,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3
       expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
       expect(task.points_without_lateness).to eq 3.0
       expect(task.points).to eq 3.0
       expect(task.score_without_lateness).to eq 1.0
@@ -808,7 +801,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3
       expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
       expect(task.points_without_lateness).to eq 3.0
       expect(task.points).to eq 3.0
       expect(task.score_without_lateness).to eq 1.0
@@ -820,7 +812,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3
       expect(task.completion).to eq 1.0
-      expect(task.correctness).to eq 1.0
       expect(task.points_without_lateness).to eq 3.0
       expect(task.points).to be_within(1e-6).of(1.2)
       expect(task.score_without_lateness).to eq 1.0

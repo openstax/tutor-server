@@ -64,8 +64,7 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :score,
-             type: Float,
+    property :is_included_in_averages,
              readable: true,
              writeable: false
 
@@ -74,17 +73,19 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :is_included_in_averages,
-             readable: true,
-             writeable: false
-
     property :available_points,
+             type: Float,
              readable: true,
              writeable: false
 
     property :points,
+             type: Float,
              readable: true,
              writeable: false
 
+    property :score,
+             type: Float,
+             readable: true,
+             writeable: false
   end
 end

@@ -110,10 +110,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     homework? || reading?
   end
 
-  def available_points_without_dropped_questions
-    available_points_without_dropped_questions_per_question_index.values.sum
-  end
-
   def available_points_without_dropped_questions_per_question_index
     @available_points_without_dropped_questions_per_question_index ||= Hash.new(1.0).tap do |hash|
       if homework?
@@ -135,11 +131,9 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def update_ungraded_step_count!
-    update_attributes(
-      ungraded_step_count: tasks.sum(:ungraded_step_count)
-    )
+    update_attribute :ungraded_step_count, tasks.sum(:ungraded_step_count)
   end
-  
+
   protected
 
   def get_ecosystems_from_exercise_ids
@@ -245,7 +239,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   def exercise_ids
     settings['exercises']&.map { |ex| ex['id'] } || []
   end
-  
+
   def correct_num_points_for_homework
     return if type != 'homework' || settings.blank? || settings['exercises'].blank?
 
