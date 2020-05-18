@@ -297,7 +297,6 @@ module Tasks
             task: tt,
             late: late,
             status: tt.status(use_cache: true),
-
             type: type,
             id: tt.id,
             due_at: due_at,
@@ -311,16 +310,16 @@ module Tasks
             score = (tt.reading? || tt.homework?) && show_score ? tt.score || 0.0 : nil
 
             data.merge!(
-              step_count:                             tt.steps_count,
-              completed_step_count:                   tt.completed_steps_count,
-              actual_and_placeholder_exercise_count:  tt.actual_and_placeholder_exercise_count,
-              completed_exercise_count:               tt.completed_exercise_count,
-              correct_exercise_count:                 correct_exercise_count,
-              recovered_exercise_count:               tt.recovered_exercise_steps_count,
-              score:                                  score,
-              progress:                               tt.completion,
-              points:                                 tt.points_without_lateness,
-              available_points:                       tt.available_points,
+              step_count:                            tt.steps_count,
+              completed_step_count:                  tt.completed_steps_count,
+              actual_and_placeholder_exercise_count: tt.actual_and_placeholder_exercise_count,
+              completed_exercise_count:              tt.completed_exercise_count,
+              correct_exercise_count:                correct_exercise_count,
+              recovered_exercise_count:              tt.recovered_exercise_steps_count,
+              progress:                              tt.completion,
+              available_points:                      tt.available_points,
+              points:                                tt.points,
+              score:                                 score,
             )
           end
         )

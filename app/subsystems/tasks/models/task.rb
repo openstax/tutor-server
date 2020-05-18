@@ -183,11 +183,6 @@ class Tasks::Models::Task < ApplicationRecord
     steps_count == 0 ? nil : completed_steps_count / steps_count.to_f
   end
 
-  def correctness
-    actual_and_placeholder_exercise_count == 0 ?
-      nil : correct_exercise_count / actual_and_placeholder_exercise_count.to_f
-  end
-
   def available_points_per_question_index
     @available_points_per_question_index ||= begin
       (
@@ -293,7 +288,9 @@ class Tasks::Models::Task < ApplicationRecord
     self.placeholder_exercise_steps_count = placeholder_exercise_steps.count
     self.core_placeholder_exercise_steps_count = placeholder_exercise_steps.count(&:is_core?)
     self.student_history_at ||= current_time if completed_core_steps_count == core_steps_count
-    self.ungraded_step_count = tasked_exercises.manually_graded.where(last_graded_at: nil).count
+    self.ungraded_step_count = exercise_steps.count do |step|
+      !step.tasked.can_be_auto_graded? && !step.tasked.was_manually_graded?
+    end
 
     self
   end

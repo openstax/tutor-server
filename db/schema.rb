@@ -1018,9 +1018,9 @@ ActiveRecord::Schema.define(version: 2020_05_13_175819) do
     t.uuid "pe_ecosystem_matrix_uuid"
     t.uuid "spe_calculation_uuid"
     t.uuid "spe_ecosystem_matrix_uuid"
+    t.datetime "closes_at_ntz"
     t.integer "core_page_ids", default: [], null: false, array: true
     t.datetime "student_history_at"
-    t.datetime "closes_at_ntz"
     t.bigint "tasks_extension_id"
     t.datetime "grades_last_published_at"
     t.integer "ungraded_step_count", default: 0, null: false
