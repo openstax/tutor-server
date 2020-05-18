@@ -48,6 +48,7 @@ class Tasks::Models::TaskedReading < IndestructibleRecord
   def content_dom
     @content_dom ||= Nokogiri::HTML.fragment(content)
   end
+
   def can_be_auto_graded?
     true
   end
