@@ -132,11 +132,6 @@ module Tasks
             num_fmt: Axlsx::NUM_FMT_PERCENT
           )
 
-          @last_worked_at = s.add_style(
-            border: { edges: [:right], color: '000000', style: :thin },
-            num_fmt: 14
-          )
-
           @overall_L = s.add_style(
             b: true,
             border: { edges: [:left, :top, :bottom], color: '000000', style: :thin },
@@ -285,17 +280,17 @@ module Tasks
         meta_rows.count.times { sheet.add_row }
 
         num_student_info_columns = 3
-        num_average_columns = format == :counts ? 0 : 5
+        num_average_columns = format == :counts ? 0 : 3
         num_non_task_columns = num_student_info_columns + num_average_columns
-        num_columns_per_task = 5
+        num_columns_per_task = 2
 
         # TITLE COLUMNS
 
         task_title_columns = num_student_info_columns.times.map { "" }
-        task_title_columns += ["Averages","","","",""] if format != :counts
+        task_title_columns += ["Averages","",""] if format != :counts
         task_title_columns += report[:data_headings].map do |data_heading|
-            [ data_heading[:title], cols: num_columns_per_task, style: @task_title ]
-          end
+          [ data_heading[:title], cols: num_columns_per_task, style: @task_title ]
+        end
 
         @helper.add_row(sheet, task_title_columns)
 
@@ -314,7 +309,7 @@ module Tasks
         # Have to merge vertically and style merged cells after the fact
         @helper.merge_and_style(
           sheet,
-          "D7:H8",
+          "D7:F8",
           @overall
         ) if format != :counts
 
@@ -326,14 +321,12 @@ module Tasks
           ["", style: @normal_TR]
         ]
         top_data_heading_columns += [
-          "Course Average*", "Homework Score",
-          "Homework Progress", "Reading Score", "Reading Progress"
+          "Course Average*", "Homework Averages", "Reading Averages"
         ].map { |text| [text] } if format != :counts
 
         report[:data_headings].count.times do
           top_data_heading_columns.push("Score")
           top_data_heading_columns.push("Progress")
-          top_data_heading_columns.push(["Late Work", style: @bold_heading_R, cols: 3])
         end
 
         @helper.add_row(sheet, top_data_heading_columns)
@@ -347,9 +340,6 @@ module Tasks
 
         report[:data_headings].count.times do
           bottom_data_heading_columns.push("", "")
-          bottom_data_heading_columns.push(["Late Score", style: @heading])
-          bottom_data_heading_columns.push(["Late Progress", style: @heading])
-          bottom_data_heading_columns.push(["Last Worked", style: @heading_R])
         end
 
         @helper.add_row(sheet, bottom_data_heading_columns)
@@ -358,9 +348,7 @@ module Tasks
         if format != :counts
           @helper.merge_and_style(sheet, "D9:D10", @bold_heading_L)
           @helper.merge_and_style(sheet, "E9:E10", @bold_heading)
-          @helper.merge_and_style(sheet, "F9:F10", @bold_heading)
-          @helper.merge_and_style(sheet, "G9:G10", @bold_heading)
-          @helper.merge_and_style(sheet, "H9:H10", @bold_heading_R)
+          @helper.merge_and_style(sheet, "F9:F10", @bold_heading_R)
         end
 
         # "Score" and "Progress"
@@ -369,16 +357,14 @@ module Tasks
           progress_column = Axlsx::col_ref(num_non_task_columns + index * num_columns_per_task + 1)
           @helper.merge_and_style(sheet, "#{score_column}9:#{score_column}10", @bold_heading_L)
           @helper.merge_and_style(
-            sheet, "#{progress_column}9:#{progress_column}10", @bold_heading
+            sheet, "#{progress_column}9:#{progress_column}10", @bold_heading_R
           )
         end
 
         # STUDENT DATA
 
         homework_score_columns = []
-        homework_progress_columns = []
         reading_score_columns = []
-        reading_progress_columns = []
 
         report[:data_headings].each_with_index do |heading, ii|
           case heading[:type]
@@ -386,15 +372,9 @@ module Tasks
             reading_score_columns.push(
               Axlsx::col_ref(num_non_task_columns + ii * num_columns_per_task)
             )
-            reading_progress_columns.push(
-              Axlsx::col_ref(num_non_task_columns + ii * num_columns_per_task + 1)
-            )
           when 'homework'
             homework_score_columns.push(
               Axlsx::col_ref(num_non_task_columns + ii * num_columns_per_task)
-            )
-            homework_progress_columns.push(
-              Axlsx::col_ref(num_non_task_columns + ii * num_columns_per_task + 1)
             )
           end
         end
@@ -429,18 +409,8 @@ module Tasks
               ],
               [
                 "#{@eq}IFERROR(AVERAGE(#{
-                  disjoint_range(cols: homework_progress_columns, rows: row_index)
-                }),0)", style: @pct
-              ],
-              [
-                "#{@eq}IFERROR(AVERAGE(#{
                   disjoint_range(cols: reading_score_columns, rows: row_index)
                 }),0)", style: @pct
-              ],
-              [
-                "#{@eq}IFERROR(AVERAGE(#{
-                  disjoint_range(cols: reading_progress_columns, rows: row_index)
-                }),0)", style: @pct_R
               ]
             ] if format != :counts
 
@@ -497,14 +467,6 @@ module Tasks
           [
             "#{@eq}IFERROR(AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\"),0)",
             style: average_style
-          ],
-          [
-            "#{@eq}IFERROR(AVERAGEIF(G#{first_student_row}:G#{last_student_row},\"<>#N/A\"),0)",
-            style: average_style
-          ],
-          [
-            "#{@eq}IFERROR(AVERAGEIF(H#{first_student_row}:H#{last_student_row},\"<>#N/A\"),0)",
-            style: average_style_R
           ]
         ] if format != :counts
 
@@ -520,13 +482,7 @@ module Tasks
             ["#{@eq}IFERROR(AVERAGE(#{score_range}),\"\")", style: average_style_L]
           )
           average_columns.push(
-            ["#{@eq}IFERROR(AVERAGE(#{progress_range}),\"\")", style: average_style]
-          )
-
-          average_columns.push(
-            ["", style: average_style],
-            ["", style: average_style],
-            ["", style: average_style_R]
+            ["#{@eq}IFERROR(AVERAGE(#{progress_range}),\"\")", style: average_style_R]
           )
         end
 
@@ -544,10 +500,7 @@ module Tasks
           task_total_counts.each do |total_count|
             total_possible_columns.push(
               [total_count.try!(:[], :exercises), style: @total_L],
-              [total_count.try!(:[], :steps), style: @total],
-              ["", style: @total],
-              ["", style: @total],
-              ["", style: @total_R]
+              [total_count.try!(:[], :steps), style: @total_R]
             )
           end
 
@@ -618,13 +571,12 @@ module Tasks
         sheet.column_widths(*data_widths)
       end
 
-      def late_accepted_comment(score)
-        "Late score accepted in the online view\nOriginal score on due date: #{score}"
-      end
-
       def push_score_columns(data, columns, format)
         if data.nil? || data[:actual_and_placeholder_exercise_count] == 0
-          columns.push(["", style: @normal_L],"","","",["", style: @normal_R])
+          columns.push(
+            ["", style: @normal_L],
+            ["", style: @normal_R]
+          )
         else
           steps_count = data[:step_count]
           exercise_steps_count = data[:actual_and_placeholder_exercise_count]
@@ -639,17 +591,15 @@ module Tasks
             columns.push([
               correct_count, { style: @normal_L }
             ])
-            columns.push(completed_count)
-
-            columns.push("","",[data[:last_worked_at], style: @last_worked_at])
+            columns.push([
+              completed_count, { style: @normal_R }
+            ])
           else
             columns.push([
               correct_count * 1.0 / exercise_steps_count,
               { style: @pct_L }
             ])
-            columns.push([completed_count * 1.0 / steps_count, style: @pct])
-
-            columns.push("","",[data[:last_worked_at], style: @last_worked_at])
+            columns.push([completed_count * 1.0 / steps_count, style: @pct_R])
           end
         end
       end
