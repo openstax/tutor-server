@@ -11,7 +11,7 @@ class Api::V1::PerformanceReportsController < Api::V1::ApiController
 
     OSU::AccessPolicy.require_action_allowed!(:export, current_api_user, course)
 
-    job_id = Tasks::ExportPerformanceReport.perform_later(
+    job_id = ::Tasks::ExportPerformanceReport.perform_later(
       course: course, role: get_course_role(course: course, type: :teacher)
     )
 
