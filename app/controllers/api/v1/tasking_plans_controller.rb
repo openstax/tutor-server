@@ -16,7 +16,7 @@ class Api::V1::TaskingPlansController < Api::V1::ApiController
     #{json_schema(Api::V1::TaskPlan::TaskingPlanRepresenter, include: :readable)}
   EOS
   def grade
-    tasking_plan = Tasks::Models::TaskingPlan.find params[:id]
+    tasking_plan = ::Tasks::Models::TaskingPlan.find params[:id]
 
     OSU::AccessPolicy.require_action_allowed!(:grade, current_api_user, tasking_plan)
 
