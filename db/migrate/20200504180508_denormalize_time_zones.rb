@@ -38,9 +38,15 @@ class DenormalizeTimeZones < ActiveRecord::Migration[5.2]
     ).delete_all
 
     Tasks::Models::Task.preload(taskings: { role: [ :student, :teacher_student ] })
-                       .find_each do |task|
-      task.update_attribute :course_profile_course_id,
-                            task.taskings.first.role.course_member.course_profile_course_id
+                       .find_in_batches do |tasks|
+      tasks.each do |task|
+        task.course_profile_course_id =
+          task.taskings.first.role.course_member.course_profile_course_id
+      end
+
+      Tasks::Models::Task.import tasks, validate: false, on_duplicate_key_update: {
+        conflict_target: :id, columns: [ :course_profile_course_id ]
+      }
     end
 
     change_column_null :tasks_tasks, :course_profile_course_id, false
