@@ -109,6 +109,11 @@ module Tasks
             border: { edges: [:right], color: '000000', style: :thin },
             alignment: { horizontal: :center, vertical: :center, wrap_text: true }
           )
+          @bold_heading_LR = s.add_style(
+            b: true,
+            border: { edges: [:left, :right], color: '000000', style: :thin },
+            alignment: { horizontal: :center, vertical: :center, wrap_text: true }
+          )
 
           @heading = s.add_style(alignment: { horizontal: :center })
           @heading_R = s.add_style(
@@ -118,12 +123,17 @@ module Tasks
 
           @normal_L = s.add_style border: { edges: [:left], color: '000000', style: :thin }
           @normal_LT = s.add_style border: { edges: [:left, :top], color: '000000', style: :thin }
+          @normal_LR = s.add_style border: { edges: [:left, :right], color: '000000', style: :thin }
           @normal_T = s.add_style border: { edges: [:top], color: '000000', style: :thin }
           @normal_TR = s.add_style border: { edges: [:top, :right], color: '000000', style: :thin }
           @normal_R = s.add_style border: { edges: [:right], color: '000000', style: :thin }
 
           @pct_L = s.add_style(
             border: { edges: [:left], color: '000000', style: :thin },
+            num_fmt: Axlsx::NUM_FMT_PERCENT
+          )
+          @pct_LR = s.add_style(
+            border: { edges: [:left, :right], color: '000000', style: :thin },
             num_fmt: Axlsx::NUM_FMT_PERCENT
           )
           @pct = s.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
@@ -282,7 +292,7 @@ module Tasks
         num_student_info_columns = 3
         num_average_columns = format == :counts ? 0 : 3
         num_non_task_columns = num_student_info_columns + num_average_columns
-        num_columns_per_task = 2
+        num_columns_per_task = 1
 
         # TITLE COLUMNS
 
@@ -326,7 +336,6 @@ module Tasks
 
         report[:data_headings].count.times do
           top_data_heading_columns.push("Score")
-          top_data_heading_columns.push("Progress")
         end
 
         @helper.add_row(sheet, top_data_heading_columns)
@@ -351,14 +360,10 @@ module Tasks
           @helper.merge_and_style(sheet, "F9:F10", @bold_heading_R)
         end
 
-        # "Score" and "Progress"
+        # "Score"
         report[:data_headings].count.times do |index|
           score_column = Axlsx::col_ref(num_non_task_columns + index * num_columns_per_task)
-          progress_column = Axlsx::col_ref(num_non_task_columns + index * num_columns_per_task + 1)
-          @helper.merge_and_style(sheet, "#{score_column}9:#{score_column}10", @bold_heading_L)
-          @helper.merge_and_style(
-            sheet, "#{progress_column}9:#{progress_column}10", @bold_heading_R
-          )
+          @helper.merge_and_style(sheet, "#{score_column}9:#{score_column}10", @bold_heading_LR)
         end
 
         # STUDENT DATA
@@ -472,17 +477,10 @@ module Tasks
 
         report[:data_headings].count.times do |index|
           score_column = Axlsx::col_ref(num_non_task_columns + index * num_columns_per_task)
-          progress_column = Axlsx::col_ref(num_non_task_columns + index * num_columns_per_task + 1)
-
           score_range = "#{score_column}#{first_student_row}:#{score_column}#{last_student_row}"
-          progress_range =
-            "#{progress_column}#{first_student_row}:#{progress_column}#{last_student_row}"
 
           average_columns.push(
             ["#{@eq}IFERROR(AVERAGE(#{score_range}),\"\")", style: average_style_L]
-          )
-          average_columns.push(
-            ["#{@eq}IFERROR(AVERAGE(#{progress_range}),\"\")", style: average_style_R]
           )
         end
 
@@ -577,32 +575,21 @@ module Tasks
       def push_score_columns(data, columns, format)
         if data.nil? || data[:actual_and_placeholder_exercise_count] == 0
           columns.push(
-            ["", style: @normal_L],
-            ["", style: @normal_R]
+            ["", style: @normal_LR]
           )
         else
-          steps_count = data[:step_count]
           exercise_steps_count = data[:actual_and_placeholder_exercise_count]
-
           correct_count = data[:correct_exercise_count]
-          completed_count = data[:completed_step_count]
-
-          correct_pct = correct_count * 1.0 / exercise_steps_count
-          completed_pct = completed_count * 1.0 / steps_count
 
           if format == :counts
             columns.push([
-              correct_count, { style: @normal_L }
-            ])
-            columns.push([
-              completed_count, { style: @normal_R }
+              correct_count, { style: @normal_LR }
             ])
           else
             columns.push([
               correct_count * 1.0 / exercise_steps_count,
-              { style: @pct_L }
+              { style: @pct_LR }
             ])
-            columns.push([completed_count * 1.0 / steps_count, style: @pct_R])
           end
         end
       end
