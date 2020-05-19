@@ -22,9 +22,10 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
     loop do
       Tasks::Models::Task.transaction do
         tasks = Tasks::Models::Task
+          .where(tt[:completed_exercise_steps_count].gt(0))
           .where('"steps_count" <= "completed_steps_count"')
-          .preload(taskings: { role: [ { student: :period }, { teacher_student: :period } ] })
           .order(:last_worked_at)
+          .preload(taskings: { role: [ { student: :period }, { teacher_student: :period } ] })
 
         tasks = tasks.where(tt[:last_worked_at].gteq(last_worked_at)) unless last_worked_at.nil?
 
@@ -55,10 +56,11 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
     loop do
       Tasks::Models::Task.transaction do
         tasks = Tasks::Models::Task
+          .where(tt[:completed_exercise_steps_count].gt(0))
           .where('"steps_count" > "completed_steps_count"')
           .where.not(due_at_ntz: nil)
-          .preload(taskings: { role: [ { student: :period }, { teacher_student: :period } ] })
           .order(:due_at_ntz)
+          .preload(taskings: { role: [ { student: :period }, { teacher_student: :period } ] })
 
         tasks = tasks.where(tt[:due_at_ntz].gteq(max_due_at)) unless max_due_at.nil?
 
