@@ -99,12 +99,6 @@ class OpenStax::Exercises::V1::Exercise
     @import_tags ||= import_tag_hashes.map { |hash| hash[:value] }
   end
 
-  def feature_ids(page_uuid)
-    feature_tag_start = 'context-cnxfeature:'
-    feature_tags = cnxfeatures.select { |tag| tag.start_with? feature_tag_start }
-    feature_tags.map{ |tag| tag.sub(feature_tag_start, '') }
-  end
-
   def questions
     @questions ||= content_hash['questions']
   end
