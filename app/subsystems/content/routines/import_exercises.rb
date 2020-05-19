@@ -24,25 +24,6 @@ class Content::Routines::ImportExercises
         # This could happen, for example, if a manifest for a different environment is imported
         next if exercise_page.nil?
 
-        # Assign exercise context if required
-        if wrapper.requires_context?
-          feature_ids = wrapper.feature_ids(exercise_page.uuid)
-          wrapper.context = exercise_page.context_for_feature_ids(feature_ids)
-
-          if wrapper.context.blank?
-            if feature_ids.empty?
-              Rails.logger.warn do
-                "Exercise #{wrapper.uid} requires context but it has no feature ID tags"
-              end
-            else
-              Rails.logger.warn do
-                "Exercise #{wrapper.uid} requires context but its feature ID(s) [ #{
-                  feature_ids.join(', ')} ] could not be found on #{exercise_page.url}"
-              end
-            end
-          end
-        end
-
         wrapper_to_exercise_page_map[wrapper] = exercise_page
       end
 
