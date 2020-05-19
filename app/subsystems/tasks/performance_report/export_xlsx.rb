@@ -123,7 +123,10 @@ module Tasks
 
           @normal_L = s.add_style border: { edges: [:left], color: '000000', style: :thin }
           @normal_LT = s.add_style border: { edges: [:left, :top], color: '000000', style: :thin }
-          @normal_LR = s.add_style border: { edges: [:left, :right], color: '000000', style: :thin }
+          @normal_LR = s.add_style(
+            border: { edges: [:left, :right], color: '000000', style: :thin },
+            alignment: { horizontal: :center, vertical: :center, wrap_text: true }
+          )
           @normal_T = s.add_style border: { edges: [:top], color: '000000', style: :thin }
           @normal_TR = s.add_style border: { edges: [:top, :right], color: '000000', style: :thin }
           @normal_R = s.add_style border: { edges: [:right], color: '000000', style: :thin }
@@ -134,7 +137,8 @@ module Tasks
           )
           @pct_LR = s.add_style(
             border: { edges: [:left, :right], color: '000000', style: :thin },
-            num_fmt: Axlsx::NUM_FMT_PERCENT
+            num_fmt: Axlsx::NUM_FMT_PERCENT,
+            alignment: { horizontal: :center, vertical: :center, wrap_text: true }
           )
           @pct = s.add_style num_fmt: Axlsx::NUM_FMT_PERCENT
           @pct_R = s.add_style(
@@ -182,6 +186,14 @@ module Tasks
             format_code: "0",
             bg_color: 'F2F2F2'
           )
+          @average_num_C = s.add_style(
+            b: true,
+            border: { edges: [:top, :bottom], color: '000000', style: :thin },
+            border_top: { style: :medium },
+            format_code: "0",
+            bg_color: 'F2F2F2',
+            alignment: { horizontal: :center }
+          )
 
           @average_pct_L = s.add_style(
             b: true,
@@ -203,6 +215,14 @@ module Tasks
             border_top: { style: :medium },
             num_fmt: Axlsx::NUM_FMT_PERCENT,
             bg_color: 'F2F2F2'
+          )
+          @average_pct_C = s.add_style(
+            b: true,
+            border: { edges: [:top, :bottom], color: '000000', style: :thin },
+            border_top: { style: :medium },
+            num_fmt: Axlsx::NUM_FMT_PERCENT,
+            bg_color: 'F2F2F2',
+            alignment: { horizontal: :center }
           )
 
           @total_L = s.add_style(
@@ -447,13 +467,14 @@ module Tasks
         data_widths = sheet.column_info.map(&:width)
         data_widths[num_student_info_columns..num_non_task_columns-1] =
           num_average_columns.times.map { 18.5 }
-        data_widths[num_non_task_columns..-1] = data_widths[num_non_task_columns..-1].map { 11 }
+        data_widths[num_non_task_columns..-1] = data_widths[num_non_task_columns..-1].map { 16 }
 
         # OVERALL ROW
 
         average_style_L = format == :counts ? @average_num_L : @average_pct_L
         average_style = format == :counts ? @average_num : @average_pct
         average_style_R = format == :counts ? @average_num_R : @average_pct_R
+        average_style_C = format == :counts ? @average_num_C : @average_pct_C
 
         average_columns = [
           ["Overall", style: @overall_L],
@@ -480,7 +501,7 @@ module Tasks
           score_range = "#{score_column}#{first_student_row}:#{score_column}#{last_student_row}"
 
           average_columns.push(
-            ["#{@eq}IFERROR(AVERAGE(#{score_range}),\"\")", style: average_style_L]
+            ["#{@eq}IFERROR(AVERAGE(#{score_range}),\"\")", style: average_style_C]
           )
         end
 
@@ -542,8 +563,10 @@ module Tasks
         end
 
         # Normalize height
-
         sheet.rows.each { |row| row.height = 15 }
+
+        # Make class name height taller so long titles can wrap
+        sheet.rows[6].height = 30
 
         # Now it is time to add the meta info rows that we skipped at the top of
         # this method. The trickiness here is that in order to insert the rows
