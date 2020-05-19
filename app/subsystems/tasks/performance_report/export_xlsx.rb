@@ -172,6 +172,14 @@ module Tasks
             format_code: "0",
             bg_color: 'F2F2F2'
           )
+          @average_num_LR = s.add_style(
+            b: true,
+            border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
+            border_top: { style: :medium },
+            format_code: "0",
+            bg_color: 'F2F2F2',
+            alignment: { horizontal: :center }
+          )
           @average_num = s.add_style(
             b: true,
             border: { edges: [:top, :bottom], color: '000000', style: :thin },
@@ -186,14 +194,6 @@ module Tasks
             format_code: "0",
             bg_color: 'F2F2F2'
           )
-          @average_num_C = s.add_style(
-            b: true,
-            border: { edges: [:top, :bottom], color: '000000', style: :thin },
-            border_top: { style: :medium },
-            format_code: "0",
-            bg_color: 'F2F2F2',
-            alignment: { horizontal: :center }
-          )
 
           @average_pct_L = s.add_style(
             b: true,
@@ -201,6 +201,14 @@ module Tasks
             border_top: { style: :medium },
             num_fmt: Axlsx::NUM_FMT_PERCENT,
             bg_color: 'F2F2F2'
+          )
+          @average_pct_LR = s.add_style(
+            b: true,
+            border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
+            border_top: { style: :medium },
+            num_fmt: Axlsx::NUM_FMT_PERCENT,
+            bg_color: 'F2F2F2',
+            alignment: { horizontal: :center }
           )
           @average_pct = s.add_style(
             b: true,
@@ -215,14 +223,6 @@ module Tasks
             border_top: { style: :medium },
             num_fmt: Axlsx::NUM_FMT_PERCENT,
             bg_color: 'F2F2F2'
-          )
-          @average_pct_C = s.add_style(
-            b: true,
-            border: { edges: [:top, :bottom], color: '000000', style: :thin },
-            border_top: { style: :medium },
-            num_fmt: Axlsx::NUM_FMT_PERCENT,
-            bg_color: 'F2F2F2',
-            alignment: { horizontal: :center }
           )
 
           @total_L = s.add_style(
@@ -474,7 +474,7 @@ module Tasks
         average_style_L = format == :counts ? @average_num_L : @average_pct_L
         average_style = format == :counts ? @average_num : @average_pct
         average_style_R = format == :counts ? @average_num_R : @average_pct_R
-        average_style_C = format == :counts ? @average_num_C : @average_pct_C
+        average_style_LR = format == :counts ? @average_num_LR : @average_pct_LR
 
         average_columns = [
           ["Overall", style: @overall_L],
@@ -501,7 +501,7 @@ module Tasks
           score_range = "#{score_column}#{first_student_row}:#{score_column}#{last_student_row}"
 
           average_columns.push(
-            ["#{@eq}IFERROR(AVERAGE(#{score_range}),\"\")", style: average_style_C]
+            ["#{@eq}IFERROR(AVERAGE(#{score_range}),\"\")", style: average_style_LR]
           )
         end
 
