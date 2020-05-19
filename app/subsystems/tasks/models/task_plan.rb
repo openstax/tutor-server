@@ -4,7 +4,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
   UPDATEABLE_ATTRIBUTES_AFTER_OPEN = [
-    'title', 'description', 'last_published_at', 'tasks_grading_template_id'
+    'title', 'description', 'last_published_at', 'tasks_grading_template_id', 'ungraded_step_count'
   ]
 
   attr_accessor :is_publish_requested
@@ -128,11 +128,15 @@ class Tasks::Models::TaskPlan < ApplicationRecord
                        owner.try(:ecosystems)&.first
   end
 
+  def update_ungraded_step_count!
+    update_attribute :ungraded_step_count, tasks.sum(:ungraded_step_count)
+  end
+
   protected
 
   def get_ecosystems_from_exercise_ids
     ecosystems = Content::Models::Ecosystem.distinct.joins(:exercises).where(
-      exercises: { id: settings['exercises'].map { |ex| ex['id'] } }
+      exercises: { id: exercise_ids }
     ).to_a
   end
 
@@ -232,10 +236,13 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     throw :abort
   end
 
+  def exercise_ids
+    settings['exercises']&.map { |ex| ex['id'] } || []
+  end
+
   def correct_num_points_for_homework
     return if type != 'homework' || settings.blank? || settings['exercises'].blank?
 
-    exercise_ids = settings['exercises'].map { |ex| ex['id'] }
     num_questions_by_exercise_id = {}
     Content::Models::Exercise.select(:id, :number_of_questions)
                              .where(id: exercise_ids)
@@ -261,4 +268,5 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     self.title&.strip!
     self.description&.strip!
   end
+
 end

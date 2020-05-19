@@ -4,6 +4,8 @@ module Tasks
 
     lev_routine express_output: :performance_report
 
+    uses_routine GetMostCommonTask
+
     protected
 
     def exec(course:, role: nil, is_teacher: nil)
@@ -214,11 +216,13 @@ module Tasks
         task_plan = tasking_plan.task_plan
         task_plan_id = task_plan.id
         tasks = task_plan_id_to_task_map[task_plan_id]
+        most_common_task = run(:get_most_common_task, tasks: tasks).outputs.task
 
         OpenStruct.new(
           plan_id: task_plan_id,
           title: task_plan.title,
           type: task_plan.type,
+          available_points: most_common_task&.available_points,
           due_at: DateTimeUtilities.apply_tz(tasking_plan.due_at_ntz, tz),
           average_score: average_score(
             tasks: tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
@@ -309,14 +313,16 @@ module Tasks
             score = (tt.reading? || tt.homework?) && show_score ? tt.score || 0.0 : nil
 
             data.merge!(
-              step_count:                             tt.steps_count,
-              completed_step_count:                   tt.completed_steps_count,
-              actual_and_placeholder_exercise_count:  tt.actual_and_placeholder_exercise_count,
-              completed_exercise_count:               tt.completed_exercise_count,
-              correct_exercise_count:                 correct_exercise_count,
-              recovered_exercise_count:               tt.recovered_exercise_steps_count,
-              score:                                  score,
-              progress:                               tt.completion
+              step_count:                            tt.steps_count,
+              completed_step_count:                  tt.completed_steps_count,
+              actual_and_placeholder_exercise_count: tt.actual_and_placeholder_exercise_count,
+              completed_exercise_count:              tt.completed_exercise_count,
+              correct_exercise_count:                correct_exercise_count,
+              recovered_exercise_count:              tt.recovered_exercise_steps_count,
+              progress:                              tt.completion,
+              available_points:                      tt.available_points,
+              points:                                tt.points,
+              score:                                 score,
             )
           end
         )

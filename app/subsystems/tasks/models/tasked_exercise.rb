@@ -12,8 +12,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   validates :free_response, length: { maximum: 10000 }
   validates :grader_points, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
 
-  validate :free_response_required, on: :update
-  validate :valid_answer, :no_feedback, :not_graded
+  validate :free_response_required_before_answer_id, on: :update
+  validate :valid_answer, :no_changes_after_feedback, :no_changes_after_graded
+  after_update :notify_task_plan_ungraded_status
 
   scope :correct, -> do
     where('tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id')
@@ -21,6 +22,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   scope :incorrect, -> do
     where('tasks_tasked_exercises.answer_id != tasks_tasked_exercises.correct_answer_id')
   end
+  scope :manually_graded, -> { where('CARDINALITY("answer_ids") = 0') }
 
   # Fields shared by all parts of a multipart exercise
   delegate :uid, :tags, :los, :aplos, to: :exercise
@@ -71,10 +73,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def before_completion
-      if has_answer_missing?
-          errors.add(:answer_id, 'is required')
-          throw :abort
-      end
+    return unless has_answer_missing?
+
+    errors.add(:answer_id, 'is required')
+    throw :abort
   end
 
   def make_correct!
@@ -127,8 +129,13 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     content_preview_from_json || "Exercise step ##{id}"
   end
 
-  def can_be_auto_graded?
+  def has_answers?
     !answer_ids.empty?
+  end
+  alias_method :can_be_auto_graded?, :has_answers?
+
+  def has_answer_missing?
+    answer_id.blank? && has_answers?
   end
 
   def was_manually_graded?
@@ -149,24 +156,12 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     was_manually_graded? && !grade_published?
   end
 
-  def has_answers?
-    question_answers.flatten.any?
-  end
-
-  def has_answer_missing?
-    answer_id.blank? && answer_ids.any?
-  end
-
   protected
 
-  def free_response_required
-    errors.add(:free_response, 'is required') if allows_free_response? && free_response.blank?
-  end
+  def free_response_required_before_answer_id
+    return if answer_id.blank? || !free_response.blank? || !allows_free_response?
 
-  def answer_id_required
-    return unless answer_id.blank?
-
-    errors.add(:answer_id, 'is required')
+    errors.add(:free_response, 'is required')
     throw :abort
   end
 
@@ -178,7 +173,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     throw :abort
   end
 
-  def no_feedback
+  def no_changes_after_feedback
     # Cannot change the answer after feedback is available
     # Feedback is available immediately for iReadings, or at the due date for HW,
     # but waits until the step is marked as completed
@@ -193,7 +188,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     throw(:abort) if errors.any?
   end
 
-  def not_graded
+  def no_changes_after_graded
     # Cannot change the answer after the due date has passed and the exercise has been graded
     return unless task_step&.task&.past_due? && was_manually_graded?
 
@@ -202,5 +197,12 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     end
 
     throw(:abort) if errors.any?
+  end
+
+  def notify_task_plan_ungraded_status
+    # was graded or free response completed on a FR only exercise
+    if previous_changes['last_graded_at'] || (!has_answers? && previous_changes['free_response'])
+      task_step.task.task_plan&.update_ungraded_step_count!
+    end
   end
 end

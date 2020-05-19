@@ -36,11 +36,11 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
     expect(result.errors).to be_empty
   end
 
-  it 'returns an error if the free_response or answer_id are missing for an exercise' do
+  it 'returns an error if the answer_id is missing for an exercise' do
     result = MarkTaskStepCompleted.call(task_step: tasked_exercise.task_step)
     expect(result.errors).not_to be_empty
     expect(result.errors).to have_offending_input :tasked
-    expect(result.errors.map(&:code)).to eq [:'Free response is required', :'Answer is required']
+    expect(result.errors.map(&:code)).to eq [ :'Answer is required' ]
 
     expect(tasked_exercise.reload.task_step).not_to be_completed
   end
