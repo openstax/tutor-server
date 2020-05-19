@@ -48,6 +48,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
   it 'does not accept a blank free response if the free-response format is present' do
     tasked_exercise.free_response = ' '
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     expect(tasked_exercise).not_to be_valid
   end
 
