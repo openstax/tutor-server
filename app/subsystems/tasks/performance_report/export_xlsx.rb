@@ -534,7 +534,10 @@ module Tasks
           @helper.add_row(
             sheet,
             [[
-              "* Course average is calculated by how you set average weights in OpenStax Tutor",
+              "* Course average = "\
+              "#{@course.homework_weight * 100}% Homework average + "\
+              "#{@course.reading_weight * 100}% Reading average. "\
+              "You can set the course average weight in OpenStax Tutor.",
               style: @italic
             ]]
           )
