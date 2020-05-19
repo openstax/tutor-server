@@ -33,6 +33,13 @@ class Content::Models::Exercise < IndestructibleRecord
         ).arel.exists
     )
   end
+  scope :requires_context, -> do
+    where(
+      Content::Models::Tag.requires_context.joins(:exercise_tags).where(
+        '"content_exercise_tags"."content_exercise_id" = "content_exercises"."id"'
+      ).arel.exists
+    )
+  end
 
   def parser
     @parser ||= OpenStax::Exercises::V1::Exercise.new content: content

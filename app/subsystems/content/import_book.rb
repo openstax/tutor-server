@@ -162,11 +162,8 @@ class Content::ImportBook
 
     # Transform links to point to the Tutor book etc
     ordered_pages = run(
-      :transform_and_cache_content, book: book, pages: ordered_pages, save: false
+      :transform_and_cache_content, book: book, pages: ordered_pages
     ).outputs.pages
-
-    # Pages are large enough that saving them individually seems faster than importing
-    ordered_pages.each(&:save!)
 
     outputs.book = book
     outputs.pages = ordered_pages
