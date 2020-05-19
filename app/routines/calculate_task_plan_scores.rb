@@ -1,6 +1,8 @@
 class CalculateTaskPlanScores
   lev_routine express_output: :scores
 
+  uses_routine GetMostCommonTask
+
   protected
 
   def exec(task_plan:)
@@ -38,14 +40,9 @@ class CalculateTaskPlanScores
 
     outputs.scores = period_tasking_plans.map do |tasking_plan|
       tasks = tasks_by_period_id[tasking_plan.target_id]
-      next if tasks.nil?
+      next if tasks.blank?
 
-      no_placeholder_tasks = tasks.select { |task| task.placeholder_steps_count == 0 }
-      representative_tasks = no_placeholder_tasks.empty? ? tasks : no_placeholder_tasks
-      most_common_tasks = representative_tasks.group_by(
-        &:actual_and_placeholder_exercise_count
-      ).max_by { |_, tasks| tasks.size }.second
-      most_common_task = most_common_tasks.first
+      most_common_task = run(:get_most_common_task, tasks: tasks).outputs.task
 
       available_points_per_question_index = most_common_task.available_points_per_question_index
       exercise_steps = most_common_task.exercise_and_placeholder_steps
@@ -62,7 +59,7 @@ class CalculateTaskPlanScores
         expected_num_questions = task_plan.settings.fetch('exercises').map do |exercise|
           exercise['points'].size
         end.sum + task_plan.settings.fetch('exercises_count_dynamic', 3)
-        actual_num_questions = most_common_tasks.first.actual_and_placeholder_exercise_count
+        actual_num_questions = most_common_task.actual_and_placeholder_exercise_count
         num_questions_dropped = expected_num_questions - actual_num_questions
       else
         num_questions_dropped = 0

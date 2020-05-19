@@ -4,6 +4,8 @@ module Tasks
 
     lev_routine express_output: :performance_report
 
+    uses_routine GetMostCommonTask
+
     protected
 
     def exec(course:, role: nil, is_teacher: nil)
@@ -214,12 +216,13 @@ module Tasks
         task_plan = tasking_plan.task_plan
         task_plan_id = task_plan.id
         tasks = task_plan_id_to_task_map[task_plan_id]
+        most_common_task = run(:get_most_common_task, tasks: tasks).outputs.task
 
         OpenStruct.new(
           plan_id: task_plan_id,
           title: task_plan.title,
           type: task_plan.type,
-          available_points: task_plan.homework? ? task_plan.settings['exercises'].sum{ |ex| ex['points'].sum } : 0,
+          available_points: most_common_task&.available_points,
           due_at: DateTimeUtilities.apply_tz(tasking_plan.due_at_ntz, tz),
           average_score: average_score(
             tasks: tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
