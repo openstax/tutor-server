@@ -15,16 +15,52 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
   def up
     current_time = Time.current
 
+    tt = Tasks::Models::Task.arel_table
+
+    last_worked_at = STORE.read 'last_worked_at'
+
+    loop do
+      Tasks::Models::Task.transaction do
+        tasks = Tasks::Models::Task
+          .where('"steps_count" <= "completed_steps_count"')
+          .preload(taskings: { role: [ { student: :period }, { teacher_student: :period } ] })
+          .order(:last_worked_at)
+
+        tasks = tasks.where(tt[:last_worked_at].gteq(last_worked_at)) unless last_worked_at.nil?
+
+        tasks = tasks.first(LIMIT)
+
+        break if tasks.empty?
+
+        tasks.each do |task|
+          role = task.taskings.first.role
+          period = role.course_member.period
+
+          perform_rating_jobs_later(
+            task: task,
+            role: role,
+            period: period,
+            current_time: current_time,
+            queue: 'migration'
+          )
+        end
+
+        last_worked_at = tasks.last.last_worked_at
+        STORE.write 'last_worked_at', last_worked_at
+      end
+    end
+
     max_due_at = STORE.read 'max_due_at'
 
     loop do
       Tasks::Models::Task.transaction do
-        tasks = Tasks::Models::Task.preload(
-          taskings: { role: [ { student: :period }, { teacher_student: :period } ] }
-        ).order(:due_at_ntz)
+        tasks = Tasks::Models::Task
+          .where('"steps_count" > "completed_steps_count"')
+          .where.not(due_at_ntz: nil)
+          .preload(taskings: { role: [ { student: :period }, { teacher_student: :period } ] })
+          .order(:due_at_ntz)
 
-        tasks = tasks.where(Tasks::Models::Task.arel_table[:due_at_ntz].gt(max_due_at)) \
-          unless max_due_at.nil?
+        tasks = tasks.where(tt[:due_at_ntz].gteq(max_due_at)) unless max_due_at.nil?
 
         tasks = tasks.first(LIMIT)
 
@@ -48,6 +84,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
       end
     end
 
+    STORE.delete 'max_worked_at'
     STORE.delete 'max_due_at'
   end
 
