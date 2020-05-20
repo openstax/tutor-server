@@ -20,7 +20,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
     last_worked_at = STORE.read 'last_worked_at'
 
     loop do
-      Tasks::Models::Task.transaction do
+      tasks = Tasks::Models::Task.transaction do
         tasks = Tasks::Models::Task
           .where(tt[:completed_exercise_steps_count].gt(0))
           .where('"steps_count" <= "completed_steps_count"')
@@ -31,7 +31,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
 
         tasks = tasks.first(LIMIT)
 
-        break if tasks.empty?
+        next tasks if tasks.empty?
 
         tasks.each do |task|
           role = task.taskings.first.role
@@ -48,13 +48,17 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
 
         last_worked_at = tasks.last.last_worked_at
         STORE.write 'last_worked_at', last_worked_at
+
+        tasks
       end
+
+      break if tasks.empty?
     end
 
     max_due_at = STORE.read 'max_due_at'
 
     loop do
-      Tasks::Models::Task.transaction do
+      tasks = Tasks::Models::Task.transaction do
         tasks = Tasks::Models::Task
           .where(tt[:completed_exercise_steps_count].gt(0))
           .where('"steps_count" > "completed_steps_count"')
@@ -66,7 +70,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
 
         tasks = tasks.first(LIMIT)
 
-        break if tasks.empty?
+        next tasks if tasks.empty?
 
         tasks.each do |task|
           role = task.taskings.first.role
@@ -83,10 +87,14 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
 
         max_due_at = tasks.last.due_at_ntz
         STORE.write 'max_due_at', max_due_at
+
+        tasks
       end
+
+      break if tasks.empty?
     end
 
-    STORE.delete 'max_worked_at'
+    STORE.delete 'last_worked_at'
     STORE.delete 'max_due_at'
   end
 

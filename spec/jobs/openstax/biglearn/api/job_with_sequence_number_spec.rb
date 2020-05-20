@@ -68,14 +68,7 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
         before { allow(Delayed::Worker).to receive(:delay_jobs).and_return(true) }
 
         context '#perform_later' do
-          it 'uses ActiveJob::AfterCommitRunner to lock and work its own job inline' do
-            runner = ActiveJob::AfterCommitRunner.new(job_with_sequence_number)
-
-            expect(ActiveJob::AfterCommitRunner).to receive(:new) do |job|
-              expect(job).to be_a described_class
-            end.and_return(runner)
-            expect(runner).to receive(:run_after_commit)
-
+          it 'works' do
             described_class.perform_later(perform_later_args)
           end
         end
@@ -140,14 +133,7 @@ RSpec.describe OpenStax::Biglearn::Api::JobWithSequenceNumber, type: :job do
         before { allow(Delayed::Worker).to receive(:delay_jobs).and_return(true) }
 
         context '#perform_later' do
-          it 'uses ActiveJob::AfterCommitRunner to lock and work its own job inline' do
-            runner = ActiveJob::AfterCommitRunner.new(job_with_sequence_number)
-
-            expect(ActiveJob::AfterCommitRunner).to receive(:new) do |job|
-              expect(job).to be_a described_class
-            end.and_return(runner)
-            expect(runner).to receive(:run_after_commit)
-
+          it 'works' do
             described_class.perform_later(perform_later_args)
           end
         end
