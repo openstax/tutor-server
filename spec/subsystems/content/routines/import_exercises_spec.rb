@@ -119,8 +119,6 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
         Content::Routines::ImportPage[cnx_page: cnx_page, book: book, book_indices: [3, 1]]
       end
-
-      Content::Routines::TransformAndCachePageContent.call book: book
     end
 
     before do
@@ -129,23 +127,14 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       end
     end
 
-    it 'assigns context for exercises that require context' do
+    it 'does not assign context for exercises that require context' do
       tags = ['k12phys-ch03-s01-lo01', 'k12phys-ch03-s01-lo02']
       expect do
-        described_class.call ecosystem: @ecosystem, page: @page, query_hash: {tag: tags}
+        described_class.call ecosystem: @ecosystem, page: @page, query_hash: { tag: tags }
       end.to change { Content::Models::Exercise.count }.by(4)
 
       imported_exercises = @ecosystem.exercises.order(:number).to_a
-      imported_exercises.each_with_index do |exercise, index|
-        expected_context_node_id = expected_context_node_ids[index]
-
-        if expected_context_node_id.nil?
-          expect(exercise.context).to be_nil
-        else
-          context_node = Nokogiri::HTML.fragment(exercise.context).children.first
-          expect(context_node.attr('id')).to eq expected_context_node_id
-        end
-      end
+      imported_exercises.each { |exercise| expect(exercise.context).to be_nil }
     end
 
     it 'skips import of exercises that don\'t map to the available pages' do
