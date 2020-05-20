@@ -168,11 +168,17 @@ module Tasks
           @average_num_L = s.add_style(
             b: true,
             border: { edges: [:left, :top, :bottom], color: '000000', style: :thin },
-            border_top: { style: :medium },
             format_code: "0",
             bg_color: 'F2F2F2'
           )
           @average_num_LR = s.add_style(
+            b: true,
+            border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
+            format_code: "0",
+            bg_color: 'F2F2F2',
+            alignment: { horizontal: :center }
+          )
+          @average_num_LRT = s.add_style(
             b: true,
             border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
             border_top: { style: :medium },
@@ -183,6 +189,12 @@ module Tasks
           @average_num = s.add_style(
             b: true,
             border: { edges: [:top, :bottom], color: '000000', style: :thin },
+            format_code: "0",
+            bg_color: 'F2F2F2'
+          )
+          @average_num_T = s.add_style(
+            b: true,
+            border: { edges: [:top, :bottom], color: '000000', style: :thin },
             border_top: { style: :medium },
             format_code: "0",
             bg_color: 'F2F2F2'
@@ -190,7 +202,6 @@ module Tasks
           @average_num_R = s.add_style(
             b: true,
             border: { edges: [:top, :right, :bottom], color: '000000', style: :thin },
-            border_top: { style: :medium },
             format_code: "0",
             bg_color: 'F2F2F2'
           )
@@ -198,11 +209,17 @@ module Tasks
           @average_pct_L = s.add_style(
             b: true,
             border: { edges: [:left, :top, :bottom], color: '000000', style: :thin },
-            border_top: { style: :medium },
             num_fmt: Axlsx::NUM_FMT_PERCENT,
             bg_color: 'F2F2F2'
           )
           @average_pct_LR = s.add_style(
+            b: true,
+            border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
+            num_fmt: Axlsx::NUM_FMT_PERCENT,
+            bg_color: 'F2F2F2',
+            alignment: { horizontal: :center }
+          )
+          @average_pct_LRT = s.add_style(
             b: true,
             border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
             border_top: { style: :medium },
@@ -213,6 +230,12 @@ module Tasks
           @average_pct = s.add_style(
             b: true,
             border: { edges: [:top, :bottom], color: '000000', style: :thin },
+            num_fmt: Axlsx::NUM_FMT_PERCENT,
+            bg_color: 'F2F2F2'
+          )
+          @average_pct_T = s.add_style(
+            b: true,
+            border: { edges: [:top, :bottom], color: '000000', style: :thin },
             border_top: { style: :medium },
             num_fmt: Axlsx::NUM_FMT_PERCENT,
             bg_color: 'F2F2F2'
@@ -220,7 +243,6 @@ module Tasks
           @average_pct_R = s.add_style(
             b: true,
             border: { edges: [:top, :right, :bottom], color: '000000', style: :thin },
-            border_top: { style: :medium },
             num_fmt: Axlsx::NUM_FMT_PERCENT,
             bg_color: 'F2F2F2'
           )
@@ -232,6 +254,14 @@ module Tasks
             format_code: "0",
             bg_color: 'F2F2F2'
           )
+          @total_LR = s.add_style(
+            b: true,
+            border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
+            alignment: { horizontal: :center },
+            border_right: { style: :thin },
+            format_code: "0",
+            bg_color: 'F2F2F2'
+          )
           @total = s.add_style(
             b: true,
             border: { edges: [:top, :bottom], color: '000000', style: :thin },
@@ -239,6 +269,35 @@ module Tasks
             bg_color: 'F2F2F2'
           )
           @total_R = s.add_style(
+            b: true,
+            border: { edges: [:top, :right, :bottom], color: '000000', style: :thin },
+            border_right: { style: :thin },
+            format_code: "0",
+            bg_color: 'F2F2F2'
+          )
+
+          @minmax_L = s.add_style(
+            b: true,
+            border: { edges: [:left, :top, :bottom], color: '000000', style: :thin },
+            border_right: { style: :thin },
+            format_code: "0",
+            bg_color: 'F2F2F2'
+          )
+          @minmax_LR = s.add_style(
+            b: true,
+            border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
+            alignment: { horizontal: :center },
+            border_right: { style: :thin },
+            format_code: "0",
+            bg_color: 'F2F2F2'
+          )
+          @minmax = s.add_style(
+            b: true,
+            border: { edges: [:top, :bottom], color: '000000', style: :thin },
+            format_code: "0",
+            bg_color: 'F2F2F2'
+          )
+          @minmax_R = s.add_style(
             b: true,
             border: { edges: [:top, :right, :bottom], color: '000000', style: :thin },
             border_right: { style: :thin },
@@ -421,7 +480,7 @@ module Tasks
               Axlsx::cell_r(num_student_info_columns + 1, row_index - 1)
             }" if @course.homework_weight > 0
             sum_formula << "#{@course.reading_weight}*#{
-              Axlsx::cell_r(num_student_info_columns + 3, row_index - 1)
+              Axlsx::cell_r(num_student_info_columns + 2, row_index - 1)
             }" if @course.reading_weight > 0
             student_columns += [
               [
@@ -473,26 +532,28 @@ module Tasks
 
         average_style_L = format == :counts ? @average_num_L : @average_pct_L
         average_style = format == :counts ? @average_num : @average_pct
+        average_style_T = format == :counts ? @average_num_T : @average_pct_T
         average_style_R = format == :counts ? @average_num_R : @average_pct_R
         average_style_LR = format == :counts ? @average_num_LR : @average_pct_LR
+        average_style_LRT = format == :counts ? @average_num_LRT : @average_pct_LRT
 
         average_columns = [
-          ["Overall", style: @overall_L],
+          ["Class Average", style: @overall_L],
           ["", style: @overall],
           ["", style: @overall_R]
         ]
         average_columns += [
           [
             "#{@eq}IFERROR(AVERAGEIF(D#{first_student_row}:D#{last_student_row},\"<>#N/A\"),0)",
-            style: average_style_L
+            style: average_style_T
           ],
           [
             "#{@eq}IFERROR(AVERAGEIF(E#{first_student_row}:E#{last_student_row},\"<>#N/A\"),0)",
-            style: average_style
+            style: average_style_T
           ],
           [
             "#{@eq}IFERROR(AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\"),0)",
-            style: average_style
+            style: average_style_T
           ]
         ] if format != :counts
 
@@ -501,11 +562,83 @@ module Tasks
           score_range = "#{score_column}#{first_student_row}:#{score_column}#{last_student_row}"
 
           average_columns.push(
-            ["#{@eq}IFERROR(AVERAGE(#{score_range}),\"\")", style: average_style_LR]
+            ["#{@eq}IFERROR(AVERAGE(#{score_range}),\"\")", style: average_style_LRT]
           )
         end
 
         @helper.add_row(sheet, average_columns)
+
+        # Minimum Score
+
+        min_columns = [
+          ["Minimum Score", style: @minmax_L],
+          ["", style: @minmax],
+          ["", style: @minmax_R]
+        ]
+
+        unless format == :counts
+          min_columns += [
+            [
+              "#{@eq}IFERROR(MIN(D#{first_student_row}:D#{last_student_row}),0)",
+              style: average_style_L
+            ],
+            [
+              "#{@eq}IFERROR(MIN(E#{first_student_row}:E#{last_student_row}),0)",
+              style: average_style
+            ],
+            [
+              "#{@eq}IFERROR(MIN(F#{first_student_row}:F#{last_student_row}),0)",
+              style: average_style
+            ]
+          ]
+        end
+
+        report[:data_headings].count.times do |index|
+          min_column = Axlsx::col_ref(num_non_task_columns + index * num_columns_per_task)
+          min_range = "#{min_column}#{first_student_row}:#{min_column}#{last_student_row}"
+
+          min_columns.push(
+            ["#{@eq}IFERROR(MIN(#{min_range}),\"\")", style: average_style_LR]
+          )
+        end
+
+        @helper.add_row(sheet, min_columns)
+
+        # Maximum Score
+
+        max_columns = [
+          ["Maximum Score", style: @minmax_L],
+          ["", style: @minmax],
+          ["", style: @minmax_R]
+        ]
+
+        unless format == :counts
+          max_columns += [
+            [
+              "#{@eq}IFERROR(MAX(D#{first_student_row}:D#{last_student_row}),0)",
+              style: average_style_L
+            ],
+            [
+              "#{@eq}IFERROR(MAX(E#{first_student_row}:E#{last_student_row}),0)",
+              style: average_style
+            ],
+            [
+              "#{@eq}IFERROR(MAX(F#{first_student_row}:F#{last_student_row}),0)",
+              style: average_style
+            ]
+          ]
+        end
+
+        report[:data_headings].count.times do |index|
+          max_column = Axlsx::col_ref(num_non_task_columns + index * num_columns_per_task)
+          max_range = "#{max_column}#{first_student_row}:#{max_column}#{last_student_row}"
+
+          max_columns.push(
+            ["#{@eq}IFERROR(MAX(#{max_range}),\"\")", style: average_style_LR]
+          )
+        end
+
+        @helper.add_row(sheet, max_columns)
 
         # Total Possible row
 
@@ -518,8 +651,7 @@ module Tasks
 
           task_total_counts.each do |total_count|
             total_possible_columns.push(
-              [total_count.try!(:[], :exercises), style: @total_L],
-              [total_count.try!(:[], :steps), style: @total_R]
+              [total_count.try!(:[], :exercises), style: @total_LR],
             )
           end
 
