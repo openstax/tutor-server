@@ -658,6 +658,12 @@ module Tasks
           @helper.add_row(sheet, total_possible_columns)
         end
 
+        # Merge average row labels so they don't get cut off
+        1.upto(4) do |i|
+          break if i == 4 && format != :counts
+          sheet.merge_cells("A#{last_student_row + i}:C#{last_student_row + i}")
+        end
+
         # Dropped students
 
         5.times { sheet.add_row }
@@ -741,7 +747,6 @@ module Tasks
               correct_count, { style: @normal_LR }
             ])
           else
-            # TODO: Are 0 values accidentally being sent in place of nil?
             columns.push([
               correct_count * 1.0 / exercise_steps_count,
               { style: @pct_LR }
