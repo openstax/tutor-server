@@ -741,6 +741,7 @@ module Tasks
               correct_count, { style: @normal_LR }
             ])
           else
+            # TODO: Are 0 values accidentally being sent in place of nil?
             columns.push([
               correct_count * 1.0 / exercise_steps_count,
               { style: @pct_LR }
