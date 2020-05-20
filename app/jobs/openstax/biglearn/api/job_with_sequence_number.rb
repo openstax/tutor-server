@@ -4,16 +4,6 @@
 class OpenStax::Biglearn::Api::JobWithSequenceNumber < OpenStax::Biglearn::Api::Job
   queue_as :biglearn
 
-  def self.perform_later(*_)
-    super.tap do |job|
-      # Attempt to get the sequence_number as soon as the current transaction (if any) ends
-      # This should guarantee that the intended order of events is preserved unless the server dies
-      # in-between committing the transaction and running the after_commit callbacks
-      # (in that case we'll still get the events eventually but they may be in the wrong order)
-      ActiveJob::AfterCommitRunner.new(job).run_after_commit
-    end
-  end
-
   def perform(
     method:, requests:, create:, sequence_number_model_key:, sequence_number_model_class:, queue:,
     response_status_key: nil, accepted_response_status: [], client: nil
