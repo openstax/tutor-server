@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
-
   let(:user)               { FactoryBot.create :user_profile }
   let(:period)             { FactoryBot.create :course_membership_period }
   let(:course)             { period.course }
@@ -35,6 +34,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
           product_uuid: secrets.openstax[:payments][:product_uuid]
         },
         feature_flags: {
+          force_browser_reload: false,
           is_payments_enabled: Settings::Payments.payments_enabled,
           teacher_student_enabled: Settings::Db[:teacher_student_enabled],
           pulse_insights: Settings::Db[:pulse_insights]
@@ -44,5 +44,4 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
       }.deep_stringify_keys
     )
   end
-
 end
