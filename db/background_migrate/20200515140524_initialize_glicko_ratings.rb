@@ -10,7 +10,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
     namespace: 'migration',
     expires_in: 1.year
   )
-  LIMIT = 1000
+  LIMIT = 1100
 
   def up
     current_time = Time.current
