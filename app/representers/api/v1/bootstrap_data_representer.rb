@@ -66,14 +66,7 @@ module Api::V1
       }
     end
 
-    property :feature_flags, writeable: false, readable: true, getter: ->(*) do
-      {
-        is_payments_enabled: Settings::Payments.payments_enabled,
-        teacher_student_enabled: Settings::Db[:teacher_student_enabled],
-        force_browser_reload: Settings::Db[:force_browser_reload],
-        pulse_insights: Settings::Db[:pulse_insights]
-      }
-    end
+    property :feature_flags, writeable: false, readable: true, getter: ->(*) { Settings.feature_flags }
 
     property :flash,
              readable: true,
