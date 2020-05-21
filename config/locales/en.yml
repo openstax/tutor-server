@@ -107,3 +107,5 @@ en:
         name: 'Can teachers become a student in their course?'
       pulse_insights:
         name: 'Should the PulseInsights analytics be activated'
+      force_browser_reload:
+        name: 'Force browser reload after deployment'
