@@ -18,6 +18,9 @@ class Ratings::UpdateRoleBookParts
     period = course_member.try(:period)
     return if period.nil? || period.archived?
 
+    course = period.course
+    update_exercises = !course.is_preview && !course.is_test && !role.profile.account.is_test
+
     exercise_steps = task.exercise_steps
     pages_by_id = Content::Models::Page.select(:id, :uuid, :parent_book_part_uuid)
                                        .where(id: exercise_steps.map(&:content_page_id).uniq)
@@ -47,6 +50,7 @@ class Ratings::UpdateRoleBookParts
         book_part_uuid: page_uuid,
         tasked_exercises: tasked_exercises,
         is_page: true,
+        update_exercises: update_exercises,
         current_time: current_time
       )
 
@@ -61,6 +65,7 @@ class Ratings::UpdateRoleBookParts
         book_part_uuid: parent_book_part_uuid,
         tasked_exercises: tasked_exercises,
         is_page: false,
+        update_exercises: update_exercises,
         current_time: current_time
       )
 
@@ -73,6 +78,8 @@ class Ratings::UpdateRoleBookParts
       columns: [ :glicko_mu, :glicko_phi, :glicko_sigma, :tasked_exercise_ids, :clue ]
     }
 
+    return unless update_exercises
+
     Ratings::ExerciseGroupBookPart.import exercise_group_book_parts, validate: false,
                                                                      on_duplicate_key_update: {
       conflict_target: [ :exercise_group_uuid, :book_part_uuid ],
@@ -80,7 +87,14 @@ class Ratings::UpdateRoleBookParts
     }
   end
 
-  def update_role_book_part(role:, book_part_uuid:, tasked_exercises:, is_page:, current_time:)
+  def update_role_book_part(
+    role:,
+    book_part_uuid:,
+    tasked_exercises:,
+    is_page:,
+    update_exercises:,
+    current_time:
+  )
     role_book_part = Ratings::RoleBookPart.find_or_initialize_by(
       role: role, book_part_uuid: book_part_uuid
     ) { |role_book_part| role_book_part.is_page = is_page }
@@ -127,7 +141,7 @@ class Ratings::UpdateRoleBookParts
       :update_glicko,
       record: role_book_part,
       opponents: task_exercise_group_book_parts,
-      update_opponents: true,
+      update_opponents: update_exercises,
       current_time: current_time
     )
 
@@ -136,7 +150,7 @@ class Ratings::UpdateRoleBookParts
       exercise_group_book_parts_by_group_uuid[
         exercise_group_uuid
       ].tasked_exercise_ids += tasked_exercises.map(&:id)
-    end
+    end if update_exercises
 
     role_book_part.clue = if role_book_part.num_responses < MIN_NUM_RESPONSES
       {
