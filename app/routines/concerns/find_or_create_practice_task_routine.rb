@@ -55,6 +55,7 @@ module FindOrCreatePracticeTaskRoutine
         task_type: @task_type,
         time_zone: time_zone,
         title: 'Practice',
+        course: @course,
         ecosystem: @ecosystem
       )
 
