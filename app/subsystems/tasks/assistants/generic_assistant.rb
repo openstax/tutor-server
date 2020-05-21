@@ -175,6 +175,7 @@ class Tasks::Assistants::GenericAssistant
       opens_at: individualized_tasking_plan.opens_at,
       due_at: individualized_tasking_plan.due_at,
       feedback_at: task_plan.is_feedback_immediate ? nil : individualized_tasking_plan.due_at,
+      course: task_plan.owner,
       ecosystem: task_plan.ecosystem
     ).tap do |task|
       task.taskings << Tasks::Models::Tasking.new(task: task, role: role,

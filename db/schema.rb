@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_27_121628) do
+ActiveRecord::Schema.define(version: 2020_05_21_193851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -981,7 +981,9 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
     t.uuid "spe_ecosystem_matrix_uuid"
     t.integer "core_page_ids", default: [], null: false, array: true
     t.datetime "student_history_at"
+    t.bigint "course_profile_course_id", null: false
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
+    t.index ["course_profile_course_id"], name: "index_tasks_tasks_on_course_profile_course_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
     t.index ["hidden_at"], name: "index_tasks_tasks_on_hidden_at"
     t.index ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at"
@@ -1130,6 +1132,7 @@ ActiveRecord::Schema.define(version: 2020_04_27_121628) do
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "content_ecosystems", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_tasks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "user_administrators", "user_profiles", on_update: :cascade, on_delete: :cascade

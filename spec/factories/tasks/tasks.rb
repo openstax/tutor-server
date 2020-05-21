@@ -15,12 +15,16 @@ FactoryBot.define do
 
       period = tasked_to.first&.course_member&.period
 
-      task.ecosystem ||= period&.course&.ecosystem || FactoryBot.build(:content_ecosystem)
+      task.course ||= period&.course || FactoryBot.build(:course_profile_course)
+      task.ecosystem ||= task.course.ecosystem
+      AddEcosystemToCourse.call(ecosystem: task.ecosystem, course: task.course) \
+        unless task.ecosystem.nil? || task.course.ecosystem == task.ecosystem
 
       task.task_plan ||= build(
         :tasks_task_plan,
+        owner: task.course,
         ecosystem: task.ecosystem,
-        target: tasked_to.first&.course_member.try(:period),
+        target: period,
         published_at: evaluator.current_time
       )
       task.title ||= task.task_plan.title
