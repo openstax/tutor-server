@@ -34,7 +34,6 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
           product_uuid: secrets.openstax[:payments][:product_uuid]
         },
         feature_flags: {
-          force_browser_reload: false,
           is_payments_enabled: Settings::Payments.payments_enabled,
           teacher_student_enabled: Settings::Db[:teacher_student_enabled],
           pulse_insights: Settings::Db[:pulse_insights],
