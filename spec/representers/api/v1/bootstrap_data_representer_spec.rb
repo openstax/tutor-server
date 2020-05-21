@@ -37,7 +37,8 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
         feature_flags: {
           is_payments_enabled: Settings::Payments.payments_enabled,
           teacher_student_enabled: Settings::Db[:teacher_student_enabled],
-          pulse_insights: Settings::Db[:pulse_insights]
+          pulse_insights: Settings::Db[:pulse_insights],
+          force_browser_reload: Settings::Db[:force_browser_reload]
         },
         ui_settings: {},
         flash: { alert: 'Nothing!' }
