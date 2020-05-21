@@ -1,9 +1,5 @@
 # NOTE: We currently do not support CLUes for Units because we only search for pages 1 level down
 class Ratings::UpdatePeriodBookParts
-  INITIAL_MU = 0.0
-  INITIAL_PHI = 2.015
-  INITIAL_SIGMA = 0.06
-
   MIN_NUM_RESPONSES = 3
 
   lev_routine
@@ -73,13 +69,7 @@ class Ratings::UpdatePeriodBookParts
   def update_period_book_part(period:, book_part_uuid:, tasked_exercises:, is_page:, current_time:)
     period_book_part = Ratings::PeriodBookPart.find_or_initialize_by(
       period: period, book_part_uuid: book_part_uuid
-    ) do |period_book_part|
-      period_book_part.is_page = is_page
-      period_book_part.tasked_exercise_ids = []
-      period_book_part.glicko_mu = INITIAL_MU
-      period_book_part.glicko_phi = INITIAL_PHI
-      period_book_part.glicko_sigma = INITIAL_SIGMA
-    end
+    ) { |period_book_part| period_book_part.is_page = is_page }
 
     used_tasked_exercise_ids = Set.new period_book_part.tasked_exercise_ids
     new_tasked_exercises = tasked_exercises.reject do |tasked_exercise|
@@ -107,9 +97,7 @@ class Ratings::UpdatePeriodBookParts
         Ratings::ExerciseGroupBookPart.new(
           exercise_group_uuid: exercise_group_uuid,
           book_part_uuid: book_part_uuid,
-          glicko_mu: INITIAL_MU,
-          glicko_phi: INITIAL_PHI,
-          glicko_sigma: INITIAL_SIGMA
+          is_page: is_page
         )
     end
 

@@ -21,8 +21,8 @@ class GetStudentGuide
       )
     ).pluck(:core_page_ids).flatten.uniq
     chapter_uuid_page_uuids = Content::Models::Page
+      .with_exercises
       .where(id: core_page_ids)
-      .where('CARDINALITY("content_pages"."all_exercise_ids") > 0')
       .pluck(:parent_book_part_uuid, :uuid)
     chapter_uuids, page_uuids = chapter_uuid_page_uuids.transpose
     chapter_uuids = Set.new chapter_uuids
@@ -36,26 +36,18 @@ class GetStudentGuide
       next unless chapter_uuids.include? chapter.uuid
       chapter_role_book_part = role_book_parts_by_book_part_uuid[chapter.uuid] ||
                                Ratings::RoleBookPart.new(
-        tasked_exercise_ids: [],
-        clue: {
-          minimum: 0.0,
-          most_likely: 0.5,
-          maximum: 1.0,
-          is_real: false
-        }
+        role: role,
+        book_part_uuid: chapter.uuid,
+        is_page: false
       )
 
       page_guides = chapter.pages.map do |page|
         next unless page_uuids.include? page.uuid
         page_role_book_part = role_book_parts_by_book_part_uuid[page.uuid] ||
                               Ratings::RoleBookPart.new(
-          tasked_exercise_ids: [],
-          clue: {
-            minimum: 0.0,
-            most_likely: 0.5,
-            maximum: 1.0,
-            is_real: false
-          }
+          role: role,
+          book_part_uuid: page.uuid,
+          is_page: true
         )
 
         {
