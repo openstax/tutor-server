@@ -3,8 +3,9 @@ class ChooseExercises
   # This corresponds to how many numbers above the given count we need to search
   MAX_DROPPED_QUESTION_PARTS = 4
 
-  INITIAL_GLICKO_MU = 0.0
-  INITIAL_GLICKO_PHI = 2.015
+  # After all spaced practice rules have been applied, we use Glicko to choose which of the
+  # remaining exercises we should present to the student.
+  # We favor exercises we believe they have a 50% chance of answering correctly.
   DESIRED_EXPECTED_SCORE = 0.5
 
   lev_routine express_output: :exercises
@@ -49,14 +50,19 @@ class ChooseExercises
         page_uuid = page_uuid_by_page_id[exercise.content_page_id]
 
         role_book_part = role_book_parts_by_page_uuid[page_uuid] || Ratings::RoleBookPart.new(
-          glicko_mu: INITIAL_GLICKO_MU
+          role: role,
+          book_part_uuid: page_uuid,
+          is_page: true
         )
+        exercise_group_uuid = exercise.group_uuid
         exercise_group_book_part = exercise_book_parts_by_exercise_group_uuid_and_page_uuid[
-          exercise.group_uuid
+          exercise_group_uuid
         ][
           page_uuid
         ] || Ratings::ExerciseGroupBookPart.new(
-          glicko_mu: INITIAL_GLICKO_MU, glicko_phi: INITIAL_GLICKO_PHI
+          exercise_group_uuid: exercise_group_uuid,
+          book_part_uuid: page_uuid,
+          is_page: true
         )
 
         (

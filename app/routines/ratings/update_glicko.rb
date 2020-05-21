@@ -47,24 +47,20 @@ class Ratings::UpdateGlicko
     )
 
     index = 0
-    delta_over_v = opponents.map do |opponent|
+    scaled_score_surprises = opponents.map do |opponent|
       g = out.g_array[index]
       expected_score = out.e_array[index]
       match_response = responses[index]
       index += 1
 
       g * ((match_response ? 1.0 : 0.0) - expected_score)
-    end.sum
-
+    end
+    delta_over_v = scaled_score_surprises.sum
     delta = v * delta_over_v
 
-    previous_sigma = record.glicko_sigma
-    previous_phi = record.glicko_phi
-    previous_mu = record.glicko_mu
-
-    phi_squared = previous_phi**2
+    phi_squared = record.glicko_phi**2
     gradient = delta**2 - phi_squared - v
-    a = initial_a = Math.log(previous_sigma**2)
+    a = initial_a = Math.log(record.glicko_sigma**2)
 
     f = ->(x) do
       exp_x = Math.exp(x)

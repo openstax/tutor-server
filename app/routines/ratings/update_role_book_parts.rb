@@ -1,9 +1,5 @@
 # NOTE: We currently do not support CLUes for Units because we only search for pages 1 level down
 class Ratings::UpdateRoleBookParts
-  INITIAL_MU = 0.0
-  INITIAL_PHI = 2.015
-  INITIAL_SIGMA = 0.06
-
   MIN_NUM_RESPONSES = 3
 
   lev_routine
@@ -87,13 +83,7 @@ class Ratings::UpdateRoleBookParts
   def update_role_book_part(role:, book_part_uuid:, tasked_exercises:, is_page:, current_time:)
     role_book_part = Ratings::RoleBookPart.find_or_initialize_by(
       role: role, book_part_uuid: book_part_uuid
-    ) do |role_book_part|
-      role_book_part.is_page = is_page
-      role_book_part.tasked_exercise_ids = []
-      role_book_part.glicko_mu = INITIAL_MU
-      role_book_part.glicko_phi = INITIAL_PHI
-      role_book_part.glicko_sigma = INITIAL_SIGMA
-    end
+    ) { |role_book_part| role_book_part.is_page = is_page }
 
     used_tasked_exercise_ids = Set.new role_book_part.tasked_exercise_ids
     new_tasked_exercises = tasked_exercises.reject do |tasked_exercise|
@@ -121,11 +111,7 @@ class Ratings::UpdateRoleBookParts
         Ratings::ExerciseGroupBookPart.new(
           exercise_group_uuid: exercise_group_uuid,
           book_part_uuid: book_part_uuid,
-          is_page: is_page,
-          tasked_exercise_ids: [],
-          glicko_mu: INITIAL_MU,
-          glicko_phi: INITIAL_PHI,
-          glicko_sigma: INITIAL_SIGMA
+          is_page: is_page
         )
     end
 
