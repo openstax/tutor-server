@@ -1030,6 +1030,8 @@ ActiveRecord::Schema.define(version: 2020_05_21_193851) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "spy", default: "{}", null: false
+    t.integer "completed_on_time_exercise_steps_count", default: 0, null: false
+    t.integer "completed_on_time_steps_count", default: 0, null: false
     t.datetime "hidden_at"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "content_ecosystem_id", null: false
