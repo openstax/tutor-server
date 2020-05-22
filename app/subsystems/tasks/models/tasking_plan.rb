@@ -40,7 +40,7 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   end
 
   def due_at_on_or_after_opens_at
-    return if task_plan&.course.nil? || due_at.nil? || opens_at.nil? || due_at > opens_at
+    return if task_plan&.course.nil? || due_at.nil? || opens_at.nil? || due_at >= opens_at
 
     errors.add(:due_at, 'cannot be before opens_at')
     throw :abort
