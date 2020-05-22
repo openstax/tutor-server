@@ -80,7 +80,7 @@ class Preview::WorkTask
     period = role&.course_member&.period
     course = period&.course
     # course will only be set if role and period were found
-    return if course.nil? || exercise_steps.none?(&:completed?)
+    return if course.nil? || task.completed_exercise_steps_count == 0
 
     requests = tasked_exercises.map do |tasked_exercise|
       { course: course, tasked_exercise: tasked_exercise }

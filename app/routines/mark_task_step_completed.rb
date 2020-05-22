@@ -29,7 +29,7 @@ class MarkTaskStepCompleted
 
     run(:populate_placeholders, task: task, lock_task: false) if task.core_task_steps_completed?
 
-    return unless save && task_step.exercise?
+    return if !save || task.completed_exercise_steps_count == 0
 
     role = task.taskings.first&.role
     period = role&.course_member&.period
@@ -37,7 +37,9 @@ class MarkTaskStepCompleted
     # course will only be set if role and period were found
     return if course.nil?
 
-    OpenStax::Biglearn::Api.record_responses course: course, tasked_exercise: task_step.tasked
+    OpenStax::Biglearn::Api.record_responses(
+      course: course, tasked_exercise: task_step.tasked
+    ) if task_step.exercise?
 
     return if task_was_completed
 
