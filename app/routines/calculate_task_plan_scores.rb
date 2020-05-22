@@ -44,11 +44,14 @@ class CalculateTaskPlanScores
 
       most_common_task = run(:get_most_common_task, tasks: tasks).outputs.task
 
+      available_points_without_dropping_per_question_index =
+        most_common_task.available_points_without_dropping_per_question_index
       available_points_per_question_index = most_common_task.available_points_per_question_index
       exercise_steps = most_common_task.exercise_and_placeholder_steps
       question_headings_array = exercise_steps.each_with_index.map do |step, index|
         {
          title: "Q#{index + 1}",
+         points_without_dropping: available_points_without_dropping_per_question_index[index],
          points: available_points_per_question_index[index],
          type: step.is_core ? (step.tasked.can_be_auto_graded? ? 'MCQ' : 'FR') : 'Tutor',
          question_id: step.exercise? && step.is_core? ? step.tasked.question_id : nil,

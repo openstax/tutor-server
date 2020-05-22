@@ -69,6 +69,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
             question_headings: student_tasks.first.task_steps.each_with_index.map do |ts, index|
               {
                title: "Q#{index + 1}",
+               points_without_dropping: 1.0,
                points: 1.0,
                type: ts.is_core? ? 'MCQ' : 'Tutor',
               }.merge(
@@ -203,6 +204,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
             question_headings: student_tasks.first.task_steps.each_with_index.map do |ts, index|
               {
                title: "Q#{index + 1}",
+               points_without_dropping: 1.0,
                points: 1.0,
                type: ts.is_core? ? 'MCQ' : 'Tutor',
               }.merge(
