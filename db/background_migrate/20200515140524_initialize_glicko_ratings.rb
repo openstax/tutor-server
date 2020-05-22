@@ -39,6 +39,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
           .where(course_profile_course_id: course_ids)
           .where(tt[:completed_exercise_steps_count].gt(0))
           .where('"steps_count" <= "completed_steps_count"')
+          .where.not(last_worked_at: nil)
           .order(:last_worked_at)
           .preload(taskings: { role: [ { student: :period }, { teacher_student: :period } ] })
 
