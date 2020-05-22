@@ -68,7 +68,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
         tasks
       end
 
-      break if tasks.empty?
+      break if tasks.size < LIMIT
     end
 
     max_due_at_key = "#{key}_max_due_at"
@@ -109,7 +109,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
         tasks
       end
 
-      break if tasks.empty?
+      break if tasks.size < LIMIT
     end
   end
 
