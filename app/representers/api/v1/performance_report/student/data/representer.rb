@@ -75,7 +75,7 @@ module Api::V1::PerformanceReport::Student::Data
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) }
 
-    property :is_late,
+    property :is_past_due,
              readable: true,
              writeable: false,
              schema_info: { type: 'boolean' }
