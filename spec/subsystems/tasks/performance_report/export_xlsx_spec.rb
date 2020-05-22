@@ -11,7 +11,8 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
         filename = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
           described_class.call(course: @course,
                                report: report_1,
-                               filename: "#{dir}/testfile#{SecureRandom.hex(2)}").outputs.filename
+                               filename: "#{dir}/testfile#{SecureRandom.hex(2)}",
+                               options: {stringify_formulas: true}).outputs.filename
         end
 
         # Uncomment this to open the file for visual inspection
@@ -34,41 +35,43 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
       (7..12).to_a.map{|row| expect(cell(row,19,0)).to be_blank}
     end
 
+    it 'has a class average value based on the course averages' do
+      expect(cell(13,4,0)).to match /AVERAGEIF\(D11:D12,\"<>#N\/A\"\),0\)/
+    end
+
+    it 'has a minimum value based on the period-wide course averages' do
+      expect(cell(14,4,0)).to match /MIN\(D11:D12\)/
+    end
+
+    it 'has a maximum value based on the period-wide course averages' do
+      expect(cell(15,4,0)).to match /MAX\(D11:D12\)/
+    end
+
     it 'puts dropped students at the bottom' do
-      expect(cell(19,1,0)).to eq "DROPPED"
-      expect(cell(20,1,0)).to eq "Droppy"
+      expect(cell(21,1,0)).to eq "DROPPED"
+      expect(cell(22,1,0)).to eq "Droppy"
       # ideally we'd test the formulas for the overall cells are correct
       # however Roo is currently unable to parse them and always returns nil :(
-      expect(cell(20,9,0)).to eq 2/9.0
+      expect(cell(22,7,0)).to eq 2/9.0
     end
 
     context 'zeter\'s scores' do
       it 'has good HW scores' do
-        expect(cell(12,9,0)).to eq 7/9.0
-        expect(cell(12,10,0)).to eq 1.0
+        expect(cell(12,7,0)).to eq 7/9.0
       end
 
-      it 'shows reading scores with late work penalties' do
-        expect(cell(12,14,0)).to eq 2/3.0
-        expect(comment(12,14,0)).to be_nil
-        expect(cell(12,15,0)).to eq 6/7.0
-        expect(cell(12,16,0)).to be_nil
-        expect(cell(12,17,0)).to be_nil
-        expect(cell(12,18,0).strftime("%-m/%-d/%Y")).to eq "3/7/2016"
+      it 'has good Reading scores' do
+        expect(cell(12,8,0)).to eq 2/3.0
       end
     end
 
     context 'abby\'s scores' do
-      it 'shows homework scores with late work penaltie' do
-        expect(cell(11,9,0)).to eq 5/9.0
-        expect(comment(11,9,0)).to be_nil
-        expect(cell(11,10,0)).to eq 1.0
-        [ 11, 12 ].map{ |col|expect(cell(11,col,0)).to be_blank }
-        expect(cell(11,13,0).strftime("%-m/%-d/%Y")).to eq "3/15/2016"
+      it 'shows homework scores' do
+        expect(cell(11,7,0)).to eq 5/9.0
       end
 
       it 'shows nothing for her reading scores' do
-        (14..18).to_a.map{|col|expect(cell(11,col,0)).to be_blank}
+        expect(cell(11,8,0)).to be_blank
       end
     end
   end
@@ -86,6 +89,9 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
                                options: { stringify_formulas: true }).outputs.filename
         end
 
+        # Uncomment this to open the file for visual inspection
+        # `open "#{filename}"` and sleep(0.5)
+
         expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
         @sheet1 = @wb.sheet(@wb.sheets.first)
       end
@@ -93,11 +99,11 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     after(:all) { DatabaseCleaner.clean }
 
     it 'has averages with disjoint cells' do
-      expect(cell(11,5,0)).to match /AVERAGE\(I11,S11\)/
+      expect(cell(11,5,0)).to match /AVERAGE\(G11,I11\)/
     end
 
     it 'has a course average based on the other averages' do
-      expect(cell(11,4,0)).to match /SUM\(0\.5\*E11\,0\.5\*G11\)/
+      expect(cell(11,4,0)).to match /SUM\(0\.5\*E11\,0\.5\*F11\)/
     end
   end
 
