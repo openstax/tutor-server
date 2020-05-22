@@ -292,6 +292,12 @@ class Tasks::Models::Task < ApplicationRecord
       !step.tasked.can_be_auto_graded? && !step.tasked.was_manually_graded?
     end
 
+    late_after = due_at
+    on_time_steps = late_after.nil? ?
+      completed_steps : completed_steps.select { |step| step.last_completed_at < late_after }
+    self.completed_on_time_steps_count = on_time_steps.count
+    self.completed_on_time_exercise_steps_count = on_time_steps.count(&:exercise?)
+
     self
   end
 

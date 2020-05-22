@@ -48,6 +48,10 @@ FactoryBot.define do
       page.content = evaluator.content unless evaluator.content.nil?
       page.save!
       Content::Routines::TransformAndCachePageContent.call book: page.book, pages: [ page ]
+
+      # If one of these is set, we expect the other one to also be
+      task_step.last_completed_at ||= task_step.first_completed_at
+      task_step.first_completed_at ||= task_step.last_completed_at
     end
   end
 end
