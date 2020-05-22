@@ -72,11 +72,21 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
+      property :past_due?,
+               as: :is_past_due,
+               readable: true,
+               writeable: false,
+               schema_info: { type: 'boolean' }
+
+      property :extended?,
+               as: :is_extended,
+               readable: true,
+               writeable: false,
+               schema_info: { type: 'boolean' }
     end
 
     class StepTaskBase < TaskBase
-      property :completed_exercise_count,
-               as: :complete_exercise_count,
+      property :steps_count,
                type: Integer,
                readable: true,
                writeable: false
@@ -87,18 +97,34 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
+      property :completed_steps_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
+      property :completed_on_time_steps_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
+      property :completed_exercise_count,
+               as: :complete_exercise_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
+      property :completed_on_time_exercise_steps_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
       property :correct_exercise_count,
                type: Integer,
                readable: true,
                writeable: false,
                if: ->(*) { auto_grading_feedback_available? }
 
-      property :steps_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_steps_count,
+      property :ungraded_step_count,
                type: Integer,
                readable: true,
                writeable: false

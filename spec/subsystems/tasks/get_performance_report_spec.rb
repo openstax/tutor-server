@@ -311,7 +311,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.due_at).to be_a Time
           expect(data.last_worked_at).to be_nil.or(be_a Time)
           expect(data.is_extended).to be_in [true, false]
-          expect(data.is_late).to be_in [true, false]
+          expect(data.is_past_due).to be_in [true, false]
           expect(data.step_count).to be_a Integer
           expect(data.completed_step_count).to be_a Integer
           expect(data.completed_on_time_steps_count).to be_a Integer
@@ -482,7 +482,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.due_at).to be_a Time
         expect(data.last_worked_at).to be_nil.or(be_a Time)
         expect(data.is_extended).to be_in [true, false]
-        expect(data.is_late).to be_in [true, false]
+        expect(data.is_past_due).to be_in [true, false]
         expect(data.step_count).to be_a Integer
         expect(data.completed_step_count).to be_a Integer
         expect(data.completed_on_time_steps_count).to be_a Integer
@@ -565,7 +565,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.due_at).to be_a Time
         expect(data.last_worked_at).to be_nil.or(be_a Time)
         expect(data.is_extended).to be_in [true, false]
-        expect(data.is_late).to be_in [true, false]
+        expect(data.is_past_due).to be_in [true, false]
         expect(data.step_count).to be_a Integer
         expect(data.completed_step_count).to be_a Integer
         expect(data.completed_on_time_steps_count).to be_a Integer

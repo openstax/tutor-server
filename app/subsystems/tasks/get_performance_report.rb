@@ -306,7 +306,7 @@ module Tasks
           due_at:                                 due_at,
           last_worked_at:                         tt.last_worked_at&.in_time_zone(tz),
           is_extended:                            tt.extended?,
-          is_late:                                tt.late?,
+          is_past_due:                            tt.past_due?,
           step_count:                             tt.steps_count,
           completed_step_count:                   tt.completed_steps_count,
           completed_on_time_steps_count:          tt.completed_on_time_steps_count,
