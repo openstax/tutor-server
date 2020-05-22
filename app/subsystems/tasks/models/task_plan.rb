@@ -108,8 +108,10 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     homework? || reading?
   end
 
-  def available_points_without_dropped_questions_per_question_index
-    @available_points_without_dropped_questions_per_question_index ||= Hash.new(1.0).tap do |hash|
+  # NOTE: This method does not know the final number of questions assigned
+  #       Look at methods in the Task model for that
+  def available_points_without_dropping_per_question_index
+    @available_points_without_dropping_per_question_index ||= Hash.new(1.0).tap do |hash|
       if homework?
         question_index = 0
         settings['exercises'].each do |exercise|

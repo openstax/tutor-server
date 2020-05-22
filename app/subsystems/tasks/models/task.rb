@@ -185,11 +185,17 @@ class Tasks::Models::Task < ApplicationRecord
     steps_count == 0 ? nil : completed_steps_count / steps_count.to_f
   end
 
+  # NOTE: This method does not know the final number of questions assigned
+  def available_points_without_dropping_per_question_index
+    @available_points_without_dropping_per_question_index ||=
+      task_plan&.available_points_without_dropping_per_question_index || Hash.new(1.0)
+  end
+
+  # NOTE: This method does not know the final number of questions assigned
   def available_points_per_question_index
     @available_points_per_question_index ||= begin
-      (
-        task_plan&.available_points_without_dropped_questions_per_question_index || Hash.new(1.0)
-      ).tap do |available_points_per_question_index|
+      available_points_without_dropping_per_question_index
+        .dup.tap do |available_points_per_question_index|
         zeroed_question_ids = task_plan&.dropped_questions&.filter(&:zeroed?)&.map(&:question_id)
         next if zeroed_question_ids.blank?
         zeroed_question_ids = Set.new(zeroed_question_ids || [])
@@ -200,6 +206,12 @@ class Tasks::Models::Task < ApplicationRecord
         end
       end
     end
+  end
+
+  def available_points_without_dropping
+    available_points_without_dropping_per_question_index.values_at(
+      *actual_and_placeholder_exercise_count.times.to_a
+    ).sum
   end
 
   def available_points

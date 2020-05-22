@@ -12,6 +12,11 @@ class Api::V1::TaskPlan::Scores::QuestionHeadingRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
+  property :points_without_dropping,
+           type: Float,
+           readable: true,
+           writeable: false
+
   property :points,
            type: Float,
            readable: true,
