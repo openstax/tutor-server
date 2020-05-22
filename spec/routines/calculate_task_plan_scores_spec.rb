@@ -74,6 +74,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           tasks.first.task_steps.each_with_index.map do |task_step, index|
             {
               title: "Q#{index + 1}",
+              points_without_dropping: 1.0,
               points: 1.0,
               type: task_step.is_core? ? 'MCQ' : 'Tutor',
               question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
@@ -156,6 +157,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           tasks.first.task_steps.each_with_index.map do |task_step, index|
             {
               title: "Q#{index + 1}",
+              points_without_dropping: 1.0,
               points: 1.0,
               type: task_step.is_core? ? 'MCQ' : 'Tutor',
               question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
@@ -237,6 +239,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           tasks.first.task_steps.each_with_index.map do |task_step, index|
             {
               title: "Q#{index + 1}",
+              points_without_dropping: 1.0,
               points: 1.0,
               type: task_step.is_core? ? 'MCQ' : 'Tutor',
               question_id: task_step.is_core? ? task_step.tasked.question_id : nil,
