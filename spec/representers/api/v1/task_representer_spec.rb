@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::TaskRepresenter, type: :representer do
-  let(:ecosystem)   { FactoryBot.create(:content_ecosystem) }
-  let(:task)        { FactoryBot.create(:tasks_task, ecosystem: ecosystem) }
-  let(:represented) { described_class.new(task).to_hash }
+  let(:tasked_exercise) { FactoryBot.create :tasks_tasked_exercise }
+  let(:task)            { tasked_exercise.task_step.task }
+  let(:ecosystem)       { task.ecosystem }
+  let(:represented)     { described_class.new(task).to_hash }
 
   it 'includes fields' do
     expect(represented).to include(

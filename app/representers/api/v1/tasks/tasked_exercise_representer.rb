@@ -135,5 +135,22 @@ module Api::V1::Tasks
                description: "The estimate of how likely the student's free response is garbage"
              },
              if: INCLUDE_CONTENT
+
+    property :available_points,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :grader_points,
+             type: Float,
+             readable: true,
+             writeable: false,
+             if: FEEDBACK_AVAILABLE
+
+    property :grader_comments,
+             type: String,
+             readable: true,
+             writeable: false,
+             if: FEEDBACK_AVAILABLE
   end
 end

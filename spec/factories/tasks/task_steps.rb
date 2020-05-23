@@ -35,6 +35,8 @@ FactoryBot.define do
             task_step.task.ecosystem.books << book
           end
 
+          AddSpyInfo[to: task_step.task, from: task_step.task.ecosystem]
+
           task_step.page = book.pages.sample
 
           if task_step.page.nil?

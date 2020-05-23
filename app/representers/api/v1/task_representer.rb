@@ -106,15 +106,22 @@ module Api::V1
              readable: true,
              writeable: false
 
-    collection :task_steps,
-               as: :steps,
+    collection :steps,
                writeable: false,
                readable: true,
                extend: TaskStepRepresenter,
                schema_info: {
                  required: true,
                  description: "The steps which this task is composed of"
-               }
+               },
+               getter: ->(*) do
+                 # Preload all the available points
+                 task_steps.filter(&:exercise?).each_with_index do |exercise_step, idx|
+                   exercise_step.tasked.available_points = available_points_per_question_index[idx]
+                 end
+
+                 task_steps
+               end
 
     # Make sure we always preload the all task steps' content before representing the task
     def initialize(task)
