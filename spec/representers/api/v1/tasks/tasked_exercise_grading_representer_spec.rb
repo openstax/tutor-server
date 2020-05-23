@@ -5,6 +5,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseGradingRepresenter, type: :represen
   include_examples 'a tasked_exercise representer'
 
   before do
+    allow(tasked_exercise).to receive(:available_points).and_return(1.0)
     allow(tasked_exercise).to receive(:grader_points).and_return(0.5)
     allow(tasked_exercise).to receive(:grader_comments).and_return('Hi')
     allow(tasked_exercise).to receive(:last_graded_at).and_return(Time.current)

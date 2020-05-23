@@ -41,6 +41,9 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:question_id).and_return('questionID')
       allow(exercise).to receive(:is_in_multipart).and_return(false)
       allow(exercise).to receive(:response_validation).and_return({ valid: false })
+      allow(exercise).to receive(:available_points).and_return(1.0)
+      allow(exercise).to receive(:grader_points).and_return(0.5)
+      allow(exercise).to receive(:grader_comments).and_return('Hi')
       allow(exercise).to receive(:cache_key).and_return('tasks/models/tasked_exercises/42')
       allow(exercise).to receive(:cache_version).and_return('test')
     end
@@ -65,6 +68,10 @@ RSpec.shared_examples 'a tasked_exercise representer' do
 
     it "has the correct 'title'" do
       expect(representation).to include('title' => 'Some title')
+    end
+
+    it "has 'available_points'" do
+      expect(representation).to include('available_points' => 1.0)
     end
 
     it "has the correct 'context'" do
