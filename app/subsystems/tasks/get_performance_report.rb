@@ -294,37 +294,35 @@ module Tasks
         show_score = is_teacher || tt.auto_grading_feedback_available?(
           current_time_ntz: current_time_ntz
         )
+        correct_exercise_count = show_score ? tt.correct_exercise_count : nil
+        score = (tt.reading? || tt.homework?) && show_score ? tt.score || 0.0 : nil
 
-        OpenStruct.new(
-          {
-            task: tt,
-            late: late,
-            status: tt.status(use_cache: true),
-            type: type,
-            id: tt.id,
-            due_at: due_at,
-            is_late_work_accepted: tt.extended?,
-            last_worked_at: tt.last_worked_at&.in_time_zone(tz),
-            is_included_in_averages: included_in_progress_averages?(
-              task: tt, current_time_ntz: current_time_ntz
-            )
-          }.tap do |data|
-            correct_exercise_count = show_score ? tt.correct_exercise_count : nil
-            score = (tt.reading? || tt.homework?) && show_score ? tt.score || 0.0 : nil
-
-            data.merge!(
-              step_count:                            tt.steps_count,
-              completed_step_count:                  tt.completed_steps_count,
-              actual_and_placeholder_exercise_count: tt.actual_and_placeholder_exercise_count,
-              completed_exercise_count:              tt.completed_exercise_count,
-              correct_exercise_count:                correct_exercise_count,
-              recovered_exercise_count:              tt.recovered_exercise_steps_count,
-              progress:                              tt.completion,
-              available_points:                      tt.available_points,
-              points:                                tt.points,
-              score:                                 score,
-            )
-          end
+        Hashie::Mash.new(
+          task:                                   tt,
+          late:                                   late,
+          status:                                 tt.status(use_cache: true),
+          type:                                   type,
+          id:                                     tt.id,
+          due_at:                                 due_at,
+          last_worked_at:                         tt.last_worked_at&.in_time_zone(tz),
+          is_extended:                            tt.extended?,
+          is_past_due:                            tt.past_due?,
+          step_count:                             tt.steps_count,
+          completed_step_count:                   tt.completed_steps_count,
+          completed_on_time_steps_count:          tt.completed_on_time_steps_count,
+          actual_and_placeholder_exercise_count:  tt.actual_and_placeholder_exercise_count,
+          completed_exercise_count:               tt.completed_exercise_count,
+          completed_on_time_exercise_steps_count: tt.completed_on_time_exercise_steps_count,
+          correct_exercise_count:                 correct_exercise_count,
+          recovered_exercise_count:               tt.recovered_exercise_steps_count,
+          ungraded_step_count:                    tt.ungraded_step_count,
+          is_included_in_averages:                included_in_progress_averages?(
+                                                    task: tt, current_time_ntz: current_time_ntz
+                                                  ),
+          progress:                               tt.completion,
+          available_points:                       tt.available_points,
+          points:                                 tt.points,
+          score:                                  score
         )
       end
     end

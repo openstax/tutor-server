@@ -27,6 +27,11 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
+    property :completed_on_time_steps_count,
+             type: Integer,
+             readable: true,
+             writeable: false
+
     property :actual_and_placeholder_exercise_count,
              as: :exercise_count,
              type: Integer,
@@ -38,12 +43,22 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
+    property :completed_on_time_exercise_steps_count,
+             type: Integer,
+             readable: true,
+             writeable: false
+
     property :correct_exercise_count,
              type: Integer,
              readable: true,
              writeable: false
 
     property :recovered_exercise_count,
+             type: Integer,
+             readable: true,
+             writeable: false
+
+    property :ungraded_step_count,
              type: Integer,
              readable: true,
              writeable: false
@@ -60,13 +75,20 @@ module Api::V1::PerformanceReport::Student::Data
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) }
 
-    property :is_late_work_accepted,
+    property :is_past_due,
              readable: true,
-             writeable: false
+             writeable: false,
+             schema_info: { type: 'boolean' }
+
+    property :is_extended,
+             readable: true,
+             writeable: false,
+             schema_info: { type: 'boolean' }
 
     property :is_included_in_averages,
              readable: true,
-             writeable: false
+             writeable: false,
+             schema_info: { type: 'boolean' }
 
     property :progress,
              type: Float,

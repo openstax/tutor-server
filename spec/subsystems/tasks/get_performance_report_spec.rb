@@ -311,18 +311,21 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         data.each do |data|
           expect(data.id).to be_a Integer
           expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
-          expect(data.step_count).to be_a Integer
-          expect(data.completed_step_count).to be_a Integer
-          expect(data.actual_and_placeholder_exercise_count).to be_a Integer
-          expect(data.completed_exercise_count).to be_a Integer
-          expect(data.correct_exercise_count).to be_a Integer
-          expect(data.recovered_exercise_count).to be_a Integer
-          expect(data.score).to be_a data.type == 'external' ? NilClass : Float
-          expect(data.progress).to be_a Float
           expect(data.due_at).to be_a Time
           expect(data.last_worked_at).to be_nil.or(be_a Time)
-          expect(data.is_late_work_accepted).to be_in [true, false]
+          expect(data.is_extended).to be_in [true, false]
+          expect(data.is_past_due).to be_in [true, false]
+          expect(data.step_count).to be_a Integer
+          expect(data.completed_step_count).to be_a Integer
+          expect(data.completed_on_time_steps_count).to be_a Integer
+          expect(data.actual_and_placeholder_exercise_count).to be_a Integer
+          expect(data.completed_exercise_count).to be_a Integer
+          expect(data.completed_on_time_exercise_steps_count).to be_a Integer
+          expect(data.recovered_exercise_count).to be_a Integer
+          expect(data.ungraded_step_count).to be_a Integer
           expect(data.is_included_in_averages).to be_in [true, false]
+          expect(data.progress).to be_a Float
+          expect(data.score).to be_a data.type == 'external' ? NilClass : Float
         end
       end
     end
@@ -479,18 +482,21 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       data.each do |data|
         expect(data.id).to be_a Integer
         expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
-        expect(data.step_count).to be_a Integer
-        expect(data.completed_step_count).to be_a Integer
-        expect(data.actual_and_placeholder_exercise_count).to be_a Integer
-        expect(data.completed_exercise_count).to be_a Integer
-        expect(data.correct_exercise_count).to be_a Integer
-        expect(data.recovered_exercise_count).to be_a Integer
-        expect(data.score).to be_a data.type == 'external' ? NilClass : Float
-        expect(data.progress).to be_a Float
         expect(data.due_at).to be_a Time
         expect(data.last_worked_at).to be_nil.or(be_a Time)
-        expect(data.is_late_work_accepted).to be_in [true, false]
+        expect(data.is_extended).to be_in [true, false]
+        expect(data.is_past_due).to be_in [true, false]
+        expect(data.step_count).to be_a Integer
+        expect(data.completed_step_count).to be_a Integer
+        expect(data.completed_on_time_steps_count).to be_a Integer
+        expect(data.actual_and_placeholder_exercise_count).to be_a Integer
+        expect(data.completed_exercise_count).to be_a Integer
+        expect(data.completed_on_time_exercise_steps_count).to be_a Integer
+        expect(data.recovered_exercise_count).to be_a Integer
+        expect(data.ungraded_step_count).to be_a Integer
         expect(data.is_included_in_averages).to be_in [true, false]
+        expect(data.progress).to be_a Float
+        expect(data.score).to be_a data.type == 'external' ? NilClass : Float
       end
     end
 
@@ -559,16 +565,20 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       data.each do |data|
         expect(data.id).to be_a Integer
         expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
-        expect(data.step_count).to be_a Integer
-        expect(data.completed_step_count).to be_a Integer
-        expect(data.actual_and_placeholder_exercise_count).to be_a Integer
-        expect(data.completed_exercise_count).to be_a Integer
-        expect(data.recovered_exercise_count).to be_a Integer
-        expect(data.progress).to be_a Float
         expect(data.due_at).to be_a Time
         expect(data.last_worked_at).to be_nil.or(be_a Time)
-        expect(data.is_late_work_accepted).to be_in [true, false]
+        expect(data.is_extended).to be_in [true, false]
+        expect(data.is_past_due).to be_in [true, false]
+        expect(data.step_count).to be_a Integer
+        expect(data.completed_step_count).to be_a Integer
+        expect(data.completed_on_time_steps_count).to be_a Integer
+        expect(data.actual_and_placeholder_exercise_count).to be_a Integer
+        expect(data.completed_exercise_count).to be_a Integer
+        expect(data.completed_on_time_exercise_steps_count).to be_a Integer
+        expect(data.recovered_exercise_count).to be_a Integer
+        expect(data.ungraded_step_count).to be_a Integer
         expect(data.is_included_in_averages).to be_in [true, false]
+        expect(data.progress).to be_a Float
       end
     end
   end
