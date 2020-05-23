@@ -1,4 +1,6 @@
 class Tasks::Models::TaskedExercise < IndestructibleRecord
+  attr_writer :available_points
+
   acts_as_tasked
 
   auto_uuid
@@ -102,6 +104,19 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     stem_html += "<!-- debug_begin --><pre>#{new_debug_content}</pre><!-- debug_end -->"
     json_hash['questions'].first['stem_html'] = stem_html
     self.content = json_hash.to_json
+  end
+
+  def available_points
+    @available_points ||= begin
+      task = task_step.task
+      if task.homework?
+        # Inefficient, which is why we preload the available_points in the TaskRepresenter
+        task_question_index = task.task_steps.filter(&:exercise?).index(self)
+        task.available_points_per_question_index[task_question_index]
+      else
+        1.0
+      end
+    end
   end
 
   # The following 2 methods assume only 1 Question; this is OK for TaskedExercise,
