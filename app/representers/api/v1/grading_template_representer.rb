@@ -39,6 +39,12 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
            writeable: true,
            schema_info: { required: true }
 
+  property :deleted_at,
+           type: String,
+           readable: true,
+           writeable: false,
+           getter: ->(*) { DateTimeUtilities.to_api_s( deleted_at ) }
+
   property :correctness_weight,
            type: Float,
            readable: true,

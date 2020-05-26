@@ -13,7 +13,7 @@ class Api::V1::GradingTemplatesController < Api::V1::ApiController
     #{json_schema(Api::V1::GradingTemplateSearchRepresenter, include: :readable)}
   DESCRIPTION
   def index
-    standard_index course.grading_templates.without_deleted.preload(:course),
+    standard_index course.grading_templates.with_deleted.preload(:course),
                    Api::V1::GradingTemplateSearchRepresenter
   end
 
@@ -54,6 +54,6 @@ class Api::V1::GradingTemplatesController < Api::V1::ApiController
   end
 
   def grading_template
-    @grading_template ||= Tasks::Models::GradingTemplate.without_deleted.find params[:id]
+    @grading_template ||= ::Tasks::Models::GradingTemplate.without_deleted.find params[:id]
   end
 end
