@@ -54,6 +54,6 @@ class Api::V1::GradingTemplatesController < Api::V1::ApiController
   end
 
   def grading_template
-    @grading_template ||= Tasks::Models::GradingTemplate.without_deleted.find params[:id]
+    @grading_template ||= ::Tasks::Models::GradingTemplate.without_deleted.find params[:id]
   end
 end
