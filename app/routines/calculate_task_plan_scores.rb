@@ -95,6 +95,7 @@ class CalculateTaskPlanScores
               exercise_id: tasked.content_exercise_id,
               question_id: tasked.question_id,
               is_completed: task_step.completed?,
+              is_correct: tasked.is_correct?,
               selected_answer_id: tasked.answer_id,
               points: points,
               free_response: tasked.free_response,

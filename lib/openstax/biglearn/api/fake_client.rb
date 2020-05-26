@@ -278,7 +278,9 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
 
       unless ecosystem.nil?
         responses_by_page_id = Hash.new { |hash, key| hash[key] = [] }
-        Tasks::Models::TaskedExercise.select(:id, :answer_id, :correct_answer_id).joins(
+        Tasks::Models::TaskedExercise.select(
+          :id, :answer_id, :correct_answer_id, :grader_points
+        ).joins(
           task_step: { task: :taskings }
         ).where(
           task_step: {
@@ -486,7 +488,9 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     students = [ students ].flatten
     role_ids = students.map(&:entity_role_id)
     page_ids = [ pages ].flatten.map(&:id)
-    responses = Tasks::Models::TaskedExercise.select(:id, :answer_id, :correct_answer_id).joins(
+    responses = Tasks::Models::TaskedExercise.select(
+      :id, :answer_id, :correct_answer_id, :grader_points
+    ).joins(
       task_step: { task: :taskings }
     ).where(
       task_step: { content_page_id: page_ids, task: { taskings: { entity_role_id: role_ids } } }
