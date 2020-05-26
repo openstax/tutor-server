@@ -13,7 +13,7 @@ class Ratings::UpdatePeriodBookPart
     page_key = is_page ? :uuid : :parent_book_part_uuid
 
     tasked_exercises = Tasks::Models::TaskedExercise
-      .select(:answer_id, :correct_answer_id, '"tasks_taskings"."entity_role_id"')
+      .select(:answer_id, :correct_answer_id, :grader_points, '"tasks_taskings"."entity_role_id"')
       .joins(task_step: [ :page, task: :taskings ])
       .where(
         task_step: {
