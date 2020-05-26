@@ -33,31 +33,66 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
     Tasks::Models::TaskPlan.reset_column_information
     CourseProfile::Models::Course.find_each do |course|
       course.homework_weight = course.homework_progress_weight + course.homework_score_weight
-      homework_completion_weight = course.homework_weight == 0 ?
-                                   0 : course.homework_progress_weight/course.homework_weight
-      homework_correctness_weight = course.homework_weight == 0 ?
-                                      1 : course.homework_score_weight/course.homework_weight
-      homework_template = Tasks::Models::GradingTemplate.new(
-        course: course,
-        task_plan_type: :homework,
-        name: 'OpenStax Homework',
-        completion_weight: homework_completion_weight,
-        correctness_weight: homework_correctness_weight,
-        auto_grading_feedback_on: :answer,
-        manual_grading_feedback_on: :publish,
-        late_work_immediate_penalty: 0,
-        late_work_per_day_penalty: 0.1,
-        default_open_time: course.default_open_time || '00:01',
-        default_due_time: course.default_due_time || '07:00',
-        default_due_date_offset_days: 7,
-        default_close_date_offset_days: 7
-      )
-
       course.reading_weight = course.reading_progress_weight + course.reading_score_weight
       reading_completion_weight = course.reading_weight == 0 ?
                                   0.9 : course.reading_progress_weight/course.reading_weight
       reading_correctness_weight = course.reading_weight == 0 ?
                                      0.1 : course.reading_score_weight/course.reading_weight
+
+      course.save validate: false
+
+      tps_by_is_feedback_immediate = Tasks::Models::TaskPlan.select(:id, :is_feedback_immediate)
+                                                            .where(owner: course, type: 'homework')
+                                                            .group(&:is_feedback_immediate)
+
+      if tps_by_is_feedback_immediate.size == 0
+        homework_template = Tasks::Models::GradingTemplate.new(
+          course: course,
+          task_plan_type: :homework,
+          name: 'OpenStax Homework',
+          completion_weight: 0.0,
+          correctness_weight: 1.0,
+          auto_grading_feedback_on: :answer,
+          manual_grading_feedback_on: :publish,
+          late_work_immediate_penalty: 0.0,
+          late_work_per_day_penalty: 0.1,
+          default_open_time: course.default_open_time || '00:01',
+          default_due_time: course.default_due_time || '07:00',
+          default_due_date_offset_days: 7,
+          default_close_date_offset_days: 7
+        )
+        homework_template.save validate: false
+      else
+        use_different_names = tps_by_is_feedback_immediate.size > 1
+        tps_by_is_feedback_immediate.each do |is_feedback_immediate, tps|
+          name_suffix = if use_different_names
+            is_feedback_immediate ? ', immediate feedback' : ', feedback after due date'
+          else
+            ''
+          end
+          homework_template = Tasks::Models::GradingTemplate.new(
+            course: course,
+            task_plan_type: :homework,
+            name: "OpenStax Homework#{name_suffix}",
+            completion_weight: 0.0,
+            correctness_weight: 1.0,
+            auto_grading_feedback_on: is_feedback_immediate ? :answer : :due,
+            manual_grading_feedback_on: :publish,
+            late_work_immediate_penalty: 0.0,
+            late_work_per_day_penalty: 0.1,
+            default_open_time: course.default_open_time || '00:01',
+            default_due_time: course.default_due_time || '07:00',
+            default_due_date_offset_days: 7,
+            default_close_date_offset_days: 7
+          )
+          homework_template.save validate: false
+
+          Tasks::Models::TaskPlan.where(id: tps.map(&:id)).update_all(
+            tasks_grading_template_id: homework_template.id
+          )
+        end
+      end
+
       reading_template = Tasks::Models::GradingTemplate.new(
         course: course,
         task_plan_type: :reading,
@@ -66,22 +101,14 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
         correctness_weight: reading_correctness_weight,
         auto_grading_feedback_on: :answer,
         manual_grading_feedback_on: :grade,
-        late_work_immediate_penalty: 0,
+        late_work_immediate_penalty: 0.0,
         late_work_per_day_penalty: 0.1,
         default_open_time: course.default_open_time || '00:01',
         default_due_time: course.default_due_time || '07:00',
         default_due_date_offset_days: 7,
         default_close_date_offset_days: 7
       )
-
-      course.save validate: false
-
-      homework_template.save validate: false
       reading_template.save validate: false
-
-      Tasks::Models::TaskPlan.where(
-        owner: course, type: 'homework'
-      ).update_all(tasks_grading_template_id: homework_template.id)
 
       Tasks::Models::TaskPlan.where(
         owner: course, type: 'reading'
