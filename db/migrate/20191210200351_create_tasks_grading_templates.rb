@@ -8,8 +8,8 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
       t.float      :correctness_weight,             precision: 3, scale: 2, null: false
       t.integer    :auto_grading_feedback_on,       null: false
       t.integer    :manual_grading_feedback_on,     null: false
-      t.float      :late_work_immediate_penalty,    precision: 3, scale: 2, null: false
-      t.float      :late_work_per_day_penalty,      precision: 3, scale: 2, null: false
+      t.float      :late_work_penalty,              precision: 3, scale: 2, null: false
+      t.integer    :late_work_penalty_applied,      null: false
       t.string     :default_open_time,              null: false
       t.string     :default_due_time,               null: false
       t.integer    :default_due_date_offset_days,   null: false
@@ -54,8 +54,8 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
           correctness_weight: 1.0,
           auto_grading_feedback_on: :answer,
           manual_grading_feedback_on: :publish,
-          late_work_immediate_penalty: 0.0,
-          late_work_per_day_penalty: 0.1,
+          late_work_penalty: 0.1,
+          late_work_penalty_applied: :daily,
           default_open_time: course.default_open_time || '00:01',
           default_due_time: course.default_due_time || '07:00',
           default_due_date_offset_days: 7,
@@ -78,8 +78,8 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
             correctness_weight: 1.0,
             auto_grading_feedback_on: is_feedback_immediate ? :answer : :due,
             manual_grading_feedback_on: :publish,
-            late_work_immediate_penalty: 0.0,
-            late_work_per_day_penalty: 0.1,
+            late_work_penalty: 0.1,
+            late_work_penalty_applied: :daily,
             default_open_time: course.default_open_time || '00:01',
             default_due_time: course.default_due_time || '07:00',
             default_due_date_offset_days: 7,
@@ -101,8 +101,8 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
         correctness_weight: reading_correctness_weight,
         auto_grading_feedback_on: :answer,
         manual_grading_feedback_on: :grade,
-        late_work_immediate_penalty: 0.0,
-        late_work_per_day_penalty: 0.1,
+        late_work_penalty: 0.1,
+        late_work_penalty_applied: :immediately,
         default_open_time: course.default_open_time || '00:01',
         default_due_time: course.default_due_time || '07:00',
         default_due_date_offset_days: 7,
