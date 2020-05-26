@@ -95,7 +95,7 @@ class Ratings::UpdateRoleBookParts
     update_exercises:,
     current_time:
   )
-    role_book_part = Ratings::RoleBookPart.find_or_initialize_by(
+    role_book_part = Ratings::RoleBookPart.lock.find_or_initialize_by(
       role: role, book_part_uuid: book_part_uuid
     ) { |role_book_part| role_book_part.is_page = is_page }
 
@@ -117,7 +117,9 @@ class Ratings::UpdateRoleBookParts
         .pluck(:group_uuid) + new_tasked_exercises.map(&:group_uuid)
     ).uniq
 
-    exercise_group_book_parts_by_group_uuid = Ratings::ExerciseGroupBookPart.where(
+    exercise_group_book_part_rel = Ratings::ExerciseGroupBookPart
+    exercise_group_book_part_rel = exercise_group_book_part_rel.lock if update_exercises
+    exercise_group_book_parts_by_group_uuid = exercise_group_book_part_rel.where(
       book_part_uuid: book_part_uuid
     ).index_by(&:exercise_group_uuid)
     exercise_group_uuids.each do |exercise_group_uuid|
