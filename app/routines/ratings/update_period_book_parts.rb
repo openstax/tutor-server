@@ -67,7 +67,7 @@ class Ratings::UpdatePeriodBookParts
   end
 
   def update_period_book_part(period:, book_part_uuid:, tasked_exercises:, is_page:, current_time:)
-    period_book_part = Ratings::PeriodBookPart.find_or_initialize_by(
+    period_book_part = Ratings::PeriodBookPart.lock.find_or_initialize_by(
       period: period, book_part_uuid: book_part_uuid
     ) { |period_book_part| period_book_part.is_page = is_page }
 
