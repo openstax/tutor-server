@@ -39,6 +39,11 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
            writeable: true,
            schema_info: { required: true }
 
+  property :deleted_at,
+           type: String,
+           readable: true,
+           writeable: false
+
   property :correctness_weight,
            type: Float,
            readable: true,
