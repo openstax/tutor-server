@@ -26,6 +26,8 @@ RSpec.describe Tasks::Models::TaskingPlan, type: :model do
   it "requires due_at to be after opens_at" do
     expect(tasking_plan).to be_valid
     tasking_plan.opens_at = tasking_plan.due_at
+    expect(tasking_plan).to be_valid
+    tasking_plan.opens_at = tasking_plan.due_at + 1.minute
     expect(tasking_plan).not_to be_valid
   end
 
