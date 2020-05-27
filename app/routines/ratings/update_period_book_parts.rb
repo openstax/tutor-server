@@ -2,7 +2,7 @@
 class Ratings::UpdatePeriodBookParts
   MIN_NUM_RESPONSES = 3
 
-  lev_routine
+  lev_routine transaction: :read_committed
 
   uses_routine Ratings::UpdateGlicko, as: :update_glicko
   uses_routine Ratings::CalculateGAndE, as: :calculate_g_and_e
@@ -67,9 +67,11 @@ class Ratings::UpdatePeriodBookParts
   end
 
   def update_period_book_part(period:, book_part_uuid:, tasked_exercises:, is_page:, current_time:)
-    period_book_part = Ratings::PeriodBookPart.lock.find_or_initialize_by(
-      period: period, book_part_uuid: book_part_uuid
-    ) { |period_book_part| period_book_part.is_page = is_page }
+    period_book_part = Ratings::PeriodBookPart
+      .lock('FOR NO KEY UPDATE NO WAIT')
+      .find_or_initialize_by(period: period, book_part_uuid: book_part_uuid) do |period_book_part|
+      period_book_part.is_page = is_page
+    end
 
     used_tasked_exercise_ids = Set.new period_book_part.tasked_exercise_ids
     new_tasked_exercises = tasked_exercises.reject do |tasked_exercise|
