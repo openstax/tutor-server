@@ -9,7 +9,7 @@ class Ratings::UpdateRoleBookParts
 
   protected
 
-  def exec(role:, task:, current_time: Time.current)
+  def exec(role:, task:, wait: false, current_time: Time.current)
     current_time = Time.parse(current_time) if current_time.is_a?(String)
 
     course_member = role.course_member
@@ -51,6 +51,7 @@ class Ratings::UpdateRoleBookParts
         tasked_exercises: tasked_exercises,
         is_page: true,
         update_exercises: update_exercises,
+        wait: wait,
         current_time: current_time
       )
 
@@ -66,6 +67,7 @@ class Ratings::UpdateRoleBookParts
         tasked_exercises: tasked_exercises,
         is_page: false,
         update_exercises: update_exercises,
+        wait: wait,
         current_time: current_time
       )
 
@@ -93,9 +95,11 @@ class Ratings::UpdateRoleBookParts
     tasked_exercises:,
     is_page:,
     update_exercises:,
+    wait:,
     current_time:
   )
-    role_book_part = Ratings::RoleBookPart.lock('FOR NO KEY UPDATE NOWAIT').find_or_initialize_by(
+    lock_statement = "FOR NO KEY UPDATE#{' NOWAIT' unless wait}"
+    role_book_part = Ratings::RoleBookPart.lock(lock_statement).find_or_initialize_by(
       role: role, book_part_uuid: book_part_uuid
     ) { |role_book_part| role_book_part.is_page = is_page }
 
@@ -119,7 +123,7 @@ class Ratings::UpdateRoleBookParts
 
     exercise_group_book_part_rel = Ratings::ExerciseGroupBookPart
     exercise_group_book_part_rel = exercise_group_book_part_rel.lock(
-      'FOR NO KEY UPDATE NOWAIT'
+      lock_statement
     ) if update_exercises
     exercise_group_book_parts_by_group_uuid = exercise_group_book_part_rel.where(
       book_part_uuid: book_part_uuid

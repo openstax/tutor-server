@@ -9,7 +9,7 @@ class Ratings::UpdatePeriodBookParts
 
   protected
 
-  def exec(period:, task:, current_time: Time.current)
+  def exec(period:, task:, wait: false, current_time: Time.current)
     return if period.nil? || period.archived?
 
     current_time = Time.parse(current_time) if current_time.is_a?(String)
@@ -40,6 +40,7 @@ class Ratings::UpdatePeriodBookParts
         book_part_uuid: page_uuid,
         tasked_exercises: tasked_exercises,
         is_page: true,
+        wait: wait,
         current_time: current_time
       )
     end + exercise_steps_by_parent_book_part_uuid.map do |parent_book_part_uuid, exercise_steps|
@@ -49,6 +50,7 @@ class Ratings::UpdatePeriodBookParts
         book_part_uuid: parent_book_part_uuid,
         tasked_exercises: tasked_exercises,
         is_page: false,
+        wait: wait,
         current_time: current_time
       )
     end
@@ -66,9 +68,16 @@ class Ratings::UpdatePeriodBookParts
     }
   end
 
-  def update_period_book_part(period:, book_part_uuid:, tasked_exercises:, is_page:, current_time:)
+  def update_period_book_part(
+    period:,
+    book_part_uuid:,
+    tasked_exercises:,
+    is_page:,
+    wait:,
+    current_time:
+  )
     period_book_part = Ratings::PeriodBookPart
-      .lock('FOR NO KEY UPDATE NOWAIT')
+      .lock("FOR NO KEY UPDATE#{' NOWAIT' unless wait}")
       .find_or_initialize_by(period: period, book_part_uuid: book_part_uuid) do |period_book_part|
       period_book_part.is_page = is_page
     end

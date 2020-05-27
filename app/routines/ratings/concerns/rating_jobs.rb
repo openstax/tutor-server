@@ -1,5 +1,12 @@
 module Ratings::Concerns::RatingJobs
-  def perform_rating_jobs_later(task:, role:, period:, current_time: Time.current, queue: nil)
+  def perform_rating_jobs_later(
+    task:,
+    role:,
+    period:,
+    wait: false,
+    current_time: Time.current,
+    queue: nil
+  )
     anti_cheating_date = [ current_time, task.due_at, task.feedback_at ].compact.max
     is_past_anti_cheating_date = anti_cheating_date <= current_time
     task_is_completed = task.completed?(use_cache: true)
@@ -44,11 +51,11 @@ module Ratings::Concerns::RatingJobs
     # We determined that the period update normally runs first
     # so we queue it first here to keep the order consistent in specs
     Ratings::UpdatePeriodBookParts.set(queue: queue).perform_later(
-      period: period, task: task
+      period: period, task: task, wait: wait
     ) if should_queue_period_job && role.student?
 
     Ratings::UpdateRoleBookParts.set(queue: queue, run_at: role_run_at).perform_later(
-      role: role, task: task
+      role: role, task: task, wait: wait
     ) if should_queue_role_job
   end
 end
