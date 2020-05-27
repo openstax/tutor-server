@@ -57,6 +57,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
             task: task,
             role: role,
             period: period,
+            wait: true,
             current_time: current_time,
             queue: 'migration'
           )
@@ -98,6 +99,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
             task: task,
             role: role,
             period: period,
+            wait: true,
             current_time: current_time,
             queue: 'migration'
           )
