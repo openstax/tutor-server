@@ -57,7 +57,7 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
 
       tps_by_is_feedback_immediate = Tasks::Models::TaskPlan.select(:id, :is_feedback_immediate)
                                                             .where(owner: course, type: 'homework')
-                                                            .group(&:is_feedback_immediate)
+                                                            .group_by(&:is_feedback_immediate)
 
       if tps_by_is_feedback_immediate.size == 0
         homework_template = Tasks::Models::GradingTemplate.new(
