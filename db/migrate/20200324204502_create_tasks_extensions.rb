@@ -40,18 +40,6 @@ class CreateTasksExtensions < ActiveRecord::Migration[5.2]
       }
     end
 
-    Tasks::Models::Task.update_all(
-      <<~UPDATE_SQL
-        "completed_steps_count" = GREATEST(
-          "completed_steps_count", "completed_accepted_late_steps_count"
-        ), "completed_exercise_steps_count" = GREATEST(
-          "completed_exercise_steps_count", "completed_accepted_late_exercise_steps_count"
-        ), "correct_exercise_steps_count" = GREATEST(
-          "correct_exercise_steps_count", "correct_accepted_late_exercise_steps_count"
-        )
-      UPDATE_SQL
-    )
-
     remove_column :tasks_tasks, :accepted_late_at
     remove_column :tasks_tasks, :completed_on_time_steps_count
     remove_column :tasks_tasks, :completed_on_time_exercise_steps_count
