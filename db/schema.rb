@@ -827,8 +827,6 @@ ActiveRecord::Schema.define(version: 2020_05_13_175819) do
     t.integer "teacher_student_ids", null: false, array: true
     t.bigint "tasks_task_plan_id"
     t.datetime "withdrawn_at"
-    t.integer "auto_grading_feedback_on", null: false
-    t.integer "manual_grading_feedback_on", null: false
     t.datetime "closes_at"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id"
     t.index ["due_at"], name: "index_tasks_task_caches_on_due_at"

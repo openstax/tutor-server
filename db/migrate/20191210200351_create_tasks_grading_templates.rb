@@ -26,9 +26,6 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
 
     add_column :tasks_task_plans, :tasks_grading_template_id, :integer
 
-    add_column :tasks_task_caches, :auto_grading_feedback_on, :integer
-    add_column :tasks_task_caches, :manual_grading_feedback_on, :integer
-
     CourseProfile::Models::Course.reset_column_information
     Tasks::Models::TaskPlan.reset_column_information
     CourseProfile::Models::Course.find_each do |course|
@@ -114,14 +111,6 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
         owner: course, type: 'reading'
       ).update_all(tasks_grading_template_id: reading_template.id)
     end
-
-    Tasks::Models::TaskCache.reset_column_information
-    Tasks::Models::TaskCache.where.not(feedback_at: nil).update_all(auto_grading_feedback_on: :due)
-    Tasks::Models::TaskCache.where(feedback_at: nil).update_all(auto_grading_feedback_on: :answer)
-    Tasks::Models::TaskCache.update_all(manual_grading_feedback_on: :grade)
-
-    change_column_null :tasks_task_caches, :auto_grading_feedback_on, false
-    change_column_null :tasks_task_caches, :manual_grading_feedback_on, false
 
     add_index :tasks_grading_templates, [ :course_profile_course_id, :task_plan_type, :deleted_at ],
               name: 'index_tasks_grading_templates_on_course_type_and_deleted'

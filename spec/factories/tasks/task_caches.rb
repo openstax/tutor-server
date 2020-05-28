@@ -8,7 +8,5 @@ FactoryBot.define do
     student_names              { task.taskings.map { |tasking| tasking.role.student.name } }
     as_toc                     { { books: [] } }
     is_cached_for_period       { [ true, false ].sample }
-    auto_grading_feedback_on   { task.auto_grading_feedback_on }
-    manual_grading_feedback_on { task.manual_grading_feedback_on }
   end
 end
