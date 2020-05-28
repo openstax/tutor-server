@@ -121,6 +121,7 @@ class CalculateTaskPlanScores
         end
 
         {
+          task_id: task.id,
           role_id: role.id,
           first_name: role.profile.first_name,
           last_name: role.profile.last_name,
