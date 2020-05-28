@@ -26,17 +26,34 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
 
     add_column :tasks_task_plans, :tasks_grading_template_id, :integer
 
+    homework_weight_cutoff_at = DateTime.new 2020, 7, 1
+
     CourseProfile::Models::Course.reset_column_information
     Tasks::Models::TaskPlan.reset_column_information
     CourseProfile::Models::Course.find_each do |course|
       course.homework_weight = course.homework_progress_weight + course.homework_score_weight
+      if course.homework_weight != 0 && course.ends_at < homework_weight_cutoff_at
+        homework_completion_weight = course.homework_progress_weight/course.homework_weight
+        homework_correctness_weight = course.homework_score_weight/course.homework_weight
+      else
+        homework_completion_weight = 0.0
+        homework_correctness_weight = 1.0
+      end
+
       course.reading_weight = course.reading_progress_weight + course.reading_score_weight
-      reading_completion_weight = course.reading_weight == 0 ?
-                                  0.9 : course.reading_progress_weight/course.reading_weight
-      reading_correctness_weight = course.reading_weight == 0 ?
-                                     0.1 : course.reading_score_weight/course.reading_weight
+      if course.reading_weight != 0
+        reading_completion_weight = course.reading_progress_weight/course.reading_weight
+        reading_correctness_weight = course.reading_score_weight/course.reading_weight
+      else
+        reading_completion_weight = 0.9
+        reading_correctness_weight = 0.1
+      end
 
       course.save validate: false
+
+      default_open_time = course.default_open_time || '00:01'
+      default_homework_due_time = course.default_due_time || '21:00'
+      default_reading_due_time = course.default_due_time || '07:00'
 
       tps_by_is_feedback_immediate = Tasks::Models::TaskPlan.select(:id, :is_feedback_immediate)
                                                             .where(owner: course, type: 'homework')
@@ -47,14 +64,14 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
           course: course,
           task_plan_type: :homework,
           name: 'OpenStax Homework',
-          completion_weight: 0.0,
-          correctness_weight: 1.0,
+          completion_weight: homework_completion_weight,
+          correctness_weight: homework_correctness_weight,
           auto_grading_feedback_on: :answer,
           manual_grading_feedback_on: :publish,
           late_work_penalty: 0.1,
           late_work_penalty_applied: :daily,
-          default_open_time: course.default_open_time || '00:01',
-          default_due_time: course.default_due_time || '07:00',
+          default_open_time: default_open_time,
+          default_due_time: default_homework_due_time,
           default_due_date_offset_days: 7,
           default_close_date_offset_days: 7
         )
@@ -71,14 +88,14 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
             course: course,
             task_plan_type: :homework,
             name: "OpenStax Homework#{name_suffix}",
-            completion_weight: 0.0,
-            correctness_weight: 1.0,
+            completion_weight: homework_completion_weight,
+            correctness_weight: homework_correctness_weight,
             auto_grading_feedback_on: is_feedback_immediate ? :answer : :due,
             manual_grading_feedback_on: :publish,
             late_work_penalty: 0.1,
             late_work_penalty_applied: :daily,
-            default_open_time: course.default_open_time || '00:01',
-            default_due_time: course.default_due_time || '07:00',
+            default_open_time: default_open_time,
+            default_due_time: default_homework_due_time,
             default_due_date_offset_days: 7,
             default_close_date_offset_days: 7
           )
@@ -100,8 +117,8 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
         manual_grading_feedback_on: :grade,
         late_work_penalty: 0.1,
         late_work_penalty_applied: :immediately,
-        default_open_time: course.default_open_time || '00:01',
-        default_due_time: course.default_due_time || '07:00',
+        default_open_time: default_open_time,
+        default_due_time: default_reading_due_time,
         default_due_date_offset_days: 7,
         default_close_date_offset_days: 7
       )
