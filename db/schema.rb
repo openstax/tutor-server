@@ -767,6 +767,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_175819) do
     t.integer "auto_grading_feedback_on", null: false
     t.integer "manual_grading_feedback_on", null: false
     t.float "late_work_penalty", null: false
+    t.integer "late_work_penalty_applied", null: false
     t.string "default_open_time", null: false
     t.string "default_due_time", null: false
     t.integer "default_due_date_offset_days", null: false
@@ -774,7 +775,6 @@ ActiveRecord::Schema.define(version: 2020_05_13_175819) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "late_work_penalty_applied", null: false
     t.bigint "cloned_from_id"
     t.index ["cloned_from_id"], name: "index_tasks_grading_templates_on_cloned_from_id"
     t.index ["course_profile_course_id", "name"], name: "index_tasks_grading_templates_on_course_and_name", unique: true
@@ -827,8 +827,6 @@ ActiveRecord::Schema.define(version: 2020_05_13_175819) do
     t.integer "teacher_student_ids", null: false, array: true
     t.bigint "tasks_task_plan_id"
     t.datetime "withdrawn_at"
-    t.integer "auto_grading_feedback_on", null: false
-    t.integer "manual_grading_feedback_on", null: false
     t.datetime "closes_at"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id"
     t.index ["due_at"], name: "index_tasks_task_caches_on_due_at"
