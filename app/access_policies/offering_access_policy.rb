@@ -3,10 +3,12 @@ class OfferingAccessPolicy
     return false if requestor.is_anonymous? ||
                     !requestor.is_human? ||
                     !requestor.account.confirmed_faculty? ||
+                    requestor.account.foreign_school? ||
                     !(
                       requestor.account.college? ||
                       requestor.account.high_school? ||
-                      requestor.account.k12_school?
+                      requestor.account.k12_school? ||
+                      requestor.account.home_school?
                     )
 
     case action.to_sym

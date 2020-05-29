@@ -114,11 +114,22 @@ class Demo::Users < Demo::Base
     end
 
     create_or_update_users(
-      users, :students, role: :student, school_type: :college
+      users,
+      :students,
+      role: :student,
+      school_type: :college,
+      school_location: :domestic_school,
+      is_kip: true
     ).each { |user| log { "Student: #{user.username}" } }
 
     create_or_update_users(
-      users, :teachers, faculty_status: :confirmed_faculty, role: :instructor, school_type: :college
+      users,
+      :teachers,
+      faculty_status: :confirmed_faculty,
+      role: :instructor,
+      school_type: :college,
+      school_location: :domestic_school,
+      is_kip: true
     ).each { |user| log { "Teacher: #{user.username}" } }
 
     log_status

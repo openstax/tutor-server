@@ -35,6 +35,8 @@ RSpec.describe Demo::Users, type: :routine do
     expect(admin.role).to eq 'other'
     expect(admin.faculty_status).to eq 'no_faculty_info'
     expect(admin.school_type).to eq 'unknown_school_type'
+    expect(admin.school_location).to eq 'unknown_school_location'
+    expect(admin.is_kip).to be_nil
     expect(admin.is_test).to eq true
 
     ca = User::Models::Profile.joins(:account).find_by(account: { username: 'content' })
@@ -45,6 +47,8 @@ RSpec.describe Demo::Users, type: :routine do
     expect(ca.role).to eq 'other'
     expect(ca.faculty_status).to eq 'no_faculty_info'
     expect(ca.school_type).to eq 'unknown_school_type'
+    expect(ca.school_location).to eq 'unknown_school_location'
+    expect(ca.is_kip).to be_nil
     expect(ca.is_test).to eq true
 
     cs = User::Models::Profile.joins(:account).find_by(account: { username: 'support' })
@@ -55,6 +59,8 @@ RSpec.describe Demo::Users, type: :routine do
     expect(cs.role).to eq 'other'
     expect(cs.faculty_status).to eq 'no_faculty_info'
     expect(cs.school_type).to eq 'unknown_school_type'
+    expect(cs.school_location).to eq 'unknown_school_location'
+    expect(cs.is_kip).to be_nil
     expect(cs.is_test).to eq true
 
     rs = User::Models::Profile.joins(:account).find_by(account: { username: 'researcher' })
@@ -65,6 +71,8 @@ RSpec.describe Demo::Users, type: :routine do
     expect(rs.role).to eq 'other'
     expect(rs.faculty_status).to eq 'no_faculty_info'
     expect(rs.school_type).to eq 'unknown_school_type'
+    expect(rs.school_location).to eq 'unknown_school_location'
+    expect(rs.is_kip).to be_nil
     expect(rs.is_test).to eq true
 
     tc = User::Models::Profile.joins(:account).find_by(account: { username: 'reviewteacher' })
@@ -75,6 +83,8 @@ RSpec.describe Demo::Users, type: :routine do
     expect(tc.role).to eq 'instructor'
     expect(tc.faculty_status).to eq 'confirmed_faculty'
     expect(tc.school_type).to eq 'college'
+    expect(tc.school_location).to eq 'domestic_school'
+    expect(tc.is_kip).to eq true
     expect(tc.is_test).to eq true
 
     acc = OpenStax::Accounts::Account.arel_table
@@ -88,6 +98,8 @@ RSpec.describe Demo::Users, type: :routine do
       expect(student.role).to eq 'student'
       expect(student.faculty_status).to eq 'no_faculty_info'
       expect(student.school_type).to eq 'college'
+      expect(student.school_location).to eq 'domestic_school'
+      expect(student.is_kip).to eq true
       expect(student.is_test).to eq true
     end
   end

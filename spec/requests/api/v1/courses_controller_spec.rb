@@ -182,6 +182,7 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
 
         @user_1.account.confirmed_faculty!
         @user_1.account.college!
+        @user_1.account.domestic_school!
 
         @preview_course = CreateCourse.call(
           name: 'Unclaimed',
