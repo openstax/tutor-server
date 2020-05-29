@@ -162,7 +162,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def needs_grading?
-    !can_be_auto_graded? && !was_manually_graded?
+    completed? && !can_be_auto_graded? && !was_manually_graded?
   end
 
   # NOTE: The following 2 methods do not take into account
