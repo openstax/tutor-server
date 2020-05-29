@@ -64,7 +64,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 9.0.3' # <- DO NOT UPDATE TO 9.1.0+ UNTIL LMS sync issue is resolved
+gem 'openstax_accounts', '~> 9.0.5' # <- DO NOT UPDATE TO 9.1.0+ UNTIL LMS sync issue is resolved
                                     # details are in: https://github.com/openstax/tutor/issues/923
 gem 'action_interceptor'
 
