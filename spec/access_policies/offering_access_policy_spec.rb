@@ -52,7 +52,7 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
   context 'verified faculty' do
     let(:requestor) { faculty }
 
-    [ :college, :high_school, :k12_school ].each do |school_type|
+    [ :college, :high_school, :k12_school, :home_school ].each do |school_type|
       context school_type.to_s do
         before { requestor.account.update_attribute :school_type, school_type }
 
@@ -96,6 +96,21 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
 
     context 'other_school_type' do
       before { requestor.account.other_school_type! }
+
+      [ :index, :read, :create_course ].each do |test_action|
+        context test_action.to_s do
+          let(:action) { test_action }
+
+          it { should eq false }
+        end
+      end
+    end
+
+    context 'foreign_school school_location' do
+      before do
+        requestor.account.college!
+        requestor.account.foreign_school!
+      end
 
       [ :index, :read, :create_course ].each do |test_action|
         context test_action.to_s do
