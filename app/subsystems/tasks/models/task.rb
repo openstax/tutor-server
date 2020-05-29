@@ -379,6 +379,29 @@ class Tasks::Models::Task < ApplicationRecord
     end
   end
 
+  def manual_grading_complete?
+    case manual_grading_feedback_on
+    when 'grade'
+      exercise_steps(preload_taskeds: true).all? do |task_step|
+        task_step.tasked.was_manually_graded?
+      end
+    when 'publish'
+      exercise_steps(preload_taskeds: true).all? do |task_step|
+        task_step.tasked.grade_published?
+      end
+    else
+      false
+    end
+  end
+
+  def provisional_score?(current_time: Time.current, current_time_ntz: nil)
+    (
+      manual_grading_feedback_available? || auto_grading_feedback_available?(
+        current_time: current_time, current_time_ntz: current_time_ntz
+      )
+    ) && !manual_grading_complete?
+  end
+
   def withdrawn?
     !task_plan.nil? && task_plan.withdrawn?
   end
