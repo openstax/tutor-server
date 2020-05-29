@@ -99,6 +99,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
                     is_completed: true,
+                    is_correct: true,
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
                     points: 1.0,
@@ -110,6 +111,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
                     is_completed: false,
+                    is_correct: false,
                     needs_grading: false
                   }
                 ] * 4 + [
@@ -136,6 +138,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
                     is_completed: true,
+                    is_correct: false,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
                     points: 0.0,
@@ -147,6 +150,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
                     is_completed: false,
+                    is_correct: false,
                     needs_grading: false
                   }
                 ] * 4 + [
@@ -236,6 +240,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
                     is_completed: true,
+                    is_correct: true,
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
                     points: 1.0,
@@ -247,6 +252,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
                     is_completed: false,
+                    is_correct: false,
                     points: 0.0,
                     needs_grading: false
                   }
@@ -279,6 +285,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
                     is_completed: true,
+                    is_correct: false,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
                     points: 0.0,
@@ -290,6 +297,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
                     is_completed: false,
+                    is_correct: false,
                     points: 0.0,
                     needs_grading: false
                   }

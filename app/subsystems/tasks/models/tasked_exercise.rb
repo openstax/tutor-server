@@ -67,7 +67,11 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def is_correct?
-    !correct_answer_id.nil? && answer_id == correct_answer_id
+    if grader_points.nil?
+      !correct_answer_id.nil? && answer_id == correct_answer_id
+    else
+      grader_points > 0
+    end
   end
 
   def exercise?

@@ -23,9 +23,14 @@ class Api::V1::TaskPlan::Scores::StudentQuestionRepresenter < Roar::Decorator
            writeable: false
 
   property :is_completed,
-           schema_info: { required: true, type: 'boolean' },
            readable: true,
-           writeable: false
+           writeable: false,
+           schema_info: { required: true, type: 'boolean' }
+
+  property :is_correct,
+           readable: true,
+           writeable: false,
+           schema_info: { required: true, type: 'boolean' }
 
   property :selected_answer_id,
            type: String,
