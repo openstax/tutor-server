@@ -14,7 +14,8 @@ class CreateCourse
            year: nil, num_sections: 1, catalog_offering: nil, appearance_code: nil, starts_at: nil,
            ends_at: nil, school: nil, timezone: nil, cloned_from: nil,
            estimated_student_count: nil, does_cost: nil, reading_weight: nil, homework_weight: nil,
-           grading_templates: Tasks::Models::GradingTemplate.default)
+           grading_templates: Tasks::Models::GradingTemplate.default,
+           past_due_unattempted_ungraded_wrq_are_zero: true)
 
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
@@ -58,7 +59,8 @@ class CreateCourse
       estimated_student_count: estimated_student_count,
       reading_weight: reading_weight,
       homework_weight: homework_weight,
-      grading_templates: grading_templates
+      grading_templates: grading_templates,
+      past_due_unattempted_ungraded_wrq_are_zero: past_due_unattempted_ungraded_wrq_are_zero
     )
 
     unless catalog_offering.blank?

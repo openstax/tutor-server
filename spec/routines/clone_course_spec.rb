@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe CloneCourse, type: :routine do
-
   let(:course) { FactoryBot.create :course_profile_course }
   let(:user)   { FactoryBot.create :user_profile }
 
@@ -23,7 +22,9 @@ RSpec.describe CloneCourse, type: :routine do
     expect(clone.estimated_student_count).to eq 100
     expect(clone.course_assistants.count).to eq 4
     expect(UserIsCourseTeacher[user: user, course: clone]).to eq true
-
+    expect(clone.past_due_unattempted_ungraded_wrq_are_zero).to(
+      eq course.past_due_unattempted_ungraded_wrq_are_zero
+    )
   end
 
   it "copies the course's question library if requested" do
@@ -43,7 +44,5 @@ RSpec.describe CloneCourse, type: :routine do
     expect(clone.excluded_exercises.map(&:exercise_number)).to(
       match_array(course.excluded_exercises.map(&:exercise_number))
     )
-
   end
-
 end

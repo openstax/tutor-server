@@ -35,7 +35,7 @@ class CollectCourseInfo
         active?: course.active?,
         timezone: course.timezone,
         offering: offering,
-        catalog_offering_id: offering.try!(:id),
+        catalog_offering_id: offering&.id,
         is_concept_coach: course.is_concept_coach,
         is_college: course.is_college,
         is_preview: course.is_preview,
@@ -43,10 +43,12 @@ class CollectCourseInfo
         does_cost: course.does_cost,
         is_lms_enabling_allowed: course.is_lms_enabling_allowed,
         is_lms_enabled: course.is_lms_enabled,
+        past_due_unattempted_ungraded_wrq_are_zero:
+          course.past_due_unattempted_ungraded_wrq_are_zero,
         last_lms_scores_push_job_id: course.last_lms_scores_push_job_id,
         school_name: course.school_name,
-        salesforce_book_name: offering.try!(:salesforce_book_name),
-        appearance_code: course.appearance_code.blank? ? offering.try!(:appearance_code) :
+        salesforce_book_name: offering&.salesforce_book_name,
+        appearance_code: course.appearance_code.blank? ? offering&.appearance_code :
                                                          course.appearance_code,
         cloned_from_id: course.cloned_from_id,
         reading_weight: course.reading_weight,
@@ -56,7 +58,7 @@ class CollectCourseInfo
         periods: periods,
         students: students,
         roles: roles,
-        spy_info: course.spy_info,
+        spy_info: course.spy_info
       )
     end
   end

@@ -40,6 +40,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           does_cost: course_1.does_cost,
           is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
           is_lms_enabled: course_1.is_lms_enabled,
+          past_due_unattempted_ungraded_wrq_are_zero:
+            course_1.past_due_unattempted_ungraded_wrq_are_zero,
           last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
           school_name: course_1.school_name,
           salesforce_book_name: course_1.offering.salesforce_book_name,
@@ -91,6 +93,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           does_cost: course_1.does_cost,
           is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
           is_lms_enabled: course_1.is_lms_enabled,
+          past_due_unattempted_ungraded_wrq_are_zero:
+            course_1.past_due_unattempted_ungraded_wrq_are_zero,
           last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
           school_name: course_1.school_name,
           salesforce_book_name: course_1.offering.salesforce_book_name,
@@ -125,6 +129,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
           does_cost: course_2.does_cost,
           is_lms_enabling_allowed: course_2.is_lms_enabling_allowed,
           is_lms_enabled: course_2.is_lms_enabled,
+          past_due_unattempted_ungraded_wrq_are_zero:
+            course_2.past_due_unattempted_ungraded_wrq_are_zero,
           last_lms_scores_push_job_id: course_2.last_lms_scores_push_job_id,
           school_name: course_2.school_name,
           salesforce_book_name: course_2.offering.salesforce_book_name,
@@ -174,6 +180,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             does_cost: course_1.does_cost,
             is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
             is_lms_enabled: course_1.is_lms_enabled,
+            past_due_unattempted_ungraded_wrq_are_zero:
+              course_1.past_due_unattempted_ungraded_wrq_are_zero,
             last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
             school_name: course_1.school_name,
             salesforce_book_name: course_1.offering.salesforce_book_name,
@@ -218,6 +226,8 @@ RSpec.describe CollectCourseInfo, type: :routine do
             does_cost: course_1.does_cost,
             is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
             is_lms_enabled: course_1.is_lms_enabled,
+            past_due_unattempted_ungraded_wrq_are_zero:
+              course_1.past_due_unattempted_ungraded_wrq_are_zero,
             last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
             school_name: course_1.school_name,
             salesforce_book_name: course_1.offering.salesforce_book_name,
