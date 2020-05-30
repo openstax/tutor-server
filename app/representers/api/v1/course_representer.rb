@@ -198,6 +198,15 @@ module Api::V1
                              "an LMS; can be `nil` which indicates no choice yet"
              }
 
+    property :past_due_unattempted_ungraded_wrq_are_zero,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               required: true,
+               type: 'boolean',
+               description: 'True iff past-due unattempted ungraded WRQ automatically receive zero'
+             }
+
     property :last_lms_scores_push_job_id,
              type: String,
              writeable: false,

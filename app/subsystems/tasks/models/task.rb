@@ -220,21 +220,22 @@ class Tasks::Models::Task < ApplicationRecord
     ).sum
   end
 
-  def points_per_question_index_without_lateness(incomplete_value: 0.0)
+  def points_per_question_index_without_lateness(incomplete_value_proc: ->(task_step) { 0.0 })
     full_credit_question_ids = Set.new(
       task_plan&.dropped_questions&.filter(&:full_credit?)&.map(&:question_id) || []
     )
 
     exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
-      next incomplete_value unless task_step.completed? && task_step.exercise?
+      next incomplete_value_proc.call(task_step) unless task_step.completed? && task_step.exercise?
 
       tasked = task_step.tasked
-      next incomplete_value if !task_step.tasked.was_manually_graded? && !tasked.can_be_auto_graded?
+      next incomplete_value_proc.call(task_step) \
+        if !task_step.tasked.was_manually_graded? && !tasked.can_be_auto_graded?
 
       next available_points_per_question_index[index] \
         if full_credit_question_ids.include?(tasked.question_id)
 
-      next tasked.grader_points || incomplete_value \
+      next tasked.grader_points || incomplete_value_proc.call(task_step) \
         if tasked.was_manually_graded? || !tasked.can_be_auto_graded?
 
       tasked.is_correct? ? available_points_per_question_index[index] : 0.0
