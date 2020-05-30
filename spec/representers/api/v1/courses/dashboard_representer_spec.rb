@@ -89,6 +89,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed_on_time_exercise_steps_count: 3,
           correct_exercise_count: 2,
           ungraded_step_count: 1,
+          provisional_score?: true,
           withdrawn?: true
         ),
         OpenStruct.new(
@@ -112,6 +113,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed_on_time_exercise_steps_count: 5,
           correct_exercise_count: 4,
           ungraded_step_count: 3,
+          provisional_score?: false,
           withdrawn?: false
         ),
         OpenStruct.new(
@@ -135,6 +137,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed_on_time_exercise_steps_count: 7,
           correct_exercise_count: 6,
           ungraded_step_count: 5,
+          provisional_score?: true,
           withdrawn?: false
         ),
         OpenStruct.new(
@@ -148,6 +151,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed?: true,
           past_due?: true,
           extended?: false,
+          provisional_score?: false,
           withdrawn?: false
         ),
       ],
@@ -224,6 +228,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'completed_on_time_exercise_steps_count' => 3,
           'correct_exercise_count' => 2,
           'ungraded_step_count' => 1,
+          'is_provisional_score' => true,
           'is_deleted' => true
         ),
         a_hash_including(
@@ -244,6 +249,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'complete_exercise_count' => 6,
           'completed_on_time_exercise_steps_count' => 5,
           'ungraded_step_count' => 3,
+          'is_provisional_score' => false,
           'is_deleted' => false
         ),
         a_hash_including(
@@ -264,6 +270,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'completed_on_time_exercise_steps_count' => 7,
           'correct_exercise_count' => 6,
           'ungraded_step_count' => 5,
+          'is_provisional_score' => true,
           'is_deleted' => false
         ),
         a_hash_including(

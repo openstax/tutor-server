@@ -128,6 +128,12 @@ module Api::V1::Courses
                type: Integer,
                readable: true,
                writeable: false
+
+      property :provisional_score?,
+               as: :is_provisional_score,
+               readable: true,
+               writeable: false,
+               schema_info: { type: 'boolean' }
     end
 
     class ReadingTask < StepTaskBase
