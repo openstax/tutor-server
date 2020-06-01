@@ -51,9 +51,9 @@ class CalculateTaskPlanScores
          title: "Q#{index + 1}",
          points_without_dropping: available_points_without_dropping_per_question_index[index],
          points: available_points_per_question_index[index],
-         type: step.is_core ? (step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ') : 'Tutor',
-         question_id: step.exercise? && step.is_core? ? step.tasked.question_id : nil,
-         exercise_id: step.exercise? && step.is_core? ? step.tasked.content_exercise_id : nil,
+         type: step.fixed_group? ? (step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ') : 'Tutor',
+         exercise_id: step.exercise? && step.fixed_group? ? step.tasked.content_exercise_id : nil,
+         question_id: step.exercise? && step.fixed_group? ? step.tasked.question_id : nil
         }
       end
       if task_plan.type == 'homework'
