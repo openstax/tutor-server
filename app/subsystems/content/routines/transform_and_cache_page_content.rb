@@ -23,6 +23,12 @@ class Content::Routines::TransformAndCachePageContent
     # Get all page uuids and cnx_ids given
     pages_by_uuid = pages.index_by(&:uuid)
 
+    # Get all exercises that require context
+    context_exercises = Content::Models::Exercise.requires_context.where(
+      id: pages.flat_map(&:all_exercise_ids)
+    ).preload(:tags).to_a
+    context_exercises_by_page_id = context_exercises.group_by(&:content_page_id)
+
     pages.each do |page|
       doc = Nokogiri::HTML(page.content)
       doc.css('[href]').each do |link|
@@ -72,12 +78,34 @@ class Content::Routines::TransformAndCachePageContent
 
       page.content = doc.to_html
       page.cache_fragments_and_snap_labs
+
+      # Assign exercise context if required
+      (context_exercises_by_page_id[page.id] || []).each do |context_exercise|
+        feature_ids = context_exercise.feature_ids
+        context_exercise.context = page.context_for_feature_ids feature_ids
+
+        if context_exercise.context.blank?
+          if feature_ids.empty?
+            Rails.logger.warn do
+              "Exercise #{context_exercise.uid} requires context but it has no feature ID tags"
+            end
+          else
+            Rails.logger.warn do
+              "Exercise #{context_exercise.uid} requires context but its feature ID(s) [ #{
+                feature_ids.join(', ')} ] could not be found on #{page.url}"
+            end
+          end
+        end
+      end
     end
 
     outputs.pages = pages
 
     return unless save
 
+    # Pages are large enough that saving them individually seems faster than importing
     pages.each(&:save!)
+
+    context_exercises.each(&:save!)
   end
 end

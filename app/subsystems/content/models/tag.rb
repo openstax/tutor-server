@@ -19,7 +19,7 @@ class Content::Models::Tag < IndestructibleRecord
   validates :value, presence: true
   validates :tag_type, presence: true
 
-  before_save :update_tag_type_data_and_visible
+  before_validation :update_tag_type, :update_data_and_visible
 
   IMPORT_TAG_TYPES  = Set[ :lo, :aplo, :cnxmod ]
   MAPPING_TAG_TYPE = :lo
@@ -41,10 +41,11 @@ class Content::Models::Tag < IndestructibleRecord
     MAPPING_TAG_TYPE == tag_type.to_sym
   end
 
-  protected
-
-  def update_tag_type_data_and_visible
+  def update_tag_type
     self.tag_type = Tagger.get_type(value) if tag_type.nil? || generic?
+  end
+
+  def update_data_and_visible
     self.data = Tagger.get_data(tag_type, value) if data.nil?
     self.visible = VISIBLE_TAG_TYPES.include?(tag_type.to_sym) if visible.nil?
   end
