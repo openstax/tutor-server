@@ -80,6 +80,26 @@ module Api::V1
                DESCRIPTION
              }
 
+    property :completion_weight,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :correctness_weight,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :late_work_penalty_applied,
+             type: String,
+             readable: true,
+             writeable: false
+
+    property :late_work_penalty_per_period,
+             type: Float,
+             readable: true,
+             writeable: false
+
     property :withdrawn?,
              as: :is_deleted,
              readable: true,
