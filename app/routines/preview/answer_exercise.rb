@@ -29,7 +29,6 @@ class Preview::AnswerExercise
     else
       free_response = 'A sentence explaining all the wrong things...' if free_response.blank?
       wrong_answer_ids = tasked.answer_ids.reject { |id| id == tasked.correct_answer_id }
-      raise "No incorrect answers to choose" if wrong_answer_ids.size == 0
       answer_id = wrong_answer_ids.shuffle.first
     end
 
