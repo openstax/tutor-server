@@ -90,6 +90,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           correct_exercise_count: 2,
           ungraded_step_count: 1,
           provisional_score?: true,
+          score: 0.5,
           withdrawn?: true
         ),
         OpenStruct.new(
@@ -113,6 +114,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed_on_time_exercise_steps_count: 5,
           correct_exercise_count: 4,
           ungraded_step_count: 3,
+          score: 0.66,
           provisional_score?: false,
           withdrawn?: false
         ),
@@ -137,6 +139,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           completed_on_time_exercise_steps_count: 7,
           correct_exercise_count: 6,
           ungraded_step_count: 5,
+          score: 1.0,
           provisional_score?: true,
           withdrawn?: false
         ),
@@ -228,6 +231,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'completed_on_time_exercise_steps_count' => 3,
           'correct_exercise_count' => 2,
           'ungraded_step_count' => 1,
+          'score' => 0.5,
           'is_provisional_score' => true,
           'is_deleted' => true
         ),
@@ -249,6 +253,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'complete_exercise_count' => 6,
           'completed_on_time_exercise_steps_count' => 5,
           'ungraded_step_count' => 3,
+          'score' => 0.66,
           'is_provisional_score' => false,
           'is_deleted' => false
         ),
@@ -270,6 +275,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'completed_on_time_exercise_steps_count' => 7,
           'correct_exercise_count' => 6,
           'ungraded_step_count' => 5,
+          'score' => 1.0,
           'is_provisional_score' => true,
           'is_deleted' => false
         ),
