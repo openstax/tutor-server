@@ -40,6 +40,41 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
     expect(described_class.new(task).to_hash['manual_grading_feedback_on']).to eq 'publish'
   end
 
+  it 'includes completion_weight' do
+    task.task_plan.grading_template.completion_weight = 0.0
+    expect(described_class.new(task).to_hash['completion_weight']).to eq 0.0
+
+    task.task_plan.grading_template.completion_weight = 0.25
+    expect(described_class.new(task).to_hash['completion_weight']).to eq 0.25
+  end
+
+  it 'includes correctness_weight' do
+    task.task_plan.grading_template.correctness_weight = 1.0
+    expect(described_class.new(task).to_hash['correctness_weight']).to eq 1.0
+
+    task.task_plan.grading_template.correctness_weight = 0.75
+    expect(described_class.new(task).to_hash['correctness_weight']).to eq 0.75
+  end
+
+  it 'includes late_work_penalty_applied' do
+    task.task_plan.grading_template.late_work_penalty_applied = :never
+    expect(described_class.new(task).to_hash['late_work_penalty_applied']).to eq 'never'
+
+    task.task_plan.grading_template.late_work_penalty_applied = :immediately
+    expect(described_class.new(task).to_hash['late_work_penalty_applied']).to eq 'immediately'
+
+    task.task_plan.grading_template.late_work_penalty_applied = :daily
+    expect(described_class.new(task).to_hash['late_work_penalty_applied']).to eq 'daily'
+  end
+
+  it 'includes late_work_penalty_per_period' do
+    task.task_plan.grading_template.late_work_penalty = 0.1
+    expect(described_class.new(task).to_hash['late_work_penalty_per_period']).to eq 0.1
+
+    task.task_plan.grading_template.late_work_penalty = 0.25
+    expect(described_class.new(task).to_hash['late_work_penalty_per_period']).to eq 0.25
+  end
+
   it 'includes is_deleted' do
     task.task_plan.withdrawn_at = nil
     expect(described_class.new(task).to_hash).to include('is_deleted' => false)
