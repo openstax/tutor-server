@@ -366,10 +366,14 @@ class Tasks::Models::Task < ApplicationRecord
     end
   end
 
+  def manually_graded_steps
+    exercise_steps(preload_taskeds: true).reject {|step| step.tasked.can_be_auto_graded? }
+  end
+
   def manual_grading_feedback_available?
     case manual_grading_feedback_on
     when 'grade'
-      exercise_steps(preload_taskeds: true).any? do |task_step|
+      manually_graded_steps.any? do |task_step|
         task_step.tasked.was_manually_graded?
       end
     when 'publish'
@@ -382,11 +386,11 @@ class Tasks::Models::Task < ApplicationRecord
   def manual_grading_complete?
     case manual_grading_feedback_on
     when 'grade'
-      exercise_steps(preload_taskeds: true).all? do |task_step|
+      manually_graded_steps.all? do |task_step|
         task_step.tasked.was_manually_graded?
       end
     when 'publish'
-      exercise_steps(preload_taskeds: true).all? do |task_step|
+      manually_graded_steps.all? do |task_step|
         task_step.tasked.grade_published?
       end
     else
