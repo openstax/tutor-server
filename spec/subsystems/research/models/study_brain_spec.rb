@@ -47,7 +47,7 @@ RSpec.describe Research::Models::StudyBrain, type: :model do
         study: cohort.study, code: code
       )
     end
-    let(:task_step) { FactoryBot.build(:tasks_tasked_exercise, skip_task: true).task_step }
+    let(:task_step) { FactoryBot.build(:tasks_tasked_exercise).task_step }
 
     it 'can be recorded from a brain and returns original value' do
       expect do

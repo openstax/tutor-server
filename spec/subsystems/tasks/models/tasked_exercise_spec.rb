@@ -94,22 +94,21 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect(tasked_exercise).to be_valid
   end
 
-  it 'cannot be answered after due and graded' do
+  it 'cannot be answered after graded' do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     tasked_exercise.free_response = 'abc'
+    expect(tasked_exercise.was_manually_graded?).to eq false
+    expect(tasked_exercise.task_step.can_be_updated?).to eq true
     tasked_exercise.save!
 
     tasked_exercise.last_graded_at = Time.current
     tasked_exercise.grader_points = 0.0
+    expect(tasked_exercise.was_manually_graded?).to eq true
+    expect(tasked_exercise.task_step.can_be_updated?).to eq false
     tasked_exercise.save!
 
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     tasked_exercise.free_response = 'def'
-
-    expect(tasked_exercise).to be_valid
-
-    tasked_exercise.task_step.task.update_attribute :due_at_ntz, Time.current - 1.day
-
     expect(tasked_exercise).not_to be_valid
   end
 

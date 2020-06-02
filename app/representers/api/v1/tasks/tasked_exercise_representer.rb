@@ -1,8 +1,8 @@
 module Api::V1::Tasks
   class TaskedExerciseRepresenter < TaskStepRepresenter
-    FEEDBACK_AVAILABLE = ->(*) { task_step.feedback_available? }
+    FEEDBACK_AVAILABLE = ->(*) { feedback_available? }
     INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE = ->(user_options:, **) do
-      user_options&.[](:include_content) && task_step.feedback_available?
+      user_options&.[](:include_content) && feedback_available?
     end
 
     property :title,
@@ -78,6 +78,16 @@ module Api::V1::Tasks
                description: "Content related to this step",
              },
              if: INCLUDE_CONTENT
+
+    property :feedback_available?,
+             as: :is_feedback_available,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               type: 'boolean',
+               description: "Whether or not this exercise's feedback is available"
+             }
 
     property :solution,
              type: String,

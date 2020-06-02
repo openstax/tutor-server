@@ -279,7 +279,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
       unless ecosystem.nil?
         responses_by_page_id = Hash.new { |hash, key| hash[key] = [] }
         Tasks::Models::TaskedExercise.select(
-          :id, :answer_id, :correct_answer_id, :grader_points
+          :id, :answer_ids, :answer_id, :correct_answer_id, :grader_points
         ).joins(
           task_step: { task: :taskings }
         ).where(
@@ -287,7 +287,7 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
             task: { ecosystem: ecosystem, taskings: { entity_role_id: role.id } }
           }
         ).preload(task_step: :task).filter do |tasked_exercise|
-          tasked_exercise.task_step.feedback_available? current_time: current_time
+          tasked_exercise.feedback_available? current_time: current_time
         end.each do |tasked_exercise|
           responses_by_page_id[tasked_exercise.task_step.content_page_id] <<
             tasked_exercise.is_correct?
@@ -489,13 +489,13 @@ class OpenStax::Biglearn::Api::FakeClient < OpenStax::Biglearn::FakeClient
     role_ids = students.map(&:entity_role_id)
     page_ids = [ pages ].flatten.map(&:id)
     responses = Tasks::Models::TaskedExercise.select(
-      :id, :answer_id, :correct_answer_id, :grader_points
+      :id, :answer_ids, :answer_id, :correct_answer_id, :grader_points
     ).joins(
       task_step: { task: :taskings }
     ).where(
       task_step: { content_page_id: page_ids, task: { taskings: { entity_role_id: role_ids } } }
     ).preload(task_step: :task).filter do |tasked_exercise|
-      tasked_exercise.task_step.feedback_available? current_time: current_time
+      tasked_exercise.feedback_available? current_time: current_time
     end.map(&:is_correct?)
 
     calculate_clue responses: responses, ecosystem: ecosystem

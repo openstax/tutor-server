@@ -96,8 +96,18 @@ class Tasks::Models::TaskStep < ApplicationRecord
     !first_completed_at.nil?
   end
 
-  def feedback_available?(current_time: Time.current)
-    completed? && task.auto_grading_feedback_available?(current_time: current_time)
+  def can_be_updated?(current_time: Time.current)
+    return false if task.past_close?(current_time: current_time)
+
+    return false if exercise? && tasked.was_manually_graded?
+
+    return true unless completed?
+
+    return false if !exercise? || tasked.was_manually_graded?
+
+    !tasked.can_be_auto_graded? || !task.auto_grading_feedback_available?(
+      current_time: current_time
+    )
   end
 
   def group_name
