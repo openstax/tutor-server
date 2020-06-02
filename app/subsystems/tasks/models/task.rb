@@ -33,8 +33,6 @@ class Tasks::Models::Task < ApplicationRecord
 
   belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
 
-  belongs_to :extension, optional: true, inverse_of: :task
-
   sortable_has_many :task_steps, on: :number, inverse_of: :task do
     # Because we update task_step counts in the middle of the following methods,
     # we cause the task_steps to reload and these methods behave oddly (giving us duplicate records)
@@ -73,6 +71,33 @@ class Tasks::Models::Task < ApplicationRecord
   before_validation :update_cached_attributes
   after_create :update_caches_now
   after_touch :update_caches_later
+
+  def reload(*args)
+    @extension = nil
+
+    super
+  end
+
+  def extension
+    return @extension unless @extension.nil?
+
+    return if task_plan.nil?
+
+    tasking = taskings.first
+    return if tasking.nil?
+
+    @extension = if task_plan.extensions.loaded?
+      task_plan.extensions.detect do |extension|
+        extension.entity_role_id == tasking.entity_role_id
+      end
+    elsif tasking.association(:role).loaded? && tasking.role.extensions.loaded?
+      tasking.role.extensions.detect do |extension|
+        extension.tasks_task_plan_id == tasks_task_plan_id
+      end
+    else
+      task_plan.extensions.find_by entity_role_id: tasking.entity_role_id
+    end
+  end
 
   def preload_taskeds
     ActiveRecord::Associations::Preloader.new.preload task_steps.to_a, :tasked

@@ -6,8 +6,6 @@ RSpec.describe Tasks::Models::Extension, type: :model do
   it { is_expected.to belong_to(:task_plan) }
   it { is_expected.to belong_to(:role) }
 
-  it { is_expected.to have_one(:task) }
-
   it { is_expected.to validate_uniqueness_of(:role).scoped_to(:tasks_task_plan_id) }
 
   it { is_expected.to validate_presence_of(:due_at_ntz) }

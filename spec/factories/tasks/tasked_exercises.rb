@@ -35,7 +35,7 @@ FactoryBot.define do
         task = tasked.task_step.task
         task_steps = task.task_steps
         task.task_steps = task_steps - [tasked.task_step]
-        create(:tasks_tasking, role: evaluator.tasked_to, task: task)
+        task.taskings << FactoryBot.build(:tasks_tasking, role: evaluator.tasked_to, task: task)
         task.task_steps = task_steps
       end
     end

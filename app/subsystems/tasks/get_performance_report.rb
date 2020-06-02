@@ -174,7 +174,7 @@ module Tasks
         .joins(task_plan: :tasking_plans)
         .where(task_type: task_types,task_plan: { withdrawn_at: nil })
         .where(tt[:opens_at_ntz].eq(nil).or tt[:opens_at_ntz].lteq(current_time_ntz))
-        .preload(task_plan: :tasking_plans)
+        .preload(task_plan: [ :tasking_plans, :extensions ])
         .reorder(nil).distinct
 
       if is_teacher
