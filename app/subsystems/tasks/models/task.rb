@@ -186,29 +186,6 @@ class Tasks::Models::Task < ApplicationRecord
     grading_template&.late_work_penalty || 0.0
   end
 
-  def lateness
-    return 0 if last_worked_at.blank? || due_at.blank?
-
-    last_worked_at - due_at
-  end
-
-  def late_work_penalty
-    return 0.0 if lateness <= 0
-
-    penalty = case late_work_penalty_applied
-    when 'immediately'
-      late_work_penalty_per_period
-    when 'daily'
-      (lateness/1.day).ceil * late_work_penalty_per_period
-    else
-      0.0
-    end
-  end
-
-  def late_work_multiplier
-    1.0 - late_work_penalty
-  end
-
   def completion
     steps_count == 0 ? nil : completed_steps_count / steps_count.to_f
   end
@@ -274,30 +251,57 @@ class Tasks::Models::Task < ApplicationRecord
     points_per_question_index_without_lateness.sum
   end
 
+  def late_work_penalty_for(task_step:, due_at: self.due_at)
+    return 0.0 if task_step.last_completed_at.nil?
+
+    return 0.0 if due_at.nil? || task_step.last_completed_at <= due_at
+
+    penalty = case late_work_penalty_applied
+    when 'immediately'
+      late_work_penalty_per_period
+    when 'daily'
+      ((task_step.last_completed_at - due_at)/1.day).ceil * late_work_penalty_per_period
+    else
+      0.0
+    end
+  end
+
   def late_work_point_penalty
-    late_work_penalty * points_without_lateness
+    due_at = self.due_at
+    return 0.0 if due_at.nil?
+
+    points_per_question_index_without_lateness = self.points_per_question_index_without_lateness
+    exercise_and_placeholder_steps.each_with_index.sum do |task_step, index|
+      points = points_per_question_index_without_lateness[index]
+      points == 0.0 ? 0.0 : points * late_work_penalty_for(task_step: task_step, due_at: due_at)
+    end
   end
 
   def points
-    late_work_multiplier * points_without_lateness
+    points_without_lateness - late_work_point_penalty
+  end
+
+  def available_points_worked(current_time: Time.current)
+    if past_due?(current_time: current_time)
+      available_points
+    else
+      exercise_and_placeholder_steps.each_with_index.sum do |task_step, index|
+        task_step.exercise? && task_step.completed? ?
+          available_points_per_question_index[index] : 0.0
+      end
+    end
   end
 
   def score_without_lateness(current_time: Time.current)
-    total = if past_due?(current_time: current_time)
-      available_points
-    else
-      exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
-        task_step.exercise? && task_step.completed? ?
-          available_points_per_question_index[index] : 0.0
-      end.sum
-    end
+    available_points_worked = self.available_points_worked current_time: current_time
 
-    points_without_lateness/total unless total == 0.0
+    points_without_lateness/available_points_worked unless available_points_worked == 0.0
   end
 
-  def score
-    swl = score_without_lateness
-    late_work_multiplier * swl unless swl.nil?
+  def score(current_time: Time.current)
+    available_points_worked = self.available_points_worked current_time: current_time
+
+    points/available_points_worked unless available_points_worked == 0.0
   end
 
   def is_preview

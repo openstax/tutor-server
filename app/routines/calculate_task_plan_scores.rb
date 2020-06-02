@@ -144,7 +144,6 @@ class CalculateTaskPlanScores
           total_points: task.points,
           total_fraction: task.score,
           late_work_point_penalty: task.late_work_point_penalty,
-          late_work_fraction_penalty: task.late_work_penalty,
           questions: student_questions,
           questions_need_grading: questions_need_grading,
           grades_need_publishing: grades_need_publishing

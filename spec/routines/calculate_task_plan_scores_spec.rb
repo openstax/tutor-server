@@ -51,7 +51,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
   let(:tasks)         do
     @task_plan.tasks.joins(
       taskings: { role: :student }
-    ).preload(taskings: { role: :student}).sort_by do |task|
+    ).preload(taskings: { role: :student }).sort_by do |task|
       student = task.taskings.first.role.student
 
       [ student.last_name, student.first_name ]
@@ -96,7 +96,6 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               role_id: task.taskings.first.entity_role_id,
               task_id: task.id,
               available_points: 8.0,
-              late_work_fraction_penalty: task.late_work_penalty,
               first_name: student.first_name,
               last_name: student.last_name,
               late_work_point_penalty: 0.0,
@@ -181,7 +180,6 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               role_id: task.taskings.first.entity_role_id,
               task_id: task.id,
               available_points: 8.0,
-              late_work_fraction_penalty: task.late_work_penalty,
               first_name: student.first_name,
               last_name: student.last_name,
               late_work_point_penalty: 0.0,
@@ -266,15 +264,14 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               role_id: task.taskings.first.entity_role_id,
               task_id: task.id,
               available_points: 8.0,
-              late_work_fraction_penalty: task.late_work_penalty,
               first_name: student.first_name,
               last_name: student.last_name,
-              late_work_point_penalty: is_correct ? 8.0 * task.late_work_penalty : 0.0,
+              late_work_point_penalty: task.late_work_point_penalty,
               is_dropped: false,
               is_late: task.late?,
               student_identifier: student.student_identifier,
-              total_fraction: is_correct ? task.late_work_multiplier : task.started? ? 0.0 : nil,
-              total_points: is_correct ? 8.0 * task.late_work_multiplier : 0.0,
+              total_fraction: task.score,
+              total_points: task.points,
               questions: task.task_steps.map do |ts|
                 if ts.exercise?
                   tasked = ts.tasked
