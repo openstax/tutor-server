@@ -1022,7 +1022,6 @@ ActiveRecord::Schema.define(version: 2020_05_29_235243) do
     t.datetime "closes_at_ntz"
     t.integer "core_page_ids", default: [], null: false, array: true
     t.datetime "student_history_at"
-    t.bigint "tasks_extension_id"
     t.datetime "grades_last_published_at"
     t.bigint "course_profile_course_id", null: false
     t.integer "ungraded_step_count", default: 0, null: false
@@ -1033,7 +1032,6 @@ ActiveRecord::Schema.define(version: 2020_05_29_235243) do
     t.index ["last_worked_at"], name: "index_tasks_tasks_on_last_worked_at"
     t.index ["opens_at_ntz"], name: "index_tasks_tasks_on_opens_at_ntz"
     t.index ["task_type", "created_at"], name: "index_tasks_tasks_on_task_type_and_created_at"
-    t.index ["tasks_extension_id"], name: "index_tasks_tasks_on_tasks_extension_id"
     t.index ["tasks_task_plan_id"], name: "index_tasks_tasks_on_tasks_task_plan_id"
     t.index ["time_zone_id"], name: "index_tasks_tasks_on_time_zone_id"
     t.index ["uuid"], name: "index_tasks_tasks_on_uuid", unique: true
@@ -1183,7 +1181,6 @@ ActiveRecord::Schema.define(version: 2020_05_29_235243) do
   add_foreign_key "tasks_taskings", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_tasks", "tasks_extensions", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_tasks", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "time_zones", on_update: :cascade, on_delete: :nullify
   add_foreign_key "user_administrators", "user_profiles", on_update: :cascade, on_delete: :cascade

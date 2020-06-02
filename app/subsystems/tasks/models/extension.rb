@@ -4,8 +4,6 @@ class Tasks::Models::Extension < ApplicationRecord
 
   belongs_to_time_zone :due_at, :closes_at, suffix: :ntz
 
-  has_one :task, inverse_of: :extension
-
   before_validation :set_time_zone
 
   validates :role, uniqueness: { scope: :tasks_task_plan_id }
