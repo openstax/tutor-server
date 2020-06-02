@@ -73,7 +73,6 @@ class DistributeTasks
       task.opens_at_ntz = tasking_plan.opens_at_ntz
       task.due_at_ntz = tasking_plan.due_at_ntz
       task.closes_at_ntz = tasking_plan.closes_at_ntz
-      task.extension = task_plan.extensions.to_a.find { |ex| ex.entity_role_id == role_id }
 
       updated_tasks << task if task.changed?
     end

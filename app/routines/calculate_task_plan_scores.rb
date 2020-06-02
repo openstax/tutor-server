@@ -6,6 +6,9 @@ class CalculateTaskPlanScores
   def exec(task_plan:)
     current_time = Time.current
 
+    # Preload extensions
+    task_plan.extensions.load
+
     # Preload each task's student and period
     tasks = task_plan.tasks.preload(:course, taskings: { role: :student })
 

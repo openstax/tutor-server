@@ -6,15 +6,17 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       :tasks_task,
       opens_at: Time.current - 1.week,
       due_at: Time.current - 2.days,
-      closes_at: Time.current - 1.day
+      closes_at: Time.current - 1.day,
+      num_random_taskings: 1
     )
   end
 
+  let(:tasking)          { task.taskings.first }
+  let(:role)             { tasking.role }
   let(:task_plan)        { task.task_plan }
   let(:grading_template) { task_plan.grading_template }
 
   it { is_expected.to belong_to(:task_plan).optional }
-  it { is_expected.to belong_to(:extension).optional }
 
   it { is_expected.to belong_to(:course) }
 
@@ -22,6 +24,12 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   it { is_expected.to have_many(:taskings) }
 
   it { is_expected.to validate_presence_of(:title) }
+
+  it 'can find its own extension' do
+    extension = FactoryBot.create :tasks_extension, task_plan: task_plan, role: role
+
+    expect(task.extension).to eq extension
+  end
 
   it 'is late when last_worked_at is past due_at' do
     expect(task).not_to be_late
@@ -82,16 +90,14 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   end
 
   it 'reports is_shared? correctly' do
-    FactoryBot.create(:tasks_tasking, task: task)
-    expect(task.is_shared?).to eq false
+    expect(task.reload.is_shared?).to eq false
 
     FactoryBot.create(:tasks_tasking, task: task)
-    expect(task.is_shared?).to eq true
+    expect(task.reload.is_shared?).to eq true
   end
 
   context 'with research cohort' do
-      let!(:tasking) { FactoryBot.create(:tasks_tasking, task: task) }
-      let(:student)  { tasking.role.student }
+      let(:student)  { role.student }
       let(:study)    { FactoryBot.create :research_study }
       let!(:cohort)  { FactoryBot.create :research_cohort, study: study }
       let!(:brain)   { FactoryBot.create :research_modified_tasked, study: study }
@@ -102,8 +108,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
 
       it 'has links to related models' do
         expect(task.taskings).to eq [tasking]
-        expect(task.roles).to eq [tasking.role]
-        expect(student).to eq tasking.role.student
+        expect(task.roles).to eq [role]
         expect(task.students).to eq [student]
         expect(task.research_cohorts).to eq [cohort]
         expect(task.research_study_brains).to eq [Research::Models::StudyBrain.find(brain.id)]
@@ -733,11 +738,11 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
 
       extension = Tasks::Models::Extension.new(
         entity_role_id: task.taskings.first.entity_role_id,
-        due_at: task.time_zone.to_tz.now,
-        closes_at: task.time_zone.to_tz.now
+        due_at: task.time_zone.to_tz.now + 1.minute,
+        closes_at: task.time_zone.to_tz.now + 1.minute
       )
       task.task_plan.extensions << extension
-      task.update_attribute :extension, extension
+      expect(task.extension).to eq extension
 
       expect(task.correct_exercise_count).to eq 2
       expect(task.completed_exercise_count).to eq 2
