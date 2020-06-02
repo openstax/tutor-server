@@ -25,7 +25,7 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     end
 
     context 'feedback available' do
-      before { allow(task_step).to receive(:feedback_available?).and_return(true) }
+      before { allow(tasked_exercise).to receive(:feedback_available?).and_return(true) }
 
       it "'grader_points is included'" do
         expect(representation).to include('grader_points' => 0.5)
