@@ -100,6 +100,11 @@ module Api::V1
              readable: true,
              writeable: false
 
+    property :late_work_point_penalty,
+             type: Float,
+             readable: true,
+             writeable: false
+
     property :withdrawn?,
              as: :is_deleted,
              readable: true,
