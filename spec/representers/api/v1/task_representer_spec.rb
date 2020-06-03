@@ -57,8 +57,8 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
   end
 
   it 'includes late_work_penalty_applied' do
-    task.task_plan.grading_template.late_work_penalty_applied = :never
-    expect(described_class.new(task).to_hash['late_work_penalty_applied']).to eq 'never'
+    task.task_plan.grading_template.late_work_penalty_applied = :not_accepted
+    expect(described_class.new(task).to_hash['late_work_penalty_applied']).to eq 'not_accepted'
 
     task.task_plan.grading_template.late_work_penalty_applied = :immediately
     expect(described_class.new(task).to_hash['late_work_penalty_applied']).to eq 'immediately'
