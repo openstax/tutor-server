@@ -140,4 +140,24 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
       expect(tasked_exercise.content_preview).to eq(content_body)
     end
   end
+
+  it 'returns the correct available_points' do
+    tasked_exercise.task_step.task.homework!
+
+    # Full reload, including reloading our custom instance variables
+    id = tasked_exercise.id
+    tasked_exercise = described_class.find id
+    expect(tasked_exercise.available_points).to eq 1.0
+
+    task_plan = tasked_exercise.task_step.task.task_plan
+    task_plan.type = 'homework'
+    task_plan.settings = {
+      exercises: [ { id: tasked_exercise.content_exercise_id, points: [ 2.0 ] } ]
+    }
+    task_plan.save validate: false
+
+    id = tasked_exercise.id
+    tasked_exercise = described_class.find id
+    expect(tasked_exercise.available_points).to eq 2.0
+  end
 end
