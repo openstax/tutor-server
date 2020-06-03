@@ -113,7 +113,9 @@ RSpec.describe Api::V1::GradingTemplateRepresenter, type: :representer do
     end
 
     it 'can be written' do
-      val = ([ 'never', 'immediately', 'daily' ] - [ represented.late_work_penalty_applied ]).sample
+      val = (
+        [ 'not_accepted', 'immediately', 'daily' ] - [ represented.late_work_penalty_applied ]
+      ).sample
       expect do
         representer.from_hash('late_work_penalty_applied' => val)
       end.to change { represented.late_work_penalty_applied }.to(val)

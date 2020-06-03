@@ -174,7 +174,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def late_work_penalty_applied
-    grading_template&.late_work_penalty_applied || 'never'
+    grading_template&.late_work_penalty_applied || 'not_accepted'
   end
 
   def late_work_penalty_per_period
@@ -256,6 +256,8 @@ class Tasks::Models::Task < ApplicationRecord
       late_work_penalty_per_period
     when 'daily'
       ((task_step.last_completed_at - due_at)/1.day).ceil * late_work_penalty_per_period
+    when 'not_accepted'
+      1.0
     else
       0.0
     end
