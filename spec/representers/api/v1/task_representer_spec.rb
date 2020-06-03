@@ -75,6 +75,13 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
     expect(described_class.new(task).to_hash['late_work_penalty_per_period']).to eq 0.25
   end
 
+  it 'includes late_work_point_penalty' do
+    expect(described_class.new(task).to_hash['late_work_point_penalty']).to eq 0.0
+
+    expect(task).to receive(:late_work_point_penalty).and_return(1.0)
+    expect(described_class.new(task).to_hash['late_work_point_penalty']).to eq 1.0
+  end
+
   it 'includes is_deleted' do
     task.task_plan.withdrawn_at = nil
     expect(described_class.new(task).to_hash).to include('is_deleted' => false)
