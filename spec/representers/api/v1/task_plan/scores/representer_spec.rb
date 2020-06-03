@@ -38,7 +38,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
     end
   end
   let(:students)             { student_tasks.map { |task| task.taskings.first.role.student } }
-  let(:late_work_penalty)    { task_plan.grading_template.late_work_penalty }
+  let(:late_work_penalty)    { task_plan.late_work_penalty }
   let(:late_work_multiplier) { 1.0 - late_work_penalty }
 
   let(:representation)       { described_class.new(task_plan).as_json.deep_symbolize_keys }

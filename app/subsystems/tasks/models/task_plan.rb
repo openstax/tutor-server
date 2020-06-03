@@ -126,6 +126,10 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     end
   end
 
+  def late_work_penalty
+    grading_template&.late_work_penalty || 0.0
+  end
+
   def set_and_return_ecosystem
     self.ecosystem ||= cloned_from&.ecosystem ||
                        get_ecosystems_from_settings&.first ||

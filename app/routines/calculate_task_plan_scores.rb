@@ -48,16 +48,35 @@ class CalculateTaskPlanScores
       available_points_without_dropping_per_question_index =
         longest_task.available_points_without_dropping_per_question_index
       available_points_per_question_index = longest_task.available_points_per_question_index
-      exercise_steps = longest_task.exercise_and_placeholder_steps
-      question_headings_array = exercise_steps.each_with_index.map do |step, index|
-        {
-         title: "Q#{index + 1}",
-         points_without_dropping: available_points_without_dropping_per_question_index[index],
-         points: available_points_per_question_index[index],
-         type: step.fixed_group? ? (step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ') : 'Tutor',
-         exercise_id: step.exercise? && step.fixed_group? ? step.tasked.content_exercise_id : nil,
-         question_id: step.exercise? && step.fixed_group? ? step.tasked.question_id : nil
-        }
+      task_steps = task_plan.type == 'external' ? longest_task.external_steps :
+                                                  longest_task.exercise_and_placeholder_steps
+      question_headings_array = task_steps.each_with_index.map do |step, index|
+        if step.external?
+          { title: 'Clicked' }
+        else
+          title = "Q#{index + 1}"
+          # These won't work if task_steps contains both exercises and external for the same task
+          points_without_dropping = available_points_without_dropping_per_question_index[index]
+          points = available_points_per_question_index[index]
+
+          if step.fixed_group? && step.exercise?
+            {
+              title: title,
+              type: step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ',
+              points_without_dropping: points_without_dropping,
+              points: points,
+              exercise_id: step.tasked.content_exercise_id,
+              question_id: step.tasked.question_id
+            }
+          else
+            {
+              title: title,
+              type: 'Tutor',
+              points_without_dropping: points_without_dropping,
+              points: points
+            }
+          end
+        end
       end
       if task_plan.type == 'homework'
         expected_num_questions = task_plan.settings.fetch('exercises').map do |exercise|
@@ -77,8 +96,9 @@ class CalculateTaskPlanScores
 
         role = task.taskings.first.role
 
-        exercise_steps = task.exercise_and_placeholder_steps
-        next if exercise_steps.empty?
+        task_steps = task_plan.type == 'external' ? task.external_steps :
+                                                    task.exercise_and_placeholder_steps
+        next if task_steps.empty?
 
         is_dropped = student.dropped? || student.period.archived?
 
@@ -96,10 +116,17 @@ class CalculateTaskPlanScores
         points_per_question_index = task.points_per_question_index_without_lateness(
           incomplete_value_proc: incomplete_value_proc
         )
-        student_questions = exercise_steps.each_with_index.map do |task_step, index|
+        student_questions = task_steps.each_with_index.map do |task_step, index|
+          # This won't work if task_steps contains both exercises and external for the same task
           points = points_per_question_index[index]
 
-          if task_step.exercise?
+          if task_step.external?
+            {
+              task_step_id: task_step.id,
+              is_completed: task_step.completed?,
+              needs_grading: false
+            }
+          elsif task_step.exercise?
             tasked = task_step.tasked
 
             {
@@ -118,7 +145,7 @@ class CalculateTaskPlanScores
           else
             {
               task_step_id: task_step.id,
-              is_completed: false,
+              is_completed: task_step.completed?,
               points: points,
               needs_grading: false
             }
@@ -127,8 +154,8 @@ class CalculateTaskPlanScores
 
         completed_questions = student_questions.filter { |question| question[:is_completed] }
         questions_need_grading = completed_questions.any? { |question| question[:needs_grading] }
-        grades_need_publishing = task.grading_template&.manual_grading_feedback_on_publish? &&
-                                 exercise_steps.filter(&:exercise?).any? do |task_step|
+        grades_need_publishing = !!task.grading_template&.manual_grading_feedback_on_publish? &&
+                                 task_steps.filter(&:exercise?).any? do |task_step|
           task_step.tasked.grade_needs_publishing?
         end
 
@@ -155,7 +182,7 @@ class CalculateTaskPlanScores
         period_id: tasking_plan.target_id,
         period_name: tasking_plan.target.name,
         question_headings: question_headings_array,
-        late_work_fraction_penalty: task_plan.grading_template&.late_work_penalty || 0,
+        late_work_fraction_penalty: task_plan.late_work_penalty,
         num_questions_dropped: num_questions_dropped,
         points_dropped: points_dropped,
         students: students_array,

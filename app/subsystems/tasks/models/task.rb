@@ -222,7 +222,7 @@ class Tasks::Models::Task < ApplicationRecord
   def available_points
     available_points_per_question_index.values_at(
       *actual_and_placeholder_exercise_count.times.to_a
-    ).sum
+    ).sum 0.0
   end
 
   def points_per_question_index_without_lateness(incomplete_value_proc: ->(task_step) { 0.0 })
@@ -511,6 +511,11 @@ class Tasks::Models::Task < ApplicationRecord
   def exercise_and_placeholder_steps(preload_taskeds: false)
     self.preload_taskeds if preload_taskeds
     task_steps.filter { |step| step.exercise? || step.placeholder? }
+  end
+
+  def external_steps(preload_taskeds: true)
+    self.preload_taskeds if preload_taskeds
+    task_steps.filter(&:external?)
   end
 
   def core_task_steps(preload_taskeds: false)
