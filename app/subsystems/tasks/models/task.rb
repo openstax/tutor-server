@@ -174,7 +174,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def late_work_penalty_applied
-    grading_template&.late_work_penalty_applied || 'never'
+    grading_template&.late_work_penalty_applied || 'not_accepted'
   end
 
   def late_work_penalty_per_period
