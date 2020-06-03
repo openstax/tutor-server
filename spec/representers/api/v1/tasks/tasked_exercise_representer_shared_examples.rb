@@ -7,7 +7,7 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(step).to receive(:group_name).and_return('Some group')
       allow(step).to receive(:is_core).and_return(true)
       allow(step).to receive(:completed?).and_return(false)
-      allow(step).to receive(:feedback_available?).and_return(false)
+      allow(step).to receive(:can_be_updated?).and_return(true)
       allow(step).to receive(:labels).and_return([])
       allow(step).to receive(:related_content).and_return('RelatedContent')
       allow(step).to receive(:spy_with_response_validation).and_return(
@@ -38,6 +38,7 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:answer_id).and_return(nil)
       allow(exercise).to receive(:last_completed_at).and_return(Time.current)
       allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
+      allow(exercise).to receive(:feedback_available?).and_return(false)
       allow(exercise).to receive(:question_id).and_return('questionID')
       allow(exercise).to receive(:is_in_multipart).and_return(false)
       allow(exercise).to receive(:response_validation).and_return({ valid: false })
@@ -94,6 +95,10 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       expect(representation).to include('is_core' => true)
     end
 
+    it "has the correct 'can_be_updated'" do
+      expect(representation).to include('can_be_updated' => true)
+    end
+
     it "has 'labels'" do
       allow(task_step).to receive(:labels).and_return([])
       expect(complete_representation).to include('labels')
@@ -139,9 +144,13 @@ RSpec.shared_examples 'a tasked_exercise representer' do
     end
 
     context 'feedback available' do
-      before { allow(task_step).to receive(:feedback_available?).and_return(true) }
+      before { allow(tasked_exercise).to receive(:feedback_available?).and_return(true) }
 
       it_behaves_like 'a good exercise representation should'
+
+      it "has the correct 'is_feedback_available'" do
+        expect(representation).to include('is_feedback_available' => true)
+      end
 
       it "has correct 'solution'" do
         expect(complete_representation).to include('solution' => 'Some solution')
@@ -159,8 +168,20 @@ RSpec.shared_examples 'a tasked_exercise representer' do
     context 'feedback unavailable' do
       it_behaves_like 'a good exercise representation should'
 
+      it "has the correct 'is_feedback_available'" do
+        expect(representation).to include('is_feedback_available' => false)
+      end
+
+      it "'solution' is not included" do
+        expect(complete_representation).not_to include('solution')
+      end
+
       it "'feedback_html' is not included" do
         expect(representation).to_not include('feedback_html')
+      end
+
+      it "'correct_answer_id' is not included" do
+        expect(representation).not_to include('correct_answer_id')
       end
     end
   end

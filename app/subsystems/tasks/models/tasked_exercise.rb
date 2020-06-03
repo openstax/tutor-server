@@ -15,7 +15,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   validates :grader_points, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
 
   validate :free_response_required_before_answer_id, on: :update
-  validate :valid_answer, :no_changes_after_feedback, :no_changes_after_graded
+  validate :valid_answer, :changes_allowed
   after_update :notify_task_plan_ungraded_status
 
   scope :correct, -> do
@@ -177,6 +177,17 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     was_manually_graded? && !grade_published?
   end
 
+  def feedback_available?(current_time: Time.current)
+    return false unless completed?
+
+    task = task_step.task
+    return task.manual_grading_feedback_available? if was_manually_graded?
+
+    can_be_auto_graded? && task.auto_grading_feedback_available?(
+      current_time: current_time
+    )
+  end
+
   protected
 
   def free_response_required_before_answer_id
@@ -194,27 +205,16 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     throw :abort
   end
 
-  def no_changes_after_feedback
-    # Cannot change the answer after feedback is available
+  def changes_allowed(current_time: Time.current)
+    # Cannot change the answer after feedback is available or manually graded
     # Feedback is available immediately for iReadings, or at the due date for HW,
     # but waits until the step is marked as completed
-    return unless task_step&.feedback_available?
+    return if task_step&.can_be_updated?(current_time: current_time)
 
     [ :answer_id, :free_response ].each do |attr|
       errors.add(
-        attr, 'cannot be updated after feedback becomes available'
+        attr, 'cannot be updated after feedback becomes available or is graded'
       ) if changes[attr].present?
-    end
-
-    throw(:abort) if errors.any?
-  end
-
-  def no_changes_after_graded
-    # Cannot change the answer after the due date has passed and the exercise has been graded
-    return unless task_step&.task&.past_due? && was_manually_graded?
-
-    [ :answer_id, :free_response ].each do |attr|
-      errors.add(attr, 'cannot be updated after graded') if changes[attr].present?
     end
 
     throw(:abort) if errors.any?
