@@ -12,7 +12,7 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
   enum task_plan_type:             [ :reading, :homework ]
   enum auto_grading_feedback_on:   [ :answer, :due, :publish ], _prefix: true
   enum manual_grading_feedback_on: [ :grade, :publish ], _prefix: true
-  enum late_work_penalty_applied:  [ :never, :immediately, :daily ]
+  enum late_work_penalty_applied:  [ :not_accepted, :immediately, :daily ]
 
   validates :task_plan_type,
             :name,
