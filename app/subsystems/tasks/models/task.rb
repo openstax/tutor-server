@@ -327,7 +327,7 @@ class Tasks::Models::Task < ApplicationRecord
     self.core_placeholder_exercise_steps_count = placeholder_exercise_steps.count(&:is_core?)
     self.student_history_at ||= current_time if completed_core_steps_count == core_steps_count
     self.ungraded_step_count = exercise_steps.count do |step|
-      !step.tasked.can_be_auto_graded? && !step.tasked.was_manually_graded?
+      step.completed? && !step.tasked.can_be_auto_graded? && !step.tasked.was_manually_graded?
     end
 
     late_after = due_at

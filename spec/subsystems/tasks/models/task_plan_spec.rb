@@ -212,14 +212,18 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   end
 
   context 'with tasks assigned to students' do
-    let(:teacher_student_role) { FactoryBot.create :entity_role, role_type: :teacher_student }
+    let(:period) { FactoryBot.create :course_membership_period, course: task_plan.owner }
+    let(:teacher_student_role) do
+      FactoryBot.create(:course_membership_teacher_student, period: period).role
+    end
     let(:teacher_student_task) do
-      FactoryBot.create :tasks_task, task_plan: task_plan, tasked_to: [teacher_student_role]
+      FactoryBot.create :tasks_task, task_plan: task_plan, tasked_to: [ teacher_student_role ]
     end
 
-    let(:student_role) { FactoryBot.create :entity_role, role_type: :student }
+    let(:student)      { FactoryBot.create(:course_membership_student, period: period) }
+    let(:student_role) { student.role }
     let(:student_task) do
-      FactoryBot.create :tasks_task, task_plan: task_plan, tasked_to: [student_role]
+      FactoryBot.create :tasks_task, task_plan: task_plan, tasked_to: [ student_role ]
     end
 
     it 'knows if tasks are available to students' do
@@ -268,6 +272,26 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
       task_plan.reload.settings = { exercises: [] }
       expect(task_plan).not_to be_valid
+    end
+
+    it 'aggregates ungraded_step_counts from undropped unarchived student tasks only' do
+      student_task.update_attribute :ungraded_step_count, 42
+      teacher_student_task.update_attribute :ungraded_step_count, 84
+
+      task_plan.update_ungraded_step_count!
+      expect(task_plan.ungraded_step_count).to eq 42
+
+      period.destroy!
+      task_plan.update_ungraded_step_count!
+      expect(task_plan.ungraded_step_count).to eq 0
+
+      period.restore!
+      task_plan.update_ungraded_step_count!
+      expect(task_plan.ungraded_step_count).to eq 42
+
+      student.destroy!
+      task_plan.update_ungraded_step_count!
+      expect(task_plan.ungraded_step_count).to eq 0
     end
   end
 end
