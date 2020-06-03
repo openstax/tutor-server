@@ -131,7 +131,10 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def update_ungraded_step_count!
-    update_attribute :ungraded_step_count, tasks.sum(:ungraded_step_count)
+    ungraded_step_count = tasks.joins(taskings: { role: { student: :period } }).where(
+      taskings: { role: { student: { dropped_at: nil, period: { archived_at: nil } } } }
+    ).sum(:ungraded_step_count)
+    update_attribute :ungraded_step_count, ungraded_step_count
   end
 
   protected
