@@ -53,6 +53,10 @@ class Tasks::Models::TaskStep < ApplicationRecord
     tasked_type == Tasks::Models::TaskedPlaceholder.name
   end
 
+  def external?
+    tasked_type == Tasks::Models::TaskedExternalUrl.name
+  end
+
   def is_correct?
     has_correctness? ? tasked.is_correct? : nil
   end
