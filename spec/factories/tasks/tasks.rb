@@ -35,6 +35,7 @@ FactoryBot.define do
       task.due_at ||= task.opens_at + evaluator.duration
       task.closes_at ||= owner.ends_at - 1.day unless owner.nil?
 
+      task.ecosystem.save! if task.ecosystem.new_record?
       AddSpyInfo[to: task, from: task.ecosystem]
 
       evaluator.step_types.each_with_index do |type, i|
