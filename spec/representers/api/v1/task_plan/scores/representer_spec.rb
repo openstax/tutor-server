@@ -28,7 +28,15 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
     end
   end
   let(:tasking_plan)         { task_plan.tasking_plans.first }
-  let(:student_tasks)        { task_plan.tasks.joins(taskings: { role: :student }).to_a }
+  let(:student_tasks)        do
+    task_plan.tasks.joins(
+      taskings: { role: :student }
+    ).preload(taskings: { role: :student }).sort_by do |task|
+      student = task.taskings.first.role.student
+
+      [ student.last_name, student.first_name ]
+    end
+  end
   let(:students)             { student_tasks.map { |task| task.taskings.first.role.student } }
   let(:late_work_penalty)    { task_plan.grading_template.late_work_penalty }
   let(:late_work_multiplier) { 1.0 - late_work_penalty }
@@ -40,7 +48,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
 
     it 'represents a task plan with tasks missing some work' do
       # Answer an exercise correctly and mark it as completed
-      task_step = student_tasks.first.task_steps.filter { |ts| ts.tasked.exercise? }.first
+      task_step = student_tasks.first.exercise_steps.first
       answer_ids = task_step.tasked.answer_ids
       correct_answer_id = task_step.tasked.correct_answer_id
       incorrect_answer_ids = (answer_ids - [correct_answer_id])
@@ -50,7 +58,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
       MarkTaskStepCompleted.call(task_step: task_step)
 
       # Answer an exercise incorrectly and mark it as completed
-      task_step = student_tasks.last.task_steps.filter { |ts| ts.tasked.exercise? }.first
+      task_step = student_tasks.last.exercise_steps.first
       task_step.tasked.free_response = 'a sentence not explaining anything'
       task_step.tasked.answer_id = incorrect_answer_ids.first
       task_step.tasked.save!
@@ -92,7 +100,6 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 total_points: 1.0,
                 total_fraction: 1.0,
                 late_work_point_penalty: 0.0,
-                late_work_fraction_penalty: 0.0,
                 questions: [
                   {
                     task_step_id: kind_of(String),
@@ -131,7 +138,6 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 total_points: 0.0,
                 total_fraction: 0.0,
                 late_work_point_penalty: 0.0,
-                late_work_fraction_penalty: 0.0,
                 questions: [
                   {
                     task_step_id: kind_of(String),
@@ -181,7 +187,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
 
     it 'represents a task plan with late tasks' do
       # Answer an exercise correctly and mark it as completed
-      task_step = student_tasks.first.task_steps.filter { |ts| ts.tasked.exercise? }.first
+      task_step = student_tasks.first.exercise_steps.first
       answer_ids = task_step.tasked.answer_ids
       correct_answer_id = task_step.tasked.correct_answer_id
       incorrect_answer_ids = (answer_ids - [correct_answer_id])
@@ -191,7 +197,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
       MarkTaskStepCompleted.call(task_step: task_step)
 
       # Answer an exercise incorrectly and mark it as completed
-      task_step = student_tasks.last.task_steps.filter { |ts| ts.tasked.exercise? }.first
+      task_step = student_tasks.last.exercise_steps.first
       task_step.tasked.free_response = 'a sentence not explaining anything'
       task_step.tasked.answer_id = incorrect_answer_ids.first
       task_step.tasked.save!
@@ -233,7 +239,6 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 total_points: 1.0 * late_work_multiplier,
                 total_fraction: 0.125 * late_work_multiplier,
                 late_work_point_penalty: 1.0 * late_work_penalty,
-                late_work_fraction_penalty: late_work_penalty,
                 questions: [
                   {
                     task_step_id: kind_of(String),
@@ -278,7 +283,6 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 total_points: 0.0,
                 total_fraction: 0.0,
                 late_work_point_penalty: 0.0,
-                late_work_fraction_penalty: late_work_penalty,
                 questions: [
                   {
                     task_step_id: kind_of(String),

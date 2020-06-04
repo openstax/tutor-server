@@ -55,11 +55,6 @@ class Api::V1::TaskPlan::Scores::StudentRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
-  property :late_work_fraction_penalty,
-           type: Float,
-           readable: true,
-           writeable: false
-
   collection :questions,
              extend: Api::V1::TaskPlan::Scores::StudentQuestionRepresenter,
              readable: true,
