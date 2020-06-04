@@ -11,6 +11,7 @@ class Tasks::Models::Task < ApplicationRecord
     :correct_exercise_steps_count,
     :placeholder_steps_count,
     :placeholder_exercise_steps_count,
+    :ungraded_step_count
   ]
 
   acts_as_paranoid column: :hidden_at, without_default_scope: true
