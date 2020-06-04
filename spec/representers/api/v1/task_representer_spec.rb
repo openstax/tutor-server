@@ -17,7 +17,7 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
 
   it 'includes ecosystem information in the spy' do
     expect(represented['spy']).to(
-      eq("ecosystem_id" => ecosystem.id, "ecosystem_title" => ecosystem.title)
+      eq('ecosystem_id' => ecosystem.id, 'ecosystem_title' => ecosystem.title)
     )
   end
 
