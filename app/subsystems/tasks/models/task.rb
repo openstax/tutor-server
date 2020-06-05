@@ -74,6 +74,7 @@ class Tasks::Models::Task < ApplicationRecord
   before_validation :update_cached_attributes
   after_create :update_caches_now
   after_touch :update_caches_later
+  after_update :notify_task_plan_ungraded_count
 
   def reload(*args)
     @extension = nil
@@ -359,6 +360,11 @@ class Tasks::Models::Task < ApplicationRecord
     Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
       task_ids: id, update_cached_attributes: update_cached_attributes, queue: queue.to_s
     )
+  end
+
+  def notify_task_plan_ungraded_count
+    # We need to update the task_plan's count if the ungraded_step_count changed
+    task_plan&.update_ungraded_step_count! if previous_changes['ungraded_step_count']
   end
 
   def stepless?
