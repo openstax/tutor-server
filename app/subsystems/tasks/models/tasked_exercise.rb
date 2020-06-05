@@ -16,7 +16,6 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   validate :free_response_required_before_answer_id, on: :update
   validate :valid_answer, :changes_allowed
-  after_update :notify_task_plan_ungraded_status
 
   scope :correct, -> do
     where('tasks_tasked_exercises.answer_id = tasks_tasked_exercises.correct_answer_id')
@@ -218,12 +217,5 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     end
 
     throw(:abort) if errors.any?
-  end
-
-  def notify_task_plan_ungraded_status
-    # was graded or free response completed on a FR only exercise
-    if previous_changes['last_graded_at'] || (!has_answers? && previous_changes['free_response'])
-      task_step.task.task_plan&.update_ungraded_step_count!
-    end
   end
 end

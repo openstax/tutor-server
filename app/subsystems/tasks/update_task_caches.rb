@@ -73,6 +73,10 @@ class Tasks::UpdateTaskCaches
       Tasks::Models::Task.import tasks, validate: false, on_duplicate_key_update: {
         conflict_target: [ :id ], columns: Tasks::Models::Task::CACHE_COLUMNS
       }
+
+      # Update task_plan step counts
+      # Normally this is done in the task's after_update but upserting does not trigger that
+      tasks.map(&:task_plan).compact.uniq.each(&:update_ungraded_step_count!)
     end
 
     # Get all page_ids
