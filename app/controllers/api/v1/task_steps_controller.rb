@@ -67,6 +67,8 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     @tasked.save
     raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
 
+    @tasked.task_step.task.update_caches_later
+
     respond_with(
       @tasked,
       represent_with: Api::V1::Tasks::TaskedExerciseGradingRepresenter,

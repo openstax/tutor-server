@@ -272,12 +272,18 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
   end
 
   context '#grade' do
-    let(:tasked) do
-      create_tasked(:tasked_exercise, @user_1_role).tap do |tasked|
-        tasked.update_attribute :free_response, 'A sentence explaining all the things!'
-      end
+    let(:tasked)    { create_tasked(:tasked_exercise, @user_1_role) }
+    let(:task_step) { tasked.task_step }
+    let(:task)      { task_step.task }
+    let(:params)    { { id: task_step.id } }
+
+    before do
+      tasked.answer_ids = []
+      tasked.free_response = 'A sentence explaining all the things!'
+      tasked.save!
+      MarkTaskStepCompleted.call task_step: task_step
+      expect(task.ungraded_step_count).to eq 1
     end
-    let(:params) { { id: tasked.task_step.id } }
 
     context 'task not yet due' do
       it 'raises SecurityTransgression' do
@@ -290,13 +296,18 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
            .and not_change { tasked.last_graded_at }
            .and not_change { tasked.published_points }
            .and not_change { tasked.published_comments }
+           .and not_change { tasked.task_step.task.reload.ungraded_step_count }
       end
     end
 
     context 'task past-due' do
-      before { tasked.task_step.task.update_attribute :due_at_ntz, Time.current - 1.day }
+      before do
+        task.opens_at_ntz = Time.current - 1.day
+        task.due_at_ntz = Time.current - 1.day
+        task.save!
+      end
 
-      it 'grades the exercise step' do
+      it "grades the exercise step and updates the task's ungraded_step_count" do
         expect do
           api_put :grade, @teacher_user_token, params: params,
                                                body: { grader_points: 1.0, grader_comments: 'Test' }
@@ -305,6 +316,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
            .and change     { tasked.last_graded_at }.from(nil)
            .and not_change { tasked.published_points }
            .and not_change { tasked.published_comments }
+           .and change     { task.reload.ungraded_step_count }.by(-1)
         expect(response).to have_http_status(:success)
 
         expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')
