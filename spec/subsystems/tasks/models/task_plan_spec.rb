@@ -8,6 +8,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   let(:book)      { FactoryBot.create :content_book, ecosystem: ecosystem }
   let(:page)      { FactoryBot.create :content_page, book: book }
   let(:exercise)  { FactoryBot.create :content_exercise, page: page }
+
   it { is_expected.to belong_to(:assistant) }
   it { is_expected.to belong_to(:course) }
 
@@ -211,6 +212,26 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(new_task_plan.ecosystem).to eq ecosystem
   end
 
+  it 'automatically sets wrq_count when validating' do
+    wrq_1 = FactoryBot.create :content_exercise, page: page, question_answer_ids: [ [] ]
+    wrq_2 = FactoryBot.create :content_exercise, page: page, question_answer_ids: [ [] ]
+
+    task_plan = FactoryBot.create(
+      :tasks_task_plan,
+      type: 'homework',
+      ecosystem: ecosystem.reload,
+      settings: { 'page_ids' => [ page.id.to_s ], 'exercises' => [] }
+    )
+    expect(task_plan).to be_valid
+    expect(task_plan.wrq_count).to eq 0
+
+    [ wrq_1, wrq_2 ].each do |wrq|
+      task_plan.settings['exercises'] << { 'id' => wrq.id.to_s, 'points' => [ 2.0 ] }
+    end
+    expect(task_plan).to be_valid
+    expect(task_plan.wrq_count).to eq 2
+  end
+
   context 'with tasks assigned to students' do
     let(:period) { FactoryBot.create :course_membership_period, course: task_plan.owner }
     let(:teacher_student_role) do
@@ -274,24 +295,40 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       expect(task_plan).not_to be_valid
     end
 
-    it 'aggregates ungraded_step_counts from undropped unarchived student tasks only' do
-      student_task.update_attribute :ungraded_step_count, 42
-      teacher_student_task.update_attribute :ungraded_step_count, 84
+    it 'aggregates wrq step counts from undropped unarchived student tasks only' do
+      tasking_plan = task_plan.tasking_plans.first
+      tasking_plan.update_attribute :target, period
+      student_task.update_attribute :completed_wrq_step_count, 42
+      student_task.update_attribute :ungraded_wrq_step_count, 21
+      teacher_student_task.update_attribute :completed_wrq_step_count, 84
+      teacher_student_task.update_attribute :ungraded_wrq_step_count, 84
 
-      task_plan.update_ungraded_step_count!
-      expect(task_plan.ungraded_step_count).to eq 42
+      task_plan.update_wrq_step_counts!
+      expect(tasking_plan.completed_wrq_step_count).to eq 42
+      expect(tasking_plan.ungraded_wrq_step_count).to eq 21
+      expect(task_plan.completed_wrq_step_count).to eq 42
+      expect(task_plan.ungraded_wrq_step_count).to eq 21
 
       period.destroy!
-      task_plan.update_ungraded_step_count!
-      expect(task_plan.ungraded_step_count).to eq 0
+      task_plan.update_wrq_step_counts!
+      expect(tasking_plan.completed_wrq_step_count).to eq 42
+      expect(tasking_plan.ungraded_wrq_step_count).to eq 21
+      expect(task_plan.completed_wrq_step_count).to eq 0
+      expect(task_plan.ungraded_wrq_step_count).to eq 0
 
       period.restore!
-      task_plan.update_ungraded_step_count!
-      expect(task_plan.ungraded_step_count).to eq 42
+      task_plan.update_wrq_step_counts!
+      expect(tasking_plan.completed_wrq_step_count).to eq 42
+      expect(tasking_plan.ungraded_wrq_step_count).to eq 21
+      expect(task_plan.completed_wrq_step_count).to eq 42
+      expect(task_plan.ungraded_wrq_step_count).to eq 21
 
       student.destroy!
-      task_plan.update_ungraded_step_count!
-      expect(task_plan.ungraded_step_count).to eq 0
+      task_plan.update_wrq_step_counts!
+      expect(tasking_plan.completed_wrq_step_count).to eq 0
+      expect(tasking_plan.ungraded_wrq_step_count).to eq 0
+      expect(task_plan.completed_wrq_step_count).to eq 0
+      expect(task_plan.ungraded_wrq_step_count).to eq 0
     end
   end
 end

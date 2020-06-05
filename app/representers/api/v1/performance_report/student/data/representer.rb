@@ -58,7 +58,12 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :ungraded_step_count,
+    property :completed_wrq_step_count,
+             type: Integer,
+             readable: true,
+             writeable: false
+
+    property :ungraded_wrq_step_count,
              type: Integer,
              readable: true,
              writeable: false

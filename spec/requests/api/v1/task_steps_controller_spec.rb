@@ -3,12 +3,12 @@ require 'rails_helper'
 RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version: :v1 do
   before(:all) do
     @course = FactoryBot.create :course_profile_course
-    period = FactoryBot.create :course_membership_period, course: @course
+    @period = FactoryBot.create :course_membership_period, course: @course
 
     application = FactoryBot.create :doorkeeper_application
 
     @user_1 = FactoryBot.create :user_profile
-    @user_1_role = AddUserAsPeriodStudent[user: @user_1, period: period]
+    @user_1_role = AddUserAsPeriodStudent[user: @user_1, period: @period]
     expires_in = @user_1_role.student.payment_due_at + 1.day + 1.hour - Time.current
     @user_1_token = FactoryBot.create :doorkeeper_access_token, application: application,
                                                                 resource_owner_id: @user_1.id,
@@ -273,22 +273,29 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
   end
 
   context '#grade' do
-    let(:tasked)    do
+    let(:tasked)       do
       FactoryBot.create(:tasks_tasked_exercise).tap do |tasked|
         FactoryBot.create :tasks_tasking, role: @user_1_role, task: tasked.task_step.task
-
-        tasked.update_attribute :free_response, 'A sentence explaining all the things!'
       end
     end
-    let(:task_step) { tasked.task_step }
-    let(:task)      { task_step.task }
+    let(:task_step)    { tasked.task_step }
+    let(:task)         { task_step.task }
+    let(:task_plan)    { task.task_plan }
+    let(:tasking_plan) { task_plan.tasking_plans.first }
 
     before do
+      tasking_plan.update_attribute :target, @period
+
       tasked.answer_ids = []
       tasked.free_response = 'A sentence explaining all the things!'
       tasked.save!
       MarkTaskStepCompleted.call task_step: task_step
-      expect(task.ungraded_step_count).to eq 1
+      expect(task.completed_wrq_step_count).to eq 1
+      expect(task.ungraded_wrq_step_count).to eq 1
+      expect(tasking_plan.reload.completed_wrq_step_count).to eq 1
+      expect(tasking_plan.ungraded_wrq_step_count).to eq 1
+      expect(task_plan.reload.completed_wrq_step_count).to eq 1
+      expect(task_plan.ungraded_wrq_step_count).to eq 1
     end
 
     context 'task not yet due' do
@@ -302,8 +309,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
            .and not_change { tasked.last_graded_at }
            .and not_change { tasked.published_points }
            .and not_change { tasked.published_comments }
-           .and not_change { tasked.task_step.task.reload.ungraded_step_count }
-           .and not_change { tasked.task_step.task.task_plan.ungraded_step_count }
+           .and not_change { task.reload.completed_wrq_step_count }
+           .and not_change { task.reload.ungraded_wrq_step_count }
+           .and not_change { tasking_plan.completed_wrq_step_count }
+           .and not_change { tasking_plan.ungraded_wrq_step_count }
+           .and not_change { task_plan.reload.completed_wrq_step_count }
+           .and not_change { task_plan.reload.ungraded_wrq_step_count }
       end
     end
 
@@ -314,7 +325,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
         task.save!
       end
 
-      it "grades the exercise step and updates the task's ungraded_step_count" do
+      it "grades the exercise step and updates the ungraded_wrq_step_counts" do
         expect do
           api_put grade_api_step_url(task_step.id), @teacher_user_token,
                   params: { grader_points: 1.0, grader_comments: 'Test' }.to_json
@@ -323,8 +334,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
            .and change     { tasked.last_graded_at }.from(nil)
            .and not_change { tasked.published_points }
            .and not_change { tasked.published_comments }
-           .and change     { task.reload.ungraded_step_count }.by(-1)
-           .and change     { tasked.task_step.task.task_plan.ungraded_step_count }.by(-1)
+           .and not_change { task.reload.completed_wrq_step_count }
+           .and change     { task.ungraded_wrq_step_count }.by(-1)
+           .and not_change { tasking_plan.reload.completed_wrq_step_count }
+           .and change     { tasking_plan.ungraded_wrq_step_count }.by(-1)
+           .and not_change { task_plan.reload.completed_wrq_step_count }
+           .and change     { task_plan.ungraded_wrq_step_count }.by(-1)
         expect(response).to have_http_status(:success)
 
         expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')

@@ -175,9 +175,10 @@ RSpec.describe Api::V1::TaskPlan::Representer, type: :representer do
       allow(task_plan).to receive(:is_preview).and_return(true)
       expect(representation).to include('is_preview' => true)
     end
+
     it 'cannot be written (attempts are silently ignored)' do
-        described_class.new(task_plan).from_hash({ 'is_preview' => true })
-        expect(task_plan).not_to have_received(:is_preview=)
+      described_class.new(task_plan).from_hash({ 'is_preview' => true })
+      expect(task_plan).not_to have_received(:is_preview=)
     end
   end
 
@@ -299,6 +300,42 @@ RSpec.describe Api::V1::TaskPlan::Representer, type: :representer do
       expect do
         described_class.new(task_plan).from_hash('num_not_started_tasks' => num_not_started_tasks)
       end.not_to raise_error
+    end
+  end
+
+  context 'wrq_count' do
+    it 'can be read' do
+      allow(task_plan).to receive(:wrq_count).and_return(21)
+      expect(representation).to include('wrq_count' => 21)
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      described_class.new(task_plan).from_hash({ 'wrq_count' => 42 })
+      expect(task_plan).not_to have_received(:wrq_count=)
+    end
+  end
+
+  context 'completed_wrq_step_count' do
+    it 'can be read' do
+      allow(task_plan).to receive(:completed_wrq_step_count).and_return(21)
+      expect(representation).to include('completed_wrq_step_count' => 21)
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      described_class.new(task_plan).from_hash({ 'completed_wrq_step_count' => 42 })
+      expect(task_plan).not_to have_received(:completed_wrq_step_count=)
+    end
+  end
+
+  context 'ungraded_wrq_step_count' do
+    it 'can be read' do
+      allow(task_plan).to receive(:ungraded_wrq_step_count).and_return(21)
+      expect(representation).to include('ungraded_wrq_step_count' => 21)
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      described_class.new(task_plan).from_hash({ 'ungraded_wrq_step_count' => 42 })
+      expect(task_plan).not_to have_received(:ungraded_wrq_step_count=)
     end
   end
 

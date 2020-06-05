@@ -606,9 +606,9 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context 'ungraded steps count' do
+      context 'completed wrq step count' do
         it 'works with no steps' do
-          expect(task.ungraded_step_count).to eq(0)
+          expect(task.completed_wrq_step_count).to eq(0)
         end
 
         it 'works with multiple completed exercise steps' do
@@ -623,7 +623,28 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
           task.save!
           task.reload
 
-          expect(task.ungraded_step_count).to eq(1)
+          expect(task.completed_wrq_step_count).to eq(2)
+        end
+      end
+
+      context 'ungraded wrq step count' do
+        it 'works with no steps' do
+          expect(task.ungraded_wrq_step_count).to eq(0)
+        end
+
+        it 'works with multiple completed exercise steps' do
+          task.task_steps = [
+            completed_exercise_step_1,
+            exercise_step_1,
+            dynamic_step_1,
+            completed_exercise_step_2,
+            completed_ungraded_wrq_step,
+            completed_graded_wrq_step
+          ]
+          task.save!
+          task.reload
+
+          expect(task.ungraded_wrq_step_count).to eq(1)
         end
       end
 
