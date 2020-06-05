@@ -152,8 +152,6 @@ class CalculateTaskPlanScores
           end
         end
 
-        completed_questions = student_questions.filter { |question| question[:is_completed] }
-        questions_need_grading = completed_questions.any? { |question| question[:needs_grading] }
         grades_need_publishing = !!task.grading_template&.manual_grading_feedback_on_publish? &&
                                  task_steps.filter(&:exercise?).any? do |task_step|
           task_step.tasked.grade_needs_publishing?
@@ -172,7 +170,6 @@ class CalculateTaskPlanScores
           total_fraction: task.score,
           late_work_point_penalty: task.late_work_point_penalty,
           questions: student_questions,
-          questions_need_grading: questions_need_grading,
           grades_need_publishing: grades_need_publishing
         }
       end.compact.sort_by { |student| [ student[:last_name], student[:first_name] ] }
@@ -186,7 +183,8 @@ class CalculateTaskPlanScores
         num_questions_dropped: num_questions_dropped,
         points_dropped: points_dropped,
         students: students_array,
-        questions_need_grading: students_array.any? { |student| student[:questions_need_grading] },
+        completed_wrq_step_count: tasking_plan.completed_wrq_step_count,
+        ungraded_wrq_step_count: tasking_plan.ungraded_wrq_step_count,
         grades_need_publishing: students_array.any? { |student| student[:grades_need_publishing] }
       }
     end.compact

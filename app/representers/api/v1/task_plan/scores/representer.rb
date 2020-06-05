@@ -33,6 +33,21 @@ class Api::V1::TaskPlan::Scores::Representer < ::Roar::Decorator
            readable: true,
            writeable: false
 
+  property :wrq_count,
+           type: Integer,
+           readable: true,
+           writeable: false
+
+  property :completed_wrq_step_count,
+           type: Integer,
+           readable: true,
+           writeable: false
+
+  property :ungraded_wrq_step_count,
+           type: Integer,
+           readable: true,
+           writeable: false
+
   collection :dropped_questions,
              class: ::Tasks::Models::DroppedQuestion,
              extend: Api::V1::TaskPlan::DroppedQuestionRepresenter,

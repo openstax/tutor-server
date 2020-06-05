@@ -4,7 +4,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
   UPDATEABLE_ATTRIBUTES_AFTER_OPEN = [
-    'title', 'description', 'last_published_at', 'tasks_grading_template_id', 'ungraded_step_count'
+    'title',
+    'description',
+    'last_published_at',
+    'tasks_grading_template_id',
+    'completed_wrq_step_count',
+    'ungraded_wrq_step_count'
   ]
 
   attr_accessor :is_publish_requested
@@ -29,7 +34,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   json_serialize :settings, Hash
 
-  before_validation :trim_text, :set_and_return_ecosystem
+  before_validation :trim_text, :set_and_return_ecosystem, :set_wrq_count
 
   validates :title, presence: true
   validates :type, presence: true
@@ -134,14 +139,50 @@ class Tasks::Models::TaskPlan < ApplicationRecord
                        owner.try(:ecosystems)&.first
   end
 
-  def update_ungraded_step_count!
-    ungraded_step_count = tasks.joins(taskings: { role: { student: :period } }).where(
-      taskings: { role: { student: { dropped_at: nil, period: { archived_at: nil } } } }
-    ).sum(:ungraded_step_count)
-    update_attribute :ungraded_step_count, ungraded_step_count
+  def update_wrq_step_counts!
+    period_tasking_plans = tasking_plans.filter do |tasking_plan|
+      tasking_plan.target_type == 'CourseMembership::Models::Period'
+    end
+    ActiveRecord::Associations::Preloader.new.preload period_tasking_plans, :target
+
+    unarchived_tasking_plans = period_tasking_plans.reject do |tasking_plan|
+      tasking_plan.target.archived?
+    end
+    period_ids = unarchived_tasking_plans.map(&:target_id)
+
+    st = CourseMembership::Models::Student.arel_table
+    tasks_by_period_id = tasks
+      .select(:completed_wrq_step_count, :ungraded_wrq_step_count, st[:course_membership_period_id])
+      .joins(taskings: { role: { student: :period } })
+      .where(
+        taskings: {
+          role: { student: { dropped_at: nil, course_membership_period_id: period_ids } }
+        }
+      )
+      .group_by(&:course_membership_period_id)
+
+    unarchived_tasking_plans.each do |tasking_plan|
+      tasks = tasks_by_period_id[tasking_plan.target_id] || []
+
+      tasking_plan.completed_wrq_step_count = tasks.sum(&:completed_wrq_step_count)
+      tasking_plan.ungraded_wrq_step_count = tasks.sum(&:ungraded_wrq_step_count)
+      tasking_plan.save validate: false
+    end
+
+    self.completed_wrq_step_count = unarchived_tasking_plans.sum(&:completed_wrq_step_count)
+    self.ungraded_wrq_step_count = unarchived_tasking_plans.sum(&:ungraded_wrq_step_count)
+    save validate: false
   end
 
   protected
+
+  def set_wrq_count
+    self.wrq_count = Content::Models::Exercise
+                       .select(:question_answer_ids)
+                       .where(id: exercise_ids)
+                       .filter(&:is_free_response_only?)
+                       .size
+  end
 
   def get_ecosystems_from_exercise_ids
     ecosystems = Content::Models::Ecosystem.distinct.joins(:exercises).where(

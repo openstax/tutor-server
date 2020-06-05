@@ -76,7 +76,7 @@ class Tasks::UpdateTaskCaches
 
       # Update task_plan step counts
       # Normally this is done in the task's after_update but upserting does not trigger that
-      tasks.map(&:task_plan).compact.uniq.each(&:update_ungraded_step_count!)
+      tasks.map(&:task_plan).compact.uniq.each(&:update_wrq_step_counts!)
     end
 
     # Get all page_ids

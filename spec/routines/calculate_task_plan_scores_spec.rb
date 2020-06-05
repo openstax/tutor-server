@@ -113,7 +113,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           expect(tasking_plan_output.late_work_fraction_penalty).to eq late_work_penalty
           expect(tasking_plan_output.num_questions_dropped).to eq 0
           expect(tasking_plan_output.points_dropped).to eq 0.0
-          expect(tasking_plan_output.questions_need_grading).to eq false
+          expect(tasking_plan_output.completed_wrq_step_count).to eq 0
+          expect(tasking_plan_output.ungraded_wrq_step_count).to eq 0
           expect(tasking_plan_output.grades_need_publishing).to eq false
 
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
@@ -158,7 +159,6 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     }
                   end
                 end,
-                questions_need_grading: false,
                 grades_need_publishing: false
               }
             end
@@ -210,7 +210,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           expect(tasking_plan_output.late_work_fraction_penalty).to eq late_work_penalty
           expect(tasking_plan_output.num_questions_dropped).to eq 0
           expect(tasking_plan_output.points_dropped).to eq 0.0
-          expect(tasking_plan_output.questions_need_grading).to eq false
+          expect(tasking_plan_output.completed_wrq_step_count).to eq 0
+          expect(tasking_plan_output.ungraded_wrq_step_count).to eq 0
           expect(tasking_plan_output.grades_need_publishing).to eq false
 
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
@@ -255,7 +256,6 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     }
                   end
                 end,
-                questions_need_grading: false,
                 grades_need_publishing: false
               }
             end
@@ -306,7 +306,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           expect(tasking_plan_output.late_work_fraction_penalty).to eq late_work_penalty
           expect(tasking_plan_output.num_questions_dropped).to eq 0
           expect(tasking_plan_output.points_dropped).to eq 0.0
-          expect(tasking_plan_output.questions_need_grading).to eq false
+          expect(tasking_plan_output.completed_wrq_step_count).to eq 0
+          expect(tasking_plan_output.ungraded_wrq_step_count).to eq 0
           expect(tasking_plan_output.grades_need_publishing).to eq false
 
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
@@ -352,7 +353,6 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     }
                   end
                 end,
-                questions_need_grading: false,
                 grades_need_publishing: false
               }
             end
@@ -382,7 +382,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           expect(tasking_plan_output.late_work_fraction_penalty).to eq late_work_penalty
           expect(tasking_plan_output.num_questions_dropped).to eq 0
           expect(tasking_plan_output.points_dropped).to eq 0.0
-          expect(tasking_plan_output.questions_need_grading).to eq false
+          expect(tasking_plan_output.completed_wrq_step_count).to eq 0
+          expect(tasking_plan_output.ungraded_wrq_step_count).to eq 0
           expect(tasking_plan_output.grades_need_publishing).to eq false
 
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
@@ -408,7 +409,6 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     needs_grading: false
                   }
                 end,
-                questions_need_grading: false,
                 grades_need_publishing: false
               }
             end
@@ -436,7 +436,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           expect(tasking_plan_output.late_work_fraction_penalty).to eq late_work_penalty
           expect(tasking_plan_output.num_questions_dropped).to eq 0
           expect(tasking_plan_output.points_dropped).to eq 0.0
-          expect(tasking_plan_output.questions_need_grading).to eq false
+          expect(tasking_plan_output.completed_wrq_step_count).to eq 0
+          expect(tasking_plan_output.ungraded_wrq_step_count).to eq 0
           expect(tasking_plan_output.grades_need_publishing).to eq false
 
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
@@ -462,7 +463,6 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     needs_grading: false
                   }
                 end,
-                questions_need_grading: false,
                 grades_need_publishing: false
               }
             end
