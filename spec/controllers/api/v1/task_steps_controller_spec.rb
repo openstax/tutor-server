@@ -297,6 +297,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
            .and not_change { tasked.published_points }
            .and not_change { tasked.published_comments }
            .and not_change { tasked.task_step.task.reload.ungraded_step_count }
+           .and not_change { tasked.task_step.task.task_plan.ungraded_step_count }
       end
     end
 
@@ -317,6 +318,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
            .and not_change { tasked.published_points }
            .and not_change { tasked.published_comments }
            .and change     { task.reload.ungraded_step_count }.by(-1)
+           .and change     { tasked.task_step.task.task_plan.ungraded_step_count }.by(-1)
         expect(response).to have_http_status(:success)
 
         expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')
