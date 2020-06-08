@@ -290,12 +290,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       tasked.free_response = 'A sentence explaining all the things!'
       tasked.save!
       MarkTaskStepCompleted.call task_step: task_step
-      expect(task.completed_wrq_step_count).to eq 1
-      expect(task.ungraded_wrq_step_count).to eq 1
-      expect(tasking_plan.reload.completed_wrq_step_count).to eq 1
-      expect(tasking_plan.ungraded_wrq_step_count).to eq 1
-      expect(task_plan.reload.completed_wrq_step_count).to eq 1
-      expect(task_plan.ungraded_wrq_step_count).to eq 1
+      expect(task.gradable_step_count).to eq 1
+      expect(task.ungraded_step_count).to eq 1
+      expect(tasking_plan.reload.gradable_step_count).to eq 1
+      expect(tasking_plan.ungraded_step_count).to eq 1
+      expect(task_plan.reload.gradable_step_count).to eq 1
+      expect(task_plan.ungraded_step_count).to eq 1
     end
 
     context 'task not yet due' do
@@ -309,12 +309,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
            .and not_change { tasked.last_graded_at }
            .and not_change { tasked.published_points }
            .and not_change { tasked.published_comments }
-           .and not_change { task.reload.completed_wrq_step_count }
-           .and not_change { task.reload.ungraded_wrq_step_count }
-           .and not_change { tasking_plan.completed_wrq_step_count }
-           .and not_change { tasking_plan.ungraded_wrq_step_count }
-           .and not_change { task_plan.reload.completed_wrq_step_count }
-           .and not_change { task_plan.reload.ungraded_wrq_step_count }
+           .and not_change { task.reload.gradable_step_count }
+           .and not_change { task.reload.ungraded_step_count }
+           .and not_change { tasking_plan.gradable_step_count }
+           .and not_change { tasking_plan.ungraded_step_count }
+           .and not_change { task_plan.reload.gradable_step_count }
+           .and not_change { task_plan.reload.ungraded_step_count }
       end
     end
 
@@ -325,7 +325,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
         task.save!
       end
 
-      it "grades the exercise step and updates the ungraded_wrq_step_counts" do
+      it "grades the exercise step and updates the gradable step counts" do
         expect do
           api_put grade_api_step_url(task_step.id), @teacher_user_token,
                   params: { grader_points: 1.0, grader_comments: 'Test' }.to_json
@@ -334,12 +334,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
            .and change     { tasked.last_graded_at }.from(nil)
            .and not_change { tasked.published_points }
            .and not_change { tasked.published_comments }
-           .and not_change { task.reload.completed_wrq_step_count }
-           .and change     { task.ungraded_wrq_step_count }.by(-1)
-           .and not_change { tasking_plan.reload.completed_wrq_step_count }
-           .and change     { tasking_plan.ungraded_wrq_step_count }.by(-1)
-           .and not_change { task_plan.reload.completed_wrq_step_count }
-           .and change     { task_plan.ungraded_wrq_step_count }.by(-1)
+           .and not_change { task.reload.gradable_step_count }
+           .and change     { task.ungraded_step_count }.by(-1)
+           .and not_change { tasking_plan.reload.gradable_step_count }
+           .and change     { tasking_plan.ungraded_step_count }.by(-1)
+           .and not_change { task_plan.reload.gradable_step_count }
+           .and change     { task_plan.ungraded_step_count }.by(-1)
         expect(response).to have_http_status(:success)
 
         expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')

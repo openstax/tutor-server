@@ -315,27 +315,27 @@ RSpec.describe Api::V1::TaskPlan::Representer, type: :representer do
     end
   end
 
-  context 'completed_wrq_step_count' do
+  context 'gradable_step_count' do
     it 'can be read' do
-      allow(task_plan).to receive(:completed_wrq_step_count).and_return(21)
-      expect(representation).to include('completed_wrq_step_count' => 21)
+      allow(task_plan).to receive(:gradable_step_count).and_return(21)
+      expect(representation).to include('gradable_step_count' => 21)
     end
 
     it 'cannot be written (attempts are silently ignored)' do
-      described_class.new(task_plan).from_hash({ 'completed_wrq_step_count' => 42 })
-      expect(task_plan).not_to have_received(:completed_wrq_step_count=)
+      described_class.new(task_plan).from_hash({ 'gradable_step_count' => 42 })
+      expect(task_plan).not_to have_received(:gradable_step_count=)
     end
   end
 
-  context 'ungraded_wrq_step_count' do
+  context 'ungraded_step_count' do
     it 'can be read' do
-      allow(task_plan).to receive(:ungraded_wrq_step_count).and_return(21)
-      expect(representation).to include('ungraded_wrq_step_count' => 21)
+      allow(task_plan).to receive(:ungraded_step_count).and_return(21)
+      expect(representation).to include('ungraded_step_count' => 21)
     end
 
     it 'cannot be written (attempts are silently ignored)' do
-      described_class.new(task_plan).from_hash({ 'ungraded_wrq_step_count' => 42 })
-      expect(task_plan).not_to have_received(:ungraded_wrq_step_count=)
+      described_class.new(task_plan).from_hash({ 'ungraded_step_count' => 42 })
+      expect(task_plan).not_to have_received(:ungraded_step_count=)
     end
   end
 

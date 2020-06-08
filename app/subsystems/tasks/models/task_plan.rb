@@ -8,8 +8,8 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     'description',
     'last_published_at',
     'tasks_grading_template_id',
-    'completed_wrq_step_count',
-    'ungraded_wrq_step_count'
+    'gradable_step_count',
+    'ungraded_step_count'
   ]
 
   attr_accessor :is_publish_requested
@@ -141,7 +141,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
                        course&.ecosystems&.first
   end
 
-  def update_wrq_step_counts!
+  def update_gradable_step_counts!
     period_tasking_plans = tasking_plans.filter do |tasking_plan|
       tasking_plan.target_type == 'CourseMembership::Models::Period'
     end
@@ -154,7 +154,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
     st = CourseMembership::Models::Student.arel_table
     tasks_by_period_id = tasks
-      .select(:completed_wrq_step_count, :ungraded_wrq_step_count, st[:course_membership_period_id])
+      .select(:gradable_step_count, :ungraded_step_count, st[:course_membership_period_id])
       .joins(taskings: { role: { student: :period } })
       .where(
         taskings: {
@@ -166,13 +166,13 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     unarchived_tasking_plans.each do |tasking_plan|
       tasks = tasks_by_period_id[tasking_plan.target_id] || []
 
-      tasking_plan.completed_wrq_step_count = tasks.sum(&:completed_wrq_step_count)
-      tasking_plan.ungraded_wrq_step_count = tasks.sum(&:ungraded_wrq_step_count)
+      tasking_plan.gradable_step_count = tasks.sum(&:gradable_step_count)
+      tasking_plan.ungraded_step_count = tasks.sum(&:ungraded_step_count)
       tasking_plan.save validate: false
     end
 
-    self.completed_wrq_step_count = unarchived_tasking_plans.sum(&:completed_wrq_step_count)
-    self.ungraded_wrq_step_count = unarchived_tasking_plans.sum(&:ungraded_wrq_step_count)
+    self.gradable_step_count = unarchived_tasking_plans.sum(&:gradable_step_count)
+    self.ungraded_step_count = unarchived_tasking_plans.sum(&:ungraded_step_count)
     save validate: false
   end
 

@@ -63,8 +63,8 @@ class GetDashboard
         is_trouble: get_is_trouble(due_pgs, total_students, true) ||
                     get_is_trouble(not_due_pgs, total_students, false),
         shareable_url: run(:get_short_code_url, task_plan, suffix: task_plan.title).outputs.url,
-        completed_wrq_step_count: task_plan.completed_wrq_step_count,
-        ungraded_wrq_step_count: task_plan.ungraded_wrq_step_count,
+        gradable_step_count: task_plan.gradable_step_count,
+        ungraded_step_count: task_plan.ungraded_step_count,
         tasking_plans: task_plan.tasking_plans
       )
     end
