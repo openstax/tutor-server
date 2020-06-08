@@ -1,0 +1,32 @@
+---
+title: 'College Physics (405335a3-7cff-4df2-a9ad-29062a4af261)'
+books:
+- archive_url: https://archive.cnx.org
+  cnx_id: 405335a3-7cff-4df2-a9ad-29062a4af261
+  reading_processing_instructions:
+  - css: .conceptual-questions, .problems-exercises, [data-element-type="conceptual-questions"],
+      [data-element-type="problems-exercises"], [data-element-type="check-understanding"],
+      [data-type="glossary"]
+    fragments: []
+  - css: '[data-type="footnote-refs"]'
+    fragments:
+    - media
+  - css: .phet-explorations-embedded
+    fragments:
+    - interactive
+    - exercise
+    labels:
+    - phet-explorations
+  - css: .watch-physics
+    fragments:
+    - video
+    - exercise
+    labels:
+    - watch-physics
+  - css: .example-video, [data-type="example"]
+    fragments:
+    - reading
+    labels:
+    - example
+  exercise_ids:
+    - 19874@2

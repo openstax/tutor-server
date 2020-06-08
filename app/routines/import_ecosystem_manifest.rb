@@ -1,5 +1,4 @@
 class ImportEcosystemManifest
-
   lev_routine express_output: :ecosystem,
               active_job_enqueue_options: { queue: :maintenance },
               use_jobba: true
@@ -35,5 +34,4 @@ class ImportEcosystemManifest
         exercise_uids: book.exercise_ids,
         comments: comments)
   end
-
 end
