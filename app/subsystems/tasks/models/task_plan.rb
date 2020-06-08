@@ -174,15 +174,19 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     save validate: false
   end
 
-  def set_wrq_count
-    self.wrq_count = Content::Models::Exercise
-                       .select(:question_answer_ids)
-                       .where(id: exercise_ids)
-                       .filter(&:is_free_response_only?)
-                       .size
+  def number_of_wrq_steps
+    Content::Models::Exercise
+      .select(:question_answer_ids)
+      .where(id: exercise_ids)
+      .filter(&:is_free_response_only?)
+      .size
   end
 
   protected
+
+  def set_wrq_count
+    self.wrq_count = number_of_wrq_steps
+  end
 
   def get_ecosystems_from_exercise_ids
     ecosystems = Content::Models::Ecosystem.distinct.joins(:exercises).where(

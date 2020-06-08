@@ -20,8 +20,8 @@ class AddWrqCountGradableStepCountAndUngradedStepCount < ActiveRecord::Migration
 
     tp = Tasks::Models::TaskPlan.arel_table
     Tasks::Models::TaskPlan.where(tp[:created_at].gt update_time).find_each do |task_plan|
-      task_plan.set_wrq_count
-      task_plan.save!
+      task_plan.update_attribute :wrq_count, task_plan.number_of_wrq_steps
+
       task_plan.update_gradable_step_counts!
     end
   end
