@@ -62,17 +62,25 @@ RSpec.describe Demo::Work, type: :routine do
       tasks.each do |task|
         if task.title.include? 'External'
           student_index = task.taskings.first.role.username.reverse.to_i - 1
-          expect(task.completion).to eq student_index < 3 ? 1 : 0
+          expect(task.completion).to eq student_index < 3 ? 1.0 : 0.0
           expect(task.score).to be_nil
         elsif task.title.include? 'Intro'
           student_index = task.taskings.first.role.username.reverse.to_i - 1
-          expect(task.completion).to(
-            be_within(1.0/task.steps_count).of(EXPECTED_COMPLETION[student_index])
-          )
+          expected_completion = EXPECTED_COMPLETION[student_index]
+          expect(task.completion).to be_within(1.0/task.steps_count).of(expected_completion)
+
           expected_score = EXPECTED_SCORES[student_index]
           # Only 100% accurate if the expected score is 0 or 1
           # Any other value depends on chance
-          expect(task.score).to(eq(expected_score)) if expected_score == 0 || expected_score == 1
+          if expected_score == 0.0
+            if expected_completion == 0.0
+              expect(task.score).to eq(0.0)
+            elsif expected_completion == 1.0
+              expect(task.score).to eq(task.completion_weight)
+            end
+          elsif expected_score == 1.0
+            expect(task.score).to eq(expected_score)
+          end
         else
           expect(task.completion).to eq 0
           expect(task.score).to eq 0

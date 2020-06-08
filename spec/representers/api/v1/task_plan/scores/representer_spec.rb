@@ -135,8 +135,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 is_dropped: false,
                 is_late: false,
                 available_points: 8.0,
-                total_points: 0.0,
-                total_fraction: 0.0,
+                total_points: student_tasks.second.points,
+                total_fraction: student_tasks.second.score,
                 late_work_point_penalty: 0.0,
                 questions: [
                   {
@@ -147,7 +147,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     is_correct: false,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
-                    points: 0.0,
+                    points: student_tasks.second.completion_weight,
                     needs_grading: false
                   }
                 ] + [
@@ -280,9 +280,9 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 is_dropped: false,
                 is_late: true,
                 available_points: 8.0,
-                total_points: 0.0,
-                total_fraction: 0.0,
-                late_work_point_penalty: 0.0,
+                total_points: student_tasks.second.points,
+                total_fraction: student_tasks.second.score,
+                late_work_point_penalty: student_tasks.second.late_work_point_penalty,
                 questions: [
                   {
                     task_step_id: kind_of(String),
@@ -292,7 +292,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     is_correct: false,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
-                    points: 0.0,
+                    points: student_tasks.second.completion_weight,
                     needs_grading: false
                   }
                 ] + [
