@@ -50,12 +50,12 @@ class Api::V1::TaskPlan::TaskingPlanRepresenter < Roar::Decorator
            getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) },
            schema_info: { required: true }
 
-  property :completed_wrq_step_count,
+  property :gradable_step_count,
            type: Integer,
            readable: true,
            writeable: false
 
-  property :ungraded_wrq_step_count,
+  property :ungraded_step_count,
            type: Integer,
            readable: true,
            writeable: false

@@ -70,8 +70,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         type: 'homework',
         dropped_questions: [],
         wrq_count: 0,
-        completed_wrq_step_count: 0,
-        ungraded_wrq_step_count: 0,
+        gradable_step_count: 0,
+        ungraded_step_count: 0,
         tasking_plans: [
           {
             id: tasking_plan.id.to_s,
@@ -167,8 +167,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 grades_need_publishing: false
               }
             ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
-            completed_wrq_step_count: 0,
-            ungraded_wrq_step_count: 0,
+            gradable_step_count: 0,
+            ungraded_step_count: 0,
             grades_need_publishing: false
           }
         ]
@@ -211,8 +211,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         type: 'homework',
         dropped_questions: [],
         wrq_count: 0,
-        completed_wrq_step_count: 0,
-        ungraded_wrq_step_count: 0,
+        gradable_step_count: 0,
+        ungraded_step_count: 0,
         tasking_plans: [
           {
             id: tasking_plan.id.to_s,
@@ -320,8 +320,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 grades_need_publishing: false
               }
             ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
-            completed_wrq_step_count: 0,
-            ungraded_wrq_step_count: 0,
+            gradable_step_count: 0,
+            ungraded_step_count: 0,
             grades_need_publishing: false
           }
         ]

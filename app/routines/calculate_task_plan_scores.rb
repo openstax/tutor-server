@@ -183,8 +183,8 @@ class CalculateTaskPlanScores
         num_questions_dropped: num_questions_dropped,
         points_dropped: points_dropped,
         students: students_array,
-        completed_wrq_step_count: tasking_plan.completed_wrq_step_count,
-        ungraded_wrq_step_count: tasking_plan.ungraded_wrq_step_count,
+        gradable_step_count: tasking_plan.gradable_step_count,
+        ungraded_step_count: tasking_plan.ungraded_step_count,
         grades_need_publishing: students_array.any? { |student| student[:grades_need_publishing] }
       }
     end.compact

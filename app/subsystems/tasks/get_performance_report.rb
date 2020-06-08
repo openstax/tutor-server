@@ -313,8 +313,8 @@ module Tasks
           completed_on_time_exercise_steps_count: tt.completed_on_time_exercise_steps_count,
           correct_exercise_count:                 correct_exercise_count,
           recovered_exercise_count:               tt.recovered_exercise_steps_count,
-          completed_wrq_step_count:               tt.completed_wrq_step_count,
-          ungraded_wrq_step_count:                tt.ungraded_wrq_step_count,
+          gradable_step_count:                    tt.gradable_step_count,
+          ungraded_step_count:                    tt.ungraded_step_count,
           is_included_in_averages:                included_in_progress_averages?(
                                                     task: tt, current_time_ntz: current_time_ntz
                                                   ),
