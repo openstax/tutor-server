@@ -227,8 +227,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                 is_dropped: false,
                 is_late: task.late?,
                 student_identifier: student.student_identifier,
-                total_fraction: task.started? ? 0.0 : nil,
-                total_points: 0.0,
+                total_fraction: task.score,
+                total_points: task.points,
                 questions: task.task_steps.map do |ts|
                   if ts.exercise?
                     tasked = ts.tasked
@@ -240,7 +240,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                       is_completed: ts.completed?,
                       is_correct: ts.is_correct?,
                       selected_answer_id: tasked.answer_id,
-                      points: ts.completed? || task.past_due? ? 0.0 : nil,
+                      points: ts.completed? ? task.completion_weight : (task.past_due? ? 0.0 : nil),
                       free_response: tasked.free_response,
                       grader_points: nil,
                       grader_comments: nil,
@@ -324,11 +324,16 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                 is_dropped: false,
                 is_late: task.late?,
                 student_identifier: student.student_identifier,
-                total_fraction: is_correct ? task.score : task.started? ? 0.0 : nil,
-                total_points: is_correct ? task.points : 0.0,
+                total_fraction: task.score,
+                total_points: task.points,
                 questions: task.task_steps.map do |ts|
                   if ts.exercise?
                     tasked = ts.tasked
+                    points = if ts.completed?
+                      is_correct ? 1.0 : task.completion_weight
+                    else
+                      task.past_due? ? 0.0 : nil
+                    end
 
                     {
                       task_step_id: ts.id,
@@ -337,7 +342,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                       is_completed: ts.completed?,
                       is_correct: is_correct,
                       selected_answer_id: tasked.answer_id,
-                      points: ts.completed? || task.past_due? ? (is_correct ? 1.0 : 0.0) : nil,
+                      points: points,
                       free_response: tasked.free_response,
                       grader_points: nil,
                       grader_comments: nil,
