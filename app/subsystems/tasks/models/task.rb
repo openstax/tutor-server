@@ -246,7 +246,7 @@ class Tasks::Models::Task < ApplicationRecord
       next tasked.grader_points || incomplete_value_proc.call(task_step) \
         if tasked.was_manually_graded? || !tasked.can_be_auto_graded?
 
-      tasked.is_correct? ? available_points_per_question_index[index] : 0.0
+      (tasked.is_correct? ? 1.0 : completion_weight) * available_points_per_question_index[index]
     end
   end
 
