@@ -121,6 +121,8 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
   it 'returns 0.0 grader_points when unattempted, past-due, ungraded and course setting set' do
     expect(tasked_exercise.grader_points).to be_nil
 
+    tasked_exercise.answer_ids = []
+
     task = tasked_exercise.task_step.task
     task.due_at = task.time_zone.to_tz.now - 1.minute
     task.course.past_due_unattempted_ungraded_wrq_are_zero = true

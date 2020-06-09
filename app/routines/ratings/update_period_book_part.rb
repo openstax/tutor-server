@@ -18,6 +18,7 @@ class Ratings::UpdatePeriodBookPart
         :correct_answer_id,
         :answer_id,
         :grader_points,
+        :last_graded_at,
         '"tasks_taskings"."entity_role_id"'
       )
       .joins(task_step: [ :page, task: :taskings ])

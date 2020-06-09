@@ -159,12 +159,12 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   def grader_points
     gp = super
 
-    gp.nil? && !task_step.completed? && task_step.task.past_due? &&
+    gp.nil? && !can_be_auto_graded? && !task_step.completed? && task_step.task.past_due? &&
     task_step.task.course.past_due_unattempted_ungraded_wrq_are_zero ? 0.0 : gp
   end
 
   def was_manually_graded?
-    !grader_points.nil?
+    !last_graded_at.nil?
   end
 
   def needs_grading?
