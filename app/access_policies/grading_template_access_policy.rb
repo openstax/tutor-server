@@ -5,7 +5,7 @@ class GradingTemplateAccessPolicy
     # standard_index also checks for read permissions for each record
     return true if action == :index
 
-    if grading_template.course.old_scores?
+    if grading_template.course.pre_wrm_scores?
       # Read-only for old courses
       return action == :read && UserIsCourseTeacher[
         user: requestor, course: grading_template.course

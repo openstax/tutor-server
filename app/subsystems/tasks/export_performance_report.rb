@@ -35,7 +35,7 @@ module Tasks
 
     def generate_temp_export_file!(course, format)
       klass = "Tasks::PerformanceReport::Export#{
-        course.old_scores? ? 'Old' : ''
+        course.pre_wrm_scores? ? 'Old' : ''
       }#{format.to_s.camelize}"
       exporter = klass.constantize
       filename = [

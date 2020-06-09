@@ -102,7 +102,7 @@ class CourseProfile::Models::Course < ApplicationRecord
     { research_studies: studies.pluck(:name) }
   end
 
-  def old_scores?
+  def pre_wrm_scores?
     ended? DateTime.new(2020, 7)
   end
 
