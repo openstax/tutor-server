@@ -31,20 +31,29 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
     CourseProfile::Models::Course.find_each do |course|
       course.homework_weight = course.homework_progress_weight + course.homework_score_weight
       if course.homework_weight != 0 && course.pre_wrm_scores?
+        # Only old courses get to keep their homework weights
         homework_completion_weight = course.homework_progress_weight/course.homework_weight
         homework_correctness_weight = course.homework_score_weight/course.homework_weight
       else
+        # Courses with 0 homework_weight and new courses get 100% homework scores
         homework_completion_weight = 0.0
         homework_correctness_weight = 1.0
       end
 
       course.reading_weight = course.reading_progress_weight + course.reading_score_weight
       if course.reading_weight != 0
+        # All courses get to keep their reading weights
         reading_completion_weight = course.reading_progress_weight/course.reading_weight
         reading_correctness_weight = course.reading_score_weight/course.reading_weight
-      else
+      elsif course.pre_wrm_scores?
+        # Old courses with 0 reading_weight get the default reading completion/correctness
+        # so the grading templates can be cloned later
         reading_completion_weight = 0.9
         reading_correctness_weight = 0.1
+      else
+        # Current (but not future) courses with 0 reading_weight get 100% reading scores
+        reading_completion_weight = 0.0
+        reading_correctness_weight = 1.0
       end
 
       course.save validate: false
