@@ -249,7 +249,6 @@ class Tasks::Models::Task < ApplicationRecord
       if tasked.is_correct?
         available_points_per_question_index[index]
       else
-        course = task_plan&.owner || taskings.first&.role&.course_member&.course
         next 0.0 if course&.pre_wrm_scores?
 
         completion_weight * available_points_per_question_index[index]
