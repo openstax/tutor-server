@@ -103,7 +103,7 @@ module Tasks
           homework_weight = course.homework_weight.to_f
           reading_weight = course.reading_weight.to_f
 
-          if course.old_scores?
+          if course.pre_wrm_scores?
             # Old courses should have only 1 set of weights for grading templates of the same type
             homework_grading_template = course.grading_templates.detect(&:homework?)
             homework_score_weight = homework_weight * (

@@ -1066,7 +1066,7 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
           ecosystem_id: @course.offering.content_ecosystem_id.to_s,
           cloned_from_id: @course.id.to_s,
           does_cost: @course.offering.does_cost,
-          uses_old_scores: false
+          uses_pre_wrm_scores: false
         )
       end
 

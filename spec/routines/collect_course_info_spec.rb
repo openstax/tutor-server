@@ -40,7 +40,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           does_cost: course_1.does_cost,
           is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
           is_lms_enabled: course_1.is_lms_enabled,
-          old_scores?: course_1.old_scores?,
+          pre_wrm_scores?: course_1.pre_wrm_scores?,
           past_due_unattempted_ungraded_wrq_are_zero:
             course_1.past_due_unattempted_ungraded_wrq_are_zero,
           last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
@@ -94,7 +94,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           does_cost: course_1.does_cost,
           is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
           is_lms_enabled: course_1.is_lms_enabled,
-          old_scores?: course_1.old_scores?,
+          pre_wrm_scores?: course_1.pre_wrm_scores?,
           past_due_unattempted_ungraded_wrq_are_zero:
             course_1.past_due_unattempted_ungraded_wrq_are_zero,
           last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
@@ -131,7 +131,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           does_cost: course_2.does_cost,
           is_lms_enabling_allowed: course_2.is_lms_enabling_allowed,
           is_lms_enabled: course_2.is_lms_enabled,
-          old_scores?: course_2.old_scores?,
+          pre_wrm_scores?: course_2.pre_wrm_scores?,
           past_due_unattempted_ungraded_wrq_are_zero:
             course_2.past_due_unattempted_ungraded_wrq_are_zero,
           last_lms_scores_push_job_id: course_2.last_lms_scores_push_job_id,
@@ -183,7 +183,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             does_cost: course_1.does_cost,
             is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
             is_lms_enabled: course_1.is_lms_enabled,
-            old_scores?: course_1.old_scores?,
+            pre_wrm_scores?: course_1.pre_wrm_scores?,
             past_due_unattempted_ungraded_wrq_are_zero:
               course_1.past_due_unattempted_ungraded_wrq_are_zero,
             last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
@@ -230,7 +230,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             does_cost: course_1.does_cost,
             is_lms_enabling_allowed: course_1.is_lms_enabling_allowed,
             is_lms_enabled: course_1.is_lms_enabled,
-            old_scores?: course_1.old_scores?,
+            pre_wrm_scores?: course_1.pre_wrm_scores?,
             past_due_unattempted_ungraded_wrq_are_zero:
               course_1.past_due_unattempted_ungraded_wrq_are_zero,
             last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
