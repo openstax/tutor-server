@@ -118,6 +118,18 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect { tasked_exercise.save! }.to change { tasked_exercise.task_step.task.cache_version }
   end
 
+  it 'returns 0.0 grader_points when unattempted, past-due, ungraded and course setting set' do
+    expect(tasked_exercise.grader_points).to be_nil
+
+    tasked_exercise.answer_ids = []
+
+    task = tasked_exercise.task_step.task
+    task.due_at = task.time_zone.to_tz.now - 1.minute
+    task.course.past_due_unattempted_ungraded_wrq_are_zero = true
+
+    expect(tasked_exercise.grader_points).to eq 0.0
+  end
+
   context '#content_preview' do
     let(:default_exercise_copy) { "Exercise step ##{tasked_exercise.id}" }
     let(:content_body) { 'exercise content' }
