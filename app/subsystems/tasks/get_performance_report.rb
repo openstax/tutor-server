@@ -103,11 +103,42 @@ module Tasks
           homework_weight = course.homework_weight.to_f
           reading_weight = course.reading_weight.to_f
 
-          course_average = if (homework_weight > 0 && homework_score.nil?) ||
-                              (reading_weight  > 0 && reading_score.nil? )
-            nil
+          if course.old_scores?
+            # Old courses should have only 1 set of weights for grading templates of the same type
+            homework_grading_template = course.grading_templates.detect(&:homework?)
+            homework_score_weight = homework_weight * (
+              homework_grading_template&.correctness_weight || 1.0
+            )
+            homework_progress_weight = homework_weight * (
+              homework_grading_template&.completion_weight || 0.0
+            )
+
+            reading_grading_template = course.grading_templates.detect(&:reading?)
+            reading_score_weight = reading_weight * (
+              reading_grading_template&.correctness_weight || 0.1
+            )
+            reading_progress_weight = reading_weight * (
+              reading_grading_template&.completion_weight || 0.9
+            )
+
+            course_average = if (homework_score_weight    > 0 && homework_score.nil?   ) ||
+                                (homework_progress_weight > 0 && homework_progress.nil?) ||
+                                (reading_score_weight     > 0 && reading_score.nil?    ) ||
+                                (reading_progress_weight  > 0 && reading_progress.nil? )
+              nil
+            else
+              homework_score_weight    * (homework_score    || 0) +
+              homework_progress_weight * (homework_progress || 0) +
+              reading_score_weight     * (reading_score     || 0) +
+              reading_progress_weight  * (reading_progress  || 0)
+            end
           else
-            homework_weight * (homework_score || 0) + reading_weight  * (reading_score  || 0)
+            course_average = if (homework_weight > 0 && homework_score.nil?) ||
+                                (reading_weight  > 0 && reading_score.nil? )
+              nil
+            else
+              homework_weight * (homework_score || 0) + reading_weight  * (reading_score  || 0)
+            end
           end
 
           OpenStruct.new(
