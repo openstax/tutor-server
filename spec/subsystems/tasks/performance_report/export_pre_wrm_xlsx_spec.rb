@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Tasks::PerformanceReport::ExportOldXlsx, type: :routine do
+RSpec.describe Tasks::PerformanceReport::ExportPreWrmXlsx, type: :routine do
   before(:all) { @course = FactoryBot.create :course_profile_course }
 
   context 'report_1' do
