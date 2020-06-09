@@ -159,6 +159,15 @@ module Api::V1
                type: 'boolean'
              }
 
+    property :old_scores?,
+             as: :uses_old_scores,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean',
+               required: true
+             }
+
     property :cloned_from_id,
              type: String,
              readable: true,
