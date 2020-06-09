@@ -84,7 +84,7 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
   context 'old scores' do
     before do
       @course.ends_at = DateTime.new 2020, 6, 30
-      expect(Tasks::PerformanceReport::ExportOldXlsx).to(
+      expect(Tasks::PerformanceReport::ExportPreWrmXlsx).to(
         receive(:call).and_wrap_original do |method, **args|
           expect(args[:course]).to eq @course
           args[:report].each { |report| expect(report.data_headings.size).to eq 3 }

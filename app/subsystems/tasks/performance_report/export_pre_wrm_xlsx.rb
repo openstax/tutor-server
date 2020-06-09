@@ -1,6 +1,6 @@
 module Tasks
   module PerformanceReport
-    class ExportOldXlsx
+    class ExportPreWrmXlsx
       lev_routine transaction: :no_transaction
 
       include ::XlsxUtils
