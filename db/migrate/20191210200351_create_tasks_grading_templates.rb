@@ -26,13 +26,11 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
 
     add_column :tasks_task_plans, :tasks_grading_template_id, :integer
 
-    homework_weight_cutoff_at = DateTime.new 2020, 7, 1
-
     CourseProfile::Models::Course.reset_column_information
     Tasks::Models::TaskPlan.reset_column_information
     CourseProfile::Models::Course.find_each do |course|
       course.homework_weight = course.homework_progress_weight + course.homework_score_weight
-      if course.homework_weight != 0 && course.ends_at < homework_weight_cutoff_at
+      if course.homework_weight != 0 && course.old_scores?
         homework_completion_weight = course.homework_progress_weight/course.homework_weight
         homework_correctness_weight = course.homework_score_weight/course.homework_weight
       else
