@@ -48,33 +48,70 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
     @role = GetUserCourseRoles[courses: @course, user: @teacher].first
   end
 
-  before do
-    expect(Tasks::PerformanceReport::ExportXlsx).to(
-      receive(:call).and_wrap_original do |method, **args|
-        expect(args[:course]).to eq @course
-        args[:report].each { |report| expect(report.data_headings.size).to eq 3 }
-        method.call(args)
-      end
-    )
-  end
-  after { File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename) }
+  before { @course.reload }
 
-  it 'does not blow up' do
-    expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+  context 'new scores' do
+    before do
+      expect(Tasks::PerformanceReport::ExportXlsx).to(
+        receive(:call).and_wrap_original do |method, **args|
+          expect(args[:course]).to eq @course
+          args[:report].each { |report| expect(report.data_headings.size).to eq 3 }
+          method.call(args)
+        end
+      )
+    end
+    after { File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename) }
+
+    it 'does not blow up' do
+      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    end
+
+    it 'does not blow up when a student was not assigned a particular task' do
+      @course.students.first.role.taskings.first.task.destroy
+      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    end
+
+    it 'does not blow up if the course name has forbidden characters' do
+      @course.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
+      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    end
+
+    it 'does not blow up if the course name is too long' do
+      @course.update_attribute(:name, 'Tro' + (['lo'] * 50).join)
+      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    end
   end
 
-  it 'does not blow up when a student was not assigned a particular task' do
-    @course.students.first.role.taskings.first.task.destroy
-    expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
-  end
+  context 'old scores' do
+    before do
+      @course.ends_at = DateTime.new 2020, 6, 30
+      expect(Tasks::PerformanceReport::ExportOldXlsx).to(
+        receive(:call).and_wrap_original do |method, **args|
+          expect(args[:course]).to eq @course
+          args[:report].each { |report| expect(report.data_headings.size).to eq 3 }
+          method.call(args)
+        end
+      )
+    end
+    after { File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename) }
 
-  it 'does not blow up if the course name has forbidden characters' do
-    @course.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
-    expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
-  end
+    it 'does not blow up' do
+      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    end
 
-  it 'does not blow up if the course name is too long' do
-    @course.update_attribute(:name, 'Tro' + (['lo'] * 50).join)
-    expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    it 'does not blow up when a student was not assigned a particular task' do
+      @course.students.first.role.taskings.first.task.destroy
+      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    end
+
+    it 'does not blow up if the course name has forbidden characters' do
+      @course.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
+      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    end
+
+    it 'does not blow up if the course name is too long' do
+      @course.update_attribute(:name, 'Tro' + (['lo'] * 50).join)
+      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    end
   end
 end
