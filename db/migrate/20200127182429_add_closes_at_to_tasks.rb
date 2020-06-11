@@ -19,6 +19,39 @@ class AddClosesAtToTasks < ActiveRecord::Migration[5.2]
               AND "tasks_task_plans"."owner_type" = 'CourseProfile::Models::Course'
           UPDATE_SQL
         )
+
+        Tasks::Models::Task.update_all(
+          <<~UPDATE_SQL
+            "closes_at_ntz" = "tasks_tasking_plans"."closes_at_ntz"
+            FROM "tasks_taskings"
+            INNER JOIN "course_membership_students"
+              ON "course_membership_students"."entity_role_id" = "tasks_taskings"."entity_role_id"
+            INNER JOIN "tasks_tasking_plans"
+              ON "tasks_tasking_plans"."target_type" = 'CourseMembership::Models::Period'
+              AND "tasks_tasking_plans"."target_id" =
+                "course_membership_students"."course_membership_period_id"
+            WHERE "tasks_tasks"."tasks_task_plan_id" IS NOT NULL
+              AND "tasks_tasking_plans"."tasks_task_plan_id" = "tasks_tasks"."tasks_task_plan_id"
+              AND "tasks_taskings"."tasks_task_id" = "tasks_tasks"."id"
+          UPDATE_SQL
+        )
+
+        Tasks::Models::Task.update_all(
+          <<~UPDATE_SQL
+            "closes_at_ntz" = "tasks_tasking_plans"."closes_at_ntz"
+            FROM "tasks_taskings"
+            INNER JOIN "course_membership_teacher_students"
+              ON "course_membership_teacher_students"."entity_role_id" =
+                "tasks_taskings"."entity_role_id"
+            INNER JOIN "tasks_tasking_plans"
+              ON "tasks_tasking_plans"."target_type" = 'CourseMembership::Models::Period'
+              AND "tasks_tasking_plans"."target_id" =
+                "course_membership_teacher_students"."course_membership_period_id"
+            WHERE "tasks_tasks"."tasks_task_plan_id" IS NOT NULL
+              AND "tasks_tasking_plans"."tasks_task_plan_id" = "tasks_tasks"."tasks_task_plan_id"
+              AND "tasks_taskings"."tasks_task_id" = "tasks_tasks"."id"
+          UPDATE_SQL
+        )
       end
     end
 
