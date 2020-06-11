@@ -102,6 +102,10 @@ class CourseProfile::Models::Course < ApplicationRecord
     { research_studies: studies.pluck(:name) }
   end
 
+  def pre_wrm_scores?
+    ended? DateTime.new(2020, 7)
+  end
+
   protected
 
   def set_starts_at_and_ends_at

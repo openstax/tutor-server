@@ -177,4 +177,11 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
     course.update_column(:is_lms_enabled, false)
     expect(course.reload.update_attributes(is_lms_enabled: true)).to eq false
   end
+
+  it 'knows if it should use old scores' do
+    expect(course.pre_wrm_scores?).to eq false
+
+    course.ends_at = DateTime.new(2020, 6, 30)
+    expect(course.pre_wrm_scores?).to eq true
+  end
 end

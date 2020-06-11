@@ -160,6 +160,15 @@ module Api::V1
                type: 'boolean'
              }
 
+    property :pre_wrm_scores?,
+             as: :uses_pre_wrm_scores,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean',
+               required: true
+             }
+
     property :cloned_from_id,
              type: String,
              readable: true,

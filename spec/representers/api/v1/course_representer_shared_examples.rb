@@ -119,5 +119,9 @@ module Api::V1
       course.last_lms_scores_push_job_id = "howdy"
       expect(represented['last_lms_scores_push_job_id']).to eq "howdy"
     end
+
+    it 'shows uses_pre_wrm_scores' do
+      expect(represented['uses_pre_wrm_scores']).to eq course.pre_wrm_scores?
+    end
   end
 end

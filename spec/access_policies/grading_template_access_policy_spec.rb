@@ -23,22 +23,46 @@ RSpec.describe GradingTemplateAccessPolicy, type: :access_policy do
   context 'any user' do
     let(:requestor) { FactoryBot.create :user_profile }
 
-    [ :index, :create ].each do |action|
-      context "##{action}" do
-        let(:action) { action }
+    context 'new scores' do
+      [ :index, :create ].each do |action|
+        context "##{action}" do
+          let(:action) { action }
+
+          it 'can be accessed' do
+            expect(action_allowed).to eq true
+          end
+        end
+      end
+
+      [ :read, :update, :destroy ].each do |action|
+        context "##{action}" do
+          let(:action) { action }
+
+          it 'cannot be accessed' do
+            expect(action_allowed).to eq false
+          end
+        end
+      end
+    end
+
+    context 'old scores' do
+      before { course.ends_at = DateTime.new(2020, 6, 30) }
+
+      context '#index' do
+        let(:action) { :index }
 
         it 'can be accessed' do
           expect(action_allowed).to eq true
         end
       end
-    end
 
-    [ :read, :update, :destroy ].each do |action|
-      context "##{action}" do
-        let(:action) { action }
+      [ :read, :create, :update, :destroy ].each do |action|
+        context "##{action}" do
+          let(:action) { action }
 
-        it 'cannot be accessed' do
-          expect(action_allowed).to eq false
+          it 'cannot be accessed' do
+            expect(action_allowed).to eq false
+          end
         end
       end
     end
@@ -49,12 +73,38 @@ RSpec.describe GradingTemplateAccessPolicy, type: :access_policy do
 
     before { AddUserAsCourseTeacher[user: requestor, course: course] }
 
-    [ :index, :create, :read, :update, :destroy ].each do |action|
-      context "##{action}" do
-        let(:action) { action }
+    context 'new scores' do
+      [ :index, :create, :read, :update, :destroy ].each do |action|
+        context "##{action}" do
+          let(:action) { action }
 
-        it 'can be accessed' do
-          expect(action_allowed).to eq true
+          it 'can be accessed' do
+            expect(action_allowed).to eq true
+          end
+        end
+      end
+    end
+
+    context 'old scores' do
+      before { course.ends_at = DateTime.new(2020, 6, 30) }
+
+      [ :index, :read ].each do |action|
+        context "##{action}" do
+          let(:action) { action }
+
+          it 'can be accessed' do
+            expect(action_allowed).to eq true
+          end
+        end
+      end
+
+      [ :create, :update, :destroy ].each do |action|
+        context "##{action}" do
+          let(:action) { action }
+
+          it 'cannot be accessed' do
+            expect(action_allowed).to eq false
+          end
         end
       end
     end
