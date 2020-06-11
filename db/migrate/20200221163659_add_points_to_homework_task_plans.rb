@@ -12,7 +12,7 @@ class AddPointsToHomeworkTaskPlans < ActiveRecord::Migration[5.2]
 
       task_plans.each do |task_plan|
         task_plan.settings['exercises'] = task_plan.settings['exercise_ids'].map do |id|
-          { 'id' => id.to_s, 'points' => [ 1.0 ] * num_questions_by_exercise_id[id] }
+          { 'id' => id.to_s, 'points' => [ 1.0 ] * num_questions_by_exercise_id[id.to_i] }
         end
         task_plan.settings.delete 'exercise_ids'
       end
