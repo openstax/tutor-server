@@ -13,7 +13,6 @@ require 'oauth'
 #   https://andyfmiller.com/2016/03/26/ims-lti-outcomes-1-0-versus-2-0/
 
 class Lms::SendCourseScores
-
   lev_routine transaction: :no_transaction, use_jobba: true
 
   def exec(course:)
@@ -168,5 +167,4 @@ class Lms::SendCourseScores
 
     builder.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
-
 end

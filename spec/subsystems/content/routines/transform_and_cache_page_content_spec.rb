@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine do
+RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, vcr: VCR_OPTS do
   context 'with real content' do
     before(:all) do
       cnx_page_1 = OpenStax::Cnx::V1::Page.new(
@@ -638,6 +638,17 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine d
           expect(context_node.attr('id')).to eq expected_context_node_id
         end
       end
+    end
+  end
+
+  context 'with an exercise that requires context from a Section Summary' do
+    let(:manifest_path)   { 'spec/fixtures/manifests/Section Summary Context Exercise.yml' }
+    let(:manifest_string) { File.read manifest_path }
+
+    it "sets the exercise's context from the Section Summary"  do
+      ecosystem = ImportEcosystemManifest[manifest: manifest_string]
+      exercise = ecosystem.exercises.first
+      expect(exercise.context).not_to be_blank
     end
   end
 end

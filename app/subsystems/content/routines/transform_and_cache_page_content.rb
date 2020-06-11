@@ -23,12 +23,6 @@ class Content::Routines::TransformAndCachePageContent
     # Get all page uuids and cnx_ids given
     pages_by_uuid = pages.index_by(&:uuid)
 
-    # Get all exercises that require context
-    context_exercises = Content::Models::Exercise.requires_context.where(
-      id: pages.flat_map(&:all_exercise_ids)
-    ).preload(:tags).to_a
-    context_exercises_by_page_id = context_exercises.group_by(&:content_page_id)
-
     pages.each do |page|
       doc = Nokogiri::HTML(page.content)
       doc.css('[href]').each do |link|
@@ -78,24 +72,41 @@ class Content::Routines::TransformAndCachePageContent
 
       page.content = doc.to_html
       page.cache_fragments_and_snap_labs
+    end
 
-      # Assign exercise context if required
-      (context_exercises_by_page_id[page.id] || []).each do |context_exercise|
+    # Get all exercises that require context
+    context_exercises = Content::Models::Exercise.requires_context.where(
+      id: pages.flat_map(&:all_exercise_ids)
+    ).preload(:tags).to_a
+    context_exercises_by_page_id = context_exercises.group_by(&:content_page_id)
+
+    # Assign exercise context if required
+    lookahead_exercises = []
+    pages.each do |page|
+      previous_context_exercises = lookahead_exercises
+      lookahead_exercises = []
+      (
+        (context_exercises_by_page_id[page.id] || []) + previous_context_exercises
+      ).each do |context_exercise|
         feature_ids = context_exercise.feature_ids
         context_exercise.context = page.context_for_feature_ids feature_ids
+        next unless context_exercise.context.blank?
 
-        if context_exercise.context.blank?
-          if feature_ids.empty?
-            Rails.logger.warn do
-              "Exercise #{context_exercise.uid} requires context but it has no feature ID tags"
-            end
-          else
-            Rails.logger.warn do
-              "Exercise #{context_exercise.uid} requires context but its feature ID(s) [ #{
-                feature_ids.join(', ')} ] could not be found on #{page.url}"
-            end
+        if feature_ids.empty?
+          Rails.logger.warn do
+            "Exercise #{context_exercise.uid} requires context but it has no feature ID tags"
           end
+        else
+          lookahead_exercises << context_exercise
         end
+      end
+    end
+
+    lookahead_exercises.each do |context_exercise|
+      Rails.logger.warn do
+        "Exercise #{context_exercise.uid} requires context but its feature ID(s) [ #{
+          context_exercise.feature_ids.join(', ')
+        } ] could not be found on its page or any subsequent pages"
       end
     end
 

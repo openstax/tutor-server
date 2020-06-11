@@ -116,16 +116,8 @@ class Content::Models::Page < IndestructibleRecord
     @context_for_feature_ids ||= {}
     return @context_for_feature_ids[feature_ids] if @context_for_feature_ids.has_key?(feature_ids)
 
-    feature_node = nil
-    fragments.each do |fragment|
-      next unless fragment.respond_to?(:to_html)
-
-      fragment_node = Nokogiri::HTML.fragment(fragment.to_html)
-      feature_node = parser_class.feature_node(fragment_node, feature_ids)
-
-      break unless feature_node.nil?
-    end
-
+    doc = Nokogiri::HTML(content)
+    feature_node = parser_class.feature_node(doc, feature_ids)
     @context_for_feature_ids[feature_ids] = feature_node.try(:to_html)
   end
 
