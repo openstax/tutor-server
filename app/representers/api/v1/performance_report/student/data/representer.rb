@@ -58,6 +58,11 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
+    property :gradable_step_count,
+             type: Integer,
+             readable: true,
+             writeable: false
+
     property :ungraded_step_count,
              type: Integer,
              readable: true,

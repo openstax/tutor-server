@@ -412,7 +412,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       end.task_step.tap { |step| step.is_core = false }
     end
 
-    let(:completed_ungraded_wrq_step) do
+    let(:gradable_step) do
       FactoryBot.build(:tasks_tasked_exercise, answer_ids: []).tap do |te|
         te.update_attribute :free_response, 'Hello there!'
       end.task_step.tap do |step|
@@ -421,7 +421,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       end
     end
 
-    let(:completed_graded_wrq_step) do
+    let(:graded_step) do
       FactoryBot.build(:tasks_tasked_exercise, answer_ids: []).tap do |te|
         te.update_attribute :free_response, "What's up?"
 
@@ -606,7 +606,28 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         end
       end
 
-      context 'ungraded steps count' do
+      context 'gradable step count' do
+        it 'works with no steps' do
+          expect(task.gradable_step_count).to eq(0)
+        end
+
+        it 'works with multiple completed exercise steps' do
+          task.task_steps = [
+            completed_exercise_step_1,
+            exercise_step_1,
+            dynamic_step_1,
+            completed_exercise_step_2,
+            gradable_step,
+            graded_step
+          ]
+          task.save!
+          task.reload
+
+          expect(task.gradable_step_count).to eq(2)
+        end
+      end
+
+      context 'ungraded step count' do
         it 'works with no steps' do
           expect(task.ungraded_step_count).to eq(0)
         end
@@ -617,8 +638,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
             exercise_step_1,
             dynamic_step_1,
             completed_exercise_step_2,
-            completed_ungraded_wrq_step,
-            completed_graded_wrq_step
+            gradable_step,
+            graded_step
           ]
           task.save!
           task.reload

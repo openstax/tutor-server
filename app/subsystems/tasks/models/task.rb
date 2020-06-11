@@ -11,6 +11,7 @@ class Tasks::Models::Task < ApplicationRecord
     :correct_exercise_steps_count,
     :placeholder_steps_count,
     :placeholder_exercise_steps_count,
+    :gradable_step_count,
     :ungraded_step_count
   ]
 
@@ -74,7 +75,7 @@ class Tasks::Models::Task < ApplicationRecord
   before_validation :update_cached_attributes
   after_create :update_caches_now
   after_touch :update_caches_later
-  after_update :notify_task_plan_ungraded_count
+  after_update :notify_task_plan_gradable_counts
 
   def reload(*args)
     @extension = nil
@@ -278,7 +279,7 @@ class Tasks::Models::Task < ApplicationRecord
     return 0.0 if due_at.nil?
 
     points_per_question_index_without_lateness = self.points_per_question_index_without_lateness
-    exercise_and_placeholder_steps.each_with_index.sum do |task_step, index|
+    exercise_and_placeholder_steps.each_with_index.sum(0.0) do |task_step, index|
       points = points_per_question_index_without_lateness[index]
       points == 0.0 ? 0.0 : points * late_work_penalty_for(task_step: task_step, due_at: due_at)
     end
@@ -330,6 +331,8 @@ class Tasks::Models::Task < ApplicationRecord
     placeholder_steps = steps.select(&:placeholder?)
     placeholder_exercise_steps = placeholder_steps.select { |step| step.tasked.exercise_type? }
 
+    gradable_steps = completed_exercise_steps.map(&:tasked).reject(&:can_be_auto_graded?)
+
     self.core_page_ids = core_steps.map(&:content_page_id).uniq
     self.steps_count = steps.count
     self.completed_steps_count = completed_steps.count
@@ -342,9 +345,8 @@ class Tasks::Models::Task < ApplicationRecord
     self.placeholder_exercise_steps_count = placeholder_exercise_steps.count
     self.core_placeholder_exercise_steps_count = placeholder_exercise_steps.count(&:is_core?)
     self.student_history_at ||= current_time if completed_core_steps_count == core_steps_count
-    self.ungraded_step_count = exercise_steps.count do |step|
-      step.completed? && !step.tasked.can_be_auto_graded? && !step.tasked.was_manually_graded?
-    end
+    self.gradable_step_count = gradable_steps.count
+    self.ungraded_step_count = gradable_steps.reject(&:was_manually_graded?).count
 
     late_after = due_at
     on_time_steps = late_after.nil? ?
@@ -368,9 +370,10 @@ class Tasks::Models::Task < ApplicationRecord
     )
   end
 
-  def notify_task_plan_ungraded_count
-    # We need to update the task_plan's count if the ungraded_step_count changed
-    task_plan&.update_ungraded_step_count! if previous_changes['ungraded_step_count']
+  def notify_task_plan_gradable_counts
+    # We need to update the task_plan's count if the wrq step counts changed
+    task_plan&.update_gradable_step_counts! if previous_changes['gradable_step_count'] ||
+                                               previous_changes['ungraded_step_count']
   end
 
   def stepless?

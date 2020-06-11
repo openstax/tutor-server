@@ -49,4 +49,14 @@ class Api::V1::TaskPlan::TaskingPlanRepresenter < Roar::Decorator
            writeable: true,
            getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) },
            schema_info: { required: true }
+
+  property :gradable_step_count,
+           type: Integer,
+           readable: true,
+           writeable: false
+
+  property :ungraded_step_count,
+           type: Integer,
+           readable: true,
+           writeable: false
 end

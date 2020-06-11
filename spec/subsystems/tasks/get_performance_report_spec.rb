@@ -322,6 +322,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.completed_exercise_count).to be_a Integer
           expect(data.completed_on_time_exercise_steps_count).to be_a Integer
           expect(data.recovered_exercise_count).to be_a Integer
+          expect(data.gradable_step_count).to be_a Integer
           expect(data.ungraded_step_count).to be_a Integer
           expect(data.is_included_in_averages).to be_in [true, false]
           expect(data.progress).to be_a Float
@@ -493,6 +494,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.completed_exercise_count).to be_a Integer
         expect(data.completed_on_time_exercise_steps_count).to be_a Integer
         expect(data.recovered_exercise_count).to be_a Integer
+        expect(data.gradable_step_count).to be_a Integer
         expect(data.ungraded_step_count).to be_a Integer
         expect(data.is_included_in_averages).to be_in [true, false]
         expect(data.progress).to be_a Float
@@ -576,6 +578,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.completed_exercise_count).to be_a Integer
         expect(data.completed_on_time_exercise_steps_count).to be_a Integer
         expect(data.recovered_exercise_count).to be_a Integer
+        expect(data.gradable_step_count).to be_a Integer
         expect(data.ungraded_step_count).to be_a Integer
         expect(data.is_included_in_averages).to be_in [true, false]
         expect(data.progress).to be_a Float

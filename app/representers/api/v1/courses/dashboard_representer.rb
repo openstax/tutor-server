@@ -124,6 +124,11 @@ module Api::V1::Courses
                writeable: false,
                if: ->(*) { auto_grading_feedback_available? }
 
+      property :gradable_step_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
       property :ungraded_step_count,
                type: Integer,
                readable: true,

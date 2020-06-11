@@ -122,6 +122,16 @@ class Api::V1::TaskPlan::Representer < Roar::Decorator
            readable: true,
            writeable: false
 
+  property :wrq_count,
+           type: Integer,
+           readable: true,
+           writeable: false
+
+  property :gradable_step_count,
+           type: Integer,
+           readable: true,
+           writeable: false
+
   property :ungraded_step_count,
            type: Integer,
            readable: true,

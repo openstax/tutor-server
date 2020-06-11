@@ -71,6 +71,30 @@ RSpec.describe Api::V1::TaskPlan::TaskingPlanRepresenter, type: :representer do
     end
   end
 
+  context 'gradable_step_count' do
+    it 'can be read' do
+      allow(tasking_plan).to receive(:gradable_step_count).and_return(21)
+      expect(representation).to include('gradable_step_count' => 21)
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      described_class.new(tasking_plan).from_json({ gradable_step_count: 42 }.to_json)
+      expect(tasking_plan).not_to have_received(:gradable_step_count=)
+    end
+  end
+
+  context 'ungraded_step_count' do
+    it 'can be read' do
+      allow(tasking_plan).to receive(:ungraded_step_count).and_return(21)
+      expect(representation).to include('ungraded_step_count' => 21)
+    end
+
+    it 'cannot be written (attempts are silently ignored)' do
+      described_class.new(tasking_plan).from_json({ ungraded_step_count: 42 }.to_json)
+      expect(tasking_plan).not_to have_received(:ungraded_step_count=)
+    end
+  end
+
   # A helper for reading input (json or hash) into a TaskingPlan.
   def consume(input:, to: tasking_plan)
     described_class.new(to).from_json(

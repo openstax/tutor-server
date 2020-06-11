@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_29_235243) do
+ActiveRecord::Schema.define(version: 2020_06_05_151734) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -861,6 +861,8 @@ ActiveRecord::Schema.define(version: 2020_05_29_235243) do
     t.boolean "is_preview", default: false
     t.integer "tasks_grading_template_id"
     t.integer "ungraded_step_count", default: 0, null: false
+    t.integer "wrq_count", default: 0, null: false
+    t.integer "gradable_step_count", default: 0, null: false
     t.index ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id"
     t.index ["owner_id", "owner_type"], name: "index_tasks_task_plans_on_owner_id_and_owner_type"
@@ -968,6 +970,8 @@ ActiveRecord::Schema.define(version: 2020_05_29_235243) do
     t.datetime "updated_at", null: false
     t.integer "time_zone_id", null: false
     t.datetime "closes_at_ntz", null: false
+    t.integer "gradable_step_count", default: 0, null: false
+    t.integer "ungraded_step_count", default: 0, null: false
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasking_plans_on_due_at_ntz_and_opens_at_ntz"
     t.index ["opens_at_ntz"], name: "index_tasks_tasking_plans_on_opens_at_ntz"
     t.index ["target_id", "target_type", "tasks_task_plan_id"], name: "index_tasking_plans_on_t_id_and_t_type_and_t_p_id", unique: true
@@ -1026,6 +1030,7 @@ ActiveRecord::Schema.define(version: 2020_05_29_235243) do
     t.datetime "grades_last_published_at"
     t.bigint "course_profile_course_id", null: false
     t.integer "ungraded_step_count", default: 0, null: false
+    t.integer "gradable_step_count", default: 0, null: false
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["course_profile_course_id"], name: "index_tasks_tasks_on_course_profile_course_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
