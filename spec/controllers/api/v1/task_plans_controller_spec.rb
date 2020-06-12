@@ -48,8 +48,10 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     AddUserAsPeriodStudent.call(period: period, user: student)
   end
 
-  # Workaround for PostgreSQL rollback bug
-  before { @task_plan.reload.touch }
+  before do
+    @published_task_plan.reload
+    @task_plan.reload
+  end
 
   context '#index' do
     before do

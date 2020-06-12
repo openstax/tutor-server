@@ -79,7 +79,7 @@ class Tasks::Models::Task < ApplicationRecord
 
   def reload(*args)
     @extension = nil
-    @@available_points_without_dropping_per_question_index = nil
+    @available_points_without_dropping_per_question_index = nil
     @available_points_per_question_index = nil
     @points_per_question_index_without_lateness = nil
 
@@ -235,16 +235,16 @@ class Tasks::Models::Task < ApplicationRecord
       )
 
       exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
-        next incomplete_value_proc.call(task_step) unless task_step.completed? && task_step.exercise?
+        # Tasks::Models::TaskStep in this array represent incomplete values
+        next task_step unless task_step.completed? && task_step.exercise?
 
         tasked = task_step.tasked
-        next incomplete_value_proc.call(task_step) \
-          if !tasked.was_manually_graded? && !tasked.can_be_auto_graded?
+        next task_step if !tasked.was_manually_graded? && !tasked.can_be_auto_graded?
 
         next available_points_per_question_index[index] \
           if full_credit_question_ids.include?(tasked.question_id)
 
-        next tasked.published_points || incomplete_value_proc.call(task_step) \
+        next tasked.published_points || task_step \
           if tasked.was_manually_graded? || !tasked.can_be_auto_graded?
 
         if tasked.is_correct?
@@ -255,6 +255,10 @@ class Tasks::Models::Task < ApplicationRecord
           completion_weight * available_points_per_question_index[index]
         end
       end
+    end
+
+    @points_per_question_index_without_lateness.map do |points|
+      points.is_a?(Numeric) ? points : incomplete_value_proc.call(points)
     end
   end
 

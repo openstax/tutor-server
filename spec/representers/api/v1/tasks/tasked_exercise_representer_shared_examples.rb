@@ -43,8 +43,8 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:is_in_multipart).and_return(false)
       allow(exercise).to receive(:response_validation).and_return({ valid: false })
       allow(exercise).to receive(:available_points).and_return(1.0)
-      allow(exercise).to receive(:grader_points).and_return(0.5)
-      allow(exercise).to receive(:grader_comments).and_return('Hi')
+      allow(exercise).to receive(:published_points).and_return(0.5)
+      allow(exercise).to receive(:published_comments).and_return('Hi')
       allow(exercise).to receive(:cache_key).and_return('tasks/models/tasked_exercises/42')
       allow(exercise).to receive(:cache_version).and_return('test')
     end
