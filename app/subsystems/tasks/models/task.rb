@@ -269,9 +269,7 @@ class Tasks::Models::Task < ApplicationRecord
     points_per_question_index_without_lateness.sum
   end
 
-  def points_visible_to_students_without_lateness(current_time: Time.current)
-    return if exercise_steps.none? { |step| step.tasked.feedback_available? }
-
+  def published_points_without_lateness(current_time: Time.current)
     exercise_and_placeholder_steps.each_with_index.sum(0.0) do |task_step, index|
       next 0.0 unless task_step.exercise? && task_step.tasked.feedback_available?
 
@@ -307,7 +305,7 @@ class Tasks::Models::Task < ApplicationRecord
     end
   end
 
-  def late_work_point_penalty_visible_to_students
+  def published_late_work_point_penalty
     due_at = self.due_at
     return 0.0 if due_at.nil?
 
@@ -324,9 +322,8 @@ class Tasks::Models::Task < ApplicationRecord
     points_without_lateness - late_work_point_penalty
   end
 
-  def points_visible_to_students
-    visible_points = points_visible_to_students_without_lateness
-    visible_points.nil? ? nil : visible_points - late_work_point_penalty_visible_to_students
+  def published_points
+    published_points_without_lateness - published_late_work_point_penalty
   end
 
   def available_points_worked(current_time: Time.current)
@@ -350,6 +347,24 @@ class Tasks::Models::Task < ApplicationRecord
     available_points_worked = self.available_points_worked current_time: current_time
 
     points/available_points_worked unless available_points_worked == 0.0
+  end
+
+  def published_score_without_lateness(current_time: Time.current)
+    visible_points = published_points_without_lateness
+    return if visible_points.nil?
+
+    available_points_worked = self.available_points_worked current_time: current_time
+
+    visible_points/available_points_worked unless available_points_worked == 0.0
+  end
+
+  def published_score(current_time: Time.current)
+    visible_points = published_points
+    return if visible_points.nil?
+
+    available_points_worked = self.available_points_worked current_time: current_time
+
+    visible_points/available_points_worked unless available_points_worked == 0.0
   end
 
   def is_preview
@@ -454,7 +469,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def manually_graded_steps
-    exercise_steps(preload_taskeds: true).reject {|step| step.tasked.can_be_auto_graded? }
+    exercise_steps(preload_taskeds: true).reject { |step| step.tasked.can_be_auto_graded? }
   end
 
   def manual_grading_feedback_available?
@@ -474,11 +489,11 @@ class Tasks::Models::Task < ApplicationRecord
     case manual_grading_feedback_on
     when 'grade'
       manually_graded_steps.all? do |task_step|
-        task_step.tasked.was_manually_graded?
+        !task_step.completed? || task_step.tasked.was_manually_graded?
       end
     when 'publish'
       manually_graded_steps.all? do |task_step|
-        task_step.tasked.grade_published?
+        !task_step.completed? || task_step.tasked.grade_published?
       end
     else
       false

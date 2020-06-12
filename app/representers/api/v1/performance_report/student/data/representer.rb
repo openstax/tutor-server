@@ -105,14 +105,20 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :points,
+    property :published_points,
              type: Float,
              readable: true,
              writeable: false
 
-    property :score,
+    property :published_score,
              type: Float,
              readable: true,
              writeable: false
+
+    property :provisional_score?,
+             as: :is_provisional_score,
+             readable: true,
+             writeable: false,
+             schema_info: { type: 'boolean' }
   end
 end

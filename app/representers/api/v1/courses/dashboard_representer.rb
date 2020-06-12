@@ -134,8 +134,7 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-      property :points_visible_to_students,
-               as: :student_points,
+      property :published_points,
                type: Float,
                readable: true,
                writeable: false

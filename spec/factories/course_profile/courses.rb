@@ -14,7 +14,9 @@ FactoryBot.define do
     is_college            { [ true, false, nil ].sample }
 
     # Preview term dates are based on DateTime.current, so they lead to flaky tests
-    term                  { (CourseProfile::Models::Course.terms.keys - [ 'preview' ]).sample }
+    term                  do
+      (CourseProfile::Models::Course.terms.keys - [ 'legacy, ''preview' ]).sample
+    end
     year                  { Time.current.year }
 
     timezone              { 'US/Central' }

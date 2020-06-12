@@ -75,18 +75,18 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
     expect(described_class.new(task).to_hash['late_work_penalty_per_period']).to eq 0.25
   end
 
-  it 'includes student_late_work_point_penalty' do
-    expect(described_class.new(task).to_hash['student_late_work_point_penalty']).to eq 0.0
+  it 'includes published_late_work_point_penalty' do
+    expect(described_class.new(task).to_hash['published_late_work_point_penalty']).to eq 0.0
 
-    expect(task).to receive(:late_work_point_penalty_visible_to_students).and_return(1.0)
-    expect(described_class.new(task).to_hash['student_late_work_point_penalty']).to eq 1.0
+    expect(task).to receive(:published_late_work_point_penalty).and_return(1.0)
+    expect(described_class.new(task).to_hash['published_late_work_point_penalty']).to eq 1.0
   end
 
-  it 'includes student_points' do
-    expect(described_class.new(task).to_hash['student_points']).to be_nil
+  it 'includes published_points' do
+    expect(described_class.new(task).to_hash['published_points']).to be_nil
 
-    expect(task).to receive(:points_visible_to_students).and_return(1.0)
-    expect(described_class.new(task).to_hash['student_points']).to eq 1.0
+    expect(task).to receive(:published_points).and_return(1.0)
+    expect(described_class.new(task).to_hash['published_points']).to eq 1.0
   end
 
   it 'includes is_deleted' do
