@@ -91,7 +91,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           gradable_step_count: 1,
           ungraded_step_count: 1,
           provisional_score?: true,
-          score: 0.5,
+          points_visible_to_students: 0.5,
           withdrawn?: true
         ),
         OpenStruct.new(
@@ -116,7 +116,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           correct_exercise_count: 4,
           gradable_step_count: 3,
           ungraded_step_count: 3,
-          score: 0.66,
+          points_visible_to_students: 0.66,
           provisional_score?: false,
           withdrawn?: false
         ),
@@ -142,7 +142,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           correct_exercise_count: 6,
           gradable_step_count: 5,
           ungraded_step_count: 5,
-          score: 1.0,
+          points_visible_to_students: 1.0,
           provisional_score?: true,
           withdrawn?: false
         ),
@@ -235,7 +235,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'correct_exercise_count' => 2,
           'gradable_step_count' => 1,
           'ungraded_step_count' => 1,
-          'score' => 0.5,
+          'student_points' => 0.5,
           'is_provisional_score' => true,
           'is_deleted' => true
         ),
@@ -258,7 +258,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'completed_on_time_exercise_steps_count' => 5,
           'gradable_step_count' => 3,
           'ungraded_step_count' => 3,
-          'score' => 0.66,
+          'student_points' => 0.66,
           'is_provisional_score' => false,
           'is_deleted' => false
         ),
@@ -267,6 +267,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'title' => 'HW3',
           'opens_at' => api_opens_at,
           'due_at' => api_due_at,
+          'closes_at' => api_closes_at,
           'last_worked_at' => api_last_worked_at,
           'type' => 'homework',
           'complete' => true,
@@ -281,7 +282,7 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
           'correct_exercise_count' => 6,
           'gradable_step_count' => 5,
           'ungraded_step_count' => 5,
-          'score' => 1.0,
+          'student_points' => 1.0,
           'is_provisional_score' => true,
           'is_deleted' => false
         ),

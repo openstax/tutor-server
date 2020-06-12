@@ -325,24 +325,52 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
         task.save!
       end
 
-      it "grades the exercise step and updates the gradable step counts" do
-        expect do
-          api_put grade_api_step_url(task_step.id), @teacher_user_token,
-                  params: { grader_points: 1.0, grader_comments: 'Test' }.to_json
-        end.to  change     { tasked.reload.grader_points }.from(nil).to(1.0)
-           .and change     { tasked.grader_comments }.from(nil).to('Test')
-           .and change     { tasked.last_graded_at }.from(nil)
-           .and not_change { tasked.published_points }
-           .and not_change { tasked.published_comments }
-           .and not_change { task.reload.gradable_step_count }
-           .and change     { task.ungraded_step_count }.by(-1)
-           .and not_change { tasking_plan.reload.gradable_step_count }
-           .and change     { tasking_plan.ungraded_step_count }.by(-1)
-           .and not_change { task_plan.reload.gradable_step_count }
-           .and change     { task_plan.ungraded_step_count }.by(-1)
-        expect(response).to have_http_status(:success)
+      context "manual_grading_feedback_on == 'grade'" do
+        before { task_plan.grading_template.manual_grading_feedback_on_grade! }
 
-        expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')
+        it 'updates the grader fields, published fields and gradable step counts' do
+          expect do
+            api_put grade_api_step_url(task_step.id), @teacher_user_token,
+                    params: { grader_points: 1.0, grader_comments: 'Test' }.to_json
+          end.to  change     { tasked.reload.grader_points }.from(nil).to(1.0)
+             .and change     { tasked.grader_comments }.from(nil).to('Test')
+             .and change     { tasked.last_graded_at }.from(nil)
+             .and change     { tasked.reload.published_points }.from(nil).to(1.0)
+             .and change     { tasked.published_comments }.from(nil).to('Test')
+             .and not_change { task.reload.gradable_step_count }
+             .and change     { task.ungraded_step_count }.by(-1)
+             .and not_change { tasking_plan.reload.gradable_step_count }
+             .and change     { tasking_plan.ungraded_step_count }.by(-1)
+             .and not_change { task_plan.reload.gradable_step_count }
+             .and change     { task_plan.ungraded_step_count }.by(-1)
+          expect(response).to have_http_status(:success)
+
+          expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')
+        end
+      end
+
+      context "manual_grading_feedback_on == 'publish'" do
+        before { task_plan.grading_template.manual_grading_feedback_on_publish! }
+
+        it 'updates the grader fields and gradable step counts' do
+          expect do
+            api_put grade_api_step_url(task_step.id), @teacher_user_token,
+                    params: { grader_points: 1.0, grader_comments: 'Test' }.to_json
+          end.to  change     { tasked.reload.grader_points }.from(nil).to(1.0)
+             .and change     { tasked.grader_comments }.from(nil).to('Test')
+             .and change     { tasked.last_graded_at }.from(nil)
+             .and not_change { tasked.published_points }
+             .and not_change { tasked.published_comments }
+             .and not_change { task.reload.gradable_step_count }
+             .and change     { task.ungraded_step_count }.by(-1)
+             .and not_change { tasking_plan.reload.gradable_step_count }
+             .and change     { tasking_plan.ungraded_step_count }.by(-1)
+             .and not_change { task_plan.reload.gradable_step_count }
+             .and change     { task_plan.ungraded_step_count }.by(-1)
+          expect(response).to have_http_status(:success)
+
+          expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')
+        end
       end
     end
   end

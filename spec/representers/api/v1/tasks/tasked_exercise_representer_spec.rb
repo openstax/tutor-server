@@ -27,12 +27,12 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     context 'feedback available' do
       before { allow(tasked_exercise).to receive(:feedback_available?).and_return(true) }
 
-      it "'grader_points is included'" do
-        expect(representation).to include('grader_points' => 0.5)
+      it "'published_points' is included" do
+        expect(representation).to include('published_points' => 0.5)
       end
 
-      it "'grader_comments is included'" do
-        expect(representation).to include('grader_comments' => 'Hi')
+      it "'published_comments' is included" do
+        expect(representation).to include('published_comments' => 'Hi')
       end
     end
 
