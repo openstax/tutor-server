@@ -79,6 +79,9 @@ class Tasks::Models::Task < ApplicationRecord
 
   def reload(*args)
     @extension = nil
+    @@available_points_without_dropping_per_question_index = nil
+    @available_points_per_question_index = nil
+    @points_per_question_index_without_lateness = nil
 
     super
   end
@@ -226,35 +229,47 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def points_per_question_index_without_lateness(incomplete_value_proc: ->(task_step) { 0.0 })
-    full_credit_question_ids = Set.new(
-      task_plan&.dropped_questions&.filter(&:full_credit?)&.map(&:question_id) || []
-    )
+    @points_per_question_index_without_lateness ||= begin
+      full_credit_question_ids = Set.new(
+        task_plan&.dropped_questions&.filter(&:full_credit?)&.map(&:question_id) || []
+      )
 
-    exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
-      next incomplete_value_proc.call(task_step) unless task_step.completed? && task_step.exercise?
+      exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
+        next incomplete_value_proc.call(task_step) unless task_step.completed? && task_step.exercise?
 
-      tasked = task_step.tasked
-      next incomplete_value_proc.call(task_step) \
-        if !task_step.tasked.was_manually_graded? && !tasked.can_be_auto_graded?
+        tasked = task_step.tasked
+        next incomplete_value_proc.call(task_step) \
+          if !tasked.was_manually_graded? && !tasked.can_be_auto_graded?
 
-      next available_points_per_question_index[index] \
-        if full_credit_question_ids.include?(tasked.question_id)
+        next available_points_per_question_index[index] \
+          if full_credit_question_ids.include?(tasked.question_id)
 
-      next tasked.grader_points || incomplete_value_proc.call(task_step) \
-        if tasked.was_manually_graded? || !tasked.can_be_auto_graded?
+        next tasked.published_points || incomplete_value_proc.call(task_step) \
+          if tasked.was_manually_graded? || !tasked.can_be_auto_graded?
 
-      if tasked.is_correct?
-        available_points_per_question_index[index]
-      else
-        next 0.0 if course&.pre_wrm_scores?
+        if tasked.is_correct?
+          available_points_per_question_index[index]
+        else
+          next 0.0 if course&.pre_wrm_scores?
 
-        completion_weight * available_points_per_question_index[index]
+          completion_weight * available_points_per_question_index[index]
+        end
       end
     end
   end
 
   def points_without_lateness
     points_per_question_index_without_lateness.sum
+  end
+
+  def points_visible_to_students_without_lateness(current_time: Time.current)
+    return if exercise_steps.none? { |step| step.tasked.feedback_available? }
+
+    exercise_and_placeholder_steps.each_with_index.sum(0.0) do |task_step, index|
+      next 0.0 unless task_step.exercise? && task_step.tasked.feedback_available?
+
+      points_per_question_index_without_lateness[index]
+    end
   end
 
   def late_work_penalty_for(task_step:, due_at: self.due_at)
@@ -285,8 +300,26 @@ class Tasks::Models::Task < ApplicationRecord
     end
   end
 
+  def late_work_point_penalty_visible_to_students
+    due_at = self.due_at
+    return 0.0 if due_at.nil?
+
+    points_per_question_index_without_lateness = self.points_per_question_index_without_lateness
+    exercise_and_placeholder_steps.each_with_index.sum(0.0) do |task_step, index|
+      next 0.0 unless task_step.exercise? && task_step.tasked.feedback_available?
+
+      points = points_per_question_index_without_lateness[index]
+      points == 0.0 ? 0.0 : points * late_work_penalty_for(task_step: task_step, due_at: due_at)
+    end
+  end
+
   def points
     points_without_lateness - late_work_point_penalty
+  end
+
+  def points_visible_to_students
+    visible_points = points_visible_to_students_without_lateness
+    visible_points.nil? ? nil : visible_points - late_work_point_penalty_visible_to_students
   end
 
   def available_points_worked(current_time: Time.current)

@@ -156,11 +156,34 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     answer_id.blank? && has_answers?
   end
 
+  # Used directly only when grading
   def grader_points
     gp = super
 
     gp.nil? && !can_be_auto_graded? && !task_step.completed? && task_step.task.past_due? &&
     task_step.task.course.past_due_unattempted_ungraded_wrq_are_zero ? 0.0 : gp
+  end
+
+  def published_points
+    case task_step.task.manual_grading_feedback_on
+    when 'grade'
+      grader_points
+    when 'publish'
+      super
+    else
+      nil
+    end
+  end
+
+  def published_comments
+    case task_step.task.manual_grading_feedback_on
+    when 'grade'
+      grader_comments
+    when 'publish'
+      super
+    else
+      nil
+    end
   end
 
   def was_manually_graded?

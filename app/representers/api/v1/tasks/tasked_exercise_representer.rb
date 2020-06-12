@@ -151,13 +151,13 @@ module Api::V1::Tasks
              readable: true,
              writeable: false
 
-    property :grader_points,
+    property :published_points,
              type: Float,
              readable: true,
              writeable: false,
              if: FEEDBACK_AVAILABLE
 
-    property :grader_comments,
+    property :published_comments,
              type: String,
              readable: true,
              writeable: false,
