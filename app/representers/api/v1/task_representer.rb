@@ -107,14 +107,12 @@ module Api::V1
              readable: true,
              writeable: false
 
-    property :late_work_point_penalty_visible_to_students,
-             as: :student_late_work_point_penalty,
+    property :published_late_work_point_penalty,
              type: Float,
              readable: true,
              writeable: false
 
-    property :points_visible_to_students,
-             as: :student_points,
+    property :published_points,
              type: Float,
              readable: true,
              writeable: false

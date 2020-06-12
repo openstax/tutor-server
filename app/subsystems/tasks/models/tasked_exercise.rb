@@ -197,9 +197,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   # NOTE: The following 2 methods do not take into account
   #       automatic publication from the grading_template
   def grade_published?
-    was_manually_graded? && (
-      grader_points == published_points && grader_comments == published_comments
-    )
+    was_manually_graded? &&
+    grader_points == published_points &&
+    grader_comments == published_comments
   end
 
   def grade_needs_publishing?

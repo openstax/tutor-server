@@ -324,7 +324,6 @@ module Tasks
           current_time_ntz: current_time_ntz
         )
         correct_exercise_count = show_score ? tt.correct_exercise_count : nil
-        score = (tt.reading? || tt.homework?) && show_score ? tt.score || 0.0 : nil
 
         Hashie::Mash.new(
           task:                                   tt,
@@ -351,8 +350,9 @@ module Tasks
                                                   ),
           progress:                               tt.completion,
           available_points:                       tt.available_points,
-          points:                                 tt.points,
-          score:                                  score
+          published_points:                       tt.published_points,
+          published_score:                        tt.published_score,
+          is_provisional_score:                   tt.provisional_score?
         )
       end
     end
