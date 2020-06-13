@@ -326,8 +326,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.ungraded_step_count).to be_a Integer
           expect(data.is_included_in_averages).to be_in [true, false]
           expect(data.progress).to be_a Float
-          expect(data.published_points).to be_a data.type == 'external' ? NilClass : Float
-          expect(data.published_score).to be_a data.type == 'external' ? NilClass : Float
+          expect(data.published_points).to be_a Float
         end
       end
     end
@@ -499,7 +498,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(data.ungraded_step_count).to be_a Integer
         expect(data.is_included_in_averages).to be_in [true, false]
         expect(data.progress).to be_a Float
-        expect(data.published_points).to be_a data.type == 'external' ? NilClass : Float
+        expect(data.published_points).to be_a Float
         expect(data.published_score).to be_a data.type == 'external' ? NilClass : Float
       end
     end
