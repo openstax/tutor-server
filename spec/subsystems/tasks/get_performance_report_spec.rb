@@ -327,6 +327,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.is_included_in_averages).to be_in [true, false]
           expect(data.progress).to be_a Float
           expect(data.published_points).to be_a Float
+          expect(data.published_score.class).to be_in([NilClass, Float])
         end
       end
     end

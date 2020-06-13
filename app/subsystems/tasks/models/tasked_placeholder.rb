@@ -35,4 +35,10 @@ class Tasks::Models::TaskedPlaceholder < ApplicationRecord
       end
     end
   end
+
+  def points_without_lateness
+    # Behaves like an ungraded incomplete exercise step
+    task_step.task.past_due? ? 0.0 : nil
+  end
+  alias_method :published_points_without_lateness, :points_without_lateness
 end
