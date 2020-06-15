@@ -1,3 +1,5 @@
+# The scores API (for teachers only) and the grader interface show unpublished points and scores
+# Other APIs show published points and scores
 class CalculateTaskPlanScores
   lev_routine express_output: :scores
 
@@ -102,20 +104,7 @@ class CalculateTaskPlanScores
 
         is_dropped = student.dropped? || student.period.archived?
 
-        incomplete_value_proc = ->(task_step) do
-          # Always assign nil unless the task is past-due
-          next unless task.past_due?(current_time: current_time)
-
-          # MCQ always get 0 here so if WRQ should also get 0 we don't need to check the type
-          next 0.0 if task_plan.owner.past_due_unattempted_ungraded_wrq_are_zero
-
-          # Otherwise assign nil for WRQ and 0.0 for MCQ
-          task_step.exercise? && !task_step.tasked.can_be_auto_graded? ? nil : 0.0
-        end
-
-        points_per_question_index = task.points_per_question_index_without_lateness(
-          incomplete_value_proc: incomplete_value_proc
-        )
+        points_per_question_index = task.points_per_question_index_without_lateness
         student_questions = task_steps.each_with_index.map do |task_step, index|
           # This won't work if task_steps contains both exercises and external for the same task
           points = points_per_question_index[index]

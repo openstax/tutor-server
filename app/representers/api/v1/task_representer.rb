@@ -24,6 +24,13 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :opens_at,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) },
+             schema_info: { description: 'When the task opens (nil means always open)' }
+
     property :due_at_without_extension,
              type: String,
              writeable: false,
@@ -100,10 +107,21 @@ module Api::V1
              readable: true,
              writeable: false
 
-    property :late_work_point_penalty,
+    property :published_late_work_point_penalty,
              type: Float,
              readable: true,
              writeable: false
+
+    property :published_points,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :provisional_score?,
+             as: :is_provisional_score,
+             readable: true,
+             writeable: false,
+             schema_info: { type: 'boolean' }
 
     property :withdrawn?,
              as: :is_deleted,

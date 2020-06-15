@@ -5,12 +5,12 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
   include_examples 'a tasked_exercise representer'
 
   context 'non-completed exercise' do
-    it "'grader_points is not included'" do
-      expect(representation).not_to include('grader_points')
+    it "'published_points' is not included" do
+      expect(representation).not_to include('published_points')
     end
 
-    it "'grader_comments is not included'" do
-      expect(representation).not_to include('grader_comments')
+    it "'published_comments' is not included" do
+      expect(representation).not_to include('published_comments')
     end
   end
 
@@ -27,22 +27,22 @@ RSpec.describe Api::V1::Tasks::TaskedExerciseRepresenter, type: :representer do
     context 'feedback available' do
       before { allow(tasked_exercise).to receive(:feedback_available?).and_return(true) }
 
-      it "'grader_points is included'" do
-        expect(representation).to include('grader_points' => 0.5)
+      it "'published_points' is included" do
+        expect(representation).to include('published_points' => 0.5)
       end
 
-      it "'grader_comments is included'" do
-        expect(representation).to include('grader_comments' => 'Hi')
+      it "'published_comments' is included" do
+        expect(representation).to include('published_comments' => 'Hi')
       end
     end
 
     context 'feedback unavailable' do
-      it "'grader_points is not included'" do
-        expect(representation).to_not include('grader_points')
+      it "'published_points' is not included" do
+        expect(representation).to_not include('published_points')
       end
 
-      it "'grader_comments is not included'" do
-        expect(representation).to_not include('grader_comments')
+      it "'published_comments' is not included" do
+        expect(representation).to_not include('published_comments')
       end
     end
   end

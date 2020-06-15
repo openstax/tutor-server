@@ -134,9 +134,9 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-      property :score,
-               readable: true,
+      property :published_points,
                type: Float,
+               readable: true,
                writeable: false
 
       property :provisional_score?,

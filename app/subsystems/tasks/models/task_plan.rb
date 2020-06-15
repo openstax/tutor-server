@@ -64,6 +64,12 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   scope :preload_tasks, -> { preload(tasks: :time_zone) }
 
+  def reload(*args)
+    @available_points_without_dropping_per_question_index = nil
+
+    super
+  end
+
   def withdrawn?
     deleted?
   end

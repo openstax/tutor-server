@@ -156,11 +156,76 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     answer_id.blank? && has_answers?
   end
 
+  def full_credit?
+    full_credit_question_ids = Set.new(
+      task_step.task&.task_plan&.dropped_questions&.filter(&:full_credit?)&.map(&:question_id) || []
+    )
+
+    full_credit_question_ids.include? question_id
+  end
+
+  # Used directly only when grading
   def grader_points
     gp = super
 
     gp.nil? && !can_be_auto_graded? && !task_step.completed? && task_step.task.past_due? &&
     task_step.task.course.past_due_unattempted_ungraded_wrq_are_zero ? 0.0 : gp
+  end
+
+   # This is really published_grader_points only
+  def published_points
+    case task_step.task.manual_grading_feedback_on
+    when 'grade'
+      grader_points
+    when 'publish'
+      super
+    else
+      nil
+    end
+  end
+
+  def points_without_lateness
+    return available_points if full_credit?
+
+    return grader_points unless grader_points.nil?
+
+    if task_step.completed?
+      task = task_step.task
+      completion_weight = task.course&.pre_wrm_scores? ? 0.0 : task.completion_weight
+      return completion_weight unless can_be_auto_graded?
+
+      available_points * (answer_id == correct_answer_id ? 1.0 : completion_weight)
+    else
+      task_step.task.past_due? ? 0.0 : nil
+    end
+  end
+
+  def published_points_without_lateness
+    return available_points if full_credit?
+
+    return published_points unless published_points.nil?
+
+    if task_step.completed?
+      task = task_step.task
+      completion_weight = task.course&.pre_wrm_scores? ? 0.0 : task.completion_weight
+      return completion_weight unless can_be_auto_graded?
+
+      is_correct_and_feedback_available = answer_id == correct_answer_id && feedback_available?
+      available_points * (is_correct_and_feedback_available ? 1.0 : completion_weight)
+    else
+      task_step.task.past_due? ? 0.0 : nil
+    end
+  end
+
+  def published_comments
+    case task_step.task.manual_grading_feedback_on
+    when 'grade'
+      grader_comments
+    when 'publish'
+      super
+    else
+      nil
+    end
   end
 
   def was_manually_graded?
@@ -174,9 +239,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   # NOTE: The following 2 methods do not take into account
   #       automatic publication from the grading_template
   def grade_published?
-    was_manually_graded? && (
-      grader_points == published_points && grader_comments == published_comments
-    )
+    was_manually_graded? &&
+    grader_points == published_points &&
+    grader_comments == published_comments
   end
 
   def grade_needs_publishing?
