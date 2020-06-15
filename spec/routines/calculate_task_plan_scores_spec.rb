@@ -77,7 +77,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
     let(:task_plan) { @homework_task_plan }
 
     context 'with an unworked plan' do
-      it 'shows available points but no scores' do
+      it 'shows available points but no total points/scores' do
         scores.each_with_index do |tasking_plan_output, index|
           tasking_plan = tasking_plans[index]
           period = tasking_plan.target
@@ -132,7 +132,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                 is_late: task.late?,
                 student_identifier: student.student_identifier,
                 total_fraction: nil,
-                total_points: 0.0,
+                total_points: nil,
                 questions: task.task_steps.map do |ts|
                   if ts.exercise?
                     tasked = ts.tasked
@@ -168,7 +168,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
     end
 
     context 'after task steps are marked as completed' do
-      it 'shows available points and assignment scores' do
+      it 'shows available points and total points/scores' do
         work_task(task: tasks.first, is_correct: false)
 
         Preview::AnswerExercise.call(
@@ -265,7 +265,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
     end
 
     context 'after task steps are marked as correct or incorrect' do
-      it 'shows available points and assignment scores' do
+      it 'shows available points and total points/scores' do
         work_task(task: tasks.first, is_correct: true)
         work_task(task: tasks.second, is_correct: false)
         work_task(task: tasks.third, is_correct: true)
@@ -406,7 +406,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                 is_late: task.late?,
                 student_identifier: student.student_identifier,
                 total_fraction: nil,
-                total_points: 0.0,
+                total_points: nil,
                 questions: task.task_steps.map do |ts|
                   {
                     task_step_id: ts.id,
@@ -460,7 +460,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                 is_late: task.late?,
                 student_identifier: student.student_identifier,
                 total_fraction: nil,
-                total_points: 0.0,
+                total_points: nil,
                 questions: task.task_steps.map do |ts|
                   {
                     task_step_id: ts.id,

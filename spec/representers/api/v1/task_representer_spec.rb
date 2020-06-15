@@ -82,7 +82,7 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
   end
 
   it 'includes published_points' do
-    expect(described_class.new(task).to_hash['published_points']).to eq 0.0
+    expect(described_class.new(task).to_hash['published_points']).to be_nil
     expect(task).to receive(:published_points).and_return(1.0)
     expect(described_class.new(task).to_hash['published_points']).to eq 1.0
   end

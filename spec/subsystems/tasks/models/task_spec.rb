@@ -928,7 +928,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     DistributeTasks[task_plan: task_plan]
 
     task = task_plan.tasks.first
-    expect(task.points).to eq 0.0
+    expect(task.points).to be_nil
 
     Preview::AnswerExercise[task_step: task.task_steps.first, is_correct: true]
     expect(task.points).to eq 1.0

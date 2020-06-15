@@ -15,7 +15,7 @@ FactoryBot.define do
 
     # Preview term dates are based on DateTime.current, so they lead to flaky tests
     term                  do
-      (CourseProfile::Models::Course.terms.keys - [ 'legacy, ''preview' ]).sample
+      (CourseProfile::Models::Course.terms.keys - [ 'legacy', 'preview' ]).sample
     end
     year                  { Time.current.year }
 
