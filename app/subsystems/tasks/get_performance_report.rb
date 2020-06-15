@@ -291,7 +291,7 @@ module Tasks
 
       return nil if applicable_tasks.empty?
 
-      average(array: applicable_tasks, value_getter: ->(task) { task.score })
+      average(array: applicable_tasks, value_getter: ->(task) { task.published_score })
     end
 
     def average_progress(tasks:, current_time_ntz:)
