@@ -1,3 +1,5 @@
+# The scores API (for teachers only) and the grader interface show unpublished points and scores
+# Other APIs show published points and scores
 class CalculateTaskPlanScores
   lev_routine express_output: :scores
 

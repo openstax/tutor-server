@@ -172,6 +172,18 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     task_step.task.course.past_due_unattempted_ungraded_wrq_are_zero ? 0.0 : gp
   end
 
+   # This is really published_grader_points only
+  def published_points
+    case task_step.task.manual_grading_feedback_on
+    when 'grade'
+      grader_points
+    when 'publish'
+      super
+    else
+      nil
+    end
+  end
+
   def points_without_lateness
     return available_points if full_credit?
 
@@ -191,16 +203,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   def published_points_without_lateness
     return available_points if full_credit?
 
-    points = case task_step.task.manual_grading_feedback_on
-    when 'grade'
-      grader_points
-    when 'publish'
-      published_points
-    else
-      nil
-    end
-
-    return points unless points.nil?
+    return published_points unless published_points.nil?
 
     if task_step.completed?
       task = task_step.task

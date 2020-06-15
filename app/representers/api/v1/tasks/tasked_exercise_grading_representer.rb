@@ -1,3 +1,5 @@
+# The scores API (for teachers only) and the grader interface show unpublished points and scores
+# Other APIs show published points and scores
 module Api::V1::Tasks
   class TaskedExerciseGradingRepresenter < Api::V1::Tasks::TaskedExerciseRepresenter
     property :answer_id,
