@@ -171,165 +171,498 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    it 'returns the proper numbers (auto_grading_feedback_on does not matter)' do
-      tasks = Tasks::Models::Task.where(title: 'Homework task plan')
-      tasks.each do |task|
-        task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :publish
+    context "auto_grading_feedback_on == 'answer'" do
+      it 'returns the proper numbers' do
+        tasks = Tasks::Models::Task.where(title: 'Homework task plan')
+        tasks.each do |task|
+          task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :answer
+        end
+
+        expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
+        expect(first_period_report.overall_homework_progress).to be_within(1e-6).of(11/14.0)
+        expect(first_period_report.overall_reading_score).to be_nil
+        expect(first_period_report.overall_reading_progress).to be_nil
+        expect(first_period_report.overall_course_average).to be_within(1e-6).of(9/14.0)
+
+        expect(second_period_report.overall_homework_score).to eq 0.5
+        expect(second_period_report.overall_homework_progress).to eq 0.5
+        expect(second_period_report.overall_reading_score).to be_nil
+        expect(second_period_report.overall_reading_progress).to be_nil
+        expect(second_period_report.overall_course_average).to eq 0.5
+
+        expect(first_period_report.data_headings[0].title).to eq 'Homework 2 task plan'
+        expect(first_period_report.data_headings[0].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[0].type).to eq 'homework'
+        expect(first_period_report.data_headings[0].due_at).to be_a Time
+        expect(first_period_report.data_headings[0].average_score).to be_nil
+        expect(first_period_report.data_headings[0].average_progress).to be_nil
+
+        expect(second_period_report.data_headings[0].title).to eq 'Homework 2 task plan'
+        expect(second_period_report.data_headings[0].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[0].type).to eq 'homework'
+        expect(second_period_report.data_headings[0].due_at).to be_a Time
+        expect(second_period_report.data_headings[0].average_score).to be_nil
+        expect(second_period_report.data_headings[0].average_progress).to be_nil
+
+        expect(first_period_report.data_headings[1].title).to eq 'Reading task plan'
+        expect(first_period_report.data_headings[1].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[1].type).to eq 'reading'
+        expect(first_period_report.data_headings[1].due_at).to be_a Time
+        expect(first_period_report.data_headings[1].average_score).to be_nil
+        expect(first_period_report.data_headings[1].average_progress).to be_nil
+
+        expect(second_period_report.data_headings[1].title).to eq 'Reading task plan'
+        expect(second_period_report.data_headings[1].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[1].type).to eq 'reading'
+        expect(second_period_report.data_headings[1].due_at).to be_a Time
+        expect(second_period_report.data_headings[1].average_score).to be_nil
+        expect(second_period_report.data_headings[1].average_progress).to be_nil
+
+        expect(first_period_report.data_headings[2].title).to eq 'Homework task plan'
+        expect(first_period_report.data_headings[2].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[2].type).to eq 'homework'
+        expect(first_period_report.data_headings[2].due_at).to be_a Time
+        expect(first_period_report.data_headings[2].average_score).to be_within(1e-6).of(9/14.0)
+        expect(first_period_report.data_headings[2].average_progress).to be_within(1e-6).of(11/14.0)
+
+        expect(second_period_report.data_headings[2].title).to eq 'Homework task plan'
+        expect(second_period_report.data_headings[2].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[2].type).to eq 'homework'
+        expect(second_period_report.data_headings[2].due_at).to be_a Time
+        expect(second_period_report.data_headings[2].average_score).to eq 0.5
+        expect(second_period_report.data_headings[2].average_progress).to eq 0.5
+
+        expect(first_period_report.data_headings[3].title).to eq 'External assignment'
+        expect(first_period_report.data_headings[3].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[3].type).to eq 'external'
+        expect(first_period_report.data_headings[3].due_at).to be_a Time
+        expect(first_period_report.data_headings[3].average_score).to be_nil
+        expect(first_period_report.data_headings[3].average_progress).to eq 0.0
+
+        expect(second_period_report.data_headings[3].title).to eq 'External assignment'
+        expect(second_period_report.data_headings[3].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[3].type).to eq 'external'
+        expect(second_period_report.data_headings[3].due_at).to be_a Time
+        expect(second_period_report.data_headings[3].average_score).to be_nil
+        expect(second_period_report.data_headings[3].average_progress).to eq 0.0
+
+        first_period_students = first_period_report.students
+        expect(first_period_students.map(&:name)).to match_array [
+          @student_1.name, @student_2.name
+        ]
+        expect(first_period_students.map(&:first_name)).to match_array [
+          @student_1.first_name, @student_2.first_name
+        ]
+        expect(first_period_students.map(&:last_name)).to match_array [
+          @student_1.last_name, @student_2.last_name
+        ]
+        expect(first_period_students.map(&:role)).to match_array [
+          @student_1.roles.first.id, @student_2.roles.first.id
+        ]
+        expect(first_period_students.map(&:student_identifier)).to match_array [
+          @student_1.roles.first.student.student_identifier,
+          @student_2.roles.first.student.student_identifier
+        ]
+        expect(first_period_students.map(&:homework_score)).to match_array [
+          1.0, be_within(1e-6).of(2/7.0)
+        ]
+        expect(first_period_students.map(&:homework_progress)).to match_array [
+          1.0, be_within(1e-6).of(4/7.0)
+        ]
+        expect(first_period_students.map(&:reading_score)).to match_array [
+          nil, nil
+        ]
+        expect(first_period_students.map(&:reading_progress)).to match_array [
+          nil, nil
+        ]
+        expect(first_period_students.map(&:course_average)).to match_array [
+          1.0, be_within(1e-6).of(2/7.0)
+        ]
+
+        second_period_students = second_period_report.students
+        expect(second_period_students.map(&:name)).to match_array [
+          @student_3.name, @student_4.name
+        ]
+        expect(second_period_students.map(&:first_name)).to match_array [
+          @student_3.first_name, @student_4.first_name
+        ]
+        expect(second_period_students.map(&:last_name)).to match_array [
+          @student_3.last_name, @student_4.last_name
+        ]
+        expect(second_period_students.map(&:role)).to match_array [
+          @student_3.roles.first.id, @student_4.roles.first.id
+        ]
+        expect(second_period_students.map(&:student_identifier)).to match_array [
+          @student_3.roles.first.student.student_identifier,
+          @student_4.roles.first.student.student_identifier
+        ]
+        expect(second_period_students.map(&:homework_score)).to match_array [ 1.0, 0.0 ]
+        expect(second_period_students.map(&:homework_progress)).to match_array [ 1.0, 0.0 ]
+        expect(second_period_students.map(&:reading_score)).to match_array [ nil, nil ]
+        expect(second_period_students.map(&:reading_progress)).to match_array [ nil, nil ]
+        expect(second_period_students.map(&:course_average)).to match_array [ 1.0, 0.0 ]
+
+        (first_period_students + second_period_students).each do |student|
+          expect(student.is_dropped).to eq false
+
+          data = student.data
+          expect(data.size).to eq expected_tasks
+          expect(data.map(&:type)).to eq expected_task_types
+
+          data.each do |data|
+            expect(data.id).to be_a Integer
+            expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
+            expect(data.due_at).to be_a Time
+            expect(data.last_worked_at).to be_nil.or(be_a Time)
+            expect(data.is_extended).to be_in [true, false]
+            expect(data.is_past_due).to be_in [true, false]
+            expect(data.step_count).to be_a Integer
+            expect(data.completed_step_count).to be_a Integer
+            expect(data.completed_on_time_steps_count).to be_a Integer
+            expect(data.actual_and_placeholder_exercise_count).to be_a Integer
+            expect(data.completed_exercise_count).to be_a Integer
+            expect(data.completed_on_time_exercise_steps_count).to be_a Integer
+            expect(data.recovered_exercise_count).to be_a Integer
+            expect(data.gradable_step_count).to be_a Integer
+            expect(data.ungraded_step_count).to be_a Integer
+            expect(data.is_included_in_averages).to be_in [true, false]
+            expect(data.progress).to be_a Float
+            # Some assignments might not have feedback available
+            # so they might get a nil here even though points/score have been assigned
+            expect(data.published_points.class).to be_in([NilClass, Float])
+            expect(data.published_score.class).to be_in([NilClass, Float])
+          end
+        end
       end
+    end
 
-      expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
-      expect(first_period_report.overall_homework_progress).to be_within(1e-6).of(11/14.0)
-      expect(first_period_report.overall_reading_score).to be_nil
-      expect(first_period_report.overall_reading_progress).to be_nil
-      expect(first_period_report.overall_course_average).to be_within(1e-6).of(9/14.0)
+    context "auto_grading_feedback_on == 'due'" do
+      it 'returns the proper numbers' do
+        tasks = Tasks::Models::Task.where(title: 'Homework task plan')
+        tasks.each do |task|
+          task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :due
+        end
 
-      expect(second_period_report.overall_homework_score).to eq 0.5
-      expect(second_period_report.overall_homework_progress).to eq 0.5
-      expect(second_period_report.overall_reading_score).to be_nil
-      expect(second_period_report.overall_reading_progress).to be_nil
-      expect(second_period_report.overall_course_average).to eq 0.5
+        expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
+        expect(first_period_report.overall_homework_progress).to be_within(1e-6).of(11/14.0)
+        expect(first_period_report.overall_reading_score).to be_nil
+        expect(first_period_report.overall_reading_progress).to be_nil
+        expect(first_period_report.overall_course_average).to be_within(1e-6).of(9/14.0)
 
-      expect(first_period_report.data_headings[0].title).to eq 'Homework 2 task plan'
-      expect(first_period_report.data_headings[0].plan_id).to be_a Integer
-      expect(first_period_report.data_headings[0].type).to eq 'homework'
-      expect(first_period_report.data_headings[0].due_at).to be_a Time
-      expect(first_period_report.data_headings[0].average_score).to be_nil
-      expect(first_period_report.data_headings[0].average_progress).to be_nil
+        expect(second_period_report.overall_homework_score).to eq 0.5
+        expect(second_period_report.overall_homework_progress).to eq 0.5
+        expect(second_period_report.overall_reading_score).to be_nil
+        expect(second_period_report.overall_reading_progress).to be_nil
+        expect(second_period_report.overall_course_average).to eq 0.5
 
-      expect(second_period_report.data_headings[0].title).to eq 'Homework 2 task plan'
-      expect(second_period_report.data_headings[0].plan_id).to be_a Integer
-      expect(second_period_report.data_headings[0].type).to eq 'homework'
-      expect(second_period_report.data_headings[0].due_at).to be_a Time
-      expect(second_period_report.data_headings[0].average_score).to be_nil
-      expect(second_period_report.data_headings[0].average_progress).to be_nil
+        expect(first_period_report.data_headings[0].title).to eq 'Homework 2 task plan'
+        expect(first_period_report.data_headings[0].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[0].type).to eq 'homework'
+        expect(first_period_report.data_headings[0].due_at).to be_a Time
+        expect(first_period_report.data_headings[0].average_score).to be_nil
+        expect(first_period_report.data_headings[0].average_progress).to be_nil
 
-      expect(first_period_report.data_headings[1].title).to eq 'Reading task plan'
-      expect(first_period_report.data_headings[1].plan_id).to be_a Integer
-      expect(first_period_report.data_headings[1].type).to eq 'reading'
-      expect(first_period_report.data_headings[1].due_at).to be_a Time
-      expect(first_period_report.data_headings[1].average_score).to be_nil
-      expect(first_period_report.data_headings[1].average_progress).to be_nil
+        expect(second_period_report.data_headings[0].title).to eq 'Homework 2 task plan'
+        expect(second_period_report.data_headings[0].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[0].type).to eq 'homework'
+        expect(second_period_report.data_headings[0].due_at).to be_a Time
+        expect(second_period_report.data_headings[0].average_score).to be_nil
+        expect(second_period_report.data_headings[0].average_progress).to be_nil
 
-      expect(second_period_report.data_headings[1].title).to eq 'Reading task plan'
-      expect(second_period_report.data_headings[1].plan_id).to be_a Integer
-      expect(second_period_report.data_headings[1].type).to eq 'reading'
-      expect(second_period_report.data_headings[1].due_at).to be_a Time
-      expect(second_period_report.data_headings[1].average_score).to be_nil
-      expect(second_period_report.data_headings[1].average_progress).to be_nil
+        expect(first_period_report.data_headings[1].title).to eq 'Reading task plan'
+        expect(first_period_report.data_headings[1].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[1].type).to eq 'reading'
+        expect(first_period_report.data_headings[1].due_at).to be_a Time
+        expect(first_period_report.data_headings[1].average_score).to be_nil
+        expect(first_period_report.data_headings[1].average_progress).to be_nil
 
-      expect(first_period_report.data_headings[2].title).to eq 'Homework task plan'
-      expect(first_period_report.data_headings[2].plan_id).to be_a Integer
-      expect(first_period_report.data_headings[2].type).to eq 'homework'
-      expect(first_period_report.data_headings[2].due_at).to be_a Time
-      expect(first_period_report.data_headings[2].average_score).to be_within(1e-6).of(9/14.0)
-      expect(first_period_report.data_headings[2].average_progress).to be_within(1e-6).of(11/14.0)
+        expect(second_period_report.data_headings[1].title).to eq 'Reading task plan'
+        expect(second_period_report.data_headings[1].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[1].type).to eq 'reading'
+        expect(second_period_report.data_headings[1].due_at).to be_a Time
+        expect(second_period_report.data_headings[1].average_score).to be_nil
+        expect(second_period_report.data_headings[1].average_progress).to be_nil
 
-      expect(second_period_report.data_headings[2].title).to eq 'Homework task plan'
-      expect(second_period_report.data_headings[2].plan_id).to be_a Integer
-      expect(second_period_report.data_headings[2].type).to eq 'homework'
-      expect(second_period_report.data_headings[2].due_at).to be_a Time
-      expect(second_period_report.data_headings[2].average_score).to eq 0.5
-      expect(second_period_report.data_headings[2].average_progress).to eq 0.5
+        expect(first_period_report.data_headings[2].title).to eq 'Homework task plan'
+        expect(first_period_report.data_headings[2].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[2].type).to eq 'homework'
+        expect(first_period_report.data_headings[2].due_at).to be_a Time
+        expect(first_period_report.data_headings[2].average_score).to be_within(1e-6).of(9/14.0)
+        expect(first_period_report.data_headings[2].average_progress).to be_within(1e-6).of(11/14.0)
 
-      expect(first_period_report.data_headings[3].title).to eq 'External assignment'
-      expect(first_period_report.data_headings[3].plan_id).to be_a Integer
-      expect(first_period_report.data_headings[3].type).to eq 'external'
-      expect(first_period_report.data_headings[3].due_at).to be_a Time
-      expect(first_period_report.data_headings[3].average_score).to be_nil
-      expect(first_period_report.data_headings[3].average_progress).to eq 0.0
+        expect(second_period_report.data_headings[2].title).to eq 'Homework task plan'
+        expect(second_period_report.data_headings[2].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[2].type).to eq 'homework'
+        expect(second_period_report.data_headings[2].due_at).to be_a Time
+        expect(second_period_report.data_headings[2].average_score).to eq 0.5
+        expect(second_period_report.data_headings[2].average_progress).to eq 0.5
 
-      expect(second_period_report.data_headings[3].title).to eq 'External assignment'
-      expect(second_period_report.data_headings[3].plan_id).to be_a Integer
-      expect(second_period_report.data_headings[3].type).to eq 'external'
-      expect(second_period_report.data_headings[3].due_at).to be_a Time
-      expect(second_period_report.data_headings[3].average_score).to be_nil
-      expect(second_period_report.data_headings[3].average_progress).to eq 0.0
+        expect(first_period_report.data_headings[3].title).to eq 'External assignment'
+        expect(first_period_report.data_headings[3].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[3].type).to eq 'external'
+        expect(first_period_report.data_headings[3].due_at).to be_a Time
+        expect(first_period_report.data_headings[3].average_score).to be_nil
+        expect(first_period_report.data_headings[3].average_progress).to eq 0.0
 
-      first_period_students = first_period_report.students
-      expect(first_period_students.map(&:name)).to match_array [
-        @student_1.name, @student_2.name
-      ]
-      expect(first_period_students.map(&:first_name)).to match_array [
-        @student_1.first_name, @student_2.first_name
-      ]
-      expect(first_period_students.map(&:last_name)).to match_array [
-        @student_1.last_name, @student_2.last_name
-      ]
-      expect(first_period_students.map(&:role)).to match_array [
-        @student_1.roles.first.id, @student_2.roles.first.id
-      ]
-      expect(first_period_students.map(&:student_identifier)).to match_array [
-        @student_1.roles.first.student.student_identifier,
-        @student_2.roles.first.student.student_identifier
-      ]
-      expect(first_period_students.map(&:homework_score)).to match_array [
-        1.0, be_within(1e-6).of(2/7.0)
-      ]
-      expect(first_period_students.map(&:homework_progress)).to match_array [
-        1.0, be_within(1e-6).of(4/7.0)
-      ]
-      expect(first_period_students.map(&:reading_score)).to match_array [
-        nil, nil
-      ]
-      expect(first_period_students.map(&:reading_progress)).to match_array [
-        nil, nil
-      ]
-      expect(first_period_students.map(&:course_average)).to match_array [
-        1.0, be_within(1e-6).of(2/7.0)
-      ]
+        expect(second_period_report.data_headings[3].title).to eq 'External assignment'
+        expect(second_period_report.data_headings[3].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[3].type).to eq 'external'
+        expect(second_period_report.data_headings[3].due_at).to be_a Time
+        expect(second_period_report.data_headings[3].average_score).to be_nil
+        expect(second_period_report.data_headings[3].average_progress).to eq 0.0
 
-      second_period_students = second_period_report.students
-      expect(second_period_students.map(&:name)).to match_array [
-        @student_3.name, @student_4.name
-      ]
-      expect(second_period_students.map(&:first_name)).to match_array [
-        @student_3.first_name, @student_4.first_name
-      ]
-      expect(second_period_students.map(&:last_name)).to match_array [
-        @student_3.last_name, @student_4.last_name
-      ]
-      expect(second_period_students.map(&:role)).to match_array [
-        @student_3.roles.first.id, @student_4.roles.first.id
-      ]
-      expect(second_period_students.map(&:student_identifier)).to match_array [
-        @student_3.roles.first.student.student_identifier,
-        @student_4.roles.first.student.student_identifier
-      ]
-      expect(second_period_students.map(&:homework_score)).to match_array [ 1.0, 0.0 ]
-      expect(second_period_students.map(&:homework_progress)).to match_array [ 1.0, 0.0 ]
-      expect(second_period_students.map(&:reading_score)).to match_array [ nil, nil ]
-      expect(second_period_students.map(&:reading_progress)).to match_array [ nil, nil ]
-      expect(second_period_students.map(&:course_average)).to match_array [ 1.0, 0.0 ]
+        first_period_students = first_period_report.students
+        expect(first_period_students.map(&:name)).to match_array [
+          @student_1.name, @student_2.name
+        ]
+        expect(first_period_students.map(&:first_name)).to match_array [
+          @student_1.first_name, @student_2.first_name
+        ]
+        expect(first_period_students.map(&:last_name)).to match_array [
+          @student_1.last_name, @student_2.last_name
+        ]
+        expect(first_period_students.map(&:role)).to match_array [
+          @student_1.roles.first.id, @student_2.roles.first.id
+        ]
+        expect(first_period_students.map(&:student_identifier)).to match_array [
+          @student_1.roles.first.student.student_identifier,
+          @student_2.roles.first.student.student_identifier
+        ]
+        expect(first_period_students.map(&:homework_score)).to match_array [
+          1.0, be_within(1e-6).of(2/7.0)
+        ]
+        expect(first_period_students.map(&:homework_progress)).to match_array [
+          1.0, be_within(1e-6).of(4/7.0)
+        ]
+        expect(first_period_students.map(&:reading_score)).to match_array [
+          nil, nil
+        ]
+        expect(first_period_students.map(&:reading_progress)).to match_array [
+          nil, nil
+        ]
+        expect(first_period_students.map(&:course_average)).to match_array [
+          1.0, be_within(1e-6).of(2/7.0)
+        ]
 
-      (first_period_students + second_period_students).each do |student|
-        expect(student.is_dropped).to eq false
+        second_period_students = second_period_report.students
+        expect(second_period_students.map(&:name)).to match_array [
+          @student_3.name, @student_4.name
+        ]
+        expect(second_period_students.map(&:first_name)).to match_array [
+          @student_3.first_name, @student_4.first_name
+        ]
+        expect(second_period_students.map(&:last_name)).to match_array [
+          @student_3.last_name, @student_4.last_name
+        ]
+        expect(second_period_students.map(&:role)).to match_array [
+          @student_3.roles.first.id, @student_4.roles.first.id
+        ]
+        expect(second_period_students.map(&:student_identifier)).to match_array [
+          @student_3.roles.first.student.student_identifier,
+          @student_4.roles.first.student.student_identifier
+        ]
+        expect(second_period_students.map(&:homework_score)).to match_array [ 1.0, 0.0 ]
+        expect(second_period_students.map(&:homework_progress)).to match_array [ 1.0, 0.0 ]
+        expect(second_period_students.map(&:reading_score)).to match_array [ nil, nil ]
+        expect(second_period_students.map(&:reading_progress)).to match_array [ nil, nil ]
+        expect(second_period_students.map(&:course_average)).to match_array [ 1.0, 0.0 ]
 
-        data = student.data
-        expect(data.size).to eq expected_tasks
-        expect(data.map(&:type)).to eq expected_task_types
+        (first_period_students + second_period_students).each do |student|
+          expect(student.is_dropped).to eq false
 
-        data.each do |data|
-          expect(data.id).to be_a Integer
-          expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
-          expect(data.due_at).to be_a Time
-          expect(data.last_worked_at).to be_nil.or(be_a Time)
-          expect(data.is_extended).to be_in [true, false]
-          expect(data.is_past_due).to be_in [true, false]
-          expect(data.step_count).to be_a Integer
-          expect(data.completed_step_count).to be_a Integer
-          expect(data.completed_on_time_steps_count).to be_a Integer
-          expect(data.actual_and_placeholder_exercise_count).to be_a Integer
-          expect(data.completed_exercise_count).to be_a Integer
-          expect(data.completed_on_time_exercise_steps_count).to be_a Integer
-          expect(data.recovered_exercise_count).to be_a Integer
-          expect(data.gradable_step_count).to be_a Integer
-          expect(data.ungraded_step_count).to be_a Integer
-          expect(data.is_included_in_averages).to be_in [true, false]
-          expect(data.progress).to be_a Float
-          # Some assignments might not have feedback available
-          # so they might get a nil here even though points/score have been assigned
-          expect(data.published_points.class).to be_in([NilClass, Float])
-          expect(data.published_score.class).to be_in([NilClass, Float])
+          data = student.data
+          expect(data.size).to eq expected_tasks
+          expect(data.map(&:type)).to eq expected_task_types
+
+          data.each do |data|
+            expect(data.id).to be_a Integer
+            expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
+            expect(data.due_at).to be_a Time
+            expect(data.last_worked_at).to be_nil.or(be_a Time)
+            expect(data.is_extended).to be_in [true, false]
+            expect(data.is_past_due).to be_in [true, false]
+            expect(data.step_count).to be_a Integer
+            expect(data.completed_step_count).to be_a Integer
+            expect(data.completed_on_time_steps_count).to be_a Integer
+            expect(data.actual_and_placeholder_exercise_count).to be_a Integer
+            expect(data.completed_exercise_count).to be_a Integer
+            expect(data.completed_on_time_exercise_steps_count).to be_a Integer
+            expect(data.recovered_exercise_count).to be_a Integer
+            expect(data.gradable_step_count).to be_a Integer
+            expect(data.ungraded_step_count).to be_a Integer
+            expect(data.is_included_in_averages).to be_in [true, false]
+            expect(data.progress).to be_a Float
+            # Some assignments might not have feedback available
+            # so they might get a nil here even though points/score have been assigned
+            expect(data.published_points.class).to be_in([NilClass, Float])
+            expect(data.published_score.class).to be_in([NilClass, Float])
+          end
+        end
+      end
+    end
+
+    context "auto_grading_feedback_on == 'publish'" do
+      it 'returns the proper numbers' do
+        tasks = Tasks::Models::Task.where(title: 'Homework task plan')
+        tasks.each do |task|
+          task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :publish
+        end
+
+        # A single past-due unpublished task makes the homework score and the course average 0.0
+        expect(first_period_report.overall_homework_score).to eq 0.0
+        expect(first_period_report.overall_homework_progress).to be_within(1e-6).of(11/14.0)
+        expect(first_period_report.overall_reading_score).to be_nil
+        expect(first_period_report.overall_reading_progress).to be_nil
+        expect(first_period_report.overall_course_average).to eq 0.0
+
+        expect(second_period_report.overall_homework_score).to eq 0.0
+        expect(second_period_report.overall_homework_progress).to eq 0.5
+        expect(second_period_report.overall_reading_score).to be_nil
+        expect(second_period_report.overall_reading_progress).to be_nil
+        expect(second_period_report.overall_course_average).to eq 0.0
+
+        expect(first_period_report.data_headings[0].title).to eq 'Homework 2 task plan'
+        expect(first_period_report.data_headings[0].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[0].type).to eq 'homework'
+        expect(first_period_report.data_headings[0].due_at).to be_a Time
+        expect(first_period_report.data_headings[0].average_score).to be_nil
+        expect(first_period_report.data_headings[0].average_progress).to be_nil
+
+        expect(second_period_report.data_headings[0].title).to eq 'Homework 2 task plan'
+        expect(second_period_report.data_headings[0].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[0].type).to eq 'homework'
+        expect(second_period_report.data_headings[0].due_at).to be_a Time
+        expect(second_period_report.data_headings[0].average_score).to be_nil
+        expect(second_period_report.data_headings[0].average_progress).to be_nil
+
+        expect(first_period_report.data_headings[1].title).to eq 'Reading task plan'
+        expect(first_period_report.data_headings[1].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[1].type).to eq 'reading'
+        expect(first_period_report.data_headings[1].due_at).to be_a Time
+        expect(first_period_report.data_headings[1].average_score).to be_nil
+        expect(first_period_report.data_headings[1].average_progress).to be_nil
+
+        expect(second_period_report.data_headings[1].title).to eq 'Reading task plan'
+        expect(second_period_report.data_headings[1].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[1].type).to eq 'reading'
+        expect(second_period_report.data_headings[1].due_at).to be_a Time
+        expect(second_period_report.data_headings[1].average_score).to be_nil
+        expect(second_period_report.data_headings[1].average_progress).to be_nil
+
+        expect(first_period_report.data_headings[2].title).to eq 'Homework task plan'
+        expect(first_period_report.data_headings[2].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[2].type).to eq 'homework'
+        expect(first_period_report.data_headings[2].due_at).to be_a Time
+        expect(first_period_report.data_headings[2].average_score).to eq 0.0
+        expect(first_period_report.data_headings[2].average_progress).to be_within(1e-6).of(11/14.0)
+
+        expect(second_period_report.data_headings[2].title).to eq 'Homework task plan'
+        expect(second_period_report.data_headings[2].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[2].type).to eq 'homework'
+        expect(second_period_report.data_headings[2].due_at).to be_a Time
+        expect(second_period_report.data_headings[2].average_score).to eq 0.0
+        expect(second_period_report.data_headings[2].average_progress).to eq 0.5
+
+        expect(first_period_report.data_headings[3].title).to eq 'External assignment'
+        expect(first_period_report.data_headings[3].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[3].type).to eq 'external'
+        expect(first_period_report.data_headings[3].due_at).to be_a Time
+        expect(first_period_report.data_headings[3].average_score).to be_nil
+        expect(first_period_report.data_headings[3].average_progress).to eq 0.0
+
+        expect(second_period_report.data_headings[3].title).to eq 'External assignment'
+        expect(second_period_report.data_headings[3].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[3].type).to eq 'external'
+        expect(second_period_report.data_headings[3].due_at).to be_a Time
+        expect(second_period_report.data_headings[3].average_score).to be_nil
+        expect(second_period_report.data_headings[3].average_progress).to eq 0.0
+
+        first_period_students = first_period_report.students
+        expect(first_period_students.map(&:name)).to match_array [
+          @student_1.name, @student_2.name
+        ]
+        expect(first_period_students.map(&:first_name)).to match_array [
+          @student_1.first_name, @student_2.first_name
+        ]
+        expect(first_period_students.map(&:last_name)).to match_array [
+          @student_1.last_name, @student_2.last_name
+        ]
+        expect(first_period_students.map(&:role)).to match_array [
+          @student_1.roles.first.id, @student_2.roles.first.id
+        ]
+        expect(first_period_students.map(&:student_identifier)).to match_array [
+          @student_1.roles.first.student.student_identifier,
+          @student_2.roles.first.student.student_identifier
+        ]
+        expect(first_period_students.map(&:homework_score)).to match_array [
+          0.0, 0.0
+        ]
+        expect(first_period_students.map(&:homework_progress)).to match_array [
+          1.0, be_within(1e-6).of(4/7.0)
+        ]
+        expect(first_period_students.map(&:reading_score)).to match_array [
+          nil, nil
+        ]
+        expect(first_period_students.map(&:reading_progress)).to match_array [
+          nil, nil
+        ]
+        expect(first_period_students.map(&:course_average)).to match_array [
+          0.0, 0.0
+        ]
+
+        second_period_students = second_period_report.students
+        expect(second_period_students.map(&:name)).to match_array [
+          @student_3.name, @student_4.name
+        ]
+        expect(second_period_students.map(&:first_name)).to match_array [
+          @student_3.first_name, @student_4.first_name
+        ]
+        expect(second_period_students.map(&:last_name)).to match_array [
+          @student_3.last_name, @student_4.last_name
+        ]
+        expect(second_period_students.map(&:role)).to match_array [
+          @student_3.roles.first.id, @student_4.roles.first.id
+        ]
+        expect(second_period_students.map(&:student_identifier)).to match_array [
+          @student_3.roles.first.student.student_identifier,
+          @student_4.roles.first.student.student_identifier
+        ]
+        expect(second_period_students.map(&:homework_score)).to match_array [ 0.0, 0.0 ]
+        expect(second_period_students.map(&:homework_progress)).to match_array [ 1.0, 0.0 ]
+        expect(second_period_students.map(&:reading_score)).to match_array [ nil, nil ]
+        expect(second_period_students.map(&:reading_progress)).to match_array [ nil, nil ]
+        expect(second_period_students.map(&:course_average)).to match_array [ 0.0, 0.0 ]
+
+        (first_period_students + second_period_students).each do |student|
+          expect(student.is_dropped).to eq false
+
+          data = student.data
+          expect(data.size).to eq expected_tasks
+          expect(data.map(&:type)).to eq expected_task_types
+
+          data.each do |data|
+            expect(data.id).to be_a Integer
+            expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
+            expect(data.due_at).to be_a Time
+            expect(data.last_worked_at).to be_nil.or(be_a Time)
+            expect(data.is_extended).to be_in [true, false]
+            expect(data.is_past_due).to be_in [true, false]
+            expect(data.step_count).to be_a Integer
+            expect(data.completed_step_count).to be_a Integer
+            expect(data.completed_on_time_steps_count).to be_a Integer
+            expect(data.actual_and_placeholder_exercise_count).to be_a Integer
+            expect(data.completed_exercise_count).to be_a Integer
+            expect(data.completed_on_time_exercise_steps_count).to be_a Integer
+            expect(data.recovered_exercise_count).to be_a Integer
+            expect(data.gradable_step_count).to be_a Integer
+            expect(data.ungraded_step_count).to be_a Integer
+            expect(data.is_included_in_averages).to be_in [true, false]
+            expect(data.progress).to be_a Float
+            # Some assignments might not have feedback available
+            # so they might get a nil here even though points/score have been assigned
+            expect(data.published_points.class).to be_in([NilClass, Float])
+            expect(data.published_score.class).to be_in([NilClass, Float])
+          end
         end
       end
     end
