@@ -320,7 +320,7 @@ module Tasks
 
       def save
         success = @package.serialize(@filename)
-        raise(StandardError, "PerformanceReport::ExportCcXlsx failed") unless success
+        raise(StandardError, "PerformanceReport::ExportXlsx failed") unless success
       end
 
       def write_data_worksheets
@@ -333,14 +333,14 @@ module Tasks
 
           write_period_worksheet(
             report: period_report,
-            sheet: new_period_sheet(report: period_report, format: :counts),
-            format: :counts
+            sheet: new_period_sheet(report: period_report, format: :points),
+            format: :points
           )
         end
       end
 
       def new_period_sheet(report:, format:)
-        suffix = format == :counts ? " - #" : " - %"
+        suffix = format == :points ? " - #" : " - %"
         @package.workbook.add_worksheet(
           name: @helper.sanitized_worksheet_name(name: report[:period][:name], suffix: suffix)
         )
@@ -369,14 +369,14 @@ module Tasks
         meta_rows.count.times { sheet.add_row }
 
         num_student_info_columns = 3
-        num_average_columns = format == :counts ? 0 : 3
+        num_average_columns = format == :points ? 0 : 3
         num_non_task_columns = num_student_info_columns + num_average_columns
         num_columns_per_task = 1
 
         # TITLE COLUMNS
 
         task_title_columns = num_student_info_columns.times.map { "" }
-        task_title_columns += ["Averages","",""] if format != :counts
+        task_title_columns += ["Averages","",""] if format != :points
         task_title_columns += report[:data_headings].map do |data_heading|
           [ data_heading[:title], cols: num_columns_per_task, style: @task_title ]
         end
@@ -400,7 +400,7 @@ module Tasks
           sheet,
           "D7:F8",
           @overall
-        ) if format != :counts
+        ) if format != :points
 
         # DATA HEADINGS
 
@@ -411,7 +411,7 @@ module Tasks
         ]
         top_data_heading_columns += [
           "Course Average*", "Homework Averages", "Reading Averages"
-        ].map { |text| [text] } if format != :counts
+        ].map { |text| [text] } if format != :points
 
         report[:data_headings].count.times do
           top_data_heading_columns.push("Score")
@@ -433,7 +433,7 @@ module Tasks
         @helper.add_row(sheet, bottom_data_heading_columns)
 
         # Final averages sub headings
-        if format != :counts
+        if format != :points
           @helper.merge_and_style(sheet, "D9:D10", @bold_heading_L)
           @helper.merge_and_style(sheet, "E9:E10", @bold_heading)
           @helper.merge_and_style(sheet, "F9:F10", @bold_heading_R)
@@ -466,7 +466,6 @@ module Tasks
 
         student_data_writer = ->(students) do
           row_index = sheet.rows.count
-          task_total_counts ||= Array.new(report[:data_headings].length)
 
           students.each_with_index do |student|
             row_index += 1
@@ -496,27 +495,21 @@ module Tasks
                   disjoint_range(cols: reading_score_columns, rows: row_index)
                 }),0)", style: @pct
               ]
-            ] if format != :counts
+            ] if format != :points
 
             student[:data].each_with_index do |data,dd|
               push_score_columns(data, student_columns, format)
-              task_total_counts[dd] ||= {
-                steps: data[:step_count],
-                exercises: data[:actual_and_placeholder_exercise_count]
-              } if data.present?
             end
 
             @helper.add_row(sheet, student_columns)
           end
-
-          task_total_counts
         end  ### END OF student_data_writer lambda
 
         students = report[:students].sort_by { |student| student[:last_name] || '' }
         dropped_students, active_students = students.partition { |student| student[:is_dropped] }
 
         first_student_row = sheet.rows.count + 1
-        task_total_counts = student_data_writer.call(active_students)
+        student_data_writer.call(active_students)
 
         last_student_row = sheet.rows.count
 
@@ -530,12 +523,12 @@ module Tasks
 
         # OVERALL ROW
 
-        average_style_L = format == :counts ? @average_num_L : @average_pct_L
-        average_style = format == :counts ? @average_num : @average_pct
-        average_style_T = format == :counts ? @average_num_T : @average_pct_T
-        average_style_R = format == :counts ? @average_num_R : @average_pct_R
-        average_style_LR = format == :counts ? @average_num_LR : @average_pct_LR
-        average_style_LRT = format == :counts ? @average_num_LRT : @average_pct_LRT
+        average_style_L = format == :points ? @average_num_L : @average_pct_L
+        average_style = format == :points ? @average_num : @average_pct
+        average_style_T = format == :points ? @average_num_T : @average_pct_T
+        average_style_R = format == :points ? @average_num_R : @average_pct_R
+        average_style_LR = format == :points ? @average_num_LR : @average_pct_LR
+        average_style_LRT = format == :points ? @average_num_LRT : @average_pct_LRT
 
         average_columns = [
           ["Class Average", style: @overall_L],
@@ -555,7 +548,7 @@ module Tasks
             "#{@eq}IFERROR(AVERAGEIF(F#{first_student_row}:F#{last_student_row},\"<>#N/A\"),0)",
             style: average_style_T
           ]
-        ] if format != :counts
+        ] if format != :points
 
         report[:data_headings].count.times do |index|
           score_column = Axlsx::col_ref(num_non_task_columns + index * num_columns_per_task)
@@ -576,7 +569,7 @@ module Tasks
           ["", style: @minmax_R]
         ]
 
-        unless format == :counts
+        unless format == :points
           min_columns += [
             [
               "#{@eq}IFERROR(MIN(D#{first_student_row}:D#{last_student_row}),0)",
@@ -612,7 +605,7 @@ module Tasks
           ["", style: @minmax_R]
         ]
 
-        unless format == :counts
+        unless format == :points
           max_columns += [
             [
               "#{@eq}IFERROR(MAX(D#{first_student_row}:D#{last_student_row}),0)",
@@ -642,17 +635,15 @@ module Tasks
 
         # Total Possible row
 
-        if format == :counts
+        if format == :points
           total_possible_columns = [
             ["Total Possible", style: @total_L],
             ["", style: @total],
             ["", style: @total_R]
           ]
 
-          task_total_counts.each do |total_count|
-            total_possible_columns.push(
-              [total_count.try!(:[], :exercises), style: @total_LR],
-            )
+          report[:data_headings].each do |heading|
+            total_possible_columns.push([heading[:available_points], style: @total_LR])
           end
 
           @helper.add_row(sheet, total_possible_columns)
@@ -660,7 +651,7 @@ module Tasks
 
         # Merge average row labels so they don't get cut off
         1.upto(4) do |i|
-          break if i == 4 && format != :counts
+          break if i == 4 && format != :points
           sheet.merge_cells("A#{last_student_row + i}:C#{last_student_row + i}")
         end
 
@@ -685,7 +676,7 @@ module Tasks
 
         # Course average explanation
 
-        if format != :counts
+        if format != :points
           3.times { sheet.add_row }
 
           @helper.add_row(
@@ -739,17 +730,13 @@ module Tasks
             ["", style: @normal_LR]
           )
         else
-          exercise_steps_count = data[:actual_and_placeholder_exercise_count]
-          correct_count = data[:correct_exercise_count]
-
-          if format == :counts
+          if format == :points
             columns.push([
-              correct_count, { style: @normal_LR }
+              data[:published_points] || 0.0, { style: @normal_LR }
             ])
           else
             columns.push([
-              correct_count * 1.0 / exercise_steps_count,
-              { style: @pct_LR }
+              data[:published_score] || 0.0, { style: @pct_LR }
             ])
           end
         end

@@ -12,13 +12,13 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
           described_class.call(course: @course,
                                report: report_1,
                                filename: "#{dir}/testfile#{SecureRandom.hex(2)}",
-                               options: {stringify_formulas: true}).outputs.filename
+                               options: { stringify_formulas: true }).outputs.filename
         end
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filename}"` and sleep(0.5)
+        # `#{RUBY_PLATFORM =~ /linux/ ? 'xdg-open' : 'open'} "#{filename}"` && sleep(0.5)
 
-        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
+        expect { @wb = Roo::Excelx.new(filename) }.to_not raise_error
       end
     end
     after(:all) { DatabaseCleaner.clean }
@@ -237,30 +237,36 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
             data: [
               {
                 last_worked_at: Chronic.parse("3/13/2016 1PM"),
-                step_count:                             9,
-                completed_step_count:                   9,
-                actual_and_placeholder_exercise_count:  9,
-                completed_exercise_count:               9,
-                correct_exercise_count:                 7
+                step_count:                            9,
+                completed_step_count:                  9,
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count:              9,
+                correct_exercise_count:                7,
+                published_points:                      7.0,
+                published_score:                       7.0/9.0
               },
               {
                 last_worked_at: Chronic.parse("3/13/2016 11AM"), # really more here but don't need
               },
               {
                 last_worked_at: Chronic.parse("3/7/2016 1PM"),
-                step_count:                             7,
-                completed_step_count:                   6,
-                actual_and_placeholder_exercise_count:  3,
-                completed_exercise_count:               3,
-                correct_exercise_count:                 2
+                step_count:                            7,
+                completed_step_count:                  6,
+                actual_and_placeholder_exercise_count: 3,
+                completed_exercise_count:              3,
+                correct_exercise_count:                2,
+                published_points:                      2.0,
+                published_score:                       2.0/3.0
               },
               {
                 last_worked_at: Chronic.parse("3/17/2016 1PM"),
-                step_count:                             0,
-                completed_step_count:                   0,
-                actual_and_placeholder_exercise_count:  0,
-                completed_exercise_count:               0,
-                correct_exercise_count:                 0
+                step_count:                            0,
+                completed_step_count:                  0,
+                actual_and_placeholder_exercise_count: 0,
+                completed_exercise_count:              0,
+                correct_exercise_count:                0,
+                published_points:                      0.0,
+                published_score:                       0.0
               }
             ],
             # average_score: 2/3.0
@@ -274,11 +280,13 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
             data: [
               {
                 last_worked_at: Chronic.parse("3/13/2016 1PM"),
-                step_count:                             9,
-                completed_step_count:                   4,
-                actual_and_placeholder_exercise_count:  9,
-                completed_exercise_count:               4,
-                correct_exercise_count:                 2
+                step_count:                            9,
+                completed_step_count:                  4,
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count:              4,
+                correct_exercise_count:                2,
+                published_points:                      2.0,
+                published_score:                       2.0/9.0
               },
               nil,
               nil,
@@ -293,11 +301,13 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
             data: [
               {
                 last_worked_at: Chronic.parse("3/15/2016 1PM"),
-                step_count:                             9,
-                completed_step_count:                   9,
-                actual_and_placeholder_exercise_count:  9,
-                completed_exercise_count:               9,
-                correct_exercise_count:                 5
+                step_count:                            9,
+                completed_step_count:                  9,
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count:              9,
+                correct_exercise_count:                5,
+                published_points:                      5.0,
+                published_score:                       5.0/9.0
               },
               {
                 last_worked_at: Chronic.parse("3/13/2016 11AM"), # really more here but don't need
@@ -305,11 +315,13 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
               nil,
               {
                 last_worked_at: Chronic.parse("3/15/2016 1PM"),
-                step_count:                             0,
-                completed_step_count:                   0,
-                actual_and_placeholder_exercise_count:  0,
-                completed_exercise_count:               0,
-                correct_exercise_count:                 0
+                step_count:                            0,
+                completed_step_count:                  0,
+                actual_and_placeholder_exercise_count: 0,
+                completed_exercise_count:              0,
+                correct_exercise_count:                0,
+                published_points:                      nil,
+                published_score:                       nil
               }
             ],
             # average_score: 2/3.0
