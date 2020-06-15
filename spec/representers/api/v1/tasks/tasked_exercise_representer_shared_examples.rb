@@ -43,6 +43,8 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:is_in_multipart).and_return(false)
       allow(exercise).to receive(:response_validation).and_return({ valid: false })
       allow(exercise).to receive(:available_points).and_return(1.0)
+      allow(exercise).to receive(:published_points_without_lateness).and_return(0.75)
+      allow(exercise).to receive(:published_late_work_point_penalty).and_return(0.25)
       allow(exercise).to receive(:published_points).and_return(0.5)
       allow(exercise).to receive(:published_comments).and_return('Hi')
       allow(exercise).to receive(:cache_key).and_return('tasks/models/tasked_exercises/42')
@@ -163,6 +165,18 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       it "has the correct 'correct_answer_id'" do
         expect(representation).to include('correct_answer_id' => '456')
       end
+
+      it "has the correct 'published_points_without_lateness'" do
+        expect(representation).to include('published_points_without_lateness' => 0.75)
+      end
+
+      it "has the correct 'published_late_work_point_penalty'" do
+        expect(representation).to include('published_late_work_point_penalty' => 0.25)
+      end
+
+      it "has the correct 'published_points'" do
+        expect(representation).to include('published_points' => 0.5)
+      end
     end
 
     context 'feedback unavailable' do
@@ -182,6 +196,18 @@ RSpec.shared_examples 'a tasked_exercise representer' do
 
       it "'correct_answer_id' is not included" do
         expect(representation).not_to include('correct_answer_id')
+      end
+
+      it "'published_points_without_lateness' is not included" do
+        expect(representation).not_to include('published_points_without_lateness')
+      end
+
+      it "'published_late_work_point_penalty' is not included" do
+        expect(representation).not_to include('published_late_work_point_penalty')
+      end
+
+      it "'published_points' is not included" do
+        expect(representation).not_to include('published_points')
       end
     end
   end

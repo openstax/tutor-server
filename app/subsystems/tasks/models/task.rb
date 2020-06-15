@@ -261,45 +261,12 @@ class Tasks::Models::Task < ApplicationRecord
     published_points_per_question_index_without_lateness.compact.sum(0.0)
   end
 
-  def late_work_penalty_for(task_step:, due_at: self.due_at)
-    return 0.0 if task_step.last_completed_at.nil?
-
-    return 0.0 if due_at.nil? || task_step.last_completed_at <= due_at
-
-    penalty = case late_work_penalty_applied
-    when 'immediately'
-      late_work_penalty_per_period
-    when 'daily'
-      ((task_step.last_completed_at - due_at)/1.day).ceil * late_work_penalty_per_period
-    when 'not_accepted'
-      1.0
-    else
-      0.0
-    end
-  end
-
   def late_work_point_penalty
-    due_at = self.due_at
-    return 0.0 if due_at.nil?
-
-    exercise_and_placeholder_steps.each_with_index.sum(0.0) do |task_step, index|
-      points = points_per_question_index_without_lateness[index]
-      next 0.0 if points.nil? || points == 0.0
-
-      points * late_work_penalty_for(task_step: task_step, due_at: due_at)
-    end
+    exercise_and_placeholder_steps.map(&:tasked).sum(0.0, &:late_work_point_penalty)
   end
 
   def published_late_work_point_penalty
-    due_at = self.due_at
-    return 0.0 if due_at.nil?
-
-    exercise_and_placeholder_steps.each_with_index.sum(0.0) do |task_step, index|
-      points = published_points_per_question_index_without_lateness[index]
-      next 0.0 if points.nil? || points == 0.0
-
-      points * late_work_penalty_for(task_step: task_step, due_at: due_at)
-    end
+    exercise_and_placeholder_steps.map(&:tasked).sum(0.0, &:published_late_work_point_penalty)
   end
 
   def points

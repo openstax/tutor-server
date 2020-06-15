@@ -151,6 +151,18 @@ module Api::V1::Tasks
              readable: true,
              writeable: false
 
+    property :published_points_without_lateness,
+             type: Float,
+             readable: true,
+             writeable: false,
+             if: FEEDBACK_AVAILABLE
+
+    property :published_late_work_point_penalty,
+             type: Float,
+             readable: true,
+             writeable: false,
+             if: FEEDBACK_AVAILABLE
+
     property :published_points,
              type: Float,
              readable: true,
