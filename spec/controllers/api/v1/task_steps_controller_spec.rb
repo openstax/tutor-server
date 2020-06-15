@@ -286,6 +286,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
       tasked.free_response = 'A sentence explaining all the things!'
       tasked.save!
       MarkTaskStepCompleted.call task_step: task_step
+
       expect(task.gradable_step_count).to eq 1
       expect(task.ungraded_step_count).to eq 1
       expect(tasking_plan.reload.gradable_step_count).to eq 1
@@ -297,8 +298,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
     context 'task not yet due' do
       it 'raises SecurityTransgression' do
         expect do
-          api_put :grade, @teacher_user_token, params: params,
-                                               body: { grader_points: 1.0, grader_comments: 'Test' }
+          api_put :grade, @teacher_user_token, params: params, body: {
+            grader_points: 1.0, grader_comments: 'Test'
+          }
         end.to  raise_error(SecurityTransgression)
            .and not_change { tasked.reload.grader_points }
            .and not_change { tasked.grader_comments }
@@ -327,12 +329,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
         it 'updates the grader fields, published fields and gradable step counts' do
           expect do
             api_put :grade, @teacher_user_token, params: params, body: {
-              grader_points: 1.0, grader_comments: 'Test'
+              grader_points: 42.0, grader_comments: 'Test'
             }
-          end.to  change     { tasked.reload.grader_points }.from(nil).to(1.0)
+          end.to  change     { tasked.reload.grader_points }.from(nil).to(42.0)
              .and change     { tasked.grader_comments }.from(nil).to('Test')
              .and change     { tasked.last_graded_at }.from(nil)
-             .and change     { tasked.reload.published_points }.from(nil).to(1.0)
+             .and change     { tasked.reload.published_points }.to(42.0)
              .and change     { tasked.published_comments }.from(nil).to('Test')
              .and not_change { task.reload.gradable_step_count }
              .and change     { task.ungraded_step_count }.by(-1)
@@ -342,7 +344,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
              .and change     { task_plan.ungraded_step_count }.by(-1)
           expect(response).to have_http_status(:success)
 
-          expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')
+          expect(response.body_as_hash).to include(grader_points: 42.0, grader_comments: 'Test')
         end
       end
 
@@ -352,9 +354,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
         it 'updates the grader fields and gradable step counts' do
           expect do
             api_put :grade, @teacher_user_token, params: params, body: {
-              grader_points: 1.0, grader_comments: 'Test'
+              grader_points: 42.0, grader_comments: 'Test'
             }
-          end.to  change     { tasked.reload.grader_points }.from(nil).to(1.0)
+          end.to  change     { tasked.reload.grader_points }.from(nil).to(42.0)
              .and change     { tasked.grader_comments }.from(nil).to('Test')
              .and change     { tasked.last_graded_at }.from(nil)
              .and not_change { tasked.published_points }
@@ -367,7 +369,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :controller, api: true, versi
              .and change     { task_plan.ungraded_step_count }.by(-1)
           expect(response).to have_http_status(:success)
 
-          expect(response.body_as_hash).to include(grader_points: 1.0, grader_comments: 'Test')
+          expect(response.body_as_hash).to include(grader_points: 42.0, grader_comments: 'Test')
         end
       end
     end

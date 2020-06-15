@@ -172,13 +172,13 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     task_step.task.course.past_due_unattempted_ungraded_wrq_are_zero ? 0.0 : gp
   end
 
-   # This is really published_grader_points only
-  def published_points
+  # TODO: Rename published_points column to published_grader_points
+  def published_grader_points
     case task_step.task.manual_grading_feedback_on
     when 'grade'
       grader_points
     when 'publish'
-      super
+      read_attribute :published_points
     else
       nil
     end
@@ -203,7 +203,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   def published_points_without_lateness
     return available_points if full_credit?
 
-    return published_points unless published_points.nil?
+    return published_grader_points unless published_grader_points.nil?
 
     if task_step.completed?
       task = task_step.task
@@ -215,6 +215,57 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     else
       task_step.task.past_due? ? 0.0 : nil
     end
+  end
+
+  def late_work_fraction_penalty
+    return 0.0 if task_step.last_completed_at.nil?
+
+    task = task_step.task
+    due_at = task.due_at
+    return 0.0 if due_at.nil? || task_step.last_completed_at <= due_at
+
+    penalty = case task.late_work_penalty_applied
+    when 'immediately'
+      task.late_work_penalty_per_period
+    when 'daily'
+      ((task_step.last_completed_at - due_at)/1.day).ceil * task.late_work_penalty_per_period
+    when 'not_accepted'
+      1.0
+    else
+      0.0
+    end
+  end
+
+  def late_work_point_penalty
+    penalty = late_work_fraction_penalty
+    return 0.0 if penalty == 0.0
+
+    pts = points_without_lateness
+    return 0.0 if pts.nil? || pts == 0.0
+
+    pts * penalty
+  end
+
+  def published_late_work_point_penalty
+    penalty = late_work_fraction_penalty
+    return 0.0 if penalty == 0.0
+
+    pts = published_points_without_lateness
+    return 0.0 if pts.nil? || pts == 0.0
+
+    pts * penalty
+  end
+
+  def points
+    pts = points_without_lateness
+
+    pts - late_work_point_penalty unless pts.nil?
+  end
+
+  def published_points
+    pts = published_points_without_lateness
+
+    pts - published_late_work_point_penalty unless pts.nil?
   end
 
   def published_comments
