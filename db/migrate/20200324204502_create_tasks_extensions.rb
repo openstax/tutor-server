@@ -40,7 +40,7 @@ class CreateTasksExtensions < ActiveRecord::Migration[5.2]
         ),
         "completed_on_time_exercise_steps_count" = GREATEST(
           "completed_on_time_exercise_steps_count", "completed_accepted_late_exercise_steps_count"
-        )
+        ),
         "correct_on_time_exercise_steps_count" = GREATEST(
           "correct_on_time_exercise_steps_count", "correct_accepted_late_exercise_steps_count"
         )
