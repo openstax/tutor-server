@@ -31,10 +31,11 @@ class CreateTasksExtensions < ActiveRecord::Migration[5.2]
       end
 
       Tasks::Models::Extension.import extensions, validate: false
+
+      tasks.each(&:update_caches_later)
     end
 
     remove_column :tasks_tasks, :accepted_late_at
-    remove_column :tasks_tasks, :correct_on_time_exercise_steps_count
     remove_column :tasks_tasks, :completed_accepted_late_steps_count
     remove_column :tasks_tasks, :completed_accepted_late_exercise_steps_count
     remove_column :tasks_tasks, :correct_accepted_late_exercise_steps_count

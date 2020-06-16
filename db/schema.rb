@@ -1011,6 +1011,7 @@ ActiveRecord::Schema.define(version: 2020_06_05_151734) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "spy", default: "{}", null: false
+    t.integer "correct_on_time_exercise_steps_count", default: 0, null: false
     t.integer "completed_on_time_exercise_steps_count", default: 0, null: false
     t.integer "completed_on_time_steps_count", default: 0, null: false
     t.integer "time_zone_id"
