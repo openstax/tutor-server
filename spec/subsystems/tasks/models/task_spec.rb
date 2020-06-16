@@ -908,7 +908,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     ecosystem = page.ecosystem
     AddEcosystemToCourse.call ecosystem: ecosystem, course: course
 
-    task_plan.grading_template.update_attribute :task_plan_type, 'homework'
+    task_plan.grading_template.update_column :task_plan_type, 'homework'
     task_plan.update_attributes!(
       ecosystem: ecosystem,
       type: 'homework',

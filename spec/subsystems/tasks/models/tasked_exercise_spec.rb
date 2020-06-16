@@ -64,7 +64,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
   it 'cannot have answer or free response updated after feedback is available' do
     grading_template = tasked_exercise.task_step.task.task_plan.grading_template
-    grading_template.update_attribute :auto_grading_feedback_on, :answer
+    grading_template.update_column :auto_grading_feedback_on, :answer
 
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
@@ -83,7 +83,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise.free_response = 'some new thing'
     expect(tasked_exercise).not_to be_valid
 
-    grading_template.update_attribute :auto_grading_feedback_on, :due
+    grading_template.update_column :auto_grading_feedback_on, :due
 
     expect(tasked_exercise.reload).to be_valid
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last

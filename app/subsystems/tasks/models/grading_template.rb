@@ -123,7 +123,7 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
     return unless has_open_task_plans?
 
     errors.add :base,
-               'cannot be changed because this template is assigned to one or more task_plans'
+               'cannot be changed because this template is assigned to one or more open task_plans'
     throw :abort
   end
 
