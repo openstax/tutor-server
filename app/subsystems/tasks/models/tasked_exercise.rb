@@ -228,7 +228,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     when 'immediately'
       task.late_work_penalty_per_period
     when 'daily'
-      ((task_step.last_completed_at - due_at)/1.day).ceil * task.late_work_penalty_per_period
+      [
+        ((task_step.last_completed_at - due_at)/1.day).ceil * task.late_work_penalty_per_period, 1.0
+      ].min
     when 'not_accepted'
       1.0
     else
