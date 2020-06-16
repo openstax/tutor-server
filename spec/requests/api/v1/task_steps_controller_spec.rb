@@ -327,7 +327,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       end
 
       context "manual_grading_feedback_on == 'grade'" do
-        before { task_plan.grading_template.manual_grading_feedback_on_grade! }
+        before { task_plan.grading_template.update_column :manual_grading_feedback_on, :grade }
 
         it 'updates the grader fields, published fields and gradable step counts' do
           expect do
@@ -354,7 +354,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       end
 
       context "manual_grading_feedback_on == 'publish'" do
-        before { task_plan.grading_template.manual_grading_feedback_on_publish! }
+        before { task_plan.grading_template.update_column :manual_grading_feedback_on, :publish }
 
         it 'updates the grader fields and gradable step counts' do
           expect do
