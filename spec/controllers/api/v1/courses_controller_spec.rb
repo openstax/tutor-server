@@ -618,7 +618,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         Preview::AnswerExercise[task_step: @hw2_task.task_steps[0], is_correct: true]
         Preview::AnswerExercise[task_step: @hw2_task.task_steps[1], is_correct: true]
         Preview::AnswerExercise[task_step: @hw2_task.task_steps[2], is_correct: false]
-        @hw2_task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :answer
+        @hw2_task.task_plan.grading_template.update_column :auto_grading_feedback_on, :answer
 
         Preview::AnswerExercise[task_step: @hw3_task.task_steps[0], is_correct: false]
         Preview::AnswerExercise[task_step: @hw3_task.task_steps[1], is_correct: false]
