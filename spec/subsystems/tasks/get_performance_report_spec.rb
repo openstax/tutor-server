@@ -175,7 +175,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       it 'returns the proper numbers' do
         tasks = Tasks::Models::Task.where(title: 'Homework task plan')
         tasks.each do |task|
-          task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :answer
+          task.task_plan.grading_template.update_column :auto_grading_feedback_on, :answer
         end
 
         expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
@@ -340,7 +340,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       it 'returns the proper numbers' do
         tasks = Tasks::Models::Task.where(title: 'Homework task plan')
         tasks.each do |task|
-          task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :due
+          task.task_plan.grading_template.update_column :auto_grading_feedback_on, :due
         end
 
         expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
@@ -505,7 +505,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       it 'returns the proper numbers' do
         tasks = Tasks::Models::Task.where(title: 'Homework task plan')
         tasks.each do |task|
-          task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :publish
+          task.task_plan.grading_template.update_column :auto_grading_feedback_on, :publish
         end
 
         # A single past-due unpublished task makes the homework score and the course average 0.0
@@ -846,7 +846,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         taskings: { entity_role_id: @student_1.roles.first.id },
         title: 'Homework task plan'
       )
-      task.task_plan.grading_template.update_attribute :auto_grading_feedback_on, :publish
+      task.task_plan.grading_template.update_column :auto_grading_feedback_on, :publish
 
       expect(report.data_headings.size).to eq expected_tasks
 

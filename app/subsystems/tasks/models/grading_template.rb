@@ -34,7 +34,7 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
 
   validate :weights_add_up, :default_times_have_good_values
 
-  before_update  :no_task_plans_when_changing_task_plan_type
+  before_update  :no_open_task_plans_on_update, :no_task_plans_when_changing_task_plan_type
   before_destroy :no_task_plans_on_destroy, :not_last_template
 
   DEFAULT_ATTRIBUTES = [
@@ -76,6 +76,10 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
     !task_plans.reject(&:withdrawn?).empty?
   end
 
+  def has_open_task_plans?
+    task_plans.reject(&:withdrawn?).any?(&:out_to_students?)
+  end
+
   protected
 
   def weights_add_up
@@ -112,6 +116,14 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
 
     errors.add :task_plan_type,
                'cannot be changed because this template is assigned to one or more task_plans'
+    throw :abort
+  end
+
+  def no_open_task_plans_on_update
+    return unless has_open_task_plans?
+
+    errors.add :base,
+               'cannot be changed because this template is assigned to one or more open task_plans'
     throw :abort
   end
 

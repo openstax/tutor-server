@@ -17,7 +17,7 @@ RSpec.describe 'Exercise update progression', type: :request, api: true, version
 
   let(:step_route_base) { "/api/steps/#{tasked.task_step.id}" }
 
-  before { grading_template.update_attribute :auto_grading_feedback_on, :due }
+  before { grading_template.update_column :auto_grading_feedback_on, :due }
 
   it "only shows feedback and correct answer id after completed and feedback available" do
     api_get(step_route_base, user_1_token)
@@ -59,7 +59,7 @@ RSpec.describe 'Exercise update progression', type: :request, api: true, version
     expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
     # Get it again after feedback is available
-    grading_template.update_attribute :auto_grading_feedback_on, :answer
+    grading_template.update_column :auto_grading_feedback_on, :answer
 
     api_get(step_route_base, user_1_token)
 
@@ -94,7 +94,7 @@ RSpec.describe 'Exercise update progression', type: :request, api: true, version
     expect(response).to have_http_status(:success)
 
     # Feedback is now available
-    grading_template.update_attribute :auto_grading_feedback_on, :answer
+    grading_template.update_column :auto_grading_feedback_on, :answer
 
     # Free response cannot be changed
     api_put("#{step_route_base}", user_1_token,

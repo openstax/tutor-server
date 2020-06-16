@@ -769,9 +769,10 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       ]
     )
     task.taskings << FactoryBot.build(:tasks_tasking)
-    task.grading_template.late_work_penalty_applied = :immediately
-    task.grading_template.late_work_penalty = 0.5
-    task.grading_template.save!
+    task.grading_template.update_columns(
+      late_work_penalty_applied: :immediately,
+      late_work_penalty: 0.5
+    )
 
     due_at = task.due_at
 
@@ -837,9 +838,10 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.score_without_lateness).to eq 1.0
       expect(task.score).to eq 2.5/3.0
 
-      task.grading_template.late_work_penalty_applied = :daily
-      task.grading_template.late_work_penalty = 0.3
-      task.grading_template.save!
+      task.grading_template.update_columns(
+        late_work_penalty_applied: :daily,
+        late_work_penalty: 0.3
+      )
 
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3
@@ -908,7 +910,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     ecosystem = page.ecosystem
     AddEcosystemToCourse.call ecosystem: ecosystem, course: course
 
-    task_plan.grading_template.update_attribute :task_plan_type, 'homework'
+    task_plan.grading_template.update_column :task_plan_type, 'homework'
     task_plan.update_attributes!(
       ecosystem: ecosystem,
       type: 'homework',

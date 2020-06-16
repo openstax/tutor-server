@@ -21,7 +21,7 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
       assistant: get_assistant(course: @course, task_plan_type: 'reading'),
       published_at: Time.current
     )
-    @task_plan.grading_template.manual_grading_feedback_on_publish!
+    @task_plan.grading_template.update_column :manual_grading_feedback_on, :publish
     @tasking_plan = @task_plan.tasking_plans.first
     @tasking_plan.update_attribute :due_at_ntz, Time.current - 1.day
     @not_due_tasking_plan = FactoryBot.create(
