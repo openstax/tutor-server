@@ -81,7 +81,11 @@ module Tasks
           end if !is_dropped
 
           data = get_task_data(
-            tasks: student_tasks, tz: tz, current_time_ntz: current_time_ntz, is_teacher: is_teacher
+            course: course,
+            tasks: student_tasks,
+            tz: tz,
+            current_time_ntz: current_time_ntz,
+            is_teacher: is_teacher
           )
           non_nil_data = data.compact
           homework_tasks = non_nil_data.select { |dd| dd.type == 'homework' }.map(&:task)
@@ -312,7 +316,7 @@ module Tasks
       values.sum / num_values.to_f
     end
 
-    def get_task_data(tasks:, tz:, current_time_ntz:, is_teacher:)
+    def get_task_data(course:, tasks:, tz:, current_time_ntz:, is_teacher:)
       tasks.map do |tt|
         # Skip if the student hasn't worked this particular task_plan/page
         next if tt.nil?
@@ -324,6 +328,18 @@ module Tasks
           current_time_ntz: current_time_ntz
         )
         correct_exercise_count = show_score ? tt.correct_exercise_count : nil
+
+        if course.pre_wrm_scores?
+          available_points = tt.actual_and_placeholder_exercise_count
+          progress = tt.completed_on_time_steps_count.to_f / tt.steps_count
+          published_points = tt.correct_on_time_exercise_steps_count
+          published_score = published_points.to_f / available_points
+        else
+          available_points = tt.available_points
+          progress = tt.completion
+          published_points = tt.published_points
+          published_score = tt.published_score
+        end
 
         Hashie::Mash.new(
           task:                                   tt,
@@ -348,10 +364,10 @@ module Tasks
           is_included_in_averages:                included_in_progress_averages?(
                                                     task: tt, current_time_ntz: current_time_ntz
                                                   ),
-          progress:                               tt.completion,
-          available_points:                       tt.available_points,
-          published_points:                       tt.published_points,
-          published_score:                        tt.published_score,
+          available_points:                       available_points,
+          progress:                               progress,
+          published_points:                       published_points,
+          published_score:                        published_score,
           is_provisional_score:                   tt.provisional_score?
         )
       end
