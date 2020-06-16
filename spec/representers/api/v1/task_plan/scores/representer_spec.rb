@@ -24,7 +24,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         exercises_count_dynamic: 3
       }
     ).tap do |task_plan|
-      task_plan.grading_template.update_attribute :late_work_penalty_applied, :immediately
+      task_plan.grading_template.update_column :late_work_penalty_applied, :immediately
     end
   end
   let(:tasking_plan)         { task_plan.tasking_plans.first }
