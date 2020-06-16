@@ -86,6 +86,30 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
     expect(grading_template.reload.task_plan_type).to eq new_task_plan_type
   end
 
+  it 'cannot be updated if it has open task_plans' do
+    task_plan = FactoryBot.build :tasks_task_plan, owner: course,
+                                                   grading_template: grading_template
+
+    task = FactoryBot.create :tasks_task, task_plan: task_plan,
+                                          task_type: :reading,
+                                          step_types: [:tasks_tasked_reading],
+                                          num_random_taskings: 1,
+                                          opens_at: 1.day.ago
+
+    DistributeTasks[task_plan: task_plan]
+
+    new_name = 'New'
+    grading_template.name = new_name
+    expect(grading_template.save).to eq false
+
+    task_plan.destroy
+    grading_template.reload
+
+    grading_template.name = new_name
+    expect(grading_template.save).to eq true
+    expect(grading_template.reload.name).to eq new_name
+  end
+
   it 'cannot be destroyed if it has task_plans' do
     FactoryBot.create(
       :tasks_grading_template, course: course, task_plan_type: grading_template.task_plan_type
