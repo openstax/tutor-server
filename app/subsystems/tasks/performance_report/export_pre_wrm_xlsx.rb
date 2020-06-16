@@ -236,7 +236,7 @@ module Tasks
 
       def save
         success = @package.serialize(@filename)
-        raise(StandardError, "PerformanceReport::ExportCcXlsx failed") unless success
+        raise(StandardError, "PerformanceReport::ExportPreWrmXlsx failed") unless success
       end
 
       def write_data_worksheets
