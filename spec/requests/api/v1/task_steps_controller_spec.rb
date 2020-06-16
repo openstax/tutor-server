@@ -336,7 +336,10 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
           end.to  change     { tasked.reload.grader_points }.from(nil).to(42.0)
              .and change     { tasked.grader_comments }.from(nil).to('Test')
              .and change     { tasked.last_graded_at }.from(nil)
-             .and change     { tasked.reload.published_points }.to(42.0)
+             .and change     { tasked.published_grader_points }.from(nil).to(42.0)
+             .and change     {
+               tasked.published_points_without_lateness
+             }.from(task.completion_weight).to(42.0)
              .and change     { tasked.published_comments }.from(nil).to('Test')
              .and not_change { task.reload.gradable_step_count }
              .and change     { task.ungraded_step_count }.by(-1)
@@ -360,7 +363,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
           end.to  change     { tasked.reload.grader_points }.from(nil).to(42.0)
              .and change     { tasked.grader_comments }.from(nil).to('Test')
              .and change     { tasked.last_graded_at }.from(nil)
-             .and not_change { tasked.published_points }
+             .and not_change { tasked.published_grader_points }
+             .and not_change { tasked.published_points_without_lateness }
              .and not_change { tasked.published_comments }
              .and not_change { task.reload.gradable_step_count }
              .and change     { task.ungraded_step_count }.by(-1)
