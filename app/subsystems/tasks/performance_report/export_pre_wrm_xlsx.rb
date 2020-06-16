@@ -632,9 +632,6 @@ module Tasks
           correct_count = data[:correct_exercise_count]
           completed_count = data[:completed_step_count]
 
-          correct_pct = correct_count * 1.0 / exercise_steps_count
-          completed_pct = completed_count * 1.0 / steps_count
-
           if format == :counts
             columns.push([
               correct_count, { style: @normal_L }
@@ -643,10 +640,7 @@ module Tasks
 
             columns.push("","",[data[:last_worked_at], style: @last_worked_at])
           else
-            columns.push([
-              correct_count * 1.0 / exercise_steps_count,
-              { style: @pct_L }
-            ])
+            columns.push([correct_count * 1.0 / exercise_steps_count, { style: @pct_L }])
             columns.push([completed_count * 1.0 / steps_count, style: @pct])
 
             columns.push("","",[data[:last_worked_at], style: @last_worked_at])

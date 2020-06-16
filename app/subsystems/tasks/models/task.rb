@@ -359,7 +359,12 @@ class Tasks::Models::Task < ApplicationRecord
     on_time_steps = late_after.nil? ?
       completed_steps : completed_steps.select { |step| step.last_completed_at < late_after }
     self.completed_on_time_steps_count = on_time_steps.count
-    self.completed_on_time_exercise_steps_count = on_time_steps.count(&:exercise?)
+
+    on_time_exercise_steps = on_time_steps.select(&:exercise?)
+    self.completed_on_time_exercise_steps_count = on_time_exercise_steps.count
+    self.correct_on_time_exercise_steps_count = on_time_exercise_steps.count do |step|
+      step.tasked.is_correct?
+    end
 
     self
   end

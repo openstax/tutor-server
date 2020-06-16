@@ -33,8 +33,21 @@ class CreateTasksExtensions < ActiveRecord::Migration[5.2]
       Tasks::Models::Extension.import extensions, validate: false
     end
 
+    Tasks::Models::Task.where.not(accepted_late_at: nil).update_all(
+      <<~UPDATE_SQL
+        "completed_on_time_steps_count" = GREATEST(
+          "completed_on_time_steps_count", "completed_accepted_late_steps_count"
+        ),
+        "completed_on_time_exercise_steps_count" = GREATEST(
+          "completed_on_time_exercise_steps_count", "completed_accepted_late_exercise_steps_count"
+        ),
+        "correct_on_time_exercise_steps_count" = GREATEST(
+          "correct_on_time_exercise_steps_count", "correct_accepted_late_exercise_steps_count"
+        )
+      UPDATE_SQL
+    )
+
     remove_column :tasks_tasks, :accepted_late_at
-    remove_column :tasks_tasks, :correct_on_time_exercise_steps_count
     remove_column :tasks_tasks, :completed_accepted_late_steps_count
     remove_column :tasks_tasks, :completed_accepted_late_exercise_steps_count
     remove_column :tasks_tasks, :correct_accepted_late_exercise_steps_count
