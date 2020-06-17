@@ -26,14 +26,15 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
     task = task_step.task
 
     expect(task_step).to receive(:complete).and_call_original
-    expect(task_step).to receive(:save!)
-    allow(task_step).to receive(:task).and_return(task)
+    expect(task_step).to receive(:save!).and_call_original
 
-    expect(task).to receive(:handle_task_step_completion)
+    expect(task).to receive(:handle_task_step_completion).and_call_original
+    expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_later).and_call_original
 
-    result = MarkTaskStepCompleted.call(task_step: task_step)
-
-    expect(result.errors).to be_empty
+    expect do
+      result = MarkTaskStepCompleted.call(task_step: task_step)
+      expect(result.errors).to be_empty
+    end.to change { task.reload.completed_steps_count }.from(0).to(1)
   end
 
   it 'returns an error if the answer_id is missing for an exercise' do
