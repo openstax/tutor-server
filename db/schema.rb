@@ -1055,10 +1055,10 @@ ActiveRecord::Schema.define(version: 2020_06_17_142820) do
     t.integer "ungraded_step_count", default: 0, null: false
     t.integer "gradable_step_count", default: 0, null: false
     t.float "available_points", default: 0.0, null: false
-    t.float "published_points_without_auto_grading_feedback", default: ::Float::NAN, null: false
-    t.float "published_points_with_auto_grading_feedback", default: ::Float::NAN, null: false
-    t.boolean "is_provisional_score_without_auto_grading_feedback", default: false, null: false
-    t.boolean "is_provisional_score_with_auto_grading_feedback", default: false, null: false
+    t.float "published_points_before_due", default: ::Float::NAN, null: false
+    t.float "published_points_after_due", default: ::Float::NAN, null: false
+    t.boolean "is_provisional_score_before_due", default: false, null: false
+    t.boolean "is_provisional_score_after_due", default: false, null: false
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["course_profile_course_id"], name: "index_tasks_tasks_on_course_profile_course_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"

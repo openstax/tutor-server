@@ -37,14 +37,15 @@ class Tasks::Models::TaskedPlaceholder < ApplicationRecord
   end
 
   # Placeholder steps behaves like ungraded incomplete exercise step
-  def points_without_lateness(auto_grading_feedback_available: nil)
-    task_step.task.past_due? ? 0.0 : nil
+  def points_without_lateness(past_due: nil)
+    past_due = task_step.task.past_due? if past_due.nil?
+    past_due ? 0.0 : nil
   end
   alias_method :published_points_without_lateness, :points_without_lateness
   alias_method :points, :points_without_lateness
   alias_method :published_points, :points_without_lateness
 
-  def late_work_point_penalty(auto_grading_feedback_available: nil)
+  def late_work_point_penalty(past_due: nil)
     0.0
   end
   alias_method :published_late_work_point_penalty, :late_work_point_penalty

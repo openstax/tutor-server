@@ -14,9 +14,11 @@ FactoryBot.define do
     end
 
     title                       { 'A task' }
-    settings                    { {} }
     type                        do
       grading_template.nil? ? 'reading' : grading_template.task_plan_type
+    end
+    settings                    do
+      homework? ? { 'exercises': [] } : {}
     end
     first_published_at          { published_at }
     last_published_at           { published_at }

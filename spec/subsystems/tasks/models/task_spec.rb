@@ -898,6 +898,30 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     end
   end
 
+  it 'caches scores before and after due date' do
+    task.grading_template.update_column :auto_grading_feedback_on, :due
+    task.due_at = Time.current + 1.hour
+    task.closes_at = Time.current + 2.hours
+    task.save!
+
+    expect(task.available_points).to eq 0.0
+    expect(task.published_points_before_due).to be_nan
+    expect(task.published_points_after_due).to be_nan
+    expect(task.is_provisional_score_before_due).to eq false
+    expect(task.is_provisional_score_after_due).to eq false
+
+    task_step = FactoryBot.build(:tasks_tasked_exercise, skip_task: true).task_step
+    task_step.task = task
+    task_step.save!
+    Preview::AnswerExercise.call task_step: task_step, is_correct: true
+
+    expect(task.reload.available_points).to eq 1.0
+    expect(task.published_points_before_due).to be_nan
+    expect(task.published_points_after_due).to eq 1.0
+    expect(task.is_provisional_score_before_due).to eq false
+    expect(task.is_provisional_score_after_due).to eq false
+  end
+
   it 'uses teacher-chosen points for homework assignments' do
     course = task_plan.owner
     period = FactoryBot.create :course_membership_period, course: course

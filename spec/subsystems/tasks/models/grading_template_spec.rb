@@ -87,8 +87,8 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
   end
 
   it 'cannot be updated if it has open task_plans' do
-    task_plan = FactoryBot.build :tasks_task_plan, owner: course,
-                                                   grading_template: grading_template
+    task_plan = FactoryBot.create :tasks_task_plan, owner: course,
+                                                    grading_template: grading_template
 
     task = FactoryBot.create :tasks_task, task_plan: task_plan,
                                           task_type: :reading,
