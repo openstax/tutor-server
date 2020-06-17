@@ -215,8 +215,6 @@ module Tasks
          task_steps: :tasked)
         .reorder(nil).distinct
 
-        .reorder(nil).distinct
-
       if is_teacher
         rel = rel.joins(
           taskings: { role: [ :student, profile: :account ] }
