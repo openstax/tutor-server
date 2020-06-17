@@ -785,8 +785,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.completion).to eq 1/3.0
       expect(task.points_without_lateness).to eq 1.0
       expect(task.points).to eq 1.0
-      expect(task.score_without_lateness).to eq 1.0
-      expect(task.score).to eq 1.0
+      expect(task.score_without_lateness).to eq 1/3.0
+      expect(task.score).to eq 1/3.0
     end
 
     Timecop.freeze(due_at + 1.hour) do
@@ -814,8 +814,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.completion).to eq 2/3.0
       expect(task.points_without_lateness).to eq 2.0
       expect(task.points).to eq 2.0
-      expect(task.score_without_lateness).to eq 1.0
-      expect(task.score).to eq 1.0
+      expect(task.score_without_lateness).to eq 2/3.0
+      expect(task.score).to eq 2/3.0
     end
 
     Timecop.freeze(due_at + 25.hours) do
