@@ -667,7 +667,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    it 'works after a student has moved period' do
+    it 'works after a student has moved to a different period' do
       MoveStudent.call(period: second_period, student: @student_1.roles.first.student)
 
       # No need to retest the entire response, just spot check some things that

@@ -172,13 +172,12 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     task_step.task.course.past_due_unattempted_ungraded_wrq_are_zero ? 0.0 : gp
   end
 
-  # TODO: Rename published_points column to published_grader_points
   def published_grader_points
     case task_step.task.manual_grading_feedback_on
     when 'grade'
       grader_points
     when 'publish'
-      read_attribute :published_points
+      super
     else
       nil
     end
@@ -200,7 +199,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     end
   end
 
-  def published_points_without_lateness
+  def published_points_without_lateness(auto_grading_feedback_available: nil)
     return available_points if full_credit?
 
     return published_grader_points unless published_grader_points.nil?
@@ -210,7 +209,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
       completion_weight = task.course&.pre_wrm_scores? ? 0.0 : task.completion_weight
       return completion_weight unless can_be_auto_graded?
 
-      is_correct_and_feedback_available = answer_id == correct_answer_id && feedback_available?
+      auto_grading_feedback_available = feedback_available? if auto_grading_feedback_available.nil?
+      is_correct_and_feedback_available = answer_id == correct_answer_id &&
+                                          auto_grading_feedback_available
       available_points * (is_correct_and_feedback_available ? 1.0 : completion_weight)
     else
       task_step.task.past_due? ? 0.0 : nil
@@ -248,11 +249,13 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     pts * penalty
   end
 
-  def published_late_work_point_penalty
+  def published_late_work_point_penalty(auto_grading_feedback_available: nil)
     penalty = late_work_fraction_penalty
     return 0.0 if penalty == 0.0
 
-    pts = published_points_without_lateness
+    pts = published_points_without_lateness(
+      auto_grading_feedback_available: auto_grading_feedback_available
+    )
     return 0.0 if pts.nil? || pts == 0.0
 
     pts * penalty
@@ -264,10 +267,14 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     pts - late_work_point_penalty unless pts.nil?
   end
 
-  def published_points
-    pts = published_points_without_lateness
+  def published_points(auto_grading_feedback_available: nil)
+    pts = published_points_without_lateness(
+      auto_grading_feedback_available: auto_grading_feedback_available
+    )
 
-    pts - published_late_work_point_penalty unless pts.nil?
+    pts - published_late_work_point_penalty(
+      auto_grading_feedback_available: auto_grading_feedback_available
+    ) unless pts.nil?
   end
 
   def published_comments

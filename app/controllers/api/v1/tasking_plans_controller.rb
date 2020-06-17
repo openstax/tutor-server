@@ -35,7 +35,9 @@ class Api::V1::TaskingPlansController < Api::V1::ApiController
 
     Tasks::Models::TaskedExercise.joins(:task_step).where(
       task_step: { tasks_task_id: tasks.map(&:id) }
-    ).update_all '"published_points" = "grader_points", "published_comments" = "grader_comments"'
+    ).update_all(
+      '"published_grader_points" = "grader_points", "published_comments" = "grader_comments"'
+    )
 
     tasks.update_all grades_last_published_at: Time.current
 

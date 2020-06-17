@@ -222,48 +222,69 @@ class Tasks::Models::Task < ApplicationRecord
     ).sum
   end
 
-  def available_points
+  def available_points(use_cache: true)
+    if use_cache
+      cache = super()
+      return cache unless cache.nil?
+    end
+
     available_points_per_question_index.values_at(
       *actual_and_placeholder_exercise_count.times.to_a
     ).sum 0.0
   end
 
   def points_per_question_index_without_lateness
-    @points_per_question_index_without_lateness ||=
-      exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
+    @points_per_question_index_without_lateness ||= exercise_and_placeholder_steps
+                                                      .each_with_index
+                                                      .map do |task_step, index|
       tasked = task_step.tasked
       tasked.available_points = available_points_per_question_index[index]
       tasked.points_without_lateness
     end
   end
 
-  def published_points_per_question_index_without_lateness
-    @published_points_per_question_index_without_lateness ||=
-      exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
+  def published_points_per_question_index_without_lateness(auto_grading_feedback_available: nil)
+    auto_grading_feedback_available = auto_grading_feedback_available? \
+      if auto_grading_feedback_available.nil?
+
+    exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
       tasked = task_step.tasked
       tasked.available_points = available_points_per_question_index[index]
-      tasked.published_points_without_lateness
+      tasked.published_points_without_lateness(
+        auto_grading_feedback_available: auto_grading_feedback_available
+      )
     end
   end
 
   def points_without_lateness
-    return if points_per_question_index_without_lateness.all?(&:nil?)
+    pts = points_per_question_index_without_lateness
+    return if pts.all?(&:nil?)
 
-    points_per_question_index_without_lateness.compact.sum(0.0)
+    pts.compact.sum(0.0)
   end
 
-  def published_points_without_lateness(current_time: Time.current)
-    return if published_points_per_question_index_without_lateness.all?(&:nil?)
+  def published_points_without_lateness(auto_grading_feedback_available: nil)
+    pts = published_points_per_question_index_without_lateness(
+      auto_grading_feedback_available: auto_grading_feedback_available
+    )
+    return if pts.all?(&:nil?)
 
-    published_points_per_question_index_without_lateness.compact.sum(0.0)
+    pts.compact.sum(0.0)
   end
 
   def late_work_point_penalty
     exercise_and_placeholder_steps.map(&:tasked).sum(0.0, &:late_work_point_penalty)
   end
 
-  def published_late_work_point_penalty
-    exercise_and_placeholder_steps.map(&:tasked).sum(0.0, &:published_late_work_point_penalty)
+  def published_late_work_point_penalty(auto_grading_feedback_available: nil)
+    auto_grading_feedback_available = auto_grading_feedback_available? \
+      if auto_grading_feedback_available.nil?
+
+    exercise_and_placeholder_steps.map(&:tasked).sum(0.0) do |tasked_exercise|
+      tasked_exercise.published_late_work_point_penalty(
+        auto_grading_feedback_available: auto_grading_feedback_available
+      )
+    end
   end
 
   def points
@@ -271,52 +292,56 @@ class Tasks::Models::Task < ApplicationRecord
     pts - late_work_point_penalty unless pts.nil?
   end
 
-  def published_points
-    pts = published_points_without_lateness
-    pts - published_late_work_point_penalty unless pts.nil?
-  end
+  def published_points(auto_grading_feedback_available: nil, use_cache: true)
+    auto_grading_feedback_available = auto_grading_feedback_available? \
+      if auto_grading_feedback_available.nil?
 
-  def available_points_worked(current_time: Time.current)
-    if past_due?(current_time: current_time)
-      available_points
-    else
-      exercise_and_placeholder_steps.each_with_index.sum do |task_step, index|
-        task_step.exercise? && task_step.completed? ?
-          available_points_per_question_index[index] : 0.0
+    if use_cache
+      if auto_grading_feedback_available
+        return (past_due? ? 0.0 : nil) if published_points_with_auto_grading_feedback&.nan?
+        return published_points_with_auto_grading_feedback \
+          unless published_points_with_auto_grading_feedback.nil?
+      else
+        return (past_due? ? 0.0 : nil) if published_points_without_auto_grading_feedback&.nan?
+        return published_points_without_auto_grading_feedback \
+          unless published_points_without_auto_grading_feedback.nil?
       end
     end
+
+    pts = published_points_without_lateness(
+      auto_grading_feedback_available: auto_grading_feedback_available
+    )
+    pts - published_late_work_point_penalty(
+      auto_grading_feedback_available: auto_grading_feedback_available
+    ) unless pts.nil?
   end
 
   def score_without_lateness(current_time: Time.current)
     pts = points_without_lateness
     return if pts.nil?
 
-    available_points_worked = self.available_points_worked current_time: current_time
-    pts/available_points_worked unless available_points_worked == 0.0
+    pts/available_points unless available_points == 0.0
   end
 
   def score(current_time: Time.current)
     pts = points
     return if pts.nil?
 
-    available_points_worked = self.available_points_worked current_time: current_time
-    pts/available_points_worked unless available_points_worked == 0.0
+    pts/available_points unless available_points == 0.0
   end
 
   def published_score_without_lateness(current_time: Time.current)
     pts = published_points_without_lateness
     return if pts.nil?
 
-    available_points_worked = self.available_points_worked current_time: current_time
-    pts/available_points_worked unless available_points_worked == 0.0
+    pts/available_points unless available_points == 0.0
   end
 
   def published_score(current_time: Time.current)
     pts = published_points
     return if pts.nil?
 
-    available_points_worked = self.available_points_worked current_time: current_time
-    pts/available_points_worked unless available_points_worked == 0.0
+    pts/available_points unless available_points == 0.0
   end
 
   def is_preview
@@ -354,6 +379,15 @@ class Tasks::Models::Task < ApplicationRecord
     self.student_history_at ||= current_time if completed_core_steps_count == core_steps_count
     self.gradable_step_count = gradable_steps.count
     self.ungraded_step_count = gradable_steps.reject(&:was_manually_graded?).count
+    self.available_points = available_points(use_cache: false)
+    self.published_points_without_auto_grading_feedback =
+        published_points(auto_grading_feedback_available: false, use_cache: false) || Float::NAN
+    self.published_points_with_auto_grading_feedback =
+        published_points(auto_grading_feedback_available: true, use_cache: false) || Float::NAN
+    self.is_provisional_score_without_auto_grading_feedback =
+      provisional_score?(auto_grading_feedback_available: false, use_cache: false)
+    self.is_provisional_score_with_auto_grading_feedback =
+      provisional_score?(auto_grading_feedback_available: true, use_cache: false)
 
     late_after = due_at
     on_time_steps = late_after.nil? ?
@@ -457,11 +491,28 @@ class Tasks::Models::Task < ApplicationRecord
     end
   end
 
-  def provisional_score?(current_time: Time.current, current_time_ntz: nil)
+  def provisional_score?(
+    auto_grading_feedback_available: nil,
+    use_cache: true,
+    current_time: Time.current,
+    current_time_ntz: nil
+  )
+    auto_grading_feedback_available = auto_grading_feedback_available?(
+      current_time: current_time, current_time_ntz: current_time_ntz
+    ) if auto_grading_feedback_available.nil?
+
+    if use_cache
+      if auto_grading_feedback_available
+        return is_provisional_score_with_auto_grading_feedback \
+          unless is_provisional_score_with_auto_grading_feedback.nil?
+      else
+        return is_provisional_score_without_auto_grading_feedback \
+          unless is_provisional_score_without_auto_grading_feedback.nil?
+      end
+    end
+
     (
-      manual_grading_feedback_available? || auto_grading_feedback_available?(
-        current_time: current_time, current_time_ntz: current_time_ntz
-      )
+      auto_grading_feedback_available || manual_grading_feedback_available?
     ) && !manual_grading_complete?
   end
 

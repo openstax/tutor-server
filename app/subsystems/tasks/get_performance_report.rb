@@ -209,10 +209,7 @@ module Tasks
         .joins(task_plan: :tasking_plans)
         .where(task_type: task_types,task_plan: { withdrawn_at: nil })
         .where(tt[:opens_at_ntz].eq(nil).or tt[:opens_at_ntz].lteq(current_time_ntz))
-        .preload(:course, :taskings, :time_zone,
-         task_plan: [ :tasking_plans, :dropped_questions,
-                      :grading_template, :extensions],
-         task_steps: :tasked)
+        .preload(:taskings, :time_zone, task_plan: [ :tasking_plans, :extensions])
         .reorder(nil).distinct
 
       if is_teacher
@@ -224,8 +221,8 @@ module Tasks
       elsif is_teacher_student
         rel = rel.joins(
           taskings: { role: [ :teacher_student, profile: :account ] }
-          ).where(taskings: { role: role })
-      else # treat as student and load only that roles tasks
+        ).where(taskings: { role: role })
+      else # treat as student and load only that role's tasks
         rel = rel.joins(
           taskings: { role: [ :student, profile: :account ] }
         ).where(taskings: { role: role })
