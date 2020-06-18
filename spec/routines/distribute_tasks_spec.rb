@@ -114,6 +114,59 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(task.task_steps.map(&:group_type)).to eq(expected_step_types)
         end
       end
+
+      it 'updating due dates causes student scores to change' do
+        homework_plan.grading_template.update_column :late_work_penalty, 1.0
+        tasking_plan = homework_plan.tasking_plans.first
+        tasking_plan.opens_at = tasking_plan.time_zone.to_tz.now - 2.hours
+        tasking_plan.due_at = tasking_plan.time_zone.to_tz.now - 1.hour
+        tasking_plan.save validate: false
+        result = described_class.call(task_plan: homework_plan)
+
+        expect(result.errors).to be_empty
+        expect(homework_plan.reload.tasks.size).to eq 3
+        expect(homework_plan).to be_out_to_students
+        homework_plan.tasks.each do |task|
+          expect(task).to be_past_due
+          expect(task.steps_count).to eq 9
+          expect(task.exercise_steps_count).to eq 6
+          expect(task.points_without_lateness).to eq 0.0
+          expect(task.points).to eq 0.0
+          expect(task.score_without_lateness).to eq 0.0
+          expect(task.score).to eq 0.0
+
+          Preview::WorkTask.call task: task, is_correct: true
+
+          expect(task.reload.exercise_steps_count).to eq 9
+          expect(task.completed_steps_count).to eq 9
+          expect(task.completed_on_time_steps_count).to eq 0
+          expect(task.correct_exercise_steps_count).to eq 9
+          expect(task.correct_on_time_exercise_steps_count).to eq 0
+          expect(task.points_without_lateness).to eq 9.0
+          expect(task.points).to eq 0.0
+          expect(task.score_without_lateness).to eq 1.0
+          expect(task.score).to eq 0.0
+        end
+
+        tasking_plan.update_attribute :due_at, tasking_plan.time_zone.to_tz.now + 1.hour
+        result = described_class.call(task_plan: homework_plan)
+
+        expect(result.errors).to be_empty
+        expect(homework_plan.reload.tasks.size).to eq 3
+        homework_plan.tasks.each do |task|
+          expect(task).not_to be_past_due
+          expect(task.steps_count).to eq 9
+          expect(task.exercise_steps_count).to eq 9
+          expect(task.completed_steps_count).to eq 9
+          expect(task.completed_on_time_steps_count).to eq 0
+          expect(task.correct_exercise_steps_count).to eq 9
+          expect(task.correct_on_time_exercise_steps_count).to eq 0
+          expect(task.points_without_lateness).to eq 9.0
+          expect(task.points).to eq 9.0
+          expect(task.score_without_lateness).to eq 1.0
+          expect(task.score).to eq 1.0
+        end
+      end
     end
 
     context 'unpublished task_plan' do
@@ -210,6 +263,16 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(task_plan).to be_out_to_students
           task_plan.tasks.each do |task|
             expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+          end
+
+          tasking_plan.update_attribute :due_at, tasking_plan.time_zone.to_tz.now + 1.hour
+          result = described_class.call(task_plan: task_plan)
+
+          expect(result.errors).to be_empty
+          expect(task_plan.reload.tasks.size).to eq 3
+          expect(task_plan).to be_out_to_students
+          task_plan.tasks.each do |task|
+            expect(task.due_at).to be_within(1e-6).of(tasking_plan.due_at)
           end
         end
 
