@@ -31,6 +31,8 @@ module Tasks
       tasks = get_course_tasks(course, role, is_teacher, current_time_ntz)
       tasks_by_period_id = tasks.group_by(&:course_membership_period_id)
 
+      pre_wrm = course.pre_wrm_scores?
+
       outputs.performance_report = periods.map do |period|
         period_tasks = tasks_by_period_id[period.id] || []
         tasking_plans = filter_and_sort_tasking_plans(period_tasks, course, period)
@@ -81,7 +83,7 @@ module Tasks
           end if !is_dropped
 
           data = get_task_data(
-            course: course,
+            pre_wrm: pre_wrm,
             tasks: student_tasks,
             tz: tz,
             current_time_ntz: current_time_ntz,
@@ -92,22 +94,32 @@ module Tasks
           reading_tasks = non_nil_data.select { |dd| dd.type == 'reading' }.map(&:task)
 
           homework_score = average_score(
-            tasks: homework_tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
+            pre_wrm: pre_wrm,
+            tasks: homework_tasks,
+            current_time_ntz: current_time_ntz,
+            is_teacher: is_teacher
           )
           homework_progress = average_progress(
-            tasks: homework_tasks, current_time_ntz: current_time_ntz
+            pre_wrm: pre_wrm,
+            tasks: homework_tasks,
+            current_time_ntz: current_time_ntz
           )
           reading_score = average_score(
-            tasks: reading_tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
+            pre_wrm: pre_wrm,
+            tasks: reading_tasks,
+            current_time_ntz: current_time_ntz,
+            is_teacher: is_teacher
           )
           reading_progress = average_progress(
-            tasks: reading_tasks, current_time_ntz: current_time_ntz
+            pre_wrm: pre_wrm,
+            tasks: reading_tasks,
+            current_time_ntz: current_time_ntz
           )
 
           homework_weight = course.homework_weight.to_f
           reading_weight = course.reading_weight.to_f
 
-          if course.pre_wrm_scores?
+          if pre_wrm
             # Old courses should have only 1 set of weights for grading templates of the same type
             homework_grading_template = course.grading_templates.detect(&:homework?)
             homework_score_weight = homework_weight * (
@@ -171,7 +183,7 @@ module Tasks
           overall_reading_progress: average(array: overall_students.map(&:reading_progress)),
           overall_course_average: average(array: overall_students.map(&:course_average)),
           data_headings: get_data_headings(
-            tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz, is_teacher
+            pre_wrm, tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz, is_teacher
           ),
           students: student_data
         )
@@ -244,7 +256,9 @@ module Tasks
       end.uniq.sort_by { |tp| [ tp.due_at_ntz, tp.closes_at_ntz, tp.created_at ] }.reverse
     end
 
-    def get_data_headings(tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz, is_teacher)
+    def get_data_headings(
+      pre_wrm, tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz, is_teacher
+    )
       tasking_plans.map do |tasking_plan|
         task_plan = tasking_plan.task_plan
         task_plan_id = task_plan.id
@@ -258,9 +272,16 @@ module Tasks
           available_points: longest_task&.available_points,
           due_at: DateTimeUtilities.apply_tz(tasking_plan.due_at_ntz, tz),
           average_score: average_score(
-            tasks: tasks, current_time_ntz: current_time_ntz, is_teacher: is_teacher
+            pre_wrm: pre_wrm,
+            tasks: tasks,
+            current_time_ntz: current_time_ntz,
+            is_teacher: is_teacher
           ),
-          average_progress: average_progress(tasks: tasks, current_time_ntz: current_time_ntz)
+          average_progress: average_progress(
+            pre_wrm: pre_wrm,
+            tasks: tasks,
+            current_time_ntz: current_time_ntz
+          )
         )
       end
     end
@@ -276,7 +297,7 @@ module Tasks
       return false if task.actual_and_placeholder_exercise_count == 0
 
       included_in_progress_averages?(task: task, current_time_ntz: current_time_ntz) && (
-        is_teacher || task.auto_grading_feedback_available?(current_time_ntz: current_time_ntz)
+        is_teacher || task.feedback_available?(current_time_ntz: current_time_ntz)
       )
     end
 
@@ -286,7 +307,7 @@ module Tasks
       completed_count.to_f / tasks.count
     end
 
-    def average_score(tasks:, current_time_ntz:, is_teacher:)
+    def average_score(pre_wrm:, tasks:, current_time_ntz:, is_teacher:)
       applicable_tasks = tasks.compact.select do |task|
         included_in_score_averages?(
           task: task, current_time_ntz: current_time_ntz, is_teacher: is_teacher
@@ -295,17 +316,23 @@ module Tasks
 
       return nil if applicable_tasks.empty?
 
-      average(array: applicable_tasks, value_getter: ->(task) { task.published_score })
+      average(
+        array: applicable_tasks,
+        value_getter: ->(task) { pre_wrm ? pre_wrm_score(task) : task.published_score }
+      )
     end
 
-    def average_progress(tasks:, current_time_ntz:)
+    def average_progress(pre_wrm:, tasks:, current_time_ntz:)
       applicable_tasks = tasks.compact.select do |task|
         included_in_progress_averages?(task: task, current_time_ntz: current_time_ntz)
       end
 
       return nil if applicable_tasks.empty?
 
-      average(array: applicable_tasks, value_getter: ->(task) { task.completion })
+      average(
+        array: applicable_tasks,
+        value_getter: ->(task) { pre_wrm ? pre_wrm_progress(task) : task.completion }
+      )
     end
 
     def average(array:, value_getter: nil)
@@ -316,7 +343,15 @@ module Tasks
       values.sum / num_values.to_f
     end
 
-    def get_task_data(course:, tasks:, tz:, current_time_ntz:, is_teacher:)
+    def pre_wrm_progress(task)
+      task.completed_on_time_steps_count.to_f / task.steps_count
+    end
+
+    def pre_wrm_score(task)
+      task.correct_on_time_exercise_steps_count.to_f / task.actual_and_placeholder_exercise_count
+    end
+
+    def get_task_data(pre_wrm:, tasks:, tz:, current_time_ntz:, is_teacher:)
       tasks.map do |tt|
         # Skip if the student hasn't worked this particular task_plan/page
         next if tt.nil?
@@ -324,16 +359,14 @@ module Tasks
         due_at = DateTimeUtilities.apply_tz(tt.due_at_ntz, tz)
         late = tt.worked_on? && due_at.present? && tt.last_worked_at > due_at
         type = tt.task_type
-        show_score = is_teacher || tt.auto_grading_feedback_available?(
-          current_time_ntz: current_time_ntz
-        )
+        show_score = is_teacher || tt.feedback_available?(current_time_ntz: current_time_ntz)
         correct_exercise_count = show_score ? tt.correct_exercise_count : nil
 
-        if course.pre_wrm_scores?
+        if pre_wrm
           available_points = tt.actual_and_placeholder_exercise_count
-          progress = tt.completed_on_time_steps_count.to_f / tt.steps_count
+          progress = pre_wrm_progress tt
           published_points = tt.correct_on_time_exercise_steps_count
-          published_score = published_points.to_f / available_points
+          published_score = pre_wrm_score tt
         else
           available_points = tt.available_points
           progress = tt.completion

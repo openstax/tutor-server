@@ -190,8 +190,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
       return unless can_be_auto_graded?
 
       task = task_step.task
-      completion_weight = task.course&.pre_wrm_scores? ? 0.0 : task.completion_weight
-      available_points * (answer_id == correct_answer_id ? 1.0 : completion_weight)
+      available_points * (answer_id == correct_answer_id ? 1.0 : task.completion_weight)
     else
       past_due = task_step.task.past_due? if past_due.nil?
       past_due ? 0.0 : nil
@@ -213,8 +212,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
         if auto_grading_feedback_available.nil?
       return unless auto_grading_feedback_available
 
-      completion_weight = task.course&.pre_wrm_scores? ? 0.0 : task.completion_weight
-      available_points * (answer_id == correct_answer_id ? 1.0 : completion_weight)
+      available_points * (answer_id == correct_answer_id ? 1.0 : task.completion_weight)
     else
       past_due ? 0.0 : nil
     end
