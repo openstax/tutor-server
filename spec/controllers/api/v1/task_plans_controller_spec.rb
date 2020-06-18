@@ -9,13 +9,18 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
     @teacher = FactoryBot.create(:user_profile)
     student = FactoryBot.create(:user_profile)
 
-    @published_task_plan = FactoryBot.create(
+    @published_task_plan = FactoryBot.build(
       :tasked_task_plan,
       number_of_students: 0,
       owner: @course,
       assistant: get_assistant(course: @course, task_plan_type: 'reading'),
       published_at: Time.current
     )
+    @published_task_plan.tasking_plans.each do |tasking_plan|
+      tasking_plan.update_attribute :opens_at, Time.current - 2.days
+    end
+    @published_task_plan.save!
+    DistributeTasks.call task_plan: @published_task_plan
 
     @ecosystem = @published_task_plan.ecosystem
     @page = @ecosystem.pages.first
@@ -475,6 +480,84 @@ RSpec.describe Api::V1::TaskPlansController, type: :controller, api: true, versi
       end
       expect(new_preview_task).to be_persisted
       expect(@task_plan).not_to be_out_to_students
+    end
+
+    # This covers changing due dates, granting extensions and dropping questions
+    it 'automatically updates score caches for all tasks in the task_plan' do
+      @published_task_plan.grading_template.update_columns(
+        auto_grading_feedback_on: :due,
+        late_work_penalty: 1.0,
+        late_work_penalty_applied: :immediately
+      )
+
+      task = @published_task_plan.tasks.reject(&:preview?).first
+      expect(task).not_to be_past_due
+
+      Preview::WorkTask.call task: task, is_correct: true
+      expect(task.published_late_work_point_penalty).to eq 0.0
+      expect(task.points).to eq 8.0
+      expect(task.published_points).to be_nil
+      expect(task.score).to eq 1.0
+      expect(task.published_score).to be_nil
+      expect(task.provisional_score?).to eq false
+
+      valid_json_hash = Api::V1::TaskPlan::Representer.new(@published_task_plan).to_hash
+      valid_json_hash['tasking_plans'].each do |tp|
+        tp['due_at'] = DateTimeUtilities.to_api_s(Time.current - 1.day)
+      end
+
+      controller.sign_in @teacher
+      api_put :update, nil, params: { course_id: @course.id, id: @published_task_plan.id },
+                            body: valid_json_hash.to_json
+      expect(response).to be_successful
+
+      expect(task.reload).to be_past_due
+      expect(task.available_points).to eq 8.0
+      expect(task.published_late_work_point_penalty).to eq 8.0
+      expect(task.points).to eq 0.0
+      expect(task.published_points).to eq 0.0
+      expect(task.score).to eq 0.0
+      expect(task.published_score).to eq 0.0
+      expect(task.provisional_score?).to eq false
+
+      valid_json_hash['dropped_questions'] = [
+        {
+          question_id: task.exercise_steps.first.tasked.question_id.to_s,
+          drop_method: 'zeroed'
+        }.stringify_keys
+      ]
+      api_put :update, nil, params: { course_id: @course.id, id: @published_task_plan.id },
+                            body: valid_json_hash.to_json
+      expect(response).to be_successful
+
+      expect(task.reload).to be_past_due
+      expect(task.available_points).to eq 7.0
+      expect(task.published_late_work_point_penalty).to eq 7.0
+      expect(task.points).to eq 0.0
+      expect(task.published_points).to eq 0.0
+      expect(task.score).to eq 0.0
+      expect(task.published_score).to eq 0.0
+      expect(task.provisional_score?).to eq false
+
+      valid_json_hash['extensions'] = [
+        {
+          role_id: task.taskings.first.entity_role_id.to_s,
+          due_at: DateTimeUtilities.to_api_s(Time.current + 1.day),
+          closes_at: DateTimeUtilities.to_api_s(Time.current + 2.days)
+        }.stringify_keys
+      ]
+      api_put :update, nil, params: { course_id: @course.id, id: @published_task_plan.id },
+                            body: valid_json_hash.to_json
+      expect(response).to be_successful
+
+      expect(task.reload).not_to be_past_due
+      expect(task.available_points).to eq 7.0
+      expect(task.published_late_work_point_penalty).to eq 0.0
+      expect(task.points).to eq 7.0
+      expect(task.published_points).to be_nil
+      expect(task.score).to eq 1.0
+      expect(task.published_score).to be_nil
+      expect(task.provisional_score?).to eq false
     end
 
     it 'does not allow the teacher to delete all the tasking_plans' do

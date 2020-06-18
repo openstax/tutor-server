@@ -108,24 +108,22 @@ class DistributeTasks
       Tasks::Models::Task.import new_tasks, recursive: true, validate: false
     end
 
-    changed_tasks = updated_tasks + new_tasks
-
-    unless changed_tasks.empty?
+    # We must update cached attributes for all tasks due to
+    # dropped questions, extensions and changing the grading template
+    all_tasks = existing_tasks + new_tasks
+    unless all_tasks.empty?
       queue = task_plan.is_preview ? :preview : :dashboard
       Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
-        task_ids: changed_tasks.map(&:id), queue: queue.to_s
+        task_ids: all_tasks.map(&:id), update_cached_attributes: true, queue: queue.to_s
       )
 
+      changed_tasks = updated_tasks + new_tasks
       OpenStax::Biglearn::Api.create_update_assignments(
         changed_tasks.map { |task| { course: task_plan.owner, task: task } }
-      )
+      ) unless changed_tasks.empty?
     end
 
     outputs.tasks = task_plan.tasks.reset
-
-    # Return without updating timestamps if no tasks were updated and it's not the first publication
-    # Should help prevent ActiveRecord::TransactionIsolationConflicts
-    return if changed_tasks.empty? && (preview || task_plan.is_published?)
 
     if preview
       task_plan.touch if task_plan.persisted?
