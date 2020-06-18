@@ -339,7 +339,7 @@ class Tasks::Models::Task < ApplicationRecord
     pts/available_points unless available_points == 0.0
   end
 
-  def is_preview
+  def preview_course?
     task_plan.present? && task_plan.is_preview
   end
 
@@ -403,7 +403,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def update_caches_later(update_cached_attributes: true)
-    queue = is_preview ? :preview : :dashboard
+    queue = preview_course? ? :preview : :dashboard
     Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
       task_ids: id, update_cached_attributes: update_cached_attributes, queue: queue.to_s
     )
