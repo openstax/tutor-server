@@ -489,6 +489,12 @@ class Tasks::Models::Task < ApplicationRecord
     end
   end
 
+  def feedback_available?(past_due: nil, current_time: Time.current, current_time_ntz: nil)
+    auto_grading_feedback_available?(
+      past_due: nil, current_time: Time.current, current_time_ntz: nil
+    ) || manual_grading_feedback_available?
+  end
+
   def provisional_score?(past_due: nil, use_cache: true)
     past_due = past_due? if past_due.nil?
 
