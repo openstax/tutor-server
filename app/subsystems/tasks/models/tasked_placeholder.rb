@@ -26,25 +26,23 @@ class Tasks::Models::TaskedPlaceholder < ApplicationRecord
   def available_points
     @available_points ||= begin
       task = task_step.task
-      if task.homework?
-        # Inefficient, which is why we preload the available_points in the TaskRepresenter
-        task_question_index = task.exercise_and_placeholder_steps.index(task_step)
-        task.available_points_per_question_index[task_question_index]
-      else
-        1.0
-      end
+
+      # Inefficient, which is why we preload the available_points in the TaskRepresenter
+      task_question_index = task.exercise_and_placeholder_steps.index(task_step)
+      task.available_points_per_question_index[task_question_index]
     end
   end
 
   # Placeholder steps behaves like ungraded incomplete exercise step
-  def points_without_lateness
-    task_step.task.past_due? ? 0.0 : nil
+  def points_without_lateness(past_due: nil)
+    past_due = task_step.task.past_due? if past_due.nil?
+    past_due ? 0.0 : nil
   end
   alias_method :published_points_without_lateness, :points_without_lateness
   alias_method :points, :points_without_lateness
   alias_method :published_points, :points_without_lateness
 
-  def late_work_point_penalty
+  def late_work_point_penalty(past_due: nil)
     0.0
   end
   alias_method :published_late_work_point_penalty, :late_work_point_penalty

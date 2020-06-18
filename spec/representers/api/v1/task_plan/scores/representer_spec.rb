@@ -101,7 +101,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 is_late: false,
                 available_points: 8.0,
                 total_points: 1.0,
-                total_fraction: 1.0,
+                total_fraction: 0.125,
                 late_work_point_penalty: 0.0,
                 questions: [
                   {

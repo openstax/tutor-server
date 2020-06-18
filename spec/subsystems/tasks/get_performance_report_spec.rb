@@ -504,9 +504,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     context "auto_grading_feedback_on == 'publish'" do
       it 'returns the proper numbers' do
         tasks = Tasks::Models::Task.where(title: 'Homework task plan')
-        tasks.each do |task|
-          task.task_plan.grading_template.update_column :auto_grading_feedback_on, :publish
-        end
+        grading_templates = tasks.map(&:task_plan).uniq.map(&:grading_template).uniq
+        grading_templates.each { |gt| gt.update_column :auto_grading_feedback_on, :publish }
+        tasks.each { |task| task.update_caches_now update_cached_attributes: true }
 
         # A single past-due unpublished task makes the homework score and the course average 0.0
         expect(first_period_report.overall_homework_score).to eq 0.0
@@ -595,7 +595,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           @student_2.roles.first.student.student_identifier
         ]
         expect(first_period_students.map(&:homework_score)).to match_array [
-          0.0, 0.0
+          0.0, nil
         ]
         expect(first_period_students.map(&:homework_progress)).to match_array [
           1.0, be_within(1e-6).of(4/7.0)
@@ -607,7 +607,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           nil, nil
         ]
         expect(first_period_students.map(&:course_average)).to match_array [
-          0.0, 0.0
+          0.0, nil
         ]
 
         second_period_students = second_period_report.students
@@ -627,11 +627,11 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           @student_3.roles.first.student.student_identifier,
           @student_4.roles.first.student.student_identifier
         ]
-        expect(second_period_students.map(&:homework_score)).to match_array [ 0.0, 0.0 ]
+        expect(second_period_students.map(&:homework_score)).to match_array [ 0.0, nil ]
         expect(second_period_students.map(&:homework_progress)).to match_array [ 1.0, 0.0 ]
         expect(second_period_students.map(&:reading_score)).to match_array [ nil, nil ]
         expect(second_period_students.map(&:reading_progress)).to match_array [ nil, nil ]
-        expect(second_period_students.map(&:course_average)).to match_array [ 0.0, 0.0 ]
+        expect(second_period_students.map(&:course_average)).to match_array [ 0.0, nil ]
 
         (first_period_students + second_period_students).each do |student|
           expect(student.is_dropped).to eq false
@@ -667,7 +667,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    it 'works after a student has moved period' do
+    it 'works after a student has moved to a different period' do
       MoveStudent.call(period: second_period, student: @student_1.roles.first.student)
 
       # No need to retest the entire response, just spot check some things that

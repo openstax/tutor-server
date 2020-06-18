@@ -12,7 +12,12 @@ class Tasks::Models::Task < ApplicationRecord
     :placeholder_steps_count,
     :placeholder_exercise_steps_count,
     :gradable_step_count,
-    :ungraded_step_count
+    :ungraded_step_count,
+    :available_points,
+    :published_points_before_due,
+    :published_points_after_due,
+    :is_provisional_score_before_due,
+    :is_provisional_score_after_due
   ]
 
   acts_as_paranoid column: :hidden_at, without_default_scope: true
@@ -219,51 +224,64 @@ class Tasks::Models::Task < ApplicationRecord
   def available_points_without_dropping
     available_points_without_dropping_per_question_index.values_at(
       *actual_and_placeholder_exercise_count.times.to_a
-    ).sum
+    ).sum 0.0
   end
 
-  def available_points
+  def available_points(use_cache: true)
+    if use_cache
+      cache = super()
+      return cache unless cache.nil?
+    end
+
     available_points_per_question_index.values_at(
       *actual_and_placeholder_exercise_count.times.to_a
     ).sum 0.0
   end
 
   def points_per_question_index_without_lateness
-    @points_per_question_index_without_lateness ||=
-      exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
+    @points_per_question_index_without_lateness ||= exercise_and_placeholder_steps
+                                                      .each_with_index
+                                                      .map do |task_step, index|
       tasked = task_step.tasked
       tasked.available_points = available_points_per_question_index[index]
       tasked.points_without_lateness
     end
   end
 
-  def published_points_per_question_index_without_lateness
-    @published_points_per_question_index_without_lateness ||=
-      exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
+  def published_points_per_question_index_without_lateness(past_due: nil)
+    past_due = past_due? if past_due.nil?
+
+    exercise_and_placeholder_steps.each_with_index.map do |task_step, index|
       tasked = task_step.tasked
       tasked.available_points = available_points_per_question_index[index]
-      tasked.published_points_without_lateness
+      tasked.published_points_without_lateness(past_due: past_due)
     end
   end
 
   def points_without_lateness
-    return if points_per_question_index_without_lateness.all?(&:nil?)
+    pts = points_per_question_index_without_lateness
+    return if pts.all?(&:nil?)
 
-    points_per_question_index_without_lateness.compact.sum(0.0)
+    pts.compact.sum 0.0
   end
 
-  def published_points_without_lateness(current_time: Time.current)
-    return if published_points_per_question_index_without_lateness.all?(&:nil?)
+  def published_points_without_lateness(past_due: nil)
+    pts = published_points_per_question_index_without_lateness(past_due: past_due)
+    return if pts.all?(&:nil?)
 
-    published_points_per_question_index_without_lateness.compact.sum(0.0)
+    pts.compact.sum 0.0
   end
 
   def late_work_point_penalty
     exercise_and_placeholder_steps.map(&:tasked).sum(0.0, &:late_work_point_penalty)
   end
 
-  def published_late_work_point_penalty
-    exercise_and_placeholder_steps.map(&:tasked).sum(0.0, &:published_late_work_point_penalty)
+  def published_late_work_point_penalty(past_due: nil)
+    past_due = past_due? if past_due.nil?
+
+    exercise_and_placeholder_steps.map(&:tasked).sum(0.0) do |tasked_exercise|
+      tasked_exercise.published_late_work_point_penalty(past_due: past_due)
+    end
   end
 
   def points
@@ -271,55 +289,54 @@ class Tasks::Models::Task < ApplicationRecord
     pts - late_work_point_penalty unless pts.nil?
   end
 
-  def published_points
-    pts = published_points_without_lateness
-    pts - published_late_work_point_penalty unless pts.nil?
-  end
+  def published_points(past_due: nil, use_cache: true)
+    past_due = past_due? if past_due.nil?
 
-  def available_points_worked(current_time: Time.current)
-    if past_due?(current_time: current_time)
-      available_points
-    else
-      exercise_and_placeholder_steps.each_with_index.sum do |task_step, index|
-        task_step.exercise? && task_step.completed? ?
-          available_points_per_question_index[index] : 0.0
+    if use_cache
+      if past_due
+        return if published_points_after_due&.nan?
+        return published_points_after_due \
+          unless published_points_after_due.nil?
+      else
+        return if published_points_before_due&.nan?
+        return published_points_before_due \
+          unless published_points_before_due.nil?
       end
     end
+
+    pts = published_points_without_lateness(past_due: past_due)
+    pts - published_late_work_point_penalty(past_due: past_due) unless pts.nil?
   end
 
   def score_without_lateness(current_time: Time.current)
     pts = points_without_lateness
     return if pts.nil?
 
-    available_points_worked = self.available_points_worked current_time: current_time
-    pts/available_points_worked unless available_points_worked == 0.0
+    pts/available_points unless available_points == 0.0
   end
 
   def score(current_time: Time.current)
     pts = points
     return if pts.nil?
 
-    available_points_worked = self.available_points_worked current_time: current_time
-    pts/available_points_worked unless available_points_worked == 0.0
+    pts/available_points unless available_points == 0.0
   end
 
   def published_score_without_lateness(current_time: Time.current)
     pts = published_points_without_lateness
     return if pts.nil?
 
-    available_points_worked = self.available_points_worked current_time: current_time
-    pts/available_points_worked unless available_points_worked == 0.0
+    pts/available_points unless available_points == 0.0
   end
 
   def published_score(current_time: Time.current)
     pts = published_points
     return if pts.nil?
 
-    available_points_worked = self.available_points_worked current_time: current_time
-    pts/available_points_worked unless available_points_worked == 0.0
+    pts/available_points unless available_points == 0.0
   end
 
-  def is_preview
+  def preview_course?
     task_plan.present? && task_plan.is_preview
   end
 
@@ -354,6 +371,13 @@ class Tasks::Models::Task < ApplicationRecord
     self.student_history_at ||= current_time if completed_core_steps_count == core_steps_count
     self.gradable_step_count = gradable_steps.count
     self.ungraded_step_count = gradable_steps.reject(&:was_manually_graded?).count
+    self.available_points = available_points(use_cache: false)
+    self.published_points_before_due = published_points(past_due: false, use_cache: false) ||
+                                       Float::NAN
+    self.published_points_after_due = published_points(past_due: true, use_cache: false) ||
+                                      Float::NAN
+    self.is_provisional_score_before_due = provisional_score?(past_due: false, use_cache: false)
+    self.is_provisional_score_after_due = provisional_score?(past_due: true, use_cache: false)
 
     late_after = due_at
     on_time_steps = late_after.nil? ?
@@ -376,7 +400,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def update_caches_later(update_cached_attributes: true)
-    queue = is_preview ? :preview : :dashboard
+    queue = preview_course? ? :preview : :dashboard
     Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
       task_ids: id, update_cached_attributes: update_cached_attributes, queue: queue.to_s
     )
@@ -400,29 +424,37 @@ class Tasks::Models::Task < ApplicationRecord
     opens_at.nil? || current_time > opens_at
   end
 
-  def past_due?(current_time: Time.current)
-    !due_at.nil? && current_time > due_at
+  def past_due?(current_time: Time.current, current_time_ntz: nil)
+    if current_time_ntz.nil?
+      !due_at.nil? && current_time >= due_at
+    else
+      !due_at_ntz.nil? && current_time_ntz >= due_at_ntz
+    end
   end
 
   def past_close?(current_time: Time.current)
     !closes_at.nil? && current_time > closes_at
   end
 
-  def auto_grading_feedback_available?(current_time: Time.current, current_time_ntz: nil)
+  def auto_grading_feedback_available?(
+    past_due: nil, current_time: Time.current, current_time_ntz: nil
+  )
     case auto_grading_feedback_on
     when 'answer'
       true
     when 'due'
-      if current_time_ntz.nil?
-        !due_at.nil? && current_time >= due_at
-      else
-        !due_at_ntz.nil? && current_time_ntz >= due_at_ntz
-      end
+      past_due.nil? ? past_due?(
+        current_time: current_time, current_time_ntz: current_time_ntz
+      ) : past_due
     when 'publish'
       !grades_last_published_at.nil?
     else
       false
     end
+  end
+
+  def auto_graded_steps
+    exercise_steps(preload_taskeds: true).select { |step| step.tasked.can_be_auto_graded? }
   end
 
   def manually_graded_steps
@@ -457,12 +489,38 @@ class Tasks::Models::Task < ApplicationRecord
     end
   end
 
-  def provisional_score?(current_time: Time.current, current_time_ntz: nil)
-    (
-      manual_grading_feedback_available? || auto_grading_feedback_available?(
-        current_time: current_time, current_time_ntz: current_time_ntz
-      )
-    ) && !manual_grading_complete?
+  def provisional_score?(past_due: nil, use_cache: true)
+    past_due = past_due? if past_due.nil?
+
+    if use_cache
+      if past_due
+        return is_provisional_score_after_due \
+          unless is_provisional_score_after_due.nil?
+      else
+        return is_provisional_score_before_due \
+          unless is_provisional_score_before_due.nil?
+      end
+    end
+
+    # We either display the full auto grade or ---, so no provisional scores icon if no WRQ
+    return false if manually_graded_steps.size == 0
+
+    manual_grading_feedback_available = manual_grading_feedback_available?
+    manual_grading_complete = manual_grading_complete?
+    # auto_grading_feedback_available doesn't matter if we don't have any MCQ
+    return manual_grading_feedback_available && !manual_grading_complete \
+      if auto_graded_steps.size == 0
+
+    auto_grading_feedback_available = auto_grading_feedback_available?(past_due: past_due)
+
+    # This really is provisional (the score is ---) but we don't want to display the icon here
+    return false if !auto_grading_feedback_available && !manual_grading_feedback_available
+
+    # At this point we know a score is being displayed and the assignment has both MCQs and WRQs,
+    # so we check if any feedback is unavailable or if the manual grading has not been completed
+    !auto_grading_feedback_available ||
+    !manual_grading_feedback_available ||
+    !manual_grading_complete
   end
 
   def withdrawn?

@@ -40,8 +40,9 @@ class FilterExcludedExercises
       # Get tasks are not yet due or do not yet have feedback
       exercise_numbers_by_task_id.values_at(
         *tasks.filter do |task|
-          (!task.due_at.nil? && !task.past_due?(current_time: current_time)) ||
-          !task.auto_grading_feedback_available?(current_time: current_time)
+          past_due = task.past_due?(current_time: current_time)
+          (!task.due_at.nil? && !past_due) ||
+          !task.auto_grading_feedback_available?(past_due: past_due)
         end.map(&:id)
       ).flatten.uniq
     end

@@ -785,8 +785,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.completion).to eq 1/3.0
       expect(task.points_without_lateness).to eq 1.0
       expect(task.points).to eq 1.0
-      expect(task.score_without_lateness).to eq 1.0
-      expect(task.score).to eq 1.0
+      expect(task.score_without_lateness).to eq 1/3.0
+      expect(task.score).to eq 1/3.0
     end
 
     Timecop.freeze(due_at + 1.hour) do
@@ -814,8 +814,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.completion).to eq 2/3.0
       expect(task.points_without_lateness).to eq 2.0
       expect(task.points).to eq 2.0
-      expect(task.score_without_lateness).to eq 1.0
-      expect(task.score).to eq 1.0
+      expect(task.score_without_lateness).to eq 2/3.0
+      expect(task.score).to eq 2/3.0
     end
 
     Timecop.freeze(due_at + 25.hours) do
@@ -896,6 +896,34 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.score_without_lateness).to eq 1.0
       expect(task.score).to be_within(1e-6).of(0.7)
     end
+  end
+
+  it 'caches scores before and after due date' do
+    task.grading_template.update_column :auto_grading_feedback_on, :due
+    task.due_at = Time.current + 1.hour
+    task.closes_at = Time.current + 2.hours
+    task.save!
+
+    expect(task.available_points).to eq 0.0
+    expect(task.published_points_before_due).to be_nan
+    expect(task.published_points_after_due).to be_nan
+    expect(task.published_points).to be_nil
+    expect(task.is_provisional_score_before_due).to eq false
+    expect(task.is_provisional_score_after_due).to eq false
+    expect(task.provisional_score?).to eq false
+
+    task_step = FactoryBot.build(:tasks_tasked_exercise, skip_task: true).task_step
+    task_step.task = task
+    task_step.save!
+    Preview::AnswerExercise.call task_step: task_step, is_correct: true
+
+    expect(task.reload.available_points).to eq 1.0
+    expect(task.published_points_before_due).to be_nan
+    expect(task.published_points_after_due).to eq 1.0
+    expect(task.published_points).to be_nil
+    expect(task.is_provisional_score_before_due).to eq false
+    expect(task.is_provisional_score_after_due).to eq false
+    expect(task.provisional_score?).to eq false
   end
 
   it 'uses teacher-chosen points for homework assignments' do

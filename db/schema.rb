@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_05_151734) do
+ActiveRecord::Schema.define(version: 2020_06_17_142820) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -913,7 +913,7 @@ ActiveRecord::Schema.define(version: 2020_06_05_151734) do
     t.float "grader_points"
     t.text "grader_comments"
     t.datetime "last_graded_at"
-    t.float "published_points"
+    t.float "published_grader_points"
     t.text "published_comments"
     t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
@@ -1032,6 +1032,11 @@ ActiveRecord::Schema.define(version: 2020_06_05_151734) do
     t.bigint "course_profile_course_id", null: false
     t.integer "ungraded_step_count", default: 0, null: false
     t.integer "gradable_step_count", default: 0, null: false
+    t.float "available_points", default: 0.0, null: false
+    t.float "published_points_before_due", default: ::Float::NAN, null: false
+    t.float "published_points_after_due", default: ::Float::NAN, null: false
+    t.boolean "is_provisional_score_before_due", default: false, null: false
+    t.boolean "is_provisional_score_after_due", default: false, null: false
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["course_profile_course_id"], name: "index_tasks_tasks_on_course_profile_course_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"
