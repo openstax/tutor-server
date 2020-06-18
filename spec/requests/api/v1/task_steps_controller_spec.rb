@@ -214,6 +214,38 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(tasked.free_response).to eq 'Ipsum Lorem'
     end
 
+    it 'calls MarkTaskStepCompleted when setting only the free_response' do
+      completed_task_step = tasked.task_step
+      expect(MarkTaskStepCompleted).to(
+        receive(:call).and_wrap_original do |method, task_step:, lock_task:|
+          expect(task_step).to eq completed_task_step
+          expect(lock_task).to eq true
+
+          method.call task_step: task_step, lock_task: lock_task
+        end
+      )
+
+      api_put :update, @user_1_token,
+              params: id_parameters,
+              body: { free_response: 'Ipsum Lorem' }
+    end
+
+    it 'calls MarkTaskStepCompleted when setting the answer_id' do
+      completed_task_step = tasked.task_step
+      expect(MarkTaskStepCompleted).to(
+        receive(:call).and_wrap_original do |method, task_step:, lock_task:|
+          expect(task_step).to eq completed_task_step
+          expect(lock_task).to eq true
+
+          method.call task_step: task_step, lock_task: lock_task
+        end
+      )
+
+      api_put :update, @user_1_token,
+              params: id_parameters,
+              body: { free_response: 'Ipsum Lorem', answer_id: tasked.answer_ids.last }
+    end
+
     context 'research' do
       let!(:study)  { FactoryBot.create :research_study }
       let!(:cohort) { FactoryBot.create :research_cohort, name: 'control', study: study }
@@ -329,7 +361,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       context "manual_grading_feedback_on == 'grade'" do
         before { task_plan.grading_template.update_column :manual_grading_feedback_on, :grade }
 
-        it 'updates the grader fields, published fields and gradable step counts' do
+        it 'updates the grader fields, published fields, gradable step counts and scores' do
           expect do
             api_put grade_api_step_url(task_step.id), @teacher_user_token,
                     params: { grader_points: 42.0, grader_comments: 'Test' }.to_json
@@ -338,9 +370,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
              .and change     { tasked.last_graded_at }.from(nil)
              .and change     { tasked.published_grader_points }.from(nil).to(42.0)
              .and change     { tasked.published_points_without_lateness }.from(nil).to(42.0)
+             .and change     { tasked.published_points }.from(nil)
              .and change     { tasked.published_comments }.from(nil).to('Test')
              .and not_change { task.reload.gradable_step_count }
              .and change     { task.ungraded_step_count }.by(-1)
+             .and change     { task.published_points }.from(nil)
              .and not_change { tasking_plan.reload.gradable_step_count }
              .and change     { tasking_plan.ungraded_step_count }.by(-1)
              .and not_change { task_plan.reload.gradable_step_count }
@@ -363,9 +397,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
              .and change     { tasked.last_graded_at }.from(nil)
              .and not_change { tasked.published_grader_points }
              .and not_change { tasked.published_points_without_lateness }
+             .and not_change { tasked.published_points }.from(nil)
              .and not_change { tasked.published_comments }
              .and not_change { task.reload.gradable_step_count }
              .and change     { task.ungraded_step_count }.by(-1)
+             .and not_change { task.published_points }
              .and not_change { tasking_plan.reload.gradable_step_count }
              .and change     { tasking_plan.ungraded_step_count }.by(-1)
              .and not_change { task_plan.reload.gradable_step_count }
