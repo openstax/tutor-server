@@ -118,10 +118,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
       it 'updating due dates causes student scores to change' do
         homework_plan.grading_template.update_column :late_work_penalty, 1.0
-        tasking_plan = homework_plan.tasking_plans.first
-        tasking_plan.opens_at = tasking_plan.time_zone.to_tz.now - 2.hours
-        tasking_plan.due_at = tasking_plan.time_zone.to_tz.now - 1.hour
-        tasking_plan.save validate: false
+        homework_tasking_plan.opens_at = homework_tasking_plan.time_zone.to_tz.now - 2.hours
+        homework_tasking_plan.due_at = homework_tasking_plan.time_zone.to_tz.now - 1.hour
+        homework_tasking_plan.save validate: false
         result = described_class.call(task_plan: homework_plan)
 
         expect(result.errors).to be_empty
@@ -149,7 +148,9 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(task.score).to eq 0.0
         end
 
-        tasking_plan.update_attribute :due_at, tasking_plan.time_zone.to_tz.now + 1.hour
+        homework_tasking_plan.update_attribute(
+          :due_at, homework_tasking_plan.time_zone.to_tz.now + 1.hour
+        )
         result = described_class.call(task_plan: homework_plan)
 
         expect(result.errors).to be_empty
@@ -272,14 +273,16 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
           end
 
-          tasking_plan.update_attribute :due_at, tasking_plan.time_zone.to_tz.now + 1.hour
-          result = described_class.call(task_plan: task_plan)
+          reading_tasking_plan.update_attribute(
+            :due_at, reading_tasking_plan.time_zone.to_tz.now + 1.hour
+          )
+          result = described_class.call(task_plan: reading_plan)
 
           expect(result.errors).to be_empty
-          expect(task_plan.reload.tasks.size).to eq 3
-          expect(task_plan).to be_out_to_students
-          task_plan.tasks.each do |task|
-            expect(task.due_at).to be_within(1e-6).of(tasking_plan.due_at)
+          expect(reading_plan.reload.tasks.size).to eq 3
+          expect(reading_plan).to be_out_to_students
+          reading_plan.tasks.each do |task|
+            expect(task.due_at).to be_within(1e-6).of(reading_tasking_plan.due_at)
           end
         end
 
