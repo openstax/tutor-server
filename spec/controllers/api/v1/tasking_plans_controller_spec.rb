@@ -131,7 +131,9 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
         expect do
           api_put :grade, nil, params: { id: @tasking_plan.id }, body: valid_json_hash.to_json
         end.to  change     { @student_task.reload.grades_last_published_at }.from(nil)
+           .and change     { @student_task.published_points }.from(nil).to(2.0)
            .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
+           .and not_change { @teacher_student_task.published_points }.from(nil)
         expect(response).to have_http_status(:success)
         expect(response.body).to(
           eq(Api::V1::TaskPlan::TaskingPlanRepresenter.new(@tasking_plan.reload).to_json)

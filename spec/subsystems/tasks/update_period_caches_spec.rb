@@ -347,6 +347,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
           student = first_period.students.first
           CourseMembership::InactivateStudent.call(student: student)
 
+          expect(ReassignPublishedPeriodTaskPlans).to receive(:[])
+
           expect(configured_job).to receive(:perform_later) do |period_ids:, force:|
             expect(period_ids).to eq first_period.id
             expect(force).to eq true
@@ -427,6 +429,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         it 'is called with force: true when a student is reactivated' do
           student = first_period.students.first
           CourseMembership::InactivateStudent.call(student: student)
+
+          expect(ReassignPublishedPeriodTaskPlans).to receive(:[])
 
           expect(configured_job).to receive(:perform_later) do |period_ids:, force:|
             expect(period_ids).to eq first_period.id

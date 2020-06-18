@@ -907,8 +907,10 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     expect(task.available_points).to eq 0.0
     expect(task.published_points_before_due).to be_nan
     expect(task.published_points_after_due).to be_nan
+    expect(task.published_points).to be_nil
     expect(task.is_provisional_score_before_due).to eq false
     expect(task.is_provisional_score_after_due).to eq false
+    expect(task.provisional_score?).to eq false
 
     task_step = FactoryBot.build(:tasks_tasked_exercise, skip_task: true).task_step
     task_step.task = task
@@ -918,8 +920,10 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     expect(task.reload.available_points).to eq 1.0
     expect(task.published_points_before_due).to be_nan
     expect(task.published_points_after_due).to eq 1.0
+    expect(task.published_points).to be_nil
     expect(task.is_provisional_score_before_due).to eq false
     expect(task.is_provisional_score_after_due).to eq false
+    expect(task.provisional_score?).to eq false
   end
 
   it 'uses teacher-chosen points for homework assignments' do

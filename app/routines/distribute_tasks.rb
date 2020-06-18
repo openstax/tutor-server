@@ -1,5 +1,5 @@
 class DistributeTasks
-  lev_routine use_jobba: true
+  lev_routine transaction: :read_committed, use_jobba: true
 
   uses_routine IndividualizeTaskingPlans, as: :individualize_tasking_plans
 

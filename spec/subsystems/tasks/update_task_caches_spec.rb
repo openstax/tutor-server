@@ -315,10 +315,13 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       it 'is called when a task_plan is published' do
         @task_plan.tasks.delete_all
 
-        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          expect(task_ids).to match_array(@task_plan.tasks.reset.pluck(:id))
-          expect(queue).to eq queue.to_s
-        end
+        expect(configured_job).to(
+          receive(:perform_later) do |task_ids:, update_cached_attributes:, queue:|
+            expect(task_ids).to match_array(@task_plan.tasks.reset.pluck(:id))
+            expect(update_cached_attributes).to eq true
+            expect(queue).to eq queue.to_s
+          end
+        )
 
         DistributeTasks.call(task_plan: @task_plan)
       end
@@ -357,13 +360,15 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         ecosystem = course.ecosystem
         course.course_ecosystems.delete_all :delete_all
 
-        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          student_task_ids = @task_plan.tasks.filter do |task|
-            task.taskings.any? { |tasking| tasking.role.student.present? }
-          end.map(&:id)
-          expect(task_ids).to match_array(student_task_ids)
-          expect(queue).to eq queue.to_s
-        end
+        expect(configured_job).to(
+          receive(:perform_later) do |task_ids:, queue:|
+            student_task_ids = @task_plan.tasks.filter do |task|
+              task.taskings.any? { |tasking| tasking.role.student.present? }
+            end.map(&:id)
+            expect(task_ids).to match_array(student_task_ids)
+            expect(queue).to eq queue.to_s
+          end
+        )
 
         AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       end
@@ -372,11 +377,14 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         student_user = FactoryBot.create :user_profile
         period = course.periods.first
         existing_task_ids = tasks.map(&:id)
-        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          expect(task_ids.size).to eq 1
-          expect(queue).to eq queue.to_s
-          expect(existing_task_ids).not_to include task_ids.first
-        end
+        expect(configured_job).to(
+          receive(:perform_later) do |task_ids:, update_cached_attributes:, queue:|
+            expect(task_ids.size).to eq 11
+            expect(update_cached_attributes).to eq true
+            expect(queue).to eq queue.to_s
+            expect((task_ids - existing_task_ids).size).to eq 1
+          end
+        )
 
         AddUserAsPeriodStudent.call(user: student_user, period: period)
       end
@@ -486,10 +494,13 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
       it 'is called when a task_plan is published' do
         @task_plan.tasks.delete_all
 
-        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          expect(task_ids).to match_array(@task_plan.tasks.reset.pluck(:id))
-          expect(queue).to eq queue.to_s
-        end
+        expect(configured_job).to(
+          receive(:perform_later) do |task_ids:, update_cached_attributes:, queue:|
+            expect(task_ids).to match_array(@task_plan.tasks.reset.pluck(:id))
+            expect(update_cached_attributes).to eq true
+            expect(queue).to eq queue.to_s
+          end
+        )
 
         DistributeTasks.call(task_plan: @task_plan)
       end
@@ -532,13 +543,15 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         ecosystem = course.ecosystem
         course.course_ecosystems.delete_all :delete_all
 
-        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          student_task_ids = @task_plan.tasks.filter do |task|
-            task.taskings.any? { |tasking| tasking.role.student.present? }
-          end.map(&:id)
-          expect(task_ids).to match_array(student_task_ids)
-          expect(queue).to eq queue.to_s
-        end
+        expect(configured_job).to(
+          receive(:perform_later) do |task_ids:, queue:|
+            student_task_ids = @task_plan.tasks.filter do |task|
+              task.taskings.any? { |tasking| tasking.role.student.present? }
+            end.map(&:id)
+            expect(task_ids).to match_array(student_task_ids)
+            expect(queue).to eq queue.to_s
+          end
+        )
 
         AddEcosystemToCourse.call(course: course, ecosystem: ecosystem)
       end
@@ -547,11 +560,14 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         student_user = FactoryBot.create :user_profile
         period = course.periods.first
         existing_task_ids = tasks.map(&:id)
-        expect(configured_job).to receive(:perform_later) do |task_ids:, queue:|
-          expect(task_ids.size).to eq 1
-          expect(queue).to eq queue.to_s
-          expect(existing_task_ids).not_to include task_ids.first
-        end
+        expect(configured_job).to(
+          receive(:perform_later) do |task_ids:, update_cached_attributes:, queue:|
+            expect(task_ids.size).to eq 11
+            expect(update_cached_attributes).to eq true
+            expect(queue).to eq queue.to_s
+            expect((task_ids - existing_task_ids).size).to eq 1
+          end
+        )
 
         AddUserAsPeriodStudent.call(user: student_user, period: period)
       end
