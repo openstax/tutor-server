@@ -227,7 +227,7 @@ class Tasks::Models::Task < ApplicationRecord
   def available_points_without_dropping
     available_points_without_dropping_per_question_index.values_at(
       *actual_and_placeholder_exercise_count.times.to_a
-    ).sum
+    ).sum 0.0
   end
 
   def available_points(use_cache: true)
@@ -265,14 +265,14 @@ class Tasks::Models::Task < ApplicationRecord
     pts = points_per_question_index_without_lateness
     return if pts.all?(&:nil?)
 
-    pts.compact.sum(0.0)
+    pts.compact.sum 0.0
   end
 
   def published_points_without_lateness(past_due: nil)
     pts = published_points_per_question_index_without_lateness(past_due: past_due)
     return if pts.all?(&:nil?)
 
-    pts.compact.sum(0.0)
+    pts.compact.sum 0.0
   end
 
   def late_work_point_penalty
