@@ -672,4 +672,8 @@ class Tasks::Models::Task < ApplicationRecord
     errors.add(:closes_at, 'must be on or after due_at')
     throw :abort
   end
+
+  def gradable_step_count
+      super.nil? ? 0 : super
+  end
 end
