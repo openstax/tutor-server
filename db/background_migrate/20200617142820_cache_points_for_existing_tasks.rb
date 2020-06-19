@@ -30,6 +30,7 @@ class CachePointsForExistingTasks < ActiveRecord::Migration[5.2]
           task.is_provisional_score_after_due = task.provisional_score?(
             past_due: true, use_cache: false
           )
+          task.gradable_step_count = 0
         end
 
         Tasks::Models::Task.import tasks, validate: false, on_duplicate_key_update: {
@@ -39,7 +40,8 @@ class CachePointsForExistingTasks < ActiveRecord::Migration[5.2]
             :published_points_before_due,
             :published_points_after_due,
             :is_provisional_score_before_due,
-            :is_provisional_score_after_due
+            :is_provisional_score_after_due,
+            :gradable_step_count
           ]
         }
 
@@ -60,9 +62,11 @@ class CachePointsForExistingTasks < ActiveRecord::Migration[5.2]
     change_column_null :tasks_tasks, :published_points_after_due, false
     change_column_null :tasks_tasks, :is_provisional_score_before_due, false
     change_column_null :tasks_tasks, :is_provisional_score_after_due, false
+    change_column_null :tasks_tasks, :gradable_steps_count, false
   end
 
   def down
+    change_column_null :tasks_tasks, :gradable_steps_count, true
     change_column_null :tasks_tasks, :is_provisional_score_after_due, true
     change_column_null :tasks_tasks, :is_provisional_score_before_due, true
     change_column_null :tasks_tasks, :published_points_after_due, true
