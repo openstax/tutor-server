@@ -62,11 +62,11 @@ class CachePointsForExistingTasks < ActiveRecord::Migration[5.2]
     change_column_null :tasks_tasks, :published_points_after_due, false
     change_column_null :tasks_tasks, :is_provisional_score_before_due, false
     change_column_null :tasks_tasks, :is_provisional_score_after_due, false
-    change_column_null :tasks_tasks, :gradable_steps_count, false
+    change_column_null :tasks_tasks, :gradable_step_count, false
   end
 
   def down
-    change_column_null :tasks_tasks, :gradable_steps_count, true
+    change_column_null :tasks_tasks, :gradable_step_count, true
     change_column_null :tasks_tasks, :is_provisional_score_after_due, true
     change_column_null :tasks_tasks, :is_provisional_score_before_due, true
     change_column_null :tasks_tasks, :published_points_after_due, true
