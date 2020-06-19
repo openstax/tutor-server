@@ -657,6 +657,10 @@ class Tasks::Models::Task < ApplicationRecord
     correct_exercise_steps_count
   end
 
+  def gradable_step_count
+      super.nil? ? 0 : super
+  end
+
   protected
 
   def due_at_on_or_after_opens_at
