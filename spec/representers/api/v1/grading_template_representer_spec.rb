@@ -200,9 +200,9 @@ RSpec.describe Api::V1::GradingTemplateRepresenter, type: :representer do
     end
   end
 
-  context 'has_task_plans' do
+  context 'has_open_task_plans' do
     it 'can be read' do
-      expect(representation['has_task_plans']).to eq false
+      expect(representation['has_open_task_plans']).to eq false
     end
 
     it 'cannot be written (attempts are silently ignored)' do
