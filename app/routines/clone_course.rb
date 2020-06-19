@@ -14,6 +14,11 @@ class CloneCourse
   def exec(course:, teacher_user:, copy_question_library:,
            name: nil, is_college: nil, term: nil, year: nil, num_sections: nil,
            time_zone: nil, estimated_student_count: nil)
+    grading_templates = course.pre_wrm_scores? ?
+      Tasks::Models::GradingTemplate.default :
+      course.grading_templates.without_deleted.map do |grading_template|
+        grading_template.dup.tap { |clone| clone.cloned_from = grading_template }
+      end
     attrs = {
       name: name || course.name,
       is_college: is_college.nil? ? course.is_college : is_college,
@@ -34,9 +39,7 @@ class CloneCourse
       is_preview: false,
       reading_weight: course.reading_weight,
       homework_weight: course.homework_weight,
-      grading_templates: course.grading_templates.map do |grading_template|
-        grading_template.dup.tap { |clone| clone.cloned_from = grading_template }
-      end,
+      grading_templates: grading_templates,
       past_due_unattempted_ungraded_wrq_are_zero: course.past_due_unattempted_ungraded_wrq_are_zero
     }
 
