@@ -119,7 +119,7 @@ class CourseProfile::Models::Course < ApplicationRecord
   end
 
   def pre_wrm_scores?
-    ended? DateTime.new(2020, 7)
+    !is_preview && ended?(DateTime.new(2020, 7))
   end
 
   protected
