@@ -163,7 +163,9 @@ class CalculateTaskPlanScores
         }
       end.compact.sort_by { |student| [ student[:last_name], student[:first_name] ] }
 
-      fractions_array = students_array.map { |student| student[:total_fraction] }.compact
+      fractions_array = students_array.reject do |student|
+        student[:is_dropped]
+      end.map { |student| student[:total_fraction] }.compact
       num_fractions = fractions_array.size
       total_fraction = fractions_array.sum(0.0)/num_fractions unless num_fractions == 0
 
