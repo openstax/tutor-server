@@ -120,8 +120,8 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
            getter: ->(*) { DateTimeUtilities.to_api_s(created_at) },
            schema_info: { required: true }
 
-  property :has_task_plans?,
-           as: :has_task_plans,
+  property :has_open_task_plans?,
+           as: :has_open_task_plans,
            readable: true,
            writeable: false,
            schema_info: {
