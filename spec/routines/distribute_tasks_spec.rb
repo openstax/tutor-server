@@ -118,8 +118,8 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
       it 'updating due dates causes student scores to change' do
         homework_plan.grading_template.update_column :late_work_penalty, 1.0
-        homework_tasking_plan.opens_at = homework_tasking_plan.time_zone.to_tz.now - 2.hours
-        homework_tasking_plan.due_at = homework_tasking_plan.time_zone.to_tz.now - 1.hour
+        homework_tasking_plan.opens_at = homework_tasking_plan.time_zone.now - 2.hours
+        homework_tasking_plan.due_at = homework_tasking_plan.time_zone.now - 1.hour
         homework_tasking_plan.save validate: false
         result = described_class.call(task_plan: homework_plan)
 
@@ -148,9 +148,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(task.score).to eq 0.0
         end
 
-        homework_tasking_plan.update_attribute(
-          :due_at, homework_tasking_plan.time_zone.to_tz.now + 1.hour
-        )
+        homework_tasking_plan.update_attribute :due_at, homework_tasking_plan.time_zone.now + 1.hour
         result = described_class.call(task_plan: homework_plan)
 
         expect(result.errors).to be_empty
@@ -273,9 +271,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
           end
 
-          reading_tasking_plan.update_attribute(
-            :due_at, reading_tasking_plan.time_zone.to_tz.now + 1.hour
-          )
+          reading_tasking_plan.update_attribute :due_at, reading_tasking_plan.time_zone.now + 1.hour
           result = described_class.call(task_plan: reading_plan)
 
           expect(result.errors).to be_empty

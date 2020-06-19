@@ -260,7 +260,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     grading_template.auto_grading_feedback_on = :due
     expect(task.auto_grading_feedback_available?).to eq false
 
-    task.due_at = task.time_zone.to_tz.now
+    task.due_at = task.time_zone.now
     expect(task.auto_grading_feedback_available?).to eq true
 
     grading_template.auto_grading_feedback_on = :publish
@@ -803,11 +803,11 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
 
       extension = Tasks::Models::Extension.new(
         entity_role_id: task.taskings.first.entity_role_id,
-        due_at: task.time_zone.to_tz.now + 1.minute,
-        closes_at: task.time_zone.to_tz.now + 1.minute
+        due_at: task.time_zone.now + 1.minute,
+        closes_at: task.time_zone.now + 1.minute
       )
       task.task_plan.extensions << extension
-      expect(task.extension).to eq extension
+      expect(task.reload.extension).to eq extension
 
       expect(task.correct_exercise_count).to eq 2
       expect(task.completed_exercise_count).to eq 2
@@ -851,9 +851,10 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.score_without_lateness).to eq 1.0
       expect(task.score).to eq 0.9
 
-      task.extension.due_at = task.time_zone.to_tz.now
-      task.extension.closes_at = task.time_zone.to_tz.now
+      task.extension.due_at = task.time_zone.now
+      task.extension.closes_at = task.time_zone.now
       task.extension.save!
+      task.reload
 
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3

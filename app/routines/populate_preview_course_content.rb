@@ -82,7 +82,7 @@ class PopulatePreviewCourseContent
     ends_at = course.ends_at
     closes_at = course.ends_at - 1.day
     preview_chapters.each_with_index do |chapter, index|
-      reading_opens_at = [time_zone.to_tz.now.monday - 20.days + index.weeks, starts_at].max
+      reading_opens_at = [time_zone.now.monday - 20.days + index.weeks, starts_at].max
       reading_due_at = [reading_opens_at + 7.days, ends_at].min
       homework_opens_at = [reading_opens_at + 3.days, starts_at].max
       homework_due_at = [homework_opens_at + 7.days, ends_at].min
