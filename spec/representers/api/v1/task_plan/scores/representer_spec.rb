@@ -167,6 +167,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 grades_need_publishing: false
               }
             ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
+            total_fraction: (0.125 + student_tasks.second.score)/2,
             gradable_step_count: 0,
             ungraded_step_count: 0,
             grades_need_publishing: false
@@ -320,6 +321,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 grades_need_publishing: false
               }
             ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
+            total_fraction: (0.125 * late_work_multiplier + student_tasks.second.score)/2,
             gradable_step_count: 0,
             ungraded_step_count: 0,
             grades_need_publishing: false
