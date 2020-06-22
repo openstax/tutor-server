@@ -473,6 +473,10 @@ class Tasks::Models::Task < ApplicationRecord
     !closes_at.nil? && current_time > closes_at
   end
 
+  def grades_manually_published?
+    !grades_last_published_at.nil?
+  end
+
   def auto_grading_feedback_available?(
     past_due: nil, current_time: Time.current, current_time_ntz: nil
   )
@@ -484,7 +488,7 @@ class Tasks::Models::Task < ApplicationRecord
         current_time: current_time, current_time_ntz: current_time_ntz
       ) : past_due
     when 'publish'
-      !grades_last_published_at.nil?
+      grades_manually_published?
     else
       false
     end
@@ -505,7 +509,7 @@ class Tasks::Models::Task < ApplicationRecord
         task_step.tasked.was_manually_graded?
       end
     when 'publish'
-      !grades_last_published_at.nil?
+      grades_manually_published?
     else
       false
     end
@@ -519,7 +523,7 @@ class Tasks::Models::Task < ApplicationRecord
       end
     when 'publish'
       manually_graded_steps.all? do |task_step|
-        !task_step.completed? || task_step.tasked.grade_published?
+        !task_step.completed? || task_step.tasked.grade_manually_published?
       end
     else
       false
