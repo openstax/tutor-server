@@ -807,7 +807,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         closes_at: task.time_zone.to_tz.now + 1.minute
       )
       task.task_plan.extensions << extension
-      expect(task.extension).to eq extension
+      expect(task.reload.extension).to eq extension
 
       expect(task.correct_exercise_count).to eq 2
       expect(task.completed_exercise_count).to eq 2
@@ -854,6 +854,7 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       task.extension.due_at = task.time_zone.to_tz.now
       task.extension.closes_at = task.time_zone.to_tz.now
       task.extension.save!
+      task.reload
 
       expect(task.correct_exercise_count).to eq 3
       expect(task.completed_exercise_count).to eq 3

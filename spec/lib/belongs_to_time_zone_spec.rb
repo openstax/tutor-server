@@ -75,30 +75,29 @@ RSpec.describe BelongsToTimeZone, type: :lib do
   end
 
   context 'time_zone updates' do
-    let(:task) { FactoryBot.build :tasks_task, time_zone: time_zone }
+    let(:tasking_plan) { FactoryBot.build :tasks_tasking_plan, time_zone: time_zone }
 
     it 'updates all associated times automagically' do
-      task_tz = time_zone.to_tz
-      task_time = task_tz.now
-      task.due_at = task_time
-      expect(task.due_at).to eq task_time
+      tasking_plan_tz = time_zone.to_tz
+      tasking_plan_time = tasking_plan_tz.now
+      tasking_plan.due_at = tasking_plan_time
+      expect(tasking_plan.due_at).to eq tasking_plan_time
 
       test_tz_names = [
         'UTC', 'Pacific Time (US & Canada)', 'Mountain Time (US & Canada)',
         'Central Time (US & Canada)', 'Eastern Time (US & Canada)'
       ]
       test_tz_names.each do |tz_name|
-        expect { task.time_zone.name = tz_name }.to change { task.due_at.zone }
+        expect { tasking_plan.time_zone.name = tz_name }.to change { tasking_plan.due_at.zone }
 
         # The zone changes but the numbers remain the same
-        expect(task.due_at.year).to eq task_time.year
-        expect(task.due_at.month).to eq task_time.month
-        expect(task.due_at.day).to eq task_time.day
-        expect(task.due_at.hour).to eq task_time.hour
-        expect(task.due_at.min).to eq task_time.min
-        expect(task.due_at.sec).to eq task_time.sec
+        expect(tasking_plan.due_at.year).to eq tasking_plan_time.year
+        expect(tasking_plan.due_at.month).to eq tasking_plan_time.month
+        expect(tasking_plan.due_at.day).to eq tasking_plan_time.day
+        expect(tasking_plan.due_at.hour).to eq tasking_plan_time.hour
+        expect(tasking_plan.due_at.min).to eq tasking_plan_time.min
+        expect(tasking_plan.due_at.sec).to eq tasking_plan_time.sec
       end
     end
   end
-
 end
