@@ -285,12 +285,12 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     !last_graded_at.nil?
   end
 
+  # NOTE: The following 3 methods are only for manually graded questions
   def needs_grading?
     completed? && !can_be_auto_graded? && !was_manually_graded?
   end
 
-  # NOTE: The following 2 methods do not take into account
-  #       automatic publication from the grading_template
+  # NOTE: The following 2 methods do not take into account automatic publication from the template
   def grade_published?
     was_manually_graded? &&
     grader_points == published_points &&
