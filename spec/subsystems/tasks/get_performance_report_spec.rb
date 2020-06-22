@@ -508,12 +508,11 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         grading_templates.each { |gt| gt.update_column :auto_grading_feedback_on, :publish }
         tasks.each { |task| task.update_caches_now update_cached_attributes: true }
 
-        # A single past-due unpublished task makes the homework score and the course average 0.0
-        expect(first_period_report.overall_homework_score).to eq 0.0
+        expect(first_period_report.overall_homework_score).to be_nil
         expect(first_period_report.overall_homework_progress).to be_within(1e-6).of(11/14.0)
         expect(first_period_report.overall_reading_score).to be_nil
         expect(first_period_report.overall_reading_progress).to be_nil
-        expect(first_period_report.overall_course_average).to eq 0.0
+        expect(first_period_report.overall_course_average).to be_nil
 
         expect(second_period_report.overall_homework_score).to eq 0.0
         expect(second_period_report.overall_homework_progress).to eq 0.5
@@ -553,7 +552,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(first_period_report.data_headings[2].plan_id).to be_a Integer
         expect(first_period_report.data_headings[2].type).to eq 'homework'
         expect(first_period_report.data_headings[2].due_at).to be_a Time
-        expect(first_period_report.data_headings[2].average_score).to eq 0.0
+        expect(first_period_report.data_headings[2].average_score).to be_nil
         expect(first_period_report.data_headings[2].average_progress).to be_within(1e-6).of(11/14.0)
 
         expect(second_period_report.data_headings[2].title).to eq 'Homework task plan'
@@ -595,7 +594,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           @student_2.roles.first.student.student_identifier
         ]
         expect(first_period_students.map(&:homework_score)).to match_array [
-          0.0, nil
+          nil, nil
         ]
         expect(first_period_students.map(&:homework_progress)).to match_array [
           1.0, be_within(1e-6).of(4/7.0)
@@ -607,7 +606,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           nil, nil
         ]
         expect(first_period_students.map(&:course_average)).to match_array [
-          0.0, nil
+          nil, nil
         ]
 
         second_period_students = second_period_report.students

@@ -200,7 +200,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   def published_points_without_lateness(past_due: nil)
     task = task_step.task
     past_due = task.past_due? if past_due.nil?
-    feedback_available = can_be_auto_graded? ?
+    feedback_available = can_be_auto_graded? && !was_manually_graded? ?
                            task.auto_grading_feedback_available?(past_due: past_due) :
                            task.manual_grading_feedback_available?
     return unless feedback_available
@@ -285,20 +285,15 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     !last_graded_at.nil?
   end
 
-  # NOTE: The following 3 methods are only for manually graded questions
   def needs_grading?
     completed? && !can_be_auto_graded? && !was_manually_graded?
   end
 
-  # NOTE: The following 2 methods do not take into account automatic publication from the template
-  def grade_published?
+  # NOTE: The following method does not take into account automatic publication from the template
+  def grade_manually_published?
     was_manually_graded? &&
     grader_points == published_points &&
     grader_comments == published_comments
-  end
-
-  def grade_needs_publishing?
-    was_manually_graded? && !grade_published?
   end
 
   def feedback_available?(current_time: Time.current)

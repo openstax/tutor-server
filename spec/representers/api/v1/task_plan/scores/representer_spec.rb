@@ -43,6 +43,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
 
   let(:representation)       { described_class.new(task_plan).as_json.deep_symbolize_keys }
 
+  before { task_plan.grading_template.auto_grading_feedback_on_answer! }
+
   context 'before the due date' do
     before { DistributeTasks.call task_plan: task_plan }
 
