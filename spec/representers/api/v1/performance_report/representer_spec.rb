@@ -33,7 +33,8 @@ RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
               actual_and_placeholder_exercise_count: 6,
               completed_exercise_count: 6,
               correct_exercise_count: 6,
-              recovered_exercise_count: 0
+              recovered_exercise_count: 0,
+              is_provisional_score: false
             }
           ]
         }
@@ -43,15 +44,16 @@ RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
 
   let(:representation) { described_class.new([Hashie::Mash.new(report)]).to_hash }
 
-  it 'includes the due_at, last_worked_at properties for student data' do
+  it 'includes the due_at, last_worked_at, is_provisional_score properties for student data' do
     task_data = representation.first['students'].first['data'].first
     expect(task_data).to include(
       'last_worked_at' => api_last_worked_at,
       'due_at' => api_due_at,
+      'is_provisional_score' => false
     )
   end
 
-  it 'represents a students information' do
+  it "represents a student's information" do
     expect(representation.first['students'][0]).to match(
       'name' => 'Student One',
       'role' => 2,
