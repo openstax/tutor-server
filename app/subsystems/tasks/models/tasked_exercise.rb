@@ -198,22 +198,19 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def published_points_without_lateness(past_due: nil)
-    return available_points if full_credit? && task_step.completed? && (
-      can_be_auto_graded? ? task.auto_grading_feedback_available?(past_due: past_due) :
-                            task.manual_grading_feedback_available?
-    )
+    task = task_step.task
+    past_due = task.past_due? if past_due.nil?
+    feedback_available = can_be_auto_graded? ?
+                           task.auto_grading_feedback_available?(past_due: past_due) :
+                           task.manual_grading_feedback_available?
+    return unless feedback_available
+
+    return available_points if full_credit? && task_step.completed?
 
     return published_grader_points unless published_grader_points.nil?
 
-    task = task_step.task
-    past_due = task.past_due? if past_due.nil?
-
     if task_step.completed?
       return unless can_be_auto_graded?
-
-      auto_grading_feedback_available = task.auto_grading_feedback_available?(past_due: past_due) \
-        if auto_grading_feedback_available.nil?
-      return unless auto_grading_feedback_available
 
       available_points * (answer_id == correct_answer_id ? 1.0 : task.completion_weight)
     else
