@@ -181,7 +181,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def points_without_lateness
-    return available_points if full_credit?
+    return available_points if full_credit? && task_step.completed?
 
     return grader_points unless grader_points.nil?
 
@@ -198,19 +198,19 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def published_points_without_lateness(past_due: nil)
-    return available_points if full_credit?
+    task = task_step.task
+    past_due = task.past_due? if past_due.nil?
+    feedback_available = can_be_auto_graded? && !was_manually_graded? ?
+                           task.auto_grading_feedback_available?(past_due: past_due) :
+                           task.manual_grading_feedback_available?
+    return unless feedback_available
+
+    return available_points if full_credit? && task_step.completed?
 
     return published_grader_points unless published_grader_points.nil?
 
-    task = task_step.task
-    past_due = task.past_due? if past_due.nil?
-
     if task_step.completed?
       return unless can_be_auto_graded?
-
-      auto_grading_feedback_available = task.auto_grading_feedback_available?(past_due: past_due) \
-        if auto_grading_feedback_available.nil?
-      return unless auto_grading_feedback_available
 
       available_points * (answer_id == correct_answer_id ? 1.0 : task.completion_weight)
     else
@@ -289,16 +289,11 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     completed? && !can_be_auto_graded? && !was_manually_graded?
   end
 
-  # NOTE: The following 2 methods do not take into account
-  #       automatic publication from the grading_template
-  def grade_published?
+  # NOTE: The following method does not take into account automatic publication from the template
+  def grade_manually_published?
     was_manually_graded? &&
     grader_points == published_points &&
     grader_comments == published_comments
-  end
-
-  def grade_needs_publishing?
-    was_manually_graded? && !grade_published?
   end
 
   def feedback_available?(current_time: Time.current)

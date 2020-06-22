@@ -141,10 +141,20 @@ class CalculateTaskPlanScores
           end
         end
 
-        grades_need_publishing = !!task.grading_template&.manual_grading_feedback_on_publish? &&
-                                 task_steps.filter(&:exercise?).any? do |task_step|
-          task_step.tasked.grade_needs_publishing?
+        exercise_steps = task_steps.filter(&:exercise?)
+        graded_steps, ungraded_steps = exercise_steps.partition do |task_step|
+          task_step.tasked.was_manually_graded?
         end
+        grades_need_publishing = (
+          !!task.grading_template&.manual_grading_feedback_on_publish? &&
+          graded_steps.any? { |task_step| !task_step.tasked.grade_manually_published? }
+        ) || (
+          !!task.grading_template&.auto_grading_feedback_on_publish? &&
+          !task.grades_manually_published? &&
+          ungraded_steps.any? do |task_step|
+            task_step.completed? && task_step.tasked.can_be_auto_graded?
+          end
+        )
 
         {
           role_id: role.id,

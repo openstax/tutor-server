@@ -217,7 +217,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           )
           expect(tasking_plan_output.gradable_step_count).to eq 0
           expect(tasking_plan_output.ungraded_step_count).to eq 0
-          expect(tasking_plan_output.grades_need_publishing).to eq false
+          grades_need_publishing = task_plan.grading_template.auto_grading_feedback_on_publish?
+          expect(tasking_plan_output.grades_need_publishing).to eq grades_need_publishing
 
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
             tasks.map do |task|
@@ -261,7 +262,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     }
                   end
                 end,
-                grades_need_publishing: false
+                grades_need_publishing: grades_need_publishing
               }
             end
           )
@@ -317,7 +318,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           )
           expect(tasking_plan_output.gradable_step_count).to eq 0
           expect(tasking_plan_output.ungraded_step_count).to eq 0
-          expect(tasking_plan_output.grades_need_publishing).to eq false
+          grades_need_publishing = task_plan.grading_template.auto_grading_feedback_on_publish?
+          expect(tasking_plan_output.grades_need_publishing).to eq grades_need_publishing
 
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
             tasks.each_with_index.map do |task, index|
@@ -367,7 +369,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     }
                   end
                 end,
-                grades_need_publishing: false
+                grades_need_publishing: grades_need_publishing
               }
             end
           )
