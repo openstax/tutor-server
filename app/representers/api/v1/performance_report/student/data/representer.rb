@@ -115,8 +115,7 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :provisional_score?,
-             as: :is_provisional_score,
+    property :is_provisional_score,
              readable: true,
              writeable: false,
              schema_info: { type: 'boolean' }
