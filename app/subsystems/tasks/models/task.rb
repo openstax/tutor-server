@@ -345,29 +345,29 @@ class Tasks::Models::Task < ApplicationRecord
     pts - published_late_work_point_penalty(past_due: past_due) unless pts.nil?
   end
 
-  def score_without_lateness(current_time: Time.current)
+  def score_without_lateness
     pts = points_without_lateness
     return if pts.nil?
 
     pts/available_points unless available_points == 0.0
   end
 
-  def score(current_time: Time.current)
+  def score
     pts = points
     return if pts.nil?
 
     pts/available_points unless available_points == 0.0
   end
 
-  def published_score_without_lateness(current_time: Time.current)
-    pts = published_points_without_lateness
+  def published_score_without_lateness(past_due: nil)
+    pts = published_points_without_lateness past_due: past_due
     return if pts.nil?
 
     pts/available_points unless available_points == 0.0
   end
 
-  def published_score(current_time: Time.current)
-    pts = published_points
+  def published_score(past_due: nil)
+    pts = published_points past_due: past_due
     return if pts.nil?
 
     pts/available_points unless available_points == 0.0
@@ -549,25 +549,19 @@ class Tasks::Models::Task < ApplicationRecord
       end
     end
 
-    # We either display the full auto grade or ---, so no provisional scores icon if no WRQ
-    return false if manually_graded_steps.size == 0
+    # We either display --- or the full auto grade in these cases, so no provisional scores
+    return false if published_points(past_due: past_due).nil? || manually_graded_steps.size == 0
 
-    manual_grading_feedback_available = manual_grading_feedback_available?
-    manual_grading_complete = manual_grading_complete?
-    # auto_grading_feedback_available doesn't matter if we don't have any MCQ
-    return manual_grading_feedback_available && !manual_grading_complete \
-      if auto_graded_steps.size == 0
-
-    auto_grading_feedback_available = auto_grading_feedback_available?(past_due: past_due)
-
-    # This really is provisional (the score is ---) but we don't want to display the icon here
-    return false if !auto_grading_feedback_available && !manual_grading_feedback_available
+    # We know manual_grading_feedback_available? is true here if we don't have any MCQ
+    # because we have non-nil published_points
+    # auto_grading_feedback_available should not matter in this case
+    return !manual_grading_complete? if auto_graded_steps.size == 0
 
     # At this point we know a score is being displayed and the assignment has both MCQs and WRQs,
     # so we check if any feedback is unavailable or if the manual grading has not been completed
-    !auto_grading_feedback_available ||
-    !manual_grading_feedback_available ||
-    !manual_grading_complete
+    !auto_grading_feedback_available?(past_due: past_due) ||
+    !manual_grading_feedback_available? ||
+    !manual_grading_complete?
   end
 
   def withdrawn?
