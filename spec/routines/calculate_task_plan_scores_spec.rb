@@ -262,7 +262,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     }
                   end
                 end,
-                grades_need_publishing: grades_need_publishing
+                grades_need_publishing: false
               }
             end
           )
