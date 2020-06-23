@@ -65,8 +65,7 @@ class Tasks::UpdateTaskCaches
     # Update step counts for each task
     if update_cached_attributes
       tasks = tasks.map do |task|
-        task_steps = task_steps_by_task_id.fetch(task.id, [])
-        task.update_cached_attributes steps: task_steps
+        task.update_cached_attributes steps: task_steps_by_task_id.fetch(task.id, [])
       end
 
       # Update the Task cache columns (scores cache)
@@ -254,7 +253,7 @@ class Tasks::UpdateTaskCaches
           task_steps = task_steps_by_page_id[page.id]
           next if task_steps.empty?
 
-          unmapped_page_ids = task_steps.map(&:content_page_id).compact.uniq
+          unmapped_page_ids = task_steps.map(&:content_page_id).uniq
           unmapped_page_tutor_uuids = unmapped_page_tutor_uuid_by_id.values_at(*unmapped_page_ids)
           unmapped_page_tutor_uuids = (
             unmapped_page_tutor_uuids + [ page.tutor_uuid ]
