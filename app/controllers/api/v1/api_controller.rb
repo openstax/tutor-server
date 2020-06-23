@@ -2,7 +2,6 @@
 # this class could be V7 and still inherit from V1 in the API gem.
 #
 class Api::V1::ApiController < OpenStax::Api::V1::ApiController
-
   # https://github.com/rails/rails/issues/34244#issuecomment-433365579
   # Remove in Rails 6 (fixed)
   def process_action(*args)
@@ -54,5 +53,4 @@ class Api::V1::ApiController < OpenStax::Api::V1::ApiController
     student.payment_due_at.present? &&     # payment is eventually due
     Time.current >= student.payment_due_at # payment due date has passed
   end
-
 end

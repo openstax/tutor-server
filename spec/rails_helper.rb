@@ -225,12 +225,6 @@ RSpec.configure do |config|
   end
 end
 
-def fake_flash(key, value)
-  flash_hash = ActionDispatch::Flash::FlashHash.new
-  flash_hash[key] = value
-  session['flash'] = flash_hash.to_session_value
-end
-
 def redirect_path
   redirect_uri.path
 end
