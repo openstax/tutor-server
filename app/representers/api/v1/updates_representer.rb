@@ -17,6 +17,8 @@ module Api::V1
       }
     }
 
+    property :feature_flags, writeable: false, readable: true, getter: ->(*) { Settings.feature_flags }
+
   end
 
 end

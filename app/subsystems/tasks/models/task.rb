@@ -32,6 +32,8 @@ class Tasks::Models::Task < ApplicationRecord
 
   belongs_to :course, subsystem: :course_profile, inverse_of: :tasks
 
+  belongs_to :course, subsystem: :course_profile, optional: true # Remove optional after migration
+
   belongs_to :task_plan, inverse_of: :tasks, optional: true
 
   belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
