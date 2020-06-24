@@ -54,7 +54,7 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
 
     [ :college, :high_school, :k12_school, :home_school ].each do |school_type|
       context school_type.to_s do
-        before { requestor.account.update_attributes school_type: school_type, school_location: :domestic_school }
+        before { requestor.account.update_attribute :school_type, school_type }
 
         context 'index' do
           let(:action) { :index }
@@ -112,15 +112,7 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
         requestor.account.foreign_school!
       end
 
-      [ :index, :read ].each do |test_action|
-        context test_action.to_s do
-          let(:action) { test_action }
-
-          it { should eq true }
-        end
-      end
-
-      [ :create_preview, :create_course ].each do |test_action|
+      [ :index, :read, :create_course ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
