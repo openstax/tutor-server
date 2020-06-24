@@ -17,6 +17,7 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
     expect(representation['faculty_status']).to eq user.faculty_status
     expect(representation['self_reported_role']).to eq user.role
     expect(representation['school_type']).to eq user.school_type
+    expect(representation['school_location']).to eq user.school_location
     expect(representation['viewed_tour_stats']).to eq []
     expect(representation['terms_signatures_needed']).to eq false
     expect(representation['profile_url']).to eq Addressable::URI.join(
