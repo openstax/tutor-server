@@ -3,7 +3,6 @@ class OfferingAccessPolicy
     return false if requestor.is_anonymous? ||
                     !requestor.is_human? ||
                     !requestor.account.confirmed_faculty? ||
-                    requestor.account.foreign_school? ||
                     !(
                       requestor.account.college? ||
                       requestor.account.high_school? ||
@@ -15,9 +14,9 @@ class OfferingAccessPolicy
     when :index, :read
       true
     when :create_preview
-      offering.is_preview_available
+      offering.is_preview_available && !requestor.account.foreign_school?
     when :create_course
-      offering.is_available
+      offering.is_available && !requestor.account.foreign_school?
     else
       false
     end

@@ -95,7 +95,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   end
 
   def with_task_step_and_tasked
-    Tasks::Models::TaskStep.transaction do
+    ::Tasks::Models::TaskStep.transaction do
       # The explicit listing of the tables to lock is required here
       # because we want to lock the tables in exactly this order to avoid deadlocks
       @task = Tasks::Models::Task
