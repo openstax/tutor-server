@@ -221,8 +221,9 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           expect(tasking_plan_output.grades_need_publishing).to eq grades_need_publishing
 
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
-            tasks.map do |task|
+            tasks.each_with_index.map do |task, index|
               student = task.taskings.first.role.student
+              is_worked = index < 2
 
               {
                 role_id: task.taskings.first.entity_role_id,
@@ -262,7 +263,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     }
                   end
                 end,
-                grades_need_publishing: false
+                grades_need_publishing: grades_need_publishing && is_worked
               }
             end
           )
@@ -324,6 +325,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
             tasks.each_with_index.map do |task, index|
               student = task.taskings.first.role.student
+              is_worked = index < 4
               is_correct = [ 0, 2, 3 ].include?(index)
 
               {
@@ -369,7 +371,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     }
                   end
                 end,
-                grades_need_publishing: grades_need_publishing
+                grades_need_publishing: grades_need_publishing && is_worked
               }
             end
           )
