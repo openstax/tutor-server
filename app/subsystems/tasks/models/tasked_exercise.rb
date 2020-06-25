@@ -165,7 +165,6 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     full_credit_question_ids = Set.new(
       task_step.task&.task_plan&.dropped_questions&.filter(&:full_credit?)&.map(&:question_id) || []
     )
-
     full_credit_question_ids.include? question_id
   end
 
@@ -287,6 +286,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     else
       nil
     end
+  end
+
+  def drop_question
+    task_step.task&.task_plan&.dropped_questions&.find { |q| q.question_id == question_id }
   end
 
   def was_manually_graded?
