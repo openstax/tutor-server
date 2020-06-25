@@ -27,6 +27,7 @@ class Content::Routines::TagResource
       next if attrs.nil?
 
       tag.attributes = attrs.slice(:name, :description, :tag_type)
+      tag.update_tag_type
       tag
     end.compact
 
@@ -38,7 +39,10 @@ class Content::Routines::TagResource
     new_tags = new_attributes.map do |hash|
       Content::Models::Tag.new(
         hash.slice(:value, :name, :description, :tag_type).merge(ecosystem: ecosystem)
-      )
+      ).tap do |tag|
+        tag.update_tag_type
+        tag.update_data_and_visible
+      end
     end
 
     outputs.tags = existing_tags + new_tags

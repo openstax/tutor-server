@@ -65,14 +65,17 @@ class Tasks::UpdateTaskCaches
     # Update step counts for each task
     if update_cached_attributes
       tasks = tasks.map do |task|
-        task_steps = task_steps_by_task_id.fetch(task.id, [])
-        task.update_cached_attributes steps: task_steps
+        task.update_cached_attributes steps: task_steps_by_task_id.fetch(task.id, [])
       end
 
       # Update the Task cache columns (scores cache)
       Tasks::Models::Task.import tasks, validate: false, on_duplicate_key_update: {
         conflict_target: [ :id ], columns: Tasks::Models::Task::CACHE_COLUMNS
       }
+
+      # Update task_plan step counts
+      # Normally this is done in the task's after_update but upserting does not trigger that
+      tasks.map(&:task_plan).compact.uniq.each(&:update_gradable_step_counts!)
     end
 
     # Get all page_ids
@@ -211,7 +214,7 @@ class Tasks::UpdateTaskCaches
         :tasks_task_plan_id,
         :opens_at,
         :due_at,
-        :feedback_at,
+        :closes_at,
         :withdrawn_at,
         :student_ids,
         :teacher_student_ids,
@@ -266,10 +269,11 @@ class Tasks::UpdateTaskCaches
               id: id,
               uuid: exercise_uuid_by_id[id],
               question_id: tasked_exercise.question_id,
-              answer_ids: tasked_exercise.answer_ids,
               step_number: task_step.number,
               group_type: task_step.group_type,
               free_response: tasked_exercise.free_response,
+              answer_ids: tasked_exercise.answer_ids,
+              correct_answer_id: tasked_exercise.correct_answer_id,
               selected_answer_id: tasked_exercise.answer_id,
               completed: task_step.completed?,
               correct: tasked_exercise.is_correct?,
@@ -363,7 +367,7 @@ class Tasks::UpdateTaskCaches
       task_type: task.task_type,
       opens_at: task.opens_at,
       due_at: task.due_at,
-      feedback_at: task.feedback_at,
+      closes_at: task.closes_at,
       student_ids: student_ids,
       teacher_student_ids: teacher_student_ids,
       student_names: student_names,

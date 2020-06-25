@@ -61,6 +61,21 @@ module Api::V1::Tasks
                description: 'Whether or not this step is complete'
              }
 
+    property :can_be_updated,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { task_step.can_be_updated? },
+             schema_info: {
+               required: true,
+               type: 'boolean',
+               description: 'Whether or not this step can be updated'
+             }
+
+    property :last_completed_at,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(last_completed_at) }
+
     property :spy,
              type: Object,
              readable: true,

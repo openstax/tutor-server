@@ -20,6 +20,8 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
   it { is_expected.to have_many(:tasks) }
   it { is_expected.to have_many(:taskings) }
 
+  it { is_expected.to have_many(:grading_templates) }
+
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:term) }
   it { is_expected.to validate_presence_of(:year) }
@@ -34,41 +36,15 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
 
   it do
     is_expected.to(
-      validate_numericality_of(:homework_score_weight).is_greater_than_or_equal_to(0)
-                                                      .is_less_than_or_equal_to(1)
+      validate_numericality_of(:homework_weight).is_greater_than_or_equal_to(0)
+                                                .is_less_than_or_equal_to(1)
     )
   end
   it do
     is_expected.to(
-      validate_numericality_of(:homework_progress_weight).is_greater_than_or_equal_to(0)
-                                                         .is_less_than_or_equal_to(1)
+      validate_numericality_of(:reading_weight).is_greater_than_or_equal_to(0)
+                                               .is_less_than_or_equal_to(1)
     )
-  end
-  it do
-    is_expected.to(
-      validate_numericality_of(:reading_score_weight).is_greater_than_or_equal_to(0)
-                                                     .is_less_than_or_equal_to(1)
-    )
-  end
-  it do
-    is_expected.to(
-      validate_numericality_of(:reading_progress_weight).is_greater_than_or_equal_to(0)
-                                                        .is_less_than_or_equal_to(1)
-    )
-  end
-
-  it 'validates format of default times' do
-    course.default_open_time = '16:32'
-    expect(course).to be_valid
-
-    course.default_due_time = '16:'
-    expect(course).not_to be_valid
-
-    course.default_open_time = '24:00'
-    expect(course).not_to be_valid
-
-    course.default_due_time = '23:60'
-    expect(course).not_to be_valid
   end
 
   it 'knows if it is deletable' do
@@ -206,5 +182,12 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
 
     course.update_column(:is_lms_enabled, false)
     expect(course.reload.update_attributes(is_lms_enabled: true)).to eq false
+  end
+
+  it 'knows if it should use old scores' do
+    expect(course.pre_wrm_scores?).to eq false
+
+    course.ends_at = DateTime.new(2020, 6, 30)
+    expect(course.pre_wrm_scores?).to eq true
   end
 end

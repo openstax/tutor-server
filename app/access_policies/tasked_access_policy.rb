@@ -5,13 +5,19 @@ class TaskedAccessPolicy
     case action
     when :read
       return true if DoesTaskingExist[task_component: tasked, user: requestor] && task.past_open?
-      period = task.taskings.first.try(:period)
+      period = task.taskings.first&.period
       return false if period.nil?
       UserIsCourseTeacher[user: requestor, course: period.course]
     when :update
-      DoesTaskingExist[task_component: tasked, user: requestor] && (
-        task.roles.first.teacher_student? || (task.past_open? && !task.withdrawn?)
-      )
+      DoesTaskingExist[task_component: tasked, user: requestor] &&
+        !task.withdrawn? &&
+        !task.past_close? &&
+        (task.past_open? || task.teacher_student?)
+    when :grade
+      return false if !task.past_due?
+      period = task.taskings.first&.period
+      return false if period.nil?
+      UserIsCourseTeacher[user: requestor, course: period.course]
     else
       false
     end

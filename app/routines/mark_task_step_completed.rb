@@ -32,9 +32,9 @@ class MarkTaskStepCompleted
     # course will only be set if role and period were found
     return if course.nil?
 
-    queue = task.is_preview ? 'preview' : 'dashboard'
-    role_run_at = task.feedback_available? ? completed_at :
-                                             [ task.feedback_at, completed_at ].compact.max
+    queue = task.preview_course? ? 'preview' : 'dashboard'
+    role_run_at = task.auto_grading_feedback_available? ? completed_at :
+                                                          [ task.due_at, completed_at ].compact.max
 
     page = Content::Models::Page
       .select(:uuid, :parent_book_part_uuid)

@@ -9,18 +9,18 @@ RSpec.describe Content::Models::Exercise, type: :model do
   it { is_expected.to validate_presence_of(:version) }
 
   it 'splits parts' do
-    multipart = FactoryBot.create(:content_exercise, num_parts: 2)
-    separated = multipart.content_as_independent_questions
-    expect(separated.length).to eq 2
+    multipart = FactoryBot.create(:content_exercise, num_questions: 2)
+    questions = multipart.questions
+    expect(questions.length).to eq 2
 
-    expect(separated[0][:id]).to be_kind_of(String)
+    expect(questions.first.id).to be_kind_of(String)
 
-    first = JSON.parse(separated[0][:content])
-    second = JSON.parse(separated[1][:content])
+    first = JSON.parse(questions.first.content)
+    second = JSON.parse(questions.second.content)
 
     expect(first['questions']).to be_kind_of(Array)
 
-    expect(first['questions'][0]['stem_html']).to match("(0)")
-    expect(second['questions'][0]['stem_html']).to match("(1)")
+    expect(first['questions'].first['stem_html']).to match('(0)')
+    expect(second['questions'].first['stem_html']).to match('(1)')
   end
 end

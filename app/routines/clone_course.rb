@@ -1,5 +1,4 @@
 class CloneCourse
-
   lev_routine express_output: :course
 
   uses_routine CreateCourse,
@@ -14,9 +13,12 @@ class CloneCourse
 
   def exec(course:, teacher_user:, copy_question_library:,
            name: nil, is_college: nil, term: nil, year: nil, num_sections: nil,
-           timezone: nil, default_open_time: nil, default_due_time: nil,
-           estimated_student_count: nil)
-
+           timezone: nil, estimated_student_count: nil)
+    grading_templates = course.pre_wrm_scores? ?
+      Tasks::Models::GradingTemplate.default :
+      course.grading_templates.without_deleted.map do |grading_template|
+        grading_template.dup.tap { |clone| clone.cloned_from = grading_template }
+      end
     attrs = {
       name: name || course.name,
       is_college: is_college.nil? ? course.is_college : is_college,
@@ -32,15 +34,13 @@ class CloneCourse
       does_cost: course.offering.does_cost,
       appearance_code: course.appearance_code,
       timezone: timezone || course.timezone,
-      default_open_time: default_open_time || course.default_open_time,
-      default_due_time: default_due_time || course.default_due_time,
       cloned_from: course,
       estimated_student_count: estimated_student_count,
       is_preview: false,
-      homework_score_weight: course.homework_score_weight,
-      homework_progress_weight: course.homework_progress_weight,
-      reading_score_weight: course.reading_score_weight,
-      reading_progress_weight: course.reading_progress_weight
+      reading_weight: course.reading_weight,
+      homework_weight: course.homework_weight,
+      grading_templates: grading_templates,
+      past_due_unattempted_ungraded_wrq_are_zero: course.past_due_unattempted_ungraded_wrq_are_zero
     }
 
     run(:create_course, attrs)
@@ -54,7 +54,5 @@ class CloneCourse
         )
       end
     end
-
   end
-
 end

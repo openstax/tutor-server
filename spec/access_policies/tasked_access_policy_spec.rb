@@ -13,34 +13,37 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
   end
 
   [ :read, :update ].each do |allowed_action|
-    context "when the action is :#{allowed_action}" do
+    context allowed_action.to_s do
       let(:action) { allowed_action }
 
-      context 'and the requestor is human' do
+      context 'when the requestor is human' do
         before { allow(requestor).to receive(:is_human?) { true } }
 
         context 'and the tasked is part of a task for the requestor' do
           before { allow(DoesTaskingExist).to receive(:[]) { true } }
 
-          context "and the task is deleted" do
-            before do
-              allow(tasked.task_step.task).to receive(:withdrawn?) { true }
-              allow(tasked.task_step.task).to receive(:past_open?) { true }
-            end
+          context "and the task's open date has not passed" do
+            before { allow(tasked.task_step.task).to receive(:past_open?) { false } }
 
-            it { should eq action == :read }
+            it { should eq false }
           end
 
           context "and the task's open date has passed" do
             before { allow(tasked.task_step.task).to receive(:past_open?) { true } }
 
             it { should eq true }
-          end
 
-          context "and the task's open date has not passed" do
-            before { allow(tasked.task_step.task).to receive(:past_open?) { false } }
+            context "and the task is deleted" do
+              before { allow(tasked.task_step.task).to receive(:withdrawn?) { true } }
 
-            it { should eq false }
+              it { should eq action == :read }
+            end
+
+            context "and the task's close date has passed" do
+              before { allow(tasked.task_step.task).to receive(:past_close?) { true } }
+
+              it { should eq action == :read }
+            end
           end
         end
 
@@ -51,14 +54,16 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
         end
 
         context 'and the requestor is a course teacher' do
-          before { allow(DoesTaskingExist).to receive(:[]) { false }
-                   allow(UserIsCourseTeacher).to receive(:[]) { true } }
+          before do
+            allow(DoesTaskingExist   ).to receive(:[]) { false }
+            allow(UserIsCourseTeacher).to receive(:[]) { true  }
+          end
 
           it { should eq action == :read }
         end
       end
 
-      context 'and the requestor is not human' do
+      context 'when the requestor is not human' do
         before { allow(requestor).to receive(:is_human?) { false } }
 
         it { should eq false }
@@ -66,7 +71,62 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
     end
   end
 
-  context 'when the action is unknown' do
+  context 'grade' do
+    let(:action) { :grade }
+
+    context 'when the requestor is human' do
+      before { allow(requestor).to receive(:is_human?) { true } }
+
+      context 'and the tasked is part of a task for the requestor' do
+        before { allow(DoesTaskingExist).to receive(:[]) { true } }
+
+        it { should eq false }
+      end
+
+      context 'and the tasked is not part of a task for the requestor' do
+        before { allow(DoesTaskingExist).to receive(:[]) { false } }
+
+        it { should eq false }
+      end
+
+      context 'and the requestor is a course teacher' do
+        before do
+          allow(DoesTaskingExist   ).to receive(:[]) { false }
+          allow(UserIsCourseTeacher).to receive(:[]) { true  }
+        end
+
+        context "and the task's due date has not passed" do
+          before { allow(tasked.task_step.task).to receive(:past_due?) { false } }
+
+          it { should eq false }
+        end
+
+        context "and the task's due date has passed" do
+          before { allow(tasked.task_step.task).to receive(:past_due?) { true } }
+
+          context "and the task is not deleted" do
+            before { allow(tasked.task_step.task).to receive(:withdrawn?) { false } }
+
+            it { should eq true }
+          end
+
+          context "and the task is deleted" do
+            before { allow(tasked.task_step.task).to receive(:withdrawn?) { true } }
+
+            it { should eq true }
+          end
+        end
+      end
+    end
+
+    context 'when the requestor is not human' do
+      before { allow(requestor).to receive(:is_human?) { false } }
+
+      it { should eq false }
+    end
+  end
+
+  context 'unknown' do
     let(:action) { :unknown_fooey }
 
     it { should eq false }
@@ -78,7 +138,7 @@ RSpec.describe TaskedAccessPolicy, type: :access_policy do
       Tasks::CreateTasking.call(task: tasked.task_step.task, role: role)
 
       [ :read, :update ].each do |allowed_action|
-        expect(TaskedAccessPolicy.action_allowed?(allowed_action, requestor, tasked)).to be_truthy
+        expect(TaskedAccessPolicy.action_allowed?(allowed_action, requestor, tasked)).to eq true
       end
     end
   end

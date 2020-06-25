@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
-
   before(:all) { @course = FactoryBot.create :course_profile_course }
 
   context 'report_1' do
@@ -12,13 +11,14 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
         filename = Timecop.freeze(Chronic.parse("3/18/2016 1:30PM")) do
           described_class.call(course: @course,
                                report: report_1,
-                               filename: "#{dir}/testfile#{SecureRandom.hex(2)}").outputs.filename
+                               filename: "#{dir}/testfile#{SecureRandom.hex(2)}",
+                               options: { stringify_formulas: true }).outputs.filename
         end
 
         # Uncomment this to open the file for visual inspection
-        # `open "#{filename}"` and sleep(0.5)
+        # `#{RUBY_PLATFORM =~ /linux/ ? 'xdg-open' : 'open'} "#{filename}"` && sleep(0.5)
 
-        expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
+        expect { @wb = Roo::Excelx.new(filename) }.to_not raise_error
       end
     end
     after(:all) { DatabaseCleaner.clean }
@@ -35,40 +35,43 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
       (7..12).to_a.map{|row| expect(cell(row,19,0)).to be_blank}
     end
 
+    it 'has a class average value based on the course averages' do
+      expect(cell(13,4,0)).to match /AVERAGEIF\(D11:D12,\"<>#N\/A\"\),0\)/
+    end
+
+    it 'has a minimum value based on the period-wide course averages' do
+      expect(cell(14,4,0)).to match /MIN\(D11:D12\)/
+    end
+
+    it 'has a maximum value based on the period-wide course averages' do
+      expect(cell(15,4,0)).to match /MAX\(D11:D12\)/
+    end
+
     it 'puts dropped students at the bottom' do
-      expect(cell(19,1,0)).to eq "DROPPED"
-      expect(cell(20,1,0)).to eq "Droppy"
+      expect(cell(21,1,0)).to eq "DROPPED"
+      expect(cell(22,1,0)).to eq "Droppy"
       # ideally we'd test the formulas for the overall cells are correct
       # however Roo is currently unable to parse them and always returns nil :(
-      expect(cell(20,9,0)).to eq 2/9.0
+      expect(cell(22,7,0)).to eq 2/9.0
     end
 
     context 'zeter\'s scores' do
       it 'has good HW scores' do
-        expect(cell(12,9,0)).to eq 7/9.0
-        expect(cell(12,10,0)).to eq 1.0
+        expect(cell(12,7,0)).to eq 7/9.0
       end
 
-      it 'shows reading\'s late comment and pending late work' do
-        expect(cell(12,14,0)).to eq 1/3.0
-        expect(comment(12,14,0)).to match /on due date: 0%/
-        expect(cell(12,15,0)).to eq 5/7.0
-        expect(cell(12,16,0)).to eq 2/3.0
-        expect(cell(12,17,0)).to eq 6/7.0
-        expect(cell(12,18,0).strftime("%-m/%-d/%Y")).to eq "3/7/2016"
+      it 'has good Reading scores' do
+        expect(cell(12,8,0)).to eq 2/3.0
       end
     end
 
     context 'abby\'s scores' do
-      it 'shows homework late content and no pending late' do
-        expect(cell(11,9,0)).to eq 4/9.0
-        expect(comment(11,9,0)).to match /on due date: 22%/
-        expect(cell(11,10,0)).to eq 1.0
-        (11..13).to_a.map{|col|expect(cell(11,col,0)).to be_blank}
+      it 'shows homework scores' do
+        expect(cell(11,7,0)).to eq 5/9.0
       end
 
       it 'shows nothing for her reading scores' do
-        (14..18).to_a.map{|col|expect(cell(11,col,0)).to be_blank}
+        expect(cell(11,8,0)).to be_blank
       end
     end
   end
@@ -86,6 +89,9 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
                                options: { stringify_formulas: true }).outputs.filename
         end
 
+        # Uncomment this to open the file for visual inspection
+        # `open "#{filename}"` and sleep(0.5)
+
         expect{ @wb = Roo::Excelx.new(filename) }.to_not raise_error
         @sheet1 = @wb.sheet(@wb.sheets.first)
       end
@@ -93,11 +99,11 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
     after(:all) { DatabaseCleaner.clean }
 
     it 'has averages with disjoint cells' do
-      expect(cell(11,5,0)).to match /AVERAGE\(I11,S11\)/
+      expect(cell(11,5,0)).to match /AVERAGE\(G11,I11\)/
     end
 
     it 'has a course average based on the other averages' do
-      expect(cell(11,4,0)).to match /SUM\(1\.0\*E11\)/
+      expect(cell(11,4,0)).to match /SUM\(0\.5\*E11\,0\.5\*F11\)/
     end
   end
 
@@ -231,48 +237,36 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
             data: [
               {
                 last_worked_at: Chronic.parse("3/13/2016 1PM"),
-                step_count:                             9,
-                completed_step_count:                   9,
-                completed_on_time_step_count:           9,
-                completed_accepted_late_step_count:     0,
-                actual_and_placeholder_exercise_count:  9,
-                completed_exercise_count:               9,
-                completed_on_time_exercise_count:       9,
-                completed_accepted_late_exercise_count: 0,
-                correct_exercise_count:                 7,
-                correct_on_time_exercise_count:         7,
-                correct_accepted_late_exercise_count:   0,
+                step_count:                            9,
+                completed_step_count:                  9,
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count:              9,
+                correct_exercise_count:                7,
+                published_points:                      7.0,
+                published_score:                       7.0/9.0
               },
               {
                 last_worked_at: Chronic.parse("3/13/2016 11AM"), # really more here but don't need
               },
               {
                 last_worked_at: Chronic.parse("3/7/2016 1PM"),
-                step_count:                             7,
-                completed_step_count:                   6,
-                completed_on_time_step_count:           4,
-                completed_accepted_late_step_count:     5,
-                actual_and_placeholder_exercise_count:  3,
-                completed_exercise_count:               3,
-                completed_on_time_exercise_count:       1,
-                completed_accepted_late_exercise_count: 2,
-                correct_exercise_count:                 2,
-                correct_on_time_exercise_count:         0,
-                correct_accepted_late_exercise_count:   1,
+                step_count:                            7,
+                completed_step_count:                  6,
+                actual_and_placeholder_exercise_count: 3,
+                completed_exercise_count:              3,
+                correct_exercise_count:                2,
+                published_points:                      2.0,
+                published_score:                       2.0/3.0
               },
               {
                 last_worked_at: Chronic.parse("3/17/2016 1PM"),
-                step_count:                             0,
-                completed_step_count:                   0,
-                completed_on_time_step_count:           0,
-                completed_accepted_late_step_count:     0,
-                actual_and_placeholder_exercise_count:  0,
-                completed_exercise_count:               0,
-                completed_on_time_exercise_count:       0,
-                completed_accepted_late_exercise_count: 0,
-                correct_exercise_count:                 0,
-                correct_on_time_exercise_count:         0,
-                correct_accepted_late_exercise_count:   0,
+                step_count:                            0,
+                completed_step_count:                  0,
+                actual_and_placeholder_exercise_count: 0,
+                completed_exercise_count:              0,
+                correct_exercise_count:                0,
+                published_points:                      0.0,
+                published_score:                       0.0
               }
             ],
             # average_score: 2/3.0
@@ -286,17 +280,13 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
             data: [
               {
                 last_worked_at: Chronic.parse("3/13/2016 1PM"),
-                step_count:                             9,
-                completed_step_count:                   4,
-                completed_on_time_step_count:           3,
-                completed_accepted_late_step_count:     1,
-                actual_and_placeholder_exercise_count:  9,
-                completed_exercise_count:               4,
-                completed_on_time_exercise_count:       3,
-                completed_accepted_late_exercise_count: 1,
-                correct_exercise_count:                 2,
-                correct_on_time_exercise_count:         2,
-                correct_accepted_late_exercise_count:   0,
+                step_count:                            9,
+                completed_step_count:                  4,
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count:              4,
+                correct_exercise_count:                2,
+                published_points:                      2.0,
+                published_score:                       2.0/9.0
               },
               nil,
               nil,
@@ -311,17 +301,13 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
             data: [
               {
                 last_worked_at: Chronic.parse("3/15/2016 1PM"),
-                step_count:                             9,
-                completed_step_count:                   9,
-                completed_on_time_step_count:           5,
-                completed_accepted_late_step_count:     9,
-                actual_and_placeholder_exercise_count:  9,
-                completed_exercise_count:               9,
-                completed_on_time_exercise_count:       5,
-                completed_accepted_late_exercise_count: 9,
-                correct_exercise_count:                 5,
-                correct_on_time_exercise_count:         2,
-                correct_accepted_late_exercise_count:   4,
+                step_count:                            9,
+                completed_step_count:                  9,
+                actual_and_placeholder_exercise_count: 9,
+                completed_exercise_count:              9,
+                correct_exercise_count:                5,
+                published_points:                      5.0,
+                published_score:                       5.0/9.0
               },
               {
                 last_worked_at: Chronic.parse("3/13/2016 11AM"), # really more here but don't need
@@ -329,17 +315,13 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
               nil,
               {
                 last_worked_at: Chronic.parse("3/15/2016 1PM"),
-                step_count:                             0,
-                completed_step_count:                   0,
-                completed_on_time_step_count:           0,
-                completed_accepted_late_step_count:     0,
-                actual_and_placeholder_exercise_count:  0,
-                completed_exercise_count:               0,
-                completed_on_time_exercise_count:       0,
-                completed_accepted_late_exercise_count: 0,
-                correct_exercise_count:                 0,
-                correct_on_time_exercise_count:         0,
-                correct_accepted_late_exercise_count:   0,
+                step_count:                            0,
+                completed_step_count:                  0,
+                actual_and_placeholder_exercise_count: 0,
+                completed_exercise_count:              0,
+                correct_exercise_count:                0,
+                published_points:                      nil,
+                published_score:                       nil
               }
             ],
             # average_score: 2/3.0
@@ -410,6 +392,4 @@ RSpec.describe Tasks::PerformanceReport::ExportXlsx, type: :routine do
       }
     ]
   end
-
-
 end

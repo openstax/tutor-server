@@ -1,5 +1,5 @@
 class DistributeTasks
-  lev_routine use_jobba: true
+  lev_routine transaction: :read_committed, use_jobba: true
 
   uses_routine IndividualizeTaskingPlans, as: :individualize_tasking_plans
 
@@ -21,9 +21,9 @@ class DistributeTasks
     unless task_plan.out_to_students?(current_time: publish_time)
       # Only delete anything if tasks are not yet available to students
       if preview
-        # Delete preview tasks only if no assignments are open
-        existing_tasks.select(&:preview?).each(&:really_destroy!)
-        existing_tasks = existing_tasks.reject(&:preview?)
+        # Delete teacher-student preview tasks only if no assignments are open
+        existing_tasks.select(&:teacher_student?).each(&:really_destroy!)
+        existing_tasks = existing_tasks.reject(&:teacher_student?)
       elsif !protect_unopened_tasks
         # Delete pre-existing assignments only if protect_unopened_tasks is false
         existing_tasks.each(&:really_destroy!)
@@ -65,13 +65,14 @@ class DistributeTasks
     # Update existing tasks
     updated_tasks = []
     tasked_tasking_plans.each do |tasking_plan|
-      task = tasks_by_role_id[tasking_plan.target_id]
+      role_id = tasking_plan.target_id
+      task = tasks_by_role_id[role_id]
 
       task.title = task_plan.title
       task.description = task_plan.description
       task.opens_at_ntz = tasking_plan.opens_at_ntz
       task.due_at_ntz = tasking_plan.due_at_ntz
-      task.feedback_at_ntz = task_plan.is_feedback_immediate ? nil : tasking_plan.due_at_ntz
+      task.closes_at_ntz = tasking_plan.closes_at_ntz
 
       updated_tasks << task if task.changed?
     end
@@ -79,7 +80,7 @@ class DistributeTasks
     Tasks::Models::Task.import(
       updated_tasks, validate: false, on_duplicate_key_update: {
         conflict_target: [ :id ],
-        columns: [ :title, :description, :opens_at_ntz, :due_at_ntz, :feedback_at_ntz ]
+        columns: [ :title, :description, :opens_at_ntz, :due_at_ntz, :closes_at_ntz ]
       }
     ) unless updated_tasks.empty?
 
@@ -107,24 +108,22 @@ class DistributeTasks
       Tasks::Models::Task.import new_tasks, recursive: true, validate: false
     end
 
-    changed_tasks = updated_tasks + new_tasks
-
-    unless changed_tasks.empty?
+    # We must update cached attributes for all tasks due to
+    # dropped questions, extensions and changing the grading template
+    all_tasks = existing_tasks + new_tasks
+    unless all_tasks.empty?
       queue = task_plan.is_preview ? :preview : :dashboard
       Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
-        task_ids: changed_tasks.map(&:id), queue: queue.to_s
+        task_ids: all_tasks.map(&:id), update_cached_attributes: true, queue: queue.to_s
       )
 
+      changed_tasks = updated_tasks + new_tasks
       OpenStax::Biglearn::Api.create_update_assignments(
         changed_tasks.map { |task| { course: task_plan.course, task: task } }
-      )
+      ) unless changed_tasks.empty?
     end
 
     outputs.tasks = task_plan.tasks.reset
-
-    # Return without updating timestamps if no tasks were updated and it's not the first publication
-    # Should help prevent ActiveRecord::TransactionIsolationConflicts
-    return if changed_tasks.empty? && (preview || task_plan.is_published?)
 
     if preview
       task_plan.touch if task_plan.persisted?

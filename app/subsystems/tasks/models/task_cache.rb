@@ -10,7 +10,7 @@ class Tasks::Models::TaskCache < ApplicationRecord
   validates :task_type, presence: true
   validates :ecosystem, uniqueness: { scope: :tasks_task_id }
 
-  validates :opens_at, :due_at, :feedback_at, :withdrawn_at,
+  validates :opens_at, :due_at, :closes_at, :withdrawn_at,
             timeliness: { type: :date }, allow_nil: true
   validates :is_cached_for_period, inclusion: { in: [ true, false ] }
 

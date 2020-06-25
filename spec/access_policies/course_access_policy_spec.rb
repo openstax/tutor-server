@@ -26,6 +26,22 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     @new_faculty.account.confirmed_faculty!
   end
 
+  before do
+    @course.reload
+    @period.reload
+
+    @clone_course.reload
+    @clone_period.reload
+
+    @anonymous.reload
+    @user.reload
+    @student.reload
+    @faculty.reload
+    @new_faculty.reload
+    @clone_student.reload
+    @clone_faculty.reload
+  end
+
   context 'original course' do
     # action, requestor are set in contexts
     subject(:allowed) { described_class.action_allowed?(action, requestor, @course) }
@@ -113,7 +129,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     end
 
     context 'confirmed faculty' do
-      [ :college, :high_school, :k12_school ].each do |school_type|
+      [ :college, :high_school, :k12_school, :home_school ].each do |school_type|
         context school_type.to_s do
           before { requestor.account.update_attribute :school_type, school_type }
 
@@ -182,6 +198,59 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
       context 'other_school_type' do
         before { requestor.account.other_school_type! }
+
+        context 'in original course' do
+          let(:requestor) { @faculty }
+
+          [ :create ].each do |test_action|
+            context test_action.to_s do
+              let(:action) { test_action }
+
+              it { should eq false }
+            end
+          end
+
+          [
+            :index, :read, :create_practice, :performance, :read_task_plans,
+            :export, :roster, :add_period, :update, :stats, :exercises, :clone
+          ].each do |test_action|
+            context test_action.to_s do
+              let(:action) { test_action }
+
+              it { should eq true }
+            end
+          end
+        end
+
+        context 'in cloned course' do
+          let(:requestor) { @clone_faculty }
+
+          [ :index, :read_task_plans ].each do |test_action|
+            context test_action.to_s do
+              let(:action) { test_action }
+
+              it { should eq true }
+            end
+          end
+
+          [
+            :create, :read, :create_practice, :performance, :export,
+            :roster, :add_period, :update, :stats, :exercises, :clone
+          ].each do |test_action|
+            context test_action.to_s do
+              let(:action) { test_action }
+
+              it { should eq false }
+            end
+          end
+        end
+      end
+
+      context 'foreign_school school_location' do
+        before do
+          requestor.account.college!
+          requestor.account.foreign_school!
+        end
 
         context 'in original course' do
           let(:requestor) { @faculty }
@@ -319,7 +388,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     end
 
     context 'confirmed faculty' do
-      [ :college, :high_school, :k12_school ].each do |school_type|
+      [ :college, :high_school, :k12_school, :home_school ].each do |school_type|
         context school_type.to_s do
           before { requestor.account.update_attribute :school_type, school_type }
 

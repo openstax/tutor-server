@@ -5,15 +5,14 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   has_one :course, through: :task_plan
 
   delegate :timezone, :time_zone, to: :task_plan
-  has_timezone :opens_at, :due_at, suffix: :ntz
+  has_timezone :opens_at, :due_at, :closes_at, suffix: :ntz
 
   validates :task_plan, uniqueness: { scope: [ :target_type, :target_id ] }
 
-  validates :opens_at_ntz, :due_at_ntz, presence: true, timeliness: { type: :date }
+  validates :opens_at_ntz, :due_at_ntz, :closes_at_ntz, presence: true, timeliness: { type: :date }
 
-  validate :due_at_in_the_future, :due_at_on_or_after_opens_at,
-           :opens_after_course_starts, :due_before_course_ends,
-           :course_can_task_target
+  validate :due_at_in_the_future, :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at,
+           :opens_after_course_starts, :closes_before_course_ends, :course_can_task_target
 
   def past_open?(current_time: Time.current)
     opens_at.nil? || current_time > opens_at
@@ -21,6 +20,10 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
 
   def past_due?(current_time: Time.current)
     !due_at.nil? && current_time > due_at
+  end
+
+  def past_close?(current_time: Time.current)
+    !closes_at.nil? && current_time > closes_at
   end
 
   protected
@@ -37,9 +40,16 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   end
 
   def due_at_on_or_after_opens_at
-    return if task_plan&.course.nil? || due_at.nil? || opens_at.nil? || due_at > opens_at
+    return if task_plan&.course.nil? || due_at.nil? || opens_at.nil? || due_at >= opens_at
 
     errors.add(:due_at, 'cannot be before opens_at')
+    throw :abort
+  end
+
+  def closes_at_on_or_after_due_at
+    return if task_plan&.course.nil? || closes_at.nil? || due_at.nil? || closes_at >= due_at
+
+    errors.add(:closes_at, 'cannot be before due_at')
     throw :abort
   end
 
@@ -50,10 +60,10 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
     throw :abort
   end
 
-  def due_before_course_ends
-    return if task_plan&.course.nil? || due_at.nil? || task_plan.course.ends_at >= due_at
+  def closes_before_course_ends
+    return if task_plan&.course.nil? || closes_at.nil? || task_plan.course.ends_at >= closes_at
 
-    errors.add(:due_at, 'cannot be after the course ends')
+    errors.add(:closes_at, 'cannot be after the course ends')
     throw :abort
   end
 

@@ -13,13 +13,13 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       AddUserAsPeriodStudent.call(user: user, period: period)
     end
   end
-  let(:task_plan) do
-    FactoryBot.build(:tasks_task_plan, course: course).tap do |task_plan|
-      task_plan.tasking_plans.first.target = period
-      task_plan.save!
+  let(:reading_plan) do
+    FactoryBot.build(:tasks_task_plan, course: course).tap do |reading_plan|
+      reading_plan.tasking_plans.first.target = period
+      reading_plan.save!
     end
   end
-  let(:tasking_plan) { task_plan.tasking_plans.first }
+  let(:reading_tasking_plan) { reading_plan.tasking_plans.first }
   let(:teacher_student_role) do
     FactoryBot.create(:course_membership_teacher_student, period: period).role
   end
@@ -33,13 +33,20 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       course: course,
       type: 'homework',
       ecosystem: @ecosystem,
-      settings: { exercise_ids: exercise_ids[0..5], exercises_count_dynamic: 3}
-    ).tap do |task_plan|
-      task_plan.tasking_plans.first.target = period
-      task_plan.save!
+      settings: {
+        exercises: exercises[0..5].map do |exercise|
+          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+        end,
+        exercises_count_dynamic: 3
+      }
+    ).tap do |homework_plan|
+      homework_plan.tasking_plans.first.target = period
+      homework_plan.save!
     end
   end
-  let(:exercise_ids) { @pages.flat_map(&:homework_core_exercise_ids).map(&:to_s) }
+  let(:homework_tasking_plan) { homework_plan.tasking_plans.first }
+  let(:exercise_ids) { @pages.flat_map(&:homework_core_exercise_ids) }
+  let(:exercises)    { Content::Models::Exercise.where(id: exercise_ids) }
 
   context 'with no teacher_student roles' do
     context 'homework' do
@@ -108,45 +115,99 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(task.task_steps.map(&:group_type)).to eq(expected_step_types)
         end
       end
+
+      it 'updating due dates causes student scores to change' do
+        homework_plan.grading_template.update_column :late_work_penalty, 1.0
+        homework_tasking_plan.opens_at = homework_tasking_plan.time_zone.now - 2.hours
+        homework_tasking_plan.due_at = homework_tasking_plan.time_zone.now - 1.hour
+        homework_tasking_plan.save validate: false
+        result = described_class.call(task_plan: homework_plan)
+
+        expect(result.errors).to be_empty
+        expect(homework_plan.reload.tasks.size).to eq 3
+        expect(homework_plan).to be_out_to_students
+        homework_plan.tasks.each do |task|
+          expect(task).to be_past_due
+          expect(task.steps_count).to eq 9
+          expect(task.exercise_steps_count).to eq 6
+          expect(task.points_without_lateness).to eq 0.0
+          expect(task.points).to eq 0.0
+          expect(task.score_without_lateness).to eq 0.0
+          expect(task.score).to eq 0.0
+
+          Preview::WorkTask.call task: task, is_correct: true
+
+          expect(task.reload.exercise_steps_count).to eq 9
+          expect(task.completed_steps_count).to eq 9
+          expect(task.completed_on_time_steps_count).to eq 0
+          expect(task.correct_exercise_steps_count).to eq 9
+          expect(task.correct_on_time_exercise_steps_count).to eq 0
+          expect(task.points_without_lateness).to eq 9.0
+          expect(task.points).to eq 0.0
+          expect(task.score_without_lateness).to eq 1.0
+          expect(task.score).to eq 0.0
+        end
+
+        homework_tasking_plan.update_attribute :due_at, homework_tasking_plan.time_zone.now + 1.hour
+        result = described_class.call(task_plan: homework_plan)
+
+        expect(result.errors).to be_empty
+        expect(homework_plan.reload.tasks.size).to eq 3
+        homework_plan.tasks.each do |task|
+          expect(task).not_to be_past_due
+          expect(task.steps_count).to eq 9
+          expect(task.exercise_steps_count).to eq 9
+          expect(task.completed_steps_count).to eq 9
+          expect(task.completed_on_time_steps_count).to eq 0
+          expect(task.correct_exercise_steps_count).to eq 9
+          expect(task.correct_on_time_exercise_steps_count).to eq 0
+          expect(task.points_without_lateness).to eq 9.0
+          expect(task.points).to eq 9.0
+          expect(task.score_without_lateness).to eq 1.0
+          expect(task.score).to eq 1.0
+        end
+      end
     end
 
     context 'unpublished task_plan' do
-      before { expect(task_plan).not_to be_out_to_students }
+      before { expect(reading_plan).not_to be_out_to_students }
 
       context 'before the open date' do
         before do
           opens_at = Time.current.tomorrow
-          task_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
-          task_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
+          reading_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
+          reading_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
         end
 
         context 'preview' do
           before { teacher_student_role }
 
           it 'can create or update a preview task' do
-            expect(task_plan.tasks).to be_empty
-            result = described_class.call(task_plan: task_plan, preview: true)
+            expect(reading_plan.tasks).to be_empty
+            result = described_class.call(task_plan: reading_plan, preview: true)
 
             expect(result.errors).to be_empty
-            expect(task_plan.reload.tasks.size).to eq 1
-            expect(task_plan).not_to be_out_to_students
-            task = task_plan.tasks.first
+            expect(reading_plan.reload.tasks.size).to eq 1
+            expect(reading_plan).not_to be_out_to_students
+            task = reading_plan.tasks.first
             expect(task.taskings.first.role).to eq teacher_student_role
-            expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+            expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
 
-            tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.now + 1.hour
-            result = described_class.call(task_plan: task_plan, preview: true)
+            reading_tasking_plan.update_attribute(
+              :opens_at, reading_tasking_plan.time_zone.now + 1.hour
+            )
+            result = described_class.call(task_plan: reading_plan, preview: true)
 
             expect(result.errors).to be_empty
-            expect(task_plan.reload.tasks.size).to eq 1
-            expect(task_plan).not_to be_out_to_students
-            task = task_plan.tasks.first
+            expect(reading_plan.reload.tasks.size).to eq 1
+            expect(reading_plan).not_to be_out_to_students
+            task = reading_plan.tasks.first
             expect(task.taskings.first.role).to eq teacher_student_role
-            expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+            expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
           end
 
           it 'does not save plan if it is new' do
-            new_plan = task_plan.dup
+            new_plan = reading_plan.dup
             result = described_class.call(task_plan: new_plan, preview: true)
             expect(result.errors).to be_empty
             expect(new_plan).to be_new_record
@@ -154,24 +215,26 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         end
 
         it 'can create or update normal and preview tasks' do
-          tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.now + 1.hour
-          result = described_class.call(task_plan: task_plan)
+          reading_tasking_plan.update_attribute(
+            :opens_at, reading_tasking_plan.time_zone.now + 1.hour
+          )
+          result = described_class.call(task_plan: reading_plan)
 
           expect(result.errors).to be_empty
-          expect(task_plan.reload.tasks.size).to eq 3
-          expect(task_plan).not_to be_out_to_students
-          task_plan.tasks.each do |task|
-            expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+          expect(reading_plan.reload.tasks.size).to eq 3
+          expect(reading_plan).not_to be_out_to_students
+          reading_plan.tasks.each do |task|
+            expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
           end
         end
 
         it 'sets the published_at fields' do
           publish_time = Time.current
-          result = described_class.call(task_plan: task_plan, publish_time: publish_time)
+          result = described_class.call(task_plan: reading_plan, publish_time: publish_time)
           expect(result.errors).to be_empty
-          task_plan.reload
-          expect(task_plan.first_published_at).to be_within(1).of(publish_time)
-          expect(task_plan.last_published_at).to be_within(1).of(publish_time)
+          reading_plan.reload
+          expect(reading_plan.first_published_at).to be_within(1).of(publish_time)
+          expect(reading_plan.last_published_at).to be_within(1).of(publish_time)
         end
 
         it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
@@ -181,39 +244,51 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             tasks.each { |task| task.task_type = :reading }
           end
 
-          expect(task_plan.tasks).to be_empty
-          result = described_class.call(task_plan: task_plan)
+          expect(reading_plan.tasks).to be_empty
+          result = described_class.call(task_plan: reading_plan)
           expect(result.errors.first.code).to eq :empty_tasks
-          expect(task_plan.tasks).to be_empty
+          expect(reading_plan.tasks).to be_empty
         end
       end
 
       context 'after the open date' do
         before do
           opens_at = Time.current.yesterday
-          task_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
-          task_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
+          reading_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
+          reading_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
         end
 
         it 'can create or update normal and preview tasks' do
-          tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.now - 1.hour
-          result = described_class.call(task_plan: task_plan)
+          reading_tasking_plan.update_attribute(
+            :opens_at, reading_tasking_plan.time_zone.now - 1.hour
+          )
+          result = described_class.call(task_plan: reading_plan)
 
           expect(result.errors).to be_empty
-          expect(task_plan.reload.tasks.size).to eq 3
-          expect(task_plan).to be_out_to_students
-          task_plan.tasks.each do |task|
-            expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+          expect(reading_plan.reload.tasks.size).to eq 3
+          expect(reading_plan).to be_out_to_students
+          reading_plan.tasks.each do |task|
+            expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
+          end
+
+          reading_tasking_plan.update_attribute :due_at, reading_tasking_plan.time_zone.now + 1.hour
+          result = described_class.call(task_plan: reading_plan)
+
+          expect(result.errors).to be_empty
+          expect(reading_plan.reload.tasks.size).to eq 3
+          expect(reading_plan).to be_out_to_students
+          reading_plan.tasks.each do |task|
+            expect(task.due_at).to be_within(1e-6).of(reading_tasking_plan.due_at)
           end
         end
 
         it 'sets the published_at fields' do
           publish_time = Time.current
-          result = described_class.call(task_plan: task_plan, publish_time: publish_time)
+          result = described_class.call(task_plan: reading_plan, publish_time: publish_time)
           expect(result.errors).to be_empty
-          task_plan.reload
-          expect(task_plan.first_published_at).to be_within(1).of(publish_time)
-          expect(task_plan.last_published_at).to be_within(1).of(publish_time)
+          reading_plan.reload
+          expect(reading_plan.first_published_at).to be_within(1).of(publish_time)
+          expect(reading_plan.last_published_at).to be_within(1).of(publish_time)
         end
 
         it 'fails to publish the task_plan if one or more non-stepless tasks would be empty' do
@@ -223,138 +298,147 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             tasks.each { |task| task.task_type = :reading }
           end
 
-          expect(task_plan.tasks).to be_empty
-          result = described_class.call(task_plan: task_plan)
+          expect(reading_plan.tasks).to be_empty
+          result = described_class.call(task_plan: reading_plan)
           expect(result.errors.first.code).to eq :empty_tasks
-          expect(task_plan.tasks).to be_empty
+          expect(reading_plan.tasks).to be_empty
         end
       end
     end
 
     context 'published task_plan' do
       before do
-        described_class.call(task_plan: task_plan)
+        described_class.call(task_plan: reading_plan)
         new_user.roles.each { |role| role.taskings.each { |tasking| tasking.task.really_destroy! } }
-        expect(task_plan.reload).to be_out_to_students
+        expect(reading_plan.reload).to be_out_to_students
       end
 
       context 'before the open date' do
         before do
           opens_at = Time.current.tomorrow
-          task_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
-          task_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
+          reading_plan.tasking_plans.each { |tp| tp.update_attribute(:opens_at, opens_at) }
+          reading_plan.tasks.each { |task| task.update_attribute(:opens_at, opens_at) }
         end
 
         it 'can create or update normal and preview tasks' do
-          tasking_plan.update_attribute :opens_at, tasking_plan.time_zone.now + 1.hour
-          result = described_class.call(task_plan: task_plan)
+          reading_tasking_plan.update_attribute(
+            :opens_at, reading_tasking_plan.time_zone.now + 1.hour
+          )
+          result = described_class.call(task_plan: reading_plan)
 
           expect(result.errors).to be_empty
-          expect(task_plan.reload.tasks.size).to eq 3
-          expect(task_plan).not_to be_out_to_students
-          task_plan.tasks.each do |task|
-            expect(task.opens_at).to be_within(1e-6).of(tasking_plan.opens_at)
+          expect(reading_plan.reload.tasks.size).to eq 3
+          expect(reading_plan).not_to be_out_to_students
+          reading_plan.tasks.each do |task|
+            expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
           end
         end
 
         it 'does not set the first_published_at field' do
-          old_published_at = task_plan.first_published_at
+          old_published_at = reading_plan.first_published_at
           publish_time = Time.current
-          result = described_class.call(task_plan: task_plan, publish_time: publish_time)
+          result = described_class.call(task_plan: reading_plan, publish_time: publish_time)
           expect(result.errors).to be_empty
-          task_plan.reload
-          expect(task_plan.first_published_at).to eq old_published_at
-          expect(task_plan.last_published_at).to be_within(1e-6).of(publish_time)
+          reading_plan.reload
+          expect(reading_plan.first_published_at).to eq old_published_at
+          expect(reading_plan.last_published_at).to be_within(1e-6).of(publish_time)
         end
       end
 
       context 'after the open date' do
         let(:new_title)       { 'New Title' }
         let(:new_description) { 'New Description' }
-        let(:new_opens_at)    { tasking_plan.time_zone.now.yesterday }
-        let(:new_due_at)      { tasking_plan.time_zone.now.tomorrow }
-
-        before do
-          task_plan.title = new_title
-          task_plan.description = new_description
-          task_plan.save!
-
-          tasking_plan.opens_at = new_opens_at
-          tasking_plan.due_at = new_due_at
-          tasking_plan.save!
-        end
+        let(:new_opens_at)    { reading_tasking_plan.time_zone.now.yesterday }
+        let(:new_due_at)      { reading_tasking_plan.time_zone.now.tomorrow }
+        let(:new_closes_at)   { reading_tasking_plan.time_zone.now.tomorrow + 1.week }
 
         context 'homework' do
           before do
-            task_plan.type = 'homework'
-            task_plan.is_feedback_immediate = false
-            task_plan.save validate: false
+            allow_any_instance_of(Tasks::Assistants::HomeworkAssistant).to(
+              receive(:num_spaced_practice_exercises) { 3 }
+            )
+
+            generate_homework_test_exercise_content
+
+            AddEcosystemToCourse.call ecosystem: @ecosystem, course: course
+
+            homework_plan.title = new_title
+            homework_plan.description = new_description
+            homework_plan.save!
+
+            homework_tasking_plan.opens_at = new_opens_at
+            homework_tasking_plan.due_at = new_due_at
+            homework_tasking_plan.closes_at = new_closes_at
+            homework_tasking_plan.save!
           end
 
           it 'can create or update normal and preview tasks' do
-            result = described_class.call(task_plan: task_plan)
+            result = described_class.call(task_plan: homework_plan)
 
             expect(result.errors).to be_empty
-            expect(task_plan.tasks.size).to eq 3
-            expect(task_plan).to be_out_to_students
-            task_plan.tasks.each do |task|
-              expect(task.title).to       eq new_title
-              expect(task.description).to eq new_description
-              expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
-              expect(task.due_at).to      be_within(1e-6).of(new_due_at)
-              expect(task.feedback_at).to eq task.due_at
+            expect(homework_plan.tasks.size).to eq 3
+            expect(homework_plan).to be_out_to_students
+            gt = homework_plan.grading_template
+            homework_plan.tasks.each do |task|
+              expect(task.title).to                    eq new_title
+              expect(task.description).to              eq new_description
+              expect(task.opens_at).to                 be_within(1e-6).of(new_opens_at)
+              expect(task.due_at).to                   be_within(1e-6).of(new_due_at)
+              expect(task.closes_at).to                be_within(1e-6).of(new_closes_at)
+              expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
+              expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
             end
-          end
-
-          it 'sets feedback_at to nil when feedback is immediate' do
-            task_plan.update_attribute :is_feedback_immediate, true
-
-            described_class.call(task_plan: task_plan)
-
-            task_plan.tasks.each { |task| expect(task.feedback_at).to be_nil }
           end
         end
 
         context 'reading' do
           before do
-            task_plan.type = 'reading'
-            task_plan.is_feedback_immediate = true
-            task_plan.save validate: false
+            reading_plan.title = new_title
+            reading_plan.description = new_description
+            reading_plan.save!
+
+            reading_tasking_plan.opens_at = new_opens_at
+            reading_tasking_plan.due_at = new_due_at
+            reading_tasking_plan.closes_at = new_closes_at
+            reading_tasking_plan.save!
           end
 
           it 'can create or update normal and preview tasks' do
-            result = described_class.call(task_plan: task_plan)
+            result = described_class.call(task_plan: reading_plan)
 
             expect(result.errors).to be_empty
-            expect(task_plan.tasks.size).to eq 3
-            expect(task_plan).to be_out_to_students
-            task_plan.tasks.each do |task|
+            expect(reading_plan.tasks.size).to eq 3
+            expect(reading_plan).to be_out_to_students
+            gt = reading_plan.grading_template
+            reading_plan.tasks.each do |task|
               expect(task.title).to       eq new_title
               expect(task.description).to eq new_description
               expect(task.opens_at).to    be_within(1e-6).of(new_opens_at)
               expect(task.due_at).to      be_within(1e-6).of(new_due_at)
-              expect(task.feedback_at).to be_nil
+              expect(task.closes_at).to   be_within(1e-6).of(new_closes_at)
+              expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
+              expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
             end
           end
         end
 
         it 'does not rebuild existing tasks for the task_plan' do
-          expect(task_plan.tasks.size).to eq 2
-          old_tasks = task_plan.tasks.to_a
+          expect(reading_plan.tasks.size).to eq 2
+          old_tasks = reading_plan.tasks.to_a
 
-          result = described_class.call(task_plan: task_plan)
+          result = described_class.call(task_plan: reading_plan)
           expect(result.errors).to be_empty
-          expect(task_plan.reload.tasks.size).to eq 3
-          old_tasks.each { |old_task| expect(task_plan.tasks).to include old_task }
+          expect(reading_plan.reload.tasks.size).to eq 3
+          old_tasks.each { |old_task| expect(reading_plan.tasks).to include old_task }
         end
 
         it 'does not set the first_published_at field' do
-          old_published_at = task_plan.first_published_at
+          old_published_at = reading_plan.first_published_at
           publish_time = Time.current
-          result = described_class.call(task_plan: task_plan, publish_time: publish_time)
+          result = described_class.call(task_plan: reading_plan, publish_time: publish_time)
           expect(result.errors).to be_empty
-          expect(task_plan.reload.first_published_at).to eq old_published_at
-          expect(task_plan.last_published_at).to be_within(1e-6).of(publish_time)
+          expect(reading_plan.reload.first_published_at).to eq old_published_at
+          expect(reading_plan.last_published_at).to be_within(1e-6).of(publish_time)
         end
       end
     end

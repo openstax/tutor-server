@@ -33,6 +33,13 @@ class Content::Models::Exercise < IndestructibleRecord
         ).arel.exists
     )
   end
+  scope :requires_context, -> do
+    where(
+      Content::Models::Tag.requires_context.joins(:exercise_tags).where(
+        '"content_exercise_tags"."content_exercise_id" = "content_exercises"."id"'
+      ).arel.exists
+    )
+  end
 
   def parser
     @parser ||= OpenStax::Exercises::V1::Exercise.new content: content
@@ -78,14 +85,20 @@ class Content::Models::Exercise < IndestructibleRecord
     content_hash['questions']
   end
 
-  def content_as_independent_questions
-    @content_as_independent_questions ||= questions_hash.map do |question|
-      { id: question['id'], content: content_hash.merge('questions' => [question]).to_json }
+  def questions
+    @questions ||= questions_hash.map do |question|
+      Content::Question.new(
+        id: question['id'], content_hash: content_hash.merge('questions' => [question])
+      )
     end
   end
 
   def is_multipart?
     number_of_questions > 1
+  end
+
+  def is_free_response_only?
+    question_answer_ids.any? { |answer_ids| answer_ids.empty? }
   end
 
   def feature_ids

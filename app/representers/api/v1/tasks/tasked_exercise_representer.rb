@@ -1,9 +1,9 @@
 module Api::V1::Tasks
   class TaskedExerciseRepresenter < TaskStepRepresenter
-    FEEDBACK_AVAILABLE = ->(*) { task_step.feedback_available? }
-    INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE = ->(user_options:, **) {
-      user_options.try!(:[], :include_content) && task_step.feedback_available?
-    }
+    FEEDBACK_AVAILABLE = ->(*) { feedback_available? }
+    INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE = ->(user_options:, **) do
+      user_options&.[](:include_content) && feedback_available?
+    end
 
     property :title,
              type: String,
@@ -79,6 +79,16 @@ module Api::V1::Tasks
              },
              if: INCLUDE_CONTENT
 
+    property :feedback_available?,
+             as: :is_feedback_available,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               type: 'boolean',
+               description: "Whether or not this exercise's feedback is available"
+             }
+
     property :solution,
              type: String,
              writeable: false,
@@ -135,5 +145,34 @@ module Api::V1::Tasks
                description: "The estimate of how likely the student's free response is garbage"
              },
              if: INCLUDE_CONTENT
+
+    property :available_points,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :published_points_without_lateness,
+             type: Float,
+             readable: true,
+             writeable: false,
+             if: FEEDBACK_AVAILABLE
+
+    property :published_late_work_point_penalty,
+             type: Float,
+             readable: true,
+             writeable: false,
+             if: FEEDBACK_AVAILABLE
+
+    property :published_points,
+             type: Float,
+             readable: true,
+             writeable: false,
+             if: FEEDBACK_AVAILABLE
+
+    property :published_comments,
+             type: String,
+             readable: true,
+             writeable: false,
+             if: FEEDBACK_AVAILABLE
   end
 end

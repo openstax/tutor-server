@@ -4,7 +4,7 @@ RSpec.describe TaskExercise, type: :routine do
   let(:exercise) { FactoryBot.create(:content_exercise) }
 
   let(:multipart_exercise) do
-    FactoryBot.create(:content_exercise, num_parts: 2, context: 'Some context')
+    FactoryBot.create(:content_exercise, num_questions: 2, context: 'Some context')
   end
 
   let(:task) { FactoryBot.create :tasks_task }
@@ -40,7 +40,7 @@ RSpec.describe TaskExercise, type: :routine do
       ]
     end.to change { task.task_steps.count }.from(0).to(2)
 
-    question_ids = multipart_exercise.content_as_independent_questions.map { |qq| qq[:id] }
+    question_ids = multipart_exercise.questions.map(&:id)
 
     expect(task.task_steps.size).to eq 2
 
@@ -71,7 +71,7 @@ RSpec.describe TaskExercise, type: :routine do
        .and not_change { task_step.labels }
        .and not_change { task_step.spy }
 
-    question_id = multipart_exercise.content_as_independent_questions.first[:id]
+    question_id = multipart_exercise.questions.first.id
 
     expect(task.task_steps.reload.size).to eq 1
 

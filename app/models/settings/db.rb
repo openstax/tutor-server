@@ -34,8 +34,6 @@ module Settings
     # field :host, type: :string, default: "http://localhost:3000"
     field :excluded_ids, type: :string, default: ''
     field :import_real_salesforce_courses, type: :boolean, default: false
-    field :default_open_time, type: :string, default: '00:01'
-    field :default_due_time, type: :string, default: '07:00'
     field :term_years_to_import, type: :string, default: ''
     field :pulse_insights, type: :boolean, default: false
     field :force_browser_reload, type: :boolean, default: false

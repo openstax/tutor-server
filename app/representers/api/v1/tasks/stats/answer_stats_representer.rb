@@ -2,7 +2,6 @@ module Api::V1
   module Tasks
     module Stats
       class AnswerStatsRepresenter < Roar::Decorator
-
         include Roar::JSON
 
         property :answer_id,
@@ -15,6 +14,9 @@ module Api::V1
                  writeable: false,
                  readable: true
 
+        property :is_correct,
+                 writeable: false,
+                 readable: true
       end
     end
   end

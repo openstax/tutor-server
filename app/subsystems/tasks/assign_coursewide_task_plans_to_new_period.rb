@@ -14,6 +14,7 @@ module Tasks
           target: period,
           opens_at: base_tasking_plan.opens_at,
           due_at: base_tasking_plan.due_at,
+          closes_at: base_tasking_plan.closes_at,
           tasks_task_plan_id: task_plan.id
         )
       end
@@ -34,18 +35,17 @@ module Tasks
     end
 
     def tasking_plans_have_same_dates?(task_plan)
-      task_plan.tasking_plans.flat_map(&:due_at).uniq.one? &&
-        task_plan.tasking_plans.flat_map(&:opens_at).uniq.one?
+      task_plan.tasking_plans.flat_map(&:due_at).uniq.size == 1 &&
+        task_plan.tasking_plans.flat_map(&:opens_at).uniq.size == 1 &&
+          task_plan.tasking_plans.flat_map(&:closes_at).uniq.size == 1
     end
 
     def task_plans_across_periods
-      Tasks::Models::TaskPlan.joins(:tasking_plans)
-                             .where(tasking_plans: {
-                               target_id: existing_period_ids,
-                               target_type: 'CourseMembership::Models::Period'
-                             })
-                             .preload(:tasking_plans)
-                             .to_a
+      Tasks::Models::TaskPlan.joins(:tasking_plans).where(
+        tasking_plans: {
+          target_id: existing_period_ids, target_type: 'CourseMembership::Models::Period'
+        }
+      ).preload(:tasking_plans).to_a
     end
   end
 end

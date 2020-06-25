@@ -1,7 +1,5 @@
 module Api::V1::Courses
-
   class DashboardRepresenter < ::Roar::Decorator
-
     include ::Roar::JSON
 
     class TaskBase < Roar::Decorator
@@ -29,6 +27,12 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
+
+      property :closes_at,
+               type: String,
+               readable: true,
+               writeable: false,
+               getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) }
 
       property :last_worked_at,
                type: String,
@@ -68,49 +72,27 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
+      property :past_due?,
+               as: :is_past_due,
+               readable: true,
+               writeable: false,
+               schema_info: { type: 'boolean' }
+
+      property :extended?,
+               as: :is_extended,
+               readable: true,
+               writeable: false,
+               schema_info: { type: 'boolean' }
     end
 
     class StepTaskBase < TaskBase
-      property :completed_exercise_count,
-               as: :complete_exercise_count,
+      property :steps_count,
                type: Integer,
                readable: true,
                writeable: false
 
       property :actual_and_placeholder_exercise_count,
                as: :exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-      property :accepted_late_at,
-             type: String,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { DateTimeUtilities.to_api_s(accepted_late_at) }
-
-      property :completed_accepted_late_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :completed_on_time_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false
-
-      property :correct_on_time_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false,
-               if: ->(*) { feedback_available? }
-
-      property :correct_exercise_count,
-               type: Integer,
-               readable: true,
-               writeable: false,
-               if: ->(*) { feedback_available? }
-
-      property :steps_count,
                type: Integer,
                readable: true,
                writeable: false
@@ -125,10 +107,43 @@ module Api::V1::Courses
                readable: true,
                writeable: false
 
-      property :completed_accepted_late_steps_count,
+      property :completed_exercise_count,
+               as: :complete_exercise_count,
                type: Integer,
                readable: true,
                writeable: false
+
+      property :completed_on_time_exercise_steps_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
+      property :correct_exercise_count,
+               type: Integer,
+               readable: true,
+               writeable: false,
+               if: ->(*) { auto_grading_feedback_available? }
+
+      property :gradable_step_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
+      property :ungraded_step_count,
+               type: Integer,
+               readable: true,
+               writeable: false
+
+      property :published_points,
+               type: Float,
+               readable: true,
+               writeable: false
+
+      property :provisional_score?,
+               as: :is_provisional_score,
+               readable: true,
+               writeable: false,
+               schema_info: { type: 'boolean' }
     end
 
     class ReadingTask < StepTaskBase
@@ -195,7 +210,7 @@ module Api::V1::Courses
     collection :plans,
                readable: true,
                writeable: false,
-               extend: ::Api::V1::TaskPlanRepresenter
+               extend: ::Api::V1::TaskPlan::Representer
 
     collection :tasks,
                readable: true,
@@ -232,7 +247,5 @@ module Api::V1::Courses
                readable: true,
                writeable: false,
                extend: ::Api::V1::ResearchSurveyRepresenter
-
   end
-
 end

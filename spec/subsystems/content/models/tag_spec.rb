@@ -7,7 +7,6 @@ RSpec.describe Content::Models::Tag, type: :model do
   it { is_expected.to have_many(:exercise_tags).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:value) }
-  it { is_expected.to validate_presence_of(:tag_type) }
 
   it 'returns the book location information' do
     expect(tag.book_location).to eq([4, 1])

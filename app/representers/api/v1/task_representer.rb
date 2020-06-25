@@ -24,21 +24,104 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :opens_at,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(opens_at) },
+             schema_info: { description: 'When the task opens (nil means always open)' }
+
+    property :due_at_without_extension,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(due_at_without_extension) },
+             schema_info: {
+               description: 'When the task was due before any extensions (nil means never due)'
+             }
+
     property :due_at,
              type: String,
              writeable: false,
              readable: true,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) },
-             schema_info: { description: "When the task is due (nil means never due)" }
+             schema_info: { description: 'When the task is due (nil means never due)' }
 
-    property :feedback_at,
+    property :closes_at_without_extension,
+             type: String,
              writeable: false,
              readable: true,
-             getter: ->(*) { DateTimeUtilities.to_api_s(feedback_at) },
+             getter: ->(*) { DateTimeUtilities.to_api_s(closes_at_without_extension) },
              schema_info: {
-               type: 'date',
-               description: "Feedback should be shown for the task after this time"
+               description: 'When the task closed before any extensions (nil means never due)'
              }
+
+    property :closes_at,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { DateTimeUtilities.to_api_s(closes_at) },
+             schema_info: { description: 'When the task closes (nil means never closes)' }
+
+    property :auto_grading_feedback_on,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               type: 'enum',
+               description: <<~DESCRIPTION
+                 When feedback should be shown to students for automatically graded questions.
+                 One of either "answer", "due" or "publish"
+               DESCRIPTION
+             }
+
+    property :manual_grading_feedback_on,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               type: 'enum',
+               description: <<~DESCRIPTION
+                 When feedback should be shown to students for manually graded questions.
+                 One of either "grade" or "publish"
+               DESCRIPTION
+             }
+
+    property :completion_weight,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :correctness_weight,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :late_work_penalty_applied,
+             type: String,
+             readable: true,
+             writeable: false
+
+    property :late_work_penalty_per_period,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :published_late_work_point_penalty,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :published_points,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :provisional_score?,
+             as: :is_provisional_score,
+             readable: true,
+             writeable: false,
+             schema_info: { type: 'boolean' }
 
     property :withdrawn?,
              as: :is_deleted,
@@ -53,11 +136,9 @@ module Api::V1
              type: Array,
              writeable: false,
              readable: true,
-             getter: ->(*) {
-               roles.map{ |r|
-                   { role_id: r.id, name: r.course_member.name }
-                 }
-             },
+             getter: ->(*) do
+               roles.map { |role| { role_id: role.id, name: role.course_member.name } }
+             end,
              schema_info: {
                required: true,
                description: "The students who were assigned this task"
@@ -78,9 +159,18 @@ module Api::V1
                  description: "The steps which this task is composed of"
                }
 
-    # Make sure we always preload the all task steps' content before representing the task
+    # Make sure we always preload the all task steps' content and assign available_points
+    # before representing the task
     def initialize(task)
-      super task.preload_content
+      # Preload all taskeds and exercise content
+      task.preload_content
+
+      # Preload all available points
+      task.exercise_and_placeholder_steps.each_with_index do |task_step, idx|
+        task_step.tasked.available_points = task.available_points_per_question_index[idx]
+      end
+
+      super task
     end
   end
 end

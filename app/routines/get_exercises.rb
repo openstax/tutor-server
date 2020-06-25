@@ -19,23 +19,26 @@ class GetExercises
     ecosystem ||= run(:get_ecosystem, course: course).outputs.ecosystem
 
     exercise_ids_by_pool_type = run(
-      :get_page_exercise_ids, ecosystem: ecosystem, page_ids: page_ids, pool_types: pool_types
+      :get_page_exercise_ids,
+      ecosystem: ecosystem,
+      page_ids: page_ids,
+      exercise_ids: exercise_ids,
+      pool_types: pool_types
     ).outputs.exercise_ids_by_pool_type
 
     excl_exercise_numbers_set = Set.new(course.excluded_exercises.pluck(:exercise_number)) \
       unless course.nil?
 
     # Preload exercises, pages and teks tags
-    all_exercise_ids = exercise_ids_by_pool_type.values.flatten.uniq
-    all_exercises_by_id = Content::Models::Exercise
-      .where(id: all_exercise_ids)
+    exercises_by_id = Content::Models::Exercise
+      .where(id: exercise_ids_by_pool_type.values.flatten.uniq)
       .preload(:page, tags: :teks_tags)
       .index_by(&:id)
 
     # Build map of exercise uids to representations, with pool type
     hash = {}
     exercise_ids_by_pool_type.each do |pool_type, exercise_ids|
-      pool_exercises = all_exercises_by_id.values_at(*exercise_ids).compact
+      pool_exercises = exercises_by_id.values_at(*exercise_ids).compact
       filtered_exercises = run(:filter, exercises: pool_exercises).outputs.exercises
 
       filtered_exercises.each do |exercise|
@@ -50,7 +53,7 @@ class GetExercises
       end
     end
 
-    outputs.exercises = all_exercises_by_id.values
+    outputs.exercises = exercises_by_id.values
     outputs.exercise_search = Hashie::Mash.new(items: hash.values)
   end
 end

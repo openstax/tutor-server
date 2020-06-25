@@ -8,13 +8,14 @@ FactoryBot.define do
     transient           do
       uid               { nil }
       tags              { nil }
-      num_parts         { 1 }
+      num_questions     { 1 }
+
       wrapper           { OpenStax::Exercises::V1::Exercise.new(content: content) }
     end
 
     content             do
       OpenStax::Exercises::V1::FakeClient.new_exercise_hash(
-        number: number, version: version, uid: uid, tags: tags, num_parts: num_parts
+        number: number, version: version, uid: uid, tags: tags, num_questions: num_questions
       ).to_json
     end
     number_of_questions { wrapper.questions.size }
@@ -24,5 +25,12 @@ FactoryBot.define do
     group_uuid          { wrapper.group_uuid }
     url                 { wrapper.url        }
     title               { wrapper.title      }
+
+    trait :free_response_only do
+      after(:build) do |exercise, evaluator|
+        exercise.parser.questions.each{|q| q['answers'].clear }
+        exercise.question_answer_ids.each{|a| a.clear }
+      end
+    end
   end
 end

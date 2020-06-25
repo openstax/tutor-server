@@ -17,7 +17,7 @@ class Ratings::UpdateRoleBookPart
     page_key = is_page ? :uuid : :parent_book_part_uuid
 
     responses = Tasks::Models::TaskedExercise
-      .select(:id, :answer_id, :correct_answer_id)
+      .select(:id, :answer_ids, :correct_answer_id, :answer_id, :grader_points, :last_graded_at)
       .joins(task_step: [ :page, task: :taskings ])
       .where(
         task_step: {
@@ -26,7 +26,7 @@ class Ratings::UpdateRoleBookPart
       )
       .where.not(answer_id: nil)
       .filter do |tasked_exercise|
-      tasked_exercise.task_step.task.feedback_available?(current_time: feedback_before)
+      tasked_exercise.task_step.task.auto_grading_feedback_available?(current_time: feedback_before)
     end.map(&:is_correct?)
 
     role_book_part = Ratings::RoleBookPart.new(

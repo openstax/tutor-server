@@ -15,13 +15,15 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
     end
   end
 
-  before              do
+  before do
     @task_plan.reload
     @period.reload
   end
 
   let(:student_tasks) do
-    @task_plan.tasks.joins(taskings: { role: :student }).preload(taskings: { role: :profile }).to_a
+    @task_plan.tasks.joins(taskings: { role: :student }).preload(
+      taskings: { role: :profile }
+    ).to_a
   end
 
   context 'with an unworked plan' do
@@ -281,7 +283,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
         task.exercise_steps(preload_taskeds: true).each do |exercise_step|
           tasked = exercise_step.tasked
           exercise = tasked.exercise
-          question_ids = exercise.questions_hash.map { |question| question['id'].to_s }
+          question_ids = exercise.questions.map(&:id).map(&:to_s)
           question_ids.each do |question_id|
             student_names_map[question_id] << student_names
             free_responses_map[question_id][student_names] << tasked.free_response
@@ -318,6 +320,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
           expected_answer_stats = question_answer_ids.map do |aid|
             {
               answer_id: aid,
+              is_correct: be_in([ true, false ]),
               selected_count: selected_answers_map.values.map(&:values).flatten.count(aid)
             }
           end

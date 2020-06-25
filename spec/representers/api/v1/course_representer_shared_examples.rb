@@ -39,16 +39,6 @@ module Api::V1
       expect(represented['timezone']).to eq 'US/Central'
     end
 
-    it 'shows the course default open time' do
-      course.default_open_time = '16:08'
-      expect(represented['default_open_time']).to eq '16:08'
-    end
-
-    it 'shows the course default due time' do
-      course.default_due_time = '16:09'
-      expect(represented['default_due_time']).to eq '16:09'
-    end
-
     it 'shows the offering salesforce_book_name' do
       expect(represented['salesforce_book_name']).to eq 'book'
     end
@@ -128,6 +118,10 @@ module Api::V1
     it 'shows the last_lms_scores_push_job_id' do
       course.last_lms_scores_push_job_id = "howdy"
       expect(represented['last_lms_scores_push_job_id']).to eq "howdy"
+    end
+
+    it 'shows uses_pre_wrm_scores' do
+      expect(represented['uses_pre_wrm_scores']).to eq course.pre_wrm_scores?
     end
   end
 end

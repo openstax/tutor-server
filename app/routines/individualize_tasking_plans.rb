@@ -32,10 +32,13 @@ class IndividualizeTaskingPlans
       roles = roles.select { |role| role.role_type == role_type.to_s } unless role_type.nil?
 
       roles.map do |role|
-        Tasks::Models::TaskingPlan.new(task_plan: task_plan,
-                                       target: role,
-                                       opens_at: tasking_plan.opens_at,
-                                       due_at: tasking_plan.due_at)
+        Tasks::Models::TaskingPlan.new(
+          task_plan: task_plan,
+          target: role,
+          opens_at: tasking_plan.opens_at,
+          due_at: tasking_plan.due_at,
+          closes_at: tasking_plan.closes_at
+        )
       end
     end.uniq(&:target)
   end

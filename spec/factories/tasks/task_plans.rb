@@ -10,14 +10,18 @@ FactoryBot.define do
       target                    { nil }
       opens_at                  { nil }
       due_at                    { nil }
+      closes_at                 { nil }
     end
 
-    title                 { 'A task' }
-    settings              { {} }
-    type                  { 'reading' }
-    is_feedback_immediate { type != 'homework' }
-    first_published_at    { published_at }
-    last_published_at     { published_at }
+    title                       { 'A task' }
+    type                        do
+      grading_template.nil? ? 'reading' : grading_template.task_plan_type
+    end
+    settings                    do
+      homework? ? { 'exercises': [] } : {}
+    end
+    first_published_at          { published_at }
+    last_published_at           { published_at }
 
     after(:build) do |task_plan, evaluator|
       code_class_name_hash = { code_class_name: evaluator.assistant_code_class_name }
@@ -28,13 +32,20 @@ FactoryBot.define do
       task_plan.ecosystem ||= task_plan.course.ecosystem
       AddEcosystemToCourse.call(ecosystem: task_plan.ecosystem, course: task_plan.course) \
         unless task_plan.ecosystem.nil? || task_plan.course.ecosystem == task_plan.ecosystem
+      task_plan.grading_template ||= task_plan.course.grading_templates.detect do |grading_template|
+        grading_template.task_plan_type.to_s == task_plan.type
+      end
+      task_plan.grading_template ||= build(
+        :tasks_grading_template, course: task_plan.course, task_plan_type: task_plan.type.to_sym
+      ) if [ 'reading', 'homework' ].include? task_plan.type
 
       now = task_plan.time_zone.now
       task_plan.tasking_plans += evaluator.num_tasking_plans.times.map do
         args = {
           task_plan: task_plan,
           opens_at: evaluator.opens_at || now,
-          due_at: evaluator.due_at || now + evaluator.duration
+          due_at: evaluator.due_at || now + evaluator.duration,
+          closes_at: evaluator.closes_at || task_plan.course.ends_at - 1.day
         }
         args[:target] = evaluator.target unless evaluator.target.nil?
 

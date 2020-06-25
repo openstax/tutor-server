@@ -189,6 +189,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -213,6 +214,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -248,6 +250,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -344,6 +347,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
           student = first_period.students.first
           CourseMembership::InactivateStudent.call(student: student)
 
+          expect(ReassignPublishedPeriodTaskPlans).to receive(:[])
+
           expect(configured_job).to receive(:perform_later) do |period_ids:, force:|
             expect(period_ids).to eq first_period.id
             expect(force).to eq true
@@ -424,6 +429,8 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         it 'is called with force: true when a student is reactivated' do
           student = first_period.students.first
           CourseMembership::InactivateStudent.call(student: student)
+
+          expect(ReassignPublishedPeriodTaskPlans).to receive(:[])
 
           expect(configured_job).to receive(:perform_later) do |period_ids:, force:|
             expect(period_ids).to eq first_period.id
@@ -524,6 +531,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -548,6 +556,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(
@@ -583,6 +592,7 @@ RSpec.describe Tasks::UpdatePeriodCaches, type: :routine, speed: :medium do
         tasking_plan = period_cache.task_plan.tasking_plans.find { |tp| tp.target == period }
         expect(period_cache.opens_at).to be_within(1).of(tasking_plan.opens_at)
         expect(period_cache.due_at).to be_within(1).of(tasking_plan.due_at)
+        expect(period_cache.closes_at).to be_within(1).of(tasking_plan.closes_at)
       end
 
       expect(

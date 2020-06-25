@@ -27,12 +27,7 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :completed_on_time_step_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :completed_accepted_late_step_count,
+    property :completed_on_time_steps_count,
              type: Integer,
              readable: true,
              writeable: false
@@ -48,12 +43,7 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :completed_on_time_exercise_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :completed_accepted_late_exercise_count,
+    property :completed_on_time_exercise_steps_count,
              type: Integer,
              readable: true,
              writeable: false
@@ -63,17 +53,17 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :correct_on_time_exercise_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :correct_accepted_late_exercise_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
     property :recovered_exercise_count,
+             type: Integer,
+             readable: true,
+             writeable: false
+
+    property :gradable_step_count,
+             type: Integer,
+             readable: true,
+             writeable: false
+
+    property :ungraded_step_count,
              type: Integer,
              readable: true,
              writeable: false
@@ -90,32 +80,44 @@ module Api::V1::PerformanceReport::Student::Data
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) }
 
-    property :is_late_work_accepted,
-             readable: true,
-             writeable: false
-
-    property :accepted_late_at,
-             type: String,
+    property :is_past_due,
              readable: true,
              writeable: false,
-             getter: ->(*) { DateTimeUtilities.to_api_s(accepted_late_at) },
-             schema: {
-               description: "Will only be set when late work has been accepted; " +
-                            "will go away if accepted late work is later rejected."
-             }
+             schema_info: { type: 'boolean' }
 
-    property :score,
-             type: Float,
+    property :is_extended,
              readable: true,
-             writeable: false
+             writeable: false,
+             schema_info: { type: 'boolean' }
+
+    property :is_included_in_averages,
+             readable: true,
+             writeable: false,
+             schema_info: { type: 'boolean' }
 
     property :progress,
              type: Float,
              readable: true,
              writeable: false
 
-    property :is_included_in_averages,
+    property :available_points,
+             type: Float,
              readable: true,
              writeable: false
+
+    property :published_points,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :published_score,
+             type: Float,
+             readable: true,
+             writeable: false
+
+    property :is_provisional_score,
+             readable: true,
+             writeable: false,
+             schema_info: { type: 'boolean' }
   end
 end

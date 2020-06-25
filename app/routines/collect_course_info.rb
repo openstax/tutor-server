@@ -34,10 +34,8 @@ class CollectCourseInfo
         ends_at: course.ends_at,
         active?: course.active?,
         timezone: course.timezone,
-        default_open_time: course.default_open_time,
-        default_due_time: course.default_due_time,
         offering: offering,
-        catalog_offering_id: offering.try!(:id),
+        catalog_offering_id: offering&.id,
         is_concept_coach: course.is_concept_coach,
         is_college: course.is_college,
         is_preview: course.is_preview,
@@ -45,22 +43,23 @@ class CollectCourseInfo
         does_cost: course.does_cost,
         is_lms_enabling_allowed: course.is_lms_enabling_allowed,
         is_lms_enabled: course.is_lms_enabled,
+        pre_wrm_scores?: course.pre_wrm_scores?,
+        past_due_unattempted_ungraded_wrq_are_zero:
+          course.past_due_unattempted_ungraded_wrq_are_zero,
         last_lms_scores_push_job_id: course.last_lms_scores_push_job_id,
         school_name: course.school_name,
-        salesforce_book_name: offering.try!(:salesforce_book_name),
-        appearance_code: course.appearance_code.blank? ? offering.try!(:appearance_code) :
+        salesforce_book_name: offering&.salesforce_book_name,
+        appearance_code: course.appearance_code.blank? ? offering&.appearance_code :
                                                          course.appearance_code,
         cloned_from_id: course.cloned_from_id,
-        homework_score_weight: course.homework_score_weight,
-        homework_progress_weight: course.homework_progress_weight,
-        reading_score_weight: course.reading_score_weight,
-        reading_progress_weight: course.reading_progress_weight,
+        reading_weight: course.reading_weight,
+        homework_weight: course.homework_weight,
         ecosystems: course.ecosystems,
         ecosystem: course.ecosystem,
         periods: periods,
         students: students,
         roles: roles,
-        spy_info: course.spy_info,
+        spy_info: course.spy_info
       )
     end
   end

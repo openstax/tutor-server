@@ -53,6 +53,10 @@ class Tasks::Models::TaskStep < ApplicationRecord
     tasked_type == Tasks::Models::TaskedPlaceholder.name
   end
 
+  def external?
+    tasked_type == Tasks::Models::TaskedExternalUrl.name
+  end
+
   def is_correct?
     has_correctness? ? tasked.is_correct? : nil
   end
@@ -96,8 +100,18 @@ class Tasks::Models::TaskStep < ApplicationRecord
     !first_completed_at.nil?
   end
 
-  def feedback_available?
-    completed? && task.feedback_available?
+  def can_be_updated?(current_time: Time.current)
+    return false if task.past_close?(current_time: current_time)
+
+    return false if exercise? && tasked.was_manually_graded?
+
+    return true unless completed?
+
+    return false if !exercise? || tasked.was_manually_graded?
+
+    !tasked.can_be_auto_graded? || !task.auto_grading_feedback_available?(
+      current_time: current_time
+    )
   end
 
   def group_name

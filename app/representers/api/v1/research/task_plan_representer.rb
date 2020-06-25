@@ -33,12 +33,6 @@ class Api::V1::Research::TaskPlanRepresenter < Roar::Decorator
            writeable: false,
            schema_info: { required: true }
 
-  property :is_feedback_immediate,
-           readable: true,
-           writeable: false,
-           if: ->(*) { type == 'homework' },
-           schema_info: { required: true, type: 'boolean' }
-
   property :is_draft,
            readable: true,
            writeable: false,

@@ -30,8 +30,8 @@ class Preview::WorkTask
 
       completed_at_value = completed_at.is_a?(Proc) ? completed_at.call(task_step, index) :
                                                       completed_at
-      # Can't rework steps after feedback date
-      next if task_step.completed? && task.feedback_available?(current_time: completed_at)
+      # Can't rework steps after feedback date or if manually graded
+      next unless task_step.can_be_updated?(current_time: completed_at)
 
       if task_step.exercise?
         is_correct_value = is_correct.is_a?(Proc) ? is_correct.call(task_step, index) : is_correct
@@ -78,9 +78,9 @@ class Preview::WorkTask
     # course will only be set if role and period were found
     return if course.nil?
 
-    queue = task.is_preview ? 'preview' : 'dashboard'
-    role_run_at = task.feedback_available? ? completed_at :
-                                             [ task.feedback_at, completed_at ].compact.max
+    queue = task.preview_course? ? 'preview' : 'dashboard'
+    role_run_at = task.auto_grading_feedback_available? ? completed_at :
+                                                          [ task.due_at, completed_at ].compact.max
 
     page_uuid_book_part_uuids = Content::Models::Page
       .where(id: exercise_steps.map(&:content_page_id))

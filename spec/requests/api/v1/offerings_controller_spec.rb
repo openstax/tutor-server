@@ -11,6 +11,7 @@ RSpec.describe Api::V1::OfferingsController, type: :request, api: true, version:
     FactoryBot.create(:user_profile).tap do |user|
       user.account.confirmed_faculty!
       user.account.college!
+      user.account.domestic_school!
     end
   end
   let(:faculty_access_token)  do

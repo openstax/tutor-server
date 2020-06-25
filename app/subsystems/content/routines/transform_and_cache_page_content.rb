@@ -74,10 +74,49 @@ class Content::Routines::TransformAndCachePageContent
       page.cache_fragments_and_snap_labs
     end
 
+    # Get all exercises that require context
+    context_exercises = Content::Models::Exercise.requires_context.where(
+      id: pages.flat_map(&:all_exercise_ids)
+    ).preload(:tags).to_a
+    context_exercises_by_page_id = context_exercises.group_by(&:content_page_id)
+
+    # Assign exercise context if required
+    lookahead_exercises = []
+    pages.each do |page|
+      previous_context_exercises = lookahead_exercises
+      lookahead_exercises = []
+      (
+        (context_exercises_by_page_id[page.id] || []) + previous_context_exercises
+      ).each do |context_exercise|
+        feature_ids = context_exercise.feature_ids
+        context_exercise.context = page.context_for_feature_ids feature_ids
+        next unless context_exercise.context.blank?
+
+        if feature_ids.empty?
+          Rails.logger.warn do
+            "Exercise #{context_exercise.uid} requires context but it has no feature ID tags"
+          end
+        else
+          lookahead_exercises << context_exercise
+        end
+      end
+    end
+
+    lookahead_exercises.each do |context_exercise|
+      Rails.logger.warn do
+        "Exercise #{context_exercise.uid} requires context but its feature ID(s) [ #{
+          context_exercise.feature_ids.join(', ')
+        } ] could not be found on its page or any subsequent pages"
+      end
+    end
+
     outputs.pages = pages
 
     return unless save
 
+    # Pages are large enough that saving them individually seems faster than importing
     pages.each(&:save!)
+
+    context_exercises.each(&:save!)
   end
 end

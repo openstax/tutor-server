@@ -71,16 +71,6 @@ module Api::V1
              readable: true,
              writeable: true
 
-    property :default_open_time,
-             type: String,
-             readable: true,
-             writeable: true
-
-    property :default_due_time,
-             type: String,
-             readable: true,
-             writeable: true
-
     property :salesforce_book_name,
              type: String,
              readable: true,
@@ -169,6 +159,15 @@ module Api::V1
                type: 'boolean'
              }
 
+    property :pre_wrm_scores?,
+             as: :uses_pre_wrm_scores,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean',
+               required: true
+             }
+
     property :cloned_from_id,
              type: String,
              readable: true,
@@ -207,6 +206,15 @@ module Api::V1
                              "an LMS; can be `nil` which indicates no choice yet"
              }
 
+    property :past_due_unattempted_ungraded_wrq_are_zero,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               required: true,
+               type: 'boolean',
+               description: 'True iff past-due unattempted ungraded WRQ automatically receive zero'
+             }
+
     property :last_lms_scores_push_job_id,
              type: String,
              writeable: false,
@@ -216,25 +224,7 @@ module Api::V1
                 description: "Background job ID of last push of scores to LMS"
              }
 
-    property :homework_score_weight,
-             type: Float,
-             writeable: true,
-             readable: true,
-             schema_info: {
-                required: true,
-                description: "The weight given to homework scores when calculating the average"
-             }
-
-    property :homework_progress_weight,
-             type: Float,
-             writeable: true,
-             readable: true,
-             schema_info: {
-                required: true,
-                description: "The weight given to homework progress when calculating the average"
-             }
-
-    property :reading_score_weight,
+    property :reading_weight,
              type: Float,
              writeable: true,
              readable: true,
@@ -243,13 +233,13 @@ module Api::V1
                 description: "The weight given to reading scores when calculating the average"
              }
 
-    property :reading_progress_weight,
+    property :homework_weight,
              type: Float,
              writeable: true,
              readable: true,
              schema_info: {
                 required: true,
-                description: "The weight given to reading progress when calculating the average"
+                description: "The weight given to homework scores when calculating the average"
              }
 
     collection :periods,

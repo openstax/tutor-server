@@ -8,6 +8,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
       allow(step).to receive(:group_name).and_return('Some group')
       allow(step).to receive(:is_core).and_return(false)
       allow(step).to receive(:completed?).and_return(false)
+      allow(step).to receive(:can_be_updated?).and_return(true)
 
       allow(step).to receive(:spy_with_response_validation).and_return({})
     end
@@ -24,6 +25,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
       allow(placeholder).to receive(:placeholder_type).and_return('some_exercise_type')
       allow(placeholder).to receive(:last_completed_at).and_return(Time.current)
       allow(placeholder).to receive(:first_completed_at).and_return(Time.current - 1.week)
+      allow(placeholder).to receive(:available_points).and_return(1.0)
       allow(placeholder).to receive(:cache_key).and_return('tasks/models/tasked_placeholders/42')
       allow(placeholder).to receive(:cache_version).and_return('test')
     end
@@ -40,33 +42,34 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
   end
 
   it "'type' == 'placeholder'" do
-    expect(representation).to include("type" => "placeholder")
+    expect(representation).to include('type' => 'placeholder')
   end
 
   it "has the correct 'placeholder_for'" do
-    expect(representation).to include("placeholder_for" => 'some_exercise_type')
+    expect(representation).to include('placeholder_for' => 'some_exercise_type')
   end
 
-  it "correctly references the TaskStep and Task ids" do
-    expect(representation).to include(
-      "id"      => 15,
-    )
+  it 'correctly references the TaskStep and Task ids' do
+    expect(representation).to include('id' => 15)
   end
 
   it "'is_completed' == false" do
-    expect(representation).to include("is_completed" => false)
+    expect(representation).to include('is_completed' => false)
+  end
+
+  it 'has the correct available_points' do
+    expect(representation).to include('available_points' => 1.0)
   end
 
   it "has the correct 'group'" do
-    expect(representation).to include("group" => 'Some group')
+    expect(representation).to include('group' => 'Some group')
   end
 
   it "has the correct 'is_core'" do
-    expect(representation).to include("is_core" => false)
+    expect(representation).to include('is_core' => false)
   end
 
   it "has 'spy'" do
-    expect(complete_representation).to include("spy" => {})
+    expect(complete_representation).to include('spy' => {})
   end
-
 end

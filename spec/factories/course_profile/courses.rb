@@ -14,7 +14,9 @@ FactoryBot.define do
     is_college            { [ true, false, nil ].sample }
 
     # Preview term dates are based on DateTime.current, so they lead to flaky tests
-    term                  { (CourseProfile::Models::Course.terms.keys - [ 'preview' ]).sample }
+    term                  do
+      (CourseProfile::Models::Course.terms.keys - [ 'legacy', 'preview' ]).sample
+    end
     year                  { Time.current.year }
 
     timezone              { 'US/Central' }
@@ -47,6 +49,12 @@ FactoryBot.define do
 
     trait(:with_assistants) do
       after(:create) { |course| Tasks::CreateCourseAssistants[course: course] }
+    end
+
+    trait(:with_grading_templates) do
+      after(:create) do |course|
+        course.grading_templates.concat Tasks::Models::GradingTemplate.default
+      end
     end
 
     trait(:without_ecosystem) do

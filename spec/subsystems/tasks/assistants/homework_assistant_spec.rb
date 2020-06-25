@@ -13,24 +13,24 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
 
       generate_homework_test_exercise_content
 
-      core_exercise_ids = @pages.flat_map(&:homework_core_exercise_ids).sort
+      core_exercise_ids = @pages.flat_map(&:homework_core_exercise_ids)[1..5]
 
-      @teacher_selected_exercise_ids = core_exercise_ids[1..5].map(&:to_s)
+      @teacher_selected_exercises = Content::Models::Exercise.where(id: core_exercise_ids)
 
-      @tutor_selected_exercise_count = 4
+      @exercises_count_dynamic = 4
 
-      @assignment_exercise_count = @teacher_selected_exercise_ids.count +
-                                   @tutor_selected_exercise_count
+      @assignment_exercise_count = @teacher_selected_exercises.size + @exercises_count_dynamic
 
       @task_plan = FactoryBot.build(
         :tasks_task_plan,
         assistant: @assistant,
         content_ecosystem_id: @ecosystem.id,
         description: "Hello!",
-        is_feedback_immediate: true,
         settings: {
-          exercise_ids: @teacher_selected_exercise_ids,
-          exercises_count_dynamic: @tutor_selected_exercise_count
+          exercises: @teacher_selected_exercises.map do |exercise|
+            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+          end,
+          exercises_count_dynamic: @exercises_count_dynamic
         },
         num_tasking_plans: 0
       )
@@ -51,7 +51,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         @task_plan.tasking_plans << FactoryBot.build(
           :tasks_tasking_plan,
           task_plan: @task_plan,
-          target:    taskee
+          target: taskee
         )
       end
 
@@ -62,12 +62,14 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
 
     after(:all)  { DatabaseCleaner.clean }
 
-    it "sets description, task type, and feedback_at" do
+    it "sets description, task type, and feedback enums" do
+      grading_template = @task_plan.grading_template
       @tasks.each do |task|
         expect(task.description).to eq("Hello!")
         expect(task.homework?).to be_truthy
-        # feedback_at == nil because the task plan was set to immediate_feedback
-        expect(task.feedback_at).to be_nil
+        # feedback enums copied from the task_plan's grading template
+        expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
+        expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
       end
     end
 
@@ -79,24 +81,24 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
       @tasks.each { |task| expect(task.taskings.count).to eq(1) }
 
       expected_roles = @taskee_users.map{ |taskee| Role::GetDefaultUserRole[taskee] }
-      expect(@tasks.map{|t| t.taskings.first.role}).to match_array expected_roles
+      expect(@tasks.map {|t| t.taskings.first.role}).to match_array expected_roles
     end
 
     it "assigns the correct number of exercises" do
       @tasks.each do |task|
-        expect(task.task_steps.count).to eq(@assignment_exercise_count)
+        expect(task.task_steps.size).to eq(@assignment_exercise_count)
       end
     end
 
     it "assigns the teacher-selected exercises as the task's core exercises" do
       @tasks.each do |task|
         core_task_steps = task.core_task_steps
-        expect(core_task_steps.count).to eq(@teacher_selected_exercise_ids.count)
+        expect(core_task_steps.size).to eq(@teacher_selected_exercises.size)
 
         core_task_steps.each_with_index do |task_step, ii|
           tasked_exercise = task_step.tasked
 
-          exercise = Content::Models::Exercise.find @teacher_selected_exercise_ids[ii]
+          exercise = @teacher_selected_exercises[ii]
 
           expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
           expect(tasked_exercise.url).to eq(exercise.url)
@@ -109,7 +111,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
     it "assigns all available tutor slots as spaced practice exercise placeholders" do
       @tasks.each do |task|
         spaced_practice_task_steps = task.spaced_practice_task_steps
-        expect(spaced_practice_task_steps.count).to eq @tutor_selected_exercise_count
+        expect(spaced_practice_task_steps.count).to eq @exercises_count_dynamic
 
         spaced_practice_task_steps.each do |task_step|
           expect(task_step.labels).to include 'review'

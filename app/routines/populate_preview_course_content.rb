@@ -77,14 +77,23 @@ class PopulatePreviewCourseContent
     return if preview_chapters.blank?
 
     # Assign tasks
-    opens_at = [course.time_zone.now.monday - 2.weeks, course.starts_at.utc].max
+    time_zone = course.time_zone
+    starts_at = course.starts_at
+    ends_at = course.ends_at
+    closes_at = course.ends_at - 1.day
     preview_chapters.each_with_index do |chapter, index|
-      reading_due_at = [opens_at + index.weeks + 1.day, course.ends_at].min
-      homework_due_at = [reading_due_at + 3.days, course.ends_at].min
+      reading_opens_at = [time_zone.now.monday - 20.days + index.weeks, starts_at].max
+      reading_due_at = [reading_opens_at + 7.days, ends_at].min
+      homework_opens_at = [reading_opens_at + 3.days, starts_at].max
+      homework_due_at = [homework_opens_at + 7.days, ends_at].min
 
       pages = chapter.pages
-      page_ids = pages.map{ |page| page.id.to_s }
-      exercise_ids = pages.flat_map { |page| page.homework_core_exercise_ids.sample&.to_s }.compact
+      page_ids = pages.map { |page| page.id.to_s }
+      exercise_ids = pages.flat_map { |page| page.homework_core_exercise_ids.sample }.compact
+      ex = Content::Models::Exercise.select(:id, :number_of_questions).where(id: exercise_ids)
+      exercises = ex.map do |exercise|
+        { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+      end
 
       reading_tp = Tasks::Models::TaskPlan.new(
         title: "Chapter #{chapter.book_location.join('.')} Reading (Sample)",
@@ -92,13 +101,19 @@ class PopulatePreviewCourseContent
         is_preview: true,
         ecosystem: ecosystem,
         type: 'reading',
-        settings: { 'page_ids' => page_ids }
+        settings: { page_ids: page_ids },
+        grading_template: course.grading_templates.detect(&:reading?)
       )
-      reading_tp.assistant = run(:get_assistant, course: course, task_plan: reading_tp)
-                               .outputs.assistant
+      reading_tp.assistant = run(
+        :get_assistant, course: course, task_plan: reading_tp
+      ).outputs.assistant
       reading_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
-          task_plan: reading_tp, target: period, opens_at: opens_at, due_at: reading_due_at
+          task_plan: reading_tp,
+          target: period,
+          opens_at: reading_opens_at,
+          due_at: reading_due_at,
+          closes_at: closes_at
         )
       end
       reading_tp.save!
@@ -113,15 +128,23 @@ class PopulatePreviewCourseContent
         is_preview: true,
         ecosystem: ecosystem,
         type: 'homework',
-        settings: { 'page_ids' => page_ids,
-                    'exercise_ids' => exercise_ids,
-                    'exercises_count_dynamic' => exercises_count_dynamic }
+        settings: {
+          page_ids: page_ids,
+          exercises: exercises,
+          exercises_count_dynamic: exercises_count_dynamic
+        },
+        grading_template: course.grading_templates.detect(&:homework?)
       )
-      homework_tp.assistant = run(:get_assistant, course: course, task_plan: homework_tp)
-                                .outputs.assistant
+      homework_tp.assistant = run(
+        :get_assistant, course: course, task_plan: homework_tp
+      ).outputs.assistant
       homework_tp.tasking_plans = periods.map do |period|
         Tasks::Models::TaskingPlan.new(
-          task_plan: homework_tp, target: period, opens_at: opens_at, due_at: homework_due_at
+          task_plan: homework_tp,
+          target: period,
+          opens_at: homework_opens_at,
+          due_at: homework_due_at,
+          closes_at: closes_at
         )
       end
       homework_tp.save!
