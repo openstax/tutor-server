@@ -63,7 +63,7 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
       default_reading_due_time = course.default_due_time || '07:00'
 
       tps_by_is_feedback_immediate = Tasks::Models::TaskPlan.select(:id, :is_feedback_immediate)
-                                                            .where(owner: course, type: 'homework')
+                                                            .where(course: course, type: 'homework')
                                                             .group_by(&:is_feedback_immediate)
 
       if tps_by_is_feedback_immediate.size == 0
@@ -132,7 +132,7 @@ class CreateTasksGradingTemplates < ActiveRecord::Migration[5.2]
       reading_template.save validate: false
 
       Tasks::Models::TaskPlan.where(
-        owner: course, type: 'reading'
+        course: course, type: 'reading'
       ).update_all(tasks_grading_template_id: reading_template.id)
     end
 

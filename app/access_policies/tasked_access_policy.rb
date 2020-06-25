@@ -12,7 +12,7 @@ class TaskedAccessPolicy
       DoesTaskingExist[task_component: tasked, user: requestor] &&
         !task.withdrawn? &&
         !task.past_close? &&
-        (task.past_open? || task.roles.first.teacher_student?)
+        (task.past_open? || task.teacher_student?)
     when :grade
       return false if !task.past_due?
       period = task.taskings.first&.period

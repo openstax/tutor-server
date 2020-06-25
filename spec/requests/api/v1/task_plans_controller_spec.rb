@@ -444,7 +444,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
         late_work_penalty_applied: :immediately
       )
 
-      task = @published_task_plan.tasks.reject(&:preview?).first
+      task = @published_task_plan.tasks.detect(&:student?)
       expect(task).not_to be_past_due
 
       Preview::WorkTask.call task: task, is_correct: true
@@ -460,9 +460,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
         tp['due_at'] = DateTimeUtilities.to_api_s(Time.current - 1.day)
       end
 
-      controller.sign_in @teacher
-      api_put :update, nil, params: { course_id: @course.id, id: @published_task_plan.id },
-                            body: valid_json_hash.to_json
+      sign_in! @teacher
+      api_put api_task_plan_url(@published_task_plan.id), nil, params: valid_json_hash.to_json
       expect(response).to be_successful
 
       expect(task.reload).to be_past_due
@@ -480,8 +479,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
           drop_method: 'zeroed'
         }.stringify_keys
       ]
-      api_put :update, nil, params: { course_id: @course.id, id: @published_task_plan.id },
-                            body: valid_json_hash.to_json
+      api_put api_task_plan_url(@published_task_plan.id), nil, params: valid_json_hash.to_json
       expect(response).to be_successful
 
       expect(task.reload).to be_past_due
@@ -500,8 +498,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
           closes_at: DateTimeUtilities.to_api_s(Time.current + 2.days)
         }.stringify_keys
       ]
-      api_put :update, nil, params: { course_id: @course.id, id: @published_task_plan.id },
-                            body: valid_json_hash.to_json
+      api_put api_task_plan_url(@published_task_plan.id), nil, params: valid_json_hash.to_json
       expect(response).to be_successful
 
       expect(task.reload).not_to be_past_due
@@ -696,7 +693,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
 
       let(:new_grading_template) do
         FactoryBot.create(
-          :tasks_grading_template, course: @task_plan.owner, task_plan_type: @task_plan.type
+          :tasks_grading_template, course: @task_plan.course, task_plan_type: @task_plan.type
         )
       end
 
@@ -709,10 +706,9 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       end
 
       it 'allows the teacher to change title, description, and grading_template_id' do
-        controller.sign_in @teacher
+        sign_in! @teacher
         expect do
-          api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
-                  body: valid_json_hash.to_json
+          api_put api_task_plan_url(@task_plan.id), nil, params: valid_json_hash.to_json
         end.to change  { @task_plan.reload.title }
            .and change { @task_plan.description }
            .and change { @task_plan.grading_template }
@@ -730,10 +726,9 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
           tasking_plan['opens_at'] = (Time.current + 1.day).iso8601
         end
 
-        controller.sign_in @teacher
+        sign_in! @teacher
         expect do
-          api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
-                  body: invalid_json_hash.to_json
+          api_put api_task_plan_url(@task_plan.id), nil, params: invalid_json_hash.to_json
         end.to  change     { @task_plan.reload.title }
            .and change     { @task_plan.description }
            .and change     { @task_plan.grading_template }
@@ -752,10 +747,9 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
           'page_ids' => FactoryBot.create(:content_page, ecosystem: @course.ecosystem).id.to_s
         }
 
-        controller.sign_in @teacher
+        sign_in! @teacher
         expect do
-          api_put :update, nil, params: { course_id: @course.id, id: @task_plan.id },
-                  body: invalid_json_hash.to_json
+          api_put api_task_plan_url(@task_plan.id), nil, params: invalid_json_hash.to_json
         end.to  not_change { @task_plan.reload.title }
            .and not_change { @task_plan.description }
            .and not_change { @task_plan.grading_template }

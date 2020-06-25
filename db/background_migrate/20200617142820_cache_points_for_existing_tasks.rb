@@ -11,7 +11,7 @@ class CachePointsForExistingTasks < ActiveRecord::Migration[5.2]
                                    .limit(BATCH_SIZE)
                                    .preload(
            :course, :taskings, :time_zone, task_steps: :tasked, task_plan: [
-             :tasking_plans, :dropped_questions, :grading_template, :extensions
+             :course, :tasking_plans, :dropped_questions, :grading_template, :extensions
            ]
         ).to_a
         next 0 if tasks.empty?

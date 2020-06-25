@@ -16,7 +16,7 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine, speed: :medi
     worked_pages.each do |page|
       is_correct = !@worst_pages.include?(page)
       task = FactoryBot.create :tasks_task, ecosystem: @ecosystem, tasked_to: @role
-      task.grading_template.auto_grading_feedback_on_answer!
+      task.grading_template.update_column :auto_grading_feedback_on, :answer
 
       CalculateClue::CLUE_MIN_NUM_RESPONSES.times do
         exercise = FactoryBot.create :content_exercise, page: page

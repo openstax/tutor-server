@@ -32,6 +32,7 @@ class DenormalizeTimeZones < ActiveRecord::Migration[5.2]
     remove_column :course_profile_courses, :time_zone_id
     remove_column :tasks_tasking_plans, :time_zone_id
     remove_column :tasks_tasks, :time_zone_id
+    remove_column :tasks_extensions, :time_zone_id
 
     drop_table :time_zones
   end

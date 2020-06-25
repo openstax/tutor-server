@@ -172,7 +172,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       it 'returns the proper numbers' do
         tasks = Tasks::Models::Task.where(title: 'Homework task plan')
         grading_templates = tasks.map(&:task_plan).uniq.map(&:grading_template).uniq
-        grading_templates.each(&:auto_grading_feedback_on_answer!)
+        grading_templates.each { |gt| gt.update_column :auto_grading_feedback_on, :answer }
         tasks.each { |task| task.update_caches_now update_cached_attributes: true }
 
         expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
@@ -337,7 +337,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       it 'returns the proper numbers' do
         tasks = Tasks::Models::Task.where(title: 'Homework task plan')
         grading_templates = tasks.map(&:task_plan).uniq.map(&:grading_template).uniq
-        grading_templates.each(&:auto_grading_feedback_on_due!)
+        grading_templates.each { |gt| gt.update_column :auto_grading_feedback_on, :due }
         tasks.each { |task| task.update_caches_now update_cached_attributes: true }
 
         expect(first_period_report.overall_homework_score).to be_within(1e-6).of(9/14.0)
@@ -502,7 +502,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       it 'returns the proper numbers' do
         tasks = Tasks::Models::Task.where(title: 'Homework task plan')
         grading_templates = tasks.map(&:task_plan).uniq.map(&:grading_template).uniq
-        grading_templates.each(&:auto_grading_feedback_on_publish!)
+        grading_templates.each { |gt| gt.update_column :auto_grading_feedback_on, :publish }
         tasks.each { |task| task.update_caches_now update_cached_attributes: true }
 
         expect(first_period_report.overall_homework_score).to be_nil
@@ -842,7 +842,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         taskings: { entity_role_id: @student_1.roles.first.id },
         title: 'Homework task plan'
       )
-      task.task_plan.grading_template.auto_grading_feedback_on_publish!
+      task.task_plan.grading_template.update_column :auto_grading_feedback_on, :publish
 
       expect(report.data_headings.size).to eq expected_tasks
 

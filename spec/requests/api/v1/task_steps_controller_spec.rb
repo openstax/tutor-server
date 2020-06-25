@@ -225,9 +225,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
         end
       )
 
-      api_put :update, @user_1_token,
-              params: id_parameters,
-              body: { free_response: 'Ipsum Lorem' }
+      api_put api_step_url(tasked.task_step.id), @user_1_token,
+              params: { free_response: 'Ipsum Lorem' }.to_json
     end
 
     it 'calls MarkTaskStepCompleted when setting the answer_id' do
@@ -241,9 +240,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
         end
       )
 
-      api_put :update, @user_1_token,
-              params: id_parameters,
-              body: { free_response: 'Ipsum Lorem', answer_id: tasked.answer_ids.last }
+      api_put api_step_url(tasked.task_step.id), @user_1_token,
+              params: { free_response: 'Ipsum Lorem', answer_id: tasked.answer_ids.last }.to_json
     end
 
     context 'research' do
@@ -416,7 +414,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
   context 'exercise update progression' do
     before do
-      @tasked_exercise.task_step.task.task_plan.grading_template.auto_grading_feedback_on_due!
+      @tasked_exercise.task_step.task.task_plan.grading_template.update_column(
+        :auto_grading_feedback_on, :due
+      )
 
       @tasked_exercise.task_step.task.update_attribute :opens_at, Time.current.yesterday - 1.day
     end

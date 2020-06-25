@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, version: :v1 do
+RSpec.describe Api::V1::TaskingPlansController, type: :request, api: true, version: :v1 do
   before(:all) do
     @user = FactoryBot.create(:user_profile)
     @teacher = FactoryBot.create(:user_profile)
 
     @course = FactoryBot.create :course_profile_course, :with_assistants
-    @course.time_zone.update_attribute(:name, 'Pacific Time (US & Canada)')
+    @course.update_attribute(:timezone, 'US/Pacific')
 
     AddUserAsCourseTeacher.call course: @course, user: @teacher
 
@@ -17,7 +17,7 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
     @task_plan = FactoryBot.create(
       :tasked_task_plan,
       number_of_students: 1,
-      owner: @course,
+      course: @course,
       assistant: get_assistant(course: @course, task_plan_type: 'reading'),
       published_at: Time.current
     )
@@ -31,9 +31,7 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
     )
 
     @student_task = @task_plan.tasks.detect { |task| task.taskings.first.role.student? }
-    @teacher_student_task = @task_plan.tasks.detect do |task|
-      task.taskings.first.role.teacher_student?
-    end
+    @teacher_student_task = @task_plan.tasks.detect(&:teacher_student?)
 
     [ @student_task, @teacher_student_task ].each do |task|
       task.tasked_exercises.update_all(
@@ -47,11 +45,12 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
 
     context 'not yet due tasking_plan' do
       it 'does not allow an anonymous user to publish grades' do
-        expect { api_put :grade, nil, params: { id: @not_due_tasking_plan.id },
-                                      body: valid_json_hash.to_json }
-          .to  raise_error(SecurityTransgression)
-          .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
-          .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
+        expect do
+          api_put grade_api_tasking_plan_url(@not_due_tasking_plan.id), nil,
+                  params: valid_json_hash.to_json
+        end.to  raise_error(SecurityTransgression)
+           .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
+           .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
 
         [ @student_task, @teacher_student_task ].each do |task|
           task.tasked_exercises.each do |tasked_exercise|
@@ -62,12 +61,13 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
       end
 
       it 'does not allow an unauthorized user to publish grades' do
-        controller.sign_in @user
-        expect { api_put :grade, nil, params: { id: @not_due_tasking_plan.id },
-                                      body: valid_json_hash.to_json }
-          .to  raise_error(SecurityTransgression)
-          .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
-          .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
+        sign_in! @user
+        expect do
+          api_put grade_api_tasking_plan_url(@not_due_tasking_plan.id), nil,
+                  params: valid_json_hash.to_json
+        end.to  raise_error(SecurityTransgression)
+           .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
+           .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
 
         [ @student_task, @teacher_student_task ].each do |task|
           task.tasked_exercises.each do |tasked_exercise|
@@ -78,12 +78,13 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
       end
 
       it 'does not allow a teacher to publish grades' do
-        controller.sign_in @teacher
-        expect { api_put :grade, nil, params: { id: @not_due_tasking_plan.id },
-                                      body: valid_json_hash.to_json }
-          .to  raise_error(SecurityTransgression)
-          .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
-          .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
+        sign_in! @teacher
+        expect do
+          api_put grade_api_tasking_plan_url(@not_due_tasking_plan.id), nil,
+                  params: valid_json_hash.to_json
+        end.to  raise_error(SecurityTransgression)
+           .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
+           .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
 
         [ @student_task, @teacher_student_task ].each do |task|
           task.tasked_exercises.each do |tasked_exercise|
@@ -96,11 +97,12 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
 
     context 'past-due tasking_plan' do
       it 'does not allow an anonymous user to publish grades' do
-        expect { api_put :grade, nil, params: { id: @tasking_plan.id },
-                                      body: valid_json_hash.to_json }
-          .to raise_error(SecurityTransgression)
-          .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
-          .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
+        expect do
+          api_put grade_api_tasking_plan_url(@tasking_plan.id), nil,
+                  params: valid_json_hash.to_json
+        end.to raise_error(SecurityTransgression)
+           .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
+           .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
 
         [ @student_task, @teacher_student_task ].each do |task|
           task.tasked_exercises.each do |tasked_exercise|
@@ -111,12 +113,13 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
       end
 
       it 'does not allow an unauthorized user to publish grades' do
-        controller.sign_in @user
-        expect { api_put :grade, nil, params: { id: @tasking_plan.id },
-                                      body: valid_json_hash.to_json }
-          .to  raise_error(SecurityTransgression)
-          .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
-          .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
+        sign_in! @user
+        expect do
+          api_put grade_api_tasking_plan_url(@tasking_plan.id), nil,
+                  params: valid_json_hash.to_json
+        end.to raise_error(SecurityTransgression)
+           .and not_change { @student_task.reload.grades_last_published_at }.from(nil)
+           .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
 
         [ @student_task, @teacher_student_task ].each do |task|
           task.tasked_exercises.each do |tasked_exercise|
@@ -127,9 +130,10 @@ RSpec.describe Api::V1::TaskingPlansController, type: :controller, api: true, ve
       end
 
       it 'allows a teacher to publish grades for a tasking_plan for their course' do
-        controller.sign_in @teacher
+        sign_in! @teacher
         expect do
-          api_put :grade, nil, params: { id: @tasking_plan.id }, body: valid_json_hash.to_json
+          api_put grade_api_tasking_plan_url(@tasking_plan.id), nil,
+                  params: valid_json_hash.to_json
         end.to  change     { @student_task.reload.grades_last_published_at }.from(nil)
            .and change     { @student_task.published_points }.from(nil).to(2.0)
            .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)

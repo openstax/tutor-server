@@ -97,22 +97,22 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   end
 
   context 'with research cohort' do
-      let(:student)  { role.student }
-      let(:study)    { FactoryBot.create :research_study }
-      let!(:cohort)  { FactoryBot.create :research_cohort, study: study }
-      let!(:brain)   { FactoryBot.create :research_modified_tasked, study: study }
-      before(:each)  {
-        study.activate!
-        Research::Models::CohortMember.create!(student: student, cohort: cohort)
-      }
+    let(:student)  { role.student }
+    let(:study)    { FactoryBot.create :research_study }
+    let!(:cohort)  { FactoryBot.create :research_cohort, study: study }
+    let!(:brain)   { FactoryBot.create :research_modified_tasked, study: study }
+    before(:each)  {
+      study.activate!
+      Research::Models::CohortMember.create!(student: student, cohort: cohort)
+    }
 
-      it 'has links to related models' do
-        expect(task.taskings).to eq [tasking]
-        expect(task.roles).to eq [role]
-        expect(task.students).to eq [student]
-        expect(task.research_cohorts).to eq [cohort]
-        expect(task.research_study_brains).to eq [Research::Models::StudyBrain.find(brain.id)]
-      end
+    it 'has links to related models' do
+      expect(task.taskings).to eq [tasking]
+      expect(task.roles).to eq [role]
+      expect(task.students).to eq [student]
+      expect(task.research_cohorts).to eq [cohort]
+      expect(task.research_study_brains).to eq [Research::Models::StudyBrain.find(brain.id)]
+    end
   end
 
   context 'with task steps' do
@@ -928,8 +928,8 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
   end
 
   it 'uses teacher-chosen points for homework assignments' do
-    course = task_plan.owner
-    period = FactoryBot.create :course_membership_period, course: course
+    course = task_plan.course
+    period = task_plan.tasking_plans.first.target
     FactoryBot.create :course_membership_student, period: period
 
     simple_exercise = FactoryBot.create :content_exercise

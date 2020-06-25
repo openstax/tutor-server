@@ -177,10 +177,7 @@ class Tasks::Assistants::GenericAssistant
       description: task_plan.description,
       opens_at: individualized_tasking_plan.opens_at,
       due_at: individualized_tasking_plan.due_at,
-      closes_at: individualized_tasking_plan.closes_at,
-      extension: individualized_tasking_plan.task_plan.extensions.to_a.find do |ex|
-        ex.entity_role_id == role.id
-      end
+      closes_at: individualized_tasking_plan.closes_at
     ).tap do |task|
       task.taskings << Tasks::Models::Tasking.new(
         task: task, role: role, period: @periods_by_role_id[role.id]

@@ -78,9 +78,9 @@ class Preview::WorkTask
     # course will only be set if role and period were found
     return if course.nil?
 
-    queue = task.is_preview ? 'preview' : 'dashboard'
-    role_run_at = task.feedback_available? ? completed_at :
-                                             [ task.feedback_at, completed_at ].compact.max
+    queue = task.preview_course? ? 'preview' : 'dashboard'
+    role_run_at = task.auto_grading_feedback_available? ? completed_at :
+                                                          [ task.due_at, completed_at ].compact.max
 
     page_uuid_book_part_uuids = Content::Models::Page
       .where(id: exercise_steps.map(&:content_page_id))

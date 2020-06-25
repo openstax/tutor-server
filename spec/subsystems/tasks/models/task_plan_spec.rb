@@ -61,7 +61,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       exercises_count_dynamic: 1,
       exercises: []
     }
-    task_plan.grading_template = FactoryBot.create :tasks_grading_template, task_plan_type: :homework, course: task_plan.owner
+    task_plan.grading_template = FactoryBot.create :tasks_grading_template, task_plan_type: :homework, course: task_plan.course
     expect(task_plan).to be_valid
     task_plan.is_publish_requested = true
     expect(task_plan).not_to be_valid
@@ -233,7 +233,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
   end
 
   context 'with tasks assigned to students' do
-    let(:period) { FactoryBot.create :course_membership_period, course: task_plan.owner }
+    let(:period) { FactoryBot.create :course_membership_period, course: task_plan.course }
     let(:teacher_student_role) do
       FactoryBot.create(:course_membership_teacher_student, period: period).role
     end

@@ -77,7 +77,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def out_to_students?(current_time: Time.current)
-    tasks.reject(&:preview?).any? { |task| task.past_open?(current_time: current_time) }
+    tasks.select(&:student?).any? { |task| task.past_open?(current_time: current_time) }
   end
 
   def is_draft?

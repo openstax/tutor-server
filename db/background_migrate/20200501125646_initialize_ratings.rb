@@ -3,11 +3,13 @@ class InitializeRatings < ActiveRecord::Migration[5.2]
     current_time = Time.current
 
     Entity::Role.preload(
-      taskings: { task: [ :task_steps, :time_zone ] }, student: :period
+      taskings: {
+        task: [ :course, :task_steps, task_plan: [ :course, :grading_template, :extensions ] ]
+      }, student: :period
     ).find_each do |role|
       role.taskings.map(&:task).each do |task|
-        feedback_at = task.feedback_at
-        no_feedback_yet = !feedback_at.nil? && feedback_at > current_time
+        feedback_available = task.auto_grading_feedback_available?
+        feedback_at = [ task.due_at, current_time ].max unless feedback_available
 
         page_uuids_book_part_uuids = Content::Models::Page.where(
           id: task.task_steps.map(&:content_page_id)
@@ -20,7 +22,7 @@ class InitializeRatings < ActiveRecord::Migration[5.2]
 
           Ratings::UpdateRoleBookPart.set(queue: 'maintenance', run_at: feedback_at).perform_later(
             role: role, book_part_uuid: page_uuid, is_page: true
-          ) if no_feedback_yet
+          ) unless feedback_available
 
           Ratings::UpdatePeriodBookPart.set(queue: 'maintenance').perform_later(
             period: role.student.period, book_part_uuid: page_uuid, is_page: true
@@ -34,7 +36,7 @@ class InitializeRatings < ActiveRecord::Migration[5.2]
 
           Ratings::UpdateRoleBookPart.set(queue: 'maintenance', run_at: feedback_at).perform_later(
             role: role, book_part_uuid: book_part_uuid, is_page: false
-          ) if no_feedback_yet
+          ) unless feedback_available
 
           Ratings::UpdatePeriodBookPart.set(queue: 'maintenance').perform_later(
             period: role.student.period, book_part_uuid: book_part_uuid, is_page: false

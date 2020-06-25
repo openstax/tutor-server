@@ -778,12 +778,10 @@ ActiveRecord::Schema.define(version: 2020_06_17_142820) do
   create_table "tasks_extensions", force: :cascade do |t|
     t.bigint "tasks_task_plan_id", null: false
     t.bigint "entity_role_id", null: false
-    t.bigint "time_zone_id", null: false
     t.datetime "due_at_ntz", null: false
     t.datetime "closes_at_ntz", null: false
     t.index ["entity_role_id"], name: "index_tasks_extensions_on_entity_role_id"
     t.index ["tasks_task_plan_id", "entity_role_id"], name: "index_tasks_extensions_on_tasks_task_plan_id_and_entity_role_id", unique: true
-    t.index ["time_zone_id"], name: "index_tasks_extensions_on_time_zone_id"
   end
 
   create_table "tasks_grading_templates", force: :cascade do |t|

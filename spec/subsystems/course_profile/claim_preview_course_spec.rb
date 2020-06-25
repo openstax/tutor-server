@@ -61,8 +61,8 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
       expect(claimed_course.ends_at).to eq current_time + 8.weeks - 1.second
       expect(claimed_course.is_college).to eq is_college
 
-      task_plan.tasking_plans.each do |tasking_plan|
-        # In case Daylight Savings Time ended less than 3 months ago
+      task_plan.reload.tasking_plans.each do |tasking_plan|
+        # 1 extra hour in case Daylight Savings Time ended less than 3 months ago
         expect(tasking_plan.opens_at).to be_within(1.hour + 1.second).of(current_time)
         expect(tasking_plan.due_at).to be_within(1.hour + 1.second).of(current_time + 1.week)
         expect(tasking_plan.closes_at).to be_within(1.day).of(claimed_course.ends_at - 1.day)

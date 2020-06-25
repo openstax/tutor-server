@@ -605,7 +605,8 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
         Content::Routines::ImportPage[
           cnx_page: cnx_page,
           book: @book,
-          book_indices: [3, 1]
+          book_indices: [3, 1],
+          parent_book_part_uuid: SecureRandom.uuid
         ]
       end
     end

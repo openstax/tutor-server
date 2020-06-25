@@ -21,9 +21,9 @@ class DistributeTasks
     unless task_plan.out_to_students?(current_time: publish_time)
       # Only delete anything if tasks are not yet available to students
       if preview
-        # Delete preview tasks only if no assignments are open
-        existing_tasks.select(&:preview?).each(&:really_destroy!)
-        existing_tasks = existing_tasks.reject(&:preview?)
+        # Delete teacher-student preview tasks only if no assignments are open
+        existing_tasks.select(&:teacher_student?).each(&:really_destroy!)
+        existing_tasks = existing_tasks.reject(&:teacher_student?)
       elsif !protect_unopened_tasks
         # Delete pre-existing assignments only if protect_unopened_tasks is false
         existing_tasks.each(&:really_destroy!)

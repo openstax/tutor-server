@@ -30,7 +30,7 @@ class Api::V1::TaskingPlansController < Api::V1::ApiController
           }
         )
       when 'CourseProfile::Models::Course'
-        tasking_plan.task_plan.owner == tasking_plan.target ? tasking_plan.task_plan.tasks : []
+        tasking_plan.task_plan.course == tasking_plan.target ? tasking_plan.task_plan.tasks : []
       else
         raise NotImplementedError
       end

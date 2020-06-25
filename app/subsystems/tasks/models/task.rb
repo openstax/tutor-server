@@ -40,8 +40,6 @@ class Tasks::Models::Task < ApplicationRecord
 
   belongs_to :ecosystem, subsystem: :content, inverse_of: :tasks
 
-  belongs_to :extension, optional: true, inverse_of: :task
-
   delegate :timezone, :time_zone, to: :course
   has_timezone :opens_at, :due_at, :closes_at, suffix: :ntz
 
@@ -623,8 +621,12 @@ class Tasks::Models::Task < ApplicationRecord
     page_practice? || chapter_practice? || mixed_practice? || practice_worst_topics?
   end
 
-  def preview?
-    taskings.none? { |tasking| tasking.role&.student? }
+  def student?
+    taskings.any? { |tasking| tasking.role&.student? }
+  end
+
+  def teacher_student?
+    !student? && taskings.any? { |tasking| tasking.role&.teacher_student? }
   end
 
   def exercise_steps(preload_taskeds: false)
@@ -706,7 +708,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def closes_at_on_or_after_due_at
-    return if closes_at.nil? || due_at.nil? || closes_at >= due_at
+    return if course.nil? || closes_at.nil? || due_at.nil? || closes_at >= due_at
 
     errors.add(:closes_at, 'must be on or after due_at')
     throw :abort

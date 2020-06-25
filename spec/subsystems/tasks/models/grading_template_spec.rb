@@ -63,7 +63,7 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
   end
 
   it 'knows if it has task_plans' do
-    task_plan = FactoryBot.create :tasks_task_plan, owner: course,
+    task_plan = FactoryBot.create :tasks_task_plan, course: course,
                                                     grading_template: grading_template
     expect(grading_template.has_task_plans?).to eq true
 
@@ -72,7 +72,7 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
   end
 
   it 'cannot change its type if it has task_plans' do
-    task_plan = FactoryBot.create :tasks_task_plan, owner: course,
+    task_plan = FactoryBot.create :tasks_task_plan, course: course,
                                                     grading_template: grading_template
     old_task_plan_type = grading_template.task_plan_type
     new_task_plan_type = ([ 'reading', 'homework' ] - [ old_task_plan_type ]).sample
@@ -87,7 +87,7 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
   end
 
   it 'cannot be updated if it has open task_plans' do
-    task_plan = FactoryBot.create :tasks_task_plan, owner: course,
+    task_plan = FactoryBot.create :tasks_task_plan, course: course,
                                                     grading_template: grading_template
 
     task = FactoryBot.create :tasks_task, task_plan: task_plan,
@@ -114,7 +114,7 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
     FactoryBot.create(
       :tasks_grading_template, course: course, task_plan_type: grading_template.task_plan_type
     )
-    task_plan = FactoryBot.create :tasks_task_plan, owner: course,
+    task_plan = FactoryBot.create :tasks_task_plan, course: course,
                                                     grading_template: grading_template
     expect(grading_template.destroy).to eq false
     expect(grading_template.reload.deleted?).to eq false
