@@ -280,8 +280,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     end
   end
 
-  def drop_question
-    task_step.task&.task_plan&.dropped_questions&.find { |q| q.question_id == question_id }
+  def dropped
+    dropped_question = task_step.task&.task_plan&.dropped_questions&.find { |q| q.question_id == question_id }
+    dropped_question&.drop_method
   end
 
   def was_manually_graded?
