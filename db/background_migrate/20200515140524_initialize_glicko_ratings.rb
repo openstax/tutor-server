@@ -36,6 +36,7 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
     loop do
       tasks = Tasks::Models::Task.transaction do
         tasks = Tasks::Models::Task
+          .lock
           .where(course_profile_course_id: course_ids)
           .where(tt[:completed_exercise_steps_count].gt(0))
           .where('"steps_count" <= "completed_steps_count"')
@@ -57,6 +58,8 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
             task: task,
             role: role,
             period: period,
+            event: :migrate,
+            lock_task: false,
             wait: true,
             current_time: current_time,
             queue: 'migration'

@@ -42,6 +42,8 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
   end
   let(:task_plans)                do
     3.times.map do |index|
+      exercise = exercises[index]
+
       FactoryBot.create(
         :tasks_task_plan,
         type: 'homework',
@@ -49,7 +51,10 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
         course: course,
         target: period,
         assistant: homework_assistant,
-        settings: { exercise_ids: [ exercises[index].id.to_s ], exercises_count_dynamic: 0 }
+        settings: {
+          exercises: [ { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions } ],
+          exercises_count_dynamic: 0
+        }
       ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }
     end
   end
@@ -75,9 +80,12 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
     expect(period_book_part.glicko_sigma).to be_within(0.00001).of(expected_sigma)
     expect(period_book_part.glicko_phi).to be_within(0.0001).of(expected_phi)
     expect(period_book_part.glicko_mu).to be_within(0.0001).of(expected_mu)
+
+    # UpdateRoleBookParts might skip or not the exercises depending on the feedback settings,
+    # leading to some variation in the exercise ratings and CLUes
     expect(period_book_part.clue.deep_symbolize_keys).to match(
       minimum: 0.0,
-      most_likely: be_within(0.01).of(0.40),
+      most_likely: be_within(0.02).of(0.40),
       maximum: 1.0,
       is_real: true
     )

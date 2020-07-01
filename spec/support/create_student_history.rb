@@ -102,6 +102,8 @@ class CreateStudentHistory
       },
       num_tasking_plans: 0
     )
+    # Since jobs in specs run immediately, we need immediate feedback for accurate test results
+    task_plan.grading_template.auto_grading_feedback_on_answer!
 
     periods.each do |period|
       tasking_plan = FactoryBot.build(
@@ -143,6 +145,8 @@ class CreateStudentHistory
       },
       num_tasking_plans: 0
     )
+    # Since jobs in specs run immediately, we need immediate feedback for accurate test results
+    task_plan.grading_template.auto_grading_feedback_on_answer!
 
     periods.each do |period|
       tasking_plan = FactoryBot.build(

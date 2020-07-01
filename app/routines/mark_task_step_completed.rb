@@ -43,6 +43,13 @@ class MarkTaskStepCompleted
 
     return if task_was_completed
 
-    perform_rating_jobs_later task: task, role: role, period: period, current_time: completed_at
+    perform_rating_jobs_later(
+      task: task,
+      role: role,
+      period: period,
+      event: :work,
+      lock_task: false,
+      current_time: completed_at
+    )
   end
 end

@@ -46,7 +46,12 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
       assistant: FactoryBot.create(
         :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
       ),
-      settings: { exercise_ids: exercises.map(&:id).map(&:to_s), exercises_count_dynamic: 0 }
+      settings: {
+        exercises: exercises.map do |exercise|
+          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
+        end,
+        exercises_count_dynamic: 0
+      }
     ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }
   end
   let(:task)                      { task_plan.tasks.first }
@@ -58,35 +63,57 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
 
   let(:responses)                 { [ true, false, false ] }
 
-  it 'updates the role_book_part with the expected values' do
-    expect do
-      Preview::WorkTask.call task: task, is_correct: ->(_, index) { responses[index] }
-    end.to  change { exercise_group_book_parts.first.reload.num_responses }.from(0).to(1)
-       .and change { exercise_group_book_parts.second.reload.num_responses }.from(0).to(1)
-       .and change { exercise_group_book_parts.third.reload.num_responses }.from(0).to(1)
-       .and change { exercise_group_book_parts.first.glicko_sigma }
-       .and change { exercise_group_book_parts.second.glicko_sigma }
-       .and change { exercise_group_book_parts.third.glicko_sigma }
-       .and change { exercise_group_book_parts.first.glicko_phi }
-       .and change { exercise_group_book_parts.second.glicko_phi }
-       .and change { exercise_group_book_parts.third.glicko_phi }
-       .and change { exercise_group_book_parts.first.glicko_mu }
-       .and change { exercise_group_book_parts.second.glicko_mu }
-       .and change { exercise_group_book_parts.third.glicko_mu }
+  context 'feedback available' do
+    before { task_plan.grading_template.update_column :auto_grading_feedback_on, :answer }
 
-    expect(role_book_part.reload.num_responses).to eq 3
-    expect(role_book_part.glicko_sigma).to be_within(0.00001).of(expected_sigma)
-    expect(role_book_part.glicko_phi).to be_within(0.0001).of(expected_phi)
-    expect(role_book_part.glicko_mu).to be_within(0.0001).of(expected_mu)
-    expect(role_book_part.clue.deep_symbolize_keys).to match(
-      minimum: 0.0,
-      most_likely: be_within(1e-6).of(0.380825),
-      maximum: 1.0,
-      is_real: true
-    )
+    it 'updates the role_book_part with the expected values' do
+      expect do
+        Preview::WorkTask.call task: task, is_correct: ->(_, index) { responses[index] }
+      end.to  change { role_book_part.reload.num_responses }.from(0).to(3)
+         .and change { exercise_group_book_parts.first.reload.num_responses }.from(0).to(1)
+         .and change { exercise_group_book_parts.second.reload.num_responses }.from(0).to(1)
+         .and change { exercise_group_book_parts.third.reload.num_responses }.from(0).to(1)
+         .and change { exercise_group_book_parts.first.glicko_sigma }
+         .and change { exercise_group_book_parts.second.glicko_sigma }
+         .and change { exercise_group_book_parts.third.glicko_sigma }
+         .and change { exercise_group_book_parts.first.glicko_phi }
+         .and change { exercise_group_book_parts.second.glicko_phi }
+         .and change { exercise_group_book_parts.third.glicko_phi }
+         .and change { exercise_group_book_parts.first.glicko_mu }
+         .and change { exercise_group_book_parts.second.glicko_mu }
+         .and change { exercise_group_book_parts.third.glicko_mu }
 
-    exercise_group_book_parts.each do |exercise_group_book_part|
-      expect(exercise_group_book_part.reload.num_responses).to eq 1
+      expect(role_book_part.glicko_sigma).to be_within(0.00001).of(expected_sigma)
+      expect(role_book_part.glicko_phi).to be_within(0.0001).of(expected_phi)
+      expect(role_book_part.glicko_mu).to be_within(0.0001).of(expected_mu)
+      expect(role_book_part.clue.deep_symbolize_keys).to match(
+        minimum: 0.0,
+        most_likely: be_within(1e-6).of(0.380825),
+        maximum: 1.0,
+        is_real: true
+      )
+    end
+  end
+
+  context 'feedback not available' do
+    before { task_plan.grading_template.update_column :auto_grading_feedback_on, :publish }
+
+    it 'does nothing' do
+      expect do
+        Preview::WorkTask.call task: task, is_correct: ->(_, index) { responses[index] }
+      end.to  not_change { role_book_part.reload.num_responses }
+         .and not_change { exercise_group_book_parts.first.reload.num_responses }
+         .and not_change { exercise_group_book_parts.second.reload.num_responses }
+         .and not_change { exercise_group_book_parts.third.reload.num_responses }
+         .and not_change { exercise_group_book_parts.first.glicko_sigma }
+         .and not_change { exercise_group_book_parts.second.glicko_sigma }
+         .and not_change { exercise_group_book_parts.third.glicko_sigma }
+         .and not_change { exercise_group_book_parts.first.glicko_phi }
+         .and not_change { exercise_group_book_parts.second.glicko_phi }
+         .and not_change { exercise_group_book_parts.third.glicko_phi }
+         .and not_change { exercise_group_book_parts.first.glicko_mu }
+         .and not_change { exercise_group_book_parts.second.glicko_mu }
+         .and not_change { exercise_group_book_parts.third.glicko_mu }
     end
   end
 end

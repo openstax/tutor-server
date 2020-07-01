@@ -29,7 +29,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
     @teacher_role.reload
   end
 
-  subject(:guide) { described_class[role: @role].deep_symbolize_keys }
+  subject(:guide)       { described_class[role: @role].deep_symbolize_keys }
 
   let(:chapters)        { guide[:children] }
   let(:worked_chapters) { chapters.select { |ch| ch[:questions_answered_count] > 0 } }
@@ -88,7 +88,9 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           DatabaseCleaner.start
 
           VCR.use_cassette('GetCourseGuide/setup_course_guide', VCR_OPTS) do
-            CreateStudentHistory[course: @course.reload, roles: [@role.reload, @second_role.reload]]
+            CreateStudentHistory[
+              course: @course.reload, roles: [@role.reload, @second_role.reload]
+            ]
           end
         end
 
@@ -167,8 +169,8 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
 
         before { Tasks::Models::Task.update_all due_at_ntz: Time.current - 1.day }
 
-        it 'displays unworked chapters and ignores units' do
-          expect(worked_chapters).not_to eq chapters
+        it 'displays unworked chapters after the due date and ignores units' do
+          expect(chapters).not_to eq worked_chapters
 
           chapter_1_pages = chapters.first[:children]
           expect(chapter_1_pages).to match [

@@ -2,7 +2,7 @@
 class Ratings::UpdatePeriodBookParts
   MIN_NUM_RESPONSES = 3
 
-  lev_routine transaction: :read_committed
+  lev_routine transaction: :read_committed, job_class: LevJobReturningJob
 
   uses_routine Ratings::UpdateGlicko, as: :update_glicko
   uses_routine Ratings::CalculateGAndE, as: :calculate_g_and_e
@@ -20,7 +20,15 @@ class Ratings::UpdatePeriodBookParts
                                        .index_by(&:id)
     completed_exercise_steps = exercise_steps.filter(&:completed?)
     tasked_exercises_by_id = Tasks::Models::TaskedExercise
-      .select(:id, :answer_id, :correct_answer_id, '"content_exercises"."group_uuid"')
+      .select(
+        :id,
+        :answer_ids,
+        :correct_answer_id,
+        :answer_id,
+        :grader_points,
+        :last_graded_at,
+        '"content_exercises"."group_uuid"'
+      )
       .joins(:exercise)
       .where(id: completed_exercise_steps.map(&:tasked_id))
       .index_by(&:id)

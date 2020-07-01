@@ -17,6 +17,8 @@ class Preview::WorkTask
     completed_at: Time.current,
     update_caches: true
   )
+    task.lock!
+
     task.preload_taskeds
 
     task_was_completed = task.completed?(use_cache: true)
@@ -89,6 +91,13 @@ class Preview::WorkTask
 
     return if task_was_completed
 
-    perform_rating_jobs_later task: task, role: role, period: period, current_time: completed_at
+    perform_rating_jobs_later(
+      task: task,
+      role: role,
+      period: period,
+      event: :work,
+      lock_task: false,
+      current_time: completed_at
+    )
   end
 end
