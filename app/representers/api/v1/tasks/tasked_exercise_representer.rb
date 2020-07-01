@@ -174,5 +174,10 @@ module Api::V1::Tasks
              readable: true,
              writeable: false,
              if: FEEDBACK_AVAILABLE
+
+    property :dropped_method,
+            type: String,
+            readable: true,
+            writeable: false
   end
 end

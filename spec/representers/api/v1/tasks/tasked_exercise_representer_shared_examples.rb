@@ -47,6 +47,7 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:published_late_work_point_penalty).and_return(0.25)
       allow(exercise).to receive(:published_points).and_return(0.5)
       allow(exercise).to receive(:published_comments).and_return('Hi')
+      allow(exercise).to receive(:dropped_method).and_return(nil)
       allow(exercise).to receive(:cache_key).and_return('tasks/models/tasked_exercises/42')
       allow(exercise).to receive(:cache_version).and_return('test')
     end
