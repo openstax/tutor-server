@@ -69,14 +69,14 @@ module Ratings::Concerns::RatingJobs
       case run_period_job
       when :now
         Ratings::UpdatePeriodBookParts.set(queue: queue).perform_later(
-          period: period, task: task, wait: wait
+          period: period, task: task, run_at_due: false, queue: queue.to_s, wait: wait
         )
       when :due
         # Glicko requires real background jobs to be turned on to behave properly
         # We keep the due date job id in the task record to prevent queuing too many useless jobs
         unless Delayed::Job.where(id: task.period_book_part_job_id).exists?
           job = Ratings::UpdatePeriodBookParts.set(queue: queue, run_at: task.due_at).perform_later(
-            period: period, task: task, wait: wait
+            period: period, task: task, run_at_due: true, queue: queue.to_s, wait: wait
           )
 
           task.period_book_part_job_id = job&.provider_job_id
@@ -87,14 +87,14 @@ module Ratings::Concerns::RatingJobs
     case run_role_job
     when :now
       Ratings::UpdateRoleBookParts.set(queue: queue).perform_later(
-        role: role, task: task, wait: wait
+        role: role, task: task, run_at_due: false, queue: queue.to_s, wait: wait
       )
     when :due
       # Glicko requires real background jobs to be turned on to behave properly
       # We keep the due date job id in the task record to prevent queuing too many useless jobs
       unless Delayed::Job.where(id: task.role_book_part_job_id).exists?
-        Ratings::UpdateRoleBookParts.set(queue: queue, run_at: task.due_at).perform_later(
-          role: role, task: task, wait: wait
+        job = Ratings::UpdateRoleBookParts.set(queue: queue, run_at: task.due_at).perform_later(
+          role: role, task: task, run_at_due: true, queue: queue.to_s, wait: wait
         )
 
         task.role_book_part_job_id = job&.provider_job_id

@@ -9,8 +9,21 @@ class Ratings::UpdatePeriodBookParts
 
   protected
 
-  def exec(period:, task:, wait: false, current_time: Time.current)
+  def exec(period:, task:, run_at_due:, queue: 'dashboard', wait: false, current_time: Time.current)
     return if period.nil? || period.archived?
+
+    if run_at_due &&
+       Delayed::Worker.delay_jobs &&
+       !task.past_due?(current_time: current_time)
+      # This is the due date job but the task's due date changed. Try again later.
+      job = self.class.set(queue: queue, run_at: task.due_at).perform_later(
+        period: period, task: task, run_at_due: true, queue: queue, wait: wait
+      )
+
+      task.update_attribute :period_book_part_job_id, job.provider_job_id
+
+      return
+    end
 
     current_time = Time.parse(current_time) if current_time.is_a?(String)
 

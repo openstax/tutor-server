@@ -9,8 +9,21 @@ class Ratings::UpdateRoleBookParts
 
   protected
 
-  def exec(role:, task:, wait: false, current_time: Time.current)
+  def exec(role:, task:, run_at_due:, queue: 'dashboard', wait: false, current_time: Time.current)
     current_time = Time.parse(current_time) if current_time.is_a?(String)
+
+    if run_at_due &&
+       Delayed::Worker.delay_jobs &&
+       !task.past_due?(current_time: current_time)
+      # This is the due date job but the task's due date changed. Try again later.
+      job = self.class.set(queue: queue, run_at: task.due_at).perform_later(
+        role: role, task: task, run_at_due: true, queue: queue, wait: wait
+      )
+
+      task.update_attribute :role_book_part_job_id, job.provider_job_id
+
+      return
+    end
 
     course_member = role.course_member
     return if course_member.nil? || course_member.deleted?
