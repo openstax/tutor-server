@@ -93,6 +93,16 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
         is_real: true
       )
     end
+
+    it "requeues itself if run_at_due and the task's due_at changed" do
+      task.update_attribute :due_at, Time.current + 1.month
+
+      expect do
+        Delayed::Worker.with_delay_jobs(true) do
+          described_class.call role: role, task: task, run_at_due: true
+        end
+      end.to change { Delayed::Job.count }.by(1)
+    end
   end
 
   context 'feedback not available' do
@@ -114,6 +124,16 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
          .and not_change { exercise_group_book_parts.first.glicko_mu }
          .and not_change { exercise_group_book_parts.second.glicko_mu }
          .and not_change { exercise_group_book_parts.third.glicko_mu }
+    end
+
+    it "requeues itself if run_at_due and the task's due_at changed" do
+      task.update_attribute :due_at, Time.current + 1.month
+
+      expect do
+        Delayed::Worker.with_delay_jobs(true) do
+          described_class.call role: role, task: task, run_at_due: true
+        end
+      end.to change { Delayed::Job.count }.by(1)
     end
   end
 end

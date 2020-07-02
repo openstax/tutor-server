@@ -90,4 +90,15 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
       is_real: true
     )
   end
+
+  it "requeues itself if run_at_due and the task's due_at changed" do
+    task = tasks.first
+    task.update_attribute :due_at, Time.current + 1.month
+
+    expect do
+      Delayed::Worker.with_delay_jobs(true) do
+        described_class.call period: period, task: task, run_at_due: true
+      end
+    end.to change { Delayed::Job.count }.by(1)
+  end
 end
