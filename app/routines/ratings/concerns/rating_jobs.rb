@@ -10,6 +10,7 @@ module Ratings::Concerns::RatingJobs
     queue: nil
   )
     task.lock! if lock_task
+    return if task.completed_exercise_steps_count == 0
 
     # Student ratings will be updated at the due-date regardless of if they are complete or not.
     # So when the first step is completed in an assignment we queue up Glicko to run at the due date
@@ -34,7 +35,7 @@ module Ratings::Concerns::RatingJobs
         return unless task.completed?(use_cache: true)
       when :grade
         return unless task.manual_grading_complete?
-      when :migrate
+      when :update
         return if task.due_at.nil? && !task.completed?(use_cache: true)
       end
 
@@ -74,12 +75,18 @@ module Ratings::Concerns::RatingJobs
       when :due
         # Glicko requires real background jobs to be turned on to behave properly
         # We keep the due date job id in the task record to prevent queuing too many useless jobs
-        unless Delayed::Job.where(id: task.period_book_part_job_id).exists?
+        # The job's run_at is updated in case the due date changed
+        job = Delayed::Job.lock
+                          .where(Delayed::Job.arel_table[:run_at].gt Time.current)
+                          .find_by(id: task.period_book_part_job_id)
+        if job.nil?
           job = Ratings::UpdatePeriodBookParts.set(queue: queue, run_at: task.due_at).perform_later(
             period: period, task: task, run_at_due: true, queue: queue.to_s, wait: wait
           )
 
           task.period_book_part_job_id = job&.provider_job_id
+        else
+          job.update_attribute :run_at, task.due_at
         end
       end
     end
@@ -92,12 +99,18 @@ module Ratings::Concerns::RatingJobs
     when :due
       # Glicko requires real background jobs to be turned on to behave properly
       # We keep the due date job id in the task record to prevent queuing too many useless jobs
-      unless Delayed::Job.where(id: task.role_book_part_job_id).exists?
+      # The job's run_at is updated in case the due date changed
+      job = Delayed::Job.lock
+                        .where(Delayed::Job.arel_table[:run_at].gt Time.current)
+                        .find_by(id: task.role_book_part_job_id)
+      if job.nil?
         job = Ratings::UpdateRoleBookParts.set(queue: queue, run_at: task.due_at).perform_later(
           role: role, task: task, run_at_due: true, queue: queue.to_s, wait: wait
         )
 
         task.role_book_part_job_id = job&.provider_job_id
+      else
+        job.update_attribute :run_at, task.due_at
       end
     end
 

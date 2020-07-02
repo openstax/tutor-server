@@ -51,18 +51,19 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
         next tasks if tasks.empty?
 
         tasks.each do |task|
-          role = task.taskings.first.role
-          period = role.course_member.period
+          role = task.taskings.first&.role
+          period = role&.course_member&.period
+          next if period.nil?
 
           perform_rating_jobs_later(
             task: task,
             role: role,
             period: period,
-            event: :migrate,
+            event: :update,
             lock_task: false,
             wait: true,
             current_time: current_time,
-            queue: 'migration'
+            queue: :migration
           )
         end
 
@@ -95,16 +96,19 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
         next tasks if tasks.empty?
 
         tasks.each do |task|
-          role = task.taskings.first.role
-          period = role.course_member.period
+          role = task.taskings.first&.role
+          period = role&.course_member&.period
+          next if period.nil?
 
           perform_rating_jobs_later(
             task: task,
             role: role,
             period: period,
+            event: :update,
+            lock_task: false,
             wait: true,
             current_time: current_time,
-            queue: 'migration'
+            queue: :migration
           )
         end
 

@@ -30,6 +30,7 @@ RSpec.describe Api::V1::TaskingPlansController, type: :request, api: true, versi
       target: FactoryBot.create(:course_membership_period, course: @course)
     )
     DistributeTasks.call task_plan: @task_plan
+    @task_plan.tasks.update_all completed_exercise_steps_count: 1
 
     @student_task = @task_plan.tasks.detect { |task| task.taskings.first.role.student? }
     @teacher_student_task = @task_plan.tasks.detect(&:teacher_student?)
