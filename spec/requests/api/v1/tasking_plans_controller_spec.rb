@@ -29,6 +29,7 @@ RSpec.describe Api::V1::TaskingPlansController, type: :request, api: true, versi
       task_plan: @task_plan,
       target: FactoryBot.create(:course_membership_period, course: @course)
     )
+    DistributeTasks.call task_plan: @task_plan
 
     @student_task = @task_plan.tasks.detect { |task| task.taskings.first.role.student? }
     @teacher_student_task = @task_plan.tasks.detect(&:teacher_student?)
@@ -93,6 +94,18 @@ RSpec.describe Api::V1::TaskingPlansController, type: :request, api: true, versi
           end
         end
       end
+
+      it 'does not call the Glicko update routines' do
+        expect(Ratings::UpdatePeriodBookParts).not_to receive(:set)
+
+        expect(Ratings::UpdateRoleBookParts).not_to receive(:set)
+
+        sign_in! @teacher
+        expect do
+          api_put grade_api_tasking_plan_url(@not_due_tasking_plan.id), nil,
+                  params: valid_json_hash.to_json
+        end.to  raise_error(SecurityTransgression)
+      end
     end
 
     context 'past-due tasking_plan' do
@@ -135,9 +148,9 @@ RSpec.describe Api::V1::TaskingPlansController, type: :request, api: true, versi
           api_put grade_api_tasking_plan_url(@tasking_plan.id), nil,
                   params: valid_json_hash.to_json
         end.to  change     { @student_task.reload.grades_last_published_at }.from(nil)
-           .and change     { @student_task.published_points }.from(nil).to(2.0)
+           .and change     { @student_task.published_points }.from(0.0).to(2.0)
            .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
-           .and not_change { @teacher_student_task.published_points }.from(nil)
+           .and not_change { @teacher_student_task.published_points }.from(0.0)
         expect(response).to have_http_status(:success)
         expect(response.body).to(
           eq(Api::V1::TaskPlan::TaskingPlanRepresenter.new(@tasking_plan.reload).to_json)
@@ -151,6 +164,24 @@ RSpec.describe Api::V1::TaskingPlansController, type: :request, api: true, versi
           expect(tasked_exercise.published_points).to be_nil
           expect(tasked_exercise.published_comments).to be_nil
         end
+      end
+
+      it 'calls the Glicko update routines when fully graded and grades are published' do
+        expect(Ratings::UpdatePeriodBookParts).to(
+          receive(:set).with(queue: :dashboard).and_return(Ratings::UpdatePeriodBookParts)
+        )
+        expect(Ratings::UpdatePeriodBookParts).to receive(:perform_later)
+
+        expect(Ratings::UpdateRoleBookParts).to(
+          receive(:set).with(queue: :dashboard).and_return(Ratings::UpdateRoleBookParts)
+        )
+        expect(Ratings::UpdateRoleBookParts).to receive(:perform_later)
+
+        sign_in! @teacher
+        api_put grade_api_tasking_plan_url(@tasking_plan.id), nil,
+                params: valid_json_hash.to_json
+
+        expect(@student_task.reload.manual_grading_complete?).to eq true
       end
     end
   end

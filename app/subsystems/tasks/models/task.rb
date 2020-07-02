@@ -456,7 +456,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def past_open?(current_time: Time.current)
-    opens_at.nil? || current_time > opens_at
+    opens_at.nil? || current_time >= opens_at
   end
 
   def past_due?(current_time: Time.current, current_time_ntz: nil)
@@ -468,7 +468,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def past_close?(current_time: Time.current)
-    !closes_at.nil? && current_time > closes_at
+    !closes_at.nil? && current_time >= closes_at
   end
 
   def grades_manually_published?

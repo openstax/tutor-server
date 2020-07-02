@@ -35,7 +35,7 @@ module Ratings::Concerns::RatingJobs
       when :grade
         return unless task.manual_grading_complete?
       when :migrate
-        return unless task.completed?(use_cache: true) || task.manual_grading_complete?
+        return if task.due_at.nil? && !task.completed?(use_cache: true)
       end
 
       run_role_job = :now
@@ -60,7 +60,7 @@ module Ratings::Concerns::RatingJobs
       end
     end
 
-    queue ||= task.preview_course? ? 'preview' : 'dashboard'
+    queue ||= task.preview_course? ? :preview : :dashboard
 
     # We determined that the period update normally runs first
     # so we queue it first here to keep the order consistent in specs

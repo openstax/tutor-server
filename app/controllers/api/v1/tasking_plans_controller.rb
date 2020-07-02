@@ -1,4 +1,6 @@
 class Api::V1::TaskingPlansController < Api::V1::ApiController
+  include Ratings::Concerns::RatingJobs
+
   resource_description do
     api_versions 'v1'
     short_description 'Represents a TaskPlan assigned to a Course Period'
@@ -22,15 +24,19 @@ class Api::V1::TaskingPlansController < Api::V1::ApiController
       OSU::AccessPolicy.require_action_allowed!(:grade, current_api_user, tasking_plan)
 
       task_plan = tasking_plan.task_plan
-      tasks = case tasking_plan.target_type
+      case tasking_plan.target_type
       when 'CourseMembership::Models::Period'
-        task_plan.tasks.joins(taskings: { role: :student }).where(
+        periods = [ tasking_plan.target ]
+        tasks = task_plan.tasks.joins(taskings: { role: :student }).where(
           taskings: {
             role: { student: { course_membership_period_id: tasking_plan.target_id } }
           }
-        )
+        ).preload(taskings: :role)
       when 'CourseProfile::Models::Course'
-        tasking_plan.task_plan.course == tasking_plan.target ? tasking_plan.task_plan.tasks : []
+        raise NotImplementedError if tasking_plan.task_plan.course != tasking_plan.target
+
+        periods = tasking_plan.task_plan.course.periods
+        tasks = tasking_plan.task_plan.tasks.preload(taskings: :role)
       else
         raise NotImplementedError
       end
@@ -44,6 +50,20 @@ class Api::V1::TaskingPlansController < Api::V1::ApiController
       tasks.update_all grades_last_published_at: Time.current
 
       queue = task_plan.is_preview ? :preview : :dashboard
+      periods.each do |period|
+        tasks.each do |task|
+          role = task.taskings.first&.role
+          next if role.nil?
+
+          perform_rating_jobs_later(
+            task: task,
+            role: role,
+            period: period,
+            event: :grade,
+            queue: queue
+          )
+        end
+      end
       Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
         task_ids: tasks.map(&:id), update_cached_attributes: true, queue: queue.to_s
       )

@@ -1,4 +1,6 @@
 class Api::V1::TaskStepsController < Api::V1::ApiController
+  include Ratings::Concerns::RatingJobs
+
   around_action :with_task_step_and_tasked, except: :show
   before_action :fetch_step, only: :show
   before_action :error_if_student_and_needs_to_pay
@@ -67,7 +69,16 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     @tasked.save
     raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
 
-    @tasked.task_step.task.update_caches_later
+    task = @tasked.task_step.task
+    role = task.taskings.first&.role
+    perform_rating_jobs_later(
+      task: task,
+      role: role,
+      period: role.course_member.period,
+      event: :grade
+    ) unless role.nil?
+
+    task.update_caches_later
 
     respond_with(
       @tasked,
