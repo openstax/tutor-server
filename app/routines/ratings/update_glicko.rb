@@ -24,7 +24,7 @@ class Ratings::UpdateGlicko
 
     record_dup = record.dup if update_opponents
 
-    update_glicko record: record, opponents: opponents, responses: opponents.map(&:response)
+    update_glicko record: record, opponents: opponents, results: opponents.map(&:result)
 
     return unless update_opponents
 
@@ -32,12 +32,12 @@ class Ratings::UpdateGlicko
       update_glicko(
         record: opponent,
         opponents: [ record_dup ],
-        responses: [ !opponent.response ]
+        results: [ 1.0 - opponent.result ]
       )
     end
   end
 
-  def update_glicko(record:, opponents:, responses:)
+  def update_glicko(record:, opponents:, results:)
     out = run(:calculate_g_and_e, record: record, opponents: opponents).outputs
 
     v = 1.0/(
@@ -50,10 +50,10 @@ class Ratings::UpdateGlicko
     scaled_score_surprises = opponents.map do |opponent|
       g = out.g_array[index]
       expected_score = out.e_array[index]
-      match_response = responses[index]
+      match_result = results[index]
       index += 1
 
-      g * ((match_response ? 1.0 : 0.0) - expected_score)
+      g * (match_result - expected_score)
     end
     delta_over_v = scaled_score_surprises.sum
     delta = v * delta_over_v

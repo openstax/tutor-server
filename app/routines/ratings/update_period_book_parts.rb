@@ -1,6 +1,6 @@
 # NOTE: We currently do not support CLUes for Units because we only search for pages 1 level down
 class Ratings::UpdatePeriodBookParts
-  MIN_NUM_RESPONSES = 3
+  MIN_NUM_RESULTS = 3
 
   lev_routine transaction: :read_committed, job_class: LevJobReturningJob
 
@@ -45,6 +45,16 @@ class Ratings::UpdatePeriodBookParts
       .joins(:exercise)
       .where(id: completed_exercise_steps.map(&:tasked_id))
       .index_by(&:id)
+
+    # Preload all available points
+    task.exercise_and_placeholder_steps.each_with_index do |task_step, index|
+      next unless task_step.exercise?
+
+      tasked = tasked_exercises_by_id[task_step.tasked_id]
+      next if tasked.nil?
+
+      tasked.available_points = task.available_points_per_question_index[index]
+    end
 
     exercise_steps_by_page_uuid = Hash.new { |hash, key| hash[key] = [] }
     exercise_steps_by_parent_book_part_uuid = Hash.new { |hash, key| hash[key] = [] }
@@ -108,9 +118,9 @@ class Ratings::UpdatePeriodBookParts
       used_tasked_exercise_ids.include? tasked_exercise.id
     end
 
-    response_by_group_uuid = {}
+    result_by_group_uuid = {}
     new_tasked_exercises.each do |tasked_exercise|
-      response_by_group_uuid[tasked_exercise.group_uuid] = tasked_exercise.is_correct?
+      result_by_group_uuid[tasked_exercise.group_uuid] = tasked_exercise.correctness
     end
 
     page_key = is_page ? :uuid : :parent_book_part_uuid
@@ -134,11 +144,11 @@ class Ratings::UpdatePeriodBookParts
     end
 
     task_exercise_group_book_parts = exercise_group_book_parts_by_group_uuid.values_at(
-      *response_by_group_uuid.keys
+      *result_by_group_uuid.keys
     )
     task_exercise_group_book_parts.each do |exercise_group_book_part|
-      exercise_group_book_part.response =
-        response_by_group_uuid[exercise_group_book_part.exercise_group_uuid]
+      exercise_group_book_part.result =
+        result_by_group_uuid[exercise_group_book_part.exercise_group_uuid]
     end
 
     run(
@@ -158,7 +168,7 @@ class Ratings::UpdatePeriodBookParts
       .size
     period_book_part.tasked_exercise_ids += new_tasked_exercises.map(&:id)
 
-    period_book_part.clue = if period_book_part.num_responses < MIN_NUM_RESPONSES
+    period_book_part.clue = if period_book_part.num_results < MIN_NUM_RESULTS
       {
         minimum: 0.0,
         most_likely: 0.5,

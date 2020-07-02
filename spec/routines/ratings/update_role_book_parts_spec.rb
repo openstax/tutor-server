@@ -69,10 +69,10 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
     it 'updates the role_book_part with the expected values' do
       expect do
         Preview::WorkTask.call task: task, is_correct: ->(_, index) { responses[index] }
-      end.to  change { role_book_part.reload.num_responses }.from(0).to(3)
-         .and change { exercise_group_book_parts.first.reload.num_responses }.from(0).to(1)
-         .and change { exercise_group_book_parts.second.reload.num_responses }.from(0).to(1)
-         .and change { exercise_group_book_parts.third.reload.num_responses }.from(0).to(1)
+      end.to  change { role_book_part.reload.num_results }.from(0).to(3)
+         .and change { exercise_group_book_parts.first.reload.num_results }.from(0).to(1)
+         .and change { exercise_group_book_parts.second.reload.num_results }.from(0).to(1)
+         .and change { exercise_group_book_parts.third.reload.num_results }.from(0).to(1)
          .and change { exercise_group_book_parts.first.glicko_sigma }
          .and change { exercise_group_book_parts.second.glicko_sigma }
          .and change { exercise_group_book_parts.third.glicko_sigma }
@@ -111,10 +111,10 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
     it 'does nothing' do
       expect do
         Preview::WorkTask.call task: task, is_correct: ->(_, index) { responses[index] }
-      end.to  not_change { role_book_part.reload.num_responses }
-         .and not_change { exercise_group_book_parts.first.reload.num_responses }
-         .and not_change { exercise_group_book_parts.second.reload.num_responses }
-         .and not_change { exercise_group_book_parts.third.reload.num_responses }
+      end.to  not_change { role_book_part.reload.num_results }
+         .and not_change { exercise_group_book_parts.first.reload.num_results }
+         .and not_change { exercise_group_book_parts.second.reload.num_results }
+         .and not_change { exercise_group_book_parts.third.reload.num_results }
          .and not_change { exercise_group_book_parts.first.glicko_sigma }
          .and not_change { exercise_group_book_parts.second.glicko_sigma }
          .and not_change { exercise_group_book_parts.third.glicko_sigma }

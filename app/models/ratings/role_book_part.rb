@@ -17,7 +17,7 @@ class Ratings::RoleBookPart < ApplicationRecord
 
   validates :clue, :glicko_mu, :glicko_phi, :glicko_sigma, presence: true
 
-  def num_responses
+  def num_results
     tasked_exercise_ids.size
   end
 

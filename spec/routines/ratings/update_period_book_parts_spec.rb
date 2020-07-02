@@ -76,7 +76,7 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
       Preview::WorkTask.call task: task, is_correct: responses[index]
     end
 
-    expect(period_book_part.reload.num_responses).to eq 3
+    expect(period_book_part.reload.num_results).to eq 3
     expect(period_book_part.glicko_sigma).to be_within(0.00001).of(expected_sigma)
     expect(period_book_part.glicko_phi).to be_within(0.0001).of(expected_phi)
     expect(period_book_part.glicko_mu).to be_within(0.0001).of(expected_mu)

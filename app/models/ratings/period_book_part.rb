@@ -17,7 +17,7 @@ class Ratings::PeriodBookPart < ApplicationRecord
 
   validates :clue, presence: true
 
-  def num_responses
+  def num_results
     tasked_exercise_ids.size
   end
 

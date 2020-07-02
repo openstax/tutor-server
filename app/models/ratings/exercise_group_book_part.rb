@@ -3,7 +3,7 @@ class Ratings::ExerciseGroupBookPart < ApplicationRecord
   INITIAL_PHI = 2.015
   INITIAL_SIGMA = 0.06
 
-  attr_accessor :response
+  attr_accessor :result
 
   after_initialize :set_default_values
 
@@ -11,7 +11,7 @@ class Ratings::ExerciseGroupBookPart < ApplicationRecord
 
   validates :book_part_uuid, presence: true, uniqueness: { scope: :exercise_group_uuid }
 
-  def num_responses
+  def num_results
     tasked_exercise_ids.size
   end
 

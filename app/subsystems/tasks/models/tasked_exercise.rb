@@ -69,7 +69,15 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     if grader_points.nil?
       !correct_answer_id.nil? && answer_id == correct_answer_id
     else
-      grader_points > 0
+      grader_points > 0.0
+    end
+  end
+
+  def correctness
+    if grader_points.nil?
+      !correct_answer_id.nil? && answer_id == correct_answer_id ? 1.0 : 0.0
+    else
+      grader_points/available_points
     end
   end
 

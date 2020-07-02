@@ -11,12 +11,12 @@ RSpec.describe Ratings::UpdateGlicko, type: :routine do
   let(:exercise_phis)             { [  0.1727, 0.5756, 1.7269 ] }
   let(:exercise_sigmas)           { [  0.06  , 0.06  , 0.06   ] }
   let(:exercise_group_book_parts) do
-    [ true, false, false ].each_with_index.map do |response, index|
+    [ 1.0, 0.0, 0.0 ].each_with_index.map do |result, index|
       Hashie::Mash.new(
         glicko_mu: exercise_mus[index],
         glicko_phi: exercise_phis[index],
         glicko_sigma: exercise_sigmas[index],
-        response: response
+        result: result
       )
     end
   end
