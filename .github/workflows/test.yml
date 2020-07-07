@@ -19,10 +19,10 @@ jobs:
           --health-retries 5
     strategy:
       matrix:
-      tests:
-          - { name: 'slow', env: 'TAG=speed:slow' }
-          - { name: 'regular', env: 'TAG=~speed:slow' }
-          - { name: 'assets', env: 'ASSETS=true' }
+        tests:
+            - { name: 'slow', env: 'TAG=speed:slow' }
+            - { name: 'regular', env: 'TAG=~speed:slow' }
+            - { name: 'assets', env: 'ASSETS=true' }
 
     steps:
       - uses: actions/checkout@v2
