@@ -11,10 +11,13 @@ jobs:
     services:
       db:
         image: postgres:11
-        ports: ['5432:5432']
+        ports:
+        - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         env:
+          POSTGRES_USER: postgres
           POSTGRES_DB: ci_test
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: postgres
     strategy:
       matrix:
         tests:
@@ -31,6 +34,7 @@ jobs:
         env:
           OXT_DB_USER: postgres
           OXT_TEST_DB: ci_test
+          OXT_DB_PASS: postgres
           RAILS_ENV: test
         run: |
           ${{ matrix.tests.args }} ./bin/ci
