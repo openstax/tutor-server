@@ -13,24 +13,54 @@ module HasTimezone
             field_name = method_name
             field_name = "#{options[:prefix]}_#{field_name}" if options.has_key?(:prefix)
             field_name = "#{field_name}_#{options[:suffix]}" if options.has_key?(:suffix)
+            instance_variable_name = "@#{method_name}".to_sym
+            clear_cache_method = "clear_#{method_name}_cache".to_sym
+            field_setter = "#{field_name}=".to_sym
+            reload_method = "reload_without_#{method_name}_caching".to_sym
 
-            # Read timezone-less value from DB and apply the current timezone to it
-            define_method(method_name) do
-              datetime = read_attribute(field_name)
-              datetime.nil? ? nil : DateTimeUtilities.apply_tz(datetime, time_zone)
-            end
+            include(
+              Module.new do
+                # Read timezone-less value from DB and apply the current timezone to it
+                define_method(method_name.to_sym) do
+                  value = instance_variable_get instance_variable_name
+                  return value unless value.nil?
 
-            # Drop any timezones given, then write the result to the DB
-            define_method("#{method_name}=") do |value|
-              datetime = value.is_a?(String) ? DateTimeUtilities.from_s(value) :
-                                               value.try(:to_datetime)
+                  datetime = send field_name
+                  return if datetime.nil?
 
-              write_attribute(field_name, DateTimeUtilities.remove_tz(datetime))
-            end
+                  instance_variable_set instance_variable_name,
+                                        DateTimeUtilities.apply_tz(datetime, time_zone)
+                end
 
-            define_method("#{method_name}_changed?") do
-              send("#{field_name}_changed?")
-            end if field_name != method_name
+                define_method(clear_cache_method) do
+                  instance_variable_set instance_variable_name, nil
+                end
+
+                define_method(field_setter) do |value|
+                  send clear_cache_method
+
+                  super value
+                end
+
+                # Drop any timezones given, then write the result to the DB
+                define_method("#{method_name}=".to_sym) do |value|
+                  datetime = value.is_a?(String) ? DateTimeUtilities.from_s(value) :
+                                                   value.try(:to_datetime)
+
+                  send field_setter, DateTimeUtilities.remove_tz(datetime)
+                end
+
+                define_method(:reload) do |*args|
+                  send clear_cache_method
+
+                  super *args
+                end
+
+                define_method("#{method_name}_changed?".to_sym) do
+                  send "#{field_name}_changed?".to_sym
+                end if field_name != method_name
+              end
+            )
           end
         end
       end
