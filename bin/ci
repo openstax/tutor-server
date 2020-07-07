@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+gem install bundler
+bundle install --jobs 4 --retry 3
+bundle exec rake parallel:create parallel:load_schema parallel:seed --trace
+
+if [[ -n "${ASSETS}" ]]; then
+  bundle exec rake assets:precompile
+elif [[ -n "${TAG}" ]]; then
+  bundle exec parallel_rspec ./spec --test-options "--tag $TAG"
+else
+  echo Must be called with ENV of ASSETS or TAG set
+  exit 1
+fi

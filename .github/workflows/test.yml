@@ -1,0 +1,38 @@
+name: Tutor
+
+on:
+  push:
+  schedule:
+    - cron: '0 0 * * 0' # weekly
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    services:
+      db:
+        image: postgres:11
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    strategy:
+      matrix:
+      tests:
+          - { name: 'slow', env: 'TAG=speed:slow' }
+          - { name: 'regular', env: 'TAG=~speed:slow' }
+          - { name: 'assets', env: 'ASSETS=true' }
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: Build App
+        env:
+          OXT_DB_USER: postgres
+          OXT_TEST_DB: ci_test
+          RAILS_ENV: test
+        run: |
+          ${{ matrix.tests.env }} ./bin/ci
