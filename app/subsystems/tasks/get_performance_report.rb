@@ -222,8 +222,8 @@ module Tasks
         .where(task_type: task_types,task_plan: { withdrawn_at: nil })
         .where(
           <<~WHERE_SQL
-            "tasks_tasks"."opens_at_ntz" IS NULL OR TIMEZONE(
-              "course_profile_courses"."timezone", "tasks_tasks"."opens_at_ntz"
+            TIMEZONE(
+              "course_profile_courses"."timezone", "tasks_tasks"."due_at_ntz"
             ) <= '#{current_time}'
           WHERE_SQL
         )
@@ -293,17 +293,13 @@ module Tasks
       end
     end
 
-    def included_in_progress_averages?(task:, current_time:)
-      return false if task.steps_count == 0
-      return true if task.task_type == 'concept_coach'
-
-      task.due_at.present? && task.due_at <= current_time
+    def included_in_progress_averages?(task:)
+      task.steps_count > 0
     end
 
     def included_in_score_averages?(task:, current_time:, is_teacher:)
-      return false if task.actual_and_placeholder_exercise_count == 0
-
-      included_in_progress_averages?(task: task, current_time: current_time) && (
+      task.actual_and_placeholder_exercise_count > 0 &&
+      included_in_progress_averages?(task: task) && (
         is_teacher || task.feedback_available?(current_time: current_time)
       )
     end
@@ -331,7 +327,7 @@ module Tasks
 
     def average_progress(pre_wrm:, tasks:, current_time:)
       applicable_tasks = tasks.compact.select do |task|
-        included_in_progress_averages?(task: task, current_time: current_time)
+        included_in_progress_averages?(task: task)
       end
 
       return nil if applicable_tasks.empty?
@@ -400,9 +396,7 @@ module Tasks
           recovered_exercise_count:               tt.recovered_exercise_steps_count,
           gradable_step_count:                    tt.gradable_step_count,
           ungraded_step_count:                    tt.ungraded_step_count,
-          is_included_in_averages:                included_in_progress_averages?(
-                                                    task: tt, current_time: current_time
-                                                  ),
+          is_included_in_averages:                included_in_progress_averages?(task: tt),
           available_points:                       available_points,
           progress:                               progress,
           published_points:                       published_points,

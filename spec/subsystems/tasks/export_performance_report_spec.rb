@@ -34,9 +34,9 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
       :tasks_tasking_plan,
       target: @course,
       task_plan: draft_task_plan,
-      opens_at: @course.time_zone.now,
-      due_at: @course.time_zone.now + 1.week,
-      closes_at: @course.time_zone.now + 2.weeks
+      opens_at: @course.time_zone.now - 1.week,
+      due_at: @course.time_zone.now,
+      closes_at: @course.time_zone.now + 1.week
     )
 
     draft_task_plan.save!
