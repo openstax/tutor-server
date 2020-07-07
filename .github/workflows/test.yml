@@ -27,14 +27,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - name: Build App
+      - name: Test
         env:
           OXT_DB_USER: postgres
           OXT_TEST_DB: ci_test
           OXT_DB_PASS: postgres
           RAILS_ENV: test
         run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
           ${{ matrix.tests.args }} ./bin/ci
