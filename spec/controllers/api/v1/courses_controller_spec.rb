@@ -458,7 +458,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(@course.reload.is_lms_enabled).to eq nil
       end
 
-      it 'updates the timezone' do
+      it 'updates the timezone and resets task caches' do
+        FactoryBot.create :tasks_task, course: @course
+
         time_zone = @course.time_zone
         opens_at = time_zone.now - 1.months
         due_at = time_zone.now + 1.months
@@ -480,8 +482,9 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
         expect(tasking_plan.due_at).to be_within(1).of(due_at)
         expect(tasking_plan.closes_at).to be_within(1).of(closes_at)
 
-        # Change course TimeZone to Edinburgh
+        # Change course TimeZone to Arizona
         course_name = @course.name
+        expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_later)
         api_patch :update, @user_1_token, params: { id: @course.id }, body: {
           name: course_name, timezone: 'US/Arizona'
         }.to_json
@@ -493,7 +496,7 @@ RSpec.describe Api::V1::CoursesController, type: :controller, api: true,
 
         edinburgh_tz = @course.time_zone
 
-        # Reinterpret the time-zone-less strings as being in the Edingburgh time zone
+        # Reinterpret the time-zone-less strings as being in the Arizona time zone
         new_opens_at = edinburgh_tz.parse(opens_at_str)
         new_due_at = edinburgh_tz.parse(due_at_str)
         new_closes_at = edinburgh_tz.parse(closes_at_str)
