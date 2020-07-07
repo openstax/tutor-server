@@ -33,8 +33,7 @@ class SetupPerformanceReportData
       roles << CreateOrResetTeacherStudent[user: teacher_student, period: period_1]
     end
 
-    student_tasks = course.is_concept_coach ? setup_cc_tasks(roles, pages) :
-                                              setup_tasks(course, ecosystem, roles, pages)
+    student_tasks = setup_tasks(course, ecosystem, roles, pages)
 
     answer_tasks(student_tasks)
   end
@@ -83,9 +82,9 @@ class SetupPerformanceReportData
       :tasks_tasking_plan,
       target: course,
       task_plan: reading_taskplan,
-      opens_at: time_zone.now,
-      due_at: time_zone.now + 1.week,
-      closes_at: time_zone.now + 2.weeks
+      opens_at: time_zone.now - 1.week,
+      due_at: time_zone.now.yesterday,
+      closes_at: time_zone.now + 6.days
     )
 
     reading_taskplan.save!
@@ -101,7 +100,7 @@ class SetupPerformanceReportData
       content_ecosystem_id: ecosystem.id,
       settings: {
         exercises: exercises.first(5).map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 2
       },
@@ -110,10 +109,11 @@ class SetupPerformanceReportData
 
     homework_taskplan.tasking_plans << FactoryBot.build(
       :tasks_tasking_plan,
-      target: course, task_plan: homework_taskplan,
-      opens_at: time_zone.now,
-      due_at: time_zone.now.tomorrow,
-      closes_at: time_zone.now.tomorrow + 1.day
+      target: course,
+      task_plan: homework_taskplan,
+      opens_at: time_zone.now.yesterday - 2.days,
+      due_at: time_zone.now.yesterday - 1.day,
+      closes_at: time_zone.now + 5.days
     )
 
     homework_taskplan.save!
@@ -129,7 +129,7 @@ class SetupPerformanceReportData
       content_ecosystem_id: ecosystem.id,
       settings: {
         exercises: exercises.last(2).map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 2
       },
@@ -138,10 +138,11 @@ class SetupPerformanceReportData
 
     homework2_taskplan.tasking_plans << FactoryBot.build(
       :tasks_tasking_plan,
-      target: course, task_plan: homework2_taskplan,
-      opens_at: time_zone.now,
-      due_at: time_zone.now + 2.weeks,
-      closes_at: time_zone.now + 4.weeks
+      target: course,
+      task_plan: homework2_taskplan,
+      opens_at: time_zone.now - 2.weeks,
+      due_at: time_zone.now,
+      closes_at: time_zone.now + 1.week
     )
 
     homework2_taskplan.save!
@@ -157,7 +158,7 @@ class SetupPerformanceReportData
       content_ecosystem_id: ecosystem.id,
       settings: {
         exercises: exercises.first(5).map do |exercise|
-          { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 2
       },
@@ -191,7 +192,7 @@ class SetupPerformanceReportData
     # User 1 answered 2 correct core, 1 correct spaced practice
     # and 1 incorrect personalized exercise (in an SPE slot) in 2nd homework
     is_completed = ->(task_step, index) { true }
-    is_correct   = ->(task_step, index) { index < task_step.task.task_steps.size }
+    is_correct   = ->(task_step, index) { index < task_step.task.task_steps.size - 1 }
     Preview::WorkTask[task: student_1_tasks[2], is_completed: is_completed, is_correct: is_correct]
 
     # User 2 answered 2 questions correctly and 2 incorrectly in homework
