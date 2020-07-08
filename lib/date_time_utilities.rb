@@ -19,8 +19,8 @@ module DateTimeUtilities
 
     RequestStore.store[:apply_tz_cache] ||= Hash.new { |hash, key| hash[key] = {} }
     RequestStore.store[:apply_tz_cache][date_time][timezone] ||= begin
-      date_time = date_time.in_time_zone(timezone)
-      date_time - date_time.utc_offset
+      time_in_zone = date_time.in_time_zone(timezone)
+      time_in_zone - time_in_zone.utc_offset
     end
   end
 
