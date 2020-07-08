@@ -369,10 +369,7 @@ module Tasks
         # Skip if the student hasn't worked this particular task_plan/page
         next if tt.nil?
 
-        late = tt.worked_on? && tt.due_at.present? && tt.last_worked_at > tt.due_at
         type = tt.task_type
-        show_score = is_teacher || tt.feedback_available?(current_time: current_time)
-        correct_exercise_count = show_score ? tt.correct_exercise_count : nil
 
         if pre_wrm
           available_points = tt.actual_and_placeholder_exercise_count
@@ -391,7 +388,7 @@ module Tasks
           status:                                 tt.status(use_cache: true),
           type:                                   type,
           id:                                     tt.id,
-          due_at:                                 due_at,
+          due_at:                                 tt.due_at,
           step_count:                             tt.steps_count,
           completed_step_count:                   tt.completed_steps_count,
           completed_on_time_steps_count:          tt.completed_on_time_steps_count,
