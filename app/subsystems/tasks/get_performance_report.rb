@@ -368,7 +368,8 @@ module Tasks
       tasks.map do |tt|
         # Skip if the student hasn't worked this particular task_plan/page
         next if tt.nil?
-
+        show_score = is_teacher || tt.feedback_available?(current_time: current_time)
+        correct_exercise_count = show_score ? tt.correct_exercise_count : nil
         type = tt.task_type
 
         if pre_wrm
@@ -396,7 +397,11 @@ module Tasks
           progress:                               progress,
           published_points:                       published_points,
           published_score:                        published_score,
-          is_provisional_score:                   tt.provisional_score?
+          is_provisional_score:                   tt.provisional_score?,
+          # the below fields are only used by old scores report
+          actual_and_placeholder_exercise_count:  tt.actual_and_placeholder_exercise_count,
+          correct_exercise_count:                 correct_exercise_count,
+          last_worked_at:                         tt.last_worked_at&.in_time_zone(tz)
         )
       end
     end
