@@ -12,7 +12,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
         :tasked_task_plan, number_of_students: @number_of_students
       )
       course = @reading_task_plan.course
-      reading_pages = Content::Models::Page.where(id: @reading_task_plan.settings['page_ids'])
+      reading_pages = Content::Models::Page.where(id: @reading_task_plan.core_page_ids)
 
       @homework_task_plan = FactoryBot.create(
         :tasks_task_plan,

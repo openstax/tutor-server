@@ -190,6 +190,10 @@ class Tasks::Models::TaskPlan < ApplicationRecord
       .size
   end
 
+  def core_page_ids
+    settings['page_ids'] || []
+  end
+
   protected
 
   def set_wrq_count
@@ -204,14 +208,14 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   def get_ecosystems_from_page_ids
     ecosystems = Content::Models::Ecosystem.distinct.joins(:pages).where(
-      pages: { id: settings['page_ids'] }
+      pages: { id: core_page_ids }
     ).to_a
   end
 
   def get_ecosystems_from_settings
     if settings['exercises'].present?
       get_ecosystems_from_exercise_ids
-    elsif settings['page_ids'].present?
+    elsif core_page_ids.present?
       get_ecosystems_from_page_ids
     end
   end
@@ -246,7 +250,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     errors.add(
       :settings,
       "- Some of the given page IDs do not belong to the ecosystem with ID #{ecosystem.id}"
-    ) if settings['page_ids'].present? && get_ecosystems_from_page_ids != [ ecosystem ]
+    ) if core_page_ids.present? && get_ecosystems_from_page_ids != [ ecosystem ]
 
     throw(:abort) if errors.any?
   end
@@ -286,7 +290,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   def settings_valid_for_publishing
     return unless is_publish_requested
     errors.add(:settings, 'must have at least one exercise') if homework? && settings['exercises'].blank?
-    errors.add(:settings, 'must have at least one page') if reading? && settings['page_ids'].blank?
+    errors.add(:settings, 'must have at least one page') if reading? && core_page_ids.blank?
   end
 
   def not_past_due_when_publishing

@@ -24,7 +24,7 @@ RSpec.describe Api::V1::TaskPlan::Stats::Representer, type: :representer do
           partially_complete_count: 0,
           current_pages: a_collection_containing_exactly(
             a_hash_including(
-              id: task_plan.settings['page_ids'].first.to_s,
+              id: task_plan.core_page_ids.first.to_s,
               title: "Newton's First Law of Motion: Inertia",
               student_count: 0,
               correct_count: 0,

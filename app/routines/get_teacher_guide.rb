@@ -12,7 +12,7 @@ class GetTeacherGuide
     core_page_ids = Tasks::Models::TaskPlan
       .where(course: course)
       .pluck(:settings)
-      .map { |settings| settings['page_ids'] }
+      .flat_map { |settings| settings['page_ids'] || [] }
     chapter_uuid_page_uuids = Content::Models::Page
       .with_exercises
       .where(id: core_page_ids)
