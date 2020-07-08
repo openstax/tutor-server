@@ -17,8 +17,11 @@ module DateTimeUtilities
   def self.apply_tz(date_time, timezone)
     return if date_time.nil?
 
-    date_time = date_time.in_time_zone(timezone)
-    date_time - date_time.utc_offset
+    RequestStore.store[:apply_tz_cache] ||= Hash.new { |hash, key| hash[key] = {} }
+    RequestStore.store[:apply_tz_cache][date_time][timezone] ||= begin
+      date_time = date_time.in_time_zone(timezone)
+      date_time - date_time.utc_offset
+    end
   end
 
   # Removes the timezone from DateTime object (removing its offset)

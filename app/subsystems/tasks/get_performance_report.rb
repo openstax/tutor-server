@@ -219,7 +219,7 @@ module Tasks
           ]
         )
         .joins(:course, task_plan: :tasking_plans)
-        .where(task_type: task_types,task_plan: { withdrawn_at: nil })
+        .where(task_type: task_types, task_plan: { withdrawn_at: nil })
         .where(
           <<~WHERE_SQL
             TIMEZONE(
