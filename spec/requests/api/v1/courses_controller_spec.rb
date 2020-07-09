@@ -501,7 +501,7 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
         # Change course TimeZone to Arizona
         course_name = @course.name
         expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_later)
-        api_patch :update, @user_1_token, params: { id: @course.id }, body: {
+        api_patch api_course_url(@course.id), @user_1_token, params: {
           name: course_name, timezone: 'US/Arizona'
         }.to_json
 
