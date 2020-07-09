@@ -339,19 +339,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
             expect(data.id).to be_a Integer
             expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
             expect(data.due_at).to be_a Time
-            expect(data.last_worked_at).to be_nil.or(be_a Time)
-            expect(data.is_extended).to be_in [true, false]
-            expect(data.is_past_due).to be_in [true, false]
             expect(data.step_count).to be_a Integer
             expect(data.completed_step_count).to be_a Integer
-            expect(data.completed_on_time_steps_count).to be_a Integer
-            expect(data.actual_and_placeholder_exercise_count).to be_a Integer
-            expect(data.completed_exercise_count).to be_a Integer
-            expect(data.completed_on_time_exercise_steps_count).to be_a Integer
-            expect(data.recovered_exercise_count).to be_a Integer
-            expect(data.gradable_step_count).to be_a Integer
-            expect(data.ungraded_step_count).to be_a Integer
-            expect(data.is_included_in_averages).to be_in [true, false]
             expect(data.progress).to be_a Float
             # Some assignments might not have feedback available
             # so they might get a nil here even though points/score have been assigned
@@ -568,19 +557,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
             expect(data.id).to be_a Integer
             expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
             expect(data.due_at).to be_a Time
-            expect(data.last_worked_at).to be_nil.or(be_a Time)
-            expect(data.is_extended).to be_in [true, false]
-            expect(data.is_past_due).to be_in [true, false]
             expect(data.step_count).to be_a Integer
             expect(data.completed_step_count).to be_a Integer
-            expect(data.completed_on_time_steps_count).to be_a Integer
-            expect(data.actual_and_placeholder_exercise_count).to be_a Integer
-            expect(data.completed_exercise_count).to be_a Integer
-            expect(data.completed_on_time_exercise_steps_count).to be_a Integer
-            expect(data.recovered_exercise_count).to be_a Integer
-            expect(data.gradable_step_count).to be_a Integer
-            expect(data.ungraded_step_count).to be_a Integer
-            expect(data.is_included_in_averages).to be_in [true, false]
             expect(data.progress).to be_a Float
             # Some assignments might not have feedback available
             # so they might get a nil here even though points/score have been assigned
@@ -747,19 +725,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
             expect(data.id).to be_a Integer
             expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
             expect(data.due_at).to be_a Time
-            expect(data.last_worked_at).to be_nil.or(be_a Time)
-            expect(data.is_extended).to be_in [true, false]
-            expect(data.is_past_due).to be_in [true, false]
             expect(data.step_count).to be_a Integer
             expect(data.completed_step_count).to be_a Integer
-            expect(data.completed_on_time_steps_count).to be_a Integer
-            expect(data.actual_and_placeholder_exercise_count).to be_a Integer
-            expect(data.completed_exercise_count).to be_a Integer
-            expect(data.completed_on_time_exercise_steps_count).to be_a Integer
-            expect(data.recovered_exercise_count).to be_a Integer
-            expect(data.gradable_step_count).to be_a Integer
-            expect(data.ungraded_step_count).to be_a Integer
-            expect(data.is_included_in_averages).to be_in [true, false]
             expect(data.progress).to be_a Float
             # Some assignments might not have feedback available
             # so they might get a nil here even though points/score have been assigned
@@ -892,19 +859,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.id).to be_a Integer
           expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
           expect(data.due_at).to be_a Time
-          expect(data.last_worked_at).to be_nil.or(be_a Time)
-          expect(data.is_extended).to be_in [true, false]
-          expect(data.is_past_due).to be_in [true, false]
           expect(data.step_count).to be_a Integer
           expect(data.completed_step_count).to be_a Integer
-          expect(data.completed_on_time_steps_count).to be_a Integer
-          expect(data.actual_and_placeholder_exercise_count).to be_a Integer
-          expect(data.completed_exercise_count).to be_a Integer
-          expect(data.completed_on_time_exercise_steps_count).to be_a Integer
-          expect(data.recovered_exercise_count).to be_a Integer
-          expect(data.gradable_step_count).to be_a Integer
-          expect(data.ungraded_step_count).to be_a Integer
-          expect(data.is_included_in_averages).to be_in [true, false]
           expect(data.progress).to be_a Float
           # Some assignments might not have feedback available
           # so they might get a nil here even though points/score have been assigned
@@ -984,19 +940,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.id).to be_a Integer
           expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
           expect(data.due_at).to be_a Time
-          expect(data.last_worked_at).to be_nil.or(be_a Time)
-          expect(data.is_extended).to be_in [true, false]
-          expect(data.is_past_due).to be_in [true, false]
           expect(data.step_count).to be_a Integer
           expect(data.completed_step_count).to be_a Integer
-          expect(data.completed_on_time_steps_count).to be_a Integer
-          expect(data.actual_and_placeholder_exercise_count).to be_a Integer
-          expect(data.completed_exercise_count).to be_a Integer
-          expect(data.completed_on_time_exercise_steps_count).to be_a Integer
-          expect(data.recovered_exercise_count).to be_a Integer
-          expect(data.gradable_step_count).to be_a Integer
-          expect(data.ungraded_step_count).to be_a Integer
-          expect(data.is_included_in_averages).to be_in [true, false]
           expect(data.progress).to be_a Float
           # Some assignments might not have feedback available
           # so they might get a nil here even though points/score have been assigned
