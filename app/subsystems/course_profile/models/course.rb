@@ -88,6 +88,21 @@ class CourseProfile::Models::Course < ApplicationRecord
     course_ecosystems.first&.ecosystem
   end
 
+  def initial_ecosystem_id
+    course_ecosystems.last&.content_ecosystem_id
+  end
+
+  def current_ecosystem_id
+    course_ecosystems.first&.content_ecosystem_id
+  end
+
+  def should_reuse_preview?
+    return unless is_preview
+
+    current_ecosystem_id == initial_ecosystem_id &&
+    current_ecosystem_id == offering&.content_ecosystem_id
+  end
+
   def term_year
     return if term.nil? || year.nil?
 

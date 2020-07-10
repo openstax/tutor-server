@@ -83,5 +83,4 @@ class Api::V1::OfferingRepresenter < Roar::Decorator
              writeable: false,
              getter: ->(*) { TermYear.visible_term_years },
              schema_info: { required: true }
-
 end
