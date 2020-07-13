@@ -6,12 +6,18 @@ module Tasks
 
     protected
 
-    def exec(course:, role: nil, is_teacher: nil)
+    def exec(course:, role: nil, is_teacher: nil, current_time: Time.current)
       raise ArgumentError, 'you must supply the role when is_teacher is not true' \
         if role.nil? && !is_teacher
 
       is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: [role]] \
         if is_teacher.nil?
+
+      if is_teacher && course.ends_at <= current_time && !course.teacher_performance_report.nil?
+        outputs.performance_report = course.teacher_performance_report
+
+        return
+      end
 
       periods = []
       if is_teacher
@@ -157,7 +163,7 @@ module Tasks
             end
           end
 
-          OpenStruct.new(
+          Hashie::Mash.new(
             name: name,
             first_name: first_task.first_name,
             last_name: first_task.last_name,
@@ -175,7 +181,7 @@ module Tasks
         end
 
         overall_students = student_data.reject(&:is_dropped)
-        OpenStruct.new(
+        Hashie::Mash.new(
           period: period,
           overall_homework_score: average(array: overall_students.map(&:homework_score)),
           overall_homework_progress: average(array: overall_students.map(&:homework_progress)),
@@ -272,7 +278,7 @@ module Tasks
         tasks = task_plan_id_to_task_map[task_plan_id]
         longest_task = tasks.max_by(&:actual_and_placeholder_exercise_count)
 
-        OpenStruct.new(
+        Hashie::Mash.new(
           plan_id: task_plan_id,
           title: task_plan.title,
           type: task_plan.type,

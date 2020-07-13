@@ -3,7 +3,7 @@ Time::DATE_FORMATS[:w3cz] = ->(time) { time.utc.strftime("%Y-%m-%dT%H:%M:%S.%LZ"
 module DateTimeUtilities
   # Convert the given DateTime to a W3CZ formatted string
   def self.to_api_s(date_time)
-    date_time.try(:to_formatted_s, :w3cz)
+    date_time.is_a?(String) ? date_time : date_time.try(:to_formatted_s, :w3cz)
   end
 
   # Parse a string representing a DateTime
