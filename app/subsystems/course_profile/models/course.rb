@@ -122,6 +122,10 @@ class CourseProfile::Models::Course < ApplicationRecord
     !is_preview && ended?(DateTime.new(2020, 7))
   end
 
+  def frozen_scores?(current_time = Time.current)
+    ended?(current_time) && !teacher_performance_report.nil?
+  end
+
   protected
 
   def set_starts_at_and_ends_at

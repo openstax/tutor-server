@@ -122,11 +122,14 @@ RSpec.describe Tasks::FreezeEndedCourseTeacherPerformanceReports, type: :routine
 
   context 'course has not ended yet' do
     it 'does nothing' do
-      expect(@course.teacher_performance_report).to be_nil
+      expect(Tasks::ExportPerformanceReport).not_to receive(:call)
 
       expect do
         described_class.call
-      end.not_to change { @course.reload.teacher_performance_report }
+      end.to  not_change { @course.reload.frozen_scores? }.from(false)
+         .and not_change { @course.teacher_performance_report }.from(nil)
+
+      expect(@course.teacher_performance_report).to be_nil
     end
   end
 
@@ -136,12 +139,16 @@ RSpec.describe Tasks::FreezeEndedCourseTeacherPerformanceReports, type: :routine
     it "freezes the course's teacher performance report" do
       reports = Tasks::GetPerformanceReport[course: @course, is_teacher: true]
 
+      expect(Tasks::ExportPerformanceReport).to receive(:call).and_call_original
+
       expect do
         described_class.call
-      end.to change { @course.reload.teacher_performance_report }.from(nil)
+      end.to  change { @course.reload.frozen_scores? }.from(false).to(true)
+         .and change { @course.teacher_performance_report }.from(nil)
 
-      # Some objects like AR models don't serialize/deserialize entirely the same
-      # But the overall representation should match
+      # Some objects like AR models don't serialize/deserialize entirely the same,
+      # so we save the representation instead.
+      # The overall representation should always match
       expect(
         Api::V1::PerformanceReport::Representer.new(
           Tasks::GetPerformanceReport[course: @course, is_teacher: true]

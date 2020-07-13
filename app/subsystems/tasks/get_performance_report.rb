@@ -6,17 +6,21 @@ module Tasks
 
     protected
 
-    def exec(course:, role: nil, is_teacher: nil, current_time: Time.current)
+    def exec(course:, role: nil, is_teacher: nil, is_frozen: nil, current_time: Time.current)
       raise ArgumentError, 'you must supply the role when is_teacher is not true' \
         if role.nil? && !is_teacher
 
       is_teacher = CourseMembership::IsCourseTeacher[course: course, roles: [role]] \
         if is_teacher.nil?
 
-      if is_teacher && course.ends_at <= current_time && !course.teacher_performance_report.nil?
-        outputs.performance_report = course.teacher_performance_report
+      is_frozen = is_teacher && course.frozen_scores?(current_time) if is_frozen.nil?
 
-        return
+      if is_frozen
+        outputs.performance_report = course.teacher_performance_report.map do |report|
+          Hashie::Mash.new report
+        end
+
+        return unless outputs.performance_report.nil?
       end
 
       periods = []

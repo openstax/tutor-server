@@ -59,25 +59,65 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
         end
       )
     end
-    after { File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename) }
-
-    it 'does not blow up' do
-      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    after do
+      File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename)
     end
 
-    it 'does not blow up when a student was not assigned a particular task' do
-      @course.students.first.role.taskings.first.task.destroy
-      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    context 'uncached' do
+      it 'does not blow up' do
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
+
+      it 'does not blow up when a student was not assigned a particular task' do
+        @course.students.first.role.taskings.first.task.destroy
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
+
+      it 'does not blow up if the course name has forbidden characters' do
+        @course.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
+
+      it 'does not blow up if the course name is too long' do
+        @course.update_attribute(:name, 'Tro' + (['lo'] * 50).join)
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
     end
 
-    it 'does not blow up if the course name has forbidden characters' do
-      @course.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
-      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
-    end
+    context 'cached' do
+      it 'does not blow up with a cached performance report' do
+        @course.teacher_performance_report = Api::V1::PerformanceReport::Representer.new(
+          Tasks::GetPerformanceReport[role: @role, course: @course]
+        ).to_hash
+        @course.ends_at = Time.current
+        @course.save validate: false
 
-    it 'does not blow up if the course name is too long' do
-      @course.update_attribute(:name, 'Tro' + (['lo'] * 50).join)
-      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
+
+      it 'uses the last performance export, if available' do
+        @output_filename = described_class[role: @role, course: @course]
+
+        @course.teacher_performance_report = Api::V1::PerformanceReport::Representer.new(
+          Tasks::GetPerformanceReport[role: @role, course: @course]
+        ).to_hash
+        @course.ends_at = Time.current
+        @course.save validate: false
+
+        expect do
+          expect(described_class[role: @role, course: @course]).to eq @output_filename
+        end.not_to raise_error
+      end
     end
   end
 
@@ -92,25 +132,63 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
         end
       )
     end
-    after { File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename) }
-
-    it 'does not blow up' do
-      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    after do
+      File.delete(@output_filename) if !@output_filename.nil? && File.exist?(@output_filename)
     end
 
-    it 'does not blow up when a student was not assigned a particular task' do
-      @course.students.first.role.taskings.first.task.destroy
-      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+    context 'uncached' do
+      it 'does not blow up' do
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
+
+      it 'does not blow up when a student was not assigned a particular task' do
+        @course.students.first.role.taskings.first.task.destroy
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
+
+      it 'does not blow up if the course name has forbidden characters' do
+        @course.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
+
+      it 'does not blow up if the course name is too long' do
+        @course.update_attribute(:name, 'Tro' + (['lo'] * 50).join)
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
     end
 
-    it 'does not blow up if the course name has forbidden characters' do
-      @course.update_attribute(:name, "My/\\C00l\r\n\tC0ur$3 :-)")
-      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
-    end
+    context 'cached' do
+      it 'does not blow up with a cached performance report' do
+        @course.update_attribute :teacher_performance_report,
+                                 Api::V1::PerformanceReport::Representer.new(
+                                   Tasks::GetPerformanceReport[role: @role, course: @course]
+                                 ).to_hash
 
-    it 'does not blow up if the course name is too long' do
-      @course.update_attribute(:name, 'Tro' + (['lo'] * 50).join)
-      expect { @output_filename = described_class[role: @role, course: @course] }.not_to raise_error
+        expect do
+          @output_filename = described_class[role: @role, course: @course]
+        end.not_to raise_error
+      end
+
+      it 'uses the last performance export, if available' do
+        @output_filename = described_class[role: @role, course: @course]
+
+        @course.update_attribute :teacher_performance_report,
+                                 Api::V1::PerformanceReport::Representer.new(
+                                   Tasks::GetPerformanceReport[role: @role, course: @course]
+                                 ).to_hash
+
+        expect do
+          expect(described_class[role: @role, course: @course]).to eq @output_filename
+        end.not_to raise_error
+      end
     end
   end
 end
