@@ -218,15 +218,15 @@ module OpenStax::Cnx::V1
                   root.add_child(<<-eofn)
                     <div data-type="footnote-refs">
                       <h3 data-type="section-title">Footnotes</h3>
-                      <ul data-type="footnotes"></ul>
+                      <div data-type="footnotes-list"></div>
                     </div>
                   eofn
 
-      ul = container.at_css('ul')
-      footnotes.each do | note |
-        li = ul.add_child('<li role="doc-footnote" />').first
-        li['id'] = note['id']
-        li.inner_html = note.inner_html
+      list = container.at_css('[data-type="footnotes-list"]')
+      footnotes.each do |note|
+        wrapper = list.add_child('<div role="doc-footnote" />').first
+        wrapper['id'] = note['id']
+        wrapper.inner_html = note.inner_html
         note.remove
       end
     end

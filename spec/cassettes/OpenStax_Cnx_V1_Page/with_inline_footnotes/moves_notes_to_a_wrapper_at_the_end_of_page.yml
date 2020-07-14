@@ -2,134 +2,6 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/:d7290d42-6efd-4a78-b863-eb5861e630c1@4
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 404
-      message: Not Found
-    headers:
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Content-Length:
-      - '101'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Tue, 14 Jul 2020 15:20:14 GMT
-      Etag:
-      - '"1B2M2Y8AsgTpgAmY7PhCfg"'
-      Server:
-      - waitress
-      X-Varnish-Status:
-      - cacheable (override) - no Cache-Control in backend response
-      Cache-Control:
-      - public, max-age=60
-      X-Varnish-Backend:
-      - prod07_archive4
-      X-Varnish-Ttl:
-      - '60.000'
-      X-Varnish:
-      - '2959755'
-      Age:
-      - '0'
-      Via:
-      - 1.1 varnish-v4
-      X-Varnish-Cache:
-      - MISS
-      Strict-Transport-Security:
-      - max-age=16000000
-    body:
-      encoding: UTF-8
-      string: |+
-        404 Not Found
-
-        The resource could not be found.
-
-
-        /contents/:d7290d42-6efd-4a78-b863-eb5861e630c1@4
-
-    http_version: 
-  recorded_at: Tue, 14 Jul 2020 15:20:14 GMT
-- request:
-    method: get
-    uri: https://archive.cnx.org/contents/d380510e-6145-4625-b19a-4fa68204b6b1@11.1:d7290d42-6efd-4a78-b863-eb5861e630c1@4
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 404
-      message: Not Found
-    headers:
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Content-Length:
-      - '52'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Tue, 14 Jul 2020 15:20:38 GMT
-      Etag:
-      - '"1B2M2Y8AsgTpgAmY7PhCfg"'
-      Server:
-      - waitress
-      X-Varnish-Status:
-      - cacheable (override) - no Cache-Control in backend response
-      Cache-Control:
-      - public, max-age=60
-      X-Varnish-Backend:
-      - prod07_archive2
-      X-Varnish-Ttl:
-      - '60.000'
-      X-Varnish:
-      - '5666098'
-      Age:
-      - '0'
-      Via:
-      - 1.1 varnish-v4
-      X-Varnish-Cache:
-      - MISS
-      Strict-Transport-Security:
-      - max-age=16000000
-    body:
-      encoding: UTF-8
-      string: |+
-        404 Not Found
-
-        The resource could not be found.
-
-
-
-
-    http_version: 
-  recorded_at: Tue, 14 Jul 2020 15:20:38 GMT
-- request:
-    method: get
     uri: https://archive-staging.cnx.org/contents/d380510e-6145-4625-b19a-4fa68204b6b1@11.1:d7290d42-6efd-4a78-b863-eb5861e630c1@4
     body:
       encoding: US-ASCII
@@ -174,9 +46,9 @@ http_interactions:
       X-Varnish-Ttl:
       - '31536000.000'
       X-Varnish:
-      - 1063869 1081431
+      - 6883321 1081431
       Age:
-      - '2506878'
+      - '2511688'
       Via:
       - 1.1 varnish-v4
       X-Varnish-Cache:
@@ -316,5 +188,5 @@ http_interactions:
         {"surname": "Entrepreneurship", "suffix": null, "firstname": "OpenStax", "title":
         "", "fullname": "OpenStax Entrepreneurship", "id": "cnxeship"}}]}'
     http_version: 
-  recorded_at: Tue, 14 Jul 2020 15:21:47 GMT
+  recorded_at: Tue, 14 Jul 2020 16:41:57 GMT
 recorded_with: VCR 4.0.0
