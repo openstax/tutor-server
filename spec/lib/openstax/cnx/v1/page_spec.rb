@@ -244,12 +244,20 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
   context 'with inline footnotes' do
     before(:all) do
       page_info = {
-        book: OpenStax::Cnx::V1::Book.new(id: 'd380510e-6145-4625-b19a-4fa68204b6b1@11.1'),
+        book: OpenStax::Cnx::V1::Book.new(
+          id: 'd380510e-6145-4625-b19a-4fa68204b6b1@11.1',
+          canonical_url: 'https://archive.cnx.org',
+        ),
         id: 'd7290d42-6efd-4a78-b863-eb5861e630c1@4',
         title: 'Entrepreneurship Today'
       }
       @page = VCR.use_cassette('OpenStax_Cnx_V1_Page/Inline_Footnotes', VCR_OPTS) do
-        page_for(page_info).tap{ |page| page.full_hash }
+        OpenStax::Cnx::V1::Page.new(
+          book: OpenStax::Cnx::V1::Book.new(
+            canonical_url: 'https://archive-staging.cnx.org/contents/d380510e-6145-4625-b19a-4fa68204b6b1@11.1',
+          ),
+          id: 'd7290d42-6efd-4a78-b863-eb5861e630c1@4',
+        )
       end
     end
 
