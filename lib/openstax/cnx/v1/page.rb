@@ -217,7 +217,7 @@ module OpenStax::Cnx::V1
       container = doc.at_css('[data-type="footnote-refs"]') ||
                   root.add_child(<<-eofn)
                     <div data-type="footnote-refs">
-                      <h3>Footnotes</h3>
+                      <h3 data-type="section-title">Footnotes</h3>
                       <ul data-type="footnotes"></ul>
                     </div>
                   eofn
