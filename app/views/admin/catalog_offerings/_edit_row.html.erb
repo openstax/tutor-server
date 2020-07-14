@@ -38,7 +38,7 @@
   <div class="form-group">
     <%= form.label "Ecosystem" %>
     <%= form.collection_select :content_ecosystem_id,
-        @ecosystems, :id, :title, { include_blank: true }, class: 'form-control' %>
+       @ecosystems, :id, :unique_title, { include_blank: true }, class: 'form-control' %>
     <div class="checkbox">
       <label>
         <%= check_box_tag :update_courses, '1', true, class: 'form-control' %>
