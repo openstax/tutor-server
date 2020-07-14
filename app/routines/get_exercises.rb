@@ -35,13 +35,16 @@ class GetExercises
       .preload(:page, tags: :teks_tags)
       .index_by(&:id)
 
+    # Filter excluded exercises only if exercise_ids are not specified
+    filter_exercises = exercise_ids.blank?
+
     # Build map of exercise uids to representations, with pool type
     hash = {}
     exercise_ids_by_pool_type.each do |pool_type, exercise_ids|
       pool_exercises = exercises_by_id.values_at(*exercise_ids).compact
-      filtered_exercises = run(:filter, exercises: pool_exercises).outputs.exercises
+      pool_exercises = run(:filter, exercises: pool_exercises).outputs.exercises if filter_exercises
 
-      filtered_exercises.each do |exercise|
+      pool_exercises.each do |exercise|
         unless hash.has_key?(exercise.uid)
           hash[exercise.uid] = Api::V1::ExerciseRepresenter.new(exercise).to_hash
           hash[exercise.uid]['pool_types'] = []
