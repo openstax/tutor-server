@@ -66,16 +66,15 @@ RSpec.describe Demo::Assign, type: :routine do
       expect(task_plan.assistant).not_to be_blank
       expect(task_plan.grading_template).to(be_in course.grading_templates) \
         unless task_plan.type == 'external'
-      settings = task_plan.settings
       case task_plan.type
       when 'reading'
-        expect(settings['page_ids'].size).to eq matches[1].blank? ? 2 : 3
+        expect(task_plan.core_page_ids.size).to eq matches[1].blank? ? 2 : 3
       when 'homework'
-        expect(settings['page_ids'].size).to eq matches[1].blank? ? 2 : 3
-        expect(settings['exercises'].size).to eq 4
-        expect(settings['exercises_count_dynamic']).to eq 2
+        expect(task_plan.core_page_ids.size).to eq matches[1].blank? ? 2 : 3
+        expect(task_plan.settings['exercises'].size).to eq 4
+        expect(task_plan.settings['exercises_count_dynamic']).to eq 2
       when 'external'
-        expect(settings['external_url']).to eq 'https://example.com/External'
+        expect(task_plan.settings['external_url']).to eq 'https://example.com/External'
       end
 
       expect(task_plan.is_preview).to eq false

@@ -2,8 +2,6 @@ class Tasks::Models::Extension < ApplicationRecord
   belongs_to :task_plan, inverse_of: :extensions
   belongs_to :role, subsystem: :entity, inverse_of: :extensions
 
-  has_one :task, inverse_of: :extension
-
   delegate :timezone, :time_zone, to: :task_plan
   has_timezone :due_at, :closes_at, suffix: :ntz
 

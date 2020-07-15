@@ -55,11 +55,11 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
 
       updated_reading_plan = described_class[task_plan: cloned_reading_plan, ecosystem: @ecosystem]
       expect(updated_reading_plan.ecosystem).to eq @ecosystem
-      expect(updated_reading_plan.settings['page_ids'].length).to eq page_ids.length
-      expect(updated_reading_plan.settings['page_ids']).not_to eq page_ids
+      expect(updated_reading_plan.core_page_ids.length).to eq page_ids.length
+      expect(updated_reading_plan.core_page_ids).not_to eq page_ids
       expect(updated_reading_plan).to be_valid
 
-      new_page_ids = updated_reading_plan.settings['page_ids']
+      new_page_ids = updated_reading_plan.core_page_ids
       expect(@ecosystem.pages.where(id: new_page_ids).count).to eq new_page_ids.length
     end
   end
@@ -76,7 +76,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         course: @old_course,
         settings: {
           exercises: exercises.map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+            { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
           end,
           exercises_count_dynamic: 3
         }
@@ -93,7 +93,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         course: @course,
         settings: {
           exercises: exercises.map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+            { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
           end,
           exercises_count_dynamic: 3
         }

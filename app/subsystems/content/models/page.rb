@@ -33,6 +33,8 @@ class Content::Models::Page < IndestructibleRecord
   validates :uuid, presence: true
   validates :version, presence: true
 
+  scope :with_exercises, -> { where('CARDINALITY("content_pages"."all_exercise_ids") > 0') }
+
   def self.pool_types
     [
       :all,

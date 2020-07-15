@@ -38,7 +38,6 @@ Delayed::Worker.delay_jobs = Rails.env.production? || (
                                )
                              )
 
-
 module HandleFailedJobInstantly
   # Based on https://github.com/smartinez87/exception_notification/issues/195#issuecomment-31257207
   def handle_failed_job(job, exception)
@@ -100,33 +99,4 @@ Delayed::Worker.class_exec do
   end
 
   prepend HandleFailedJobInstantly
-end
-
-# The following are custom ActiveJob patches
-# to allow access to the provider_job_id during job execution
-ActiveJob::Base.class_exec do
-  attr_accessor :provider_job_id
-
-  def self.execute(job_data, provider_job_id = nil)
-    job = deserialize(job_data)
-    job.provider_job_id = provider_job_id
-    job.perform_now
-  end
-end
-
-ActiveJob::QueueAdapters::DelayedJobAdapter::JobWrapper.class_exec do
-  attr_reader :job_data
-  attr_reader :provider_job_id
-
-  def initialize(job_data)
-    @job_data = job_data
-  end
-
-  def before(delayed_job)
-    @provider_job_id = delayed_job.id
-  end
-
-  def perform
-    ActiveJob::Base.execute(job_data, provider_job_id)
-  end
 end

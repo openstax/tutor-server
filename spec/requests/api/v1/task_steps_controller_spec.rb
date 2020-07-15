@@ -381,6 +381,23 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
           expect(response.body_as_hash).to include(grader_points: 42.0, grader_comments: 'Test')
         end
+
+        it 'calls the Glicko update routines when all steps are graded' do
+          expect(Ratings::UpdatePeriodBookParts).to(
+            receive(:set).with(queue: :dashboard).and_return(Ratings::UpdatePeriodBookParts)
+          )
+          expect(Ratings::UpdatePeriodBookParts).to receive(:perform_later)
+
+          expect(Ratings::UpdateRoleBookParts).to(
+            receive(:set).with(queue: :dashboard).and_return(Ratings::UpdateRoleBookParts)
+          )
+          expect(Ratings::UpdateRoleBookParts).to receive(:perform_later)
+
+          api_put grade_api_step_url(task_step.id), @teacher_user_token,
+                  params: { grader_points: 42.0, grader_comments: 'Test' }.to_json
+
+          expect(task_step.reload.task.manual_grading_complete?).to eq true
+        end
       end
 
       context "manual_grading_feedback_on == 'publish'" do
@@ -407,6 +424,17 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
           expect(response).to have_http_status(:success)
 
           expect(response.body_as_hash).to include(grader_points: 42.0, grader_comments: 'Test')
+        end
+
+        it 'does not call the Glicko update routines until grades are published' do
+          expect(Ratings::UpdatePeriodBookParts).not_to receive(:set)
+
+          expect(Ratings::UpdateRoleBookParts).not_to receive(:set)
+
+          api_put grade_api_step_url(task_step.id), @teacher_user_token,
+                  params: { grader_points: 42.0, grader_comments: 'Test' }.to_json
+
+          expect(task_step.reload.task.manual_grading_complete?).to eq false
         end
       end
     end

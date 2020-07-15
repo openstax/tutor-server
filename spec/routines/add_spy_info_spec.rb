@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe AddSpyInfo, type: :routine do
-
   let(:ecosystem) { FactoryBot.build(:content_ecosystem) }
 
   it 'sets spy info from an ecosystem' do
@@ -24,5 +23,4 @@ RSpec.describe AddSpyInfo, type: :routine do
                             'ecosystem_id' => ecosystem.id,
                             'ecosystem_title' => ecosystem.title})
   end
-
 end

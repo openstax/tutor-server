@@ -15,15 +15,15 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
            :opens_after_course_starts, :closes_before_course_ends, :course_can_task_target
 
   def past_open?(current_time: Time.current)
-    opens_at.nil? || current_time > opens_at
+    opens_at.nil? || current_time >= opens_at
   end
 
   def past_due?(current_time: Time.current)
-    !due_at.nil? && current_time > due_at
+    !due_at.nil? && current_time >= due_at
   end
 
   def past_close?(current_time: Time.current)
-    !closes_at.nil? && current_time > closes_at
+    !closes_at.nil? && current_time >= closes_at
   end
 
   protected

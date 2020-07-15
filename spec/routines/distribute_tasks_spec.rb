@@ -116,7 +116,23 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         end
       end
 
-      it 'updating due dates causes student scores to change' do
+      it 'updating due dates causes student scores to change and Glicko jobs to re-queue' do
+        # 3 tasks, called twice
+        expect(Ratings::UpdateRoleBookParts).to(
+          receive(:set).and_return(Ratings::UpdateRoleBookParts)
+        ).exactly(6).times
+        expect(Ratings::UpdateRoleBookParts).to(
+          receive(:perform_later).exactly(6).times.and_call_original
+        )
+
+        # teacher_student tasks don't count here
+        expect(Ratings::UpdatePeriodBookParts).to(
+          receive(:set).and_return(Ratings::UpdatePeriodBookParts)
+        ).exactly(4).times
+        expect(Ratings::UpdatePeriodBookParts).to(
+          receive(:perform_later).exactly(4).times.and_call_original
+        )
+
         homework_plan.grading_template.update_column :late_work_penalty, 1.0
         homework_tasking_plan.opens_at = homework_tasking_plan.time_zone.now - 2.hours
         homework_tasking_plan.due_at = homework_tasking_plan.time_zone.now - 1.hour
@@ -259,6 +275,10 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         end
 
         it 'can create or update normal and preview tasks' do
+          # No work done
+          expect(Ratings::UpdateRoleBookParts).not_to receive(:set)
+          expect(Ratings::UpdatePeriodBookParts).not_to receive(:set)
+
           reading_tasking_plan.update_attribute(
             :opens_at, reading_tasking_plan.time_zone.now - 1.hour
           )
@@ -373,6 +393,10 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           end
 
           it 'can create or update normal and preview tasks' do
+            # No work done
+            expect(Ratings::UpdateRoleBookParts).not_to receive(:set)
+            expect(Ratings::UpdatePeriodBookParts).not_to receive(:set)
+
             result = described_class.call(task_plan: homework_plan)
 
             expect(result.errors).to be_empty
@@ -404,6 +428,10 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           end
 
           it 'can create or update normal and preview tasks' do
+            # No work done
+            expect(Ratings::UpdateRoleBookParts).not_to receive(:set)
+            expect(Ratings::UpdatePeriodBookParts).not_to receive(:set)
+
             result = described_class.call(task_plan: reading_plan)
 
             expect(result.errors).to be_empty

@@ -85,8 +85,8 @@ class Tasks::Models::Task < ApplicationRecord
 
   def reload(*args)
     @extension = nil
-    @due_at = nil
-    @closes_at = nil
+    @due_at_with_extension = nil
+    @closes_at_with_extension = nil
     @available_points_without_dropping_per_question_index = nil
     @available_points_per_question_index = nil
     @points_per_question_index_without_lateness = nil
@@ -154,51 +154,59 @@ class Tasks::Models::Task < ApplicationRecord
     task_steps.spaced_practice_group.to_a.count { |step| step.exercise? || step.placeholder? }
   end
 
-  alias_method :due_at_without_extension, :due_at
-  alias_method :closes_at_without_extension, :closes_at
-
   def extended?
     !extension.nil?
   end
 
+  alias_method :due_at_without_extension, :due_at
+  alias_method :closes_at_without_extension, :closes_at
+
   def due_at
-    @due_at ||= begin
+    @due_at_with_extension ||= if @due_at.nil?
+      # Saves us one call to apply_tz compared to [ super, extension&.due_at ].compact.max
       datetime = [ due_at_ntz, extension&.due_at_ntz ].compact.max
       return nil if datetime.nil?
-      # Use server's time_zone (Time.zone) if no time_zone available
-      tz = time_zone || Time.zone
 
-      DateTimeUtilities.apply_tz(datetime, tz)
+      DateTimeUtilities.apply_tz(datetime, time_zone)
+    else
+      [ super, extension&.due_at ].compact.max
     end
   end
 
-  alias_method :due_at_without_caching=, :due_at=
   def due_at=(value)
-    self.due_at_without_caching=(value).tap { @due_at = nil }
+    @due_at_with_extension = nil
+
+    super
   end
 
   def due_at_ntz=(value)
-    super.tap { @due_at = nil }
+    @due_at_with_extension = nil
+
+    super
   end
 
   def closes_at
-    @closes_at ||= begin
+    @closes_at_with_extension ||= if @closes_at.nil?
+      # Saves us one call to apply_tz compared to [ super, extension&.closes_at ].compact.max
       datetime = [ closes_at_ntz, extension&.closes_at_ntz ].compact.max
       return nil if datetime.nil?
-      # Use server's time_zone (Time.zone) if no time_zone available
-      tz = time_zone || Time.zone
 
-      DateTimeUtilities.apply_tz(datetime, tz)
+      DateTimeUtilities.apply_tz(datetime, time_zone)
+    else
+      [ super, extension&.closes_at ].compact.max
     end
   end
 
-  alias_method :closes_at_without_caching=, :closes_at=
   def closes_at=(value)
-    self.closes_at_without_caching=(value).tap { @closes_at = nil }
+    @closes_at_with_extension = nil
+
+    super
   end
 
   def closes_at_ntz=(value)
-    super.tap { @closes_at = nil }
+    @closes_at_with_extension = nil
+
+    super
   end
 
   def grading_template
@@ -456,7 +464,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def past_open?(current_time: Time.current)
-    opens_at.nil? || current_time > opens_at
+    opens_at.nil? || current_time >= opens_at
   end
 
   def past_due?(current_time: Time.current, current_time_ntz: nil)
@@ -468,7 +476,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def past_close?(current_time: Time.current)
-    !closes_at.nil? && current_time > closes_at
+    !closes_at.nil? && current_time >= closes_at
   end
 
   def grades_manually_published?

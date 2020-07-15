@@ -26,9 +26,9 @@ module Tasks
       end
 
       tz = course.time_zone
-      current_time_ntz = DateTimeUtilities.remove_tz(tz.now)
+      current_time = tz.now
 
-      tasks = get_course_tasks(course, role, is_teacher, current_time_ntz)
+      tasks = get_course_tasks(course, role, is_teacher, current_time)
       tasks_by_period_id = tasks.group_by(&:course_membership_period_id)
 
       pre_wrm = course.pre_wrm_scores?
@@ -86,7 +86,7 @@ module Tasks
             pre_wrm: pre_wrm,
             tasks: student_tasks,
             tz: tz,
-            current_time_ntz: current_time_ntz,
+            current_time: current_time,
             is_teacher: is_teacher
           )
           non_nil_data = data.compact
@@ -96,24 +96,24 @@ module Tasks
           homework_score = average_score(
             pre_wrm: pre_wrm,
             tasks: homework_tasks,
-            current_time_ntz: current_time_ntz,
+            current_time: current_time,
             is_teacher: is_teacher
           )
           homework_progress = average_progress(
             pre_wrm: pre_wrm,
             tasks: homework_tasks,
-            current_time_ntz: current_time_ntz
+            current_time: current_time
           )
           reading_score = average_score(
             pre_wrm: pre_wrm,
             tasks: reading_tasks,
-            current_time_ntz: current_time_ntz,
+            current_time: current_time,
             is_teacher: is_teacher
           )
           reading_progress = average_progress(
             pre_wrm: pre_wrm,
             tasks: reading_tasks,
-            current_time_ntz: current_time_ntz
+            current_time: current_time
           )
 
           homework_weight = course.homework_weight.to_f
@@ -183,7 +183,7 @@ module Tasks
           overall_reading_progress: average(array: overall_students.map(&:reading_progress)),
           overall_course_average: average(array: overall_students.map(&:course_average)),
           data_headings: get_data_headings(
-            pre_wrm, tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz, is_teacher
+            pre_wrm, tasking_plans, task_plan_id_to_task_map, tz, current_time, is_teacher
           ),
           students: student_data
         )
@@ -193,13 +193,14 @@ module Tasks
     # Return reading, homework and external tasks for a student
     # reorder(nil) is required for distinct to work
     # distinct is required for preloading to work
-    def get_course_tasks(course, role, is_teacher, current_time_ntz)
+    def get_course_tasks(course, role, is_teacher, current_time)
       is_teacher_student = role.present? && role.teacher_student?
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
       tt = Tasks::Models::Task.arel_table
       er = Entity::Role.arel_table
       st = is_teacher_student ?
-        CourseMembership::Models::TeacherStudent.arel_table : CourseMembership::Models::Student.arel_table
+        CourseMembership::Models::TeacherStudent.arel_table :
+        CourseMembership::Models::Student.arel_table
       up = User::Models::Profile.arel_table
       ac = OpenStax::Accounts::Account.arel_table
       rel = Tasks::Models::Task
@@ -207,22 +208,28 @@ module Tasks
           [
             tt[ Arel.star ],
             er[:id].as('"role_id"'),
-            is_teacher_student ?
-              Arel::Nodes::SqlLiteral.new("'' as student_identifier") : st[:student_identifier],
+            is_teacher_student ? Arel::Nodes::SqlLiteral.new("'' as student_identifier") :
+                                 st[:student_identifier],
             st[:course_membership_period_id],
-            is_teacher_student ?
-              st[:deleted_at].as('dropped_at') : st[:dropped_at],
+            is_teacher_student ? st[:deleted_at].as('"dropped_at"') : st[:dropped_at],
             up[:id].as('"user_id"'),
             ac[:username],
             ac[:first_name],
             ac[:last_name]
           ]
         )
-        .joins(task_plan: :tasking_plans)
+        .joins(:course, task_plan: :tasking_plans)
         .where(task_type: task_types,task_plan: { withdrawn_at: nil })
-        .where(tt[:opens_at_ntz].eq(nil).or tt[:opens_at_ntz].lteq(current_time_ntz))
-        .preload(:course, :taskings, task_plan: [ :course, :tasking_plans, :extensions ])
-        .reorder(nil).distinct
+        .where(
+          <<~WHERE_SQL
+            TIMEZONE(
+              "course_profile_courses"."timezone", "tasks_tasks"."due_at_ntz"
+            ) <= '#{current_time}'
+          WHERE_SQL
+        )
+        .preload(:taskings, :course, task_plan: [ :tasking_plans, :course, :extensions ])
+        .reorder(nil)
+        .distinct
 
       if is_teacher
         rel = rel.joins(
@@ -253,11 +260,11 @@ module Tasks
             tp.target_id == period.id
           end
         end
-      end.uniq.sort_by { |tp| [ tp.due_at_ntz, tp.closes_at_ntz, tp.created_at ] }.reverse
+      end.uniq.sort_by { |tp| [ tp.due_at, tp.closes_at, tp.created_at ] }.reverse
     end
 
     def get_data_headings(
-      pre_wrm, tasking_plans, task_plan_id_to_task_map, tz, current_time_ntz, is_teacher
+      pre_wrm, tasking_plans, task_plan_id_to_task_map, tz, current_time, is_teacher
     )
       tasking_plans.map do |tasking_plan|
         task_plan = tasking_plan.task_plan
@@ -270,34 +277,30 @@ module Tasks
           title: task_plan.title,
           type: task_plan.type,
           available_points: longest_task&.available_points,
-          due_at: DateTimeUtilities.apply_tz(tasking_plan.due_at_ntz, tz),
+          due_at: tasking_plan.due_at,
           average_score: average_score(
             pre_wrm: pre_wrm,
             tasks: tasks,
-            current_time_ntz: current_time_ntz,
+            current_time: current_time,
             is_teacher: is_teacher
           ),
           average_progress: average_progress(
             pre_wrm: pre_wrm,
             tasks: tasks,
-            current_time_ntz: current_time_ntz
+            current_time: current_time
           )
         )
       end
     end
 
-    def included_in_progress_averages?(task:, current_time_ntz:)
-      return false if task.steps_count == 0
-      return true if task.task_type == 'concept_coach'
-
-      task.due_at_ntz.present? && task.due_at_ntz <= current_time_ntz
+    def included_in_progress_averages?(task:)
+      task.steps_count > 0
     end
 
-    def included_in_score_averages?(task:, current_time_ntz:, is_teacher:)
-      return false if task.actual_and_placeholder_exercise_count == 0
-
-      included_in_progress_averages?(task: task, current_time_ntz: current_time_ntz) && (
-        is_teacher || task.feedback_available?(current_time_ntz: current_time_ntz)
+    def included_in_score_averages?(task:, current_time:, is_teacher:)
+      task.actual_and_placeholder_exercise_count > 0 &&
+      included_in_progress_averages?(task: task) && (
+        is_teacher || task.feedback_available?(current_time: current_time)
       )
     end
 
@@ -307,10 +310,10 @@ module Tasks
       completed_count.to_f / tasks.count
     end
 
-    def average_score(pre_wrm:, tasks:, current_time_ntz:, is_teacher:)
+    def average_score(pre_wrm:, tasks:, current_time:, is_teacher:)
       applicable_tasks = tasks.compact.select do |task|
         included_in_score_averages?(
-          task: task, current_time_ntz: current_time_ntz, is_teacher: is_teacher
+          task: task, current_time: current_time, is_teacher: is_teacher
         )
       end
 
@@ -322,9 +325,9 @@ module Tasks
       )
     end
 
-    def average_progress(pre_wrm:, tasks:, current_time_ntz:)
+    def average_progress(pre_wrm:, tasks:, current_time:)
       applicable_tasks = tasks.compact.select do |task|
-        included_in_progress_averages?(task: task, current_time_ntz: current_time_ntz)
+        included_in_progress_averages?(task: task)
       end
 
       return nil if applicable_tasks.empty?
@@ -351,15 +354,14 @@ module Tasks
       task.correct_on_time_exercise_steps_count.to_f / task.actual_and_placeholder_exercise_count
     end
 
-    def get_task_data(pre_wrm:, tasks:, tz:, current_time_ntz:, is_teacher:)
+    def get_task_data(pre_wrm:, tasks:, tz:, current_time:, is_teacher:)
       tasks.map do |tt|
         # Skip if the student hasn't worked this particular task_plan/page
         next if tt.nil?
 
-        due_at = DateTimeUtilities.apply_tz(tt.due_at_ntz, tz)
-        late = tt.worked_on? && due_at.present? && tt.last_worked_at > due_at
+        late = tt.worked_on? && tt.due_at.present? && tt.last_worked_at > tt.due_at
         type = tt.task_type
-        show_score = is_teacher || tt.feedback_available?(current_time_ntz: current_time_ntz)
+        show_score = is_teacher || tt.feedback_available?(current_time: current_time)
         correct_exercise_count = show_score ? tt.correct_exercise_count : nil
 
         if pre_wrm
@@ -380,7 +382,7 @@ module Tasks
           status:                                 tt.status(use_cache: true),
           type:                                   type,
           id:                                     tt.id,
-          due_at:                                 due_at,
+          due_at:                                 tt.due_at,
           last_worked_at:                         tt.last_worked_at&.in_time_zone(tz),
           is_extended:                            tt.extended?,
           is_past_due:                            tt.past_due?,
@@ -394,9 +396,7 @@ module Tasks
           recovered_exercise_count:               tt.recovered_exercise_steps_count,
           gradable_step_count:                    tt.gradable_step_count,
           ungraded_step_count:                    tt.ungraded_step_count,
-          is_included_in_averages:                included_in_progress_averages?(
-                                                    task: tt, current_time_ntz: current_time_ntz
-                                                  ),
+          is_included_in_averages:                included_in_progress_averages?(task: tt),
           available_points:                       available_points,
           progress:                               progress,
           published_points:                       published_points,

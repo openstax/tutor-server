@@ -10,7 +10,7 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
              getter: ->(*) do
                next unless settings.has_key? 'page_ids'
 
-               Content::Models::Page.where(id: settings['page_ids']).map(&:book_indices).sort
+               Content::Models::Page.where(id: core_page_ids).map(&:book_indices).sort
              end,
              readable: true,
              writeable: true

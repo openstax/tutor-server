@@ -69,7 +69,15 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     if grader_points.nil?
       !correct_answer_id.nil? && answer_id == correct_answer_id
     else
-      grader_points > 0
+      grader_points > 0.0
+    end
+  end
+
+  def correctness
+    if grader_points.nil?
+      !correct_answer_id.nil? && answer_id == correct_answer_id ? 1.0 : 0.0
+    else
+      grader_points/available_points
     end
   end
 
@@ -157,7 +165,6 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     full_credit_question_ids = Set.new(
       task_step.task&.task_plan&.dropped_questions&.filter(&:full_credit?)&.map(&:question_id) || []
     )
-
     full_credit_question_ids.include? question_id
   end
 
@@ -279,6 +286,11 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     else
       nil
     end
+  end
+
+  def dropped_method
+    dropped_question = task_step.task&.task_plan&.dropped_questions&.find { |q| q.question_id == question_id }
+    dropped_question&.drop_method
   end
 
   def was_manually_graded?

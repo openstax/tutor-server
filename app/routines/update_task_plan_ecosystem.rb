@@ -35,7 +35,7 @@ class UpdateTaskPlanEcosystem
       snap_lab_ids = outputs.task_plan.settings['snap_lab_ids']
       page_ids = snap_lab_ids.map{ |page_id_snap_lab_id| page_id_snap_lab_id.split(':').first }
     else
-      page_ids = outputs.task_plan.settings['page_ids']
+      page_ids = outputs.task_plan.core_page_ids
     end
 
     unless page_ids.nil?

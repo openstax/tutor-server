@@ -4,7 +4,7 @@ RSpec.describe Demo::Export, type: :routine do
   let(:reading)   { FactoryBot.create :tasked_task_plan, type: :reading }
   let(:course)    { reading.course }
   let!(:homework) do
-    reading_pages = Content::Models::Page.where(id: reading.settings['page_ids'])
+    reading_pages = Content::Models::Page.where(id: reading.core_page_ids)
 
     FactoryBot.create(
       :tasks_task_plan,

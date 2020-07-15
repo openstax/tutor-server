@@ -1,4 +1,6 @@
 class DistributeTasks
+  include Ratings::Concerns::RatingJobs
+
   lev_routine transaction: :read_committed, use_jobba: true
 
   uses_routine IndividualizeTaskingPlans, as: :individualize_tasking_plans
@@ -15,7 +17,9 @@ class DistributeTasks
          task_plan.publish_last_requested_at > publish_time
 
     # Get all tasks for this plan
-    existing_tasks = task_plan.tasks.preload(taskings: { role: [ :student, :teacher_student ] })
+    existing_tasks = task_plan.tasks.preload(
+      taskings: { role: [ student: :period, teacher_student: :period ] }
+    )
 
     # Task deletion (re-publishing)
     unless task_plan.out_to_students?(current_time: publish_time)
@@ -113,6 +117,21 @@ class DistributeTasks
     all_tasks = existing_tasks + new_tasks
     unless all_tasks.empty?
       queue = task_plan.is_preview ? :preview : :dashboard
+
+      existing_tasks.each do |task|
+        role = task.taskings.first&.role
+        period = role&.course_member&.period
+        next if period.nil?
+
+        perform_rating_jobs_later(
+          task: task,
+          role: role,
+          period: period,
+          event: :update,
+          queue: queue
+        )
+      end
+
       Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
         task_ids: all_tasks.map(&:id), update_cached_attributes: true, queue: queue.to_s
       )

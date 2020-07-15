@@ -8,7 +8,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
   let(:course)    { reading.course }
   let(:period)    { course.periods.first }
   let(:task_plan) do
-    reading_pages = Content::Models::Page.where(id: reading.settings['page_ids'])
+    reading_pages = Content::Models::Page.where(id: reading.core_page_ids)
 
     FactoryBot.create(
       :tasks_task_plan,

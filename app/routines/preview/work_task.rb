@@ -5,6 +5,8 @@ class Preview::WorkTask
   uses_routine MarkTaskStepCompleted, as: :mark_completed
   uses_routine Preview::AnswerExercise, as: :answer_exercise
 
+  include Ratings::Concerns::RatingJobs
+
   protected
 
   def exec(
@@ -15,7 +17,11 @@ class Preview::WorkTask
     completed_at: Time.current,
     update_caches: true
   )
+    task.lock!
+
     task.preload_taskeds
+
+    task_was_completed = task.completed?(use_cache: true)
 
     run :populate_placeholders, task: task, force: true, background: true
 
@@ -76,39 +82,22 @@ class Preview::WorkTask
     period = role&.course_member&.period
     course = period&.course
     # course will only be set if role and period were found
-    return if course.nil?
-
-    queue = task.preview_course? ? 'preview' : 'dashboard'
-    role_run_at = task.auto_grading_feedback_available? ? completed_at :
-                                                          [ task.due_at, completed_at ].compact.max
-
-    page_uuid_book_part_uuids = Content::Models::Page
-      .where(id: exercise_steps.map(&:content_page_id))
-      .pluck(:uuid, :parent_book_part_uuid)
-
-    page_uuid_book_part_uuids.map(&:first).uniq.each do |page_uuid|
-      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
-        role: role, book_part_uuid: page_uuid, is_page: true
-      )
-
-      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
-        period: period, book_part_uuid: page_uuid, is_page: true
-      ) if role.student?
-    end
-
-    page_uuid_book_part_uuids.map(&:second).uniq.each do |book_part_uuid|
-      Ratings::UpdateRoleBookPart.set(queue: queue, run_at: role_run_at).perform_later(
-        role: role, book_part_uuid: book_part_uuid, is_page: false
-      )
-
-      Ratings::UpdatePeriodBookPart.set(queue: queue).perform_later(
-        period: period, book_part_uuid: book_part_uuid, is_page: false
-      ) if role.student?
-    end
+    return if course.nil? || task.completed_exercise_steps_count == 0
 
     requests = tasked_exercises.map do |tasked_exercise|
       { course: course, tasked_exercise: tasked_exercise }
     end
     OpenStax::Biglearn::Api.record_responses requests
+
+    return if task_was_completed
+
+    perform_rating_jobs_later(
+      task: task,
+      role: role,
+      period: period,
+      event: :work,
+      lock_task: false,
+      current_time: completed_at
+    )
   end
 end

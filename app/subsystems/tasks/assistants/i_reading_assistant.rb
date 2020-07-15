@@ -25,7 +25,7 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
   def initialize(task_plan:, individualized_tasking_plans:)
     super
 
-    page_ids = task_plan.settings['page_ids'].map(&:to_i)
+    page_ids = task_plan.core_page_ids.map(&:to_i)
     pages_by_id = ecosystem.pages.where(id: page_ids).index_by(&:id)
     @pages = pages_by_id.values_at(*page_ids).compact
   end

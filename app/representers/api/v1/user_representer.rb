@@ -49,6 +49,15 @@ module Api::V1
                required: true
              }
 
+    property :school_location,
+             type: String,
+             schema_info: {
+               description: "The geographic location of the user's school, one of [#{
+                 OpenStax::Accounts::Account.school_locations.keys.map(&:to_s).join(', ')
+               }]",
+               required: true
+             }
+
     property :account_uuid,
              getter: ->(*) { account.uuid },
              type: String,

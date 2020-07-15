@@ -91,7 +91,7 @@ gem 'nokogiri'
 gem 'jobba', '~> 1.8.0'
 
 # Lev framework
-gem 'lev', '~> 10.0.0'
+gem 'lev', '~> 10.1.0', github: 'lml/lev', ref: '110d240'
 
 # Contract management
 gem 'fine_print'
