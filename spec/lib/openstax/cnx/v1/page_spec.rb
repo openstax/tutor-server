@@ -185,21 +185,13 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
   end
 
   context 'parsing html titles' do
-    it 'parses parts' do
+    it 'extracts os-number and retains all HTML' do
+      html = '<span class="os-number"><span class="os-part-text">Unit </span>1.42</span><span class="os-divider"> </span><span data-type="" itemprop="" class="os-text"><i>The Florentine Codex</i>, c. 1585</span>'
       page = OpenStax::Cnx::V1::Page.new(
-        id: '123',
-        hash: { 'title' => '<span class="os-number">2.1</span><span class="os-divider"> </span><span class="os-text">Atoms, Isotopes, Ions, and Molecules: The Building Blocks</span>' }
+        id: '123', hash: { 'title' => html }
       )
-      expect(page.book_location).to eq [ 2, 1 ]
-      expect(page.title).to eq 'Atoms, Isotopes, Ions, and Molecules: The Building Blocks'
-    end
-
-    it 'removes part-text but retains other HTML tags' do
-      page = OpenStax::Cnx::V1::Page.new(
-        id: '123', hash: { 'title' => '<span class="os-number"><span class="os-part-text">Unit </span>1</span><span class="os-divider"> </span><span data-type="" itemprop="" class="os-text"><i>The Florentine Codex</i>, c. 1585</span>' }
-      )
-      expect(page.book_location).to eq [1]
-      expect(page.title).to eq '<i>The Florentine Codex</i>, c. 1585'
+      expect(page.book_location).to eq [1, 42]
+      expect(page.title).to eq html
     end
 
     it 'leaves book_location blank if not present' do
@@ -207,7 +199,6 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
         id: '123', hash: { 'title' => '<span class="os-text">Review Questions</span>' }
       )
       expect(page.book_location).to eq []
-      expect(page.title).to eq 'Review Questions'
     end
 
     it 'continues to function for plain text titles' do

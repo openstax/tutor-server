@@ -5,16 +5,13 @@ class OpenStax::Cnx::V1::Title
     return nil if title.nil?
 
     part = Nokogiri::HTML.fragment(title)
-    text_node = part.css('.os-text')
-    if text_node.present? && (number = part.at_css('.os-number'))
-      number.css('.os-part-text').each(&:remove)      
-      @book_location = number.text.split('.').map do |number|
+    number_node = part.css('.os-number')
+    if number_node.present?
+      @book_location = number_node.text.gsub(/[^\.\d]/, '').split('.').map do |number|
         Integer(number) rescue nil
       end.compact
-      @text = text_node.inner_html
-    else
-      @book_location = []
-      @text = part.text.strip
     end
+    @book_location = [] if @book_location.nil?
+    @text = title
   end
 end
