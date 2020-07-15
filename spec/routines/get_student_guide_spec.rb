@@ -117,7 +117,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
 
           chapter_1 = chapters.first
           expect(chapter_1).to match(
-            title: 'Acceleration',
+            title: a_string_matching('Acceleration'),
             book_location: [],
             student_count: 1,
             questions_answered_count: 2,
@@ -130,7 +130,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
 
           chapter_2 = chapters.second
           expect(chapter_2).to match(
-            title: "Force and Newton's Laws of Motion",
+            title: a_string_matching("Force and Newton's Laws of Motion"),
             book_location: [],
             student_count: 1,
             questions_answered_count: 7,
@@ -146,7 +146,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           chapter_1_pages = chapters.first['children']
           expect(chapter_1_pages).to match [
             {
-              title: 'Acceleration',
+              title: a_string_matching('Acceleration'),
               book_location: [],
               student_count: 1,
               questions_answered_count: 2,
@@ -156,7 +156,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: kind_of(String)
             },
             {
-              title: 'Representing Acceleration with Equations and Graphs',
+              title: a_string_matching('Representing Acceleration with Equations and Graphs'),
               book_location: [],
               student_count: 1,
               questions_answered_count: 0,
@@ -170,7 +170,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           chapter_2_pages = chapters.second['children']
           expect(chapter_2_pages).to match [
             {
-              title: 'Force',
+              title: a_string_matching('Force'),
               book_location: [],
               student_count: 1,
               questions_answered_count: 2,
@@ -180,7 +180,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: kind_of(String)
             },
             {
-              title: "Newton's First Law of Motion: Inertia",
+              title: a_string_matching("Newton's First Law of Motion: Inertia"),
               book_location: [],
               student_count: 1,
               questions_answered_count: 5,
@@ -190,7 +190,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: kind_of(String)
             },
             {
-              title: "Newton's Second Law of Motion",
+              title: a_string_matching("Newton's Second Law of Motion"),
               book_location: [],
               student_count: 1,
               questions_answered_count: 0,
@@ -200,7 +200,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: "Newton's Third Law of Motion",
+              title: a_string_matching("Newton's Third Law of Motion"),
               book_location: [],
               student_count: 1,
               questions_answered_count: 0,
@@ -238,7 +238,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           chapter_1_pages = chapters.first['children']
           expect(chapter_1_pages).to match [
             {
-              title: 'The Science of Biology',
+              title: '<span class="os-number">1.1</span><span class="os-divider"> </span><span class="os-text">The Science of Biology</span>',
               book_location: [1, 1],
               student_count: 1,
               questions_answered_count: 0,
@@ -248,7 +248,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: 'Themes and Concepts of Biology',
+              title: '<span class="os-number">1.2</span><span class="os-divider"> </span><span class="os-text">Themes and Concepts of Biology</span>',
               book_location: [1, 2],
               student_count: 1,
               questions_answered_count: 0,
@@ -258,11 +258,10 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             }
           ]
-
           chapter_2_pages = chapters.second['children']
           expect(chapter_2_pages).to match [
             {
-              title: 'Atoms, Isotopes, Ions, and Molecules: The Building Blocks',
+              title: a_string_matching('Atoms, Isotopes, Ions, and Molecules: The Building Blocks'),
               book_location: [2, 1],
               student_count: 1,
               questions_answered_count: 0,
@@ -272,7 +271,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: 'Water',
+              title: a_string_matching('Water'),
               book_location: [2, 2],
               student_count: 1,
               questions_answered_count: 0,
@@ -282,7 +281,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: 'Carbon',
+              title: a_string_matching('Carbon'),
               book_location: [2, 3],
               student_count: 1,
               questions_answered_count: 0,
@@ -297,7 +296,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           chapter_3_pages = chapters.third['children']
           expect(chapter_3_pages).to match [
             {
-              title: 'Synthesis of Biological Macromolecules',
+              title: a_string_matching('Synthesis of Biological Macromolecules'),
               book_location: [3, 1],
               student_count: 1,
               questions_answered_count: 1,
@@ -307,7 +306,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: kind_of(String)
             },
             {
-              title: 'Carbohydrates',
+              title: a_string_matching('Carbohydrates'),
               book_location: [3, 2],
               student_count: 1,
               questions_answered_count: 0,
@@ -317,7 +316,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: 'Lipids',
+              title: a_string_matching('Lipids'),
               book_location: [3, 3],
               student_count: 1,
               questions_answered_count: 0,
@@ -327,7 +326,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: 'Proteins',
+              title: a_string_matching('Proteins'),
               book_location: [3, 4],
               student_count: 1,
               questions_answered_count: 0,
@@ -337,7 +336,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: 'Nucleic Acids',
+              title: a_string_matching('Nucleic Acids'),
               book_location: [3, 5],
               student_count: 1,
               questions_answered_count: 0,
@@ -352,7 +351,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           chapter_4_pages = chapters.fourth['children']
           expect(chapter_4_pages).to match [
             {
-              title: 'Studying Cells',
+              title: a_string_matching('Studying Cells'),
               book_location: [4, 1],
               student_count: 1,
               questions_answered_count: 2,
@@ -362,7 +361,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: kind_of(String)
             },
             {
-              title: 'Prokaryotic Cells',
+              title: a_string_matching('Prokaryotic Cells'),
               book_location: [4, 2],
               student_count: 1,
               questions_answered_count: 5,
@@ -372,7 +371,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: kind_of(String)
             },
             {
-              title: 'Eukaryotic Cells',
+              title: a_string_matching('Eukaryotic Cells'),
               book_location: [4, 3],
               student_count: 1,
               questions_answered_count: 0,
@@ -382,7 +381,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: 'The Endomembrane System and Proteins',
+              title: a_string_matching('The Endomembrane System and Proteins'),
               book_location: [4, 4],
               student_count: 1,
               questions_answered_count: 0,
@@ -392,7 +391,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: 'Cytoskeleton',
+              title: a_string_matching('Cytoskeleton'),
               book_location: [4, 5],
               student_count: 1,
               questions_answered_count: 0,
@@ -402,7 +401,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
               last_worked_at: nil
             },
             {
-              title: 'Connections between Cells and Cellular Activities',
+              title: a_string_matching('Connections between Cells and Cellular Activities'),
               book_location: [4, 6],
               student_count: 1,
               questions_answered_count: 0,
