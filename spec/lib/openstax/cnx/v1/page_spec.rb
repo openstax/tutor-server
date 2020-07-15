@@ -241,6 +241,30 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
     end
   end
 
+  context 'with inline footnotes' do
+    before(:all) do
+      @page = VCR.use_cassette('OpenStax_Cnx_V1_Page/Inline_Footnotes', VCR_OPTS) do
+        OpenStax::Cnx::V1::Page.new(
+          book: OpenStax::Cnx::V1::Book.new(
+            id: 'd380510e-6145-4625-b19a-4fa68204b6b1@11.1',
+            canonical_url: 'https://archive-staging.cnx.org/contents/d380510e-6145-4625-b19a-4fa68204b6b1@11.1',
+          ),
+          id: 'd7290d42-6efd-4a78-b863-eb5861e630c1@4',
+        )
+      end
+    end
+
+    it 'moves notes to a wrapper at the end of page' do
+      ids = %w[fs-idm328510320 fs-idm355745312 fs-idm365192080 fs-idm344190816]
+      expect(@page.footnotes.map{ |fn| fn['id'] }).to eq ids
+      @page.convert_content!
+      expect(@page.footnotes.length).to eq 4
+      expect(
+        @page.doc.css('[data-type="footnote-refs"] [role="doc-footnote"]').map{ |fn| fn['id'] }
+      ).to eq ids
+    end
+  end
+
   protected
 
   def page_for(hash)

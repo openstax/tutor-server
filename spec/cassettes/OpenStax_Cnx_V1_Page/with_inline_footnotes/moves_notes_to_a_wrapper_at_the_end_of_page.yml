@@ -1,0 +1,192 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://archive-staging.cnx.org/contents/d380510e-6145-4625-b19a-4fa68204b6b1@11.1:d7290d42-6efd-4a78-b863-eb5861e630c1@4
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - max-age=31536000, public
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 15 Jun 2020 15:00:29 GMT
+      Etag:
+      - '"U1XtJUgVz0yX7eiq5nDXZQ"'
+      Expires:
+      - Tue, 15 Jun 2021 15:00:29 GMT
+      Link:
+      - <https://staging.cnx.org/contents/d380510e-6145-4625-b19a-4fa68204b6b1:d7290d42-6efd-4a78-b863-eb5861e630c1/Introduction>
+        ;rel="Canonical"
+      Server:
+      - waitress
+      X-Varnish-Status:
+      - cacheable - Cache-Control in backend response
+      X-Varnish-Backend:
+      - staging08_archive0
+      X-Varnish-Ttl:
+      - '31536000.000'
+      X-Varnish:
+      - 6883321 1081431
+      Age:
+      - '2511688'
+      Via:
+      - 1.1 varnish-v4
+      X-Varnish-Cache:
+      - HIT
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=16000000
+    body:
+      encoding: ASCII-8BIT
+      string: '{"googleAnalytics": null, "version": "4", "submitlog": "metadata title
+        space", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\" xmlns:qml=\"http://cnx.rice.edu/qml/1.0\"
+        xmlns:mod=\"http://cnx.rice.edu/#moduleIds\" xmlns:bib=\"http://bibtexml.sf.net/\"
+        xmlns:data=\"http://dev.w3.org/html5/spec/#custom\"/>", "revised": "2020-05-22T19:47:47Z",
+        "printStyle": null, "roles": null, "keywords": ["social entrepreneur", "lifestyle
+        venture", "entrepreneurial vision", "entrepreneurial venture", "entrepreneurial
+        mindset", "disruptive technologies", "career entrepreneur", "serial entrepreneur",
+        "vision statement", "mission statement", "entrepreneur", "divergent thinking"],
+        "id": "d7290d42-6efd-4a78-b863-eb5861e630c1", "canonical": "d380510e-6145-4625-b19a-4fa68204b6b1",
+        "title": "Introduction ", "mediaType": "application/vnd.org.cnx.module", "canon_url":
+        "https://staging.cnx.org/contents/d380510e-6145-4625-b19a-4fa68204b6b1:d7290d42-6efd-4a78-b863-eb5861e630c1/Introduction",
+        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\"><body xmlns:epub=\"http://www.idpf.org/2007/ops\"><div
+        data-type=\"page\" id=\"d7290d42-6efd-4a78-b863-eb5861e630c1\" class=\"introduction\"
+        data-cnxml-to-html-ver=\"2.0.0\"><div class=\"os-chapter-outline\"><h3 class=\"os-title\">Chapter
+        Outline</h3><div class=\"os-chapter-objective\"><a class=\"os-chapter-objective\"
+        href=\"/contents/d51e5dbd-ff69-4828-a882-9c6e8a940365#9592\"><span class=\"os-number\">1.1</span><span
+        class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Entrepreneurship
+        Today </span></a></div><div class=\"os-chapter-objective\"><a class=\"os-chapter-objective\"
+        href=\"/contents/7ccc54a5-2430-429f-b74e-c94732f87418#67897\"><span class=\"os-number\">1.2</span><span
+        class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Entrepreneurial
+        Vision and Goals </span></a></div><div class=\"os-chapter-objective\"><a class=\"os-chapter-objective\"
+        href=\"/contents/eca9a0ef-7ef7-47d3-abaf-ce21ce92452d#29556\"><span class=\"os-number\">1.3</span><span
+        class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">The
+        Entrepreneurial Mindset </span></a></div></div><h2 data-type=\"document-title\"
+        id=\"4672\"><span data-type=\"\" itemprop=\"\" class=\"os-text\">Introduction
+        </span></h2>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"os-figure has-splash\"><figure
+        id=\"OSX_Eship_01_00_Algae\" class=\"splash\"><span data-type=\"media\" id=\"fs-idm364079856\"
+        data-alt=\"Photo of two men talking (left); on the right is a screenshot of
+        an app with the words New Note at the top, with options for text, snapshot,
+        camera roll, and voice.\">\n<img src=\"/resources/7ffe3141b66a07b02254486248bdfa999a756ce1\"
+        data-media-type=\"image/jpeg\" alt=\"Photo of two men talking (left); on the
+        right is a screenshot of an app with the words New Note at the top, with options
+        for text, snapshot, camera roll, and voice.\" id=\"41352\"/>\n</span>\n\n</figure><div
+        class=\"os-caption-container\"><span class=\"os-title-label\">Figure </span><span
+        class=\"os-number\">1.1</span><span class=\"os-divider\"> </span><span class=\"os-divider\">
+        </span><span class=\"os-caption\">Phil Libin, former CEO of Evernote, discusses
+        his product. Evernote is an app that allows users to create notes in a variety
+        of formats and save and share them across platforms. (credit (a): modification
+        of \u201cPhil Libin and Loic Le Meur - LeWeb Day 1 - Dan Taylor/Heisenberg
+        Media\u201d by Heisenberg Media/Flickr, CC BY 2.0; credit (b): modification
+        of \u201cscreenshot of the old Evernote iPhone app\u201d by Jason Jones/Flickr,
+        CC BY 2.0)</span></div></div><p id=\"fs-idm348624928\">Phil <span data-type=\"term\"
+        class=\"no-emphasis\" id=\"term1\" group-by=\"L\">Libin</span>, cofounder
+        and former CEO of <span data-type=\"term\" class=\"no-emphasis\" id=\"term2\"
+        group-by=\"E\">Evernote</span>, once said there are \u201clots of bad reasons
+        to start a company. But there\u2019s only one good, legitimate reason . .
+        . it\u2019s to change the world.\u201d<a href=\"#fs-idm328510320\" role=\"doc-noteref\"
+        epub:type=\"noteref\">1</a> Evernote is an example of an entrepreneurial startup.
+        Its goal is to make our lives more organized and increase our personal memory
+        abilities by storing necessary and desired information on the Evernote app.
+        Evernote is designed to capture information through note taking (including
+        pictures, web pages, drawings, and even audio), track and organize this material,
+        and then save and archive the information. Evernote Corporation describes
+        itself as \u201cnot only an organization, rather it is a family of professionals
+        who are creative, innovative and experienced in their respective fields.\u201d<a
+        href=\"#fs-idm355745312\" role=\"doc-noteref\" epub:type=\"noteref\">2</a></p><aside
+        role=\"doc-footnote\" epub:type=\"footnote\" id=\"fs-idm328510320\"><div data-type=\"footnote-number\">1</div>Robin
+        Wauters. \u201cEvernote CEO Phil Libin: \u2018My Advice to Aspiring Entrepreneurs?
+        Don\u2019t Do It.\u2019\u201d <em data-effect=\"italics\">The Next Web</em>.
+        April 27, 2012. https://thenextweb.com/video/2012/04/27/evernote-ceo-phil-libin-my-advice-to-aspiring-entrepreneurs-dont-do-it-video/</aside><aside
+        role=\"doc-footnote\" epub:type=\"footnote\" id=\"fs-idm355745312\"><div data-type=\"footnote-number\">2</div>\u201cEvernote
+        SuccessStory.\u201d <em data-effect=\"italics\">SuccessStory</em>. June 24,
+        2018. https://successstory.com/products/evernote</aside>\n\n<p id=\"fs-idm353422032\">Around
+        the globe, individuals, communities, and organizations advocate for and support
+        the entrepreneurship movement. Many colleges and universities offer courses,
+        degrees, and competitions for entrepreneurship teams. Communities provide
+        support through services such as incubators that foster planning and startup
+        activities. Organizations like <span data-type=\"term\" class=\"no-emphasis\"
+        id=\"term3\" group-by=\"U\">UNESCO\u2019s Global Action Programme on Education
+        for Sustainable Development</span> holds a Youth Entrepreneurship Competition
+        annually.<a href=\"#fs-idm365192080\" role=\"doc-noteref\" epub:type=\"noteref\">3</a>
+        That is where student Chloe <span data-type=\"term\" class=\"no-emphasis\"
+        id=\"term4\" group-by=\"H\">Huang</span>, in 2017, submitted her idea for
+        an <span data-type=\"term\" class=\"no-emphasis\" id=\"term5\" group-by=\"a\">algae
+        energy pavilion</span> to the Education for Sustainable Development competition.
+        Huang recognized the problem of lakes suffering from oversaturation of algae
+        and saw a solution in converting the algae into a biofuel, creating green
+        energy while alleviating an environmental problem.<a href=\"#fs-idm344190816\"
+        role=\"doc-noteref\" epub:type=\"noteref\">4</a></p><aside role=\"doc-footnote\"
+        epub:type=\"footnote\" id=\"fs-idm365192080\"><div data-type=\"footnote-number\">3</div>UNESCO.
+        \u201cGlobal Action Programme on Education for Sustainable Development.\u201d
+        n.d. https://en.unesco.org/gap</aside><aside role=\"doc-footnote\" epub:type=\"footnote\"
+        id=\"fs-idm344190816\"><div data-type=\"footnote-number\">4</div>Chloe Huang.
+        \u201cAlgae Energy Pavilion.\u201d <em data-effect=\"italics\">Entrepreneurship
+        Campus</em>. August 1, 2017. https://www.entrepreneurship-campus.org/ideas/14/7404/</aside>\n\n<p
+        id=\"fs-idm365468576\">In the examples of both Libin and Huang, the entrepreneurial
+        products focus on the use of technology and improving life, but they also
+        represent two vastly different approaches to entrepreneurship. Libin\u2019s
+        focus was on improving quality of life by allowing users to track and organize
+        information in their business and personal lives, whereas Huang focused on
+        a global environmental issue to sustainably improve water quality. Each idea
+        solves a problem that many people might not even have noticed. Becoming aware
+        of problems that need to be solved, then solving the problem to make our lives
+        easier or better, is part of the entrepreneurial perspective.</p>\n\n\n  </div></body>\n</html>\n",
+        "subjects": ["Mathematics and Statistics"], "legacy_id": "m71113", "parentId":
+        null, "resources": [{"media_type": "text/html", "id": "14496bcb34cc45cfa6b334c9fa2ed82a0b3f6610",
+        "filename": "index.cnxml.html"}, {"media_type": "text/xml", "id": "66fb5de088ecdca5e7083a512fc13914ee518356",
+        "filename": "index.cnxml"}, {"media_type": "image/jpeg", "id": "7ffe3141b66a07b02254486248bdfa999a756ce1",
+        "filename": "OSX_Eship_01_00_Algae.jpg"}], "publishers": [{"surname": "OpenStax
+        College", "suffix": "", "firstname": "", "title": "", "fullname": "OpenStax",
+        "id": "OpenStaxCollege"}, {"surname": "Entrepreneurship", "suffix": null,
+        "firstname": "OpenStax", "title": "", "fullname": "OpenStax Entrepreneurship",
+        "id": "cnxeship"}], "parent": {"authors": [], "shortId": null, "version":
+        "", "id": null, "title": null}, "stateid": 1, "parentTitle": null, "shortId":
+        "1ykNQm79", "authors": [{"surname": "OpenStax College", "suffix": "", "firstname":
+        "", "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}], "parentVersion":
+        "", "legacy_version": "1.4", "licensors": [{"surname": "University", "suffix":
+        "", "firstname": "Rice", "title": "", "fullname": "Rice University", "id":
+        "OSCRiceUniversity"}], "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
+        "code": "by", "version": "4.0", "name": "Creative Commons Attribution License"},
+        "created": "2018-11-27T20:52:37Z", "doctype": "", "buyLink": null, "submitter":
+        {"surname": "OpenStax College", "suffix": "", "firstname": "", "title": "",
+        "fullname": "OpenStax", "id": "OpenStaxCollege"}, "baked": null, "parentAuthors":
+        [], "history": [{"changes": "metadata title space", "version": "4", "revised":
+        "2020-05-22T19:47:47Z", "publisher": {"surname": "OpenStax College", "suffix":
+        "", "firstname": "", "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}},
+        {"changes": "created module", "version": "3", "revised": "2019-12-10T20:40:22Z",
+        "publisher": {"surname": "Entrepreneurship", "suffix": null, "firstname":
+        "OpenStax", "title": "", "fullname": "OpenStax Entrepreneurship", "id": "cnxeship"}},
+        {"changes": "added intro tags -TM", "version": "2", "revised": "2019-11-22T16:52:49Z",
+        "publisher": {"surname": "OpenStax College", "suffix": "", "firstname": "",
+        "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}}, {"changes":
+        "created module", "version": "1", "revised": "2018-11-27T20:53:06Z", "publisher":
+        {"surname": "Entrepreneurship", "suffix": null, "firstname": "OpenStax", "title":
+        "", "fullname": "OpenStax Entrepreneurship", "id": "cnxeship"}}]}'
+    http_version: 
+  recorded_at: Tue, 14 Jul 2020 16:41:57 GMT
+recorded_with: VCR 4.0.0

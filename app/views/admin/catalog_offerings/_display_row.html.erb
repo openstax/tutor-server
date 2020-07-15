@@ -36,7 +36,7 @@
     <b>Appearance code:</b> <%= offering.appearance_code || 'not set' %>
   </div>
   <div>
-    <b>Ecosystem:</b> <%= offering.ecosystem ? offering.ecosystem.title : 'not set' %>
+    <b>Ecosystem:</b> <%= offering.ecosystem ? offering.ecosystem.unique_title : 'not set' %>
   </div>
   <div>
     <b>Available for preview courses:</b> <%= tf_to_yn(offering.is_preview_available) %>

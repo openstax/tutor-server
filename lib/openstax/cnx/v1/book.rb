@@ -1,11 +1,12 @@
 module OpenStax::Cnx::V1
   class Book
-    def initialize(id: nil, hash: nil, title: nil, tree: nil, root_book_part: nil)
+    def initialize(id: nil, hash: nil, title: nil, tree: nil, root_book_part: nil, canonical_url: nil)
       @id             = id
       @hash           = hash
       @title          = title
       @tree           = tree
       @root_book_part = root_book_part
+      @canonical_url  = canonical_url
     end
 
     attr_reader :id

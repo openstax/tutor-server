@@ -93,6 +93,10 @@ module OpenStax::Cnx::V1
       @root ||= doc.at_css(ROOT_CSS)
     end
 
+    def footnotes
+      @footnotes ||= doc.css('[role=doc-footnote]')
+    end
+
     # Warning: Use only when importing, as it assumes all links currently point to CNX
     # Replaces links to embeddable sims (and maybe videos in the future) with iframes
     # Changes exercise urls and relative urls in the doc to be absolute
@@ -101,7 +105,7 @@ module OpenStax::Cnx::V1
       OpenStax::Cnx::V1::Fragment::Interactive.replace_interactive_links_with_iframes!(doc)
       absolutize_and_secure_urls!(doc)
       map_note_format!(doc)
-
+      move_footnotes!
       @content = doc.to_html
       @root = nil
     end
@@ -204,6 +208,26 @@ module OpenStax::Cnx::V1
 
         body.children = content
         note.add_child(body)
+      end
+    end
+
+   
+    def move_footnotes!
+      return if footnotes.none?
+      container = doc.at_css('[data-type="footnote-refs"]') ||
+                  root.add_child(<<-eofn)
+                    <div data-type="footnote-refs">
+                      <h3 data-type="section-title">Footnotes</h3>
+                      <div data-type="footnotes-list"></div>
+                    </div>
+                  eofn
+
+      list = container.at_css('[data-type="footnotes-list"]')
+      footnotes.each do |note|
+        wrapper = list.add_child('<div role="doc-footnote" />').first
+        wrapper['id'] = note['id']
+        wrapper.inner_html = note.inner_html
+        note.remove
       end
     end
 
