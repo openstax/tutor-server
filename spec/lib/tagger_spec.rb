@@ -55,6 +55,7 @@ RSpec.describe Tagger, type: :lib do
       [
         { value: 'lo:stax-phys:1-2-3', name: nil, type: :lo },
         { value: 'aplo:stax-bio:4-5-6', name: nil, type: :aplo },
+        { value: 'aplo:stax-apbio:EVO-1.C', name: nil, type: :aplo },
         { value: 'dok:7', name: 'DOK: 7', type: :dok },
         { value: 'blooms:8', name: 'Blooms: 8', type: :blooms },
         { value: 'time:short', name: 'Length: S', type: :time },
@@ -71,12 +72,12 @@ RSpec.describe Tagger, type: :lib do
     end
 
     let(:correct_data) do
-      [ nil, nil, '7', '8', 'short', '9a', '6a0568d8-23d7-439b-9a01-16e4e73886b3',
+      [ nil, nil, nil, '7', '8', 'short', '9a', '6a0568d8-23d7-439b-9a01-16e4e73886b3',
         '101', nil, nil, nil, nil, 'fs-featureid', nil ]
     end
 
     let(:correct_book_locations) do
-      [ [1, 2], [4, 5], [], [], [], [], [], [], [], [], [], [], [], [] ]
+      [ [1, 2], [4, 5], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
     end
 
     it 'generates correct tag types' do
