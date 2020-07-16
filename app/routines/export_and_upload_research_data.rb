@@ -86,7 +86,6 @@ class ExportAndUploadResearchData
           "Question Correct?"
         ]
 
-        tk = Tasks::Models::Tasking.arel_table
         te = Tasks::Models::TaskedExercise.arel_table
         pg = Content::Models::Page.arel_table
         er = Entity::Role.arel_table
@@ -94,7 +93,6 @@ class ExportAndUploadResearchData
         steps = Tasks::Models::TaskStep
           .select([
             Tasks::Models::TaskStep.arel_table[ Arel.star ],
-            tk[:course_membership_period_id],
             te[:content_exercise_id].as('"exercise_id"'),
             te[:url].as('"exercise_url"'),
             te[:question_index],
@@ -105,6 +103,7 @@ class ExportAndUploadResearchData
             pg[:url].as('"page_url"'),
             er[:research_identifier],
             st[:course_profile_course_id].as('"course_id"'),
+            st[:course_membership_period_id],
             <<-TAGS_SQL.strip_heredoc
               (
                 SELECT COALESCE(ARRAY_AGG("content_tags"."value"), ARRAY[]::varchar[])
@@ -424,5 +423,4 @@ class ExportAndUploadResearchData
   def bool_to_int(bool)
     bool ? 1 : 0
   end
-
 end

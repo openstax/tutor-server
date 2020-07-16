@@ -5,20 +5,6 @@ class Tasks::Assistants::GenericAssistant
   def initialize(task_plan:, individualized_tasking_plans:)
     @task_plan = task_plan
     @individualized_tasking_plans = individualized_tasking_plans
-    role_ids = individualized_tasking_plans.map(&:target_id)
-
-    periods_by_student_role_id = CourseMembership::Models::Period
-      .joins(enrollments: :student)
-      .where(enrollments: { student: { entity_role_id: role_ids } })
-      .select(
-        [:id, CourseMembership::Models::Student.arel_table[:entity_role_id]]
-      ).index_by(&:entity_role_id)
-    periods_by_teacher_student_role_id = CourseMembership::Models::Period
-      .joins(:teacher_students)
-      .where(teacher_students: { entity_role_id: role_ids })
-      .select([:id, CourseMembership::Models::TeacherStudent.arel_table[:entity_role_id]])
-      .index_by(&:entity_role_id)
-    @periods_by_role_id = periods_by_student_role_id.merge(periods_by_teacher_student_role_id)
 
     @ecosystems_map = {}
     @page_cache = {}
@@ -179,9 +165,7 @@ class Tasks::Assistants::GenericAssistant
       due_at:      individualized_tasking_plan.due_at,
       closes_at:   individualized_tasking_plan.closes_at
     ).tap do |task|
-      task.taskings << Tasks::Models::Tasking.new(
-        task: task, role: role, period: @periods_by_role_id[role.id]
-      )
+      task.taskings << Tasks::Models::Tasking.new(task: task, role: role)
       AddSpyInfo[to: task, from: ecosystem]
     end
   end

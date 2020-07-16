@@ -14,8 +14,7 @@ class Preview::WorkTask
     is_correct:,
     free_response: nil,
     is_completed: true,
-    completed_at: Time.current,
-    update_caches: true
+    completed_at: Time.current
   )
     task.lock!
 
@@ -76,7 +75,6 @@ class Preview::WorkTask
     }
 
     task.save!
-    task.update_caches_now if update_caches
 
     role = task.taskings.first&.role
     period = role&.course_member&.period

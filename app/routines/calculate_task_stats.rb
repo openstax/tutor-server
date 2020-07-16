@@ -8,11 +8,13 @@ class CalculateTaskStats
 
     # Preload each task's student and period
     tasks = [ tasks ].flatten
-    ActiveRecord::Associations::Preloader.new.preload tasks, taskings: [ :period, role: :student ]
-    tasks = [tasks].flatten.reject do |task|
+    ActiveRecord::Associations::Preloader.new.preload(
+      tasks, taskings: [ role: { student: :period } ]
+    )
+    tasks = tasks.reject do |task|
       task.taskings.all? do |tasking|
-        period = tasking.period
         student = tasking.role.student
+        period = student&.period
 
         period.nil? || period.archived? || student.nil? || student.dropped?
       end
@@ -20,7 +22,8 @@ class CalculateTaskStats
 
     # Group tasks by period
     tasks_by_period = tasks.group_by do |task|
-      periods = task.taskings.map(&:period).uniq
+      periods = task.taskings.map(&:role).map(&:student).map(&:period).uniq
+
       raise(
         NotImplementedError, 'Each task in CalculateTaskStats must belong to exactly 1 period'
       ) if periods.size != 1
