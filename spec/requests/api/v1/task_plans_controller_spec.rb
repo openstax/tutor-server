@@ -858,35 +858,6 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
     end
   end
 
-  context '#review' do
-    it 'cannot be requested by anonymous users' do
-      expect {
-        api_get review_api_task_plan_url(@published_task_plan.id), nil
-      }.to raise_error(SecurityTransgression)
-    end
-
-    it 'cannot be requested by unauthorized users' do
-      sign_in! @user
-      expect {
-        api_get review_api_task_plan_url(@published_task_plan.id), nil
-      }.to raise_error(SecurityTransgression)
-    end
-
-    it "can be requested by the course's teacher" do
-      sign_in! @teacher
-      expect {
-        api_get review_api_task_plan_url(@published_task_plan.id), nil
-      }.to_not raise_error
-    end
-
-    it 'includes stats' do
-      sign_in! @teacher
-      api_get review_api_task_plan_url(@published_task_plan.id), nil
-      # The representer spec does validate the json so we'll rely on it and just check presense
-      expect(response.body_as_hash[:stats]).to be_a(Array)
-    end
-  end
-
   context '#scores' do
     it 'cannot be requested by anonymous users' do
       expect {
