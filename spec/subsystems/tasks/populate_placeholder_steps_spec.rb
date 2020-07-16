@@ -36,7 +36,7 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
       expect(OpenStax::Biglearn::Api).to(
         receive(:fetch_assignment_pes).and_return(accepted: false)
       )
-      expect_any_instance_of(Tasks::Models::Task).not_to receive(:update_cached_attributes)
+      expect_any_instance_of(Tasks::Models::Task).not_to receive(:update_caches_now)
       expect(OpenStax::Biglearn::Api).not_to receive(:create_update_assignments)
 
       expect { subject }.to  not_change { @task.reload.pes_are_assigned }
@@ -65,6 +65,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
       end
 
       it 'removes only the personalized group placeholder steps from the task' do
+        expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_now)
+
         expect { subject }.to  change     { @task.personalized_task_steps.size    }.to(0)
                           .and not_change { @task.spaced_practice_task_steps.size }
                           .and change     { @task.pes_are_assigned  }.from(false).to(true)
@@ -73,6 +75,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     end
 
     it 'populates only the personalized group placeholder steps in the task' do
+      expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_now)
+
       expect { subject }.to  not_change { @task.personalized_task_steps.size    }
                         .and not_change { @task.spaced_practice_task_steps.size }
                         .and change     { @task.pes_are_assigned  }.from(false).to(true)
@@ -139,6 +143,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
       end
 
       it 'removes all the placeholder steps from the task' do
+        expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_now)
+
         expect { subject }.to  change { @task.personalized_task_steps.size    }.to(0)
                           .and change { @task.spaced_practice_task_steps.size }.to(0)
                           .and change { @task.pes_are_assigned  }.from(false).to(true)
@@ -161,6 +167,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
       end
 
       it 'populates all the placeholders in the task and changes the group_type of SPE steps' do
+        expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_now)
+
         num_spe_steps = @task.spaced_practice_task_steps.size
 
         expect do
@@ -197,6 +205,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
       end
 
       it 'populates all the placeholder steps in the task' do
+        expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_now)
+
         expect { subject }.to  not_change { @task.personalized_task_steps.size    }
                           .and not_change { @task.spaced_practice_task_steps.size }
                           .and change     { @task.pes_are_assigned  }.from(false).to(true)

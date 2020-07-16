@@ -59,9 +59,7 @@ class Tasks::PopulatePlaceholderSteps
     return unless pes_populated || spes_populated
 
     # Save pes_are_assigned/spes_are_assigned and step counts
-    task.update_cached_attributes.save validate: false
-
-    task.update_caches_later update_cached_attributes: false
+    task.update_caches_now
 
     # Can't send the info to Biglearn if there's no course
     return if role.nil?

@@ -156,66 +156,25 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       end
     end
 
-    context 'if the students were already in the periods before the assignment' do
-      before do
-        student_tasks.last(@number_of_students/2).each do |task|
-          task.taskings.each do |tasking|
-            tasking.period = period_2
-            tasking.save!
-          end
-        end
-      end
+    it 'splits the students into their periods' do
+      expect(stats.first.total_count).to eq student_tasks.length/2
+      expect(stats.first.complete_count).to eq 0
+      expect(stats.first.partially_complete_count).to eq 0
 
-      it 'splits the students into their periods' do
+      expect(stats.second.total_count).to eq student_tasks.length/2
+      expect(stats.second.complete_count).to eq 0
+      expect(stats.second.partially_complete_count).to eq 0
+    end
+
+    context 'if a period was archived after the assignment was distributed' do
+      before { period_2.destroy }
+
+      it 'does not show the archived period' do
         expect(stats.first.total_count).to eq student_tasks.length/2
         expect(stats.first.complete_count).to eq 0
         expect(stats.first.partially_complete_count).to eq 0
 
-        expect(stats.second.total_count).to eq student_tasks.length/2
-        expect(stats.second.complete_count).to eq 0
-        expect(stats.second.partially_complete_count).to eq 0
-      end
-
-      context 'if a period was archived after the assignment was distributed' do
-        before { period_2.destroy }
-
-        it 'does not show the archived period' do
-          expect(stats.first.total_count).to eq student_tasks.length/2
-          expect(stats.first.complete_count).to eq 0
-          expect(stats.first.partially_complete_count).to eq 0
-
-          expect(stats.second).to be_nil
-        end
-      end
-    end
-
-    context 'if the students changed periods after the assignment was distributed' do
-      it 'shows students that changed periods in their original period' do
-        expect(stats.first.total_count).to eq student_tasks.length
-        expect(stats.first.complete_count).to eq 0
-        expect(stats.first.partially_complete_count).to eq 0
-
         expect(stats.second).to be_nil
-      end
-
-      context 'if the old period was archived after the assignment was distributed' do
-        before { @period.destroy }
-
-        it 'shows no stats' do
-          expect(stats.first).to be_nil
-        end
-      end
-
-      context 'if the new period was archived after the assignment was distributed' do
-        before { period_2.destroy }
-
-        it 'shows students that changed periods in their original period' do
-          expect(stats.first.total_count).to eq student_tasks.length
-          expect(stats.first.complete_count).to eq 0
-          expect(stats.first.partially_complete_count).to eq 0
-
-          expect(stats.second).to be_nil
-        end
       end
     end
 
@@ -229,15 +188,17 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
         expect(stats.first.complete_count).to eq 1
         expect(stats.first.partially_complete_count).to eq 0
 
-        first_task.taskings.first.role.student.destroy
+        first_task.taskings.first.role.student.destroy!
 
         stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-        expect(stats.first.total_count).to eq student_tasks.length - 1
+        expect(stats.first.total_count).to eq student_tasks.length/2 - 1
         expect(stats.first.complete_count).to eq 0
         expect(stats.first.partially_complete_count).to eq 0
 
-        expect(stats.second).to be_nil
+        expect(stats.second.total_count).to eq student_tasks.length/2
+        expect(stats.second.complete_count).to eq 0
+        expect(stats.second.partially_complete_count).to eq 0
       end
     end
   end

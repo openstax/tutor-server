@@ -1,4 +1,9 @@
 class Tasks::Models::TaskingPlan < ApplicationRecord
+  CACHE_COLUMNS = [
+    :gradable_step_count,
+    :ungraded_step_count
+  ]
+
   belongs_to :task_plan, inverse_of: :tasking_plans, touch: true
   belongs_to :target, polymorphic: true
 

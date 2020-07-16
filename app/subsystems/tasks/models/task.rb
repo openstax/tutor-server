@@ -79,7 +79,6 @@ class Tasks::Models::Task < ApplicationRecord
   validate :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at
 
   before_validation :update_cached_attributes
-  after_create :update_caches_now
   after_touch :update_caches_later
   after_update :notify_task_plan_gradable_counts
 
@@ -420,17 +419,14 @@ class Tasks::Models::Task < ApplicationRecord
     self
   end
 
-  def update_caches_now(update_cached_attributes: false)
-    Tasks::UpdateTaskCaches.call(
-      task_ids: id, update_cached_attributes: update_cached_attributes, background: false
-    )
+  def update_caches_now
+    queue = preview_course? ? :preview : :dashboard
+    Tasks::UpdateTaskCaches.call tasks: self, queue: queue.to_s
   end
 
-  def update_caches_later(update_cached_attributes: true)
+  def update_caches_later
     queue = preview_course? ? :preview : :dashboard
-    Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
-      task_ids: id, update_cached_attributes: update_cached_attributes, queue: queue.to_s
-    )
+    Tasks::UpdateTaskCaches.set(queue: queue).perform_later task_ids: id, queue: queue.to_s
   end
 
   def notify_task_plan_gradable_counts
