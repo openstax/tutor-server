@@ -1,4 +1,4 @@
-class Api::V1::TaskPlan::Stats::Representer < ::Roar::Decorator
+class Api::V1::TaskPlan::StatsRepresenter < ::Roar::Decorator
   include Roar::JSON
   include Representable::Coercion
 
@@ -23,7 +23,7 @@ class Api::V1::TaskPlan::Stats::Representer < ::Roar::Decorator
            writeable: true
 
   collection :stats,
-             extend: Api::V1::Tasks::Stats::Representer,
+             extend: Api::V1::Tasks::StatsRepresenter,
              getter: ->(*) { CalculateTaskStats[tasks: tasks] },
              readable: true,
              writable: false

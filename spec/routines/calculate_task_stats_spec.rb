@@ -30,19 +30,9 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
     let(:stats) { described_class.call(tasks: @task_plan.tasks).outputs.stats }
 
     it 'is all nil or zero for an unworked task_plan' do
-      expect(stats.first.mean_grade_percent).to be_nil
       expect(stats.first.total_count).to eq student_tasks.length
       expect(stats.first.complete_count).to eq 0
       expect(stats.first.partially_complete_count).to eq 0
-      expect(stats.first.trouble).to eq false
-
-      page = stats.first.current_pages[0]
-      expect(page.student_count).to eq 0 # no students have worked yet
-      expect(page.incorrect_count).to eq 0
-      expect(page.correct_count).to eq 0
-      expect(page.trouble).to eq false
-
-      expect(stats.first.spaced_pages).to be_empty
     end
 
     it 'does not break if an exercise has more than one tag' do
@@ -111,28 +101,21 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       MarkTaskStepCompleted[task_step: step]
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-      expect(stats.first.mean_grade_percent).to be_nil
       expect(stats.first.complete_count).to eq 0
       expect(stats.first.partially_complete_count).to eq 1
-      expect(stats.first.trouble).to eq false
 
       work_task(task: first_task, is_correct: false)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-      expect(stats.first.mean_grade_percent).to eq 0
       expect(stats.first.complete_count).to eq 1
       expect(stats.first.partially_complete_count).to eq 0
-      expect(stats.first.trouble).to eq false
 
       last_task = student_tasks.last
       MarkTaskStepCompleted[task_step: last_task.task_steps.first]
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent).to eq 0
       expect(stats.first.complete_count).to eq 1
       expect(stats.first.partially_complete_count).to eq 1
-      expect(stats.first.trouble).to eq false
     end
-
   end
 
   context 'after task steps are marked as correct or incorrect' do
@@ -140,193 +123,23 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       work_task(task: student_tasks[0], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-      expect(stats.first.mean_grade_percent).to eq 100
       expect(stats.first.complete_count).to eq 1
       expect(stats.first.partially_complete_count).to eq 0
-      expect(stats.first.trouble).to eq false
-
-      page = stats.first.current_pages.first
-      expect(page['title']).to match "Newton's First Law of Motion: Inertia"
-      expect(page['student_count']).to eq 1 # num students with completed task steps
-      expect(page['correct_count']).to eq student_tasks[0].exercise_steps.size
-      expect(page['incorrect_count']).to eq 0
-      expect(page['trouble']).to eq false
-
-      expect(stats.first.spaced_pages).to be_empty
 
       work_task(task: student_tasks[1], is_correct: false)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent).to eq 50
       expect(stats.first.complete_count).to eq 2
       expect(stats.first.partially_complete_count).to eq 0
-      expect(stats.first.trouble).to eq false
-
-      page = stats.first.current_pages.first
-      expect(page['title']).to match "Newton's First Law of Motion: Inertia"
-      expect(page['student_count']).to eq 2
-      expect(page['correct_count']).to eq student_tasks[0].exercise_steps.size
-      expect(page['incorrect_count']).to eq student_tasks[1].exercise_steps.size
-      expect(page['chapter_section']).to eq [1, 1]
-      expect(page['trouble']).to eq false
-
-      expect(stats.first.spaced_pages).to be_empty
 
       work_task(task: student_tasks[2], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent).to eq 67
       expect(stats.first.complete_count).to eq 3
       expect(stats.first.partially_complete_count).to eq 0
-      expect(stats.first.trouble).to eq false
-
-      page = stats.first.current_pages.first
-      expect(page['title']).to match "Newton's First Law of Motion: Inertia"
-      expect(page['student_count']).to eq 3
-      expect(page['correct_count']).to eq(
-        student_tasks[0].exercise_steps.size +
-        student_tasks[2].exercise_steps.size
-      )
-      expect(page['incorrect_count']).to eq student_tasks[1].exercise_steps.size
-      expect(page['chapter_section']).to eq [1, 1]
-      expect(page['trouble']).to eq false
-
-      expect(stats.first.spaced_pages).to be_empty
 
       work_task(task: student_tasks[3], is_correct: true)
       stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.mean_grade_percent).to eq 75
       expect(stats.first.complete_count).to eq 4
       expect(stats.first.partially_complete_count).to eq 0
-      expect(stats.first.trouble).to eq false
-
-      page = stats.first.current_pages.first
-      expect(page['title']).to match "Newton's First Law of Motion: Inertia"
-      expect(page['student_count']).to eq 4
-      expect(page['correct_count']).to eq(
-        student_tasks[0].exercise_steps.size +
-        student_tasks[2].exercise_steps.size +
-        student_tasks[3].exercise_steps.size
-      )
-      expect(page['incorrect_count']).to eq student_tasks[1].exercise_steps.size
-      expect(page['chapter_section']).to eq [1, 1]
-      expect(page['trouble']).to eq false
-
-      expect(stats.first.spaced_pages).to be_empty
-    end
-
-    # This test assumes that all of these tasks have the same numbers of steps,
-    # which is true at least for now
-    it 'sets trouble to true if >=50% completed and <50% correct' do
-      stats = described_class.call(tasks: @task_plan.tasks).outputs.stats
-      expect(stats.first.trouble).to eq false
-
-      page = stats.first.current_pages.first
-      expect(page.trouble).to eq false
-
-      expect(stats.first.spaced_pages).to be_empty
-
-      # Less than 50% done: no trouble
-      work_task(task: student_tasks[0], is_correct: false, num_steps: 5)
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.trouble).to eq false
-
-      page = stats.first.current_pages.first
-      expect(page.trouble).to eq false
-
-      expect(stats.first.spaced_pages).to be_empty
-
-      # 50% done: trouble
-      student_tasks[1..3].each { |task| work_task(task: task, is_correct: false) }
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.trouble).to eq true
-
-      page = stats.first.current_pages.first
-      expect(page.trouble).to eq true
-
-      expect(stats.first.spaced_pages).to be_empty
-
-      # 37.5% correct: still trouble
-      student_tasks[4..6].each { |task| work_task(task: task, is_correct: true) }
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.trouble).to eq true
-
-      page = stats.first.current_pages.first
-      expect(page.trouble).to eq true
-
-      expect(stats.first.spaced_pages).to be_empty
-
-      # 50% correct: no more trouble
-      work_task(task: student_tasks[7], is_correct: true)
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.trouble).to eq false
-
-      page = stats.first.current_pages.first
-      expect(page.trouble).to eq false
-
-      expect(stats.first.spaced_pages).to be_empty
-    end
-
-    it 'returns detailed stats if :details is true' do
-      tasks = student_tasks[0..2]
-
-      student_names_map = Hash.new { |hash, key| hash[key] = [] }
-      free_responses_map = Hash.new do |hash, key|
-        hash[key] = Hash.new { |hash, key| hash[key] = [] }
-      end
-      selected_answers_map = Hash.new do |hash, key|
-        hash[key] = Hash.new { |hash, key| hash[key] = [] }
-      end
-      tasks.each_with_index do |task, ii|
-        work_task task: task, is_correct: (ii.even? ? true : false)
-
-        student_names = task.taskings.map(&:role).map(&:profile).map(&:name).sort.join('; ')
-
-        task.exercise_steps(preload_taskeds: true).each do |exercise_step|
-          tasked = exercise_step.tasked
-          exercise = tasked.exercise
-          question_ids = exercise.questions.map(&:id).map(&:to_s)
-          question_ids.each do |question_id|
-            student_names_map[question_id] << student_names
-            free_responses_map[question_id][student_names] << tasked.free_response
-            selected_answers_map[question_id][student_names] << tasked.answer_id
-          end
-        end
-      end
-
-      stats = described_class.call(tasks: @task_plan.reload.tasks, details: true).outputs.stats
-
-      exercises = stats.first.current_pages.first.exercises
-      exercises.each_with_index do |exercise, ii|
-        expect(exercise.content).to be_kind_of(String)
-        expect(exercise.question_stats.length).to eq 1
-        exercise.question_stats.each_with_index do |question_stats, qq|
-          question_id = question_stats.question_id
-          expect(question_id).to be_kind_of(String)
-          expect(question_stats.answered_count).to be <= 4
-          expect(question_stats.answers.length).to eq question_stats.answered_count
-          student_names = question_stats.answers.flat_map(&:student_names)
-          expect(student_names).to match_array student_names_map[question_id]
-          question_stats.answers.group_by do |student_answer|
-            student_answer.student_names.sort.join('; ')
-          end.each do |student_names, student_answers|
-            expect(student_answers.map(&:free_response)).to(
-              match_array free_responses_map[question_id][student_names]
-            )
-            expect(student_answers.map(&:answer_id)).to(
-              match_array selected_answers_map[question_id][student_names]
-            )
-          end
-
-          question_answer_ids = answer_ids(exercise.content, qq)
-          expected_answer_stats = question_answer_ids.map do |aid|
-            {
-              answer_id: aid,
-              is_correct: be_in([ true, false ]),
-              selected_count: selected_answers_map.values.map(&:values).flatten.count(aid)
-            }
-          end
-          expect(question_stats.answer_stats).to match_array expected_answer_stats
-        end
-      end
     end
   end
 
@@ -354,52 +167,22 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       end
 
       it 'splits the students into their periods' do
-        expect(stats.first.mean_grade_percent).to be_nil
         expect(stats.first.total_count).to eq student_tasks.length/2
         expect(stats.first.complete_count).to eq 0
         expect(stats.first.partially_complete_count).to eq 0
-        expect(stats.first.trouble).to eq false
 
-        page = stats.first.current_pages[0]
-        expect(page.student_count).to eq 0
-        expect(page.incorrect_count).to eq 0
-        expect(page.correct_count).to eq 0
-        expect(page.trouble).to eq false
-
-        expect(stats.first.spaced_pages).to be_empty
-
-        expect(stats.second.mean_grade_percent).to be_nil
         expect(stats.second.total_count).to eq student_tasks.length/2
         expect(stats.second.complete_count).to eq 0
         expect(stats.second.partially_complete_count).to eq 0
-        expect(stats.second.trouble).to eq false
-
-        page = stats.second.current_pages[0]
-        expect(page.student_count).to eq 0
-        expect(page.incorrect_count).to eq 0
-        expect(page.correct_count).to eq 0
-        expect(page.trouble).to eq false
-
-        expect(stats.second.spaced_pages).to be_empty
       end
 
       context 'if a period was archived after the assignment was distributed' do
         before { period_2.destroy }
 
         it 'does not show the archived period' do
-          expect(stats.first.mean_grade_percent).to be_nil
           expect(stats.first.total_count).to eq student_tasks.length/2
           expect(stats.first.complete_count).to eq 0
           expect(stats.first.partially_complete_count).to eq 0
-          expect(stats.first.trouble).to eq false
-
-          page = stats.first.current_pages[0]
-          expect(page.student_count).to eq 0
-          expect(page.incorrect_count).to eq 0
-          expect(page.correct_count).to eq 0
-          expect(page.trouble).to eq false
-
-          expect(stats.first.spaced_pages).to be_empty
 
           expect(stats.second).to be_nil
         end
@@ -408,19 +191,9 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
 
     context 'if the students changed periods after the assignment was distributed' do
       it 'shows students that changed periods in their original period' do
-        expect(stats.first.mean_grade_percent).to be_nil
         expect(stats.first.total_count).to eq student_tasks.length
         expect(stats.first.complete_count).to eq 0
         expect(stats.first.partially_complete_count).to eq 0
-        expect(stats.first.trouble).to eq false
-
-        page = stats.first.current_pages[0]
-        expect(page.student_count).to eq 0
-        expect(page.incorrect_count).to eq 0
-        expect(page.correct_count).to eq 0
-        expect(page.trouble).to eq false
-
-        expect(stats.first.spaced_pages).to be_empty
 
         expect(stats.second).to be_nil
       end
@@ -437,19 +210,9 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
         before { period_2.destroy }
 
         it 'shows students that changed periods in their original period' do
-          expect(stats.first.mean_grade_percent).to be_nil
           expect(stats.first.total_count).to eq student_tasks.length
           expect(stats.first.complete_count).to eq 0
           expect(stats.first.partially_complete_count).to eq 0
-          expect(stats.first.trouble).to eq false
-
-          page = stats.first.current_pages[0]
-          expect(page.student_count).to eq 0
-          expect(page.incorrect_count).to eq 0
-          expect(page.correct_count).to eq 0
-          expect(page.trouble).to eq false
-
-          expect(stats.first.spaced_pages).to be_empty
 
           expect(stats.second).to be_nil
         end
@@ -463,41 +226,20 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
 
         stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-        expect(stats.first.mean_grade_percent).to eq 100
         expect(stats.first.complete_count).to eq 1
         expect(stats.first.partially_complete_count).to eq 0
-        expect(stats.first.trouble).to eq false
-
-        page = stats.first.current_pages[0]
-        expect(page.student_count).to eq 1
-        expect(page.incorrect_count).to eq 0
-        expect(page.correct_count).to eq first_task.exercise_steps.size
-        expect(page.trouble).to eq false
-
-        expect(stats.first.spaced_pages).to be_empty
 
         first_task.taskings.first.role.student.destroy
 
         stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
-        expect(stats.first.mean_grade_percent).to be_nil
         expect(stats.first.total_count).to eq student_tasks.length - 1
         expect(stats.first.complete_count).to eq 0
         expect(stats.first.partially_complete_count).to eq 0
-        expect(stats.first.trouble).to eq false
-
-        page = stats.first.current_pages[0]
-        expect(page.student_count).to eq 0
-        expect(page.incorrect_count).to eq 0
-        expect(page.correct_count).to eq 0
-        expect(page.trouble).to eq false
-
-        expect(stats.first.spaced_pages).to be_empty
 
         expect(stats.second).to be_nil
       end
     end
-
   end
 
   protected

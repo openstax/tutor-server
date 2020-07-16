@@ -13,12 +13,6 @@ class Api::V1::TaskPlan::Representer < Roar::Decorator
            readable: true,
            writeable: true
 
-  property :is_trouble,
-           readable: true,
-           writeable: false,
-           schema_info: { type: 'boolean' },
-           if: ->(*) { respond_to? :is_trouble }
-
   property :content_ecosystem_id,
            as: :ecosystem_id,
            type: String,
