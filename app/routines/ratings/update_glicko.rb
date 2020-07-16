@@ -9,7 +9,7 @@ class Ratings::UpdateGlicko
   # Glicko convergence tolerance
   EPSILON = 1e-6
 
-  lev_routine
+  lev_routine transaction: :no_transaction
 
   uses_routine Ratings::CalculateGAndE, as: :calculate_g_and_e
 
