@@ -40,7 +40,7 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
           role.taskings.each do |tasking|
             task = tasking.task
 
-            expect(task.opens_at).to be_within(1).of task.due_at - 7.days
+            expect(task.opens_at).to be_within(1.day).of @course.time_zone.now.monday - 2.weeks
             expect(task.closes_at).to be_within(1.day).of @course.ends_at - 1.day
 
             task.task_steps.each do |task_step|
@@ -85,7 +85,7 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
           role.taskings.each do |tasking|
             task = tasking.task
 
-            expect(task.opens_at).to be_within(1).of task.due_at - 7.days
+            expect(task.opens_at).to be_within(1.day).of @course.time_zone.now.monday - 2.weeks
             expect(task.closes_at).to be_within(1.day).of @course.ends_at - 1.day
 
             task.task_steps.each do |task_step|

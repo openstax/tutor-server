@@ -81,11 +81,10 @@ class PopulatePreviewCourseContent
     starts_at = course.starts_at
     ends_at = course.ends_at
     closes_at = course.ends_at - 1.day
+    opens_at = [time_zone.now.monday - 2.weeks, starts_at + 1.day].max
     preview_chapters.each_with_index do |chapter, index|
-      reading_opens_at = [time_zone.now.monday - 20.days + index.weeks, starts_at].max
-      reading_due_at = [reading_opens_at + 7.days, ends_at].min
-      homework_opens_at = [reading_opens_at + 3.days, starts_at].max
-      homework_due_at = [homework_opens_at + 7.days, ends_at].min
+      reading_due_at = [opens_at + index.weeks + 1.day, closes_at].min
+      homework_due_at = [reading_due_at + 3.days, closes_at].min
 
       pages = chapter.pages
       page_ids = pages.map { |page| page.id.to_s }
@@ -111,7 +110,7 @@ class PopulatePreviewCourseContent
         Tasks::Models::TaskingPlan.new(
           task_plan: reading_tp,
           target: period,
-          opens_at: reading_opens_at,
+          opens_at: opens_at,
           due_at: reading_due_at,
           closes_at: closes_at
         )
@@ -142,7 +141,7 @@ class PopulatePreviewCourseContent
         Tasks::Models::TaskingPlan.new(
           task_plan: homework_tp,
           target: period,
-          opens_at: homework_opens_at,
+          opens_at: opens_at,
           due_at: homework_due_at,
           closes_at: closes_at
         )
