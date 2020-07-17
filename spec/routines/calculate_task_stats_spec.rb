@@ -146,7 +146,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
-      expect(page['title']).to eq "Newton's First Law of Motion: Inertia"
+      expect(page['title']).to match "Newton's First Law of Motion: Inertia"
       expect(page['student_count']).to eq 1 # num students with completed task steps
       expect(page['correct_count']).to eq student_tasks[0].exercise_steps.size
       expect(page['incorrect_count']).to eq 0
@@ -162,7 +162,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
-      expect(page['title']).to eq "Newton's First Law of Motion: Inertia"
+      expect(page['title']).to match "Newton's First Law of Motion: Inertia"
       expect(page['student_count']).to eq 2
       expect(page['correct_count']).to eq student_tasks[0].exercise_steps.size
       expect(page['incorrect_count']).to eq student_tasks[1].exercise_steps.size
@@ -179,7 +179,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
-      expect(page['title']).to eq "Newton's First Law of Motion: Inertia"
+      expect(page['title']).to match "Newton's First Law of Motion: Inertia"
       expect(page['student_count']).to eq 3
       expect(page['correct_count']).to eq(
         student_tasks[0].exercise_steps.size +
@@ -199,7 +199,7 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       expect(stats.first.trouble).to eq false
 
       page = stats.first.current_pages.first
-      expect(page['title']).to eq "Newton's First Law of Motion: Inertia"
+      expect(page['title']).to match "Newton's First Law of Motion: Inertia"
       expect(page['student_count']).to eq 4
       expect(page['correct_count']).to eq(
         student_tasks[0].exercise_steps.size +

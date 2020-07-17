@@ -136,7 +136,7 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow 
         'Douglass promotes dignity',
         'Confrontation seeking righteousness'
       ]
-      book.pages.each_with_index do |page, index|
+      book.as_toc.pages.each_with_index do |page, index|
         expect(page.title).to match titles[index]
       end
     end
