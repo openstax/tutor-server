@@ -287,7 +287,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
                   version: book.as_toc.pages.first.version,
                   cnx_id: book.as_toc.pages.first.cnx_id,
                   short_id: book.as_toc.pages.first.short_id,
-                  title: 'Preface',
+                  title: a_string_matching('Preface'),
                   chapter_section: [],
                   type: 'page'
                 },
@@ -295,7 +295,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
                   {
                     uuid: unit.uuid,
                     cnx_id: unit.uuid,
-                    title: "Unit #{unit_index + 1}",
+                    title: a_string_matching("Unit #{unit_index + 1}"),
                     type: 'unit',
                     chapter_section: [],
                     children: unit.chapters.each.map do |chapter|
@@ -333,7 +333,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
                     version: page.version,
                     cnx_id: page.cnx_id,
                     short_id: page.short_id,
-                    title: title,
+                    title: a_string_matching(title),
                     chapter_section: [],
                     type: 'page'
                   }

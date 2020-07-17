@@ -43,7 +43,7 @@ RSpec.describe Api::V1::TaskPlan::Stats::DetailedRepresenter, type: :representer
           partially_complete_count: 2,
           current_pages: a_collection_containing_exactly(
             id: task_plan.core_page_ids.first.to_s,
-            title: "Newton's First Law of Motion: Inertia",
+            title: a_string_matching("Newton's First Law of Motion: Inertia"),
             student_count: 2,
             correct_count: 1,
             incorrect_count: 1,

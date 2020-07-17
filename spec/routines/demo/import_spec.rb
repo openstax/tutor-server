@@ -46,17 +46,17 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
     end
 
     chapter = book.chapters.first
-    expect(chapter.title).to eq 'Chapter 1'
+    expect(chapter.title).to match 'Chapter 1'
     expect(chapter.book_location).to eq [1]
 
     pages = chapter.pages
-    expect(pages.map(&:title)).to eq [
+    expect(pages.map(&:title)).to match([
       'Introduction',
       'Douglass struggles toward literacy',
       "Douglass struggles against slavery’s injustice",
       'Douglass promotes dignity',
       'Confrontation seeking righteousness'
-    ]
+    ].map{ |title| a_string_matching(title)})
     expect(pages.map(&:book_location)).to eq [[], [1, 1], [1, 2], [1, 3], [1, 4]]
   end
 end

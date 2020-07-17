@@ -71,28 +71,28 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow 
 
       chapter = book.chapters.first
       expect(book.units.first.chapters.first).to eq chapter
-      expect(chapter.title).to eq 'The Study of Life'
+      expect(chapter.title).to match 'The Study of Life'
       expect(chapter.book_location).to eq [1]
 
       page = book.chapters.first.pages.first
-      expect(page.title).to eq 'Introduction'
+      expect(page.title).to match 'Introduction'
       expect(page.book_location).to eq []
 
       # Jump to 3rd chapter
       chapter = book.chapters.third
       expect(book.units.first.chapters.third).to eq chapter
-      expect(chapter.title).to eq 'Biological Macromolecules'
+      expect(chapter.title).to match 'Biological Macromolecules'
       expect(chapter.book_location).to eq [3]
 
       # The second page of that chapter
       page = chapter.pages.second
-      expect(page.title).to eq 'Synthesis of Biological Macromolecules'
+      expect(page.title).to match 'Synthesis of Biological Macromolecules'
       expect(page.book_location).to eq [3, 1]
 
       # Jump to 6th chapter (getting us into 2nd unit)
       chapter = book.chapters[5]
       expect(book.units.second.chapters.third).to eq chapter
-      expect(chapter.title).to eq 'Metabolism'
+      expect(chapter.title).to match 'Metabolism'
       expect(chapter.book_location).to eq [6]
     end
 
@@ -126,16 +126,19 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow 
 
     it 'handles baked book_locations' do
       expect(book.chapters.size).to eq 1
-      expect(book.chapters.first.title).to eq 'Chapter 1'
+      expect(book.chapters.first.title).to match 'Chapter 1'
 
       expect(book.as_toc.pages.map(&:book_location)).to eq [ [], [1, 1], [1, 2], [1, 3], [1, 4] ]
-      expect(book.as_toc.pages.map(&:title)).to eq [
+      titles = [
         'Introduction',
         'Douglass struggles toward literacy',
         'Douglass struggles against slavery’s injustice',
         'Douglass promotes dignity',
         'Confrontation seeking righteousness'
       ]
+      book.as_toc.pages.each_with_index do |page, index|
+        expect(page.title).to match titles[index]
+      end
     end
 
     it 'converts CNX links' do
