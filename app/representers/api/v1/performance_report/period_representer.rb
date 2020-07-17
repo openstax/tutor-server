@@ -6,7 +6,7 @@ module Api::V1::PerformanceReport
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { period.id.to_s }
+             getter: ->(*) { respond_to?(:period_id) ? period_id : period.id.to_s }
 
     property :overall_course_average,
              type: Float,

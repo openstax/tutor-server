@@ -32,11 +32,14 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :actual_and_placeholder_exercise_count,
-             as: :exercise_count,
+    property :exercise_count,
              type: Integer,
              readable: true,
-             writeable: false
+             writeable: false,
+             getter: ->(*) do
+               respond_to?(:exercise_count) ? exercise_count :
+                                              actual_and_placeholder_exercise_count
+             end
 
     property :completed_exercise_count,
              type: Integer,

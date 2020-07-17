@@ -119,6 +119,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
   end
 
   before do
+    @course.reload
     @student_1.reload
     @student_2.reload
   end
@@ -165,6 +166,18 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           data_types = student.data.map(&:type)
           expect(data_types).to eq expected_task_types
         end
+      end
+    end
+
+    context 'ended course with a frozen performance report' do
+      before do
+        @course.ends_at = Time.current
+        @course.teacher_performance_report = [ { is_frozen: true } ]
+        @course.save validate: false
+      end
+
+      it 'returns the frozen performance report instead' do
+        expect(reports.first.is_frozen).to eq true
       end
     end
 

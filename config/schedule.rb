@@ -35,5 +35,10 @@ every 1.hour do
 end
 
 every 1.week do
-  runner "Stats::Generate.call(start_at: 1.week.ago.beginning_of_week)"
+  runner "OpenStax::RescueFrom.this { Stats::Generate.call start_at: 1.week.ago.beginning_of_week }"
+end
+
+# On the 1st of every odd month (normal courses only end on January, March, July, September)
+every 2.month do
+  runner 'OpenStax::RescueFrom.this { Tasks::FreezeEndedCourseTeacherPerformanceReports.call }'
 end

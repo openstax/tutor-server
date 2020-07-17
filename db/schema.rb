@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_17_142820) do
+ActiveRecord::Schema.define(version: 2020_07_13_140652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -343,6 +343,7 @@ ActiveRecord::Schema.define(version: 2020_06_17_142820) do
     t.float "reading_weight", default: 0.5, null: false
     t.string "timezone", null: false
     t.boolean "past_due_unattempted_ungraded_wrq_are_zero", default: true, null: false
+    t.jsonb "teacher_performance_report", array: true
     t.index ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id"
     t.index ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id"
     t.index ["is_lms_enabling_allowed"], name: "index_course_profile_courses_on_is_lms_enabling_allowed"
