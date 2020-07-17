@@ -1,6 +1,6 @@
 # http://www.glicko.net/glicko/glicko2.pdf
 class Ratings::CalculateGAndE
-  lev_routine
+  lev_routine transaction: :no_transaction
 
   def exec(record:, opponents:)
     outputs.g_array = opponents.map do |opponent|
