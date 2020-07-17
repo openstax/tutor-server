@@ -82,21 +82,20 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { appearance_code.blank? ? offering.try!(:appearance_code) : \
-                                                      appearance_code }
+             getter: ->(*) { appearance_code.blank? ? offering&.appearance_code : appearance_code }
 
     property :ecosystem_id,
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { ecosystem.try!(:id) },
+             getter: ->(*) { ecosystem&.id },
              schema_info: { description: "The ID of the course's current ecosystem, if available." }
 
     property :ecosystem_book_uuid,
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { ecosystem.try!(:books).try!(:first).try!(:uuid) },
+             getter: ->(*) { ecosystem&.books&.first&.uuid },
              schema_info: {
                description: "The UUID of the book for the course's current ecosystem, if available."
              }
@@ -110,11 +109,20 @@ module Api::V1
                description: "The ID of the course's offering, if available."
              }
 
+    property :should_reuse_preview?,
+             as: :should_reuse_preview,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: :boolean,
+               description: 'Whether or not this preview course should be reused.'
+             }
+
     property :book_pdf_url,
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { offering.try!(:pdf_url) },
+             getter: ->(*) { offering&.pdf_url },
              schema_info: {
                description: "The book's PDF url, if available."
              }
@@ -123,7 +131,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { offering.try!(:webview_url) },
+             getter: ->(*) { offering&.webview_url },
              schema_info: {
                description: "The book's webview url, if available."
              }
