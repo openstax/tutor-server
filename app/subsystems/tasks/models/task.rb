@@ -85,8 +85,8 @@ class Tasks::Models::Task < ApplicationRecord
 
   def reload(*args)
     @extension = nil
-    @due_at_with_extension = nil
-    @closes_at_with_extension = nil
+    @due_at = nil
+    @closes_at = nil
     @available_points_without_dropping_per_question_index = nil
     @available_points_per_question_index = nil
     @points_per_question_index_without_lateness = nil
@@ -162,49 +162,33 @@ class Tasks::Models::Task < ApplicationRecord
   alias_method :closes_at_without_extension, :closes_at
 
   def due_at
-    @due_at_with_extension ||= if @due_at.nil?
-      # Saves us one call to apply_tz compared to [ super, extension&.due_at ].compact.max
-      datetime = [ due_at_ntz, extension&.due_at_ntz ].compact.max
-      return nil if datetime.nil?
-
-      DateTimeUtilities.apply_tz(datetime, time_zone)
-    else
-      [ super, extension&.due_at ].compact.max
-    end
+    @due_at ||= [ super, extension&.due_at ].compact.max
   end
 
   def due_at=(value)
-    @due_at_with_extension = nil
+    @due_at = nil
 
     super
   end
 
   def due_at_ntz=(value)
-    @due_at_with_extension = nil
+    @due_at = nil
 
     super
   end
 
   def closes_at
-    @closes_at_with_extension ||= if @closes_at.nil?
-      # Saves us one call to apply_tz compared to [ super, extension&.closes_at ].compact.max
-      datetime = [ closes_at_ntz, extension&.closes_at_ntz ].compact.max
-      return nil if datetime.nil?
-
-      DateTimeUtilities.apply_tz(datetime, time_zone)
-    else
-      [ super, extension&.closes_at ].compact.max
-    end
+    @closes_at ||= [ super, extension&.closes_at ].compact.max
   end
 
   def closes_at=(value)
-    @closes_at_with_extension = nil
+    @closes_at = nil
 
     super
   end
 
   def closes_at_ntz=(value)
-    @closes_at_with_extension = nil
+    @closes_at = nil
 
     super
   end
