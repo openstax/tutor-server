@@ -80,7 +80,9 @@ module Ratings::Concerns::RatingJobs
                           .where(Delayed::Job.arel_table[:run_at].gt Time.current)
                           .find_by(id: task.period_book_part_job_id)
         if job.nil?
-          job = Ratings::UpdatePeriodBookParts.set(queue: queue, run_at: task.due_at).perform_later(
+          job = Ratings::UpdatePeriodBookParts.set(
+            queue: queue, wait_until: task.due_at
+          ).perform_later(
             period: period, task: task, run_at_due: true, queue: queue.to_s, wait: wait
           )
 
@@ -104,7 +106,7 @@ module Ratings::Concerns::RatingJobs
                         .where(Delayed::Job.arel_table[:run_at].gt Time.current)
                         .find_by(id: task.role_book_part_job_id)
       if job.nil?
-        job = Ratings::UpdateRoleBookParts.set(queue: queue, run_at: task.due_at).perform_later(
+        job = Ratings::UpdateRoleBookParts.set(queue: queue, wait_until: task.due_at).perform_later(
           role: role, task: task, run_at_due: true, queue: queue.to_s, wait: wait
         )
 
