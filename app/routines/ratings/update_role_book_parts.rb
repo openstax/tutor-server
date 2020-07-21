@@ -16,7 +16,7 @@ class Ratings::UpdateRoleBookParts
        Delayed::Worker.delay_jobs &&
        !task.past_due?(current_time: current_time)
       # This is the due date job but the task's due date changed. Try again later.
-      job = self.class.set(queue: queue, run_at: task.due_at).perform_later(
+      job = self.class.set(queue: queue, wait_until: task.due_at).perform_later(
         role: role, task: task, run_at_due: true, queue: queue, wait: wait
       )
 
