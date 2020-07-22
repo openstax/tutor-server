@@ -393,6 +393,7 @@ module Tasks
           type:                                   type,
           id:                                     tt.id,
           due_at:                                 tt.due_at,
+          due_at_without_extension:               tt.due_at_without_extension,
           last_worked_at:                         tt.last_worked_at&.in_time_zone(tz),
           is_extended:                            tt.extended?,
           is_past_due:                            tt.past_due?,

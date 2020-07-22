@@ -339,6 +339,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
             expect(data.id).to be_a Integer
             expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
             expect(data.due_at).to be_a Time
+            expect(data.due_at_without_extension).to be_a Time
             expect(data.last_worked_at).to be_nil.or(be_a Time)
             expect(data.is_extended).to be_in [true, false]
             expect(data.is_past_due).to be_in [true, false]
@@ -568,6 +569,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
             expect(data.id).to be_a Integer
             expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
             expect(data.due_at).to be_a Time
+            expect(data.due_at_without_extension).to be_a Time
             expect(data.last_worked_at).to be_nil.or(be_a Time)
             expect(data.is_extended).to be_in [true, false]
             expect(data.is_past_due).to be_in [true, false]
@@ -747,6 +749,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
             expect(data.id).to be_a Integer
             expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
             expect(data.due_at).to be_a Time
+            expect(data.due_at_without_extension).to be_a Time
             expect(data.last_worked_at).to be_nil.or(be_a Time)
             expect(data.is_extended).to be_in [true, false]
             expect(data.is_past_due).to be_in [true, false]
@@ -892,6 +895,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.id).to be_a Integer
           expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
           expect(data.due_at).to be_a Time
+          expect(data.due_at_without_extension).to be_a Time
           expect(data.last_worked_at).to be_nil.or(be_a Time)
           expect(data.is_extended).to be_in [true, false]
           expect(data.is_past_due).to be_in [true, false]
@@ -984,6 +988,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           expect(data.id).to be_a Integer
           expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
           expect(data.due_at).to be_a Time
+          expect(data.due_at_without_extension).to be_a Time
           expect(data.last_worked_at).to be_nil.or(be_a Time)
           expect(data.is_extended).to be_in [true, false]
           expect(data.is_past_due).to be_in [true, false]

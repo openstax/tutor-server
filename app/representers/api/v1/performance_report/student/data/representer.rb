@@ -77,6 +77,12 @@ module Api::V1::PerformanceReport::Student::Data
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
 
+    property :due_at_without_extension,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(due_at_without_extension) }
+
     property :last_worked_at,
              type: String,
              readable: true,
