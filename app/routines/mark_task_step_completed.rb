@@ -43,6 +43,24 @@ class MarkTaskStepCompleted
 
     return if task_was_completed
 
+    # Queue a Tasks::UpdateTaskCaches job to run on the task's due date
+    unless task.past_due?
+      job = Delayed::Job.lock.where(
+        Delayed::Job.arel_table[:run_at].gt Time.current
+      ).find_by(id: task.task_cache_job_id)
+
+      if job.nil?
+        queue = task.preview_course? ? :preview : :dashboard
+        job = Tasks::UpdateTaskCaches.set(queue: queue, wait_until: task.due_at).perform_later(
+          task_ids: task.id, run_at_due: true, queue: queue.to_s
+        )
+
+        task.task_cache_job_id = job.provider_job_id
+      else
+        job.update_attribute :run_at, task.due_at
+      end
+    end
+
     perform_rating_jobs_later(
       task: task,
       role: role,

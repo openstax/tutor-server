@@ -397,7 +397,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             expect(Ratings::UpdateRoleBookParts).not_to receive(:set)
             expect(Ratings::UpdatePeriodBookParts).not_to receive(:set)
 
-            result = described_class.call(task_plan: homework_plan)
+            result = described_class.call task_plan: homework_plan
 
             expect(result.errors).to be_empty
             expect(homework_plan.tasks.size).to eq 3
@@ -425,6 +425,8 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             reading_tasking_plan.due_at = new_due_at
             reading_tasking_plan.closes_at = new_closes_at
             reading_tasking_plan.save!
+
+            reading_plan.reload
           end
 
           it 'can create or update normal and preview tasks' do
@@ -448,25 +450,41 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
               expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
             end
           end
-        end
 
-        it 'does not rebuild existing tasks for the task_plan' do
-          expect(reading_plan.tasks.size).to eq 2
-          old_tasks = reading_plan.tasks.to_a
+          it 'does not rebuild existing tasks for the task_plan' do
+            expect(reading_plan.tasks.size).to eq 2
+            old_tasks = reading_plan.tasks.to_a
 
-          result = described_class.call(task_plan: reading_plan)
-          expect(result.errors).to be_empty
-          expect(reading_plan.reload.tasks.size).to eq 3
-          old_tasks.each { |old_task| expect(reading_plan.tasks).to include old_task }
-        end
+            result = described_class.call(task_plan: reading_plan)
+            expect(result.errors).to be_empty
+            expect(reading_plan.reload.tasks.size).to eq 3
+            old_tasks.each { |old_task| expect(reading_plan.tasks).to include old_task }
+          end
 
-        it 'does not set the first_published_at field' do
-          old_published_at = reading_plan.first_published_at
-          publish_time = Time.current
-          result = described_class.call(task_plan: reading_plan, publish_time: publish_time)
-          expect(result.errors).to be_empty
-          expect(reading_plan.reload.first_published_at).to eq old_published_at
-          expect(reading_plan.last_published_at).to be_within(1e-6).of(publish_time)
+          it 'does not set the first_published_at field' do
+            old_published_at = reading_plan.first_published_at
+            publish_time = Time.current
+            result = described_class.call(task_plan: reading_plan, publish_time: publish_time)
+            expect(result.errors).to be_empty
+            expect(reading_plan.reload.first_published_at).to eq old_published_at
+            expect(reading_plan.last_published_at).to be_within(1e-6).of(publish_time)
+          end
+
+          it 'queues Tasks::UpdateTaskCaches jobs to run on the new due date when updating' do
+            existing_tasks = reading_plan.tasks.to_a
+            expect(existing_tasks.size).to eq 2
+            existing_tasks.each { |task| expect(task.task_cache_job_id).to be_nil }
+
+            Delayed::Worker.with_delay_jobs(true) do
+              described_class.call task_plan: reading_plan.reload
+            end
+
+            existing_tasks.each { |task| expect(task.reload.task_cache_job_id).not_to be_nil }
+
+            jobs = Delayed::Job.where(id: existing_tasks.map(&:task_cache_job_id))
+            expect(jobs.size).to eq existing_tasks.size
+            jobs.each { |job| expect(job.run_at).to be_within(1).of(new_due_at) }
+          end
         end
       end
     end

@@ -1,12 +1,16 @@
 # Updates the Task cache fields (step counts), used by several parts of Tutor
 class Tasks::UpdateTaskCaches
-  lev_routine active_job_enqueue_options: { queue: :dashboard }, transaction: :read_committed
+  lev_routine active_job_enqueue_options: { queue: :dashboard },
+              transaction: :read_committed,
+              job_class: LevJobReturningJob
 
   uses_routine GetCourseEcosystemsMap, as: :get_course_ecosystems_map
 
   protected
 
-  def exec(tasks: nil, task_ids: nil, queue: 'dashboard')
+  def exec(
+    tasks: nil, task_ids: nil, run_at_due: false, queue: 'dashboard', current_time: Time.current
+  )
     raise(ArgumentError, 'Either tasks or task_ids must be provided') if tasks.nil? && task_ids.nil?
 
     ScoutHelper.ignore!(0.995)
@@ -20,6 +24,22 @@ class Tasks::UpdateTaskCaches
         .lock('FOR NO KEY UPDATE SKIP LOCKED')
         .preload(:course, task_steps: :tasked, task_plan: [ :course, :extensions ])
         .to_a
+
+      if run_at_due &&
+         Delayed::Worker.delay_jobs &&
+         tasks.any? { |task| !task.past_due?(current_time: current_time) }
+        tasks.each do |task|
+          # This is the due date job but the task's due date changed. Try again later.
+          job = self.class.set(queue: queue.to_sym, wait_until: task.due_at).perform_later(
+            task_ids: task.id, run_at_due: true, queue: queue
+          )
+
+          task.update_attribute :task_cache_job_id, job.provider_job_id
+        end
+
+        return
+      end
+
       locked_task_ids = tasks.map(&:id)
 
       # Requeue tasks that exist but we couldn't lock

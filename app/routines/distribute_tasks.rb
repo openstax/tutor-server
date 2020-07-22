@@ -81,12 +81,49 @@ class DistributeTasks
       updated_tasks << task if task.changed?
     end
 
-    Tasks::Models::Task.import(
-      updated_tasks, validate: false, on_duplicate_key_update: {
-        conflict_target: [ :id ],
-        columns: [ :title, :description, :opens_at_ntz, :due_at_ntz, :closes_at_ntz ]
-      }
-    ) unless updated_tasks.empty?
+    unless updated_tasks.empty?
+      # Queue UpdateTaskCaches jobs to run on the updated tasks' due dates
+      jobs_by_id = Delayed::Job.lock.where(
+        Delayed::Job.arel_table[:run_at].gt Time.current
+      ).where(id: updated_tasks.map(&:task_cache_job_id))
+       .index_by(&:id)
+      updated_jobs = []
+      updated_tasks.each do |task|
+        job = jobs_by_id[task.task_cache_job_id]
+
+        if job.nil?
+          queue = task.preview_course? ? :preview : :dashboard
+          job = Tasks::UpdateTaskCaches.set(queue: queue, wait_until: task.due_at).perform_later(
+            task_ids: task.id, run_at_due: true, queue: queue.to_s
+          )
+
+          task.task_cache_job_id = job.provider_job_id
+        else
+          job.run_at = task.due_at
+          updated_jobs << job
+        end
+      end
+
+      Tasks::Models::Task.import(
+        updated_tasks, validate: false, on_duplicate_key_update: {
+          conflict_target: [ :id ],
+          columns: [
+            :title,
+            :description,
+            :opens_at_ntz,
+            :due_at_ntz,
+            :closes_at_ntz,
+            :task_cache_job_id
+          ]
+        }
+      )
+
+      Delayed::Job.import(
+        updated_jobs, validate: false, on_duplicate_key_update: {
+          conflict_target: [ :id ], columns: [ :run_at ]
+        }
+      ) unless updated_jobs.empty?
+    end
 
     unless new_tasks.empty?
       # Taskeds are not saved by recursive: true because they are a belongs_to association

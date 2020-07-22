@@ -315,6 +315,9 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
     before do
       tasking_plan.update_attribute :target, @period
+      task.opens_at = Time.current - 1.day
+      task.due_at = Time.current - 1.day
+      task.save!
 
       tasked.answer_ids = []
       tasked.free_response = 'A sentence explaining all the things!'
@@ -330,6 +333,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
     end
 
     context 'task not yet due' do
+      before do
+        task.opens_at_ntz = Time.current + 1.day
+        task.due_at_ntz = Time.current + 1.day
+        task.save!
+      end
+
       it 'raises SecurityTransgression' do
         expect do
           api_put grade_api_step_url(task_step.id), @teacher_user_token,
@@ -350,12 +359,6 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
     end
 
     context 'task past-due' do
-      before do
-        task.opens_at_ntz = Time.current - 1.day
-        task.due_at_ntz = Time.current - 1.day
-        task.save!
-      end
-
       context "manual_grading_feedback_on == 'grade'" do
         before { task_plan.grading_template.update_column :manual_grading_feedback_on, :grade }
 

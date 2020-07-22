@@ -84,7 +84,7 @@ module Ratings::Concerns::RatingJobs
             period: period, task: task, run_at_due: true, queue: queue.to_s, wait: wait
           )
 
-          task.period_book_part_job_id = job&.provider_job_id
+          task.period_book_part_job_id = job.provider_job_id
         else
           job.update_attribute :run_at, task.due_at
         end
@@ -108,7 +108,7 @@ module Ratings::Concerns::RatingJobs
           role: role, task: task, run_at_due: true, queue: queue.to_s, wait: wait
         )
 
-        task.role_book_part_job_id = job&.provider_job_id
+        task.role_book_part_job_id = job.provider_job_id
       else
         job.update_attribute :run_at, task.due_at
       end

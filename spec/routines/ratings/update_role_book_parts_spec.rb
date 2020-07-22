@@ -101,7 +101,8 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
         Delayed::Worker.with_delay_jobs(true) do
           described_class.call role: role, task: task, run_at_due: true
         end
-      end.to change { Delayed::Job.count }.by(1)
+      end.to  change { Delayed::Job.count }.by(1)
+         .and change { task.reload.role_book_part_job_id }
     end
   end
 
@@ -133,7 +134,8 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
         Delayed::Worker.with_delay_jobs(true) do
           described_class.call role: role, task: task, run_at_due: true
         end
-      end.to change { Delayed::Job.count }.by(1)
+      end.to  change { Delayed::Job.count }.by(1)
+         .and change { task.reload.role_book_part_job_id }
     end
   end
 end

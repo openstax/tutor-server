@@ -298,29 +298,34 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     end
 
     it 'aggregates wrq step counts from undropped unarchived student tasks only' do
-      tasking_plan = task_plan.tasking_plans.first
+      tasking_plan = task_plan.reload.tasking_plans.first
       tasking_plan.update_attribute :target, period
-      student_task.update_attribute :gradable_step_count, 42
-      student_task.update_attribute :ungraded_step_count, 21
-      teacher_student_task.update_attribute :gradable_step_count, 84
-      teacher_student_task.update_attribute :ungraded_step_count, 84
+      student_task.gradable_step_count = 42
+      student_task.ungraded_step_count = 21
+      teacher_student_task.gradable_step_count = 84
+      teacher_student_task.ungraded_step_count = 84
+      [ student_task, teacher_student_task ].each do |task|
+        task.opens_at = Time.current - 1.day
+        task.due_at = Time.current - 1.day
+        task.save validate: false
+      end
 
       task_plan.update_gradable_step_counts!
-      expect(tasking_plan.gradable_step_count).to eq 42
+      expect(tasking_plan.reload.gradable_step_count).to eq 42
       expect(tasking_plan.ungraded_step_count).to eq 21
       expect(task_plan.gradable_step_count).to eq 42
       expect(task_plan.ungraded_step_count).to eq 21
 
       period.destroy!
       task_plan.reload.update_gradable_step_counts!
-      expect(tasking_plan.gradable_step_count).to eq 42
+      expect(tasking_plan.reload.gradable_step_count).to eq 42
       expect(tasking_plan.ungraded_step_count).to eq 21
       expect(task_plan.gradable_step_count).to eq 0
       expect(task_plan.ungraded_step_count).to eq 0
 
       period.restore!
       task_plan.reload.update_gradable_step_counts!
-      expect(tasking_plan.gradable_step_count).to eq 42
+      expect(tasking_plan.reload.gradable_step_count).to eq 42
       expect(tasking_plan.ungraded_step_count).to eq 21
       expect(task_plan.gradable_step_count).to eq 42
       expect(task_plan.ungraded_step_count).to eq 21

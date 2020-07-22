@@ -170,20 +170,28 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     period_ids = unarchived_period_tasking_plans.map(&:target_id)
     st = CourseMembership::Models::Student.arel_table
     tasks_by_period_id = tasks
-      .select(:gradable_step_count, :ungraded_step_count, st[:course_membership_period_id])
+      .select(
+        :tasks_task_plan_id,
+        :gradable_step_count,
+        :ungraded_step_count,
+        :course_profile_course_id,
+        :due_at_ntz,
+        st[:course_membership_period_id]
+      )
       .joins(taskings: { role: { student: :period } })
       .where(
         taskings: {
           role: { student: { dropped_at: nil, course_membership_period_id: period_ids } }
         }
       )
+      .preload(:course, task_plan: :extensions)
       .group_by(&:course_membership_period_id)
 
     unarchived_period_tasking_plans.each do |tasking_plan|
       tasks = tasks_by_period_id[tasking_plan.target_id] || []
 
-      tasking_plan.gradable_step_count = tasks.sum(&:gradable_step_count)
-      tasking_plan.ungraded_step_count = tasks.sum(&:ungraded_step_count)
+      tasking_plan.gradable_step_count = tasks.select(&:past_due?).sum(&:gradable_step_count)
+      tasking_plan.ungraded_step_count = tasks.select(&:past_due?).sum(&:ungraded_step_count)
     end
 
     self.gradable_step_count = unarchived_period_tasking_plans.sum(&:gradable_step_count)

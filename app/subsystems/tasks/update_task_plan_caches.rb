@@ -1,6 +1,8 @@
 # Updates the TaskPlan cache fields (step counts), used by the Teacher dashboard NEW flag
 class Tasks::UpdateTaskPlanCaches
-  lev_routine active_job_enqueue_options: { queue: :dashboard }, transaction: :read_committed
+  lev_routine active_job_enqueue_options: { queue: :dashboard },
+              transaction: :read_committed,
+              job_class: LevJobReturningJob
 
   protected
 

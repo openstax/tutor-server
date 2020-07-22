@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_16_155313) do
+ActiveRecord::Schema.define(version: 2020_07_22_150727) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -1030,6 +1030,7 @@ ActiveRecord::Schema.define(version: 2020_07_16_155313) do
     t.float "published_points_after_due", default: ::Float::NAN, null: false
     t.boolean "is_provisional_score_before_due", default: false, null: false
     t.boolean "is_provisional_score_after_due", default: false, null: false
+    t.integer "task_cache_job_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_tasks_on_content_ecosystem_id"
     t.index ["course_profile_course_id"], name: "index_tasks_tasks_on_course_profile_course_id"
     t.index ["due_at_ntz", "opens_at_ntz"], name: "index_tasks_tasks_on_due_at_ntz_and_opens_at_ntz"

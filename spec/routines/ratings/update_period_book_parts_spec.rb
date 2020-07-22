@@ -99,6 +99,7 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
       Delayed::Worker.with_delay_jobs(true) do
         described_class.call period: period, task: task, run_at_due: true
       end
-    end.to change { Delayed::Job.count }.by(1)
+    end.to  change { Delayed::Job.count }.by(1)
+       .and change { task.reload.period_book_part_job_id }
   end
 end
