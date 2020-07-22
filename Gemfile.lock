@@ -1,19 +1,4 @@
 GIT
-  remote: https://github.com/lml/lev.git
-  revision: 110d2403ba62baa30d65fbec88e3b1d15f696f7b
-  ref: 110d240
-  specs:
-    lev (10.1.0)
-      actionpack (>= 4.2)
-      active_attr
-      activejob
-      activemodel (>= 4.2)
-      activerecord (>= 4.2)
-      hashie
-      transaction_isolation
-      transaction_retry
-
-GIT
   remote: https://github.com/openstax/keyword_search.git
   revision: 0ce23c42575129b74c14add9e5d069ef9fedebac
   ref: 0ce23c42575129b74c14add9e5d069ef9fedebac
@@ -350,6 +335,15 @@ GEM
     jwt (1.5.6)
     launchy (2.4.3)
       addressable (~> 2.3)
+    lev (10.0.0)
+      actionpack (>= 4.2)
+      active_attr
+      activejob
+      activemodel (>= 4.2)
+      activerecord (>= 4.2)
+      hashie
+      transaction_isolation
+      transaction_retry
     libv8 (7.3.492.27.1)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -407,7 +401,7 @@ GEM
     omniauth-oauth2 (1.3.1)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
-    openstax_accounts (9.0.5)
+    openstax_accounts (9.3.0)
       action_interceptor
       keyword_search
       lev
@@ -417,7 +411,7 @@ GEM
       openstax_api
       openstax_utilities
       pg
-      rails (< 6.0)
+      rails (> 5.0)
       representable
       roar
     openstax_active_force (1.0.0)
@@ -773,7 +767,7 @@ DEPENDENCIES
   json-schema (~> 2.8.0)
   keyword_search!
   launchy
-  lev (~> 10.1.0)!
+  lev (~> 10.0.0)
   lograge
   maruku
   mini_magick
@@ -784,7 +778,7 @@ DEPENDENCIES
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
-  openstax_accounts (~> 9.0.5)
+  openstax_accounts (~> 9.3.0)
   openstax_api
   openstax_healthcheck
   openstax_rescue_from

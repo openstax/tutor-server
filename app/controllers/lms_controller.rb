@@ -109,16 +109,17 @@ class LmsController < ApplicationController
     # fact the user who is logged in, for which we'd need to track a link
     # between LMS user ID and local user ID.  For users who have launched
     # before, the trip to Accounts and back should be pretty quick / invisible.
+    params = launch.app.owner.starts_at < TermYear.new(:fall, 2020).starts_at ? {} : {
+      uuid:  launch.lms_tc_scoped_user_id,
+      name:  launch.full_name,
+      email: launch.email,
+      school: launch.school,
+      role:  launch.role
+    }
 
     redirect_to openstax_accounts.login_url(
       sp: OpenStax::Api::Params.sign(
-        params: {
-          uuid:  launch.lms_tc_scoped_user_id,
-          name:  launch.full_name,
-          email: launch.email,
-          school: launch.school,
-          role:  launch.role
-        },
+        params: params,
         secret: OpenStax::Accounts.configuration.openstax_application_secret
       ),
       return_to: lms_complete_launch_url
