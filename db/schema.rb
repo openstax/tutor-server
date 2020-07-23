@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_13_140652) do
+ActiveRecord::Schema.define(version: 2020_07_23_162633) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -931,6 +931,7 @@ ActiveRecord::Schema.define(version: 2020_07_13_140652) do
     t.integer "content_page_id"
     t.integer "fragment_index"
     t.boolean "is_core", null: false
+    t.index ["content_page_id"], name: "index_tasks_task_steps_on_content_page_id"
     t.index ["first_completed_at"], name: "index_tasks_task_steps_on_first_completed_at"
     t.index ["last_completed_at"], name: "index_tasks_task_steps_on_last_completed_at"
     t.index ["tasked_id", "tasked_type"], name: "index_tasks_task_steps_on_tasked_id_and_tasked_type", unique: true
