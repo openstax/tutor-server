@@ -159,13 +159,25 @@ class Ratings::UpdatePeriodBookParts
       current_time: current_time
     )
 
+    # Count students that answered at least 1 exercise in the target page
     period_book_part.num_students = CourseMembership::Models::Student
       .joins(role: { taskings: { task: { task_steps: :page } } })
-      .where(course_membership_period_id: period.id)
-      .where(role: { taskings: { task: { task_steps: { page: { page_key => book_part_uuid } } } } })
+      .where(
+        course_membership_period_id: period.id,
+        role: {
+          taskings: {
+            task: {
+              task_steps: {
+                tasked_type: 'Tasks::Models::TaskedExercise',
+                page: { page_key => book_part_uuid }
+              }
+            }
+          }
+        }
+      )
+      .where.not(role: { taskings: { task: { task_steps: { first_completed_at: nil } } } })
       .distinct
-      .pluck(:entity_role_id)
-      .size
+      .count(:entity_role_id)
     period_book_part.tasked_exercise_ids += new_tasked_exercises.map(&:id)
 
     period_book_part.clue = if period_book_part.num_results < MIN_NUM_RESULTS
