@@ -28,11 +28,7 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
 
   let!(:role)          { AddUserAsPeriodStudent[period: period, user: user_1] }
 
-  before(:each)        do
-    Content::Routines::PopulateExercisePools[book: page.book]
-
-    OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
-  end
+  before(:each)        { Content::Routines::PopulateExercisePools[book: page.book] }
 
   context 'POST #create' do
     it 'returns the practice task data' do
@@ -76,10 +72,8 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
     end
 
     it 'returns error when no exercises can be scrounged' do
-      expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(
-        accepted: true,
-        exercises: [],
-        spy_info: {}
+      expect_any_instance_of(Tasks::FetchAssignmentPes).to receive(:call).and_return(
+        Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
       )
 
       api_post api_course_practices_url(course.id), user_1_token,
@@ -105,11 +99,12 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
       let(:num_practice_exercises) { 5 }
 
       before do
-        allow(OpenStax::Biglearn::Api).to(
-          receive(:fetch_practice_worst_areas_exercises).and_return(
-            accepted: true,
-            exercises: num_practice_exercises.times.map { FactoryBot.create(:content_exercise) },
-            spy_info: {}
+        allow_any_instance_of(Tasks::FetchPracticeWorstAreasExercises).to receive(:call).and_return(
+          Lev::Routine::Result.new(
+            Lev::Outputs.new(
+              exercises: num_practice_exercises.times.map { FactoryBot.create(:content_exercise) }
+            ),
+            Lev::Errors.new
           )
         )
       end
@@ -160,12 +155,10 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
 
     context 'with no practice exercises' do
       before do
-        expect(OpenStax::Biglearn::Api).to(
-          receive(:fetch_practice_worst_areas_exercises).and_return(
-            accepted: true,
-            exercises: [],
-            spy_info: {}
-          )
+        expect_any_instance_of(
+          Tasks::FetchPracticeWorstAreasExercises
+        ).to receive(:call).and_return(
+          Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
         )
       end
 

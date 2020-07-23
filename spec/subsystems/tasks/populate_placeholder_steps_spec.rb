@@ -25,42 +25,15 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     @task.reload
   end
 
-  let(:skip_unready) { false }
-
-  subject { described_class.call(task: @task, skip_unready: skip_unready) }
-
-  context 'with skip_unready and Biglearn not ready' do
-    let(:skip_unready) { true }
-
-    it 'does not send the task to Biglearn again' do
-      expect(OpenStax::Biglearn::Api).to(
-        receive(:fetch_assignment_pes).and_return(accepted: false)
-      )
-      expect_any_instance_of(Tasks::Models::Task).not_to receive(:update_caches_now)
-      expect(OpenStax::Biglearn::Api).not_to receive(:create_update_assignments)
-
-      expect { subject }.to  not_change { @task.reload.pes_are_assigned }
-                        .and not_change { @task.reload.spes_are_assigned }
-    end
-  end
+  subject { described_class.call(task: @task) }
 
   context 'with not all core steps completed' do
     before { expect(@task).not_to be_core_task_steps_completed }
 
     context 'with no dynamic exercises available' do
       before do
-        expect_any_instance_of(OpenStax::Biglearn::Api::FakeClient).to(
-          receive(:fetch_assignment_pes) do |_, requests|
-            requests.map do |request|
-              {
-                request_uuid: request[:request_uuid],
-                assignment_uuid: request[:task].uuid,
-                exercise_uuids: [],
-                assignment_status: 'assignment_ready',
-                spy_info: {}
-              }
-            end
-          end
+        expect_any_instance_of(Tasks::FetchAssignmentPes).to receive(:call).and_return(
+          Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
         )
       end
 
@@ -114,31 +87,11 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
 
     context 'with no dynamic exercises available' do
       before do
-        expect_any_instance_of(OpenStax::Biglearn::Api::FakeClient).to(
-          receive(:fetch_assignment_pes) do |_, requests|
-            requests.map do |request|
-              {
-                request_uuid: request[:request_uuid],
-                assignment_uuid: request[:task].uuid,
-                exercise_uuids: [],
-                assignment_status: 'assignment_ready',
-                spy_info: {}
-              }
-            end
-          end
+        expect_any_instance_of(Tasks::FetchAssignmentPes).to receive(:call).and_return(
+          Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
         )
-        expect_any_instance_of(OpenStax::Biglearn::Api::FakeClient).to(
-          receive(:fetch_assignment_spes) do |_, requests|
-            requests.map do |request|
-              {
-                request_uuid: request[:request_uuid],
-                assignment_uuid: request[:task].uuid,
-                exercise_uuids: [],
-                assignment_status: 'assignment_ready',
-                spy_info: {}
-              }
-            end
-          end
+        expect_any_instance_of(Tasks::FetchAssignmentSpes).to receive(:call).and_return(
+          Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
         )
       end
 
@@ -154,16 +107,13 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
 
     context 'with some SPE slots filled by PEs' do
       before do
-        expect_any_instance_of(OpenStax::Biglearn::Api::FakeClient).to(
-          receive(:fetch_assignment_spes).and_wrap_original do |method, *args|
-            method.call(*args).map do |response|
-              exercise_uuids = [ @spaced_page.exercises.sample.uuid ] +
-                               response[:exercise_uuids][0..-2]
-
-              response.merge(exercise_uuids: exercise_uuids)
-            end
+        expect_any_instance_of(
+          Tasks::FetchAssignmentSpes
+        ).to receive(:call).and_wrap_original do |method, *args|
+          method.call(*args).tap do |result|
+            result.outputs.exercises[0] = @spaced_page.exercises.sample
           end
-        )
+        end
       end
 
       it 'populates all the placeholders in the task and changes the group_type of SPE steps' do
@@ -187,21 +137,13 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
 
     context 'with enough dynamic exercises available' do
       before do
-        expect_any_instance_of(OpenStax::Biglearn::Api::FakeClient).to(
-          receive(:fetch_assignment_spes) do |_, requests|
-            requests.map do |request|
-              exercise_uuids = @spaced_page.exercises.map(&:uuid).sample(request[:max_num_exercises])
+        expect_any_instance_of(
+          Tasks::FetchAssignmentSpes
+        ).to receive(:call) do |task:, max_num_exercises:|
+          exercises = @spaced_page.exercises.sample(max_num_exercises)
 
-              {
-                request_uuid: request[:request_uuid],
-                assignment_uuid: request[:task].uuid,
-                exercise_uuids: exercise_uuids,
-                assignment_status: 'assignment_ready',
-                spy_info: {}
-              }
-            end
-          end
-        )
+          Lev::Routine::Result.new(Lev::Outputs.new(exercises: exercises), Lev::Errors.new)
+        end
       end
 
       it 'populates all the placeholder steps in the task' do

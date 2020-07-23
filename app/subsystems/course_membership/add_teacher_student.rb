@@ -4,7 +4,7 @@ class CourseMembership::AddTeacherStudent
 
   protected
 
-  def exec(period:, role:, reassign_published_period_task_plans: true, send_to_biglearn: true)
+  def exec(period:, role:, reassign_published_period_task_plans: true)
     teacher_student = CourseMembership::Models::TeacherStudent.find_by role: role, deleted_at: nil
     fatal_error(
       code: :already_a_student, message: "The provided role is already a student in #{
@@ -21,7 +21,5 @@ class CourseMembership::AddTeacherStudent
 
     ReassignPublishedPeriodTaskPlans.perform_later(period: period) \
       if reassign_published_period_task_plans
-
-    OpenStax::Biglearn::Api.update_rosters(course: period.course) if send_to_biglearn
   end
 end

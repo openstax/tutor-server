@@ -39,7 +39,5 @@ class CourseContent::AddEcosystemToCourse
         )
       end
     end
-
-    OpenStax::Biglearn::Api.prepare_and_update_course_ecosystem(course: course)
   end
 end

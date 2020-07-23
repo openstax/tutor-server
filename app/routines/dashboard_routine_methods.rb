@@ -1,6 +1,4 @@
 module DashboardRoutineMethods
-  BIGLEARN_TIMEOUT = 3.minutes
-
   def self.included(base)
     base.lev_routine
 
@@ -29,23 +27,16 @@ module DashboardRoutineMethods
 
     visible_tasks = all_tasks.reject(&:hidden?)
 
-    open_tasks = visible_tasks
-    open_tasks = open_tasks.select { |task| task.past_open? current_time: current_time } \
+    outputs.tasks = visible_tasks
+    outputs.tasks = outputs.tasks.select { |task| task.past_open? current_time: current_time } \
       if role.student?
 
-    ready_tasks = Tasks::IsReady[tasks: open_tasks]
-    unready_tasks = open_tasks - ready_tasks
-    timedout_tasks = unready_tasks.select do |task|
-      task.created_at < current_time - BIGLEARN_TIMEOUT
-    end
-
-    outputs.tasks = ready_tasks + timedout_tasks
-
-    all_task_plans_are_ready = if role.teacher?
+    # All task plans are ready
+    outputs.all_tasks_are_ready = if role.teacher?
       # Teachers don't get tasks for course task_plans
       true
     else
-      # Also require that all task_plans have been distributed for non-teachers (including ghosts)
+      # Require that all task_plans have been distributed for non-teachers (including ghosts)
       # This code assumes all TaskPlans target periods (not courses and not directly students)
       all_task_plan_ids = Tasks::Models::TaskPlan
         .tasked_to_period_id(role.course_member.course_membership_period_id)
@@ -57,8 +48,5 @@ module DashboardRoutineMethods
 
       (all_task_plan_ids - ready_task_plan_ids).empty?
     end
-
-    # All task plans are ready and all open tasks are ready
-    outputs.all_tasks_are_ready = all_task_plans_are_ready && (open_tasks - outputs.tasks).empty?
   end
 end

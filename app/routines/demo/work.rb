@@ -58,7 +58,7 @@ class Demo::Work < Demo::Base
           # correctly calculate the number of complete and incomplete steps
           # Set background to true so we wait longer for Biglearn to be ready
           task_model = run(
-            :populate_placeholders, task: task_model.preload_taskeds, force: true, background: true
+            :populate_placeholders, task: task_model.preload_taskeds, force: true
           ).outputs.task.preload_exercise_content
 
           num_complete_steps = (task_model.steps_count * task[:progress]).round

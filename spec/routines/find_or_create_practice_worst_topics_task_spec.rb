@@ -38,12 +38,8 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine, speed: :medi
   end
 
   it 'errors when there are not enough local exercises for the widget' do
-    expect(OpenStax::Biglearn::Api).to receive(:fetch_practice_worst_areas_exercises).and_return(
-      {
-        accepted: true,
-        exercises: [],
-        spy_info: {}
-      }
+    expect_any_instance_of(Tasks::FetchPracticeWorstAreasExercises).to receive(:call).and_return(
+      Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
     )
 
     expect { result }

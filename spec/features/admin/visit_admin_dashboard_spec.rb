@@ -24,7 +24,6 @@ RSpec.feature 'Admnistration' do
       expect(page).to have_content('Excluded exercise IDs')
       fill_in 'settings_excluded_ids', with: '123456@7'
 
-      expect(SendGlobalExerciseExclusionsToBiglearn).to receive(:perform_later).once
       click_button 'Save'
     end
 

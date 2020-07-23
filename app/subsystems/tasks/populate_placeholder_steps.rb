@@ -1,17 +1,14 @@
 class Tasks::PopulatePlaceholderSteps
-  BIGLEARN_BACKGROUND_ATTEMPTS = 600
-  BIGLEARN_SLEEP_INTERVAL = 1.second
-
   lev_routine transaction: :read_committed, express_output: :task
 
   uses_routine GetTaskCorePageIds, as: :get_task_core_page_ids
+  uses_routine Tasks::FetchAssignmentPes, as: :fetch_assignment_pes
+  uses_routine Tasks::FetchAssignmentSpes, as: :fetch_assignment_spes
   uses_routine TaskExercise, as: :task_exercise
-  uses_routine TranslateBiglearnSpyInfo, as: :translate_biglearn_spy_info
 
   protected
 
-  def exec(task:, force: false, lock_task: true, background: false,
-           skip_unready: false, populate_spes: true)
+  def exec(task:, force: false, lock_task: true, populate_spes: true)
     outputs.task = task
 
     return if already_populated?(task, populate_spes)
@@ -31,9 +28,7 @@ class Tasks::PopulatePlaceholderSteps
       populate_placeholder_steps(
         task: task,
         group_type: :personalized_group,
-        exercise_type: :pe,
-        background: background,
-        skip_unready: skip_unready
+        exercise_type: :pe
       )
       pes_populated = task.pes_are_assigned
     end
@@ -49,9 +44,7 @@ class Tasks::PopulatePlaceholderSteps
       populate_placeholder_steps(
         task: task,
         group_type: :spaced_practice_group,
-        exercise_type: :spe,
-        background: background,
-        skip_unready: skip_unready
+        exercise_type: :spe
       )
       spes_populated = task.spes_are_assigned
     end
@@ -60,27 +53,17 @@ class Tasks::PopulatePlaceholderSteps
 
     # Save pes_are_assigned/spes_are_assigned and step counts
     task.update_caches_now
-
-    # Can't send the info to Biglearn if there's no course
-    return if role.nil?
-
-    course = role.course
-    return if course.nil?
-
-    # Send the updated assignment to Biglearn
-    OpenStax::Biglearn::Api.create_update_assignments(course: course, task: task)
   end
 
   def already_populated?(task, populate_spes)
     task.pes_are_assigned && (!populate_spes || task.spes_are_assigned)
   end
 
-  def populate_placeholder_steps(task:, group_type:, exercise_type:, background:, skip_unready:)
+  def populate_placeholder_steps(task:, group_type:, exercise_type:)
     # Get the task core_page_ids (only necessary for spaced_practice_group)
     core_page_ids = run(:get_task_core_page_ids, tasks: task)
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
-    biglearn_api_method = "fetch_assignment_#{exercise_type}s".to_sym
-    max_attempts = !skip_unready && background ? BIGLEARN_BACKGROUND_ATTEMPTS : 1
+    exercise_routine = "fetch_assignment_#{exercise_type}s".to_sym
     boolean_attribute = "#{exercise_type}s_are_assigned"
 
     task_steps_to_upsert = []
@@ -99,20 +82,9 @@ class Tasks::PopulatePlaceholderSteps
 
     ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
-    result = OpenStax::Biglearn::Api.public_send(
-      biglearn_api_method,
-      task: task,
-      max_num_exercises: placeholder_steps.size,
-      inline_max_attempts: max_attempts,
-      inline_sleep_interval: BIGLEARN_SLEEP_INTERVAL,
-      enable_warnings: !skip_unready
-    )
-    # Bail if we are supposed to retry this in the background
-    return if !result[:accepted] && skip_unready
-
-    chosen_exercises = result[:exercises]
-    spy_info = run(:translate_biglearn_spy_info, spy_info: result[:spy_info]).outputs.spy_info
-    exercise_spy_info = spy_info.fetch('exercises', {})
+    chosen_exercises = run(
+      exercise_routine, task: task, max_num_exercises: placeholder_steps.size
+    ).outputs.exercises
 
     # Group placeholder steps and exercises by content_page_id
     # Spaced Practice uses nil content_page_ids
@@ -144,8 +116,6 @@ class Tasks::PopulatePlaceholderSteps
           task_step.group_type = :personalized_group \
             if group_type == :spaced_practice_group &&
                core_page_ids.include?(exercise.content_page_id)
-
-          task_step.spy = exercise_spy_info.fetch(exercise.uuid, {})
         end
 
         task_steps_to_upsert.concat task_steps
@@ -204,7 +174,6 @@ class Tasks::PopulatePlaceholderSteps
               :last_completed_at,
               :group_type,
               :is_core,
-              :spy,
               :content_page_id
             ]
           }
@@ -213,9 +182,6 @@ class Tasks::PopulatePlaceholderSteps
 
     task.task_steps.reset
 
-    task.spy = task.spy.merge(spy_info.except('exercises'))
     task.send "#{boolean_attribute}=", true
-    task.send "#{exercise_type}_calculation_uuid=", result[:calculation_uuid]
-    task.send "#{exercise_type}_ecosystem_matrix_uuid=", result[:ecosystem_matrix_uuid]
   end
 end

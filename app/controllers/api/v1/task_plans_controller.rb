@@ -267,9 +267,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def destroy
     task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.find(params[:id])
-    standard_destroy(task_plan, Api::V1::TaskPlan::Representer) do |task_plan|
-      send_to_biglearn task_plan
-    end
+    standard_destroy(task_plan, Api::V1::TaskPlan::Representer)
   end
 
   ###############################################################
@@ -286,9 +284,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   EOS
   def restore
     task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.find(params[:id])
-    standard_restore(task_plan, Api::V1::TaskPlan::Representer) do |task_plan|
-      send_to_biglearn task_plan
-    end
+    standard_restore(task_plan, Api::V1::TaskPlan::Representer)
   end
 
   protected
@@ -312,13 +308,5 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
         task_plan.update_attribute(:publish_job_uuid, job_uuid)
       end
     end
-  end
-
-  def send_to_biglearn(task_plan)
-    return if task_plan.tasks.empty?
-
-    requests = task_plan.tasks.map { |task| { course: task_plan.course, task: task } }
-
-    OpenStax::Biglearn::Api.create_update_assignments requests
   end
 end

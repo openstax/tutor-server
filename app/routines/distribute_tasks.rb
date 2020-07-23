@@ -135,11 +135,6 @@ class DistributeTasks
       Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
         task_ids: all_tasks.map(&:id), queue: queue.to_s
       )
-
-      changed_tasks = updated_tasks + new_tasks
-      OpenStax::Biglearn::Api.create_update_assignments(
-        changed_tasks.map { |task| { course: task_plan.course, task: task } }
-      ) unless changed_tasks.empty?
     end
 
     outputs.tasks = task_plan.tasks.reset
