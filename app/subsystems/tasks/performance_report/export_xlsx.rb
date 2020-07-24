@@ -78,6 +78,8 @@ module Tasks
           @bold_R = s.add_style(b: true, border: { edges: [:right], color: '000000', style: :thin })
           @italic = s.add_style i: true
 
+          @dec_format = "0.0#;(0.0#);0"
+
           @overall = s.add_style(
             b: true,
             border: { edges: [:left, :top, :right], color: '000000', style: :thin },
@@ -168,13 +170,13 @@ module Tasks
           @average_num_L = s.add_style(
             b: true,
             border: { edges: [:left, :top, :bottom], color: '000000', style: :thin },
-            format_code: "0",
+            format_code: @dec_format,
             bg_color: 'F2F2F2'
           )
           @average_num_LR = s.add_style(
             b: true,
             border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
-            format_code: "0",
+            format_code: @dec_format,
             bg_color: 'F2F2F2',
             alignment: { horizontal: :center }
           )
@@ -182,27 +184,27 @@ module Tasks
             b: true,
             border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
             border_top: { style: :medium },
-            format_code: "0",
+            format_code: @dec_format,
             bg_color: 'F2F2F2',
             alignment: { horizontal: :center }
           )
           @average_num = s.add_style(
             b: true,
             border: { edges: [:top, :bottom], color: '000000', style: :thin },
-            format_code: "0",
+            format_code: @dec_format,
             bg_color: 'F2F2F2'
           )
           @average_num_T = s.add_style(
             b: true,
             border: { edges: [:top, :bottom], color: '000000', style: :thin },
             border_top: { style: :medium },
-            format_code: "0",
+            format_code: @dec_format,
             bg_color: 'F2F2F2'
           )
           @average_num_R = s.add_style(
             b: true,
             border: { edges: [:top, :right, :bottom], color: '000000', style: :thin },
-            format_code: "0",
+            format_code: @dec_format,
             bg_color: 'F2F2F2'
           )
 
@@ -259,7 +261,7 @@ module Tasks
             border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
             alignment: { horizontal: :center },
             border_right: { style: :thin },
-            format_code: "0",
+            format_code: @dec_format,
             bg_color: 'F2F2F2'
           )
           @total = s.add_style(
@@ -279,14 +281,6 @@ module Tasks
           @minmax_L = s.add_style(
             b: true,
             border: { edges: [:left, :top, :bottom], color: '000000', style: :thin },
-            border_right: { style: :thin },
-            format_code: "0",
-            bg_color: 'F2F2F2'
-          )
-          @minmax_LR = s.add_style(
-            b: true,
-            border: { edges: [:left, :top, :right, :bottom], color: '000000', style: :thin },
-            alignment: { horizontal: :center },
             border_right: { style: :thin },
             format_code: "0",
             bg_color: 'F2F2F2'
@@ -521,7 +515,7 @@ module Tasks
           num_average_columns.times.map { 18.5 }
         data_widths[num_non_task_columns..-1] = data_widths[num_non_task_columns..-1].map { 16 }
 
-        # OVERALL ROW
+        # Class Average
 
         average_style_L = format == :points ? @average_num_L : @average_pct_L
         average_style = format == :points ? @average_num : @average_pct
@@ -732,11 +726,11 @@ module Tasks
         else
           if format == :points
             columns.push([
-              data[:published_points] || 0.0, { style: @normal_LR }
+              (data[:published_points] ? "=ROUND(#{data[:published_points]}, 2)" : 0), { style: @normal_LR }
             ])
           else
             columns.push([
-              data[:published_score] || 0.0, { style: @pct_LR }
+              data[:published_score] || 0, { style: @pct_LR }
             ])
           end
         end
