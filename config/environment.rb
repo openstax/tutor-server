@@ -31,7 +31,7 @@ require 'term_year'
 require 'values_table'
 require 'shared_course_search_helper'
 
-%w(biglearn cnx exercises payments).each do |oxlib|
+%w(cnx exercises payments).each do |oxlib|
   Dir[Rails.root.join("lib/openstax/#{oxlib}/#{oxlib}.rb")].each { |f| require f }
 end
 

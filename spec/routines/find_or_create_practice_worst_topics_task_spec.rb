@@ -47,7 +47,6 @@ RSpec.describe FindOrCreatePracticeWorstTopicsTask, type: :routine, speed: :medi
       .and not_change { Tasks::Models::Tasking.count }
       .and not_change { Tasks::Models::TaskStep.count }
       .and not_change { Tasks::Models::TaskedExercise.count }
-      .and not_change { @course.reload.sequence_number }
     expect(result.errors.first.code).to eq :no_exercises
   end
 end

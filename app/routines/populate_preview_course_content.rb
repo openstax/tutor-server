@@ -18,8 +18,9 @@ class PopulatePreviewCourseContent
   uses_routine AddUserAsPeriodStudent, as: :add_student
   uses_routine Tasks::GetAssistant, as: :get_assistant
   uses_routine DistributeTasks, as: :distribute_tasks
+  uses_routine WorkPreviewCourseTasks, as: :work_tasks
 
-  def exec(course:)
+  def exec(course:, work_tasks: true)
     # is_preview_ready: false prevents the course from being claimed
     course.update_attribute(:is_preview_ready, false) if course.is_preview_ready
 
@@ -151,8 +152,6 @@ class PopulatePreviewCourseContent
       run(:distribute_tasks, task_plan: homework_tp)
     end
 
-    # Work tasks after the current transaction finishes
-    # so Biglearn can receive the data from this course
-    WorkPreviewCourseTasks.perform_later(course: course)
+    run(:work_tasks, course: course) if work_tasks
   end
 end

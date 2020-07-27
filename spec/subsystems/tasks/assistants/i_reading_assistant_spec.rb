@@ -131,8 +131,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
         expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
         expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
 
-        # Preview tasks don't receive Biglearn PEs yet
-        next unless task.taskings.first.role.try!(:student).present?
+        # Preview tasks don't receive PEs yet
+        next unless task.taskings.first.role&.student.present?
 
         task_steps = task.task_steps
 
@@ -196,8 +196,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
         expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
         expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
 
-        # Preview tasks don't receive Biglearn PEs yet
-        next unless task.taskings.first.role.try!(:student).present?
+        # Preview tasks don't receive PEs yet
+        next unless task.taskings.first.role&.student.present?
 
         task_steps = task.task_steps
 
@@ -327,8 +327,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
         expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
         expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
 
-        # Preview tasks don't receive Biglearn PEs yet
-        next unless task.taskings.first.role.try!(:student).present?
+        # Preview tasks don't receive PEs yet
+        next unless task.taskings.first.role&.student.present?
 
         task_steps = task.task_steps
 
@@ -469,8 +469,8 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
         expect(task.auto_grading_feedback_on).to eq grading_template.auto_grading_feedback_on
         expect(task.manual_grading_feedback_on).to eq grading_template.manual_grading_feedback_on
 
-        # Preview tasks don't receive Biglearn PEs yet
-        next unless task.taskings.first.role.try!(:student).present?
+        # Preview tasks don't receive PEs yet
+        next unless task.taskings.first.role&.student.present?
 
         task_steps = task.task_steps
 

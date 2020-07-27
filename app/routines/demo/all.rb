@@ -7,7 +7,7 @@ class Demo::All < Demo::Base
   uses_routine Demo::Import, as: :import, translations: { inputs: { type: :verbatim } }
   uses_routine Demo::Course, as: :course, translations: { inputs: { type: :verbatim } }
   uses_routine Demo::Assign, as: :assign, translations: { inputs: { type: :verbatim } }
-  uses_routine Demo::Work
+  uses_routine Demo::Work,   as: :work,   translations: { inputs: { type: :verbatim } }
 
   protected
 
@@ -39,9 +39,7 @@ class Demo::All < Demo::Base
 
     run :assign, assign: assign unless assign.nil?
 
-    # Work always happens in a separate transaction because we need the assignments
-    # to be sent to Biglearn so the placeholder steps can be populated when working
-    Demo::Work.perform_later work: work unless work.nil?
+    run :work, work: work unless work.nil?
 
     log_status course&.name
   end

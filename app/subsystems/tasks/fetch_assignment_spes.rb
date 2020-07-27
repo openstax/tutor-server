@@ -111,7 +111,6 @@ class Tasks::FetchAssignmentSpes
 
     case num_spes
     when Integer
-      # Tutor decides
       return [] if num_spes == 0
 
       # Subtract 1 for random-ago/personalized
@@ -128,7 +127,7 @@ class Tasks::FetchAssignmentSpes
         k_ago_map << [(include_random_ago ? nil : 0), 1]
       end
     when NilClass
-      # Biglearn decides
+      # Default
       NON_RANDOM_K_AGOS.map do |k_ago|
         [k_ago, DEFAULT_NUM_SPES_PER_K_AGO]
       end.compact.tap do |k_ago_map|

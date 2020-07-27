@@ -44,7 +44,7 @@ RSpec.describe Demo::All, type: :routine do
 
     expected_work_config = config[:work]
     expected_work_config[:course][:id] = 84
-    expect(Demo::Work).to receive(:perform_later).with(
+    expect_any_instance_of(Demo::Work).to receive(:call).with(
       work: expected_work_config
     ).and_return Lev::Routine::Result.new(Lev::Outputs.new, Lev::Errors.new)
 

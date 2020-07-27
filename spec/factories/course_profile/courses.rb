@@ -26,8 +26,6 @@ FactoryBot.define do
 
     uuid                  { SecureRandom.uuid }
 
-    sequence_number       { rand(1000) + 1 }
-
     is_lms_enabling_allowed { is_lms_enabled == true ? true : false }
 
     association :offering, factory: :catalog_offering

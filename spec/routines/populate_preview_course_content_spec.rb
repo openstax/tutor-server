@@ -14,7 +14,9 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
   end
 
   before do
-    expect(WorkPreviewCourseTasks).to receive(:perform_later).with(course: @course).once
+    expect_any_instance_of(WorkPreviewCourseTasks).to(
+      receive(:call).with(course: @course).and_call_original
+    )
 
     @course.reload
   end
@@ -27,6 +29,7 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
         .and change { @course.periods.reload.size }.from(0).to(1)
         .and change { Tasks::Models::TaskPlan.where(course: @course).size }.by(4)
         .and change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }.by(24)
+        .and change { Tasks::Models::TaskStep.where.not(first_completed_at: nil).count }
 
       # all task plans should be marked as "is_preview"
       Tasks::Models::TaskPlan.where(course: @course).each { |tp| expect(tp.is_preview).to eq(true) }
@@ -43,12 +46,10 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
             expect(task.opens_at).to be_within(1.day).of @course.time_zone.now.monday - 2.weeks
             expect(task.closes_at).to be_within(1.day).of @course.ends_at - 1.day
 
-            task.task_steps.each do |task_step|
-              expect(task_step).not_to be_completed
-
-              next unless task_step.exercise?
-
-              expect(task_step.tasked.free_response).to be_nil
+            task.task_steps.select(&:completed?).select(&:exercise?).each do |exercise_step|
+              expect(exercise_step.tasked.free_response).to(
+                eq "This is where you can see each student’s answer in his or her own words."
+              )
             end
           end
         end
@@ -75,6 +76,7 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
          .and(
            change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }.by(24)
          )
+         .and change { Tasks::Models::TaskStep.where.not(first_completed_at: nil).count }
 
       @course.periods.each do |period|
         student_roles = period.student_roles.sort_by(&:created_at)
@@ -88,12 +90,10 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
             expect(task.opens_at).to be_within(1.day).of @course.time_zone.now.monday - 2.weeks
             expect(task.closes_at).to be_within(1.day).of @course.ends_at - 1.day
 
-            task.task_steps.each do |task_step|
-              expect(task_step).not_to be_completed
-
-              next unless task_step.exercise?
-
-              expect(task_step.tasked.free_response).to be_nil
+            task.task_steps.select(&:completed?).select(&:exercise?).each do |exercise_step|
+              expect(exercise_step.tasked.free_response).to(
+                eq "This is where you can see each student’s answer in his or her own words."
+              )
             end
           end
         end

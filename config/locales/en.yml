@@ -31,35 +31,6 @@ en:
       term_years_to_import:
         name: 'Term years to import'
         help_block: 'Comma-separated list of Salesforce-formatted term years, e.g. "2015 - 16 Spring, 2016 - 17 Fall", blank to disable import'
-      biglearn_student_clues_algorithm_name:
-        name: 'Biglearn algorithm for calculating Student CLUes'
-        labels:
-          biglearn_sparfa: SPARFA
-          local_query: Local Query
-          fake: Fake
-      biglearn_teacher_clues_algorithm_name:
-        name: 'Biglearn algorithm for calculating Teacher CLUes'
-        labels:
-          biglearn_sparfa: SPARFA
-          local_query: Local Query
-          fake: Fake
-      biglearn_assignment_spes_algorithm_name:
-        name: 'Biglearn algorithm for choosing Spaced Practice exercises'
-        labels:
-          student_driven_biglearn_sparfa: Student-Driven SPARFA
-          instructor_driven_biglearn_sparfa: Instructor-Driven SPARFA
-          student_driven_local_query: Student-Driven Local Query
-          instructor_driven_local_query: Instructor-Driven Local Query
-      biglearn_assignment_pes_algorithm_name:
-        name: 'Biglearn algorithm for choosing Personalized exercises'
-        labels:
-          biglearn_sparfa: SPARFA
-          local_query: Local Query
-      biglearn_practice_worst_areas_algorithm_name:
-        name: 'Biglearn algorithm for choosing exercises for Practice Worst Topics'
-        labels:
-          biglearn_sparfa: SPARFA
-          local_query: Local Query
       course_appearance_codes:
         name: 'Valid Course Appearance Codes'
         help_block: 'As a Ruby Hash'

@@ -14,8 +14,8 @@ RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :slow do
   end
 
   before do
-    expect(described_class).to receive(:perform_later).with(course: @course).once
-    PopulatePreviewCourseContent[course: @course]
+    PopulatePreviewCourseContent[course: @course, work_tasks: false]
+
     @course.reload
     expect(@course.periods.count).to eq 1
     expect(@course.students.count).to eq 6
@@ -28,6 +28,7 @@ RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :slow do
        .and not_change { @course.students.count }
        .and not_change { Tasks::Models::TaskPlan.where(course: @course).size }
        .and not_change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }
+       .and change { Tasks::Models::TaskStep.where.not(first_completed_at: nil).count }
 
     @course.periods.each do |period|
       student_roles = period.student_roles.sort_by(&:created_at)

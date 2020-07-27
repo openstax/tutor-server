@@ -771,7 +771,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
         .to raise_error(SecurityTransgression)
     end
 
-    it 'allows a teacher to destroy a task_plan for their course and sends it to Biglearn' do
+    it 'allows a teacher to destroy a task_plan for their course' do
       sign_in! @teacher
       expect { api_delete api_task_plan_url(@task_plan.id), nil }
         .to change { @task_plan.reload.withdrawn? }.from(false).to(true)
@@ -803,7 +803,7 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
         .to raise_error(SecurityTransgression)
     end
 
-    it 'allows a teacher to restore a task_plan for their course and sends it to Biglearn' do
+    it 'allows a teacher to restore a task_plan for their course' do
       sign_in! @teacher
       expect { api_put restore_api_task_plan_url(@task_plan.id), nil }
         .to change{ @task_plan.reload.withdrawn? }.from(true).to(false)

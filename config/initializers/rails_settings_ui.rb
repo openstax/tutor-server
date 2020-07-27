@@ -15,14 +15,6 @@ RailsSettingsUi.setup do |config|
   config.parent_controller = 'Admin::BaseController' # default: '::ApplicationController'
 
   config.settings_class = 'Settings::Db'
-
-  config.settings_displayed_as_select_tag = [
-    :biglearn_student_clues_algorithm_name,
-    :biglearn_teacher_clues_algorithm_name,
-    :biglearn_assignment_spes_algorithm_name,
-    :biglearn_assignment_pes_algorithm_name,
-    :biglearn_practice_worst_areas_algorithm_name
-  ]
 end
 
 ActiveSupport::Reloader.to_prepare do
