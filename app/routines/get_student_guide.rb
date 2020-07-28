@@ -33,14 +33,6 @@ class GetStudentGuide
     ).index_by(&:book_part_uuid)
 
     chapter_guides = book.chapters.map do |chapter|
-      next unless chapter_uuids.include? chapter.uuid
-      chapter_role_book_part = role_book_parts_by_book_part_uuid[chapter.uuid] ||
-                               Ratings::RoleBookPart.new(
-        role: role,
-        book_part_uuid: chapter.uuid,
-        is_page: false
-      )
-
       page_guides = chapter.pages.map do |page|
         next unless page_uuids.include? page.uuid
         page_role_book_part = role_book_parts_by_book_part_uuid[page.uuid] ||
@@ -61,6 +53,14 @@ class GetStudentGuide
           last_worked_at: page_role_book_part.updated_at
         }
       end.compact
+      next if page_guides.empty?
+
+      chapter_role_book_part = role_book_parts_by_book_part_uuid[chapter.uuid] ||
+                               Ratings::RoleBookPart.new(
+        role: role,
+        book_part_uuid: chapter.uuid,
+        is_page: false
+      )
 
       {
         title: chapter.title,

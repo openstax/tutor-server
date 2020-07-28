@@ -10,9 +10,9 @@ class GetTeacherGuide
     book = ecosystem.books.first
 
     core_page_ids = Tasks::Models::TaskPlan
+      .select(:settings)
       .where(course: course)
-      .pluck(:settings)
-      .flat_map { |settings| settings['page_ids'] || [] }
+      .flat_map(&:core_page_ids)
     chapter_uuid_page_uuids = Content::Models::Page
       .with_exercises
       .where(id: core_page_ids)
@@ -30,18 +30,10 @@ class GetTeacherGuide
       period_book_parts_by_book_part_uuid = period_book_parts.index_by(&:book_part_uuid)
 
       chapter_guides = book.chapters.map do |chapter|
-        next unless chapter_uuids.include? chapter.uuid
-        chapter_period_book_part = period_book_parts_by_book_part_uuid[chapter.uuid] ||
-                                   Ratings::PeriodBookPart.new(
-          period: period,
-          book_part_uuid: chapter.uuid,
-          is_page: false
-        )
-
         page_guides = chapter.pages.map do |page|
           next unless page_uuids.include? page.uuid
           page_period_book_part = period_book_parts_by_book_part_uuid[page.uuid] ||
-                                Ratings::PeriodBookPart.new(
+                                  Ratings::PeriodBookPart.new(
             period: period,
             book_part_uuid: page.uuid,
             is_page: true
@@ -58,6 +50,14 @@ class GetTeacherGuide
             last_worked_at: page_period_book_part.updated_at
           }
         end.compact
+        next if page_guides.empty?
+
+        chapter_period_book_part = period_book_parts_by_book_part_uuid[chapter.uuid] ||
+                                   Ratings::PeriodBookPart.new(
+          period: period,
+          book_part_uuid: chapter.uuid,
+          is_page: false
+        )
 
         {
           title: chapter.title,
