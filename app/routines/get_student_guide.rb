@@ -20,13 +20,17 @@ class GetStudentGuide
         WHERE_SQL
       )
     ).pluck(:core_page_ids).flatten.uniq
-    chapter_uuid_page_uuids = Content::Models::Page
+
+    chapter_uuids_by_page_uuid = Hash.new { |hash, key| hash[key] = [] }
+    Content::Models::Page
       .with_exercises
       .where(id: core_page_ids)
-      .pluck(:parent_book_part_uuid, :uuid)
-    chapter_uuids, page_uuids = chapter_uuid_page_uuids.transpose
-    chapter_uuids = Set.new chapter_uuids
-    page_uuids = Set.new page_uuids
+      .pluck(:uuid, :parent_book_part_uuid)
+      .each do |page_uuid, chapter_uuid|
+      chapter_uuids_by_page_uuid[page_uuid] << chapter_uuid
+    end
+    page_uuids = Set.new chapter_uuids_by_page_uuid.keys
+    chapter_uuids = Set.new chapter_uuids_by_page_uuid.values.flatten
 
     role_book_parts_by_book_part_uuid = Ratings::RoleBookPart.where(
       role: role, book_part_uuid: (chapter_uuids + page_uuids).to_a
@@ -55,22 +59,44 @@ class GetStudentGuide
       end.compact
       next if page_guides.empty?
 
-      chapter_role_book_part = role_book_parts_by_book_part_uuid[chapter.uuid] ||
-                               Ratings::RoleBookPart.new(
-        role: role,
-        book_part_uuid: chapter.uuid,
-        is_page: false
-      )
+      chapter_uuids = (
+        [ chapter.uuid ] + chapter_uuids_by_page_uuid.values_at(*chapter.pages.map(&:uuid)).flatten
+      ).uniq
+
+      chapter_role_book_parts = role_book_parts_by_book_part_uuid.values_at(*chapter_uuids).compact
+
+      real_clue_book_parts = chapter_role_book_parts.select do |chapter_role_book_part|
+        chapter_role_book_part.clue['is_real']
+      end
+      if real_clue_book_parts.empty?
+        clue = {
+          minimum: 0.0,
+          most_likely: 0.5,
+          maximum: 1.0,
+          is_real: false
+        }
+      else
+        most_likely = real_clue_book_parts.sum(0.0) do |chapter_role_book_part|
+          chapter_role_book_part.clue['most_likely'] * chapter_role_book_part.num_results
+        end/real_clue_book_parts.sum(0, &:num_results)
+
+        clue = {
+          minimum: 0.0,
+          most_likely: most_likely,
+          maximum: 1.0,
+          is_real: true
+        }
+      end
 
       {
         title: chapter.title,
         book_location: chapter.book_location,
         student_count: 1,
-        questions_answered_count: chapter_role_book_part.num_results,
-        clue: chapter_role_book_part.clue,
+        questions_answered_count: chapter_role_book_parts.sum(0, &:num_results),
+        clue: clue,
         page_ids: page_guides.map { |guide| guide[:page_ids] }.reduce([], :+),
-        first_worked_at: chapter_role_book_part.created_at,
-        last_worked_at: chapter_role_book_part.updated_at,
+        first_worked_at: chapter_role_book_parts.map(&:created_at).min,
+        last_worked_at: chapter_role_book_parts.map(&:updated_at).max,
         children: page_guides
       }
     end.compact
