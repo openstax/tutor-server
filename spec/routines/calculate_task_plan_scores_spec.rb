@@ -146,10 +146,12 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                       is_correct: false,
                       selected_answer_id: tasked.answer_id,
                       points: ts.completed? || task.past_due? ? 0.0 : nil,
+                      late_work_point_penalty: 0.0,
                       free_response: nil,
                       grader_points: nil,
                       grader_comments: nil,
-                      needs_grading: false
+                      needs_grading: false,
+                      submitted_late: false
                     }
                   else
                     {
@@ -249,10 +251,12 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                       is_correct: ts.is_correct?,
                       selected_answer_id: tasked.answer_id,
                       points: ts.completed? ? task.completion_weight : (task.past_due? ? 0.0 : nil),
+                      late_work_point_penalty: 0.0,
                       free_response: tasked.free_response,
                       grader_points: nil,
                       grader_comments: nil,
-                      needs_grading: false
+                      needs_grading: false,
+                      submitted_late: false
                     }
                   else
                     {
@@ -357,10 +361,12 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                       is_correct: is_correct,
                       selected_answer_id: tasked.answer_id,
                       points: points,
+                      late_work_point_penalty: 0.0,
                       free_response: tasked.free_response,
                       grader_points: nil,
                       grader_comments: nil,
-                      needs_grading: false
+                      needs_grading: false,
+                      submitted_late: false
                     }
                   else
                     {

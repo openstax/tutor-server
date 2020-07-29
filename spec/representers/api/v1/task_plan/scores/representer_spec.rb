@@ -115,7 +115,9 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
                     points: 1.0,
-                    needs_grading: false
+                    late_work_point_penalty: 0.0,
+                    needs_grading: false,
+                    submitted_late: false
                   }
                 ] + [
                   {
@@ -124,10 +126,16 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: false,
                     is_correct: false,
-                    needs_grading: false
+                    needs_grading: false,
+                    submitted_late: false,
+                    late_work_point_penalty: 0.0
                   }
                 ] * 4 + [
-                  { task_step_id: kind_of(String), is_completed: false, needs_grading: false }
+                  {
+                    task_step_id: kind_of(String),
+                    is_completed: false,
+                    needs_grading: false
+                  }
                 ] * 3,
                 grades_need_publishing: false
               },
@@ -152,7 +160,9 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
                     points: student_tasks.second.completion_weight,
-                    needs_grading: false
+                    late_work_point_penalty: 0.0,
+                    needs_grading: false,
+                    submitted_late: false
                   }
                 ] + [
                   {
@@ -161,10 +171,16 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: false,
                     is_correct: false,
-                    needs_grading: false
+                    needs_grading: false,
+                    submitted_late: false,
+                    late_work_point_penalty: 0.0
                   }
                 ] * 4 + [
-                  { task_step_id: kind_of(String), is_completed: false, needs_grading: false }
+                  {
+                    task_step_id: kind_of(String),
+                    is_completed: false,
+                    needs_grading: false,
+                  }
                 ] * 3,
                 grades_need_publishing: false
               }
@@ -257,7 +273,9 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
                     points: 1.0,
-                    needs_grading: false
+                    late_work_point_penalty: 0.2,
+                    needs_grading: false,
+                    submitted_late: true
                   }
                 ] + [
                   {
@@ -267,14 +285,16 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     is_completed: false,
                     is_correct: false,
                     points: 0.0,
-                    needs_grading: false
+                    late_work_point_penalty: 0.0,
+                    needs_grading: false,
+                    submitted_late: false,
                   }
                 ] * 4 + [
                   {
                     task_step_id: kind_of(String),
                     is_completed: false,
                     points: 0.0,
-                    needs_grading: false
+                    needs_grading: false,
                   }
                 ] * 3,
                 grades_need_publishing: false
@@ -300,7 +320,10 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
                     points: student_tasks.second.completion_weight,
-                    needs_grading: false
+                    late_work_point_penalty: student_tasks.second.completion_weight *
+                                             student_tasks.second.grading_template.late_work_penalty,
+                    needs_grading: false,
+                    submitted_late: true
                   }
                 ] + [
                   {
@@ -310,7 +333,9 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     is_completed: false,
                     is_correct: false,
                     points: 0.0,
-                    needs_grading: false
+                    late_work_point_penalty: 0.0,
+                    needs_grading: false,
+                    submitted_late: false
                   }
                 ] * 4 + [
                   {

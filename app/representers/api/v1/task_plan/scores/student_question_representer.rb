@@ -22,6 +22,11 @@ class Api::V1::TaskPlan::Scores::StudentQuestionRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
+  property :late_work_point_penalty,
+           type: Float,
+           readable: true,
+           writeable: false
+
   property :is_completed,
            readable: true,
            writeable: false,
@@ -53,6 +58,11 @@ class Api::V1::TaskPlan::Scores::StudentQuestionRepresenter < Roar::Decorator
            writeable: false
 
   property :needs_grading,
+           readable: true,
+           writeable: false,
+           schema_info: { type: 'boolean' }
+
+  property :submitted_late,
            readable: true,
            writeable: false,
            schema_info: { type: 'boolean' }
