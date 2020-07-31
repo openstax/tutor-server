@@ -8,8 +8,7 @@ class AddUserAsPeriodStudent
 
   protected
 
-  def exec(user:, period:, student_identifier: nil,
-           reassign_published_period_task_plans: true, send_to_biglearn: true)
+  def exec(user:, period:, student_identifier: nil, reassign_published_period_task_plans: true)
     student_identifier = nil if student_identifier.blank?
     course = period.course
     result = run(UserIsCourseTeacher, user: user, course: course)
@@ -30,8 +29,7 @@ class AddUserAsPeriodStudent
       period: period,
       role: outputs.role,
       student_identifier: student_identifier,
-      reassign_published_period_task_plans: reassign_published_period_task_plans,
-      send_to_biglearn: send_to_biglearn
+      reassign_published_period_task_plans: reassign_published_period_task_plans
     )
   end
 end

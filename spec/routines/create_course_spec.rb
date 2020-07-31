@@ -29,12 +29,6 @@ RSpec.describe CreateCourse, type: :routine do
     expect(course.term).to eq term
     expect(course.year).to eq year
     expect(course.estimated_student_count).to eq 42
-
-    expect(course.biglearn_student_clues_algorithm_name).to be_nil
-    expect(course.biglearn_teacher_clues_algorithm_name).to be_nil
-    expect(course.biglearn_assignment_spes_algorithm_name).to be_nil
-    expect(course.biglearn_assignment_pes_algorithm_name).to be_nil
-    expect(course.biglearn_practice_worst_areas_algorithm_name).to be_nil
   end
 
   it "creates a new preview course" do

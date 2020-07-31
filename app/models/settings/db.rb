@@ -44,13 +44,6 @@ module Settings
     field :active_nomad_onboarding_salesforce_campaign_id, type: :string, default: ''
     field :find_tutor_course_period_report_id, type: :string, default: ''
 
-    field :biglearn_student_clues_algorithm_name, type: :symbol, default: :biglearn_sparfa
-    field :biglearn_teacher_clues_algorithm_name, type: :symbol, default: :biglearn_sparfa
-    field :biglearn_assignment_spes_algorithm_name, type: :symbol, default: \
-      :student_driven_biglearn_sparfa
-    field :biglearn_assignment_pes_algorithm_name, type: :symbol, default: :biglearn_sparfa
-    field :biglearn_practice_worst_areas_algorithm_name, type: :symbol, default: :biglearn_sparfa
-
     field :default_is_lms_enabling_allowed, type: :boolean, default: true
 
     field :prebuilt_preview_course_count, type: :integer, default: 10

@@ -717,9 +717,9 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
         expect(task.correct_exercise_steps_count).to eq 2
 
         # The placeholder step is removed due to no available personalized exercises
-        expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(
-          { accepted: true, exercises: [], spy_info: {} }
-        ).once
+        expect_any_instance_of(Tasks::FetchAssignmentPes).to receive(:call).and_return(
+          Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
+        )
 
         MarkTaskStepCompleted[task_step: task.task_steps[3]]
         task.reload

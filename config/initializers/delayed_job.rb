@@ -23,7 +23,6 @@ Delayed::Worker.max_run_time = 8.hours
 
 # Default queue priorities
 Delayed::Worker.queue_attributes = {
-  biglearn:    { priority: -5 },
   default:     { priority:  0 },
   dashboard:   { priority:  5 },
   maintenance: { priority: 10 },

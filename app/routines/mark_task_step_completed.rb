@@ -34,14 +34,9 @@ class MarkTaskStepCompleted
     role = task.taskings.first&.role
     period = role&.course_member&.period
     course = period&.course
+
     # course will only be set if role and period were found
-    return if course.nil?
-
-    OpenStax::Biglearn::Api.record_responses(
-      course: course, tasked_exercise: task_step.tasked
-    ) if task_step.exercise?
-
-    return if task_was_completed
+    return if course.nil? || task_was_completed
 
     perform_rating_jobs_later(
       task: task,

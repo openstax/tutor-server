@@ -55,6 +55,6 @@ class Api::V1::TasksController < Api::V1::ApiController
   end
 
   def populate_placeholders
-    Tasks::PopulatePlaceholderSteps[task: @task, skip_unready: @task.practice?]
+    Tasks::PopulatePlaceholderSteps[task: @task]
   end
 end

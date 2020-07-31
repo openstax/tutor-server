@@ -73,11 +73,6 @@ OpenStax::RescueFrom.register_exception(
   notify: false
 )
 
-OpenStax::RescueFrom.register_exception(
-  'OpenStax::Biglearn::Api::JobFailed',
-  notify: true # Change this to false once we are confident that Biglearn jobs work properly
-)
-
 # Exceptions in controllers are not automatically reraised in production-like environments
 ActionController::Base.use_openstax_exception_rescue
 

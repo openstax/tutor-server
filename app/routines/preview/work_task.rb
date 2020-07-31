@@ -22,7 +22,7 @@ class Preview::WorkTask
 
     task_was_completed = task.completed?(use_cache: true)
 
-    run :populate_placeholders, task: task, force: true, background: true
+    run :populate_placeholders, task: task, force: true
 
     task_steps = task.task_steps.to_a
 
@@ -79,15 +79,9 @@ class Preview::WorkTask
     role = task.taskings.first&.role
     period = role&.course_member&.period
     course = period&.course
+
     # course will only be set if role and period were found
-    return if course.nil? || task.completed_exercise_steps_count == 0
-
-    requests = tasked_exercises.map do |tasked_exercise|
-      { course: course, tasked_exercise: tasked_exercise }
-    end
-    OpenStax::Biglearn::Api.record_responses requests
-
-    return if task_was_completed
+    return if course.nil? || task.completed_exercise_steps_count == 0 || task_was_completed
 
     perform_rating_jobs_later(
       task: task,

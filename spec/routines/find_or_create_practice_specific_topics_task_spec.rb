@@ -6,37 +6,16 @@ RSpec.describe FindOrCreatePracticeSpecificTopicsTask, type: :routine do
                    -> { described_class.call course: @course, role: @role, page_ids: [ @page.id ] }
 
   it 'non-fatal errors when there are not enough local exercises for the widget' do
-    expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(
-      {
-        accepted: true,
-        exercises: [],
-        spy_info: {}
-      }
+    expect_any_instance_of(Tasks::FetchAssignmentPes).to receive(:call).and_return(
+      Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
     )
 
-    expect { expect(result.errors.first.code).to eq :no_exercises }
-      .to  change { Tasks::Models::Task.count }.by(1)
-      .and change { Tasks::Models::Tasking.count }.by(1)
-      .and not_change { Tasks::Models::TaskStep.count }
-      .and not_change { Tasks::Models::TaskedPlaceholder.count }
-      .and change { @course.reload.sequence_number }.by(2)
-  end
-
-  it 'non-fatal errors when Biglearn does not return an accepted response after max attempts' do
-    expect(OpenStax::Biglearn::Api).to receive(:fetch_assignment_pes).and_return(
-      {
-        accepted: false,
-        exercises: [],
-        spy_info: {}
-      }
-    )
-
-    expect { expect(result.errors).to be_empty }
-      .to  change { Tasks::Models::Task.count }.by(1)
-      .and change { Tasks::Models::Tasking.count }.by(1)
-      .and change { Tasks::Models::TaskStep.count }.by(5)
-      .and change { Tasks::Models::TaskedPlaceholder.count }.by(5)
-      .and change { @course.reload.sequence_number }.by(1)
+    expect do
+      expect(result.errors.first.code).to eq :no_exercises
+    end.to  not_change { Tasks::Models::Task.count }
+       .and not_change { Tasks::Models::Tasking.count }
+       .and not_change { Tasks::Models::TaskStep.count }
+       .and not_change { Tasks::Models::TaskedPlaceholder.count }
   end
 
   it 'returns same task id when posted twice' do

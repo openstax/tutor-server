@@ -167,8 +167,5 @@ class Content::ImportBook
 
     outputs.book = book
     outputs.pages = ordered_pages
-
-    # Send ecosystem information to Biglearn
-    OpenStax::Biglearn::Api.create_ecosystem(ecosystem: ecosystem)
   end
 end

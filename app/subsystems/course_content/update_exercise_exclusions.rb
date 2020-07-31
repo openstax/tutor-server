@@ -1,5 +1,4 @@
 class CourseContent::UpdateExerciseExclusions
-
   lev_routine transaction: :read_committed, express_output: :exercise_representations
 
   uses_routine GetExercises, as: :get_exercises
@@ -63,9 +62,5 @@ class CourseContent::UpdateExerciseExclusions
 
     # This touch ensures that transactions trying to lock the same course will retry
     course.touch
-
-    # Send the exercise exclusions to Biglearn
-    OpenStax::Biglearn::Api.update_course_excluded_exercises(course: course)
   end
-
 end

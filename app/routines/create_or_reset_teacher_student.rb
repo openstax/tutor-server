@@ -6,7 +6,7 @@ class CreateOrResetTeacherStudent
 
   protected
 
-  def exec(user:, period:, reassign_published_period_task_plans: true, send_to_biglearn: true)
+  def exec(user:, period:, reassign_published_period_task_plans: true)
     teacher_student = CourseMembership::Models::TeacherStudent
       .joins(:role)
       .find_by(course_membership_period_id: period.id, role: { user_profile_id: user.id })
@@ -18,8 +18,7 @@ class CreateOrResetTeacherStudent
       CourseMembership::AddTeacherStudent,
       period: period,
       role: outputs.role,
-      reassign_published_period_task_plans: reassign_published_period_task_plans,
-      send_to_biglearn: send_to_biglearn
+      reassign_published_period_task_plans: reassign_published_period_task_plans
     )
   end
 end

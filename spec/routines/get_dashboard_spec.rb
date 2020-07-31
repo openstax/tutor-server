@@ -166,10 +166,6 @@ RSpec.describe GetDashboard, type: :routine do
 
       context 'with no time period specified' do
         it "works for a #{role_type}" do
-          expect(Tasks::IsReady).to receive(:[]) do |tasks:|
-            tasks - [ @unready_reading_task, @old_unready_reading_task ]
-          end
-
           outputs = described_class.call(course: @course, role: @role).outputs
 
           expected_tasks = [
@@ -201,7 +197,7 @@ RSpec.describe GetDashboard, type: :routine do
               type: role_type.to_s
             },
             tasks: a_collection_including(*expected_tasks),
-            all_tasks_are_ready: false
+            all_tasks_are_ready: true
           )
         end
 

@@ -22,10 +22,6 @@ module FindOrCreatePracticeTaskRoutine
     raise NotImplementedError
   end
 
-  def send_task_to_biglearn
-    OpenStax::Biglearn::Api.create_update_assignments course: @course, task: @task
-  end
-
   def exec(course:, role:, **args)
     fatal_error(code: :course_not_started) unless course.started?
     fatal_error(code: :course_ended) if course.ended?
@@ -63,8 +59,6 @@ module FindOrCreatePracticeTaskRoutine
       add_task_steps
 
       @task.update_cached_attributes.save!
-
-      send_task_to_biglearn
     end
 
     outputs.task = @task

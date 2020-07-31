@@ -10,8 +10,6 @@ class CourseMembership::CreatePeriod
       name: name, enrollment_code: enrollment_code, uuid: uuid
     )
     course.periods << outputs.period
-    transfer_errors_from(outputs.period, {type: :verbatim}, true)
-
-    OpenStax::Biglearn::Api.update_rosters(course: course)
+    transfer_errors_from outputs.period, { type: :verbatim }, true
   end
 end
