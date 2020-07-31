@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe CourseProfile::Models::Course, type: :model do
   subject(:course) { FactoryBot.create :course_profile_course }
 
+  it { is_expected.to have_one(:cache) }
+
   it { is_expected.to belong_to(:school).optional }
   it { is_expected.to belong_to(:offering).optional }
 
@@ -189,5 +191,18 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
 
     course.ends_at = DateTime.new(2020, 6, 30)
     expect(course.pre_wrm_scores?).to eq true
+  end
+
+  it 'knows if scores are frozen' do
+    expect(course.frozen_scores?).to eq false
+
+    cache = FactoryBot.create :course_profile_cache, course: course
+    expect(course.frozen_scores?).to eq false
+
+    course.ends_at = Time.current
+    expect(course.frozen_scores?).to eq true
+
+    cache.destroy!
+    expect(course.reload.frozen_scores?).to eq false
   end
 end

@@ -303,6 +303,14 @@ ActiveRecord::Schema.define(version: 2020_07_31_211543) do
     t.index ["entity_role_id"], name: "index_course_membership_teachers_on_entity_role_id", unique: true
   end
 
+  create_table "course_profile_caches", force: :cascade do |t|
+    t.bigint "course_profile_course_id", null: false
+    t.jsonb "teacher_performance_report", null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_profile_course_id"], name: "index_course_profile_caches_on_course_profile_course_id"
+  end
+
   create_table "course_profile_courses", id: :serial, force: :cascade do |t|
     t.integer "school_district_school_id"
     t.string "name", null: false
@@ -343,7 +351,6 @@ ActiveRecord::Schema.define(version: 2020_07_31_211543) do
     t.float "reading_weight", default: 0.5, null: false
     t.string "timezone", null: false
     t.boolean "past_due_unattempted_ungraded_wrq_are_zero", default: true, null: false
-    t.jsonb "teacher_performance_report", array: true
     t.index ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id"
     t.index ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id"
     t.index ["is_lms_enabling_allowed"], name: "index_course_profile_courses_on_is_lms_enabling_allowed"
@@ -1125,6 +1132,7 @@ ActiveRecord::Schema.define(version: 2020_07_31_211543) do
   add_foreign_key "course_membership_teacher_students", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_membership_teachers", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_profile_caches", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_courses", "catalog_offerings", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "course_profile_courses", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "school_district_schools", on_update: :cascade, on_delete: :nullify

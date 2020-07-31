@@ -15,6 +15,8 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   acts_as_paranoid without_default_scope: true
 
+  has_one :cache, inverse_of: :course
+
   belongs_to :cloned_from, foreign_key: 'cloned_from_id',
                            class_name: 'CourseProfile::Models::Course',
                            optional: true
@@ -138,7 +140,7 @@ class CourseProfile::Models::Course < ApplicationRecord
   end
 
   def frozen_scores?(current_time = Time.current)
-    ended?(current_time) && !teacher_performance_report.nil?
+    ended?(current_time) && !cache&.teacher_performance_report.nil?
   end
 
   protected

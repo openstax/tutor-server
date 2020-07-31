@@ -171,8 +171,12 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
 
     context 'ended course with a frozen performance report' do
       before do
+        FactoryBot.create(
+          :course_profile_cache,
+          course: @course,
+          teacher_performance_report: [ { is_frozen: true } ]
+        )
         @course.ends_at = Time.current
-        @course.teacher_performance_report = [ { is_frozen: true } ]
         @course.save validate: false
       end
 

@@ -16,7 +16,7 @@ module Tasks
       is_frozen = is_teacher && course.frozen_scores?(current_time) if is_frozen.nil?
 
       if is_frozen
-        outputs.performance_report = course.teacher_performance_report.map do |report|
+        outputs.performance_report = course.cache.teacher_performance_report.map do |report|
           Hashie::Mash.new report
         end
 

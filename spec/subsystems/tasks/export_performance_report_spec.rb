@@ -94,9 +94,13 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
 
     context 'cached' do
       it 'does not blow up with a cached performance report' do
-        @course.teacher_performance_report = Api::V1::PerformanceReport::Representer.new(
-          Tasks::GetPerformanceReport[role: @role, course: @course]
-        ).to_hash
+        FactoryBot.create(
+          :course_profile_cache,
+          course: @course,
+          teacher_performance_report: Api::V1::PerformanceReport::Representer.new(
+            Tasks::GetPerformanceReport[role: @role, course: @course]
+          ).to_hash
+        )
         @course.ends_at = Time.current
         @course.save validate: false
 
@@ -108,9 +112,13 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
       it 'uses the last performance export, if available' do
         @output_filename = described_class[role: @role, course: @course]
 
-        @course.teacher_performance_report = Api::V1::PerformanceReport::Representer.new(
-          Tasks::GetPerformanceReport[role: @role, course: @course]
-        ).to_hash
+        FactoryBot.create(
+          :course_profile_cache,
+          course: @course,
+          teacher_performance_report: Api::V1::PerformanceReport::Representer.new(
+            Tasks::GetPerformanceReport[role: @role, course: @course]
+          ).to_hash
+        )
         @course.ends_at = Time.current
         @course.save validate: false
 
@@ -167,10 +175,12 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
 
     context 'cached' do
       it 'does not blow up with a cached performance report' do
-        @course.update_attribute :teacher_performance_report,
-                                 Api::V1::PerformanceReport::Representer.new(
-                                   Tasks::GetPerformanceReport[role: @role, course: @course]
-                                 ).to_hash
+        FactoryBot.create(
+          :course_profile_cache,
+          course: @course, teacher_performance_report: Api::V1::PerformanceReport::Representer.new(
+            Tasks::GetPerformanceReport[role: @role, course: @course]
+          ).to_hash
+        )
 
         expect do
           @output_filename = described_class[role: @role, course: @course]
@@ -180,10 +190,12 @@ RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
       it 'uses the last performance export, if available' do
         @output_filename = described_class[role: @role, course: @course]
 
-        @course.update_attribute :teacher_performance_report,
-                                 Api::V1::PerformanceReport::Representer.new(
-                                   Tasks::GetPerformanceReport[role: @role, course: @course]
-                                 ).to_hash
+        FactoryBot.create(
+          :course_profile_cache,
+          course: @course, teacher_performance_report: Api::V1::PerformanceReport::Representer.new(
+            Tasks::GetPerformanceReport[role: @role, course: @course]
+          ).to_hash
+        )
 
         expect do
           expect(described_class[role: @role, course: @course]).to eq @output_filename

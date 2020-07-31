@@ -4,24 +4,30 @@ class Tasks::FreezeEndedCourseTeacherPerformanceReports
   lev_routine transaction: :no_transaction
 
   def exec(current_time: Time.current)
+    co = CourseProfile::Models::Course.arel_table
+    ca = CourseProfile::Models::Cache.arel_table
     loop do
       courses = CourseProfile::Models::Course.transaction do
         courses = CourseProfile::Models::Course
           .lock
           .where(CourseProfile::Models::Course.arel_table[:ends_at].lteq current_time)
-          .where(teacher_performance_report: nil)
+          .where.not(
+            CourseProfile::Models::Cache.where(ca[:course_profile_course_id].eq co[:id]).arel.exists
+          )
           .order(ends_at: :desc)
           .preload(teachers: :role)
           .first(BATCH_SIZE)
 
-        courses.each do |course|
+        caches = courses.map do |course|
           performance_report = Tasks::GetPerformanceReport[
             course: course,
             is_teacher: true,
             is_frozen: false
           ]
 
-          course.teacher_performance_report = Api::V1::PerformanceReport::Representer.new(
+          # The export routines tend to modify the performance report to remove stuff,
+          # so we create the representation now before that can happen
+          performance_report_hash = Api::V1::PerformanceReport::Representer.new(
             performance_report
           ).to_hash
 
@@ -32,11 +38,13 @@ class Tasks::FreezeEndedCourseTeacherPerformanceReports
               performance_report: performance_report
             )
           end
+
+          CourseProfile::Models::Cache.new(
+            course: course, teacher_performance_report: performance_report_hash
+          )
         end
 
-        CourseProfile::Models::Course.import courses, validate: false, on_duplicate_key_update: {
-          conflict_target: [ :id ], columns: [ :teacher_performance_report ]
-        }
+        CourseProfile::Models::Cache.import caches, validate: false
 
         courses
       end

@@ -127,9 +127,7 @@ RSpec.describe Tasks::FreezeEndedCourseTeacherPerformanceReports, type: :routine
       expect do
         described_class.call
       end.to  not_change { @course.reload.frozen_scores? }.from(false)
-         .and not_change { @course.teacher_performance_report }.from(nil)
-
-      expect(@course.teacher_performance_report).to be_nil
+         .and not_change { @course.cache }.from(nil)
     end
   end
 
@@ -144,7 +142,7 @@ RSpec.describe Tasks::FreezeEndedCourseTeacherPerformanceReports, type: :routine
       expect do
         described_class.call
       end.to  change { @course.reload.frozen_scores? }.from(false).to(true)
-         .and change { @course.teacher_performance_report }.from(nil)
+         .and change { @course.cache }.from(nil)
 
       # Some objects like AR models don't serialize/deserialize entirely the same,
       # so we save the representation instead.
