@@ -368,11 +368,9 @@ module Tasks
       tasks.map do |tt|
         # Skip if the student hasn't worked this particular task_plan/page
         next if tt.nil?
-
-        late = tt.worked_on? && tt.due_at.present? && tt.last_worked_at > tt.due_at
-        type = tt.task_type
         show_score = is_teacher || tt.feedback_available?(current_time: current_time)
         correct_exercise_count = show_score ? tt.correct_exercise_count : nil
+        type = tt.task_type
 
         if pre_wrm
           available_points = tt.actual_and_placeholder_exercise_count
@@ -388,30 +386,22 @@ module Tasks
 
         Hashie::Mash.new(
           task:                                   tt,
-          late:                                   late,
           status:                                 tt.status(use_cache: true),
           type:                                   type,
           id:                                     tt.id,
           due_at:                                 tt.due_at,
-          last_worked_at:                         tt.last_worked_at&.in_time_zone(tz),
-          is_extended:                            tt.extended?,
-          is_past_due:                            tt.past_due?,
           step_count:                             tt.steps_count,
           completed_step_count:                   tt.completed_steps_count,
           completed_on_time_steps_count:          tt.completed_on_time_steps_count,
-          actual_and_placeholder_exercise_count:  tt.actual_and_placeholder_exercise_count,
-          completed_exercise_count:               tt.completed_exercise_count,
-          completed_on_time_exercise_steps_count: tt.completed_on_time_exercise_steps_count,
-          correct_exercise_count:                 correct_exercise_count,
-          recovered_exercise_count:               tt.recovered_exercise_steps_count,
-          gradable_step_count:                    tt.gradable_step_count,
-          ungraded_step_count:                    tt.ungraded_step_count,
-          is_included_in_averages:                included_in_progress_averages?(task: tt),
           available_points:                       available_points,
           progress:                               progress,
           published_points:                       published_points,
           published_score:                        published_score,
-          is_provisional_score:                   tt.provisional_score?
+          is_provisional_score:                   tt.provisional_score?,
+          # the below fields are only used by old scores report
+          actual_and_placeholder_exercise_count:  tt.actual_and_placeholder_exercise_count,
+          correct_exercise_count:                 correct_exercise_count,
+          last_worked_at:                         tt.last_worked_at&.in_time_zone(tz)
         )
       end
     end

@@ -2,17 +2,7 @@ module Api::V1::PerformanceReport::Student::Data
   class Representer < Roar::Decorator
     include Roar::JSON
 
-    property :type,
-             type: String,
-             readable: true,
-             writeable: false
-
     property :id,
-             type: String,
-             readable: true,
-             writeable: false
-
-    property :status,
              type: String,
              readable: true,
              writeable: false
@@ -27,76 +17,11 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
-    property :completed_on_time_steps_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :exercise_count,
-             type: Integer,
-             readable: true,
-             writeable: false,
-             getter: ->(*) do
-               respond_to?(:exercise_count) ? exercise_count :
-                                              actual_and_placeholder_exercise_count
-             end
-
-    property :completed_exercise_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :completed_on_time_exercise_steps_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :correct_exercise_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :recovered_exercise_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :gradable_step_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
-    property :ungraded_step_count,
-             type: Integer,
-             readable: true,
-             writeable: false
-
     property :due_at,
              type: String,
              readable: true,
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(due_at) }
-
-    property :last_worked_at,
-             type: String,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { DateTimeUtilities.to_api_s(last_worked_at) }
-
-    property :is_past_due,
-             readable: true,
-             writeable: false,
-             schema_info: { type: 'boolean' }
-
-    property :is_extended,
-             readable: true,
-             writeable: false,
-             schema_info: { type: 'boolean' }
-
-    property :is_included_in_averages,
-             readable: true,
-             writeable: false,
-             schema_info: { type: 'boolean' }
 
     property :progress,
              type: Float,
@@ -122,5 +47,11 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false,
              schema_info: { type: 'boolean' }
+
+    # only used by old scores report
+    property :completed_on_time_steps_count,
+             type: Integer,
+             readable: true,
+             writeable: false
   end
 end

@@ -44,10 +44,9 @@ RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
 
   let(:representation) { described_class.new([Hashie::Mash.new(report)]).to_hash }
 
-  it 'includes the due_at, last_worked_at, is_provisional_score properties for student data' do
+  it 'includes the due_at, is_provisional_score properties for student data' do
     task_data = representation.first['students'].first['data'].first
     expect(task_data).to include(
-      'last_worked_at' => api_last_worked_at,
       'due_at' => api_due_at,
       'is_provisional_score' => false
     )
