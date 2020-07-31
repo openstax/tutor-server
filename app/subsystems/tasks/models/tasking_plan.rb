@@ -11,7 +11,7 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
 
   validates :opens_at_ntz, :due_at_ntz, :closes_at_ntz, presence: true, timeliness: { type: :date }
 
-  validate :due_at_in_the_future, :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at,
+  validate :due_at_on_or_after_opens_at, :closes_at_on_or_after_due_at,
            :opens_after_course_starts, :closes_before_course_ends, :course_can_task_target
 
   def past_open?(current_time: Time.current)
@@ -27,17 +27,6 @@ class Tasks::Models::TaskingPlan < ApplicationRecord
   end
 
   protected
-
-  def due_at_in_the_future
-    return if task_plan&.course.nil? ||
-              task_plan.is_draft? ||
-              !due_at_ntz_changed? ||
-              due_at.nil? ||
-              due_at > Time.current
-
-    errors.add(:due_at, 'cannot be set into the past')
-    throw :abort
-  end
 
   def due_at_on_or_after_opens_at
     return if task_plan&.course.nil? || due_at.nil? || opens_at.nil? || due_at >= opens_at
