@@ -273,7 +273,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
                     points: 1.0,
-                    late_work_point_penalty: 0.2,
+                    late_work_point_penalty: 1.0 * late_work_penalty,
                     needs_grading: false,
                     submitted_late: true
                   }
