@@ -40,6 +40,7 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def become
+    session[:admin_user_id] = current_user.id
     sign_in(@user.account)
     redirect_to root_path
   end

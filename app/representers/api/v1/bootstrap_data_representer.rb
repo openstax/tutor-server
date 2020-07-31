@@ -84,6 +84,15 @@ module Api::V1
              readable: true,
              writeable: false
 
+    property :is_impersonating,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               required: true,
+               type: 'boolean'
+             },
+             getter: ->(user_options:, **) { user_options[:is_impersonating] }
+
     collection :courses,
                extend: Api::V1::CourseRepresenter,
                readable: true,

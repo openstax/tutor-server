@@ -7,7 +7,11 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
   let!(:student_role)      { AddUserAsPeriodStudent[user: user, period: period] }
   let(:representation)     do
     described_class.new(user).to_json(
-      user_options: { tutor_api_url: 'https://example.com/api', flash: { alert: 'Nothing!'} }
+      user_options: {
+        tutor_api_url: 'https://example.com/api',
+        flash: { alert: 'Nothing!'},
+        is_impersonating: false,
+      }
     )
   end
 
@@ -40,6 +44,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
           force_browser_reload: Settings::Db[:force_browser_reload]
         },
         ui_settings: {},
+        is_impersonating: false,
         flash: { alert: 'Nothing!' }
       }.deep_stringify_keys
     )

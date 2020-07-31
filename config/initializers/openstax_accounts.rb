@@ -17,6 +17,14 @@ OpenStax::Accounts.configure do |config|
   config.logout_via = :delete
   config.account_user_mapper = MapUsersAccounts
   config.logout_redirect_url = ->(request) do
+    if request.session[:admin_user_id]
+      admin = User::Models::Profile.find(request.session[:admin_user_id])
+      if admin.present?
+        request.session[:account_id] = admin.account_id
+        request.session.delete(:admin_user_id)
+        return '/admin/users'
+      end
+    end
     LogoutRedirectChooser.new(request.url).choose(default: config.default_logout_redirect_url)
   end
   config.return_to_url_approver = ->(url) do
