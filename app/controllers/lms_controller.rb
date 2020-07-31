@@ -103,26 +103,7 @@ class LmsController < ApplicationController
       fail_for_could_not_load_launch and return
     end
 
-    # Always send users to accounts when a launch happens.  We may decide
-    # later to skip accounts when the user is already logged in, but in
-    # that case we will want to make sure that the launching user is in
-    # fact the user who is logged in, for which we'd need to track a link
-    # between LMS user ID and local user ID.  For users who have launched
-    # before, the trip to Accounts and back should be pretty quick / invisible.
-
-    redirect_to openstax_accounts.login_url(
-      sp: OpenStax::Api::Params.sign(
-        params: {
-          uuid:  launch.lms_tc_scoped_user_id,
-          name:  launch.full_name,
-          email: launch.email,
-          school: launch.school,
-          role:  launch.role
-        },
-        secret: OpenStax::Accounts.configuration.openstax_application_secret
-      ),
-      return_to: lms_complete_launch_url
-    )
+    redirect_to openstax_accounts.login_url(return_to: lms_complete_launch_url)
   end
 
   def complete_launch

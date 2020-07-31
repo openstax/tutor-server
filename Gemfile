@@ -64,8 +64,8 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 9.0.5' # <- DO NOT UPDATE TO 9.1.0+ UNTIL LMS sync issue is resolved
-                                    # details are in: https://github.com/openstax/tutor/issues/923
+gem 'openstax_accounts', '~> 9.4.0'
+
 gem 'action_interceptor'
 
 # Datetime parsing
@@ -91,7 +91,7 @@ gem 'nokogiri'
 gem 'jobba', '~> 1.8.0'
 
 # Lev framework
-gem 'lev', '~> 10.1.0', github: 'lml/lev', ref: '110d240'
+gem 'lev', '~> 10.1.0'
 
 # Contract management
 gem 'fine_print'
