@@ -102,9 +102,10 @@ RSpec.describe Admin::CoursesController, type: :request do
       expect(flash[:notice]).to eq('The course has been created.')
     end
 
-    it 'redirects to /admin/courses' do
+    it 'redirects to /admin/courses with the course id in the query param' do
       req
-      expect(response).to redirect_to(admin_courses_url)
+      id = CourseProfile::Models::Course.order(:created_at).last.id
+      expect(response).to redirect_to(admin_courses_url(query: "id:#{id}"))
     end
   end
 
