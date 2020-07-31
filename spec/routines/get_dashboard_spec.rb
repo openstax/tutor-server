@@ -241,8 +241,7 @@ RSpec.describe GetDashboard, type: :routine do
                 publish_last_requested_at: @unpublished_reading_plan.publish_last_requested_at,
                 publish_job_uuid: @unpublished_reading_plan.publish_job_uuid,
                 shareable_url: ShortCode::UrlFor[@unpublished_reading_plan],
-                tasking_plans: @unpublished_reading_plan.tasking_plans,
-                is_trouble: false
+                tasking_plans: @unpublished_reading_plan.tasking_plans
               ),
               a_hash_including(
                 id: @unpublished_homework_plan.id,
@@ -257,8 +256,7 @@ RSpec.describe GetDashboard, type: :routine do
                 publish_last_requested_at: @unpublished_homework_plan.publish_last_requested_at,
                 publish_job_uuid: @unpublished_homework_plan.publish_job_uuid,
                 shareable_url: ShortCode::UrlFor[@unpublished_homework_plan],
-                tasking_plans: @unpublished_homework_plan.tasking_plans,
-                is_trouble: false
+                tasking_plans: @unpublished_homework_plan.tasking_plans
               )
             ),
             all_tasks_are_ready: true
@@ -353,8 +351,7 @@ RSpec.describe GetDashboard, type: :routine do
                 publish_last_requested_at: @unpublished_reading_plan.publish_last_requested_at,
                 publish_job_uuid: @unpublished_reading_plan.publish_job_uuid,
                 shareable_url: ShortCode::UrlFor[@unpublished_reading_plan],
-                tasking_plans: @unpublished_reading_plan.tasking_plans,
-                is_trouble: false
+                tasking_plans: @unpublished_reading_plan.tasking_plans
               ),
               a_hash_including(
                 id: @unpublished_homework_plan.id,
@@ -369,8 +366,7 @@ RSpec.describe GetDashboard, type: :routine do
                 publish_last_requested_at: @unpublished_homework_plan.publish_last_requested_at,
                 publish_job_uuid: @unpublished_homework_plan.publish_job_uuid,
                 shareable_url: ShortCode::UrlFor[@unpublished_homework_plan],
-                tasking_plans: @unpublished_homework_plan.tasking_plans,
-                is_trouble: false
+                tasking_plans: @unpublished_homework_plan.tasking_plans
               )
             ),
             all_tasks_are_ready: true

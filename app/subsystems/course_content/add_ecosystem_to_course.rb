@@ -34,8 +34,9 @@ class CourseContent::AddEcosystemToCourse
 
       queue = course.is_preview ? :preview : :dashboard
       all_task_ids.each_slice(100) do |task_ids|
-        Tasks::UpdateTaskCaches.set(queue: queue)
-                               .perform_later(task_ids: task_ids, queue: queue.to_s)
+        Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
+          task_ids: task_ids, queue: queue.to_s
+        )
       end
     end
 

@@ -46,7 +46,6 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
         OpenStruct.new(
           id: 23,
           title: 'HW1',
-          is_trouble: false,
           type: 'homework',
           is_draft?: false,
           is_publishing?: true,
@@ -194,7 +193,6 @@ RSpec.describe Api::V1::Courses::DashboardRepresenter, type: :representer do
         a_hash_including(
           'id' => '23',
           'title' => 'HW1',
-          'is_trouble' => false,
           'type' => 'homework',
           'is_draft' => false,
           'is_publishing' => true,

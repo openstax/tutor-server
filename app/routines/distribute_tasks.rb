@@ -133,7 +133,7 @@ class DistributeTasks
       end
 
       Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
-        task_ids: all_tasks.map(&:id), update_cached_attributes: true, queue: queue.to_s
+        task_ids: all_tasks.map(&:id), queue: queue.to_s
       )
 
       changed_tasks = updated_tasks + new_tasks

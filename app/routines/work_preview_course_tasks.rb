@@ -82,9 +82,7 @@ class WorkPreviewCourseTasks
         )
       end
 
-      Tasks::UpdateTaskCaches.call(
-        task_ids: all_tasks.map(&:id), update_cached_attributes: true, background: false
-      )
+      Tasks::UpdateTaskCaches.call task_ids: all_tasks.map(&:id)
     end
 
     # The course is now ready to be claimed
@@ -109,8 +107,7 @@ class WorkPreviewCourseTasks
         free_response: FREE_RESPONSE,
         is_correct: is_correct,
         is_completed: is_completed,
-        completed_at: completed_at,
-        update_caches: false
+        completed_at: completed_at
       )
     end
   end

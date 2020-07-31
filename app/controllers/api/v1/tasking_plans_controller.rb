@@ -65,7 +65,7 @@ class Api::V1::TaskingPlansController < Api::V1::ApiController
         end
       end
       Tasks::UpdateTaskCaches.set(queue: queue).perform_later(
-        task_ids: tasks.map(&:id), update_cached_attributes: true, queue: queue.to_s
+        task_ids: tasks.map(&:id), queue: queue.to_s
       )
 
       respond_with(

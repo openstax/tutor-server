@@ -12,6 +12,11 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     'ungraded_step_count'
   ]
 
+  CACHE_COLUMNS = [
+    :gradable_step_count,
+    :ungraded_step_count
+  ]
+
   attr_accessor :is_publish_requested
 
   # Allow use of 'type' column without STI
@@ -68,6 +73,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   def reload(*args)
     @available_points_without_dropping_per_question_index = nil
+    @unarchived_period_tasking_plans = nil
 
     super
   end
@@ -147,17 +153,21 @@ class Tasks::Models::TaskPlan < ApplicationRecord
                        course&.ecosystems&.first
   end
 
-  def update_gradable_step_counts!
+  def unarchived_period_tasking_plans
+    return @unarchived_period_tasking_plans unless @unarchived_period_tasking_plans.nil?
+
     period_tasking_plans = tasking_plans.filter do |tasking_plan|
       tasking_plan.target_type == 'CourseMembership::Models::Period'
     end
     ActiveRecord::Associations::Preloader.new.preload period_tasking_plans, :target
 
-    unarchived_tasking_plans = period_tasking_plans.reject do |tasking_plan|
+    @unarchived_period_tasking_plans = period_tasking_plans.reject do |tasking_plan|
       tasking_plan.target.archived?
     end
-    period_ids = unarchived_tasking_plans.map(&:target_id)
+  end
 
+  def update_gradable_step_counts
+    period_ids = unarchived_period_tasking_plans.map(&:target_id)
     st = CourseMembership::Models::Student.arel_table
     tasks_by_period_id = tasks
       .select(:gradable_step_count, :ungraded_step_count, st[:course_membership_period_id])
@@ -169,16 +179,24 @@ class Tasks::Models::TaskPlan < ApplicationRecord
       )
       .group_by(&:course_membership_period_id)
 
-    unarchived_tasking_plans.each do |tasking_plan|
+    unarchived_period_tasking_plans.each do |tasking_plan|
       tasks = tasks_by_period_id[tasking_plan.target_id] || []
 
       tasking_plan.gradable_step_count = tasks.sum(&:gradable_step_count)
       tasking_plan.ungraded_step_count = tasks.sum(&:ungraded_step_count)
-      tasking_plan.save validate: false
     end
 
-    self.gradable_step_count = unarchived_tasking_plans.sum(&:gradable_step_count)
-    self.ungraded_step_count = unarchived_tasking_plans.sum(&:ungraded_step_count)
+    self.gradable_step_count = unarchived_period_tasking_plans.sum(&:gradable_step_count)
+    self.ungraded_step_count = unarchived_period_tasking_plans.sum(&:ungraded_step_count)
+
+    self
+  end
+
+  def update_gradable_step_counts!
+    update_gradable_step_counts
+
+    unarchived_period_tasking_plans.each { |tasking_plan| tasking_plan.save validate: false }
+
     save validate: false
   end
 

@@ -16,7 +16,10 @@ module CourseMembership
       ReassignPublishedPeriodTaskPlans[period: student.period]
 
       queue = student.course.is_preview ? :preview : :dashboard
-      Tasks::UpdatePeriodCaches.set(queue: queue).perform_later(period_ids: period.id, force: true)
+      task_plan_ids = Tasks::Models::Task.joins(:taskings).where(
+        taskings: { entity_role_id: student.entity_role_id }
+      ).pluck(:tasks_task_plan_id).compact.uniq
+      Tasks::UpdateTaskPlanCaches.set(queue: queue).perform_later(task_plan_ids: task_plan_ids)
 
       outputs.student = student
 

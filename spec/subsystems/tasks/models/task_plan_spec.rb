@@ -312,14 +312,14 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
       expect(task_plan.ungraded_step_count).to eq 21
 
       period.destroy!
-      task_plan.update_gradable_step_counts!
+      task_plan.reload.update_gradable_step_counts!
       expect(tasking_plan.gradable_step_count).to eq 42
       expect(tasking_plan.ungraded_step_count).to eq 21
       expect(task_plan.gradable_step_count).to eq 0
       expect(task_plan.ungraded_step_count).to eq 0
 
       period.restore!
-      task_plan.update_gradable_step_counts!
+      task_plan.reload.update_gradable_step_counts!
       expect(tasking_plan.gradable_step_count).to eq 42
       expect(tasking_plan.ungraded_step_count).to eq 21
       expect(task_plan.gradable_step_count).to eq 42
@@ -327,7 +327,7 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
       student.destroy!
       task_plan.update_gradable_step_counts!
-      expect(tasking_plan.gradable_step_count).to eq 0
+      expect(tasking_plan.reload.gradable_step_count).to eq 0
       expect(tasking_plan.ungraded_step_count).to eq 0
       expect(task_plan.gradable_step_count).to eq 0
       expect(task_plan.ungraded_step_count).to eq 0

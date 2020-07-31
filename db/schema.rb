@@ -839,54 +839,6 @@ ActiveRecord::Schema.define(version: 2020_07_31_211543) do
     t.index ["entity_role_id", "course_profile_course_id"], name: "index_performance_report_exports_on_role_and_course"
   end
 
-  create_table "tasks_period_caches", id: :serial, force: :cascade do |t|
-    t.integer "course_membership_period_id", null: false
-    t.integer "content_ecosystem_id", null: false
-    t.integer "tasks_task_plan_id"
-    t.datetime "opens_at"
-    t.datetime "due_at"
-    t.integer "student_ids", null: false, array: true
-    t.text "as_toc", default: "{}", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "closes_at"
-    t.index ["content_ecosystem_id"], name: "index_tasks_period_caches_on_content_ecosystem_id"
-    t.index ["course_membership_period_id", "content_ecosystem_id", "tasks_task_plan_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id_and_t_t_p_id", unique: true
-    t.index ["course_membership_period_id", "content_ecosystem_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id", unique: true, where: "(tasks_task_plan_id IS NULL)"
-    t.index ["course_membership_period_id"], name: "index_tasks_period_caches_on_course_membership_period_id"
-    t.index ["due_at"], name: "index_tasks_period_caches_on_due_at"
-    t.index ["opens_at"], name: "index_tasks_period_caches_on_opens_at"
-    t.index ["student_ids"], name: "index_tasks_period_caches_on_student_ids", using: :gin
-    t.index ["tasks_task_plan_id"], name: "index_tasks_period_caches_on_tasks_task_plan_id"
-  end
-
-  create_table "tasks_task_caches", id: :serial, force: :cascade do |t|
-    t.integer "tasks_task_id", null: false
-    t.integer "content_ecosystem_id", null: false
-    t.integer "task_type", null: false
-    t.datetime "opens_at"
-    t.datetime "due_at"
-    t.integer "student_ids", null: false, array: true
-    t.string "student_names", null: false, array: true
-    t.text "as_toc", default: "{}", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "is_cached_for_period", null: false
-    t.integer "teacher_student_ids", null: false, array: true
-    t.bigint "tasks_task_plan_id"
-    t.datetime "withdrawn_at"
-    t.datetime "closes_at"
-    t.index ["content_ecosystem_id"], name: "index_tasks_task_caches_on_content_ecosystem_id"
-    t.index ["due_at"], name: "index_tasks_task_caches_on_due_at"
-    t.index ["is_cached_for_period"], name: "index_tasks_task_caches_on_is_cached_for_period"
-    t.index ["opens_at"], name: "index_tasks_task_caches_on_opens_at"
-    t.index ["student_ids"], name: "index_tasks_task_caches_on_student_ids", using: :gin
-    t.index ["task_type"], name: "index_tasks_task_caches_on_task_type"
-    t.index ["tasks_task_id", "content_ecosystem_id"], name: "index_task_caches_on_task_id_and_ecosystem_id", unique: true
-    t.index ["tasks_task_plan_id"], name: "index_tasks_task_caches_on_tasks_task_plan_id"
-    t.index ["teacher_student_ids"], name: "index_tasks_task_caches_on_teacher_student_ids", using: :gin
-  end
-
   create_table "tasks_task_plans", id: :serial, force: :cascade do |t|
     t.integer "tasks_assistant_id", null: false
     t.integer "course_profile_course_id", null: false
@@ -1025,11 +977,9 @@ ActiveRecord::Schema.define(version: 2020_07_31_211543) do
 
   create_table "tasks_taskings", id: :serial, force: :cascade do |t|
     t.integer "entity_role_id", null: false
-    t.integer "course_membership_period_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "tasks_task_id", null: false
-    t.index ["course_membership_period_id"], name: "index_tasks_taskings_on_course_membership_period_id"
     t.index ["entity_role_id"], name: "index_tasks_taskings_on_entity_role_id"
     t.index ["tasks_task_id", "entity_role_id"], name: "index_tasks_taskings_on_tasks_task_id_and_entity_role_id", unique: true
   end
@@ -1212,12 +1162,6 @@ ActiveRecord::Schema.define(version: 2020_07_31_211543) do
   add_foreign_key "tasks_grading_templates", "tasks_grading_templates", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_period_caches", "content_ecosystems", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_period_caches", "course_membership_periods", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_period_caches", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_task_caches", "content_ecosystems", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_task_caches", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_task_caches", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_grading_templates", on_update: :cascade, on_delete: :restrict
@@ -1225,7 +1169,6 @@ ActiveRecord::Schema.define(version: 2020_07_31_211543) do
   add_foreign_key "tasks_task_steps", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasked_exercises", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasking_plans", "tasks_task_plans", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "tasks_taskings", "course_membership_periods", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_taskings", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_taskings", "tasks_tasks", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_tasks", "content_ecosystems", on_update: :cascade, on_delete: :cascade

@@ -27,9 +27,8 @@ RSpec.describe OpenStax::Biglearn::Api, type: :external do
       @course.update_attribute :is_preview, true
       @reading_task = reading_task_plan.tasks.first
       @tasked_exercise = @reading_task.tasked_exercises.first
-      tasking = @reading_task.taskings.first
-      @period = tasking.period
-      @student = tasking.role.student
+      @student = @reading_task.taskings.first.role.student
+      @period = @student.period
       FactoryBot.create :course_content_excluded_exercise, course: @course
     end
 
