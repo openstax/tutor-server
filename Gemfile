@@ -64,7 +64,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 9.3.0'
+gem 'openstax_accounts', '~> 9.4.0'
 
 gem 'action_interceptor'
 
@@ -91,7 +91,7 @@ gem 'nokogiri'
 gem 'jobba', '~> 1.8.0'
 
 # Lev framework
-gem 'lev', '~> 10.0.0'
+gem 'lev', '~> 10.1.0'
 
 # Contract management
 gem 'fine_print'
