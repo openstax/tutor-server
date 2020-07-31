@@ -9,7 +9,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
 
     @catalog_offering = FactoryBot.create :catalog_offering
 
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
 
     click_on 'Add Course'
     fill_in 'Name', with: 'Physics I'
@@ -23,7 +23,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   end
 
   scenario 'Editing the name of a course' do
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
 
     expect(page).to have_content('Edit course')
@@ -37,7 +37,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
 
 
   scenario 'Editing the course dates' do
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
 
     expect(page).to have_content('Edit course')
@@ -57,7 +57,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   scenario 'Changing "Is College"' do
     @course.update_attribute :is_college, nil
 
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
 
     expect(current_path).to eq(edit_admin_course_path(@course))
@@ -93,7 +93,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   end
 
   scenario 'Changing "Is Test"' do
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
 
     expect(page).to have_content('Edit course')
@@ -106,7 +106,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   end
 
   scenario 'Changing "Does Cost"' do
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
 
     expect(page).to have_content('Edit course')
@@ -126,7 +126,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   end
 
   scenario 'Changing "Is LMS Enabling Allowed"' do
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
 
     expect(page).to have_content('Edit course')
@@ -147,7 +147,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
 
   scenario 'Assigning a school' do
     FactoryBot.create(:school_district_school, name: 'High high hi school')
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
 
     select 'High high hi school', from: 'School'
@@ -158,7 +158,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   end
 
   scenario 'Adding a period', js: true do
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
 
     click_link 'Periods'
@@ -175,7 +175,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   end
 
   scenario 'Editing a period', js: true do
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
 
     click_link 'Periods'
@@ -198,7 +198,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
     physics_new = FetchAndImportBookAndCreateEcosystem[
       book_cnx_id: physics_new_cnx_id]
 
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     find(:id, :ecosystem_id).find("option[value='#{physics_old.id}']").select_option
     click_on 'Set Ecosystem'
 
@@ -211,7 +211,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
     click_on 'Save'
 
     course_2 = CourseProfile::Models::Course.order(:id).last
-
+    visit admin_courses_path(query: '')
     find(:id, :ecosystem_id).find("option[value='#{physics_new.id}']").select_option
     click_on 'Set Ecosystem'
     expect(page).to have_content('Course ecosystem updates have been queued')
@@ -232,7 +232,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
     student_2.is_comped = true
     student_2.save!
 
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
     click_link 'Roster'
 
@@ -259,7 +259,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
     # Payments will cause us to update payment status, so simulate that here
     UpdatePaymentStatus[uuid: student.uuid]
 
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Edit'
     click_link 'Roster'
 

@@ -3,13 +3,16 @@ require 'rails_helper'
 RSpec.describe Admin::CoursesController, type: :request do
   let(:admin) { FactoryBot.create(:user_profile, :administrator) }
 
-  before      { sign_in! admin }
+  before      {
+    sign_in! admin
+    # click_button 'input[type="submit"]'
+  }
 
   context 'GET #index' do
     it 'assigns all CollectCourseInfo output to @course_infos' do
       FactoryBot.create :course_profile_course, name: 'Hello World'
 
-      get admin_courses_url
+      get admin_courses_url(query: '')
 
       expect(assigns[:course_infos].count).to eq(1)
       expect(assigns[:course_infos].first.name).to eq('Hello World')
@@ -26,10 +29,10 @@ RSpec.describe Admin::CoursesController, type: :request do
       it 'paginates the results' do
         3.times { FactoryBot.create(:course_profile_course) }
 
-        get admin_courses_url, params: { page: 1, per_page: 2 }
+        get admin_courses_url, params: { query: '', page: 1, per_page: 2 }
         expect(assigns[:course_infos].length).to eq(2)
 
-        get admin_courses_url, params: { page: 2, per_page: 2 }
+        get admin_courses_url, params: { query: '', page: 2, per_page: 2 }
         expect(assigns[:course_infos].length).to eq(1)
       end
 
@@ -38,19 +41,19 @@ RSpec.describe Admin::CoursesController, type: :request do
 
         context 'with per_page param equal to "all"' do
           it 'assigns all courses to the first page' do
-            get admin_courses_url, params: { page: 1, per_page: 'all' }
+            get admin_courses_url, params: { query: '', page: 1, per_page: 'all' }
             expect(assigns[:course_infos].length).to eq(26)
           end
         end
 
         context 'with no per_page param' do
           it 'assigns 25 courses per page' do
-            get admin_courses_url, params: { page: 1 }
+            get admin_courses_url, params: { query: '', page: 1 }
             expect(assigns[:course_infos].length).to eq(25)
           end
 
           it 'can show other pages' do
-            get admin_courses_url, params: { page: 2 }
+            get admin_courses_url, params: { query: '', page: 2 }
             expect(assigns[:course_infos].length).to eq(1)
           end
         end
@@ -60,7 +63,7 @@ RSpec.describe Admin::CoursesController, type: :request do
         it 'returns http status OK' do
           expect(CourseProfile::Models::Course.count).to eq(0)
 
-          get admin_courses_url, params: { page: 1 }
+          get admin_courses_url, params: { query: '', page: 1 }
           expect(response).to have_http_status :ok
         end
       end

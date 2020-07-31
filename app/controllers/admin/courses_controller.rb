@@ -47,7 +47,7 @@ class Admin::CoursesController < Admin::BaseController
     handle_with(Admin::CoursesCreate,
                 success: ->(*) {
                   flash.notice = 'The course has been created.'
-                  redirect_to admin_courses_path
+                  redirect_to admin_courses_path(query: "id:#{@handler_result.outputs.course.id}")
                 },
                 failure: ->(*) {
                   flash.now[:error] = @handler_result.errors.full_messages

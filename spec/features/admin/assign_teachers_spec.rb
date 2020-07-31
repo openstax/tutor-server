@@ -15,7 +15,7 @@ RSpec.feature 'Administration', js: true do
     )
 
     # Create a course
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Add Course'
 
     fill_in 'Name', with: 'A Course'
