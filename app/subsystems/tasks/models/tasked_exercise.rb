@@ -168,6 +168,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     full_credit_question_ids.include? question_id
   end
 
+  def submitted_late?
+    task_step.completed? && task_step.last_completed_at >= task_step.task.due_at
+  end
+
   # Used directly only when grading
   def grader_points
     gp = super

@@ -126,10 +126,12 @@ class CalculateTaskPlanScores
               is_correct: tasked.is_correct?,
               selected_answer_id: tasked.answer_id,
               points: points,
+              late_work_point_penalty: tasked.late_work_point_penalty,
               free_response: tasked.free_response,
               grader_points: tasked.grader_points,
               grader_comments: tasked.grader_comments,
-              needs_grading: tasked.needs_grading?
+              needs_grading: tasked.needs_grading?,
+              submitted_late: tasked.submitted_late?
             }
           else
             {
