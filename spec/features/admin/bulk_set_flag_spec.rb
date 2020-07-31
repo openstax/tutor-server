@@ -12,7 +12,7 @@ RSpec.feature 'Bulk set course flag', js: true do
   end
 
   scenario 'select all on page with no query' do
-    visit admin_courses_path(per_page: 1)
+    visit admin_courses_path(query: '', per_page: 1)
 
     check 'courses_select_all_on_page'
     uncheck 'courses_select_all_on_all_pages'
@@ -33,7 +33,7 @@ RSpec.feature 'Bulk set course flag', js: true do
   end
 
   scenario 'select all on all pages with no query' do
-    visit admin_courses_path(per_page: 1)
+    visit admin_courses_path(query: '', per_page: 1)
 
     check 'courses_select_all_on_all_pages'
 

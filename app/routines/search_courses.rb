@@ -28,7 +28,6 @@ class SearchCourses
     ).distinct
 
     run(:search, relation: relation, sortable_fields: SORTABLE_FIELDS, params: params) do |with|
-
       with.default_keyword :any
 
       co = CourseProfile::Models::Course.arel_table

@@ -7,7 +7,7 @@ RSpec.feature 'Administration' do
   end
 
   scenario 'create a blank course' do
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Add Course'
 
     fill_in 'Name', with: 'Hello hi ciao Hey World'
@@ -21,7 +21,7 @@ RSpec.feature 'Administration' do
   scenario 'create a blank course with a catalog_offering' do
     catalog_offering = FactoryBot.create :catalog_offering
 
-    visit admin_courses_path
+    visit admin_courses_path(query: '')
     click_link 'Add Course'
 
     fill_in 'Name', with: 'Hello hi ciao Hey World'

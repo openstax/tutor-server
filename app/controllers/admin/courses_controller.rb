@@ -7,21 +7,26 @@ class Admin::CoursesController < Admin::BaseController
   def index
     @query = params[:query]
     @order_by = params[:order_by]
-    result = SearchCourses.call(query: params[:query], order_by: params[:order_by] || 'id')
-    per_page = params[:per_page] || 25
-    per_page = result.outputs.total_count if params[:per_page] == 'all'
-    params_for_pagination = { page: (params[:page] || 1), per_page: per_page }
 
-    if result.errors.any?
-      flash[:error] = "Invalid search"
-      redirect_to admin_courses_path and return
+    @course_infos = if @query.nil?
+      []
+    else
+      result = SearchCourses.call(query: @query, order_by: @order_by || 'id')
+      per_page = params[:per_page] || 25
+      per_page = result.outputs.total_count if params[:per_page] == 'all'
+      params_for_pagination = { page: (params[:page] || 1), per_page: per_page }
+
+      if result.errors.any?
+        flash[:error] = "Invalid search"
+        redirect_to admin_courses_path and return
+      end
+
+      result.outputs.items.preload(
+        teachers: { role: :profile },
+        periods: :students,
+        course_ecosystems: { ecosystem: :books }
+      ).try(:paginate, params_for_pagination)
     end
-
-    @course_infos = result.outputs.items.preload(
-      teachers: { role: :profile },
-      periods: :students,
-      course_ecosystems: { ecosystem: :books }
-    ).try(:paginate, params_for_pagination)
 
     @ecosystems = Content::ListEcosystems[]
     result = CollectJobsData.call job_name: 'CourseContent::AddEcosystemToCourse'
@@ -42,7 +47,7 @@ class Admin::CoursesController < Admin::BaseController
     handle_with(Admin::CoursesCreate,
                 success: ->(*) {
                   flash.notice = 'The course has been created.'
-                  redirect_to admin_courses_path
+                  redirect_to admin_courses_path(query: "id:#{@handler_result.outputs.course.id}")
                 },
                 failure: ->(*) {
                   flash.now[:error] = @handler_result.errors.full_messages
