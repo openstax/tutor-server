@@ -13,10 +13,10 @@ RSpec.describe User::Models::Profile, type: :model do
     expect(profile_2).to_not be_valid
   end
 
-  [:username, :first_name, :last_name, :full_name, :title,
-   :name, :casual_name, :faculty_status, :role, :school_type].each do |method|
-    it { is_expected.to delegate_method(method).to(:account) }
-  end
+  [
+    :username, :first_name, :last_name, :full_name, :title, :name, :casual_name, :role,
+    :salesforce_contact_id, :faculty_status, :grant_tutor_access, :school_type, :school_location
+  ].each { |method| it { is_expected.to delegate_method(method).to(:account) } }
 
   [:first_name=, :last_name=, :full_name=, :title=].each do |method|
     it { is_expected.to delegate_method(method).to(:account).with_arguments('foo') }

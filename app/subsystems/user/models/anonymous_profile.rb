@@ -37,6 +37,14 @@ module User
         'unknown_school_type'
       end
 
+      def school_location
+        'unknown_school_location'
+      end
+
+      def can_create_courses?
+        false
+      end
+
       def ui_settings
         {}
       end

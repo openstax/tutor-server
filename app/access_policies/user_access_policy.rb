@@ -11,5 +11,4 @@ class UserAccessPolicy
       false
     end
   end
-
 end

@@ -22,12 +22,21 @@ module User
       validates :account, uniqueness: true
       validates :ui_settings, max_json_length: 10_000
 
-      delegate :username, :first_name, :last_name, :full_name, :title, :name, :casual_name,
-               :salesforce_contact_id, :faculty_status, :role, :school_type, :school_location, :uuid, :support_identifier, :is_kip, :is_test,
+      delegate :username, :first_name, :last_name, :full_name, :title, :name, :casual_name, :role,
+               :salesforce_contact_id, :faculty_status, :grant_tutor_access, :school_type,
+               :school_location, :uuid, :support_identifier, :is_kip, :is_test,
                :first_name=, :last_name=, :full_name=, :title=, to: :account
 
       def self.anonymous
         ::User::Models::AnonymousProfile.instance
+      end
+
+      def can_create_courses?
+        account.grant_tutor_access || (
+          account.confirmed_faculty? && !account.foreign_school? && (
+            account.college? || account.high_school? || account.home_school?
+          )
+        )
       end
 
       def is_human?
