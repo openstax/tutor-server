@@ -16,17 +16,22 @@ OpenStax::Accounts.configure do |config|
   config.enable_stubbing = ActiveAttr::Typecasting::BooleanTypecaster.new.call(secrets[:stub])
   config.logout_via = :delete
   config.account_user_mapper = MapUsersAccounts
-  config.logout_redirect_url = ->(request) do
+  config.logout_handler = ->(controller) do
+    request = controller.request
     if request.session[:admin_user_id]
       admin = User::Models::Profile.find(request.session[:admin_user_id])
+      request.session.delete(:admin_user_id)
       if admin.present?
         request.session[:account_id] = admin.account_id
-        request.session.delete(:admin_user_id)
-        return '/admin/users'
+        controller.redirect_to '/admin/users'
+        return
       end
     end
-    LogoutRedirectChooser.new(request.url).choose(default: config.default_logout_redirect_url)
+    controller.sign_out!
+    controller.redirect_to config.enable_stubbing? ?
+      controller.main_app.root_url : LogoutRedirectChooser.new(request.url).choose(default: config.default_logout_redirect_url)
   end
+
   config.return_to_url_approver = ->(url) do
     begin
       uri = Addressable::URI.parse(url)
