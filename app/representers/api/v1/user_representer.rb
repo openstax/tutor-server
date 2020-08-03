@@ -21,15 +21,6 @@ module Api::V1
     property :is_researcher?,
              as: :is_researcher
 
-    property :faculty_status,
-             type: String,
-             schema_info: {
-               description: "The user's faculty status, one of [#{
-                 OpenStax::Accounts::Account.faculty_statuses.keys.map(&:to_s).join(', ')
-               }]",
-               required: true
-             }
-
     property :role,
              as: :self_reported_role,
              type: String,
@@ -40,21 +31,20 @@ module Api::V1
                required: true
              }
 
-    property :school_type,
+    property :faculty_status,
              type: String,
              schema_info: {
-               description: "The user's school type, one of [#{
-                 OpenStax::Accounts::Account.school_types.keys.map(&:to_s).join(', ')
+               description: "The user's faculty status, one of [#{
+                 OpenStax::Accounts::Account.faculty_statuses.keys.map(&:to_s).join(', ')
                }]",
                required: true
              }
 
-    property :school_location,
-             type: String,
+    property :can_create_courses?,
+             as: :can_create_courses,
              schema_info: {
-               description: "The geographic location of the user's school, one of [#{
-                 OpenStax::Accounts::Account.school_locations.keys.map(&:to_s).join(', ')
-               }]",
+               type: :boolean,
+               description: 'Whether or not the user is allowed to create courses',
                required: true
              }
 

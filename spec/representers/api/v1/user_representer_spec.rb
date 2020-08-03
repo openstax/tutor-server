@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::UserRepresenter, type: :representer do
-
-
   let(:user)           { FactoryBot.create(:user_profile) }
   let(:representation) { Api::V1::UserRepresenter.new(user).as_json }
 
@@ -14,10 +12,9 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
     expect(representation['is_customer_service']).to eq user.is_customer_support?
     expect(representation['is_content_analyst']).to eq user.is_content_analyst?
     expect(representation['is_researcher']).to eq user.is_researcher?
-    expect(representation['faculty_status']).to eq user.faculty_status
     expect(representation['self_reported_role']).to eq user.role
-    expect(representation['school_type']).to eq user.school_type
-    expect(representation['school_location']).to eq user.school_location
+    expect(representation['faculty_status']).to eq user.faculty_status
+    expect(representation['can_create_courses']).to eq user.can_create_courses?
     expect(representation['viewed_tour_stats']).to eq []
     expect(representation['terms_signatures_needed']).to eq false
     expect(representation['profile_url']).to eq Addressable::URI.join(
@@ -30,7 +27,7 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
     expect(representation['viewed_tour_stats']).to eq [{'id' => 'chaos-fang', 'view_count' => 1}]
   end
 
-  it "flags terms as needing signing" do
+  it 'flags terms as needing signing' do
     user # force let to fire before create contract
 
     FinePrint::Contract.create! do |contract|
@@ -40,9 +37,6 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
       contract.content = 'Placeholder for general terms of use, required for new installations to function'
     end
 
-    expect(representation).to include(
-      "terms_signatures_needed" => true
-    )
+    expect(representation).to include('terms_signatures_needed' => true)
   end
-
 end
