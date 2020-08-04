@@ -17,10 +17,22 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
 
   subject(:instance) { described_class.new }
 
+  before { @course.reload }
+
   it 'calls Tasks::GetPerformanceReport to get the report information' do
     expect(Tasks::GetPerformanceReport).to(
       receive(:[]).with(course: @course, is_teacher: true).once.and_call_original
     )
+
+    expect { described_class.call(course: @course) }.not_to raise_error
+  end
+
+  it 'errors if the course was created in a different environment' do
+    expect(Tasks::GetPerformanceReport).not_to receive(:[])
+    expect(Rails.logger).to receive(:error)
+    expect(Raven).to receive(:capture_message)
+
+    @course.update_attribute :environment_name, 'probably_production'
 
     expect { described_class.call(course: @course) }.not_to raise_error
   end

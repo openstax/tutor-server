@@ -144,6 +144,10 @@ class CourseProfile::Models::Course < ApplicationRecord
     ended?(current_time) && !cache&.teacher_performance_report.nil?
   end
 
+  def created_in_current_environment?
+    environment_name == Rails.application.secrets.environment_name
+  end
+
   protected
 
   def set_starts_at_and_ends_at

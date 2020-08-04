@@ -49,6 +49,16 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
     )
   end
 
+  it 'knows its environment_name' do
+    expect(course.environment_name).to eq Rails.application.secrets.environment_name
+  end
+
+  it 'knows if it was created in the current environment' do
+    expect(course.created_in_current_environment?).to eq true
+    course.environment_name = 'probably_production'
+    expect(course.created_in_current_environment?).to eq false
+  end
+
   it 'knows if it is deletable' do
     expect(course).to be_deletable
 

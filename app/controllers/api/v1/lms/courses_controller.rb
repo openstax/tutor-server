@@ -1,9 +1,8 @@
 class Api::V1::Lms::CoursesController < Api::V1::ApiController
-
   before_action :get_course
 
   resource_description do
-    api_versions "v1"
+    api_versions 'v1'
     short_description 'LMS course actions'
     description <<-EOS
     EOS
@@ -81,5 +80,4 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
   def get_course
     @course = CourseProfile::Models::Course.find(params[:id])
   end
-
 end
