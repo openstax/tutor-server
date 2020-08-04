@@ -344,6 +344,7 @@ ActiveRecord::Schema.define(version: 2020_08_07_211136) do
     t.float "reading_weight", default: 0.5, null: false
     t.string "timezone", null: false
     t.boolean "past_due_unattempted_ungraded_wrq_are_zero", default: true, null: false
+    t.string "environment_name", null: false
     t.index ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id"
     t.index ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id"
     t.index ["is_lms_enabling_allowed"], name: "index_course_profile_courses_on_is_lms_enabling_allowed"

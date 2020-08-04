@@ -62,6 +62,7 @@ class CourseProfile::Models::Course < ApplicationRecord
   validates :homework_weight,
             :reading_weight,
             presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
+  validates :environment_name, presence: true
 
   validate :ends_after_it_starts, :valid_year
 
@@ -69,7 +70,7 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   delegate :name, to: :school, prefix: true, allow_nil: true
 
-  before_validation :set_starts_at_and_ends_at, :set_weights
+  before_validation :set_starts_at_and_ends_at, :set_weights, :set_environment_name
 
   scope :not_ended, -> { where(arel_table[:ends_at].gt(Time.now)) }
 
@@ -156,6 +157,10 @@ class CourseProfile::Models::Course < ApplicationRecord
   def set_weights
     self.homework_weight ||= 0.5
     self.reading_weight ||= 1 - homework_weight
+  end
+
+  def set_environment_name
+    self.environment_name ||= Rails.application.secrets.environment_name
   end
 
   def ends_after_it_starts
