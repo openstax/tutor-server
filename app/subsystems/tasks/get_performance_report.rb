@@ -23,9 +23,13 @@ module Tasks
         return unless outputs.performance_report.nil?
       end
 
-      periods = []
+      roles_by_period_id = {}
       if is_teacher
-        periods = course.periods.reject(&:archived?)
+        periods = course.periods.preload(
+          students: { role: { profile: :account } }
+        ).reject(&:archived?)
+
+        periods.each { |period| roles_by_period_id[period.id] = period.students.map(&:role) }
       else
         member = role.course_member
 
@@ -33,18 +37,21 @@ module Tasks
           if member.nil? || member.course_profile_course_id != course.id
 
         periods = [ member.period ]
+        roles_by_period_id[member.period.id] = [ role ]
       end
 
       tz = course.time_zone
       current_time = tz.now
 
-      tasks = get_course_tasks(course, role, is_teacher, current_time)
-      tasks_by_period_id = tasks.group_by(&:course_membership_period_id)
+      tasks_by_role_id = get_past_due_tasks_by_role_id(
+        roles_by_period_id.values.flatten, current_time
+      )
 
       pre_wrm = course.pre_wrm_scores?
 
       outputs.performance_report = periods.map do |period|
-        period_tasks = tasks_by_period_id[period.id] || []
+        roles = roles_by_period_id[period.id] || []
+        period_tasks = tasks_by_role_id.values_at(*roles.map(&:id)).compact.flatten
         tasking_plans = filter_and_sort_tasking_plans(period_tasks, course, period)
 
         # Assign column numbers in the performance report to task_plans
@@ -53,26 +60,23 @@ module Tasks
           col_nums_by_task_plan_id[tasking_plan.tasks_task_plan_id] = col_num
         end
 
-        # Sort the students into the performance report rows by name
-        period_tasks_by_role_id = period_tasks.group_by(&:role_id)
-        sorted_role_id_tasks_array = period_tasks_by_role_id.sort_by do |_, tasks|
-          first_task = tasks.first
-          name = "#{first_task.last_name} #{first_task.first_name}"
-          name = first_task.username if name.blank?
-          name.downcase
-        end
-
         # This hash will accumulate student tasks to calculate header stats later
         task_plan_id_to_task_map = Hash.new { |hash, key| hash[key] = [] }
-        student_data = sorted_role_id_tasks_array.map do |role_id, tasks|
-          first_task = tasks.first
 
-          name = "#{first_task.first_name} #{first_task.last_name}"
-          name = first_task.username if name.blank?
+        # Sort the students into the performance report rows by name
+        student_data = roles.sort_by do |rr|
+          name = "#{rr.last_name} #{rr.first_name}"
+          name = rr.username if name.blank?
+          name.downcase
+        end.map do |rr|
+          tasks = tasks_by_role_id[rr.id] || []
 
-          # Populate the student_tasks array but leave empty spaces (nils)
+          name = "#{rr.first_name} #{rr.last_name}"
+          name = rr.username if name.blank?
+
+          # Populate the task_scores array but leave empty spaces (nils)
           # for assignments the student hasn't done
-          student_tasks = Array.new(tasking_plans.size)
+          tasks_for_columns = Array.new(tasking_plans.size)
 
           tasks.each do |task|
             col_num = col_nums_by_task_plan_id[task.tasks_task_plan_id]
@@ -82,26 +86,34 @@ module Tasks
             # only to a different period and done by the student before transferring
             next if col_num.nil?
 
-            student_tasks[col_num] = task
+            tasks_for_columns[col_num] = task
           end
 
-          is_dropped = !first_task.dropped_at.nil?
+          case rr.role_type
+          when 'student'
+            student = rr.student
+            is_dropped = !student.dropped_at.nil?
+            student_identifier = student.student_identifier
+          when 'teacher_student'
+            is_dropped = !rr.teacher_student.deleted_at.nil?
+            student_identifier = ''
+          end
 
           # Gather the non-dropped student tasks into the task_plan_id_to_task_map hash
-          student_tasks.compact.each do |task|
+          tasks_for_columns.compact.each do |task|
             task_plan_id_to_task_map[task.tasks_task_plan_id] << task
-          end if !is_dropped
+          end unless is_dropped
 
           data = get_task_data(
             pre_wrm: pre_wrm,
-            tasks: student_tasks,
+            tasks: tasks_for_columns,
             tz: tz,
             current_time: current_time,
             is_teacher: is_teacher
           )
           non_nil_data = data.compact
           homework_tasks = non_nil_data.select { |dd| dd.type == 'homework' }.map(&:task)
-          reading_tasks = non_nil_data.select { |dd| dd.type == 'reading' }.map(&:task)
+          reading_tasks =  non_nil_data.select { |dd| dd.type == 'reading'  }.map(&:task)
 
           homework_score = average_score(
             pre_wrm: pre_wrm,
@@ -169,11 +181,11 @@ module Tasks
 
           Hashie::Mash.new(
             name: name,
-            first_name: first_task.first_name,
-            last_name: first_task.last_name,
-            student_identifier: first_task.student_identifier,
-            role: role_id,
-            user: first_task.user_id,
+            first_name: rr.first_name,
+            last_name: rr.last_name,
+            role: rr.id,
+            user: rr.user_profile_id,
+            student_identifier: student_identifier,
             data: data,
             homework_score: homework_score,
             homework_progress: homework_progress,
@@ -200,36 +212,17 @@ module Tasks
       end
     end
 
-    # Return reading, homework and external tasks for a student
+    # Return reading, homework and external tasks for the given roles
     # reorder(nil) is required for distinct to work
     # distinct is required for preloading to work
-    def get_course_tasks(course, role, is_teacher, current_time)
-      is_teacher_student = role.present? && role.teacher_student?
+    def get_past_due_tasks_by_role_id(roles, current_time)
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
       tt = Tasks::Models::Task.arel_table
       er = Entity::Role.arel_table
-      st = is_teacher_student ?
-        CourseMembership::Models::TeacherStudent.arel_table :
-        CourseMembership::Models::Student.arel_table
-      up = User::Models::Profile.arel_table
-      ac = OpenStax::Accounts::Account.arel_table
-      rel = Tasks::Models::Task
-        .select(
-          [
-            tt[ Arel.star ],
-            er[:id].as('"role_id"'),
-            is_teacher_student ? Arel::Nodes::SqlLiteral.new("'' as student_identifier") :
-                                 st[:student_identifier],
-            st[:course_membership_period_id],
-            is_teacher_student ? st[:deleted_at].as('"dropped_at"') : st[:dropped_at],
-            up[:id].as('"user_id"'),
-            ac[:username],
-            ac[:first_name],
-            ac[:last_name]
-          ]
-        )
-        .joins(:course, task_plan: :tasking_plans)
-        .where(task_type: task_types, task_plan: { withdrawn_at: nil })
+      Tasks::Models::Task
+        .select([ tt[Arel.star], er[:id].as('"role_id"') ])
+        .joins(:course, task_plan: :tasking_plans, taskings: { role: [ profile: :account ] })
+        .where(task_type: task_types, task_plan: { withdrawn_at: nil }, taskings: { role: roles })
         .where(
           <<~WHERE_SQL
             TIMEZONE(
@@ -240,24 +233,7 @@ module Tasks
         .preload(:taskings, :course, task_plan: [ :tasking_plans, :course, :extensions ])
         .reorder(nil)
         .distinct
-
-      if is_teacher
-        rel = rel.joins(
-          taskings: { role: [ :student, profile: :account ] }
-        ).where(
-          taskings: { role: { student: { course_profile_course_id: course.id } } }
-        )
-      elsif is_teacher_student
-        rel = rel.joins(
-          taskings: { role: [ :teacher_student, profile: :account ] }
-        ).where(taskings: { role: role })
-      else # treat as student and load only that role's tasks
-        rel = rel.joins(
-          taskings: { role: [ :student, profile: :account ] }
-        ).where(taskings: { role: role })
-      end
-
-      rel.to_a
+        .group_by(&:role_id)
     end
 
     def filter_and_sort_tasking_plans(tasks, course, period)
