@@ -217,8 +217,8 @@ RSpec::Matchers.define :be_the_same_time_as do |expected|
   end
 end
 
-# Make the Boxr gem work with Webmock/VCR
 RSpec.configure do |config|
+  # Make the Boxr gem work with Webmock/VCR
   config.before(:suite) do
     Boxr.send :remove_const, 'BOX_CLIENT'
     Boxr::BOX_CLIENT = HTTPClient.new

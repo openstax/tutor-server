@@ -22,7 +22,7 @@ class Lms::SendCourseScores
 
     @course = course
 
-    if @course.created_in_current_environment?
+    if @course.environment.current?
       callbacks = Lms::Models::CourseScoreCallback.where(course: course)
 
       @course.update_attributes(last_lms_scores_push_job_id: status.id)

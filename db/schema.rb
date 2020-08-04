@@ -344,9 +344,10 @@ ActiveRecord::Schema.define(version: 2020_08_07_211136) do
     t.float "reading_weight", default: 0.5, null: false
     t.string "timezone", null: false
     t.boolean "past_due_unattempted_ungraded_wrq_are_zero", default: true, null: false
-    t.string "environment_name", null: false
+    t.bigint "environment_id", null: false
     t.index ["catalog_offering_id"], name: "index_course_profile_courses_on_catalog_offering_id"
     t.index ["cloned_from_id"], name: "index_course_profile_courses_on_cloned_from_id"
+    t.index ["environment_id"], name: "index_course_profile_courses_on_environment_id"
     t.index ["is_lms_enabling_allowed"], name: "index_course_profile_courses_on_is_lms_enabling_allowed"
     t.index ["is_preview", "is_preview_ready", "preview_claimed_at", "catalog_offering_id"], name: "preview_pending_index"
     t.index ["name"], name: "index_course_profile_courses_on_name"
@@ -380,6 +381,13 @@ ActiveRecord::Schema.define(version: 2020_08_07_211136) do
     t.index ["research_identifier"], name: "index_entity_roles_on_research_identifier", unique: true
     t.index ["role_type"], name: "index_entity_roles_on_role_type"
     t.index ["user_profile_id"], name: "index_entity_roles_on_user_profile_id"
+  end
+
+  create_table "environments", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_environments_on_name", unique: true
   end
 
   create_table "fine_print_contracts", id: :serial, force: :cascade do |t|
@@ -1129,6 +1137,7 @@ ActiveRecord::Schema.define(version: 2020_08_07_211136) do
   add_foreign_key "course_profile_caches", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_profile_courses", "catalog_offerings", on_update: :cascade, on_delete: :nullify
   add_foreign_key "course_profile_courses", "course_profile_courses", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "course_profile_courses", "environments", on_update: :cascade, on_delete: :restrict
   add_foreign_key "course_profile_courses", "school_district_schools", on_update: :cascade, on_delete: :nullify
   add_foreign_key "entity_roles", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_contexts", "course_profile_courses", on_update: :cascade, on_delete: :cascade

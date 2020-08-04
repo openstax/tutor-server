@@ -17,6 +17,8 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   has_one :cache, inverse_of: :course
 
+  belongs_to :environment, subsystem: :none, inverse_of: :courses
+
   belongs_to :cloned_from, foreign_key: 'cloned_from_id',
                            class_name: 'CourseProfile::Models::Course',
                            optional: true
@@ -62,7 +64,6 @@ class CourseProfile::Models::Course < ApplicationRecord
   validates :homework_weight,
             :reading_weight,
             presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
-  validates :environment_name, presence: true
 
   validate :ends_after_it_starts, :valid_year
 
@@ -70,7 +71,7 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   delegate :name, to: :school, prefix: true, allow_nil: true
 
-  before_validation :set_starts_at_and_ends_at, :set_weights, :set_environment_name
+  before_validation :set_starts_at_and_ends_at, :set_weights, :set_environment
 
   scope :not_ended, -> { where(arel_table[:ends_at].gt(Time.now)) }
 
@@ -144,10 +145,6 @@ class CourseProfile::Models::Course < ApplicationRecord
     ended?(current_time) && !cache&.teacher_performance_report.nil?
   end
 
-  def created_in_current_environment?
-    environment_name == Rails.application.secrets.environment_name
-  end
-
   protected
 
   def set_starts_at_and_ends_at
@@ -163,8 +160,8 @@ class CourseProfile::Models::Course < ApplicationRecord
     self.reading_weight ||= 1 - homework_weight
   end
 
-  def set_environment_name
-    self.environment_name ||= Rails.application.secrets.environment_name
+  def set_environment
+    self.environment ||= Environment.current
   end
 
   def ends_after_it_starts

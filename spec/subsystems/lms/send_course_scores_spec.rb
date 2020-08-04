@@ -32,7 +32,7 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
     expect(Rails.logger).to receive(:error)
     expect(Raven).to receive(:capture_message)
 
-    @course.update_attribute :environment_name, 'probably_production'
+    @course.update_attribute :environment, FactoryBot.create(:environment)
 
     expect { described_class.call(course: @course) }.not_to raise_error
   end

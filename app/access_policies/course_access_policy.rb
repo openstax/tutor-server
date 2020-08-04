@@ -20,8 +20,7 @@ class CourseAccessPolicy
       (course.offering.nil? || course.offering.is_available) &&
       UserIsCourseTeacher[user: requestor, course: course]
     when :lms_connection_info, :lms_sync_scores, :lms_course_pair
-      course.created_in_current_environment? &&
-      UserIsCourseTeacher[user: requestor, course: course]
+      course.environment.current? && UserIsCourseTeacher[user: requestor, course: course]
     else
       false
     end

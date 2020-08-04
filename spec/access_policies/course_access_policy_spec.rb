@@ -9,7 +9,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     @clone_period = FactoryBot.create :course_membership_period, course: @clone_course
 
     @copied_course = FactoryBot.create :course_profile_course,
-                                       environment_name: 'probably_production'
+                                       environment: FactoryBot.create(:environment)
     @copied_period = FactoryBot.create :course_membership_period, course: @copied_course
 
     @anonymous = User::Models::Profile.anonymous
