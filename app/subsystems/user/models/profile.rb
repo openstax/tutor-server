@@ -34,7 +34,7 @@ module User
       def can_create_courses?
         account.grant_tutor_access || (
           account.confirmed_faculty? && !account.foreign_school? && (
-            account.college? || account.high_school? || account.home_school?
+            account.college? || account.high_school? || account.k12_school? || account.home_school?
           )
         )
       end
