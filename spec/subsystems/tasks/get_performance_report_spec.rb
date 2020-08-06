@@ -746,11 +746,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       expect(first_period_report.students.first.data).to include nil
     end
 
-    it 'excludes students that did not get assigned any tasks' do
+    it 'includes all students in the period, even if they did not get assigned any tasks' do
       first_student_of_first_period.role.taskings.each { |tasking| tasking.task.really_destroy! }
-      expect(first_period_report.students.map(&:name)).not_to(
-        include first_student_of_first_period.name
-      )
+      expect(first_period_report.students.map(&:name)).to include first_student_of_first_period.name
     end
 
     it 'works when a student was not assigned a particular task' do
