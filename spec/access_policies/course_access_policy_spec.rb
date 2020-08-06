@@ -194,7 +194,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     end
 
     context 'confirmed faculty' do
-      [ :college, :high_school, :home_school ].each do |school_type|
+      [ :college, :high_school, :k12_school, :home_school ].each do |school_type|
         context school_type.to_s do
           before { requestor.account.update_attribute :school_type, school_type }
 
@@ -261,7 +261,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
       end
 
-      [ :k12_school, :other_school_type ].each do |school_type|
+      [ :other_school_type ].each do |school_type|
         context school_type.to_s do
           before { requestor.account.update_attribute :school_type, school_type }
 
@@ -520,7 +520,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
     end
 
     context 'confirmed faculty' do
-      [ :college, :high_school, :home_school ].each do |school_type|
+      [ :college, :high_school, :k12_school, :home_school ].each do |school_type|
         context school_type.to_s do
           before { requestor.account.update_attribute :school_type, school_type }
 
@@ -587,7 +587,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
       end
 
-      [ :k12_school, :other_school_type ].each do |school_type|
+      [ :other_school_type ].each do |school_type|
         context school_type.to_s do
           before { requestor.account.update_attribute :school_type, school_type }
 
