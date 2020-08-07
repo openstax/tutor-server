@@ -293,7 +293,9 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def dropped_method
-    dropped_question = task_step.task&.task_plan&.dropped_questions&.find { |q| q.question_id == question_id }
+    dropped_question = task_step.task&.task_plan&.dropped_questions&.find do |dq|
+      dq.question_id == question_id
+    end
     dropped_question&.drop_method
   end
 
@@ -308,7 +310,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   # NOTE: The following method does not take into account automatic publication from the template
   def grade_manually_published?
     was_manually_graded? &&
-    grader_points == published_points &&
+    grader_points == published_grader_points &&
     grader_comments == published_comments
   end
 
