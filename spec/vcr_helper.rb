@@ -5,10 +5,10 @@ VCR::Configuration.class_exec do
     secret_name = path_to_secret.join('_')
 
     secret_value = Rails.application.secrets
-    path_to_secret.each { |key| secret_value = secret_value[key.to_sym] }
-    secret_value = secret_value.to_s
+    path_to_secret.each { |key| secret_value = secret_value&.[](key.to_sym) }
 
     if secret_value.present?
+      secret_value = secret_value.to_s
       filter_sensitive_data("<#{secret_name}>") { secret_value }
 
       # If the secret value is a URL, it may be used without its protocol
@@ -26,6 +26,18 @@ VCR::Configuration.class_exec do
       if secret_value != url_secret_value
         filter_sensitive_data("<#{secret_name}_url>") { url_secret_value }
       end
+    end
+  end
+
+  def filter_request_header(header)
+    filter_sensitive_data("<#{header}>") do |interaction|
+      interaction.request.headers[header]&.first
+    end
+  end
+
+  def filter_response_header(header)
+    filter_sensitive_data("<#{header}>") do |interaction|
+      interaction.response.headers[header]&.first
     end
   end
 end
@@ -62,6 +74,14 @@ VCR.configure do |c|
   [ 'client_id', 'client_secret', 'jwt_public_key_id', 'jwt_private_key',
     'jwt_private_key_password', 'enterprise_id', 'exports_folder' ].each do |field_name|
     c.filter_secret(['box', field_name])
+  end
+
+  c.filter_secret(['aws', 's3', 'bucket_name'])
+
+  c.filter_request_header 'Authorization'
+
+  ['X-Amz-Request-Id', 'X-Amz-Id-2'].each do |response_header|
+    c.filter_response_header response_header
   end
 end
 

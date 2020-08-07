@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: https://<aws_s3_bucket_name>.s3.amazonaws.com/exports/f30204859d1220abd380bda909d7cfba6744c9455668affd2f0e03d94872dc75.xlsx
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - fog-core/2.1.2
+      Content-Type:
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      X-Amz-Acl:
+      - private
+      Cache-Control:
+      - max-age=31536000
+      Content-Disposition:
+      - attachment; filename="Sociology_with_Courseware_Review_Scores_20200807-163104.xlsx"
+      X-Amz-Date:
+      - 20200807T200859Z
+      X-Amz-Content-Sha256:
+      - STREAMING-AWS4-HMAC-SHA256-PAYLOAD
+      X-Amz-Decoded-Content-Length:
+      - '12425'
+      Authorization:
+      - "<Authorization>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      X-Amz-Id-2:
+      - "<X-Amz-Id-2>"
+      X-Amz-Request-Id:
+      - "<X-Amz-Request-Id>"
+      Date:
+      - Fri, 07 Aug 2020 20:09:00 GMT
+      X-Amz-Server-Side-Encryption:
+      - AES256
+      Etag:
+      - '"f5d4cda33ee02306bad1db62cf9e4536"'
+      Content-Length:
+      - '0'
+      Server:
+      - AmazonS3
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    http_version:
+  recorded_at: Fri, 07 Aug 2020 20:08:59 GMT
+recorded_with: VCR 4.0.0
