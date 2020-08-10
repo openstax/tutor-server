@@ -16,31 +16,35 @@ class Lms::SendCourseScores
   lev_routine transaction: :no_transaction, use_jobba: true
 
   def exec(course:)
-    raise "Course cannot be nil" if course.nil?
+    raise 'Course cannot be nil' if course.nil?
 
     @errors = []
 
     @course = course
 
-    callbacks = Lms::Models::CourseScoreCallback.where(course: course)
+    if @course.environment.current?
+      callbacks = Lms::Models::CourseScoreCallback.where(course: course)
 
-    @course.update_attributes(last_lms_scores_push_job_id: status.id)
+      @course.update_attributes(last_lms_scores_push_job_id: status.id)
 
-    @num_callbacks = callbacks.count
-    @num_missing_scores = 0
+      @num_callbacks = callbacks.count
+      @num_missing_scores = 0
 
-    save_status_data
+      save_status_data
 
-    callbacks.each_with_index do |callback, ii|
-      score_data = course_score_data(callback.user_profile_id)
+      callbacks.each_with_index do |callback, ii|
+        score_data = course_score_data(callback.user_profile_id)
 
-      if score_data.present? && score_data[:course_average].present?
-        send_one_score(callback, score_data)
-      else
-        @num_missing_scores += 1
-        save_status_data
+        if score_data.present? && score_data[:course_average].present?
+          send_one_score(callback, score_data)
+        else
+          @num_missing_scores += 1
+          save_status_data
+        end
+        status.set_progress(ii, @num_callbacks)
       end
-      status.set_progress(ii, @num_callbacks)
+    else
+      error! message: 'This course was created in a different environment', course: @course.id
     end
 
     notify_errors
@@ -103,7 +107,7 @@ class Lms::SendCourseScores
         course: @course.id,
         score: score_data[:course_average],
         student_name: score_data[:name],
-        student_identifier: score_data[:student_identifier],
+        student_identifier: score_data[:student_identifier]
       )
     end
   end
@@ -140,10 +144,12 @@ class Lms::SendCourseScores
     # https://www.imsglobal.org/specs/ltiomv1p0/specification
 
     builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-      xml.imsx_POXEnvelopeRequest(xmlns: "http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0") {
+      xml.imsx_POXEnvelopeRequest(
+        xmlns: 'http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0'
+      ) {
         xml.imsx_POXHeader {
           xml.imsx_POXRequestHeaderInfo {
-            xml.imsx_version "V1.0"
+            xml.imsx_version 'V1.0'
             xml.imsx_messageIdentifier message_identifier
           }
         }
@@ -155,7 +161,7 @@ class Lms::SendCourseScores
               }
               xml.result {
                 xml.resultScore {
-                  xml.language "en"
+                  xml.language 'en'
                   xml.textString score
                 }
               }

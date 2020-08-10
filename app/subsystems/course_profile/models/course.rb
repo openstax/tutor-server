@@ -17,6 +17,8 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   has_one :cache, inverse_of: :course
 
+  belongs_to :environment, subsystem: :none, inverse_of: :courses
+
   belongs_to :cloned_from, foreign_key: 'cloned_from_id',
                            class_name: 'CourseProfile::Models::Course',
                            optional: true
@@ -69,7 +71,7 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   delegate :name, to: :school, prefix: true, allow_nil: true
 
-  before_validation :set_starts_at_and_ends_at, :set_weights
+  before_validation :set_starts_at_and_ends_at, :set_weights, :set_environment
 
   scope :not_ended, -> { where(arel_table[:ends_at].gt(Time.now)) }
 
@@ -156,6 +158,10 @@ class CourseProfile::Models::Course < ApplicationRecord
   def set_weights
     self.homework_weight ||= 0.5
     self.reading_weight ||= 1 - homework_weight
+  end
+
+  def set_environment
+    self.environment ||= Environment.current
   end
 
   def ends_after_it_starts

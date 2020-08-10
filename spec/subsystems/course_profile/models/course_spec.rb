@@ -49,6 +49,10 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
     )
   end
 
+  it 'knows its environment' do
+    expect(course.environment).to eq Environment.current
+  end
+
   it 'knows if it is deletable' do
     expect(course).to be_deletable
 
