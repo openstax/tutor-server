@@ -33,9 +33,6 @@ config/deploy_settings.yml
 # Ignore editor temp files
 *~
 
-# Ignore XLS files (from report generators)
-*.xls*
-
 # Ignore byebug history
 .byebug_history
 

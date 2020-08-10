@@ -7,6 +7,8 @@ module Tasks::Models
     belongs_to :course, subsystem: :course_profile
     belongs_to :role,   subsystem: :entity
 
+    validates :export, presence: true
+
     def filename
       export.file.filename
     end

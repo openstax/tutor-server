@@ -313,12 +313,14 @@ group :test do
   gem 'rspec-retry'
 end
 
+group :production, :test do
+  # Upload and manage AWS S3 files
+  gem 'fog-aws'
+end
+
 group :production do
   # AWS SES
   gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
-
-  # Fog AWS
-  gem 'fog-aws'
 
   # Lograge for consistent logging
   gem 'lograge'
