@@ -122,13 +122,16 @@ RSpec.describe CourseProfile::ClaimPreviewCourse, type: :routine do
   end
 
   context 'when no previews are pre-built' do
-    it 'errors with api code and sends email' do
+    it 'logs the error to the console and to Sentry' do
+      expect(Rails.logger).to receive(:error)
+      expect(Raven).to receive(:capture_message) do |message, options|
+        expect(message).to eq 'Failed to claim preview course'
+        expect(options).to eq({ extra: { catalog_offering_id: offering.id } })
+      end
       result = described_class.call(
         catalog_offering: offering, name: 'My New Preview Course', is_college: is_college
       )
       expect(result.errors.first.code).to eq :no_preview_courses_available
-      expect(ActionMailer::Base.deliveries.last.subject).to match('claim_preview_course.rb')
-      expect(ActionMailer::Base.deliveries.last.body).to match("offering id #{offering.id}")
     end
   end
 end

@@ -111,9 +111,7 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
       it 'does not log the error to Sentry or send error emails' do
         expect(Raven).not_to receive(:capture_message)
         expect(Raven).not_to receive(:capture_exception)
-        expect do
-          call_expecting_skips(/No teachers have a SF contact ID/)
-        end.not_to change { ActionMailer::Base.deliveries.count }
+        call_expecting_skips(/No teachers have a SF contact ID/)
       end
     end
   end
@@ -227,9 +225,7 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
             expect(exception).to be_a RuntimeError
             expect(exception.message).to eq 'kaboom'
           end
-          expect do
-            call_expecting_errors(/Unable to update stats: kaboom/)
-          end.not_to change { ActionMailer::Base.deliveries.count }
+          call_expecting_errors(/Unable to update stats: kaboom/)
 
           OpenStax::Salesforce::Remote::TutorCoursePeriod
             .where(period_uuid: @period_uuids)

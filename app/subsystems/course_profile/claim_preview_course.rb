@@ -36,9 +36,11 @@ class CourseProfile::ClaimPreviewCourse
                )
                .first
     if course.nil?
-      WarningMailer.log_and_deliver(
-        "Failed to claim preview course for offering id #{catalog_offering.id}"
-      )
+      Rails.logger.error do
+        "[#{self.class.name}] Failed to claim preview course for offering id #{catalog_offering.id}"
+      end
+      Raven.capture_message 'Failed to claim preview course',
+                            extra: { catalog_offering_id: catalog_offering.id }
 
       fatal_error(code: :no_preview_courses_available)
     end

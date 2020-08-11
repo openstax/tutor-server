@@ -319,9 +319,6 @@ group :production, :test do
 end
 
 group :production do
-  # AWS SES
-  gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
-
   # Lograge for consistent logging
   gem 'lograge'
 end

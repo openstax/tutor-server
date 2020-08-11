@@ -1,7 +1,7 @@
 require_relative 'boot'
 
 # https://github.com/rails/rails/blob/master/railties/lib/rails/all.rb
-# Minus ActionCable and Rails 6 stuff (ActionMailbox and ActionText)
+# All Rails except ActionMailer, ActionMailbox, ActionCable and ActionText
 require 'rails'
 
 %w(
@@ -9,7 +9,6 @@ require 'rails'
   active_storage/engine
   action_controller/railtie
   action_view/railtie
-  action_mailer/railtie
   active_job/railtie
   rails/test_unit/railtie
   sprockets/railtie

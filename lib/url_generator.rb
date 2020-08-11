@@ -4,7 +4,10 @@ module Routing
 
   included do
     def default_url_options
-      ActionMailer::Base.default_url_options
+      {
+        protocol: "http#{'s' if Rails.env.production?}",
+        host: Rails.application.secrets.mail_site_url
+      }.merge ActionController::Base.default_url_options
     end
   end
 end
