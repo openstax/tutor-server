@@ -110,7 +110,7 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
           expect(Rails.logger).to receive(:error)
           expect(Raven).to receive(raven_method) { |first_arg, *| expect(first_arg).to eq value }
           instance.error!(key => value)
-          expect { instance.notify_errors }.not_to change { ActionMailer::Base.deliveries.count }
+          instance.notify_errors
         end
       end
     end

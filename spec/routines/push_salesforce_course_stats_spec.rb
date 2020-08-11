@@ -128,7 +128,7 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
           expect(Rails.logger).to receive(:error)
           expect(Raven).to receive(raven_method) { |first_arg, *| expect(first_arg).to eq value }
           catch(:go_to_next_record) { instance.error!(key => value) }
-          expect { run_notify_errors }.not_to change { ActionMailer::Base.deliveries.count }
+          run_notify_errors
         end
       end
     end

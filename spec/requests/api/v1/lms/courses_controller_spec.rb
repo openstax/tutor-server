@@ -178,9 +178,7 @@ RSpec.describe Api::V1::Lms::CoursesController, type: :request, api: true, versi
       expect(Raven).to receive(:capture_message) do |message, *|
         expect(message).to eq 'User is dropped'
       end
-      expect do
-        api_put(push_scores_api_lms_course_url(course.id), teacher_token)
-      end.not_to change { ActionMailer::Base.deliveries.count }
+      api_put(push_scores_api_lms_course_url(course.id), teacher_token)
       expect(response).to have_http_status :accepted
 
       expect_job_info(errors: [a_hash_including("message" => /User is dropped/)],
@@ -201,9 +199,7 @@ RSpec.describe Api::V1::Lms::CoursesController, type: :request, api: true, versi
         expect(exception).to be_a(RuntimeError)
         expect(exception.message).to eq 'Wowsers!'
       end
-      expect do
-        api_put(push_scores_api_lms_course_url(course.id), teacher_token)
-      end.not_to change { ActionMailer::Base.deliveries.count }
+      api_put(push_scores_api_lms_course_url(course.id), teacher_token)
       expect(response).to have_http_status :accepted
 
       expect_job_info(errors: [a_hash_including("message" => "Wowsers!")])
