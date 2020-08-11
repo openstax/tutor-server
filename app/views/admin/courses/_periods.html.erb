@@ -1,5 +1,5 @@
 <%= render partial: 'manager/periods/index',
-           locals: { periods: @periods,
+           locals: { periods: @course.periods,
                      extra_headers: 'Actions',
                      extra_fields_proc: lambda do |period| %>
   <td>

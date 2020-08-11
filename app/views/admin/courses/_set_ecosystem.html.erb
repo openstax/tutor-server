@@ -3,7 +3,9 @@
 <%= form_tag(url, method: method, class: 'form-inline') do |f| %>
   <div class="form-group">
     <%= label_tag :ecosystem_id %>
-    <%= select_tag :ecosystem_id, options_from_collection_for_select(@ecosystems, :id, :unique_title, params[:ecosystem_id] || @course_ecosystem.try(:id)), include_blank: true, class: 'form-control' %>
+    <%= select_tag :ecosystem_id, options_from_collection_for_select(
+          @ecosystems, :id, :unique_title, params[:ecosystem_id] || @course.ecosystem&.id
+        ), include_blank: true, class: 'form-control' %>
   </div>
 
   <%= submit_tag 'Submit', class: 'btn btn-primary' %>

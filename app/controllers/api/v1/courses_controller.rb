@@ -48,7 +48,8 @@ class Api::V1::CoursesController < Api::V1::ApiController
     render_api_errors(code: :invalid_term, message: 'The given course term is invalid') and return \
       if attributes[:term].present? && !TermYear::VISIBLE_TERMS.include?(attributes[:term].to_sym)
 
-    catalog_offering = Catalog::Models::Offering.find(attributes[:catalog_offering_id])
+    catalog_offering = Catalog::Models::Offering.without_deleted
+                                                .find(attributes[:catalog_offering_id])
     offering_action = attributes[:is_preview] ? :create_preview : :create_course
     OSU::AccessPolicy.require_action_allowed! offering_action, current_api_user, catalog_offering
 

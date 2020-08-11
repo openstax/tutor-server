@@ -98,6 +98,7 @@ class CourseProfile::BuildPreviewCourses
     # We only lock one offering here, so other calls to this routine
     # could potentially work on different offerings simultaneously
     Catalog::Models::Offering
+      .without_deleted
       .select(of[Arel.star], preview_course_count.dup.as('"preview_course_count"'))
       .joins(
         <<-JOIN_SQL.strip_heredoc

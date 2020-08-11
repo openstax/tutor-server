@@ -11,7 +11,7 @@ class Admin::CoursesUpdate
 
   def handle
     catalog_offering_id = params[:course][:catalog_offering_id]
-    offering = Catalog::GetOffering[id: catalog_offering_id] unless catalog_offering_id.blank?
+    offering = Catalog::Models::Offering.find(catalog_offering_id) unless catalog_offering_id.blank?
     params[:course][:is_concept_coach] = offering.is_concept_coach unless offering.nil?
     run(:update_course, params[:id], params[:course])
   end

@@ -66,7 +66,7 @@ class Demo::Import < Demo::Base
       Catalog::Models::Offering.transaction(requires_new: true) do
         attrs[:title] ||= attrs[:salesforce_book_name] ||
                           attrs[:appearance_code].split('_').map(&:capitalize).join(' ')
-        offering = Catalog::Models::Offering.find_by title: attrs[:title]
+        offering = Catalog::Models::Offering.without_deleted.find_by title: attrs[:title]
 
         if offering.nil?
           attrs[:salesforce_book_name] ||= attrs[:title]

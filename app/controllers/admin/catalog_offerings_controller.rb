@@ -50,13 +50,35 @@ module Admin
     end
 
     def destroy
-      if @offering.destroy
+      if !@offering.deleted? && @offering.destroy
         redirect_to admin_catalog_offerings_path, alert: "#{@offering.title} deleted"
       else
-        flash.now[:error] = @offering.errors.map do |att, msg|
-          att = @offering.title if att == :base
+        if @offering.deleted?
+          flash.now[:error] = "#{@offering.title} is already deleted"
+        else
+          flash.now[:error] = @offering.errors.map do |att, msg|
+            att = @offering.title if att == :base
 
-          [att, msg].join(' ')
+            [att, msg].join(' ')
+          end
+        end
+
+        render :index
+      end
+    end
+
+    def restore
+      if @offering.deleted? && @offering.restore
+        redirect_to admin_catalog_offerings_path, alert: "#{@offering.title} restored"
+      else
+        if @offering.deleted?
+          flash.now[:error] = @offering.errors.map do |att, msg|
+            att = @offering.title if att == :base
+
+            [att, msg].join(' ')
+          end
+        else
+          flash.now[:error] = "#{@offering.title} is not deleted"
         end
 
         render :index
@@ -66,9 +88,9 @@ module Admin
     protected
 
     def get_offerings_and_ecosystems
-      @offerings = Catalog::Models::Offering.preload_deletable.to_a
-      @offering = params[:id] ? @offerings.find { |offering| offering.id.to_s == params[:id] } :
-                                Catalog::Models::Offering.new
+      @deleted_offerings, @offerings = Catalog::Models::Offering.all.partition(&:deleted?)
+      @offering = params[:id].blank? ? Catalog::Models::Offering.new :
+                                       Catalog::Models::Offering.find(params[:id])
       @ecosystems = Content::ListEcosystems[]
     end
 

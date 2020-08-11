@@ -41,7 +41,7 @@
     </tr>
   </thead>
   <tbody>
-  <% @periods.each_with_index do |period, pp| %>
+  <% @course.periods.each_with_index do |period, pp| %>
     <tr>
       <td><span class="<%= 'deleted' if period.archived? %>"><%= period.name %><span></td>
       <td><%= period.uuid %></td>

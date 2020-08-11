@@ -11,13 +11,14 @@
     <%= link_to 'Edit',
                 edit_admin_catalog_offering_url(offering.id, anchor: "offering_#{offering.id}") %>
 
-    <% if offering.deletable? %>
-      |
+    |
 
-      <%= link_to 'Delete',
-                  admin_catalog_offering_url(offering.id),
-                  method: :delete,
-                  data: { confirm: "Permanently delete #{offering.title}?" } %>
+    <% if offering.deleted? %>
+      <%= link_to 'Restore', restore_admin_catalog_offering_url(offering.id),
+                  method: :put, data: { confirm: "Restore #{offering.title}?" } %>
+    <% else %>
+      <%= link_to 'Delete', admin_catalog_offering_url(offering.id),
+                  method: :delete, data: { confirm: "Delete #{offering.title}?" } %>
     <% end %>
   </span>
   <div>

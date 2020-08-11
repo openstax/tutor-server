@@ -7,13 +7,13 @@
 
 <div>
   <h3>Content</h3>
-  <div><%= @course_ecosystem.title %></div>
+  <div><%= @course.ecosystem.title %></div>
 </div>
 
 <div>
   <h3>Periods</h3>
   <div>
-    <%= render partial: 'manager/periods/index', locals: { periods: @periods } %>
+    <%= render partial: 'manager/periods/index', locals: { periods: @course.periods } %>
   </div>
 </div>
 

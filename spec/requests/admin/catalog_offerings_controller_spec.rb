@@ -5,7 +5,7 @@ RSpec.describe Admin::CatalogOfferingsController, type: :request do
     FactoryBot.create :user_profile, :administrator, username: 'admin', full_name: 'Administrator'
   end
   let(:offering)    { FactoryBot.create(:catalog_offering) }
-  let!(:attributes) { offering.attributes }
+  let!(:attributes) { offering.attributes.except('id') }
 
   before { sign_in! admin }
 
@@ -92,21 +92,36 @@ RSpec.describe Admin::CatalogOfferingsController, type: :request do
   end
 
   context '#destroy' do
-    it 'can delete an offering' do
+    it 'soft-deletes the offering' do
       expect do
         delete admin_catalog_offering_url(offering.id)
-      end.to change { Catalog::Models::Offering.count }.by(-1)
-      expect { offering.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end.to  not_change { Catalog::Models::Offering.count }
+         .and change     { offering.reload.deleted_at }.from(nil)
       expect(response).to redirect_to action: :index
     end
 
-    it 'does not delete the offering if it has courses' do
+    it 'does nothing if the offering is already deleted' do
       FactoryBot.create :course_profile_course, offering: offering
+
+      offering.destroy!
 
       expect do
         delete admin_catalog_offering_url(offering.id)
-      end.not_to change { Catalog::Models::Offering.count }
-      expect { offering.reload }.not_to raise_error
+      end.to  not_change { Catalog::Models::Offering.count }
+         .and not_change { offering.reload.deleted_at }
+      expect(response).to be_ok
+    end
+  end
+
+  context '#restore' do
+    it 'can restore a deleted offering' do
+      offering.destroy!
+
+      expect do
+        put restore_admin_catalog_offering_url(offering.id)
+      end.to  not_change { Catalog::Models::Offering.count }
+         .and change     { offering.reload.deleted_at }.to(nil)
+      expect(response).to redirect_to action: :index
     end
   end
 end
