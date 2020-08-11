@@ -14,6 +14,6 @@ module Manager::CourseDetails
 
     @course_ecosystem = @course.ecosystem
 
-    @catalog_offerings = Catalog::Models::Offering.all.to_a
+    @catalog_offerings = Catalog::Models::Offering.without_deleted.to_a
   end
 end

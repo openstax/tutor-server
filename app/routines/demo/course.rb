@@ -29,7 +29,7 @@ class Demo::Course < Demo::Base
         offering_model = if catalog_offering[:id].present?
           Catalog::Models::Offering.find catalog_offering[:id]
         elsif catalog_offering[:title].present?
-          Catalog::Models::Offering.order(created_at: :desc).find_by!(
+          Catalog::Models::Offering.without_deleted.order(created_at: :desc).find_by!(
             title: catalog_offering[:title]
           )
         end

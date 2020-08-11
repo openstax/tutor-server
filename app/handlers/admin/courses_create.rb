@@ -30,7 +30,7 @@ class Admin::CoursesCreate
   def handle
     school = SchoolDistrict::GetSchool[id: course_params.school_district_school_id] \
       unless course_params.school_district_school_id.blank?
-    offering = Catalog::GetOffering[id: course_params.catalog_offering_id] \
+    offering = Catalog::Models::Offering.find(course_params.catalog_offering_id) \
       unless course_params.catalog_offering_id.blank?
 
     run(:create_course, name: course_params.name,

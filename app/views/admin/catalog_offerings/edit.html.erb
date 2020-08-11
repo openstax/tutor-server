@@ -12,10 +12,7 @@
       method: @offering.id ? 'put' : 'post') do |form| %>
 
   <% @offerings.each do |offering| %>
-
     <%= render partial: (offering == @offering) ? 'edit_row' : 'display_row',
                locals: { offering: offering, form: form } %>
-
   <% end -%>
-
 <% end %>

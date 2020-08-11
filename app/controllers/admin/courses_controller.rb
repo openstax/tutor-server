@@ -217,6 +217,6 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def get_catalog_offerings
-    @catalog_offerings = Catalog::Models::Offering.all.to_a
+    @catalog_offerings = Catalog::Models::Offering.without_deleted.to_a
   end
 end

@@ -250,7 +250,9 @@ Rails.application.routes.draw do
       get :manifest, on: :member
     end
 
-    resources :catalog_offerings, except: :show
+    resources :catalog_offerings, except: :show do
+      put :restore, on: :member
+    end
 
     resources :courses, except: :show do
       member do

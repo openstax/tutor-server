@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_07_211136) do
+ActiveRecord::Schema.define(version: 2020_08_11_191556) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 2020_08_07_211136) do
     t.boolean "does_cost", default: false, null: false
     t.boolean "is_preview_available", null: false
     t.text "preview_message"
+    t.datetime "deleted_at"
     t.index ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id"
     t.index ["number"], name: "index_catalog_offerings_on_number", unique: true
     t.index ["salesforce_book_name"], name: "index_catalog_offerings_on_salesforce_book_name"
