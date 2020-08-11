@@ -16,7 +16,9 @@ RSpec.describe CustomerService::CoursesController, type: :request do
     end
 
     it 'passes the query param to SearchCourses along with order_by params' do
-      expect(SearchCourses).to receive(:call).with(query: 'test', order_by: 'name').once.and_call_original
+      expect(SearchCourses).to receive(:call).with(
+        query: 'test', order_by: 'name'
+      ).once.and_call_original
       get customer_service_courses_url, params: { query: 'test', order_by: 'name' }
     end
 
@@ -58,8 +60,6 @@ RSpec.describe CustomerService::CoursesController, type: :request do
       expect(assigns[:course].id).to eq course.id
       expect(Set.new assigns[:periods]).to eq Set.new course.periods
       expect(Set.new assigns[:teachers]).to eq Set.new course.teachers
-      expect(Set.new assigns[:ecosystems]).to eq Set.new Content::ListEcosystems[]
-      expect(assigns[:course_ecosystem]).not_to be_nil
     end
   end
 

@@ -142,13 +142,6 @@ RSpec.describe Admin::CoursesController, type: :request do
       expect(Set.new assigns[:periods]).to eq Set.new course.periods
       expect(Set.new assigns[:teachers]).to eq Set.new course.teachers
       expect(Set.new assigns[:ecosystems]).to eq Set.new Content::ListEcosystems[]
-      expect(assigns[:course_ecosystem]).to eq GetCourseEcosystem[course: course]
-    end
-
-    it 'selects the correct ecosystem' do
-      get edit_admin_course_url(course.id)
-      expect(assigns[:course_ecosystem]).to eq eco_1
-      expect(assigns[:ecosystems]).to eq [eco_2, eco_1]
     end
   end
 

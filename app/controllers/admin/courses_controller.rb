@@ -2,8 +2,6 @@ class Admin::CoursesController < Admin::BaseController
   include Manager::CourseDetails
   include Lev::HandleWith
 
-  before_action :get_schools, :get_catalog_offerings, only: [:new, :edit]
-
   def index
     @query = params[:query]
     @order_by = params[:order_by]
@@ -35,6 +33,7 @@ class Admin::CoursesController < Admin::BaseController
   end
 
   def new
+    get_records_for_select
     get_new_course
   end
 
@@ -52,14 +51,15 @@ class Admin::CoursesController < Admin::BaseController
                 failure: ->(*) {
                   flash.now[:error] = @handler_result.errors.full_messages
                   @course = @handler_result.outputs.course || get_new_course
-                  get_schools
-                  get_catalog_offerings
+                  get_records_for_select
                   render :new
                 })
   end
 
   def edit
+    get_records_for_select include_deleted: true
     get_course_details
+    get_roster_students
   end
 
   def update
@@ -71,10 +71,9 @@ class Admin::CoursesController < Admin::BaseController
                 },
                 failure: ->(*) {
                   flash.now[:error] = @handler_result.errors.full_messages
-                  @course = CourseProfile::Models::Course.find(params[:id])
-                  get_schools
-                  get_catalog_offerings
+                  get_records_for_select include_deleted: true
                   get_course_details
+                  get_roster_students
                   render :edit
                 })
   end
@@ -212,11 +211,17 @@ class Admin::CoursesController < Admin::BaseController
     }
   end
 
-  def get_schools
+  def get_records_for_select(include_deleted: false)
     @schools = SchoolDistrict::ListSchools[]
+    @catalog_offerings = Catalog::Models::Offering.all
+    @catalog_offerings = @catalog_offerings.without_deleted unless include_deleted
+    @catalog_offerings = @catalog_offerings.to_a
+    @ecosystems = Content::ListEcosystems[]
   end
 
-  def get_catalog_offerings
-    @catalog_offerings = Catalog::Models::Offering.without_deleted.to_a
+  def get_roster_students
+    @students = @course.students
+                       .preload(role: { profile: :account })
+                       .sort_by { |student| student.last_name || student.name }
   end
 end
