@@ -13,18 +13,22 @@ def demo_routine_perform_later(routine_class, type_string, args)
   types = type_string == 'all' ? [ 'import', 'users', 'course', 'assign', 'work' ] : [ type_string ]
   filter = (options.delete(:config) || Demo::DEFAULT_CONFIG).to_s
 
-  configs = Hash.new { |hash, key| hash[key] = options.dup }.tap do |options_by_basename|
+  configs = Hash.new { |hash, key| hash[key] = options.dup }.tap do |grouped_options|
     types.each do |type|
       Dir[File.join(Demo::CONFIG_BASE_DIR, '**', type, '**/[^_]*.yml{.erb,}')].select do |path|
         path.include? filter
       end.each do |path|
-        string = File.read(path)
-        if File.extname(path) == '.erb'
+        pathname = Pathname.new path
+        string = File.read path
+
+        if pathname.extname == '.erb'
           erb = ERB.new(string)
           erb.filename = path
           string = erb.result
         end
-        options_by_basename[path.sub("/#{type}/", '/').chomp('.erb')][type] = YAML.load(string)
+
+        group_by = (pathname.dirname.dirname + pathname.basename).to_s.chomp('.erb')
+        grouped_options[group_by][type] = YAML.load(string)
       end
     end
   end.values
