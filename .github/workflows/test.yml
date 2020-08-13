@@ -25,9 +25,10 @@ jobs:
     strategy:
       matrix:
         tests:
-            - { name: 'slow', args: 'TAG=speed:slow' }
-            - { name: 'regular', args: 'TAG=~speed:slow' }
-            - { name: 'assets', args: 'ASSETS=true' }
+            - { name: 'fast'  , args: 'TAG=speed:fast'   }
+            - { name: 'medium', args: 'TAG=speed:medium' }
+            - { name: 'slow'  , args: 'TAG=speed:slow'   }
+            - { name: 'assets', args: 'ASSETS=true'      }
 
     steps:
       - uses: actions/checkout@v2
