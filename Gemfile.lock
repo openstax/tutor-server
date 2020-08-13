@@ -446,7 +446,7 @@ GEM
       activerecord (>= 4.0, < 5.3)
     parser (2.6.0.0)
       ast (~> 2.4.0)
-    pg (1.2.2)
+    pg (1.2.3)
     pilfer (1.0.2)
       rblineprof (~> 0.3.2)
     postgresql_cursor (0.6.2)
