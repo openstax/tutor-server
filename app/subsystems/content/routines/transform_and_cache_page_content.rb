@@ -75,9 +75,9 @@ class Content::Routines::TransformAndCachePageContent
     end
 
     # Get all exercises that require context
-    context_exercises = Content::Models::Exercise.requires_context.where(
-      id: pages.flat_map(&:all_exercise_ids)
-    ).preload(:tags).to_a
+    context_exercises = Content::Models::Exercise.requires_context.select(
+      :id, :content_page_id
+    ).where(content_page_id: pages.map(&:id)).preload(:tags).to_a
     context_exercises_by_page_id = context_exercises.group_by(&:content_page_id)
 
     # Assign exercise context if required
@@ -117,6 +117,7 @@ class Content::Routines::TransformAndCachePageContent
     # Pages are large enough that saving them individually seems faster than importing
     pages.each(&:save!)
 
-    context_exercises.each(&:save!)
+    # We MUST skip validations here since we didn't load most of the some fields
+    context_exercises.each { |ce| ce.save validate: false }
   end
 end
