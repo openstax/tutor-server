@@ -116,7 +116,7 @@ class Tasks::FetchAssignmentSpes
 
       outputs.eligible_page_ids = (outputs.eligible_page_ids + eligible_page_ids).uniq.sort
       outputs.initially_eligible_exercise_uids = (
-        outputs.initially_eligible_exercise_uids + eligible_exercises
+        outputs.initially_eligible_exercise_uids + eligible_exercises.map(&:uid)
       ).uniq.sort
     end
 
