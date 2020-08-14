@@ -16,11 +16,12 @@ class Tasks::FetchAssignmentPes
       return
     end
 
-    page_ids = task.task_steps.map(&:content_page_id).uniq
+    page_ids = task.task_steps.map(&:content_page_id).compact.uniq
     exercise_ids = Content::Models::Page.where(id: page_ids).pluck(pool_method).flatten
     exercises = Content::Models::Exercise.where(id: exercise_ids).to_a
 
-    outputs.initially_eligible_exercise_uids = exercises.sort_by(&:number).map(&:uid)
+    outputs.eligible_page_ids = page_ids.sort
+    outputs.initially_eligible_exercise_uids = exercises.map(&:uid).sort
     outputs.admin_excluded_uids = []
     outputs.course_excluded_uids = []
     outputs.role_excluded_uids = []
@@ -62,13 +63,13 @@ class Tasks::FetchAssignmentPes
       current_time: current_time
     ).outputs
 
-    outputs.admin_excluded_uids = (outputs.admin_excluded_uids + outs.admin_excluded_uids).sort.uniq
+    outputs.admin_excluded_uids = (outputs.admin_excluded_uids + outs.admin_excluded_uids).uniq.sort
     outputs.course_excluded_uids = (
       outputs.course_excluded_uids + outs.course_excluded_uids
-    ).sort.uniq
+    ).uniq.sort
     outputs.role_excluded_uids = (
       outputs.role_excluded_uids + outs.role_excluded_uids
-    ).sort.uniq
+    ).uniq.sort
 
     run(
       :choose_exercises,

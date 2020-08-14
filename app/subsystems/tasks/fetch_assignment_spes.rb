@@ -72,21 +72,19 @@ class Tasks::FetchAssignmentSpes
       id: exercise_ids_by_page_id.values.flatten
     ).index_by(&:id)
 
-    outputs.initially_eligible_exercise_uids = exercises_by_id.values
-                                                              .flatten
-                                                              .sort_by(&:number)
-                                                              .map(&:uid)
+    outputs.eligible_page_ids = []
+    outputs.initially_eligible_exercise_uids = []
     outputs.admin_excluded_uids = []
     outputs.course_excluded_uids = []
     outputs.role_excluded_uids = []
     chosen_exercises = []
     remaining = spaced_tasks_num_exercises.sum(&:second)
     spaced_tasks_num_exercises.each do |spaced_task, num_exercises|
-      exercise_ids = exercise_ids_by_page_id.values_at(
-        *spaced_task.core_page_ids
-      ).compact.flatten
+      eligible_page_ids = spaced_task.core_page_ids
+      exercise_ids = exercise_ids_by_page_id.values_at(*eligible_page_ids).compact.flatten
+      eligible_exercises = exercises_by_id.values_at(*exercise_ids)
       exercises = filter_and_choose_exercises(
-        exercises: exercises_by_id.values_at(*exercise_ids),
+        exercises: eligible_exercises,
         task: task,
         count: num_exercises,
         additional_excluded_numbers: chosen_exercises.map(&:number),
@@ -96,18 +94,30 @@ class Tasks::FetchAssignmentSpes
       remaining -= exercises.size
 
       chosen_exercises.concat exercises
+
+      outputs.eligible_page_ids = (outputs.eligible_page_ids + eligible_page_ids).uniq.sort
+      outputs.initially_eligible_exercise_uids = (
+        outputs.initially_eligible_exercise_uids + eligible_exercises.map(&:uid)
+      ).uniq.sort
     end
 
     if remaining > 0
       # Use personalized exercises if not enough spaced practice exercises available
-      exercise_ids = exercise_ids_by_page_id.values_at(*task.core_page_ids).compact.flatten
+      eligible_page_ids = task.core_page_ids
+      exercise_ids = exercise_ids_by_page_id.values_at(*eligible_page_ids).compact.flatten
+      eligible_exercises = exercises_by_id.values_at(*exercise_ids)
       chosen_exercises.concat filter_and_choose_exercises(
-        exercises: exercises_by_id.values_at(*exercise_ids),
+        exercises: eligible_exercises,
         task: task,
         count: remaining,
         additional_excluded_numbers: chosen_exercises.map(&:number),
         current_time: current_time
       )
+
+      outputs.eligible_page_ids = (outputs.eligible_page_ids + eligible_page_ids).uniq.sort
+      outputs.initially_eligible_exercise_uids = (
+        outputs.initially_eligible_exercise_uids + eligible_exercises
+      ).uniq.sort
     end
 
     outputs.exercises = chosen_exercises.first(max_num_exercises || task.goal_num_spes)
@@ -176,13 +186,13 @@ class Tasks::FetchAssignmentSpes
       current_time: current_time
     ).outputs
 
-    outputs.admin_excluded_uids = (outputs.admin_excluded_uids + outs.admin_excluded_uids).sort.uniq
+    outputs.admin_excluded_uids = (outputs.admin_excluded_uids + outs.admin_excluded_uids).uniq.sort
     outputs.course_excluded_uids = (
       outputs.course_excluded_uids + outs.course_excluded_uids
-    ).sort.uniq
+    ).uniq.sort
     outputs.role_excluded_uids = (
       outputs.role_excluded_uids + outs.role_excluded_uids
-    ).sort.uniq
+    ).uniq.sort
 
     run(
       :choose_exercises,

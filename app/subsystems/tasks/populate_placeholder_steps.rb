@@ -187,6 +187,7 @@ class Tasks::PopulatePlaceholderSteps
     task.task_steps.reset
 
     task.spy["#{exercise_type}s"] = outs.slice(
+      'eligible_page_ids',
       'initially_eligible_exercise_uids',
       'admin_excluded_uids',
       'course_excluded_uids',
