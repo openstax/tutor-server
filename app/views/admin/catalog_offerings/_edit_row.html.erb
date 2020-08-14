@@ -78,16 +78,3 @@
 
   <%= link_to 'Cancel', admin_catalog_offerings_path, class: 'btn' %>
 </div>
-<script>
-  function onPreviewChange() {
-    const previewFG = $('#offering_preview_message').closest('.form-group');
-    if ($('#offering_is_preview_available').is(":checked")) {
-      previewFG.show();
-    } else {
-      previewFG.hide();
-    }
-  }
-  $('#offering_is_preview_available').change(onPreviewChange);
-  onPreviewChange();
-
-</script>

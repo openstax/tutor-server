@@ -87,14 +87,24 @@ $(document).ready(function() {
     window.location.search = $.param(paramsObject);
   });
 
+  //========== Hides and shows the preview message box when is_preview selected ==========//
+  function onIsPreviewChange() {
+    const previewFG = $('#offering_preview_message').closest('.form-group');
+    if ($('#offering_is_preview_available').is(":checked")) {
+      previewFG.show();
+    } else {
+      previewFG.hide();
+    }
+  }
+  $('#offering_is_preview_available').change(onIsPreviewChange);
+  onIsPreviewChange();
+
+  
   //========== Changes the course form when a course offering is selected ==========//
   function updateCourseForm() {
     var offering = $('#course_catalog_offering_id option:selected').first();
     if (offering.prop('value')) {
       $('#course_appearance_code').prop('placeholder', offering.attr('data-appearance_code'));
-      $('#course_is_concept_coach').prop('disabled', true);
-      $('#course_is_concept_coach').prop('checked',
-                                         offering.attr('data-is_concept_coach') == '1');
     }
     else {
       $('#course_appearance_code').prop('placeholder', '');
