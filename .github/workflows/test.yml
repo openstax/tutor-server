@@ -43,6 +43,7 @@ jobs:
           ruby-version: 2.6
       - name: Test
         env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           OXT_DB_USER: postgres
           OXT_TEST_DB: ci_test
           OXT_DB_PASS: postgres
