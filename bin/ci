@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+if [[ -n "${ASSETS}" ]]; then
+  bundle exec rake assets:precompile
+elif [[ -n "${TAG}" ]]; then
+  bundle exec rake parallel:create parallel:load_schema parallel:seed --trace
+  bundle exec parallel_rspec ./spec --test-options "--tag $TAG --format documentation"
+else
+  echo Must be called with ENV of ASSETS or TAG set
+  exit 1
+fi
