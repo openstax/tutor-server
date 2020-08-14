@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.feature 'Administration' do
+  let!(:catalog_offering){catalog_offering = FactoryBot.create :catalog_offering}
   before do
     admin = FactoryBot.create(:user_profile, :administrator)
     stub_current_user(admin)
@@ -11,6 +12,7 @@ RSpec.feature 'Administration' do
     click_link 'Add Course'
 
     fill_in 'Name', with: 'Hello hi ciao Hey World'
+    select catalog_offering.salesforce_book_name, from: 'Catalog Offering'
     click_button 'Save'
 
     expect(current_path).to eq(admin_courses_path)
@@ -19,7 +21,6 @@ RSpec.feature 'Administration' do
   end
 
   scenario 'create a blank course with a catalog_offering' do
-    catalog_offering = FactoryBot.create :catalog_offering
 
     visit admin_courses_path(query: '')
     click_link 'Add Course'

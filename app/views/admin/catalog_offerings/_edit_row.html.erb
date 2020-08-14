@@ -1,10 +1,3 @@
-<style type='text/css'>
-  .checkbox-label {
-    display: inline-block;
-    margin: 11px 0 0 10px;
-  }
-</style>
-
 <div id='offering_<%= offering.id %>' class='underlined-spaced-row'>
   <div class="form-group">
     <%= form.label :number %>
@@ -36,6 +29,14 @@
     <%= form.text_field :default_course_name, class: 'form-control' %>
   </div>
   <div class="form-group">
+    <%= form.label :pdf_url %>
+    <%= form.text_field :pdf_url, class: 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= form.label :webview_url %>
+    <%= form.text_field :webview_url, class: 'form-control' %>
+  </div>
+  <div class="form-group">
     <%= form.label "Ecosystem" %>
     <%= form.collection_select :content_ecosystem_id,
        @ecosystems, :id, :unique_title, { include_blank: true }, class: 'form-control' %>
@@ -52,8 +53,8 @@
   </div>
   <div class="checkbox">
     <label>
-      <%= form.check_box :is_preview_available, class: 'form-control' %>
-      <span class="checkbox-label">Available for preview courses?</span>
+      <%= form.check_box :does_cost, class: 'form-control' %>
+      <span class="checkbox-label">Costs students?</span>
     </label>
   </div>
   <div class="checkbox">
@@ -62,35 +63,15 @@
       <span class="checkbox-label">Available for real courses?</span>
     </label>
   </div>
+  <div class="checkbox">
+    <label>
+      <%= form.check_box :is_preview_available, class: 'form-control' %>
+      <span class="checkbox-label">Available for preview courses?</span>
+    </label>
+  </div>
   <div class="form-group">
     <%= form.label :preview_message, 'Message displayed when a preview course is created' %>
     <%= form.text_field :preview_message, class: 'form-control' %>
-  </div>
-  <div class="checkbox">
-    <label>
-      <%= form.check_box :does_cost, class: 'form-control' %>
-      <span class="checkbox-label">Costs students?</span>
-    </label>
-  </div>
-  <div class="checkbox">
-    <label>
-      <%= form.check_box :is_tutor, class: 'form-control' %>
-      <span class="checkbox-label">Works for full Tutor?</span>
-    </label>
-  </div>
-  <div class="checkbox">
-    <label style="vertical-align:middle">
-      <%= form.check_box :is_concept_coach, class: 'form-control' %>
-      <span class="checkbox-label">Works for Concept Coach?</span>
-    </label>
-  </div>
-  <div class="form-group">
-    <%= form.label :pdf_url %>
-    <%= form.text_field :pdf_url, class: 'form-control' %>
-  </div>
-  <div class="form-group">
-    <%= form.label :webview_url %>
-    <%= form.text_field :webview_url, class: 'form-control' %>
   </div>
 
   <%= form.submit class: 'btn btn-primary', value: 'Save' %>

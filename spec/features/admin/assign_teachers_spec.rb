@@ -13,12 +13,13 @@ RSpec.feature 'Administration', js: true do
       :user_profile, username: 'imateacher', first_name: 'Ima',
       last_name: 'Teacher', full_name: 'Ima Teacher'
     )
-
+    offering = FactoryBot.create :catalog_offering
     # Create a course
     visit admin_courses_path(query: '')
     click_link 'Add Course'
 
     fill_in 'Name', with: 'A Course'
+    select offering.salesforce_book_name, from: 'Catalog Offering'
 
     click_button 'Save'
     # Edit the course
