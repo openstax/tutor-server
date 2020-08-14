@@ -86,3 +86,13 @@ nav.navbar.production {
     overflow: hidden;
   }
 }
+
+input[type="radio"],
+input[type="checkbox"] {
+  &.form-control {
+    display: inline;
+    width: inherit;
+    height: inherit;
+  }
+
+}
