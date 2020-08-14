@@ -1,4 +1,4 @@
-# codecov:
+codecov:
 #   url: "string"        # [enterprise] your self-hosted Codecov endpoint
 #                        # ex. https://codecov.company.com
 #   slug: "owner/repo"   # [enterprise] the project's name when using the global upload tokens
@@ -9,8 +9,8 @@
 #                        # must have previously logged into Codecov
 #   ci:                  # [advanced] a list of custom CI domains
 #     - "ci.custom.com"
-#   notify:              # [advanced] usage only
-#     after_n_builds: 5  # how many build to wait for before submitting notifications
+  notify:                # [advanced] usage only
+    after_n_builds: 3    # how many build to wait for before submitting notifications
 #                        # therefore skipping status checks
 #     countdown: 50      # number of seconds to wait before checking CI status
 #     delay: 100         # number of seconds between each CI status check
@@ -59,8 +59,8 @@ coverage:
   #       threshold: null               # -> see "threshold" below
 
   status:
-    project:                   # measuring the overall project coverage
-      default:                 # context, you can create multiple ones with custom titles
+    project:                     # measuring the overall project coverage
+      default:                   # context, you can create multiple ones with custom titles
         # enabled: yes           # must be yes|true to enable this status
         target: 87%              # specify the target coverage for each commit status
         #                        #   option: "auto" (must increase from parent commit or pull request base)
@@ -77,7 +77,7 @@ coverage:
                                # adjusted are covered at least X%.
       default:
         # enabled: yes             # must be yes|true to enable this status
-        target: 60%                 # specify the target "X%" coverage to hit
+        target: 60%                # specify the target "X%" coverage to hit
         # branches: null           # -> see "branch patterns" below
         threshold: 2%              # allowed to drop X% and still result in a "success" commit status
         # if_no_uploads: error     # will post commit status of "error" if no coverage reports we uploaded
