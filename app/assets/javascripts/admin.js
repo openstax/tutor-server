@@ -108,7 +108,6 @@ $(document).ready(function() {
     }
     else {
       $('#course_appearance_code').prop('placeholder', '');
-      $('#course_is_concept_coach').prop('disabled', false);
     }
   }
   $('#course_catalog_offering_id').change(updateCourseForm);

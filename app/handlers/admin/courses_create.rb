@@ -13,10 +13,9 @@ class Admin::CoursesCreate
     attribute :catalog_offering_id, type: Integer
     attribute :is_test, type: ActiveAttr::Typecasting::Boolean
     attribute :is_preview, type: ActiveAttr::Typecasting::Boolean
-    attribute :is_concept_coach, type: ActiveAttr::Typecasting::Boolean
     attribute :is_college, type: ActiveAttr::Typecasting::Boolean
     validates :name, :term, :year, :num_sections, presence: true
-    validates :is_test, :is_preview, :is_concept_coach, :is_college, inclusion: [true, false]
+    validates :is_test, :is_preview, :is_college, inclusion: [true, false]
   end
 
   uses_routine CreateCourse, translations: { outputs: { type: :verbatim } }
@@ -41,7 +40,6 @@ class Admin::CoursesCreate
                         ends_at: course_params.ends_at,
                         is_test: course_params.is_test,
                         is_preview: course_params.is_preview,
-                        is_concept_coach: course_params.is_concept_coach,
                         is_college: course_params.is_college,
                         catalog_offering: offering,
                         appearance_code: course_params.appearance_code,
