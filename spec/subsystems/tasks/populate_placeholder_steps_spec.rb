@@ -36,6 +36,7 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
           Lev::Routine::Result.new(
             Lev::Outputs.new(
               exercises: [],
+              eligible_page_ids: @task.core_page_ids.sort,
               initially_eligible_exercise_uids: [],
               admin_excluded_uids: [],
               course_excluded_uids: [],
@@ -56,6 +57,7 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
                           .and change     { @task.spy }
         expect(@task.spy.deep_symbolize_keys).to include(
           pes: {
+            eligible_page_ids: @task.core_page_ids.sort,
             initially_eligible_exercise_uids: [],
             admin_excluded_uids: [],
             course_excluded_uids: [],
@@ -76,6 +78,7 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
                         .and change     { @task.spy }
       expect(@task.spy.deep_symbolize_keys).to include(
         pes: {
+          eligible_page_ids: @task.core_page_ids.sort,
           initially_eligible_exercise_uids: kind_of(Array),
           admin_excluded_uids: [],
           course_excluded_uids: [],
@@ -120,6 +123,7 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
           Lev::Routine::Result.new(
             Lev::Outputs.new(
               exercises: [],
+              eligible_page_ids: @task.core_page_ids.sort,
               initially_eligible_exercise_uids: [],
               admin_excluded_uids: [],
               course_excluded_uids: [],
@@ -132,6 +136,7 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
           Lev::Routine::Result.new(
             Lev::Outputs.new(
               exercises: [],
+              eligible_page_ids: [],
               initially_eligible_exercise_uids: [],
               admin_excluded_uids: [],
               course_excluded_uids: [],
@@ -152,14 +157,14 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
                           .and change { @task.spy }
         expect(@task.spy.deep_symbolize_keys).to include(
           pes: {
+            eligible_page_ids: @task.core_page_ids.sort,
             initially_eligible_exercise_uids: [],
             admin_excluded_uids: [],
             course_excluded_uids: [],
             role_excluded_uids: []
-          }
-        )
-        expect(@task.spy.deep_symbolize_keys).to include(
+          },
           spes: {
+            eligible_page_ids: [],
             initially_eligible_exercise_uids: [],
             admin_excluded_uids: [],
             course_excluded_uids: [],
@@ -194,14 +199,14 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
            .and change { @task.spy }
         expect(@task.spy.deep_symbolize_keys).to include(
           pes: {
+            eligible_page_ids: @task.core_page_ids.sort,
             initially_eligible_exercise_uids: kind_of(Array),
             admin_excluded_uids: [],
             course_excluded_uids: [],
             role_excluded_uids: kind_of(Array)
-          }
-        )
-        expect(@task.spy.deep_symbolize_keys).to include(
+          },
           spes: {
+            eligible_page_ids: kind_of(Array),
             initially_eligible_exercise_uids: kind_of(Array),
             admin_excluded_uids: [],
             course_excluded_uids: [],
@@ -228,7 +233,8 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
           Lev::Routine::Result.new(
             Lev::Outputs.new(
               exercises: exercises,
-              initially_eligible_exercise_uids: @spaced_page.exercises.sort_by(&:number).map(&:uid),
+              eligible_page_ids: [ @spaced_page.id ],
+              initially_eligible_exercise_uids: @spaced_page.exercises.map(&:uid).sort,
               admin_excluded_uids: [],
               course_excluded_uids: [],
               role_excluded_uids: []
@@ -248,15 +254,15 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
                           .and change     { @task.spy }
         expect(@task.spy.deep_symbolize_keys).to include(
           pes: {
+            eligible_page_ids: @task.core_page_ids.sort,
             initially_eligible_exercise_uids: kind_of(Array),
             admin_excluded_uids: [],
             course_excluded_uids: [],
             role_excluded_uids: kind_of(Array)
-          }
-        )
-        expect(@task.spy.deep_symbolize_keys).to include(
+          },
           spes: {
-            initially_eligible_exercise_uids: @spaced_page.exercises.sort_by(&:number).map(&:uid),
+            eligible_page_ids: [ @spaced_page.id ],
+            initially_eligible_exercise_uids: @spaced_page.exercises.map(&:uid).sort,
             admin_excluded_uids: [],
             course_excluded_uids: [],
             role_excluded_uids: []

@@ -52,6 +52,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
       exercises.each { |exercise| expect(expected_exercises).to include exercise }
 
       expected_exercise_uids_set = Set.new expected_exercises.map(&:uid)
+      expect(outs.eligible_page_ids).to eq @task.core_page_ids.sort
       outs.initially_eligible_exercise_uids.each do |uid|
         expect(expected_exercise_uids_set).to include(uid)
       end
