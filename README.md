@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/openstax/tutor-server.png?branch=master)](https://travis-ci.org/openstax/tutor-server)
+[![Build Status](https://github.com/openstax/tutor-server/workflows/Tutor/badge.svg)](https://github.com/openstax/tutor-server)
 [![Coverage Status](https://img.shields.io/codecov/c/github/openstax/tutor-server.svg)](https://codecov.io/gh/openstax/tutor-server)
 
 # OpenStax Tutor Backend Server
@@ -221,7 +221,7 @@ CNX book UUID and version, assignments and progress on those assignments, etc.
 
 By default, all YAML files in the directories under the
 [review](https://github.com/openstax/tutor-server/tree/master/config/demo/review)
-directory are run, in the order `import', `users`, `course`, `assign`, `work`. 
+directory are run, in the order `import', `users`, `course`, `assign`, `work`.
 
 You can run a single step as a separate rake task, as so:
 
