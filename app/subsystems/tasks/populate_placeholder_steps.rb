@@ -51,8 +51,11 @@ class Tasks::PopulatePlaceholderSteps
 
     return unless pes_populated || spes_populated
 
-    # Save pes_are_assigned/spes_are_assigned and step counts
+    # Update step counts
     task.update_caches_now
+
+    # Save modified fields
+    task.save validate: false
   end
 
   def already_populated?(task, populate_spes)
@@ -82,9 +85,10 @@ class Tasks::PopulatePlaceholderSteps
 
     ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
-    chosen_exercises = run(
+    outs = run(
       exercise_routine, task: task, max_num_exercises: placeholder_steps.size
-    ).outputs.exercises
+    ).outputs
+    chosen_exercises = outs.exercises
 
     # Group placeholder steps and exercises by content_page_id
     # Spaced Practice uses nil content_page_ids
@@ -181,6 +185,13 @@ class Tasks::PopulatePlaceholderSteps
     end
 
     task.task_steps.reset
+
+    task.spy["#{exercise_type}s"] = outs.slice(
+      'initially_eligible_exercise_uids',
+      'admin_excluded_uids',
+      'course_excluded_uids',
+      'role_excluded_uids'
+    )
 
     task.send "#{boolean_attribute}=", true
   end

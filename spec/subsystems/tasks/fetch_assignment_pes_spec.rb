@@ -46,11 +46,18 @@ RSpec.describe Tasks::FetchAssignmentPes, type: :routine do
     end
 
     it 'returns exercises from the expected pages' do
-      exercises = described_class[task: @task, max_num_exercises: @max_num_exercises]
+      outs = described_class.call(task: @task, max_num_exercises: @max_num_exercises).outputs
+      exercises = outs.exercises
       expect(exercises).not_to be_empty
-      exercises.each do |exercise|
-        expect(expected_exercises).to include exercise
+      exercises.each { |exercise| expect(expected_exercises).to include exercise }
+
+      expected_exercise_uids_set = Set.new expected_exercises.map(&:uid)
+      outs.initially_eligible_exercise_uids.each do |uid|
+        expect(expected_exercise_uids_set).to include(uid)
       end
+      expect(outs.admin_excluded_uids).to eq []
+      expect(outs.course_excluded_uids).to eq []
+      expect(outs.role_excluded_uids).to be_a(Array)
     end
   end
 end

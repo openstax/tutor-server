@@ -8,6 +8,9 @@ class Tasks::FetchAssignmentSpes
 
   lev_routine express_output: :exercises, transaction: :read_committed
 
+  uses_routine FilterExcludedExercises, as: :filter_excluded_exercises
+  uses_routine ChooseExercises,         as: :choose_exercises
+
   # Returns a number of recommended personalized exercises for the given task using Glicko ratings
   def exec(task:, max_num_exercises: nil, current_time: Time.current)
     case task.task_type
@@ -69,6 +72,13 @@ class Tasks::FetchAssignmentSpes
       id: exercise_ids_by_page_id.values.flatten
     ).index_by(&:id)
 
+    outputs.initially_eligible_exercise_uids = exercises_by_id.values
+                                                              .flatten
+                                                              .sort_by(&:number)
+                                                              .map(&:uid)
+    outputs.admin_excluded_uids = []
+    outputs.course_excluded_uids = []
+    outputs.role_excluded_uids = []
     chosen_exercises = []
     remaining = spaced_tasks_num_exercises.sum(&:second)
     spaced_tasks_num_exercises.each do |spaced_task, num_exercises|
@@ -157,7 +167,8 @@ class Tasks::FetchAssignmentSpes
       id: excluded_exercise_ids
     ).pluck(:number)
 
-    outs = FilterExcludedExercises.call(
+    outs = run(
+      :filter_excluded_exercises,
       exercises: exercises,
       task: task,
       role: role,
@@ -165,11 +176,20 @@ class Tasks::FetchAssignmentSpes
       current_time: current_time
     ).outputs
 
-    ChooseExercises[
+    outputs.admin_excluded_uids = (outputs.admin_excluded_uids + outs.admin_excluded_uids).sort.uniq
+    outputs.course_excluded_uids = (
+      outputs.course_excluded_uids + outs.course_excluded_uids
+    ).sort.uniq
+    outputs.role_excluded_uids = (
+      outputs.role_excluded_uids + outs.role_excluded_uids
+    ).sort.uniq
+
+    run(
+      :choose_exercises,
       exercises: outs.exercises,
       role: role,
       count: count,
       already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
-    ]
+    ).outputs.exercises
   end
 end
