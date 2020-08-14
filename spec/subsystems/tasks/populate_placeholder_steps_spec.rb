@@ -33,7 +33,16 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     context 'with no dynamic exercises available' do
       before do
         expect_any_instance_of(Tasks::FetchAssignmentPes).to receive(:call).and_return(
-          Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
+          Lev::Routine::Result.new(
+            Lev::Outputs.new(
+              exercises: [],
+              initially_eligible_exercise_uids: [],
+              admin_excluded_uids: [],
+              course_excluded_uids: [],
+              role_excluded_uids: []
+            ),
+            Lev::Errors.new
+          )
         )
       end
 
@@ -44,6 +53,16 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
                           .and not_change { @task.spaced_practice_task_steps.size }
                           .and change     { @task.pes_are_assigned  }.from(false).to(true)
                           .and not_change { @task.spes_are_assigned }
+                          .and change     { @task.spy }
+        expect(@task.spy.deep_symbolize_keys).to include(
+          pes: {
+            initially_eligible_exercise_uids: [],
+            admin_excluded_uids: [],
+            course_excluded_uids: [],
+            role_excluded_uids: []
+          }
+        )
+        expect(@task.spy.deep_symbolize_keys.keys).not_to include(:spes)
       end
     end
 
@@ -54,6 +73,16 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
                         .and not_change { @task.spaced_practice_task_steps.size }
                         .and change     { @task.pes_are_assigned  }.from(false).to(true)
                         .and not_change { @task.spes_are_assigned }
+                        .and change     { @task.spy }
+      expect(@task.spy.deep_symbolize_keys).to include(
+        pes: {
+          initially_eligible_exercise_uids: kind_of(Array),
+          admin_excluded_uids: [],
+          course_excluded_uids: [],
+          role_excluded_uids: kind_of(Array)
+        }
+      )
+      expect(@task.spy.deep_symbolize_keys.keys).not_to include(:spes)
 
       @task.personalized_task_steps.each do |task_step|
         expect(task_step).not_to be_placeholder
@@ -88,10 +117,28 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     context 'with no dynamic exercises available' do
       before do
         expect_any_instance_of(Tasks::FetchAssignmentPes).to receive(:call).and_return(
-          Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
+          Lev::Routine::Result.new(
+            Lev::Outputs.new(
+              exercises: [],
+              initially_eligible_exercise_uids: [],
+              admin_excluded_uids: [],
+              course_excluded_uids: [],
+              role_excluded_uids: []
+            ),
+            Lev::Errors.new
+          )
         )
         expect_any_instance_of(Tasks::FetchAssignmentSpes).to receive(:call).and_return(
-          Lev::Routine::Result.new(Lev::Outputs.new(exercises: []), Lev::Errors.new)
+          Lev::Routine::Result.new(
+            Lev::Outputs.new(
+              exercises: [],
+              initially_eligible_exercise_uids: [],
+              admin_excluded_uids: [],
+              course_excluded_uids: [],
+              role_excluded_uids: []
+            ),
+            Lev::Errors.new
+          )
         )
       end
 
@@ -102,6 +149,23 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
                           .and change { @task.spaced_practice_task_steps.size }.to(0)
                           .and change { @task.pes_are_assigned  }.from(false).to(true)
                           .and change { @task.spes_are_assigned }.from(false).to(true)
+                          .and change { @task.spy }
+        expect(@task.spy.deep_symbolize_keys).to include(
+          pes: {
+            initially_eligible_exercise_uids: [],
+            admin_excluded_uids: [],
+            course_excluded_uids: [],
+            role_excluded_uids: []
+          }
+        )
+        expect(@task.spy.deep_symbolize_keys).to include(
+          spes: {
+            initially_eligible_exercise_uids: [],
+            admin_excluded_uids: [],
+            course_excluded_uids: [],
+            role_excluded_uids: []
+          }
+        )
       end
     end
 
@@ -127,6 +191,23 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
            .and change { @task.spaced_practice_task_steps.size }.to(1)
            .and change { @task.pes_are_assigned  }.from(false).to(true)
            .and change { @task.spes_are_assigned }.from(false).to(true)
+           .and change { @task.spy }
+        expect(@task.spy.deep_symbolize_keys).to include(
+          pes: {
+            initially_eligible_exercise_uids: kind_of(Array),
+            admin_excluded_uids: [],
+            course_excluded_uids: [],
+            role_excluded_uids: kind_of(Array)
+          }
+        )
+        expect(@task.spy.deep_symbolize_keys).to include(
+          spes: {
+            initially_eligible_exercise_uids: kind_of(Array),
+            admin_excluded_uids: [],
+            course_excluded_uids: [],
+            role_excluded_uids: kind_of(Array)
+          }
+        )
 
         @task.personalized_task_steps.each do |task_step|
           expect(task_step).not_to be_placeholder
@@ -136,23 +217,51 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     end
 
     context 'with enough dynamic exercises available' do
+      let(:exercises) { @spaced_page.exercises.sample @task.goal_num_spes }
+
       before do
         expect_any_instance_of(
           Tasks::FetchAssignmentSpes
         ).to receive(:call) do |task:, max_num_exercises:|
-          exercises = @spaced_page.exercises.sample(max_num_exercises)
+          expect(max_num_exercises).to eq @task.goal_num_spes
 
-          Lev::Routine::Result.new(Lev::Outputs.new(exercises: exercises), Lev::Errors.new)
+          Lev::Routine::Result.new(
+            Lev::Outputs.new(
+              exercises: exercises,
+              initially_eligible_exercise_uids: @spaced_page.exercises.sort_by(&:number).map(&:uid),
+              admin_excluded_uids: [],
+              course_excluded_uids: [],
+              role_excluded_uids: []
+            ),
+            Lev::Errors.new
+          )
         end
       end
 
       it 'populates all the placeholder steps in the task' do
         expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_now)
 
-        expect { subject }.to  not_change { @task.personalized_task_steps.size    }
+        expect { subject }.to  not_change { @task.reload.personalized_task_steps.size    }
                           .and not_change { @task.spaced_practice_task_steps.size }
                           .and change     { @task.pes_are_assigned  }.from(false).to(true)
                           .and change     { @task.spes_are_assigned }.from(false).to(true)
+                          .and change     { @task.spy }
+        expect(@task.spy.deep_symbolize_keys).to include(
+          pes: {
+            initially_eligible_exercise_uids: kind_of(Array),
+            admin_excluded_uids: [],
+            course_excluded_uids: [],
+            role_excluded_uids: kind_of(Array)
+          }
+        )
+        expect(@task.spy.deep_symbolize_keys).to include(
+          spes: {
+            initially_eligible_exercise_uids: @spaced_page.exercises.sort_by(&:number).map(&:uid),
+            admin_excluded_uids: [],
+            course_excluded_uids: [],
+            role_excluded_uids: []
+          }
+        )
 
         (@task.personalized_task_steps + @task.spaced_practice_task_steps).each do |task_step|
           expect(task_step).not_to be_placeholder

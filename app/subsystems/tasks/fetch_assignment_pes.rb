@@ -1,6 +1,9 @@
 class Tasks::FetchAssignmentPes
   lev_routine express_output: :exercises, transaction: :read_committed
 
+  uses_routine FilterExcludedExercises, as: :filter_excluded_exercises
+  uses_routine ChooseExercises,         as: :choose_exercises
+
   # Returns a number of recommended personalized exercises for the given task using Glicko ratings
   def exec(task:, max_num_exercises: nil, current_time: Time.current)
     case task.task_type
@@ -17,6 +20,10 @@ class Tasks::FetchAssignmentPes
     exercise_ids = Content::Models::Page.where(id: page_ids).pluck(pool_method).flatten
     exercises = Content::Models::Exercise.where(id: exercise_ids).to_a
 
+    outputs.initially_eligible_exercise_uids = exercises.sort_by(&:number).map(&:uid)
+    outputs.admin_excluded_uids = []
+    outputs.course_excluded_uids = []
+    outputs.role_excluded_uids = []
     outputs.exercises = filter_and_choose_exercises(
       exercises: exercises,
       task: task,
@@ -46,7 +53,8 @@ class Tasks::FetchAssignmentPes
       id: excluded_exercise_ids
     ).pluck(:number)
 
-    outs = FilterExcludedExercises.call(
+    outs = run(
+      :filter_excluded_exercises,
       exercises: exercises,
       task: task,
       role: role,
@@ -54,11 +62,20 @@ class Tasks::FetchAssignmentPes
       current_time: current_time
     ).outputs
 
-    ChooseExercises[
+    outputs.admin_excluded_uids = (outputs.admin_excluded_uids + outs.admin_excluded_uids).sort.uniq
+    outputs.course_excluded_uids = (
+      outputs.course_excluded_uids + outs.course_excluded_uids
+    ).sort.uniq
+    outputs.role_excluded_uids = (
+      outputs.role_excluded_uids + outs.role_excluded_uids
+    ).sort.uniq
+
+    run(
+      :choose_exercises,
       exercises: outs.exercises,
       role: role,
       count: count,
       already_assigned_exercise_numbers: outs.already_assigned_exercise_numbers
-    ]
+    ).outputs.exercises
   end
 end

@@ -15,12 +15,15 @@ class FilterExcludedExercises
 
     # Get global excluded exercises
     admin_exclusions = Settings::Exercises.excluded_ids.split(',').map(&:strip)
-    admin_excluded_ids, admin_excluded_numbers = admin_exclusions.partition { |ex| ex.include? '@' }
+    admin_excluded_uids, admin_excluded_numbers = admin_exclusions.partition do |string|
+      string.include? '@'
+    end
 
     # Get course excluded exercises
     course_excluded_numbers = course.nil? ? [] : course.excluded_exercises.map(&:exercise_number)
 
-    role_excluded_numbers = if role.nil?
+    # Get exercises excluded due to anti-cheating rules
+    anti_cheating_excluded_numbers = if role.nil?
       outputs.already_assigned_exercise_numbers = []
       []
     else
@@ -47,17 +50,40 @@ class FilterExcludedExercises
       ).flatten.uniq
     end
 
-    excluded_exercise_numbers_set = Set.new(
-      admin_excluded_numbers.map(&:to_i) +
-      course_excluded_numbers +
-      role_excluded_numbers +
-      additional_excluded_numbers.to_a
-    )
+    admin_excluded_uids_set = Set.new admin_excluded_uids
 
-    admin_excluded_ids_set = Set.new admin_excluded_ids
+    admin_excluded_numbers_set = Set.new admin_excluded_numbers.map(&:to_i)
+    course_excluded_numbers_set = Set.new course_excluded_numbers
+    anti_cheating_excluded_numbers_set = Set.new anti_cheating_excluded_numbers
+    additional_excluded_numbers_set = Set.new additional_excluded_numbers.to_a
 
-    outputs.exercises = exercises.reject do |ex|
-      excluded_exercise_numbers_set.include?(ex.number) || admin_excluded_ids_set.include?(ex.uid)
+    outputs.admin_excluded_uids = []
+    outputs.course_excluded_uids = []
+    outputs.role_excluded_uids = []
+    outputs.additional_excluded_uids = []
+
+    outputs.exercises = exercises.select do |ex|
+      if admin_excluded_uids_set.include?(ex.uid) || admin_excluded_numbers_set.include?(ex.number)
+        outputs.admin_excluded_uids << ex.uid
+        next false
+      end
+
+      if course_excluded_numbers_set.include?(ex.number)
+        outputs.course_excluded_uids << ex.uid
+        next false
+      end
+
+      if anti_cheating_excluded_numbers_set.include?(ex.number)
+        outputs.role_excluded_uids << ex.uid
+        next false
+      end
+
+      if additional_excluded_numbers_set.include?(ex.number)
+        outputs.additional_excluded_uids << ex.uid
+        next false
+      end
+
+      true
     end
   end
 end
