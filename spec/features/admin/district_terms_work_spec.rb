@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.feature 'DistrictTermsWork' do
   scenario 'normal creation, no deletion or editing' do
     admin = FactoryBot.create(:user_profile, :administrator)
+    offering = FactoryBot.create :catalog_offering
     stub_current_user(admin)
 
     visit admin_districts_path
@@ -22,6 +23,7 @@ RSpec.feature 'DistrictTermsWork' do
     click_link 'Add Course'
 
     fill_in 'Name', with: 'Hello World'
+    select offering.salesforce_book_name, from: 'Catalog Offering'
     select 'JFK', from: 'School'
     click_button 'Save'
 
