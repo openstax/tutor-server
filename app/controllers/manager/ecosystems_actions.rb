@@ -1,5 +1,4 @@
 module Manager::EcosystemsActions
-
   def self.included(base)
     base.before_action :get_ecosystem, only: [ :manifest ]
   end
@@ -21,5 +20,4 @@ module Manager::EcosystemsActions
   def get_ecosystem
     @ecosystem = Content::Models::Ecosystem.find(params[:id])
   end
-
 end

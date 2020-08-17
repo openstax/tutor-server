@@ -8,8 +8,7 @@ class FetchAndImportBookAndCreateEcosystem
   # Returns a Content::Models::Ecosystem containing a book obtained from the given CNX id
   def exec(book_cnx_id:, archive_url: nil,
            reading_processing_instructions: nil, exercise_uids: nil, comments: nil)
-    archive_url ||= OpenStax::Cnx::V1.archive_url_base
-    OpenStax::Cnx::V1.with_archive_url(archive_url) do
+    OpenStax::Cnx::V1.with_archive_url(archive_url || OpenStax::Cnx::V1.archive_url_base) do
       cnx_book = OpenStax::Cnx::V1.book(id: book_cnx_id)
 
       outputs.ecosystem = Content::Models::Ecosystem.create! comments: comments
@@ -20,6 +19,10 @@ class FetchAndImportBookAndCreateEcosystem
                         exercise_uids: exercise_uids)
 
       outputs.ecosystem.update_attribute :title, outputs.ecosystem.set_title
+
+      return if outputs.ecosystem.books.empty?
+
+      Content::UploadEcosystemManifestToValidator.perform_later outputs.ecosystem.manifest.to_yaml
     end
   end
 end

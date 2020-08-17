@@ -45,12 +45,30 @@ RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
     ]
   }
 
+  let(:expected_manifest_hash) { YAML.load(manifest_yaml).deep_symbolize_keys }
+  let(:expected_book_hash)     { expected_manifest_hash[:books].first }
+
+  let(:manifest_yaml) { File.read fixture_path }
+
+  before do
+    expect(Content::UploadEcosystemManifestToValidator).to receive(:perform_later) do |manifest|
+      manifest_hash = YAML.load(manifest).deep_symbolize_keys
+      book_hash = manifest_hash[:books].first
+
+      expect(manifest_hash.except(:title, :books)).to(
+        eq expected_manifest_hash.except(:title, :books)
+      )
+      expect(expected_manifest_hash[:title]).to include manifest_hash[:title]
+      expect(book_hash.except(:archive_url)).to eq expected_book_hash.except(:archive_url)
+      expect(book_hash[:archive_url] + '/').to eq expected_book_hash[:archive_url]
+    end
+  end
+
   it 'can import an ecosystem from a manifest' do
-    manifest_yaml = File.open(fixture_path) { |file| file.read }
     manifest = Content::Manifest.from_yaml(manifest_yaml)
 
-    expect{ @new_ecosystem = described_class[manifest: manifest] }.to(
-      change{ Content::Models::Ecosystem.count }.by(1)
+    expect { @new_ecosystem = described_class[manifest: manifest] }.to(
+      change { Content::Models::Ecosystem.count }.by(1)
     )
 
     expect(@new_ecosystem.title).to start_with expected_ecosystem_title_start
