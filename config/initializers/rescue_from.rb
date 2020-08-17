@@ -73,6 +73,12 @@ OpenStax::RescueFrom.register_exception(
   notify: false
 )
 
+OpenStax::RescueFrom.register_exception(
+  'ActiveRecord::LockWaitTimeout',
+  status: :locked,
+  notify: false
+)
+
 # Exceptions in controllers are not automatically reraised in production-like environments
 ActionController::Base.use_openstax_exception_rescue
 
