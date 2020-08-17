@@ -72,8 +72,10 @@ class UpdateTaskPlanEcosystem
       number: exercise_numbers
     ).pluck(:number, :id).to_h
     outputs.task_plan.settings['exercises'] = exercises.each_with_index.map do |hash, index|
-      number = exercise_numbers[index]
-      { 'id' => new_exercise_id_by_number[number].to_s, 'points' => hash['points'] }
-    end
+      id = new_exercise_id_by_number[exercise_numbers[index]]
+      next if id.nil?
+
+      { 'id' => id.to_s, 'points' => hash['points'] }
+    end.compact
   end
 end

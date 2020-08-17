@@ -27,7 +27,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
   end
 
   context 'reading task plan' do
-    let(:page_ids) { @old_pages[0..2].map(&:id) }
+    let(:page_ids) { @old_pages[0..2].map(&:id).map(&:to_s) }
 
     let(:original_reading_plan) do
       FactoryBot.create(
@@ -37,6 +37,13 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         course: @old_course,
         settings: { page_ids: page_ids }
       )
+    end
+
+    before do
+      # Simulate a page being removed from the new ecosystem
+      @ecosystem.pages.where(uuid: Content::Models::Page.find(page_ids.last).uuid).delete_all
+
+      @ecosystem.pages.reset
     end
 
     it 'can be updated to a newer ecosystem' do
@@ -55,8 +62,13 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
 
       updated_reading_plan = described_class[task_plan: cloned_reading_plan, ecosystem: @ecosystem]
       expect(updated_reading_plan.ecosystem).to eq @ecosystem
-      expect(updated_reading_plan.core_page_ids.length).to eq page_ids.length
-      expect(updated_reading_plan.core_page_ids).not_to eq page_ids
+
+      expect(updated_reading_plan.core_page_ids.length).to eq page_ids.length - 1
+      old_page_ids_set = Set.new page_ids
+      updated_reading_plan.core_page_ids.each do |page_id|
+        expect(old_page_ids_set).not_to include page_id.to_s
+      end
+
       expect(updated_reading_plan).to be_valid
 
       new_page_ids = updated_reading_plan.core_page_ids
@@ -65,8 +77,9 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
   end
 
   context 'homework task plan' do
-    let(:exercise_ids) { @old_pages.flat_map(&:homework_core_exercise_ids)[0..5] }
-    let(:exercises)    { Content::Models::Exercise.where(id: exercise_ids) }
+    let(:page_ids)          { @old_pages.map(&:id).map(&:to_s) }
+    let(:exercise_ids)      { @old_pages.flat_map(&:homework_core_exercise_ids)[0..5].map(&:to_s) }
+    let(:exercises)         { Content::Models::Exercise.where(id: exercise_ids) }
 
     let(:original_homework_plan) do
       FactoryBot.create(
@@ -75,12 +88,30 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         ecosystem: @old_ecosystem,
         course: @old_course,
         settings: {
+          page_ids: page_ids,
           exercises: exercises.map do |exercise|
             { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
           end,
           exercises_count_dynamic: 3
         }
       )
+    end
+
+    before do
+      # Simulate an exercise being removed from the new ecosystem
+      exercise = @ecosystem.exercises.find_by(number: exercises.last.number)
+      page = exercise.page
+      page.update_columns(
+        all_exercise_ids: page.all_exercise_ids - [ exercise.id ],
+        reading_dynamic_exercise_ids: page.reading_dynamic_exercise_ids - [ exercise.id ],
+        reading_context_exercise_ids: page.reading_context_exercise_ids - [ exercise.id ],
+        homework_core_exercise_ids: page.homework_core_exercise_ids - [ exercise.id ],
+        homework_dynamic_exercise_ids: page.homework_dynamic_exercise_ids - [ exercise.id ],
+        practice_widget_exercise_ids: page.practice_widget_exercise_ids - [ exercise.id ]
+      )
+      Content::Models::Exercise.where(id: exercise.id).delete_all
+
+      @ecosystem.exercises.reset
     end
 
     it 'can be updated to a newer ecosystem' do
@@ -92,6 +123,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
         ecosystem: @old_ecosystem,
         course: @course,
         settings: {
+          page_ids: page_ids,
           exercises: exercises.map do |exercise|
             { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
           end,
@@ -102,14 +134,23 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
       cloned_homework_plan.course.course_ecosystems.reload
       expect(cloned_homework_plan).not_to be_valid
 
-      updated_homework_plan = described_class[
+      updated_homework_plan = described_class.call(
         task_plan: cloned_homework_plan, ecosystem: @ecosystem
-      ]
+      ).outputs.task_plan
       expect(updated_homework_plan.ecosystem).to eq @ecosystem
-      expect(updated_homework_plan.settings['exercises'].length).to eq exercises.length
-      expect(updated_homework_plan.settings['exercises'].map { |ex| ex['id'] }).not_to(
-        eq exercises.map(&:id).map(&:to_s)
-      )
+
+      expect(updated_homework_plan.core_page_ids.length).to eq page_ids.length
+      old_page_ids_set = Set.new page_ids
+      updated_homework_plan.core_page_ids.each do |page_id|
+        expect(old_page_ids_set).not_to include page_id.to_s
+      end
+
+      expect(updated_homework_plan.settings['exercises'].length).to eq exercises.length - 1
+      old_exercise_ids_set = Set.new exercise_ids
+      updated_homework_plan.settings['exercises'].each do |exercise|
+        expect(old_exercise_ids_set).not_to include exercise['id']
+      end
+
       expect(updated_homework_plan).to be_valid
 
       new_exercise_ids = updated_homework_plan.settings['exercises'].map { |ex| ex['id'] }
