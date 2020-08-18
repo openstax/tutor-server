@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe CourseProfile::Models::Course, type: :model do
   subject(:course) { FactoryBot.create :course_profile_course }
 
+  let(:offering)   { course.offering }
+
   it { is_expected.to have_one(:cache) }
 
   it { is_expected.to belong_to(:school).optional }
@@ -164,6 +166,33 @@ RSpec.describe CourseProfile::Models::Course, type: :model do
     term_year = TermYear.new('winter', year + 1)
     expect(course.starts_at).to eq term_year.starts_at
     expect(course.ends_at).to eq term_year.ends_at
+  end
+
+  it 'automatically set does_cost based on the offering and is_kip' do
+    offering.update_attribute :does_cost, false
+    expect(course).to be_valid
+    expect(course.does_cost).to eq false
+
+    offering.update_attribute :does_cost, true
+    course.does_cost = nil
+    expect(course).to be_valid
+    expect(course.does_cost).to eq true
+
+    teacher = FactoryBot.create :course_membership_teacher, course: course
+    teacher.role.profile.account.update_attribute :is_kip, true
+    course.does_cost = nil
+    expect(course).to be_valid
+    expect(course.does_cost).to eq false
+
+    teacher.really_destroy!
+    course.does_cost = nil
+    expect(course).to be_valid
+    expect(course.does_cost).to eq true
+
+    course.offering = nil
+    course.does_cost = nil
+    expect(course).to be_valid
+    expect(course.does_cost).to eq false
   end
 
   context 'when is_lms_enabling_allowed is false' do

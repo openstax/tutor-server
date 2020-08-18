@@ -34,7 +34,7 @@ RSpec.describe CreateOrClaimCourse, type: :routine do
     it 'creates a new course, setting is_college and does_cost' do
       expect_any_instance_of(CreateCourse).to receive(:call) do |**options|
         expect(options[:is_college]).to eq true
-        expect(options[:does_cost]).to eq false
+        expect(options[:does_cost]).to be_nil
 
         Lev::Routine::Result.new(Lev::Outputs.new(course: mock_course), Lev::Errors.new)
       end
