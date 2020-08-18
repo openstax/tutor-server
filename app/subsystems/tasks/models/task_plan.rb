@@ -39,8 +39,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   delegate :timezone, :time_zone, to: :course
 
-  json_serialize :settings, Hash
-
   before_validation :trim_text, :set_and_return_ecosystem, :set_wrq_count
 
   validates :title, presence: true

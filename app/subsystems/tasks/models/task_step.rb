@@ -11,10 +11,6 @@ class Tasks::Models::TaskStep < ApplicationRecord
     :recovery_group
   ]
 
-  json_serialize :related_exercise_ids, Integer, array: true
-  json_serialize :labels, String, array: true
-  json_serialize :spy, Hash
-
   validates :tasked_id, uniqueness: { scope: :tasked_type }
   validates :group_type, presence: true
   validates :fragment_index,

@@ -1,8 +1,6 @@
 class Tasks::Models::TaskedReading < IndestructibleRecord
   acts_as_tasked
 
-  json_serialize :book_location, Integer, array: true
-
   delegate :fragment_index, to: :task_step
 
   validates :url, :fragment_index, presence: true

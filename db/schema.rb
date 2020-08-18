@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_18_184342) do
+ActiveRecord::Schema.define(version: 2020_08_18_192348) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -52,11 +52,11 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "short_id"
-    t.text "reading_processing_instructions", default: "[]", null: false
     t.uuid "tutor_uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "baked_at"
     t.boolean "is_collated", default: false
     t.jsonb "tree", null: false
+    t.jsonb "reading_processing_instructions", default: [], null: false, array: true
     t.index ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id"
     t.index ["title"], name: "index_content_books_on_title"
     t.index ["tutor_uuid"], name: "index_content_books_on_tutor_uuid", unique: true
@@ -124,10 +124,10 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.boolean "is_valid", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "exercise_id_to_page_id_map", default: "{}", null: false
-    t.text "page_id_to_page_id_map", default: "{}", null: false
-    t.text "page_id_to_pool_type_exercise_ids_map", default: "{}", null: false
-    t.text "validity_error_messages", default: "[]", null: false
+    t.jsonb "exercise_id_to_page_id_map", default: {}, null: false
+    t.jsonb "page_id_to_page_id_map", default: {}, null: false
+    t.jsonb "page_id_to_pool_type_exercise_ids_map", default: {}, null: false
+    t.string "validity_error_messages", default: [], null: false, array: true
     t.index ["content_from_ecosystem_id", "content_to_ecosystem_id"], name: "index_content_maps_on_from_ecosystem_id_and_to_ecosystem_id", unique: true
     t.index ["content_to_ecosystem_id"], name: "index_content_maps_on_content_to_ecosystem_id"
   end
@@ -163,9 +163,7 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.datetime "updated_at", null: false
     t.string "short_id"
     t.text "fragments", default: "[]", null: false
-    t.text "snap_labs", default: "[]", null: false
     t.uuid "tutor_uuid", default: -> { "gen_random_uuid()" }, null: false
-    t.text "book_location", default: "[]", null: false
     t.bigint "content_book_id", null: false
     t.integer "all_exercise_ids", default: [], null: false, array: true
     t.integer "reading_dynamic_exercise_ids", default: [], null: false, array: true
@@ -175,6 +173,8 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.integer "practice_widget_exercise_ids", default: [], null: false, array: true
     t.integer "book_indices", null: false, array: true
     t.uuid "parent_book_part_uuid", null: false
+    t.jsonb "snap_labs", default: [], null: false, array: true
+    t.integer "book_location", default: [], null: false, array: true
     t.index ["content_book_id"], name: "index_content_pages_on_content_book_id"
     t.index ["parent_book_part_uuid"], name: "index_content_pages_on_parent_book_part_uuid"
     t.index ["title"], name: "index_content_pages_on_title"
@@ -420,7 +420,7 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.boolean "is_end_user_visible", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "masked_contract_names", default: "[]", null: false
+    t.string "masked_contract_names", default: [], null: false, array: true
     t.index ["target_gid"], name: "legal_targeted_contracts_target"
   end
 
@@ -794,8 +794,8 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.string "tasks_task_plan_type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "settings", default: "{}", null: false
-    t.text "data", default: "{}", null: false
+    t.jsonb "settings", default: {}, null: false
+    t.jsonb "data", default: {}, null: false
     t.index ["course_profile_course_id", "tasks_task_plan_type"], name: "index_tasks_course_assistants_on_course_id_and_task_plan_type", unique: true
     t.index ["tasks_assistant_id", "course_profile_course_id"], name: "index_tasks_course_assistants_on_assistant_id_and_course_id"
   end
@@ -857,7 +857,7 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.string "type", null: false
     t.string "title", null: false
     t.text "description"
-    t.text "settings", null: false
+    t.jsonb "settings", default: {}, null: false
     t.datetime "publish_last_requested_at"
     t.datetime "first_published_at"
     t.string "publish_job_uuid"
@@ -890,12 +890,12 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.integer "group_type", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "related_exercise_ids", default: "[]", null: false
-    t.text "labels", default: "[]", null: false
-    t.text "spy", default: "{}", null: false
+    t.jsonb "spy", default: {}, null: false
     t.integer "content_page_id"
     t.integer "fragment_index"
     t.boolean "is_core", null: false
+    t.integer "related_exercise_ids", default: [], null: false, array: true
+    t.string "labels", default: [], null: false, array: true
     t.index ["content_page_id"], name: "index_tasks_task_steps_on_content_page_id"
     t.index ["first_completed_at"], name: "index_tasks_task_steps_on_first_completed_at"
     t.index ["last_completed_at"], name: "index_tasks_task_steps_on_last_completed_at"
@@ -959,7 +959,7 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "book_location", default: "[]", null: false
+    t.integer "book_location", default: [], null: false, array: true
   end
 
   create_table "tasks_tasked_videos", id: :serial, force: :cascade do |t|
@@ -1016,7 +1016,7 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.integer "placeholder_exercise_steps_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "spy", default: "{}", null: false
+    t.jsonb "spy", default: {}, null: false
     t.integer "correct_on_time_exercise_steps_count", default: 0, null: false
     t.integer "completed_on_time_exercise_steps_count", default: 0, null: false
     t.integer "completed_on_time_steps_count", default: 0, null: false
@@ -1080,7 +1080,7 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.integer "account_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "ui_settings"
+    t.jsonb "ui_settings", default: {}, null: false
     t.index ["account_id"], name: "index_user_profiles_on_account_id", unique: true
   end
 

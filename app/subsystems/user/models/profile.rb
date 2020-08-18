@@ -17,8 +17,6 @@ module User
       has_one :content_analyst, dependent: :destroy, inverse_of: :profile
       has_one :researcher, dependent: :destroy, inverse_of: :profile
 
-      json_serialize :ui_settings, Hash
-
       validates :account, uniqueness: true
       validates :ui_settings, max_json_length: 10_000
 

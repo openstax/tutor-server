@@ -12,9 +12,7 @@ class Content::Models::Page < IndestructibleRecord
 
   auto_uuid :tutor_uuid
 
-  json_serialize :fragments, OpenStax::Cnx::V1::Fragment, array: true
-  json_serialize :snap_labs, Hash, array: true
-  json_serialize :book_location, Integer, array: true
+  serialize :fragments, JSON
 
   belongs_to :book, inverse_of: :pages
   has_one :ecosystem, through: :book

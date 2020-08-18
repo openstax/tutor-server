@@ -1,9 +1,4 @@
 class Content::Models::Map < IndestructibleRecord
-  json_serialize :exercise_id_to_page_id_map, Hash
-  json_serialize :page_id_to_page_id_map, Hash
-  json_serialize :page_id_to_pool_type_exercise_ids_map, Hash
-  json_serialize :validity_error_messages, String, array: true
-
   belongs_to :from_ecosystem, class_name: '::Content::Models::Ecosystem', inverse_of: :to_maps
   belongs_to :to_ecosystem,   class_name: '::Content::Models::Ecosystem', inverse_of: :from_maps
 

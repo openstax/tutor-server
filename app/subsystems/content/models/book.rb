@@ -3,8 +3,6 @@ class Content::Models::Book < IndestructibleRecord
 
   auto_uuid :tutor_uuid
 
-  json_serialize :reading_processing_instructions, Hash, array: true
-
   belongs_to :ecosystem, inverse_of: :books
 
   # If you need the pages in order, use the children method to obtain the book tree

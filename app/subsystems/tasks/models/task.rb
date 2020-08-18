@@ -32,8 +32,6 @@ class Tasks::Models::Task < ApplicationRecord
 
   STEPLESS_TASK_TYPES = [ :external, :event ]
 
-  json_serialize :spy, Hash
-
   belongs_to :course, subsystem: :course_profile, inverse_of: :tasks
 
   belongs_to :task_plan, inverse_of: :tasks, optional: true
