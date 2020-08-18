@@ -1,3 +1,4 @@
 module OpenStax
-  class HTTPError < StandardError; end
+  class HTTPError < StandardError
+  end
 end

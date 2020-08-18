@@ -180,15 +180,18 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
 
     context 'if the students were dropped after working the assignment' do
       it 'does not show dropped students' do
-        first_task = student_tasks.first
-        work_task(task: first_task, is_correct: true)
+        student = CourseMembership::Models::Student.where(
+          course_membership_period_id: stats.first.period_id
+        ).first
+        task = student_tasks.detect { |task| task.taskings.first.role.student == student }
+        work_task(task: task, is_correct: true)
 
         stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
         expect(stats.first.complete_count).to eq 1
         expect(stats.first.partially_complete_count).to eq 0
 
-        first_task.taskings.first.role.student.destroy!
+        student.destroy!
 
         stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
 
