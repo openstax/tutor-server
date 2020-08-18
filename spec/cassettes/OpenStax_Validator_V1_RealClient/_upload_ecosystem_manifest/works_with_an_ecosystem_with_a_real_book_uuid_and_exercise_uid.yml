@@ -1,0 +1,93 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://localhost:5000/import
+    body:
+      encoding: UTF-8
+      string: |
+        ---
+        title: quae debitis est (d6af3133-0d78-4bf6-9602-90bc03b2d999@8)
+        books:
+        - archive_url: https://archive.cnx.org
+          cnx_id: 02040312-72c8-441e-a685-20e9333f3e1d@14.3
+          reading_processing_instructions:
+          - css: .ost-reading-discard, .os-teacher, [data-type="glossary"]
+            fragments: []
+            except:
+            - snap-lab
+          - fragments:
+            - node
+            - optional_exercise
+            css: |-
+              .ost-feature:has-descendants(".os-exercise",2),
+              .ost-feature:has-descendants(".ost-exercise-choice"),
+              .ost-assessed-feature:has-descendants(".os-exercise",2),
+              .ost-assessed-feature:has-descendants(".ost-exercise-choice")
+          - fragments:
+            - node
+            - exercise
+            css: |-
+              .ost-feature:has-descendants(".os-exercise, .ost-exercise-choice"),
+              .ost-assessed-feature:has-descendants(".os-exercise, .ost-exercise-choice")
+          - fragments: []
+            css: |-
+              .ost-feature .ost-exercise-choice,
+              .ost-assessed-feature .ost-exercise-choice,
+              .ost-feature .os-exercise,
+              .ost-assessed-feature .os-exercise
+          - css: ".ost-exercise-choice"
+            fragments:
+            - exercise
+            - optional_exercise
+          - css: ".os-exercise"
+            fragments:
+            - exercise
+          - css: ".ost-video"
+            fragments:
+            - video
+          - css: ".os-interactive, .ost-interactive"
+            fragments:
+            - interactive
+          - css: ".worked-example"
+            fragments:
+            - reading
+            labels:
+            - worked-example
+          - css: ".ost-feature, .ost-assessed-feature"
+            fragments:
+            - reading
+          exercise_ids:
+          - 5918@3
+    headers:
+      User-Agent:
+      - Faraday v0.17.0
+      Content-Type:
+      - application/yaml
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - gunicorn/20.0.4
+      Date:
+      - Mon, 17 Aug 2020 22:37:38 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '42'
+    body:
+      encoding: UTF-8
+      string: '{"msg":"Ecosystem successfully imported"}
+
+'
+    http_version: 
+  recorded_at: Mon, 17 Aug 2020 22:37:38 GMT
+recorded_with: VCR 4.0.0

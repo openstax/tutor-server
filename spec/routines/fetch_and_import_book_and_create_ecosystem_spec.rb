@@ -4,6 +4,11 @@ require 'vcr_helper'
 RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
                                                      vcr: VCR_OPTS,
                                                      speed: :medium do
+  before do
+    expect(Content::UploadEcosystemManifestToValidator).to receive(:perform_later) do |manifest|
+      expect(manifest).to be_a(String)
+    end
+  end
 
   context 'tutor book' do
     let(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }
@@ -16,10 +21,12 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
     end
 
     it 'imports a book even if the book already exists' do
-      FactoryBot.create(:content_book,
-                         title: 'Physics',
-                         url: "#{archive_url}#{book_cnx_id}",
-                         version: '4.4')
+      FactoryBot.create(
+        :content_book,
+        title: 'Physics',
+        url: "#{archive_url}#{book_cnx_id}",
+        version: '4.4'
+      )
 
       expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id)
@@ -27,10 +34,12 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
     end
 
     it 'imports a book with a different version' do
-      FactoryBot.create(:content_book,
-                         title: 'Physics',
-                         url: "#{archive_url}#{book_cnx_id}",
-                         version: '4.4')
+      FactoryBot.create(
+        :content_book,
+        title: 'Physics',
+        url: "#{archive_url}#{book_cnx_id}",
+        version: '4.4'
+      )
 
       expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id.sub('@4.4', '@4.3'))
@@ -49,10 +58,12 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
     end
 
     it 'imports a book even if the book already exists' do
-      FactoryBot.create(:content_book,
-                         title: 'Derived copy of Biology',
-                         url: "#{archive_url}#{book_cnx_id}",
-                         version: '2.1')
+      FactoryBot.create(
+        :content_book,
+        title: 'Derived copy of Biology',
+        url: "#{archive_url}#{book_cnx_id}",
+        version: '2.1'
+      )
 
       expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id)
@@ -60,10 +71,12 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
     end
 
     it 'imports a book with a different version' do
-      FactoryBot.create(:content_book,
-                         title: 'Derived copy of Biology',
-                         url: "#{archive_url}#{book_cnx_id}",
-                         version: '2.1')
+      FactoryBot.create(
+        :content_book,
+        title: 'Derived copy of Biology',
+        url: "#{archive_url}#{book_cnx_id}",
+        version: '2.1'
+      )
 
       expect do
         described_class.call(archive_url: archive_url, book_cnx_id: book_cnx_id.sub('@2.1', '@1.1'))

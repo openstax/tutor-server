@@ -39,11 +39,11 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
     expect { task_step.save! }.to change { task_step.task.cache_version }
   end
 
-  it 'includes garbage_detection in spy_with_response_validation' do
+  it 'includes response_validation in spy_with_response_validation' do
     task_step.tasked = FactoryBot.build :tasks_tasked_exercise,
                                         task_step: task_step,
                                         response_validation: { valid: false }
-    expect(task_step.spy_with_response_validation).to eq(response_validation: { "valid"=>false })
+    expect(task_step.spy_with_response_validation).to eq(response_validation: { 'valid' => false })
   end
 
   context "group types" do

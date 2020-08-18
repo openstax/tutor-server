@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external, vcr: VCR_OPTS do
-
   before(:all) do
     @config = OpenStax::Exercises::V1.configuration
     @client_id = @config.client_id
@@ -19,7 +18,6 @@ RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external, vcr: VCR_OP
   subject(:real_client) { described_class.new(@config) }
 
   context "exercises search" do
-
     context "single match" do
       it "returns an Exercise matching some content" do
         results = real_client.exercises(content: 'WhAt Is KiNeMaTiCs?')
@@ -68,7 +66,5 @@ RSpec.describe OpenStax::Exercises::V1::RealClient, type: :external, vcr: VCR_OP
         previous_version = current_version
       end
     end
-
   end
-
 end
