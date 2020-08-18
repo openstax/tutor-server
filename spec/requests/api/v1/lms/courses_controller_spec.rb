@@ -7,7 +7,7 @@ RSpec.describe Api::V1::Lms::CoursesController, type: :request, api: true, versi
   let(:token)    { FactoryBot.create(:doorkeeper_access_token, resource_owner_id: user.id) }
 
   let(:willo)          { Lms::WilloLabs.new }
-  let(:launch_request) { FactoryBot.create(:launch_request, app: willo) }
+  let(:launch_request) { FactoryBot.create(:launch_request, app: willo, roles: [:instructor]) }
 
   let!(:teacher)       { AddUserAsCourseTeacher[course: course, user: user].teacher }
 
@@ -44,13 +44,20 @@ RSpec.describe Api::V1::Lms::CoursesController, type: :request, api: true, versi
       expect_any_instance_of(
         ::IMS::LTI::Services::MessageAuthenticator
       ).to receive(:valid_signature?).and_return(true)
+
       post lms_launch_url, params: launch_request.request_parameters
-      expect(session[:launch_id]).not_to be_nil
+      match = response.body.match(/\/lms\/launch_authenticate\/(.*)\'/)
+      expect(match).not_to be_nil
+
+      api_get(lms_launch_authenticate_url(launch_uuid: match[1]), token)
 
       api_post pair_api_lms_course_url(course.id), token
+
+      expect(session[:launch_uuid]).not_to be_nil
+
       expect(response.body_as_hash[:success]).to eq true
 
-      lms_launch = Lms::Launch.from_id(session[:launch_id]).validate!
+      lms_launch = Lms::Launch.from_uuid(session[:launch_uuid]).validate!
       expect(lms_launch.context.reload.course).to eq course
       expect(course.reload.is_lms_enabled).to be true
     end

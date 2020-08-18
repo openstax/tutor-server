@@ -11,7 +11,7 @@ RSpec.describe Lms::PairLaunchToCourse do
   }
 
   it "sets errors when launch doesn't exist" do
-    result = subject.call(launch_id: 123, course: course)
+    result = subject.call(launch_uuid: 123, course: course)
     expect(result.outputs.success).to be false
     expect(result.errors).not_to be_empty
     expect(result.errors.first.code).to eq :lms_launch_doesnt_exist
@@ -23,7 +23,7 @@ RSpec.describe Lms::PairLaunchToCourse do
       FactoryBot.create(:launch_request, app: app),
       authenticator: authenticator
     ).validate!
-    result = subject.call(launch_id: launch.persist!, course: course)
+    result = subject.call(launch_uuid: launch.persist!, course: course)
     expect(result.outputs.success).to be true
     expect(result.errors).to be_empty
     expect(course.reload.is_lms_enabled).to be true

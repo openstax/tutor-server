@@ -1,5 +1,5 @@
 <%# This page exists to force Tutor to open in its own tab; we try to load minimal CSS/JS to
-    make it fast. %>
+  make it fast. %>
 
 <html>
   <head>
@@ -10,7 +10,7 @@
     <div id="lms-say-open-in-tab" style="display:none">
       <%= image_tag "openstax-tutor-beta-logo.svg", class: 'logo' %>
       <div class="text" id="message">Continue to OpenStax Tutor in a new browser tab.</div>
-      <%= link_to "Continue", lms_launch_authenticate_path, target: :_blank, class: "btn", id: 'continue' %>
+      <%= link_to "Continue", @next_url, target: :_blank, class: "btn", id: 'continue' %>
     </div>
 
     <script>
@@ -28,7 +28,7 @@
       if (inIframe()) {
         document.getElementById('lms-say-open-in-tab').style.display = 'block';
       } else {
-        window.location.href = '<%= lms_launch_authenticate_path %>';
+        window.location.href = '<%= @next_url %>';
       }
 
       document.getElementById('continue').onclick=function() {

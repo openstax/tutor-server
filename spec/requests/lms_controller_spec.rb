@@ -500,11 +500,27 @@ RSpec.describe LmsController, type: :request do
     end
 
     context 'launch_authenticate' do
-      let(:launch_path) { lms_launch_authenticate_path }
+      context 'with invalid uuid' do
+        let(:launch_path) { lms_launch_authenticate_path(launch_uuid: '1234') }
 
-      it 'errors' do
-        simulator.launch method: :get
-        expect_error('Make sure your browser is set to allow cookies from OpenStax Tutor')
+        it 'errors' do
+          simulator.launch method: :get
+
+          expect_error('launch identifier for your request was not found')
+        end
+      end
+      context 'with valid uuid' do
+        let(:launch_path) { lms_launch_authenticate_path(launch_uuid: '1234') }
+
+        it 'redirects with no errors' do
+          launch = Lms::Launch.new(request_parameters: {}, request_url: '/bad')
+
+          expect(Lms::Launch).to receive(:from_uuid).with('1234').and_return(launch)
+          expect(launch).to receive(:validate!).and_return(true)
+
+          simulator.launch method: :get
+          expect(response).to redirect_to Regexp.new(openstax_accounts.login_url)
+        end
       end
     end
 

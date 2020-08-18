@@ -2,10 +2,10 @@ class Lms::PairLaunchToCourse
 
   lev_routine
 
-  def exec(launch_id:, course:)
+  def exec(launch_uuid:, course:)
     outputs.success = false
     begin
-      launch = Lms::Launch.from_id(launch_id)
+      launch = Lms::Launch.from_uuid(launch_uuid)
       launch.validate!
     rescue Lms::Launch::CouldNotLoadLaunch => ee
       fatal_error(code: :lms_launch_doesnt_exist, message: "LMS Launch was not found")

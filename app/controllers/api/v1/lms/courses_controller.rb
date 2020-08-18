@@ -37,7 +37,7 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
   def pair
     OSU::AccessPolicy.require_action_allowed!(:lms_course_pair, current_api_user, @course)
     result = Lms::PairLaunchToCourse.call(
-      launch_id: session[:launch_id], course: @course
+      launch_uuid: session[:launch_uuid], course: @course
     )
     render json: { success: result.outputs[:success], errors: result.errors }
   end

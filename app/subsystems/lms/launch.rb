@@ -50,13 +50,13 @@ class Lms::Launch
     Lms::Models::TrustedLaunchData.create!(
       request_params: request_parameters,
       request_url: request_url
-    ).id
+    ).uuid
   end
 
-  # You MUST call validate! immediately after this method
+  # You MUST call validate! immediately after this method 
   # This is not done automatically in order to enable better error handling
-  def self.from_id(id)
-    launch_data = Lms::Models::TrustedLaunchData.find_by(id: id)
+  def self.from_uuid(uuid)
+    launch_data = Lms::Models::TrustedLaunchData.find_by(uuid: uuid)
     raise CouldNotLoadLaunch if launch_data.nil?
     new(request_parameters: ActiveSupport::HashWithIndifferentAccess.new(launch_data.request_params),
         request_url: launch_data.request_url,

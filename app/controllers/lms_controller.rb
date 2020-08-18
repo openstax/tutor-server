@@ -49,7 +49,8 @@ class LmsController < ApplicationController
       # these persisted launches are going to be kept around for a while for
       # debugging, persist before any errors are detected
 
-      session[:launch_id] = launch.persist!
+      # set launch uuid as param in url, this may be loaded inside iframe where the cookie based session may be blocked
+      @next_url = lms_launch_authenticate_path(launch_uuid: launch.persist!)
 
       # Do some early error checking
       fail_for_unsupported_role and return if !(launch.is_student? || launch.is_instructor?)
@@ -97,8 +98,10 @@ class LmsController < ApplicationController
     # Part 2 of 3 in how Tutor processes the launch
 
     begin
-      launch = Lms::Launch.from_id(session[:launch_id])
+      launch = Lms::Launch.from_uuid(params[:launch_uuid])
       launch.validate!
+      
+      session[:launch_uuid] = params[:launch_uuid] # we're now outside iframe and can use session
     rescue Lms::Launch::CouldNotLoadLaunch => ee
       fail_for_could_not_load_launch and return
     end
@@ -109,7 +112,7 @@ class LmsController < ApplicationController
   def complete_launch
     # Part 3 of 3 in how Tutor processes the launch - gets the now authenticated user to
     # their course (or the enrollment screen into it)
-    launch = Lms::Launch.from_id(session[:launch_id])
+    launch = Lms::Launch.from_uuid(session[:launch_uuid])
     launch.validate!
     process_completed_launch(launch)
   rescue Lms::Launch::CouldNotLoadLaunch => ee
@@ -161,33 +164,33 @@ class LmsController < ApplicationController
   protected
 
   def fail_for_unpaired
-    log(:info) { "Attempting to launch (#{session[:launch_id]}) into an not-yet-paired course" }
+    log(:info) { "Attempting to launch (#{session[:launch_uuid]}) into an not-yet-paired course" }
     render_minimal_error(:fail_unpaired)
   end
 
   def fail_for_unsupported_role
-    log(:info) { "Unsupported role launched in launch #{session[:launch_id]}"}
+    log(:info) { "Unsupported role launched in launch #{session[:launch_uuid]}"}
     render_minimal_error(:fail_unsupported_role)
   end
 
   def fail_for_could_not_load_launch
-    log(:info) { "Could not load launch #{session[:launch_id]}"}
+    log(:info) { "Could not load launch #{session[:launch_uuid]}"}
     render_minimal_error(:fail_could_not_load_launch)
   end
 
   def fail_for_lms_disabled(launch, context)
-    log(:info) { "Attempting to launch (#{session[:launch_id]}) into an " \
+    log(:info) { "Attempting to launch (#{session[:launch_uuid]}) into an " \
                  "LMS-disabled course (#{context.nil? ? 'not set' : context.course.id})" }
     render_minimal_error(:fail_lms_disabled, locals: { launch: launch })
   end
 
   def fail_for_course_ended(launch)
-    log(:info) { "Attempting to launch (#{session[:launch_id]}) into a course that has ended" }
+    log(:info) { "Attempting to launch (#{session[:launch_uuid]}) into a course that has ended" }
     render_minimal_error(:fail_course_ended, locals: { launch: launch })
   end
 
   def fail_for_missing_required_fields(launch)
-    log(:info) { "Launch #{session[:launch_id]} is missing required fields: " \
+    log(:info) { "Launch #{session[:launch_uuid]} is missing required fields: " \
                  "#{launch.missing_required_fields}" }
     render_minimal_error(:fail_missing_required_fields, locals: { launch: launch })
   end
@@ -198,27 +201,27 @@ class LmsController < ApplicationController
   end
 
   def fail_for_app_not_found(launch)
-    log(:info) { "App not found #{session[:launch_id]}" }
+    log(:info) { "App not found #{session[:launch_uuid]}" }
     render_minimal_error(:fail_app_not_found, locals: { launch: launch })
   end
 
   def fail_for_invalid_signature(launch)
-    log(:info) { "Invalid signature #{session[:launch_id]}" }
+    log(:info) { "Invalid signature #{session[:launch_uuid]}" }
     render_minimal_error(:fail_invalid_signature, locals: { launch: launch })
   end
 
   def fail_for_expired_timestamp(launch)
-    log(:info) { "Expired timestamp #{session[:launch_id]}" }
+    log(:info) { "Expired timestamp #{session[:launch_uuid]}" }
     render_minimal_error(:fail_expired_timestamp, locals: { launch: launch })
   end
 
   def fail_for_invalid_timestamp(launch)
-    log(:info) { "Invalid timestamp #{session[:launch_id]}" }
+    log(:info) { "Invalid timestamp #{session[:launch_uuid]}" }
     render_minimal_error(:fail_invalid_timestamp, locals: { launch: launch })
   end
 
   def fail_for_nonce_already_used(launch)
-    log(:info) { "Nonce already used #{session[:launch_id]}" }
+    log(:info) { "Nonce already used #{session[:launch_uuid]}" }
     render_minimal_error(:fail_nonce_already_used, locals: { launch: launch })
   end
 
