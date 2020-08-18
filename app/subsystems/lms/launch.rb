@@ -152,8 +152,16 @@ class Lms::Launch
   end
 
   def find_existing_context
-    query = Lms::Models::Context.eager_load(:course).where(lti_id: context_id)
+    query = Lms::Models::Context.eager_load(:course)
+              .where(lti_id: context_id)
 
+    # occasionally a LMS will re-use a context from one course
+    # to another even if the LMS course's keys have changed
+    # To prevent that we also filter by the Tutor course
+    if app.owner.is_a? CourseProfile::Models::Course
+      query = query.where(course: app.owner)
+    end
+    
     if @tool_consumer.nil?
       query = query.joins(:tool_consumer)
                 .where(tool_consumer: { guid: tool_consumer_instance_guid })
