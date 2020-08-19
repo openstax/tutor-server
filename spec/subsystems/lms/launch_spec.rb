@@ -98,6 +98,17 @@ RSpec.describe Lms::Launch, type: :model do
       end
     end
 
+    it 'will not re-use a context that is linked to a different course' do
+      message.context_id = "re-used-launch-id"
+      launch1 = Lms::Launch.from_request(FactoryBot.create(:launch_request, app: app), authenticator: authenticator).validate!
+      launch1.persist!
+
+      app2 = FactoryBot.create(:lms_app, owner: FactoryBot.create(:course_profile_course, is_lms_enabled: true))
+      launch2 = Lms::Launch.from_request(FactoryBot.create(:launch_request, app: app2), authenticator: authenticator).validate!
+      launch2.persist!
+      expect(launch1.context).not_to eq(launch2.context)
+    end
+
     context 'recording app type on the context' do
       let(:launch) do
         Lms::Launch.from_request(
