@@ -39,13 +39,6 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
       )
     end
 
-    before do
-      # Simulate a page being removed from the new ecosystem
-      @ecosystem.pages.where(uuid: Content::Models::Page.find(page_ids.last).uuid).delete_all
-
-      @ecosystem.pages.reset
-    end
-
     it 'can be updated to a newer ecosystem' do
       expect(original_reading_plan).to be_valid
 
@@ -63,7 +56,7 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
       updated_reading_plan = described_class[task_plan: cloned_reading_plan, ecosystem: @ecosystem]
       expect(updated_reading_plan.ecosystem).to eq @ecosystem
 
-      expect(updated_reading_plan.core_page_ids.length).to eq page_ids.length - 1
+      expect(updated_reading_plan.core_page_ids.length).to eq page_ids.length
       old_page_ids_set = Set.new page_ids
       updated_reading_plan.core_page_ids.each do |page_id|
         expect(old_page_ids_set).not_to include page_id.to_s

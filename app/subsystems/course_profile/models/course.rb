@@ -64,6 +64,7 @@ class CourseProfile::Models::Course < ApplicationRecord
   validates :homework_weight,
             :reading_weight,
             presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
+  validates :does_cost, inclusion: { in: [ true, false ] }
 
   validate :ends_after_it_starts, :valid_year
 
@@ -71,7 +72,7 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   delegate :name, to: :school, prefix: true, allow_nil: true
 
-  before_validation :set_starts_at_and_ends_at, :set_weights, :set_environment
+  before_validation :set_starts_at_and_ends_at, :set_weights, :set_environment, :set_does_cost
 
   scope :not_ended, -> { where(arel_table[:ends_at].gt(Time.now)) }
 
@@ -162,6 +163,15 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   def set_environment
     self.environment ||= Environment.current
+  end
+
+  def set_does_cost
+    return unless does_cost.nil?
+
+    self.does_cost = !!offering&.does_cost &&
+                     teachers.preload(role: { profile: :account }).none? do |teacher|
+      !teacher.deleted? && teacher.role.profile.is_kip
+    end
   end
 
   def ends_after_it_starts

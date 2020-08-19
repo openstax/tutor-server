@@ -16,7 +16,6 @@ class CreateCourse
            estimated_student_count: nil, does_cost: nil, reading_weight: nil, homework_weight: nil,
            grading_templates: Tasks::Models::GradingTemplate.default,
            past_due_unattempted_ungraded_wrq_are_zero: true)
-
     # TODO eventually, making a course part of a school should be done independently
     # with separate admin controller interfaces and all work done in the SchoolDistrict SS
 
@@ -31,7 +30,6 @@ class CreateCourse
     end
 
     is_concept_coach = catalog_offering&.is_concept_coach if is_concept_coach.nil?
-    does_cost = (catalog_offering&.does_cost || false) if does_cost.nil?
 
     fatal_error(
       code: :is_concept_coach_blank,

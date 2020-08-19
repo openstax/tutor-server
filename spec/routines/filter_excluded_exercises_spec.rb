@@ -30,7 +30,7 @@ RSpec.describe FilterExcludedExercises, type: :routine do
         it 'returns exercises not excluded by admin, course or additional' do
           outputs = described_class.call(**args).outputs
           expect(outputs.exercises).to eq exercises.last(1)
-          expect(outputs.admin_excluded_uids).to eq exercises.first(2).map(&:uid).sort
+          expect(outputs.admin_excluded_uids).to match_array exercises.first(2).map(&:uid)
           expect(outputs.course_excluded_uids).to eq [ exercises.third.uid ]
           expect(outputs.role_excluded_uids).to eq []
         end
@@ -42,7 +42,7 @@ RSpec.describe FilterExcludedExercises, type: :routine do
         it 'returns exercises not excluded by admin or course' do
           outputs = described_class.call(**args).outputs
           expect(outputs.exercises).to eq exercises.last(2)
-          expect(outputs.admin_excluded_uids).to eq exercises.first(2).map(&:uid).sort
+          expect(outputs.admin_excluded_uids).to match_array exercises.first(2).map(&:uid)
           expect(outputs.course_excluded_uids).to eq [ exercises.third.uid ]
           expect(outputs.role_excluded_uids).to eq []
         end
@@ -58,7 +58,7 @@ RSpec.describe FilterExcludedExercises, type: :routine do
         it 'returns exercises not excluded by admin or additional' do
           outputs = described_class.call(**args).outputs
           expect(outputs.exercises).to eq [ exercises.third, exercises.fifth ]
-          expect(outputs.admin_excluded_uids).to eq exercises.first(2).map(&:uid).sort
+          expect(outputs.admin_excluded_uids).to match_array exercises.first(2).map(&:uid)
           expect(outputs.course_excluded_uids).to eq []
           expect(outputs.role_excluded_uids).to eq []
         end
@@ -70,7 +70,7 @@ RSpec.describe FilterExcludedExercises, type: :routine do
         it 'returns exercises not excluded by admin' do
           outputs = described_class.call(**args).outputs
           expect(outputs.exercises).to eq exercises.last(3)
-          expect(outputs.admin_excluded_uids).to eq exercises.first(2).map(&:uid).sort
+          expect(outputs.admin_excluded_uids).to match_array exercises.first(2).map(&:uid)
           expect(outputs.course_excluded_uids).to eq []
           expect(outputs.role_excluded_uids).to eq []
         end
