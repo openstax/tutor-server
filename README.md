@@ -1,4 +1,5 @@
-[![Build Status](https://github.com/openstax/tutor-server/workflows/Tutor/badge.svg)](https://github.com/openstax/tutor-server)
+[![Migration Status](https://github.com/openstax/tutor-server/workflows/Migrations/badge.svg)](https://github.com/openstax/tutor-server)
+[![Build Status](https://github.com/openstax/tutor-server/workflows/Tests/badge.svg)](https://github.com/openstax/tutor-server)
 [![Coverage Status](https://img.shields.io/codecov/c/github/openstax/tutor-server.svg)](https://codecov.io/gh/openstax/tutor-server)
 
 # OpenStax Tutor Backend Server
