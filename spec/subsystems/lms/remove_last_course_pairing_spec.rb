@@ -17,7 +17,7 @@ RSpec.describe Lms::RemoveLastCoursePairing do
   let(:course) { FactoryBot.create :course_profile_course }
 
   before(:each) {
-    Lms::PairLaunchToCourse.call(launch_id: launch.persist!, course: course)
+    Lms::PairLaunchToCourse.call(launch_uuid: launch.persist!, course: course)
     course.reload
   }
 
@@ -37,7 +37,7 @@ RSpec.describe Lms::RemoveLastCoursePairing do
       FactoryBot.create(:launch_request, app: Lms::WilloLabs.new),
       authenticator: authenticator
     ).validate!
-    Lms::PairLaunchToCourse.call(launch_id: new_launch.persist!, course: course)
+    Lms::PairLaunchToCourse.call(launch_uuid: new_launch.persist!, course: course)
 
     expect(course.lms_contexts.count).to eq 2
 

@@ -47,7 +47,7 @@ Rails.application.routes.draw do
   scope :lms, controller: :lms, as: :lms do
     get :configuration
     post :launch
-    get :launch_authenticate
+    get :'launch_authenticate/:launch_uuid', action: :launch_authenticate, as: :launch_authenticate
     get :complete_launch
     get :pair
     post :ci_launch

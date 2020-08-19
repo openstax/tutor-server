@@ -7,9 +7,9 @@ RSpec.describe Lms::Launch, type: :model do
   let(:message) { OpenStruct.new(context_id: '1234', tool_consumer_instance_guid: '4242') }
   let(:authenticator) { OpenStruct.new(valid_signature?: true, message: message) }
 
-  context '#from_id' do
+  context '#from_uuid' do
     it 'verifies the launch already exists' do
-      expect { Lms::Launch.from_id(42) }.to raise_error(Lms::Launch::CouldNotLoadLaunch)
+      expect { Lms::Launch.from_uuid(42) }.to raise_error(Lms::Launch::CouldNotLoadLaunch)
     end
   end
 
