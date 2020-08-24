@@ -43,6 +43,9 @@ jobs:
       # Install gems, create data to be migrated and revert to PR merge commit
       - name: Create data to be migrated
         env:
+          OPENSTAX_EXERCISES_CLIENT_ID: ${{ secrets.OPENSTAX_EXERCISES_CLIENT_ID }}
+          OPENSTAX_EXERCISES_SECRET: ${{ secrets.OPENSTAX_EXERCISES_SECRET }}
+          OPENSTAX_EXERCISES_URL: ${{ secrets.OPENSTAX_EXERCISES_URL }}
           OXT_DB_USER: postgres
           OXT_TEST_DB: ci_test
           OXT_DB_PASS: postgres
@@ -66,6 +69,9 @@ jobs:
       # Migrate the data
       - name: Migrate
         env:
+          OPENSTAX_EXERCISES_CLIENT_ID: ${{ secrets.OPENSTAX_EXERCISES_CLIENT_ID }}
+          OPENSTAX_EXERCISES_SECRET: ${{ secrets.OPENSTAX_EXERCISES_SECRET }}
+          OPENSTAX_EXERCISES_URL: ${{ secrets.OPENSTAX_EXERCISES_URL }}
           OXT_DB_USER: postgres
           OXT_TEST_DB: ci_test
           OXT_DB_PASS: postgres
