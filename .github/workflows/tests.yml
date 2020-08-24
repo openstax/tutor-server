@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-18.04
     services:
-      db:
+      postgres:
         image: postgres:11
         ports:
         - 5432:5432
