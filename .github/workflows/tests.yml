@@ -9,7 +9,7 @@ on:
     - cron: '0 0 * * 0' # weekly
 
 jobs:
-  test:
+  tests:
     timeout-minutes: 30
     runs-on: ubuntu-18.04
     services:
