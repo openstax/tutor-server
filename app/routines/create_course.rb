@@ -30,6 +30,7 @@ class CreateCourse
     end
 
     is_concept_coach = catalog_offering&.is_concept_coach if is_concept_coach.nil?
+    does_cost = !!catalog_offering&.does_cost if does_cost.nil?
 
     fatal_error(
       code: :is_concept_coach_blank,

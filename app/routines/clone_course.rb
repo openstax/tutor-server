@@ -31,6 +31,7 @@ class CloneCourse
       catalog_offering: course.offering,
       # don't copy `does_cost` from the course,
       # because that course may not have cost but this one should
+      does_cost: !!course.offering&.does_cost && !teacher_user.is_kip,
       appearance_code: course.appearance_code,
       timezone: timezone || course.timezone,
       cloned_from: course,
