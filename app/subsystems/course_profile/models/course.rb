@@ -72,7 +72,7 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   delegate :name, to: :school, prefix: true, allow_nil: true
 
-  before_validation :set_starts_at_and_ends_at, :set_weights, :set_environment, :set_does_cost
+  before_validation :set_starts_at_and_ends_at, :set_weights, :set_environment
 
   scope :not_ended, -> { where(arel_table[:ends_at].gt(Time.now)) }
 
@@ -163,15 +163,6 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   def set_environment
     self.environment ||= Environment.current
-  end
-
-  def set_does_cost
-    return unless does_cost.nil?
-
-    self.does_cost = !!offering&.does_cost &&
-                     teachers.preload(role: { profile: :account }).none? do |teacher|
-      !teacher.deleted? && teacher.role.profile.is_kip
-    end
   end
 
   def ends_after_it_starts
