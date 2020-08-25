@@ -49,6 +49,18 @@ RSpec.describe OfferingAccessPolicy, type: :access_policy do
     end
   end
 
+  context 'explicitly marked as grant_tutor_access' do
+    let(:requestor) { FactoryBot.create(:user_profile).tap{ |user| user.account.update_attributes(grant_tutor_access: true) } }
+
+    [:index, :read, :create_course].each do |test_action|
+      context test_action.to_s do
+        let(:action) { test_action }
+
+        it { should eq true }
+      end
+    end
+  end
+
   context 'verified faculty' do
     let(:requestor) { faculty }
 
