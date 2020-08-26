@@ -1,7 +1,6 @@
 class Api::V1::TasksController < Api::V1::ApiController
-  before_action :get_task
-  before_action :error_if_student_and_needs_to_pay, only: [ :show, :destroy ]
-  before_action :populate_placeholders, only: :show
+  around_action :with_task
+  before_action :error_if_student_and_needs_to_pay
 
   resource_description do
     api_versions "v1"
@@ -28,6 +27,8 @@ class Api::V1::TasksController < Api::V1::ApiController
   def show
     ScoutHelper.ignore!(0.8)
 
+    Tasks::PopulatePlaceholderSteps[task: @task, lock_task: false]
+
     @task.task_steps.tap do |task_steps|
       ActiveRecord::Associations::Preloader.new.preload task_steps, [ :tasked, :page ]
     end
@@ -50,11 +51,11 @@ class Api::V1::TasksController < Api::V1::ApiController
 
   protected
 
-  def get_task
-    @task = ::Tasks::Models::Task.find(params[:id])
-  end
+  def with_task
+    ::Tasks::Models::Task.transaction do
+      @task = ::Tasks::Models::Task.lock.find(params[:id])
 
-  def populate_placeholders
-    Tasks::PopulatePlaceholderSteps[task: @task]
+      yield
+    end
   end
 end
