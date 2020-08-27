@@ -1,0 +1,91 @@
+name: Migrations
+
+on:
+  pull_request:
+    types: [ opened, edited, synchronize, reopened ]
+
+jobs:
+  migrations:
+    timeout-minutes: 30
+    runs-on: ubuntu-18.04
+    services:
+      postgres:
+        image: postgres:11
+        ports:
+        - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: ci_test
+          POSTGRES_PASSWORD: postgres
+      redis:
+        image: redis
+        ports:
+        - 6379:6379
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+
+    steps:
+      # Clone repo and checkout merge commit parent (PR target commit)
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - run: git checkout HEAD^
+
+      # Install ruby
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+
+      # Retrieve gem cache for merge commit parent
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-parent-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-parent-
+
+      # Install gems, create data to be migrated and revert to PR merge commit
+      - name: Create data to be migrated
+        env:
+          OPENSTAX_EXERCISES_CLIENT_ID: ${{ secrets.OPENSTAX_EXERCISES_CLIENT_ID }}
+          OPENSTAX_EXERCISES_SECRET: ${{ secrets.OPENSTAX_EXERCISES_SECRET }}
+          OPENSTAX_EXERCISES_URL: ${{ secrets.OPENSTAX_EXERCISES_URL }}
+          OXT_DB_USER: postgres
+          OXT_TEST_DB: ci_test
+          OXT_DB_PASS: postgres
+        run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+          bundle exec rake db:create db:schema:load db:seed --trace
+          bundle exec rake demo[soc]
+          bundle exec rake jobs:workoff
+          git checkout -
+
+      # Retrieve gem cache for PR merge commit
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-pr-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-pr-
+
+      # Migrate the data
+      - name: Migrate
+        env:
+          OPENSTAX_EXERCISES_CLIENT_ID: ${{ secrets.OPENSTAX_EXERCISES_CLIENT_ID }}
+          OPENSTAX_EXERCISES_SECRET: ${{ secrets.OPENSTAX_EXERCISES_SECRET }}
+          OPENSTAX_EXERCISES_URL: ${{ secrets.OPENSTAX_EXERCISES_URL }}
+          OXT_DB_USER: postgres
+          OXT_TEST_DB: ci_test
+          OXT_DB_PASS: postgres
+        run: |
+          bundle install --jobs 4 --retry 3
+          bundle exec rake db:migrate

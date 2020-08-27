@@ -1,4 +1,4 @@
-name: Tutor
+name: Tests
 
 on:
   pull_request:
@@ -9,11 +9,11 @@ on:
     - cron: '0 0 * * 0' # weekly
 
 jobs:
-  test:
+  tests:
     timeout-minutes: 30
     runs-on: ubuntu-18.04
     services:
-      db:
+      postgres:
         image: postgres:11
         ports:
         - 5432:5432
@@ -32,15 +32,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: 2.6
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-pr-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-pr-
       - name: Test
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
