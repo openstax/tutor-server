@@ -9,11 +9,28 @@
 @import "fonts";
 @import "mixins";
 
+$mobile-collapse-breakpoint: 600px;
+
+@media(max-width: $mobile-collapse-breakpoint) {
+  html {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
 body#enroll {
   font-family: $tutor-default-font-list;
   font-weight: 300;
   color: #424242;
   padding: 40px;
+  line-height: 20px;
+
+  @media(max-width: $mobile-collapse-breakpoint) {
+    font-size: 16px;
+    line-height: 24px;
+    height: 100%;
+    padding: 0;
+  }
 
   @include hero-fullpage-background();
 
@@ -23,9 +40,16 @@ body#enroll {
     padding: 40px;
     background-color: $tutor-neutral-lighter;
     text-align: center;
+
+    @media(max-width: $mobile-collapse-breakpoint) {
+     height: 100%;
+     margin: 0 auto;
+    }
     h1 {
       color: #222e66;
+      line-height: 35px;
     }
+
     h3 {
       font-weight: 300;
     }
@@ -35,6 +59,11 @@ body#enroll {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
+
+      @media(max-width: $mobile-collapse-breakpoint) {
+        flex-flow: column;
+        margin: 20px 0;
+      }
 
       > div {
         flex: 1;
@@ -54,6 +83,9 @@ body#enroll {
     }
     .btn {
       @include tutor-button();
+      @media(max-width: $mobile-collapse-breakpoint) {
+        padding: 19px;
+      }
     }
   }
 }
