@@ -77,7 +77,12 @@ body#enroll {
         margin: 20px auto;
 
         &.signup { background-image: image-url("student-onboarding/key.svg"); }
-        &.enter-id { background-image: image-url("student-onboarding/student-id.svg"); }
+        &.enter-id {
+          background-image: image-url("student-onboarding/student-id.svg");
+          @media(max-width: $mobile-collapse-breakpoint) {
+            padding-top: 95px;
+          }
+        }
       }
 
     }
