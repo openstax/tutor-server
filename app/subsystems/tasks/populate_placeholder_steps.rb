@@ -8,7 +8,7 @@ class Tasks::PopulatePlaceholderSteps
 
   protected
 
-  def exec(task:, force: false, lock_task: true, populate_spes: true)
+  def exec(task:, force: false, lock_task: true, populate_spes: true, save: true)
     outputs.task = task
 
     return if already_populated?(task, populate_spes)
@@ -28,7 +28,8 @@ class Tasks::PopulatePlaceholderSteps
       populate_placeholder_steps(
         task: task,
         group_type: :personalized_group,
-        exercise_type: :pe
+        exercise_type: :pe,
+        save: save
       )
       pes_populated = task.pes_are_assigned
     end
@@ -44,7 +45,8 @@ class Tasks::PopulatePlaceholderSteps
       populate_placeholder_steps(
         task: task,
         group_type: :spaced_practice_group,
-        exercise_type: :spe
+        exercise_type: :spe,
+        save: save
       )
       spes_populated = task.spes_are_assigned
     end
@@ -62,7 +64,7 @@ class Tasks::PopulatePlaceholderSteps
     task.pes_are_assigned && (!populate_spes || task.spes_are_assigned)
   end
 
-  def populate_placeholder_steps(task:, group_type:, exercise_type:)
+  def populate_placeholder_steps(task:, group_type:, exercise_type:, save:)
     # Get the task core_page_ids (only necessary for spaced_practice_group)
     core_page_ids = run(:get_task_core_page_ids, tasks: task)
       .outputs.task_id_to_core_page_ids_map[task.id] if group_type == :spaced_practice_group
@@ -195,5 +197,7 @@ class Tasks::PopulatePlaceholderSteps
     )
 
     task.send "#{boolean_attribute}=", true
+
+    task.save(validate: false) if save
   end
 end
