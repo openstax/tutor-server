@@ -22,7 +22,7 @@ class Preview::WorkTask
 
     task_was_completed = task.completed?(use_cache: true)
 
-    run :populate_placeholders, task: task, force: true
+    run :populate_placeholders, task: task, force: true, save: false
 
     task_steps = task.task_steps.to_a
 
