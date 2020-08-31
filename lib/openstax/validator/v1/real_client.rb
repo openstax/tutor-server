@@ -15,7 +15,7 @@ class OpenStax::Validator::V1::RealClient
   def upload_ecosystem_manifest(ecosystem_or_manifest)
     manifest = ecosystem_or_manifest
     manifest = ecosystem_or_manifest.manifest if ecosystem_or_manifest.respond_to?(:manifest)
-    manifest = manifest.to_yaml if manifest.respond_to?(:to_yaml)
+    manifest = manifest.to_yaml unless manifest.is_a?(String)
 
     request :post, :import, headers: { 'Content-Type' => 'application/yaml' }, body: manifest
   end
