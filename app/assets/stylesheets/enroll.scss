@@ -11,13 +11,6 @@
 
 $mobile-collapse-breakpoint: 600px;
 
-@media(max-width: $mobile-collapse-breakpoint) {
-  html {
-    height: 100%;
-    overflow: hidden;
-  }
-}
-
 body#enroll {
   font-family: $tutor-default-font-list;
   font-weight: 300;
@@ -28,11 +21,18 @@ body#enroll {
   @media(max-width: $mobile-collapse-breakpoint) {
     font-size: 16px;
     line-height: 24px;
-    height: 100%;
     padding: 0;
   }
 
   @include hero-fullpage-background();
+
+  // the splash background color covers the whole height of the screen.
+  @media(max-width: $mobile-collapse-breakpoint) {
+    &::before {
+      background-image: none;
+      background-color: $tutor-neutral-lighter;
+    }
+   }
 
   .splash {
     margin: 80px auto;
@@ -42,7 +42,7 @@ body#enroll {
     text-align: center;
 
     @media(max-width: $mobile-collapse-breakpoint) {
-     height: 100%;
+
      margin: 0 auto;
     }
     h1 {
