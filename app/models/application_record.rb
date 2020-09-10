@@ -20,6 +20,14 @@ class ApplicationRecord < ActiveRecord::Base
       base.table_name
     end
   end
+
+  # Don't care if the record has local changes, just discard them
+  # Can probably be removed after we get rid of json_serialize
+  def lock!(lock = true)
+    reload(lock: lock) if persisted?
+
+    self
+  end
 end
 
 # https://github.com/rails/rails/issues/32374#issuecomment-378122738
