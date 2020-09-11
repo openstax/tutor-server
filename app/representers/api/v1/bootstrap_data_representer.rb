@@ -31,6 +31,12 @@ module Api::V1
                )
              end
 
+    property :assets_url,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { Tutor::Assets.url }
+
     property :osweb_base_url,
              type: String,
              readable: true,

@@ -9,15 +9,15 @@ RSpec.describe Api::V1::UpdatesRepresenter, type: :representer do
     )
   }
 
-  it 'updates tutor_js_url when it changes' do
-    expect(Tutor::Assets::Scripts).to receive(:[]).with(:tutor) { '/a/url' }
+  it 'updates tutor_assets_hash when it changes' do
+    expect(Tutor::Assets).to receive(:tags).with(:tutor) { '<script src="/a/url" />' }
     expect(
       representation.to_hash
-    ).to include 'tutor_js_url' => '/a/url'
+    ).to include 'tutor_assets_hash' => 'e226430def0160b8160912ccfe1b410a'
 
-    expect(Tutor::Assets::Scripts).to receive(:[]).with(:tutor) { '/a/new/url' }
+    expect(Tutor::Assets).to receive(:tags).with(:tutor) { '<script src="/a/new/url" />' }
     expect(
       representation.to_hash
-    ).to include 'tutor_js_url' => '/a/new/url'
+    ).to include 'tutor_assets_hash' => 'd09b68b6d423987fd8c0cfc9feb1399d'
   end
 end
