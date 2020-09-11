@@ -14,7 +14,7 @@ module Tutor
             return {}
           end
           contents['entrypoints'].reduce(HashWithIndifferentAccess.new) do |assets, (entry_key, chunks) |
-            assets[entry_key] = chunks['js'].map{ |chunk| { 'src' => chunk } }
+            assets[entry_key] = chunks['js'].map{ |chunk| { 'src' => "#{url}#{chunk}" } }
             assets
           end
         end
