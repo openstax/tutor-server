@@ -1,8 +1,6 @@
 module Tutor
   module Assets
     module Manifest
-      # A remote manifest is used in production from s3/cloudfront
-      #
       class ManifestParser
         def [](asset)
           assets[asset] || []
@@ -10,22 +8,19 @@ module Tutor
 
         def parse_source(source)
           contents = JSON.parse(source)
-          pp contents['entrypoints']
+
           unless contents['entrypoints']
             Rails.logger.error "failed to parse manifest from #{url}"
             return {}
           end
-          
-          contents['entrypoints'].reduce(HashWithIndifferentAccess.new()) do |assets, (entry_key, types) |
-            assets[entry_key] = types['js'].map do |chunk|
-              asset = contents.find{ |_, attributes| attributes['src'] == chunk }
-              asset.present? ? asset.last.tap{ |a| a['src'] = "#{url}#{a['src']}" } : nil
-            end.compact
+          contents['entrypoints'].reduce(HashWithIndifferentAccess.new) do |assets, (entry_key, chunks) |
+            assets[entry_key] = chunks['js'].map{ |chunk| { 'src' => chunk } }
             assets
           end
         end
       end
 
+      # A remote manifest is used in production from s3/cloudfront
       class Remote < ManifestParser
 
         def url

@@ -9,7 +9,7 @@ module Tutor
       end
 
       @manifest[asset].map do |chunk|
-        "<script type='text/javascript' src='#{chunk['src']}' integrity='#{chunk['integrity']}' crossorigin='anonymous' async></script>"
+        "<script type='text/javascript' src='#{chunk['src']}' crossorigin='anonymous' async></script>"
       end.join("\n").html_safe
     end
 
