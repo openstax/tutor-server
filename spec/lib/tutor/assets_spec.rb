@@ -30,14 +30,14 @@ RSpec.describe Tutor::Assets, vcr: VCR_OPTS do
     Tutor::Assets.read_manifest
     expect(stub).to receive(:mtime).and_return(0, 1)
     expect(stub).to receive(:read).and_return('{"foo.min.bar": "foo-2.min.bar"}')
-    expect(Tutor::Assets[:foo, :bar]).to eq 'http://localhost:8000/dist/foo-2.min.bar'
+    Tutor::Assets.tags(:foo)
   end
 
   describe 'loading remote manifest' do
     before(:each) {
-      Rails.application.secrets.assets_manifest_url = 'https://tutor-dev.openstax.org/assets/rev-manifest.json'
+      Rails.application.secrets.assets_url = 'http://localhost:8000/dist/'
     }
-    after(:each) { Rails.application.secrets.assets_manifest_url = nil }
+    after(:each) { Rails.application.secrets.assets_url = nil }
 
     it 'uses remote json' do
       Tutor::Assets.read_manifest
@@ -45,8 +45,8 @@ RSpec.describe Tutor::Assets, vcr: VCR_OPTS do
       expect(
         Tutor::Assets.instance_variable_get(:'@manifest')
       ).to be_kind_of Tutor::Assets::Manifest::Remote
-      expect(Tutor::Assets::Scripts[:tutor]).to(
-        eq 'http://localhost:8000/dist/tutor-991511e12f76aa9aa1ddcb7732c56c32ff399b62.min.js'
+      expect(Tutor::Assets.tags(:tutor)).to(
+        eq "<script type='text/javascript' src='http://localhost:8000/dist/tutor.js' integrity='sha256-XA9vHjNFc...bQmYVPDfp5jQBzoTAob2VueUGlgEHcHllYzXtoITVgOppOvwtbkdA0Hg==' crossorigin='anonymous' async></script>"
       )
     end
   end

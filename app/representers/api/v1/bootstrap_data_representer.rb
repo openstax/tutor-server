@@ -35,7 +35,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { Rails.application.secrets.assets_manifest_url }
+             getter: ->(*) { Rails.application.secrets.assets_url }
     
     property :osweb_base_url,
              type: String,

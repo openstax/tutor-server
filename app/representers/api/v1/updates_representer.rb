@@ -5,11 +5,11 @@ module Api::V1
 
     collection :notifications, extend: NotificationRepresenter
 
-    property :tutor_js_url,
+    property :tutor_assets_hash,
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(**) { Tutor::Assets::Scripts[:tutor] }
+             getter: ->(**) { Tutor::Assets.unique_key(:tutor) }
 
     property :payments, writeable: false, readable: true, getter: ->(*) {
       {

@@ -10,13 +10,15 @@ module Tutor
 
         def parse_source(source)
           contents = JSON.parse(source)
-          contents.default_proc = proc do |_, asset|
-            raise("Asset #{asset} does not exist")
+          pp contents['entrypoints']
+          unless contents['entrypoints']
+            Rails.logger.error "failed to parse manifest from #{url}"
+            return {}
           end
-          contents['entrypoints'].reduce({}) do |assets, (entry_key, types) |
+          
+          contents['entrypoints'].reduce(HashWithIndifferentAccess.new()) do |assets, (entry_key, types) |
             assets[entry_key] = types['js'].map do |chunk|
               asset = contents.find{ |_, attributes| attributes['src'] == chunk }
-              puts asset
               asset.present? ? asset.last.tap{ |a| a['src'] = "#{url}#{a['src']}" } : nil
             end.compact
             assets
@@ -27,7 +29,8 @@ module Tutor
       class Remote < ManifestParser
 
         def url
-          Rails.application.secrets.assets_manifest_url
+          url = Rails.application.secrets.assets_url
+          url.ends_with?('/') ? url : "#{url}/"
         end
 
         def assets
@@ -60,7 +63,7 @@ module Tutor
           "/assets/"
         end
 
-        SOURCE = Rails.root.join('public', 'assets', 'rev-manifest.json')
+        SOURCE = Rails.root.join('public', 'assets', 'manifest.json')
         def [](asset)
           read if SOURCE.mtime != @mtime
           @contents[asset]
@@ -78,7 +81,7 @@ module Tutor
       end
 
       def self.pick_local_or_remote
-        Rails.application.secrets.assets_manifest_url.present? ?
+        Rails.application.secrets.assets_url.present? ?
           Remote.new : Local.new
       end
     end
