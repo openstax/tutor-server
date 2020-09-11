@@ -35,8 +35,8 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { Rails.application.secrets.assets_url }
-    
+             getter: ->(*) { Tutor::Assets.url }
+
     property :osweb_base_url,
              type: String,
              readable: true,

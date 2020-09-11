@@ -1,6 +1,7 @@
 module Tutor
   module Assets
     module Manifest
+      # Reads and parses a manifest from a url
       class ManifestParser
         def [](asset)
           assets[asset] || []
@@ -14,18 +15,16 @@ module Tutor
             return {}
           end
           contents['entrypoints'].reduce(HashWithIndifferentAccess.new) do |assets, (entry_key, chunks) |
-            assets[entry_key] = chunks['js'].map{ |chunk| { 'src' => "#{url}#{chunk}" } }
+            assets[entry_key] = chunks['js'].map do |chunk|
+              { 'src' => "#{Tutor::Assets.url_for(chunk)}" }
+            end
+
             assets
           end
         end
-      end
-
-      # A remote manifest is used in production from s3/cloudfront
-      class Remote < ManifestParser
 
         def url
-          url = Rails.application.secrets.assets_url
-          url.ends_with?('/') ? url : "#{url}/"
+          Tutor::Assets.url_for 'manifest.json'
         end
 
         def assets
@@ -33,11 +32,11 @@ module Tutor
         end
 
         def fetch
-          response = Faraday.get "#{url}manifest.json"
+          response = Faraday.get url
           if response.success?
             response.body
           else
-            Rails.logger.info "status #{response.status} when reading remote url: #{url}"
+            Rails.logger.error "status #{response.status} when reading remote url: #{url}"
             '{}'
           end
         end
@@ -49,35 +48,6 @@ module Tutor
             false
           end
         end
-      end
-
-      # A local manifest is use when assets are copied into the public/assets directory. docker uses this
-      class Local < ManifestParser
-
-        def url
-          "/assets/"
-        end
-
-        SOURCE = Rails.root.join('public', 'assets', 'manifest.json')
-        def [](asset)
-          read if SOURCE.mtime != @mtime
-          @contents[asset]
-        end
-
-        def read
-          @contents = parse_source SOURCE.read
-          @mtime = SOURCE.mtime
-          Rails.logger.info "read assets manifest at #{SOURCE.expand_path}"
-        end
-
-        def present?
-          SOURCE.exist?
-        end
-      end
-
-      def self.pick_local_or_remote
-        Rails.application.secrets.assets_url.present? ?
-          Remote.new : Local.new
       end
     end
   end
