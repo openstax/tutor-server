@@ -1,8 +1,7 @@
 require 'rails_helper'
-require 'vcr_helper'
 
-RSpec.describe WebviewController, type: :request, vcr: VCR_OPTS do
-  
+RSpec.describe WebviewController, type: :request do
+
   let!(:contract)       do
     FinePrint::Contract.create!(name: 'general_terms_of_use',
                                 title: 'General Terms of Use',
@@ -46,7 +45,6 @@ RSpec.describe WebviewController, type: :request, vcr: VCR_OPTS do
     end
 
     context 'as a signed in user' do
-      set_vcr_config_around(:all, ignore_localhost: false)
       before { sign_in! registered_user }
 
       it 'sets boostrap data in script tag' do
