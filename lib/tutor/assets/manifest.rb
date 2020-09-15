@@ -32,21 +32,21 @@ module Tutor
         end
 
         def fetch
-          response = Faraday.get url
-          if response.success?
-            response.body
-          else
-            Rails.logger.error "status #{response.status} when reading remote url: #{url}"
+          begin
+            response = Faraday.get url
+            if response.success?
+              response.body
+            else
+              Rails.logger.error "status #{response.status} when reading remote url: #{url}"
+              '{}'
+            end
+          rescue Faraday::ConnectionFailed, Addressable::URI::InvalidURIError, Errno::ECONNREFUSED
             '{}'
           end
         end
 
         def present?
-          begin
-            assets.present?
-          rescue Faraday::ConnectionFailed, Addressable::URI::InvalidURIError
-            false
-          end
+          assets.present?
         end
       end
     end

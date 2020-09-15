@@ -62,10 +62,10 @@ Rails.application.routes.draw do
     resource :user, only: :show do
       get :tasks
       put :ui_settings
-      patch :'tours/:tour_id', action: :record_tour_view
+      put :'tours/:tour_id', action: :record_tour_view
 
       resources :courses, only: :index do
-        patch :'student(/role/:role_id)', controller: :students, action: :update_self
+        put :'student(/role/:role_id)', controller: :students, action: :update_self
       end
     end
 
