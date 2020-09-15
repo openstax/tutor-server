@@ -1,10 +1,10 @@
 require "rails_helper"
 
 RSpec.describe Api::V1::StudentsController, type: :routing, api: true, version: :v1 do
-  context 'PATCH /api/user/courses/:course_id/student(/role/:role_id)' do
+  context 'PUT /api/user/courses/:course_id/student(/role/:role_id)' do
     context 'no role_id' do
       it 'routes to #update_self' do
-        expect(patch '/api/user/courses/42/student').to(
+        expect(put '/api/user/courses/42/student').to(
           route_to('api/v1/students#update_self', format: 'json', course_id: '42')
         )
       end
@@ -12,7 +12,7 @@ RSpec.describe Api::V1::StudentsController, type: :routing, api: true, version: 
 
     context 'role_id in path' do
       it 'routes to #update_self' do
-        expect(patch '/api/user/courses/21/student/role/42').to(
+        expect(put '/api/user/courses/21/student/role/42').to(
           route_to('api/v1/students#update_self', format: 'json', course_id: '21', role_id: '42')
         )
       end
@@ -20,7 +20,7 @@ RSpec.describe Api::V1::StudentsController, type: :routing, api: true, version: 
 
     context 'role_id in query params' do
       it 'routes to #update_self' do
-        expect(patch '/api/user/courses/21/student?role_id=42').to(
+        expect(put '/api/user/courses/21/student?role_id=42').to(
           route_to('api/v1/students#update_self', format: 'json', course_id: '21', role_id: '42')
         )
       end
