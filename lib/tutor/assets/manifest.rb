@@ -24,7 +24,7 @@ module Tutor
         end
 
         def url
-          Tutor::Assets.url_for 'manifest.json'
+          Tutor::Assets.url_for 'assets.json'
         end
 
         def assets
