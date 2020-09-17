@@ -1153,7 +1153,7 @@ http_interactions:
         \         <td class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n
         \       <tr>\n          <td>WEBPACK_LOADER</td>\n          <td class=\"code\"><pre>{&#39;DEFAULT&#39;:
         {&#39;BUNDLE_DIR_NAME&#39;: &#39;bundles/&#39;,\n             &#39;STATS_FILE&#39;:
-        &#39;/Users/jps/dev/openstax/ospayments/static/bundles/assets.json&#39;}}</pre></td>\n
+        &#39;/Users/jps/dev/openstax/ospayments/static/bundles/manifest.json&#39;}}</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>WSGI_APPLICATION</td>\n
         \         <td class=\"code\"><pre>&#39;wsgi.application&#39;</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>X_FRAME_OPTIONS</td>\n
