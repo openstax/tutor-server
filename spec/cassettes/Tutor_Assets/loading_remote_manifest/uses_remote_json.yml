@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://tutor-dev.openstax.org/assets/manifest.json
+    uri: https://tutor-dev.openstax.org/assets/assets.json
     body:
       encoding: US-ASCII
       string: ''
