@@ -181,6 +181,10 @@ class LmsController < ApplicationController
   def fail_for_lms_disabled(launch, context)
     log(:info) { "Attempting to launch (#{session[:launch_uuid]}) into an " \
                  "LMS-disabled course (#{context.nil? ? 'not set' : context.course.id})" }
+    Raven.capture_message('LMS launch into disabled course', extra: {
+      launch_uuid: session[:launch_uuid],
+      course: context.nil? ? 'not set' : context.course.id,
+    })
     render_minimal_error(:fail_lms_disabled, locals: { launch: launch })
   end
 
@@ -197,6 +201,10 @@ class LmsController < ApplicationController
 
   def fail_for_course_score_in_use(launch)
     log(:error) { "Course Score Callback is already taken #{launch.result_sourcedid} : #{launch.outcome_url}" }
+    Raven.capture_message('LMS course score callback in use', extra: {
+      id: launch.result_sourcedid,
+      url: launch.outcome_url,
+    })
     render_minimal_error(:fail_course_score_in_use)
   end
 
@@ -222,6 +230,7 @@ class LmsController < ApplicationController
 
   def fail_for_nonce_already_used(launch)
     log(:info) { "Nonce already used #{session[:launch_uuid]}" }
+    Raven.capture_message('LMS nonce already used', extra: { nonce: session[:launch_uuid] })
     render_minimal_error(:fail_nonce_already_used, locals: { launch: launch })
   end
 

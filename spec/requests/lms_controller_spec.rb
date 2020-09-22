@@ -148,6 +148,7 @@ RSpec.describe LmsController, type: :request do
     context 'nonce already used' do
       it 'errors' do
         simulator.launch
+        expect(Raven).to receive(:capture_message).with('LMS nonce already used', any_args)
         simulator.repeat_last_launch
         expect_error('duplicate request')
       end
@@ -363,6 +364,7 @@ RSpec.describe LmsController, type: :request do
 
     context 'nonce already used' do
       it 'errors' do
+        expect(Raven).to receive(:capture_message).with('LMS nonce already used', any_args)
         simulator.launch
         simulator.repeat_last_launch
         expect_error('duplicate request')
