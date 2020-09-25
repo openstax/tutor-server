@@ -499,7 +499,7 @@ module Tasks
           end
         end  ### END OF student_data_writer lambda
 
-        students = report[:students].sort_by { |student| student[:last_name] || '' }
+        students = report[:students].sort_by { |student| (student[:last_name] || '').downcase }
         dropped_students, active_students = students.partition { |student| student[:is_dropped] }
 
         first_student_row = sheet.rows.count + 1
