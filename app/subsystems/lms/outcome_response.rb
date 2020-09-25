@@ -6,11 +6,11 @@ module Lms
     end
 
     def code_major
-      @code_major ||= @xml.at_css('imsx_POXHeader imsx_statusInfo imsx_codeMajor').content
+      @code_major ||= @xml.at_css('imsx_POXHeader imsx_statusInfo imsx_codeMajor')&.content || 'failure'
     end
 
     def description
-      @description ||= @xml.at_css('imsx_POXHeader imsx_statusInfo imsx_description').content
+      @description ||= @xml.at_css('imsx_POXHeader imsx_statusInfo imsx_description')&.content
     end
 
   end
