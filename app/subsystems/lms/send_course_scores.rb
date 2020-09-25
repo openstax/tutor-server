@@ -87,27 +87,17 @@ class Lms::SendCourseScores
         callback.outcome_url, request_xml, {'Content-Type' => 'application/xml'}
       )
 
-      Rails.logger.debug { response.body }
-
       outcome_response = Lms::OutcomeResponse.new(response)
-
-      if 'failure' == outcome_response.code_major
-        error!(
-          message: outcome_response.description,
-          course: @course.id,
-          score: score_data[:course_average],
-          student_name: score_data[:name],
-          student_identifier: score_data[:student_identifier]
-        )
-      end
-    rescue StandardError => ee
+      raise 'lms returned failure' if outcome_response.code_major == 'failure'
+    rescue StandardError => e
       error!(
-        exception: ee,
-        message: ee.message,
+        exception: e,
+        message: e.message,
         course: @course.id,
         score: score_data[:course_average],
         student_name: score_data[:name],
-        student_identifier: score_data[:student_identifier]
+        student_identifier: score_data[:student_identifier],
+        response: response&.body
       )
     end
   end
