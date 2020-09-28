@@ -9,7 +9,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(**) { Tutor::Assets.digest_for(:tutor) }
+             getter: ->(**) { OpenStax::Utilities::Assets.digest_for(:tutor) }
 
     property :payments, writeable: false, readable: true, getter: ->(*) {
       {

@@ -24,6 +24,3 @@ Rails.application.config.assets.precompile += %w( home.css
                                                   customer_service.js
                                                   research.css
                                                   research.js )
-
-# Initialize FE Assets
-require 'tutor/assets'

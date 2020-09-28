@@ -435,10 +435,13 @@ GEM
       openstax_active_force
       rails (~> 5.0)
       restforce
-    openstax_utilities (4.2.3)
+    openstax_utilities (4.3.0)
+      faraday
+      faraday-http-cache
       keyword_search
       lev
-      rails (>= 3.1)
+      rails (~> 5.2)
+      request_store
     p3p (2.0.0)
       rack (>= 1.6.2)
     pager (1.0.1)
@@ -748,7 +751,6 @@ DEPENDENCIES
   factory_bot_rails
   faker
   fakeredis
-  faraday-http-cache
   fine_print
   fog-aws
   guard-bundler
@@ -778,7 +780,7 @@ DEPENDENCIES
   openstax_healthcheck
   openstax_rescue_from
   openstax_salesforce
-  openstax_utilities (~> 4.2.0)
+  openstax_utilities (~> 4.3.0)
   p3p
   parallel_tests
   paranoia (~> 2.4.1)

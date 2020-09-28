@@ -24,7 +24,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
         courses: Api::V1::CoursesRepresenter.new(CollectCourseInfo[user: user]).as_json,
         accounts_api_url: OpenStax::Accounts.configuration.openstax_accounts_url + 'api',
         accounts_profile_url: OpenStax::Accounts.configuration.openstax_accounts_url + 'profile',
-        assets_url: Tutor::Assets.url,
+        assets_url: OpenStax::Utilities::Assets.url,
         osweb_base_url: 'https://cms.openstax.org',
         tutor_api_url: 'https://example.com/api',
         response_validation: {
