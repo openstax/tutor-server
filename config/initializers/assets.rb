@@ -27,4 +27,3 @@ Rails.application.config.assets.precompile += %w( home.css
 
 # Initialize FE Assets
 require 'tutor/assets'
-Tutor::Assets.read_manifest

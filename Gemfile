@@ -54,6 +54,9 @@ gem 'rails-html-sanitizer', '~> 1.0'
 # URI replacement
 gem 'addressable'
 
+# HTTP client that supports Cache-Control header
+gem 'faraday-http-cache'
+
 # Utilities for OpenStax websites
 gem 'openstax_utilities', '~> 4.2.0'
 

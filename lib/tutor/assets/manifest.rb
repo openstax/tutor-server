@@ -1,52 +1,53 @@
 module Tutor
   module Assets
-    module Manifest
-      # Reads and parses a manifest from a url
-      class ManifestParser
-        def [](asset)
-          assets[asset] || []
-        end
+    # Reads and parses the assets manifest
+    class Manifest
+      def initialize
+        @assets = HashWithIndifferentAccess.new
 
-        def parse_source(source)
-          contents = JSON.parse(source)
+        url = Tutor::Assets.url_for('assets.json')
 
-          unless contents['entrypoints']
-            Rails.logger.error "failed to parse manifest from #{url}"
-            return {}
-          end
-          contents['entrypoints'].reduce(HashWithIndifferentAccess.new) do |assets, (entry_key, chunks) |
-            assets[entry_key] = chunks['js'].map do |chunk|
-              { 'src' => "#{Tutor::Assets.url_for(chunk)}" }
-            end
+        begin
+          response = self.class.client.get url
 
-            assets
-          end
-        end
+          if response.success?
+            contents = JSON.parse response.body
 
-        def url
-          Tutor::Assets.url_for 'assets.json'
-        end
-
-        def assets
-          RequestStore.store[:assets_manifest] ||= parse_source(fetch)
-        end
-
-        def fetch
-          begin
-            response = Faraday.get url
-            if response.success?
-              response.body
+            if contents['entrypoints'].blank?
+              Rails.logger.error { "failed to parse manifest from #{url}" }
             else
-              Rails.logger.error "status #{response.status} when reading remote url: #{url}"
-              '{}'
+              contents['entrypoints'].each do |entry_key, chunks|
+                @assets[entry_key] = chunks['js'].map { |chunk| Tutor::Assets.url_for(chunk) }
+              end
             end
-          rescue Faraday::ConnectionFailed, Addressable::URI::InvalidURIError, Errno::ECONNREFUSED
-            '{}'
+          else
+            Rails.logger.error { "status #{response.status} when reading remote url: #{url}" }
           end
+        rescue Faraday::ConnectionFailed, Addressable::URI::InvalidURIError, Errno::ECONNREFUSED
         end
 
-        def present?
-          assets.present?
+        Rails.logger.info do
+          "running in development mode with assets served by webpack at #{Tutor::Assets.url}"
+        end if @assets.blank?
+      end
+
+      def [](asset)
+        return [ Tutor::Assets.url_for("#{asset}.js") ] if @assets.blank?
+
+        @assets[asset] || []
+      end
+
+      protected
+
+      # Faraday is probably thread-safe but makes no guarantees
+      # https://github.com/lostisland/faraday/issues/370
+      # We could potentially reuse the client object
+      # However, bugs happen: https://github.com/lostisland/faraday/issues/1068
+      def self.client
+        Faraday.new do |builder|
+          builder.use :http_cache, store: Rails.cache
+
+          builder.adapter Faraday.default_adapter
         end
       end
     end

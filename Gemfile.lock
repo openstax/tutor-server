@@ -245,6 +245,8 @@ GEM
       redis (>= 3.2, < 5.0)
     faraday (0.17.0)
       multipart-post (>= 1.2, < 3)
+    faraday-http-cache (2.2.0)
+      faraday (>= 0.8)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.10.0)
@@ -746,6 +748,7 @@ DEPENDENCIES
   factory_bot_rails
   faker
   fakeredis
+  faraday-http-cache
   fine_print
   fog-aws
   guard-bundler
