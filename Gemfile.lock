@@ -245,6 +245,8 @@ GEM
       redis (>= 3.2, < 5.0)
     faraday (0.17.0)
       multipart-post (>= 1.2, < 3)
+    faraday-http-cache (2.2.0)
+      faraday (>= 0.8)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.10.0)
@@ -433,10 +435,13 @@ GEM
       openstax_active_force
       rails (~> 5.0)
       restforce
-    openstax_utilities (4.2.3)
+    openstax_utilities (4.3.0)
+      faraday
+      faraday-http-cache
       keyword_search
       lev
-      rails (>= 3.1)
+      rails (~> 5.2)
+      request_store
     p3p (2.0.0)
       rack (>= 1.6.2)
     pager (1.0.1)
@@ -775,7 +780,7 @@ DEPENDENCIES
   openstax_healthcheck
   openstax_rescue_from
   openstax_salesforce
-  openstax_utilities (~> 4.2.0)
+  openstax_utilities (~> 4.3.0)
   p3p
   parallel_tests
   paranoia (~> 2.4.1)

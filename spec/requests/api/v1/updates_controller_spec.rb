@@ -59,7 +59,9 @@ RSpec.describe Api::V1::UpdatesController, type: :request, api: true, version: :
 
     it 'includes the tutor assets hash' do
       api_get api_updates_url, nil
-      expect(response.body_as_hash[:tutor_assets_hash]).to eq Tutor::Assets.unique_key(:tutor)
+      expect(response.body_as_hash[:tutor_assets_hash]).to(
+        eq OpenStax::Utilities::Assets.digest_for(:tutor)
+      )
     end
 
     it 'includes the payment status' do

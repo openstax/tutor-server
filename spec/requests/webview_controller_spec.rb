@@ -60,7 +60,7 @@ RSpec.describe WebviewController, type: :request do
 
       it 'has url to tutor js asset' do
         get "/#{SecureRandom.hex}", headers: headers
-        expect(response.body).to include "src='#{Tutor::Assets.url_for('tutor.js')}'"
+        expect(response.body).to include "src='#{OpenStax::Utilities::Assets.url_for('tutor.js')}'"
       end
     end
   end

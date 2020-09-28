@@ -35,7 +35,7 @@ module Api::V1
              type: String,
              readable: true,
              writeable: false,
-             getter: ->(*) { Tutor::Assets.url }
+             getter: ->(*) { OpenStax::Utilities::Assets.url }
 
     property :osweb_base_url,
              type: String,
