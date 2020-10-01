@@ -8,55 +8,62 @@
         <th>Payment Due</th>
       <% end %>
       <th>Student Identifier</th>
-      <th width="100px; text-align: center;">User</th>
+      <% if @course.is_lms_enabled? %><th width="100" style="text-align: center">Score <i class="glyphicon glyphicon-link"></i></th><% end %>
+        <th width="100" style="text-align: center">Actions</th>
     </tr>
   </thead>
   <tbody>
-  <% @students.each do |student| %>
-    <% @timezone ||= student.course.timezone %>
-    <% user_id = student.role.profile.id %>
+    <% @students.each do |student| %>
+      <% @timezone ||= student.course.timezone %>
+      <% user_id = student.role.profile.id %>
 
-    <tr>
-      <td><%= student.name %></td>
-      <% if @course.does_cost %>
-        <td>
-          <% if student.is_paid %>
-            <% if student.is_refund_pending %>
-              Yes (Refund pending)
+      <tr>
+        <td><%= student.name %></td>
+        <% if @course.does_cost %>
+          <td>
+            <% if student.is_paid %>
+              <% if student.is_refund_pending %>
+                Yes (Refund pending)
+              <% else %>
+                Yes
+                (<%= link_to "Refund",
+                     refund_admin_student_path(student),
+                    method: :put,
+                    data: {
+                      confirm: "Are you sure you want to refund for #{student.name}?"
+                    } %>)
+              <% end %>
             <% else %>
-              Yes
-              (<%= link_to "Refund",
-                          refund_admin_student_path(student),
-                          method: :put,
-                          data: {
-                            confirm: "Are you sure you want to refund for #{student.name}?"
-                          } %>)
+              No
             <% end %>
-          <% else %>
-            No
-          <% end %>
-        </td>
-        <td>
-          <a href="#">
-            <%= best_in_place student,
-                :is_comped,
-                as: :checkbox,
-                url: admin_student_path(student) %>
-          </a>
-        </td>
-        <td>
-          <a href="#">
-            <%= best_in_place student,
-                :payment_due_at,
-                as: :date,
-                url: admin_student_path(student),
-                display_with: ->(val) do
-                  val.in_time_zone(@timezone).strftime("%b %-d, %Y %l:%M:%S %p %Z")
-                end %>
-          </a>
+          </td>
+          <td>
+            <a href="#">
+              <%= best_in_place student,
+                   :is_comped,
+                   as: :checkbox,
+                   url: admin_student_path(student) %>
+            </a>
+          </td>
+          <td>
+            <a href="#">
+              <%= best_in_place student,
+                   :payment_due_at,
+                   as: :date,
+                   url: admin_student_path(student),
+                 display_with: ->(val) do
+                   val.in_time_zone(@timezone).strftime("%b %-d, %Y %l:%M:%S %p %Z")
+                 end %>
+            </a>
+          </td>
+        <% end %>
+        <td><%= student.student_identifier %></td>
+        <% if @course.is_lms_enabled? %>
+        <td width="100" align="center">
+          <% callback = @course.course_score_callbacks.for_student(student); %>
+          <%= callback.created_at.strftime('%Y-%m-%d') if callback.present?%>
         </td>
       <% end %>
-      <td><%= student.student_identifier %></td>
       <td>
         <%= link_to '', edit_admin_user_path(user_id), class: "btn btn-xs glyphicon glyphicon-pencil" %>
         <%= link_to '', info_admin_users_path(id: user_id), class: "btn btn-xs glyphicon glyphicon-info-sign" %>

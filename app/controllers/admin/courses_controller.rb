@@ -21,7 +21,7 @@ class Admin::CoursesController < Admin::BaseController
 
       result.outputs.items.preload(
         teachers: { role: :profile },
-        periods: :students,
+        periods: { students: :profile },
         course_ecosystems: { ecosystem: :books }
       ).try(:paginate, params_for_pagination)
     end
