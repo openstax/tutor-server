@@ -87,9 +87,7 @@ class Tasks::PopulatePlaceholderSteps
 
     ActiveRecord::Associations::Preloader.new.preload(placeholder_steps, :tasked)
 
-    outs = run(
-      exercise_routine, task: task, max_num_exercises: placeholder_steps.size
-    ).outputs
+    outs = run(exercise_routine, task: task).outputs
     chosen_exercises = outs.exercises
 
     # Group placeholder steps and exercises by content_page_id
