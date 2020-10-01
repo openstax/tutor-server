@@ -28,8 +28,6 @@ RSpec.describe Tasks::FetchAssignmentPes, type: :routine do
 
       @preparation_uuid = SecureRandom.uuid
 
-      @max_num_exercises = 5
-
       @excluded_exercises = 3.times.map { FactoryBot.create :content_exercise }
       @previous_globally_excluded_exercises = Settings::Exercises.excluded_ids
       Settings::Exercises.excluded_ids = @excluded_exercises.map(&:uid).join(', ')
@@ -46,7 +44,7 @@ RSpec.describe Tasks::FetchAssignmentPes, type: :routine do
     end
 
     it 'returns exercises from the expected pages' do
-      outs = described_class.call(task: @task, max_num_exercises: @max_num_exercises).outputs
+      outs = described_class.call(task: @task).outputs
       exercises = outs.exercises
       expect(exercises).not_to be_empty
       exercises.each { |exercise| expect(expected_exercises).to include exercise }
