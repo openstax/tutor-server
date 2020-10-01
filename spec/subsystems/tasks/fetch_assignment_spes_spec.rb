@@ -28,8 +28,6 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
       @preparation_uuid = SecureRandom.uuid
 
-      @max_num_exercises = 5
-
       @excluded_exercises = 3.times.map { FactoryBot.create :content_exercise }
       @previous_globally_excluded_exercises = Settings::Exercises.excluded_ids
       Settings::Exercises.excluded_ids = @excluded_exercises.map(&:uid).join(', ')
@@ -46,7 +44,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
     end
 
     it 'returns exercises from the expected pages' do
-      outs = described_class.call(task: @task, max_num_exercises: @max_num_exercises).outputs
+      outs = described_class.call(task: @task).outputs
       exercises = outs.exercises
       expect(exercises).not_to be_empty
       exercises.each { |exercise| expect(expected_exercises).to include exercise }
@@ -142,16 +140,14 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
     context 'when no assignments are past-due' do
       context 'when worked in order' do
         it 'returns spaced practice exercises from the correct sections' do
-          task_1_spe_uuids = described_class[task: @task_1, max_num_exercises: 3].map(&:uuid)
-          expect(task_1_spe_uuids.size).to eq 3
+          task_1_spe_uuids = described_class[task: @task_1].map(&:uuid)
           task_1_spe_uuids.each do |exercise_uuid|
             expect(@page_1_exercise_uuids).to include(exercise_uuid)
           end
 
           Preview::WorkTask.call task: @task_1, is_correct: [ true, false ].sample
 
-          task_2_spe_uuids = described_class[task: @task_2, max_num_exercises: 3].map(&:uuid)
-          expect(task_2_spe_uuids.size).to eq 3
+          task_2_spe_uuids = described_class[task: @task_2].map(&:uuid)
           expect(@page_1_exercise_uuids).to include(task_2_spe_uuids.first)
           task_2_spe_uuids[1..-1].each do |exercise_uuid|
             expect(@page_2_exercise_uuids).to include(exercise_uuid)
@@ -159,8 +155,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
           Preview::WorkTask.call task: @task_2, is_correct: [ true, false ].sample
 
-          task_3_spe_uuids = described_class[task: @task_3, max_num_exercises: 3].map(&:uuid)
-          expect(task_3_spe_uuids.size).to eq 3
+          task_3_spe_uuids = described_class[task: @task_3].map(&:uuid)
           expect(@page_2_exercise_uuids).to include(task_3_spe_uuids.first)
           task_3_spe_uuids[1..-1].each do |exercise_uuid|
             expect(@page_3_exercise_uuids).to include(exercise_uuid)
@@ -168,8 +163,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
           Preview::WorkTask.call task: @task_3, is_correct: [ true, false ].sample
 
-          task_4_spe_uuids = described_class[task: @task_4, max_num_exercises: 3].map(&:uuid)
-          expect(task_4_spe_uuids.size).to eq 3
+          task_4_spe_uuids = described_class[task: @task_4].map(&:uuid)
           expect(@page_3_exercise_uuids).to include(task_4_spe_uuids.first)
           expect(@page_1_exercise_uuids).to include(task_4_spe_uuids.second)
           expect(@page_4_exercise_uuids).to include(task_4_spe_uuids.third)
@@ -178,16 +172,14 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
       context 'when worked in reverse order' do
         it 'returns spaced practice exercises from the correct sections' do
-          task_4_spe_uuids = described_class[task: @task_4, max_num_exercises: 3].map(&:uuid)
-          expect(task_4_spe_uuids.size).to eq 3
+          task_4_spe_uuids = described_class[task: @task_4].map(&:uuid)
           task_4_spe_uuids.each do |exercise_uuid|
             expect(@page_4_exercise_uuids).to include(exercise_uuid)
           end
 
           Preview::WorkTask.call task: @task_4, is_correct: [ true, false ].sample
 
-          task_3_spe_uuids = described_class[task: @task_3, max_num_exercises: 3].map(&:uuid)
-          expect(task_3_spe_uuids.size).to eq 3
+          task_3_spe_uuids = described_class[task: @task_3].map(&:uuid)
           expect(@page_4_exercise_uuids).to include(task_3_spe_uuids.first)
           task_3_spe_uuids[1..-1].each do |exercise_uuid|
             expect(@page_3_exercise_uuids).to include(exercise_uuid)
@@ -195,8 +187,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
           Preview::WorkTask.call task: @task_3, is_correct: [ true, false ].sample
 
-          task_2_spe_uuids = described_class[task: @task_2, max_num_exercises: 3].map(&:uuid)
-          expect(task_2_spe_uuids.size).to eq 3
+          task_2_spe_uuids = described_class[task: @task_2].map(&:uuid)
           expect(@page_3_exercise_uuids).to include(task_2_spe_uuids.first)
           task_2_spe_uuids[1..-1].each do |exercise_uuid|
             expect(@page_2_exercise_uuids).to include(exercise_uuid)
@@ -204,8 +195,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
           Preview::WorkTask.call task: @task_2, is_correct: [ true, false ].sample
 
-          task_1_spe_uuids = described_class[task: @task_1, max_num_exercises: 3].map(&:uuid)
-          expect(task_1_spe_uuids.size).to eq 3
+          task_1_spe_uuids = described_class[task: @task_1].map(&:uuid)
           expect(@page_2_exercise_uuids).to include(task_1_spe_uuids.first)
           expect(@page_4_exercise_uuids).to include(task_1_spe_uuids.second)
           expect(@page_1_exercise_uuids).to include(task_1_spe_uuids.third)
@@ -218,8 +208,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
       context 'when worked in order' do
         it 'returns spaced practice exercises from the correct sections' do
-          task_2_spe_uuids = described_class[task: @task_2, max_num_exercises: 3].map(&:uuid)
-          expect(task_2_spe_uuids.size).to eq 3
+          task_2_spe_uuids = described_class[task: @task_2].map(&:uuid)
           expect(@page_1_exercise_uuids).to include(task_2_spe_uuids.first)
           task_2_spe_uuids[1..-1].each do |exercise_uuid|
             expect(@page_2_exercise_uuids).to include(exercise_uuid)
@@ -227,8 +216,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
           Preview::WorkTask.call task: @task_2, is_correct: [ true, false ].sample
 
-          task_3_spe_uuids = described_class[task: @task_3, max_num_exercises: 3].map(&:uuid)
-          expect(task_3_spe_uuids.size).to eq 3
+          task_3_spe_uuids = described_class[task: @task_3].map(&:uuid)
           expect(@page_2_exercise_uuids).to include(task_3_spe_uuids.first)
           task_3_spe_uuids[1..-1].each do |exercise_uuid|
             expect(@page_3_exercise_uuids).to include(exercise_uuid)
@@ -236,8 +224,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
           Preview::WorkTask.call task: @task_3, is_correct: [ true, false ].sample
 
-          task_4_spe_uuids = described_class[task: @task_4, max_num_exercises: 3].map(&:uuid)
-          expect(task_4_spe_uuids.size).to eq 3
+          task_4_spe_uuids = described_class[task: @task_4].map(&:uuid)
           expect(@page_3_exercise_uuids).to include(task_4_spe_uuids.first)
           expect(@page_1_exercise_uuids).to include(task_4_spe_uuids.second)
           expect(@page_4_exercise_uuids).to include(task_4_spe_uuids.third)
@@ -246,8 +233,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
       context 'when worked in reverse order' do
         it 'returns spaced practice exercises from the correct sections' do
-          task_4_spe_uuids = described_class[task: @task_4, max_num_exercises: 3].map(&:uuid)
-          expect(task_4_spe_uuids.size).to eq 3
+          task_4_spe_uuids = described_class[task: @task_4].map(&:uuid)
           expect(@page_1_exercise_uuids).to include(task_4_spe_uuids.first)
           task_4_spe_uuids[1..-1].each do |exercise_uuid|
             expect(@page_4_exercise_uuids).to include(exercise_uuid)
@@ -255,8 +241,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
           Preview::WorkTask.call task: @task_4, is_correct: [ true, false ].sample
 
-          task_3_spe_uuids = described_class[task: @task_3, max_num_exercises: 3].map(&:uuid)
-          expect(task_3_spe_uuids.size).to eq 3
+          task_3_spe_uuids = described_class[task: @task_3].map(&:uuid)
           expect(@page_4_exercise_uuids).to include(task_3_spe_uuids.first)
           task_3_spe_uuids[1..-1].each do |exercise_uuid|
             expect(@page_3_exercise_uuids).to include(exercise_uuid)
@@ -264,8 +249,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
           Preview::WorkTask.call task: @task_3, is_correct: [ true, false ].sample
 
-          task_2_spe_uuids = described_class[task: @task_2, max_num_exercises: 3].map(&:uuid)
-          expect(task_2_spe_uuids.size).to eq 3
+          task_2_spe_uuids = described_class[task: @task_2].map(&:uuid)
           expect(@page_3_exercise_uuids).to include(task_2_spe_uuids.first)
           expect(@page_1_exercise_uuids).to include(task_2_spe_uuids.second)
           expect(@page_2_exercise_uuids).to include(task_2_spe_uuids.third)
