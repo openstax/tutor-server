@@ -12,7 +12,7 @@ class Tasks::FetchAssignmentSpes
   uses_routine ChooseExercises,         as: :choose_exercises
 
   # Returns a number of recommended personalized exercises for the given task using Glicko ratings
-  def exec(task:, max_num_exercises: nil, current_time: Time.current)
+  def exec(task:, current_time: Time.current)
     case task.task_type
     when 'reading', 'homework'
       pool_type = "#{task.task_type}_dynamic".to_sym
@@ -120,7 +120,7 @@ class Tasks::FetchAssignmentSpes
       ).uniq.sort
     end
 
-    outputs.exercises = chosen_exercises.first(max_num_exercises || task.goal_num_spes)
+    outputs.exercises = chosen_exercises.first task.num_unpopulated_spes
   end
 
   protected

@@ -149,8 +149,16 @@ class Tasks::Models::Task < ApplicationRecord
     task_steps.personalized_group.to_a.count { |step| step.exercise? || step.placeholder? }
   end
 
+  def num_unpopulated_pes
+    task_steps.personalized_group.to_a.count(&:placeholder?)
+  end
+
   def goal_num_spes
     task_steps.spaced_practice_group.to_a.count { |step| step.exercise? || step.placeholder? }
+  end
+
+  def num_unpopulated_spes
+    task_steps.spaced_practice_group.to_a.count(&:placeholder?)
   end
 
   def extended?

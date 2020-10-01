@@ -222,14 +222,12 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
     end
 
     context 'with enough dynamic exercises available' do
-      let(:exercises) { @spaced_page.exercises.sample @task.goal_num_spes }
+      let(:exercises) { @spaced_page.exercises.sample @task.num_unpopulated_spes }
 
       before do
         expect_any_instance_of(
           Tasks::FetchAssignmentSpes
-        ).to receive(:call) do |task:, max_num_exercises:|
-          expect(max_num_exercises).to eq @task.goal_num_spes
-
+        ).to receive(:call) do |task:|
           Lev::Routine::Result.new(
             Lev::Outputs.new(
               exercises: exercises,
