@@ -51,7 +51,7 @@ RSpec.describe ShortCodesController, type: :request do
     get short_code_url(task_plan_code.code)
 
     expect(response).to redirect_to(
-      "#{course_dashboard_path(course.id)}/t/month/#{task_plan_due_at}/plan/#{task_plan.id}"
+      "#{course_dashboard_path(course.id)}/assignment/review/#{task_plan.id}"
     )
   end
 
