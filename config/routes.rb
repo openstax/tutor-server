@@ -109,6 +109,12 @@ Rails.application.routes.draw do
       resource :practices, path: :'practice/(/role/:role_id)', only: [ :create ]
       post :'practice/worst(/role/:role_id)', controller: :practices, action: :create_worst
 
+      scope controller: :practice_questions do
+        get :'practice_questions(/role/role/:role_id)', action: :index
+        post :'practice_questions(/role/role/:role_id)', action: :create
+        delete :'practice_questions(/role/role/:role_id)/:id', action: :destroy
+      end
+
       scope controller: :guides do
         get :'guide(/role/:role_id)', action: :student
         get :'teacher_guide(/role/:role_id)', action: :teacher

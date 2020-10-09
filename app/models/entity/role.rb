@@ -9,6 +9,8 @@ module Entity
     has_many :taskings, subsystem: :tasks, dependent: :destroy, inverse_of: :role
     has_many :extensions, subsystem: :tasks, dependent: :destroy, inverse_of: :role
 
+    has_many :practice_questions, subsystem: :tasks, dependent: :destroy, inverse_of: :role
+
     has_many :notes, subsystem: :content, dependent: :destroy, inverse_of: :role
 
     has_many :role_book_parts, subsystem: :ratings, dependent: :destroy, inverse_of: :role
