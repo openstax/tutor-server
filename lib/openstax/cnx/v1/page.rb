@@ -46,7 +46,7 @@ module OpenStax::Cnx::V1
     end
 
     def url
-      @url ||= url_for(id)
+      @url ||= url_for(uuid)
     end
 
     def parsed_title
@@ -66,7 +66,7 @@ module OpenStax::Cnx::V1
     end
 
     def uuid
-      @uuid ||= full_hash.fetch('id')
+      id.gsub(%r{@(\d|\.)+$}, '')
     end
 
     def short_id
@@ -74,11 +74,11 @@ module OpenStax::Cnx::V1
     end
 
     def version
-      @version ||= full_hash.fetch('version')
+      id.split('@').last
     end
 
     def canonical_url
-      @canonical_url ||= url_for("#{uuid}@#{version}")
+      @canonical_url ||= url_for("#{uuid}")
     end
 
     def content

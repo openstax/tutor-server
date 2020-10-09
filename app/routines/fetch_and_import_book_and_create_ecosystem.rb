@@ -8,6 +8,7 @@ class FetchAndImportBookAndCreateEcosystem
   # Returns a Content::Models::Ecosystem containing a book obtained from the given CNX id
   def exec(book_cnx_id:, archive_url: nil,
            reading_processing_instructions: nil, exercise_uids: nil, comments: nil)
+
     OpenStax::Cnx::V1.with_archive_url(archive_url || OpenStax::Cnx::V1.archive_url_base) do
       cnx_book = OpenStax::Cnx::V1.book(id: book_cnx_id)
 
