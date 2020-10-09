@@ -13,4 +13,9 @@ class Api::V1::TaskPlan::DroppedQuestionRepresenter < Roar::Decorator
            readable: true,
            writeable: true,
            schema_info: { required: true }
+
+  property :updated_at,
+           type: String,
+           readable: true,
+           writeable: false
 end

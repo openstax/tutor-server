@@ -155,17 +155,31 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   def has_answers?
     !answer_ids.empty?
   end
-  alias_method :can_be_auto_graded?, :has_answers?
 
   def has_answer_missing?
     answer_id.blank? && has_answers?
   end
 
+  def dropped_question
+    @dropped_question ||= (task_step.task&.task_plan&.dropped_questions || []).detect do |dq|
+      dq.question_id == question_id
+    end
+  end
+
+  def dropped?
+    dropped_question.present?
+  end
+
+  def zeroed?
+    dropped? && dropped_question.zeroed?
+  end
+
   def full_credit?
-    full_credit_question_ids = Set.new(
-      task_step.task&.task_plan&.dropped_questions&.filter(&:full_credit?)&.map(&:question_id) || []
-    )
-    full_credit_question_ids.include? question_id
+    dropped? && dropped_question.full_credit?
+  end
+
+  def can_be_auto_graded?
+    has_answers? || dropped?
   end
 
   def submitted_late?
