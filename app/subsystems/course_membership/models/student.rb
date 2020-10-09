@@ -8,6 +8,7 @@ class CourseMembership::Models::Student < ApplicationRecord
   belongs_to :role,   subsystem: :entity, inverse_of: :student
   belongs_to :course, subsystem: :course_profile, inverse_of: :students
   belongs_to :period, inverse_of: :students
+  has_one :profile, subsystem: :user, through: :role
 
   has_many :enrollments, inverse_of: :student
   has_one :latest_enrollment, -> { latest }, class_name: '::CourseMembership::Models::Enrollment'

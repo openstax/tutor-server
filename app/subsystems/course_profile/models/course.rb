@@ -36,7 +36,11 @@ class CourseProfile::Models::Course < ApplicationRecord
   has_many :teacher_students, subsystem: :course_membership, inverse_of: :course
 
   has_many :excluded_exercises, subsystem: :course_content
-
+  has_many :course_score_callbacks, subsystem: :lms do
+    def for_student(student)
+      find { |cb| cb.profile == student.profile }
+    end
+  end
   has_many :course_ecosystems, subsystem: :course_content
 
   has_many :course_assistants, subsystem: :tasks
