@@ -26,7 +26,6 @@ class ImportEcosystemManifest
     fatal_error(code: :multiple_books) if manifest.books.size > 1
 
     book = manifest.books.first
-
     run(:fetch_and_import,
         archive_url: book.archive_url,
         book_cnx_id: book.cnx_id,

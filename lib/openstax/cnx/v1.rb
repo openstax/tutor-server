@@ -4,7 +4,7 @@ require 'open-uri'
 require_relative './v1/configuration'
 
 require_relative './v1/custom_css'
-
+require_relative '../../url_path'
 require_relative './v1/fragment'
 require_relative './v1/fragment/html'
 require_relative './v1/fragment/embedded'
@@ -58,21 +58,22 @@ module OpenStax::Cnx::V1
       end
     end
 
-    # Archive url for the given path
-    # Forces /contents/ to be prepended to the path, unless the path begins with /
+
     def archive_url_for(path)
-      Addressable::URI.join(configuration.archive_url_base, '/contents/', path).to_s
+      UrlPath.join(configuration.archive_url_base, '/contents/', path.to_s)
     end
 
     # Webview url for the given path
     # Forces /contents/ to be prepended to the path, unless the path begins with /
     def webview_url_for(path)
-      Addressable::URI.join(configuration.webview_url_base, '/contents/', path).to_s
+      UrlPath.join(configuration.webview_url_base, '/contents/', path.to_s)
     end
+ 
+    def fetch(path, format: 'json')
+      url = "#{path}.#{format}"
 
-    def fetch(url)
       begin
-        Rails.logger.debug { "Fetching #{url}" }
+        Rails.logger.debug { "Fetching #{url}.json" }
         JSON.parse open(url, 'ACCEPT' => 'text/json').read
       rescue OpenURI::HTTPError => exception
         raise OpenStax::HTTPError, "#{exception.message} for URL #{url}"
