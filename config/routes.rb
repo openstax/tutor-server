@@ -23,7 +23,7 @@ Rails.application.routes.draw do
       get :dashboard
       get :'course/:id', as: :course_dashboard
       get :'course/:course_id/task/:task_id', as: :student_task
-      get :'course/:course_id/t/month/:date/plan/:task_id', as: :teacher_task_plan_review
+      get :'course/:course_id/assignment/review/:task_id', as: :teacher_task_plan_review
     end
   end
 

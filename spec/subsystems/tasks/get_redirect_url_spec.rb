@@ -22,8 +22,7 @@ RSpec.describe Tasks::GetRedirectUrl, type: :routine do
   it 'returns the edit task plan page for teachers' do
     result = described_class.call(gid: task_plan_gid, user: teacher)
     expect(result.errors).to be_empty
-    due_at = task_plan.tasking_plans.first.due_at_ntz.strftime('%Y-%m-%d')
-    expect(result.outputs.uri).to eq("/course/#{course.id}/t/month/#{due_at}/plan/#{task_plan.id}")
+    expect(result.outputs.uri).to eq("/course/#{course.id}/assignment/review/#{task_plan.id}")
   end
 
   it 'returns the task page for students' do
