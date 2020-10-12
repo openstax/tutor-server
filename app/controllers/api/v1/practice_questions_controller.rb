@@ -27,7 +27,7 @@ class Api::V1::PracticeQuestionsController < Api::V1::ApiController
   def create
     step = ::Tasks::Models::TaskStep.joins(task: :taskings).find_by(
       task: { taskings: { entity_role_id: @role.id} },
-      tasked_id: params[:tasked_id],
+      tasked_id: params[:tasked_exercise_id],
       tasked_type: ::Tasks::Models::TaskedExercise.name
     )
 
