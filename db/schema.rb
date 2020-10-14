@@ -851,15 +851,37 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.index ["entity_role_id", "course_profile_course_id"], name: "index_performance_report_exports_on_role_and_course"
   end
 
+  create_table "tasks_period_caches", id: :serial, force: :cascade do |t|
+    t.integer "course_membership_period_id", null: false
+    t.integer "content_ecosystem_id", null: false
+    t.integer "tasks_task_plan_id"
+    t.datetime "opens_at"
+    t.datetime "due_at"
+    t.integer "student_ids", null: false, array: true
+    t.text "as_toc", default: "{}", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "closes_at"
+    t.index ["content_ecosystem_id"], name: "index_tasks_period_caches_on_content_ecosystem_id"
+    t.index ["course_membership_period_id", "content_ecosystem_id", "tasks_task_plan_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id_and_t_t_p_id", unique: true
+    t.index ["course_membership_period_id", "content_ecosystem_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id", unique: true, where: "(tasks_task_plan_id IS NULL)"
+    t.index ["course_membership_period_id"], name: "index_tasks_period_caches_on_course_membership_period_id"
+    t.index ["due_at"], name: "index_tasks_period_caches_on_due_at"
+    t.index ["opens_at"], name: "index_tasks_period_caches_on_opens_at"
+    t.index ["student_ids"], name: "index_tasks_period_caches_on_student_ids", using: :gin
+    t.index ["tasks_task_plan_id"], name: "index_tasks_period_caches_on_tasks_task_plan_id"
+  end
+
   create_table "tasks_practice_questions", force: :cascade do |t|
-    t.integer "exercise_number", null: false
-    t.integer "exercise_version", null: false
-    t.integer "tasked_exercise_id", null: false
+    t.bigint "tasks_tasked_exercise_id", null: false
+    t.bigint "content_exercise_id", null: false
     t.bigint "entity_role_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["entity_role_id", "exercise_version", "exercise_number"], name: "index_question_on_exercise_and_role", unique: true
+    t.index ["content_exercise_id"], name: "index_tasks_practice_questions_on_content_exercise_id"
+    t.index ["entity_role_id", "content_exercise_id"], name: "index_question_on_role_and_content_exercise", unique: true
     t.index ["entity_role_id"], name: "index_tasks_practice_questions_on_entity_role_id"
+    t.index ["tasks_tasked_exercise_id"], name: "index_tasks_practice_questions_on_tasks_tasked_exercise_id"
   end
 
   create_table "tasks_task_plans", id: :serial, force: :cascade do |t|

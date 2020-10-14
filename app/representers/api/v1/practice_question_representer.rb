@@ -10,25 +10,15 @@ module Api::V1
              readable: true,
              schema_info: { required: true }
 
-    property :tasked_exercise_id,
+    property :tasks_tasked_exercise_id,
+             as: :tasked_exercise_id,
              type: String,
              writeable: false,
              readable: true,
              schema_info: { required: true }
 
-    property :exercise_number,
-             type: String,
-             writeable: false,
-             readable: true,
-             schema_info: { required: true }
-
-    property :exercise_version,
-             type: String,
-             writeable: false,
-             readable: true,
-             schema_info: { required: true }
-
-    property :entity_role_id,
+    property :content_exercise_id,
+             as: :exercise_id,
              type: String,
              writeable: false,
              readable: true,

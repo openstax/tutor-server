@@ -37,9 +37,8 @@ class Api::V1::PracticeQuestionsController < Api::V1::ApiController
 
     standard_create ::Tasks::Models::PracticeQuestion.new, Api::V1::PracticeQuestionRepresenter do |question|
       question.role = @role
-      question.tasked_exercise_id = step.tasked_id
-      question.exercise_number = step.tasked.exercise.number
-      question.exercise_version = step.tasked.exercise.version
+      question.tasked_exercise = step.tasked
+      question.exercise = step.tasked.exercise
     end
   end
 
