@@ -24,7 +24,6 @@ modd.conf
 /.idea
 
 # Ignore files containing keys and passwords
-config/secrets.yml
 config/deploy_settings.yml
 
 # Ignore OS X's Desktop Service Store files
