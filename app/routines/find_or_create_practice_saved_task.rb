@@ -1,0 +1,36 @@
+class FindOrCreatePracticeSavedTask
+  include FindOrCreatePracticeTaskRoutine
+
+  uses_routine GetCourseEcosystem, as: :get_course_ecosystem
+  uses_routine TaskExercise, as: :task_exercise
+
+  protected
+
+  def setup(**args)
+    @exercise_ids = @role.practice_questions.where(id: args[:question_ids]).select(&:available?).pluck(:content_exercise_id).limit(10)
+    @task_type = :practice_saved
+    @ecosystem = run(:get_course_ecosystem, course: @course).outputs.ecosystem
+  end
+
+  def add_task_steps
+    exercises = Content::Models::Exercise.where(id: @exercise_ids)
+
+    fatal_error(
+      code: :no_exercises,
+      message: "No exercises available to build the Saved Practice." +
+               " [Course: #{@course.id} - Role: #{@role.id}" +
+               " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
+    ) if exercises.empty?
+
+    # Add the exercises as task steps
+    exercises.each do |exercise|
+      run(
+        :task_exercise,
+        exercise: exercise,
+        task: @task,
+        group_type: :personalized_group,
+        is_core: true
+      )
+    end.tap { @task.pes_are_assigned = true }
+  end
+end

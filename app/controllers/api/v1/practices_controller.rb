@@ -1,7 +1,7 @@
 module Api::V1
   class PracticesController < ApiController
     before_action :get_course_and_practice_role
-    before_action :error_if_student_and_needs_to_pay, only: [:create, :create_worst, :show]
+    before_action :error_if_student_and_needs_to_pay, only: [:create, :create_worst, :create_saved, :show]
 
     api :POST, '/courses/:course_id/practice',
                'Starts a new practice widget for a specific set of page_ids'
@@ -31,6 +31,22 @@ module Api::V1
       OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
 
       result = FindOrCreatePracticeWorstTopicsTask.call course: @course, role: @role
+
+      render_api_errors(result.errors) || respond_with(
+        result.outputs.task,
+        represent_with: Api::V1::TaskRepresenter,
+        location: nil
+      )
+    end
+
+    api :POST, '/courses/:course_id/practice/saved',
+               'Starts a new practice from saved PracticeQuestions'
+    def create_saved
+      OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
+
+      result = FindOrCreatePracticeSavedTask.call(
+        course: @course, role: @role, question_ids: params[:practice_question_ids]
+      )
 
       render_api_errors(result.errors) || respond_with(
         result.outputs.task,

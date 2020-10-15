@@ -27,7 +27,8 @@ class Tasks::Models::Task < ApplicationRecord
   enum task_type: [
     :homework, :reading, :chapter_practice,
     :page_practice, :mixed_practice, :external,
-    :event, :extra, :concept_coach, :practice_worst_topics
+    :event, :extra, :concept_coach, :practice_worst_topics,
+    :practice_saved
   ]
 
   STEPLESS_TASK_TYPES = [ :external, :event ]

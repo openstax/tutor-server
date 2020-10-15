@@ -879,7 +879,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["content_exercise_id"], name: "index_tasks_practice_questions_on_content_exercise_id"
-    t.index ["entity_role_id", "content_exercise_id"], name: "index_question_on_role_and_content_exercise", unique: true
+    t.index ["entity_role_id", "content_exercise_id"], name: "index_question_on_role_and_exercise", unique: true
     t.index ["entity_role_id"], name: "index_tasks_practice_questions_on_entity_role_id"
     t.index ["tasks_tasked_exercise_id"], name: "index_tasks_practice_questions_on_tasks_tasked_exercise_id"
   end
@@ -1209,7 +1209,9 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
   add_foreign_key "tasks_grading_templates", "tasks_grading_templates", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_practice_questions", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_practice_questions", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_practice_questions", "tasks_tasked_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_grading_templates", on_update: :cascade, on_delete: :restrict
