@@ -35,7 +35,10 @@ module Api::V1
              type: Object,
              readable: true,
              writeable: false,
-             getter: ->(*) { respond_to?(:content_hash) ? content_hash : content },
+             getter: ->(user_options) {
+              user_options&.[](:for_student) ? parser.content_hash_for_students :
+                respond_to?(:content_hash) ? content_hash : content
+            },
              schema_info: { required: true }
 
     collection :tags,

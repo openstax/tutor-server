@@ -60,15 +60,33 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     ecosystem = ::Content::Models::Ecosystem.find(params[:id])
     course = CourseProfile::Models::Course.find(params[:course_id]) if params[:course_id].present?
 
-    OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)
+    if current_human_user.account.student?
+      role = ChooseCourseRole.call(user: current_human_user,
+                                   course: [course],
+                                   role_id: params[:role_id],
+                                   allowed_role_types: [ :student, :teacher_student ]).outputs.role
 
-    exercises = GetExercises[ecosystem: ecosystem,
-                             course: course,
-                             exercise_ids: params[:exercise_ids],
-                             page_ids: params[:page_ids],
-                             pool_types: params[:pool_types]]
+      exercise_ids = role.practice_questions.where(content_exercise_id: params[:exercise_ids]).pluck(:content_exercise_id)
 
-    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
+      exercises = GetExercises.call(ecosystem: ecosystem,
+                                    course: course,
+                                    exercise_ids: exercise_ids).outputs.exercises
+
+      respond_with(exercises,
+                   represent_with: Api::V1::ExerciseSearchRepresenter,
+                   user_options: { for_student: true }) and return
+
+    else
+      OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, ecosystem)
+
+      exercises = GetExercises[ecosystem: ecosystem,
+                               course: course,
+                               exercise_ids: params[:exercise_ids],
+                               page_ids: params[:page_ids],
+                               pool_types: params[:pool_types]]
+    end
+
+    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter, user_options: { for_student: false }
   end
 
 end
