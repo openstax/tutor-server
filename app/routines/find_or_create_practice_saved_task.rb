@@ -7,7 +7,7 @@ class FindOrCreatePracticeSavedTask
   protected
 
   def setup(**args)
-    @exercise_ids = @role.practice_questions.where(id: args[:question_ids]).select(&:available?).pluck(:content_exercise_id).limit(10)
+    @exercise_ids = @role.practice_questions.where(id: args[:question_ids]).select(&:available?).pluck(:content_exercise_id)
     @task_type = :practice_saved
     @ecosystem = run(:get_course_ecosystem, course: @course).outputs.ecosystem
   end
@@ -21,6 +21,13 @@ class FindOrCreatePracticeSavedTask
                " [Course: #{@course.id} - Role: #{@role.id}" +
                " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
     ) if exercises.empty?
+
+    exercises = FilterExcludedExercises.call(
+      exercises: exercises,
+      role: @role,
+      additional_excluded_numbers: [],
+      current_time: Time.current
+    ).outputs.exercises
 
     # Add the exercises as task steps
     exercises.each do |exercise|

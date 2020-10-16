@@ -9,6 +9,6 @@ class Tasks::Models::PracticeQuestion < ApplicationRecord
                                   uniqueness: { scope: [:content_exercise_id, :entity_role_id] }
 
   def available?
-    tasked_exercise.published_grader_points.present?
+    tasked_exercise.feedback_available?
   end
 end
