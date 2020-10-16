@@ -312,7 +312,7 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   end
 
   def not_past_due_when_publishing
-    return if !is_publish_requested || tasking_plans.none?(&:past_due?)
+    return if is_published? || !is_publish_requested || tasking_plans.none?(&:past_due?)
 
     errors.add :due_at, 'cannot be in the past when publishing'
     throw :abort

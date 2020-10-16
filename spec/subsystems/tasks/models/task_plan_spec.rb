@@ -176,6 +176,10 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
 
     task_plan.tasking_plans.first.due_at = Time.current.yesterday
     expect(task_plan).to_not be_valid
+    # it shouldn't have error when it's already published
+    task_plan.first_published_at = Time.current
+    expect(task_plan).to be_valid
+
   end
 
   it 'trims title and description fields' do
