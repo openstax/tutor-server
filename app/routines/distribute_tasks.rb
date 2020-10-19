@@ -11,6 +11,9 @@ class DistributeTasks
     # Lock the plan to prevent concurrent publication
     task_plan.lock!
 
+    # when ran in background job, publish_time will be iso date string
+    publish_time = Time.parse(publish_time) if publish_time.is_a?(String)
+
     # Abort if it seems like someone already published this plan
     fatal_error(code: :publish_last_requested_at_must_be_in_the_past) \
       if task_plan.publish_last_requested_at.present? &&

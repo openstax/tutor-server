@@ -2,8 +2,6 @@ class ReassignPublishedPeriodTaskPlans
 
   lev_routine
 
-  uses_routine DistributeTasks, as: :distribute
-
   protected
 
   def exec(period:, protect_unopened_tasks: true)
@@ -17,9 +15,11 @@ class ReassignPublishedPeriodTaskPlans
 
     published_task_plans.each_with_index do |tp, ii|
       status.set_progress(ii, published_task_plans.size)
-      run(:distribute, task_plan: tp,
-                       publish_time: Time.current,
-                       protect_unopened_tasks: protect_unopened_tasks)
+      DistributeTasks.perform_later(
+        task_plan: tp,
+        publish_time: Time.current.iso8601,
+        protect_unopened_tasks: protect_unopened_tasks
+      )
     end
   end
 
