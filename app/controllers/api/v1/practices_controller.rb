@@ -45,14 +45,12 @@ module Api::V1
       OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
 
       # Find a not completed practice task
-      @task = ::Tasks::GetPracticeTask[
+      task = ::Tasks::GetPracticeTask[
         role: @role,
         task_type: :practice_saved
       ]
 
-      return render_api_errors(:not_found) unless @task
-
-      respond_with @task, represent_with: Api::V1::TaskRepresenter, location: nil
+      render json: { id: task&.id }
     end
 
     api :POST, '/courses/:course_id/practice/saved',
