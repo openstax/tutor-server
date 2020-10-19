@@ -39,6 +39,22 @@ module Api::V1
       )
     end
 
+    api :GET, '/courses/:course_id/practice/saved',
+              'Returns the id of an existing practice that was created from saved PracticeQuestions'
+    def find_saved
+      OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
+
+      # Find a not completed practice task
+      @task = ::Tasks::GetPracticeTask[
+        role: @role,
+        task_type: :practice_saved
+      ]
+
+      return render_api_errors(:not_found) unless @task
+
+      respond_with @task, represent_with: Api::V1::TaskRepresenter, location: nil
+    end
+
     api :POST, '/courses/:course_id/practice/saved',
                'Starts a new practice from saved PracticeQuestions'
     def create_saved
