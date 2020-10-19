@@ -36,7 +36,7 @@ module Api::V1
              readable: true,
              writeable: false,
              getter: ->(user_options) {
-              user_options&.[](:for_student) ? parser.content_hash_for_students :
+              user_options&.[](:for_student) ? content_hash_for_students :
                 respond_to?(:content_hash) ? content_hash : content
             },
              schema_info: { required: true }
