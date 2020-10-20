@@ -209,12 +209,12 @@ gem 'openstax_healthcheck'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '~> 1.4.0', require: false
 
+# Get env variables from .env file
+gem 'dotenv-rails'
+
 group :development, :test do
   # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
   gem 'awesome_print'
-
-  # Get env variables from .env file
-  gem 'dotenv-rails'
 
   # lint files
   gem 'rubocop'
