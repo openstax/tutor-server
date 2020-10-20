@@ -851,27 +851,6 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.index ["entity_role_id", "course_profile_course_id"], name: "index_performance_report_exports_on_role_and_course"
   end
 
-  create_table "tasks_period_caches", id: :serial, force: :cascade do |t|
-    t.integer "course_membership_period_id", null: false
-    t.integer "content_ecosystem_id", null: false
-    t.integer "tasks_task_plan_id"
-    t.datetime "opens_at"
-    t.datetime "due_at"
-    t.integer "student_ids", null: false, array: true
-    t.text "as_toc", default: "{}", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "closes_at"
-    t.index ["content_ecosystem_id"], name: "index_tasks_period_caches_on_content_ecosystem_id"
-    t.index ["course_membership_period_id", "content_ecosystem_id", "tasks_task_plan_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id_and_t_t_p_id", unique: true
-    t.index ["course_membership_period_id", "content_ecosystem_id"], name: "index_period_caches_on_c_m_p_id_and_c_e_id", unique: true, where: "(tasks_task_plan_id IS NULL)"
-    t.index ["course_membership_period_id"], name: "index_tasks_period_caches_on_course_membership_period_id"
-    t.index ["due_at"], name: "index_tasks_period_caches_on_due_at"
-    t.index ["opens_at"], name: "index_tasks_period_caches_on_opens_at"
-    t.index ["student_ids"], name: "index_tasks_period_caches_on_student_ids", using: :gin
-    t.index ["tasks_task_plan_id"], name: "index_tasks_period_caches_on_tasks_task_plan_id"
-  end
-
   create_table "tasks_practice_questions", force: :cascade do |t|
     t.bigint "tasks_tasked_exercise_id", null: false
     t.bigint "content_exercise_id", null: false
