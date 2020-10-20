@@ -62,11 +62,11 @@ coverage:
     project:                     # measuring the overall project coverage
       default:                   # context, you can create multiple ones with custom titles
         # enabled: yes           # must be yes|true to enable this status
-        target: 83%              # specify the target coverage for each commit status
+        target: auto             # specify the target coverage for each commit status
         #                        #   option: "auto" (must increase from parent commit or pull request base)
         #                        #   option: "X%" a static target percentage to hit
         # branches:              # -> see "branch patterns" below
-        threshold: 1%            # allowed to drop X% and still result in a "success" commit status
+        threshold: 5%            # allowed to drop X% and still result in a "success" commit status
         # if_no_uploads: error   # will post commit status of "error" if no coverage reports we uploaded
         #                        # options: success, error, failure
         # if_not_found: success  # if parent is not found report status as success, error, or failure
@@ -77,9 +77,9 @@ coverage:
                                # adjusted are covered at least X%.
       default:
         # enabled: yes             # must be yes|true to enable this status
-        target: 60%                # specify the target "X%" coverage to hit
+        target: auto               # specify the target "X%" coverage to hit
         # branches: null           # -> see "branch patterns" below
-        threshold: 2%              # allowed to drop X% and still result in a "success" commit status
+        threshold: 10%             # allowed to drop X% and still result in a "success" commit status
         # if_no_uploads: error     # will post commit status of "error" if no coverage reports we uploaded
         #                          # options: success, error, failure
         # if_not_found: success
