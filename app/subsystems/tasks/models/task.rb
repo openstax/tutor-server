@@ -32,7 +32,7 @@ class Tasks::Models::Task < ApplicationRecord
   ]
 
   STEPLESS_TASK_TYPES = [ :external, :event ]
-  PRACTICE_TASK_TYPES = [ :chapter_practice, :page_practice,
+  PRACTICE_TASK_TYPES = [ :chapter_practice, :page_practice, :mixed_practice,
                           :practice_worst_topics, :practice_saved ]
 
   json_serialize :spy, Hash
@@ -450,6 +450,10 @@ class Tasks::Models::Task < ApplicationRecord
     STEPLESS_TASK_TYPES.include?(task_type.to_sym)
   end
 
+  def practice?
+    PRACTICE_TASK_TYPES.include?(task_type.to_sym)
+  end
+
   def is_shared?
     taskings.size > 1
   end
@@ -614,10 +618,6 @@ class Tasks::Models::Task < ApplicationRecord
 
   def worked_on?
     last_worked_at.present?
-  end
-
-  def practice?
-    page_practice? || chapter_practice? || mixed_practice? || practice_worst_topics?
   end
 
   def student?
