@@ -11,7 +11,7 @@ module CourseMembership
       transfer_errors_from(student, { type: :verbatim }, true)
 
       period = student.period
-      ReassignPublishedPeriodTaskPlans[period: student.period]
+      ReassignPublishedPeriodTaskPlans[period: student.period, role: student.role]
 
       queue = student.course.is_preview ? :preview : :dashboard
       task_plan_ids = Tasks::Models::Task.joins(:taskings).where(
