@@ -14,7 +14,7 @@ class CourseMembership::AddEnrollment
     outputs.student = student
     transfer_errors_from(student, { type: :verbatim }, true)
 
-    ReassignPublishedPeriodTaskPlans.perform_later(period: period) \
+    ReassignPublishedPeriodTaskPlans.perform_later(period: period, role: student.role) \
       if reassign_published_period_task_plans
   end
 end

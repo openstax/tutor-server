@@ -7,7 +7,13 @@ class DistributeTasks
 
   protected
 
-  def exec(task_plan:, publish_time: Time.current, protect_unopened_tasks: false, preview: false)
+  def exec(
+    task_plan:,
+    role: nil,
+    publish_time: Time.current,
+    protect_unopened_tasks: false,
+    preview: false
+  )
     # Lock the plan to prevent concurrent publication
     task_plan.lock!
 
@@ -23,6 +29,10 @@ class DistributeTasks
     existing_tasks = task_plan.tasks.preload(
       taskings: { role: [ student: :period, teacher_student: :period ] }
     )
+
+    existing_tasks = existing_tasks.select do |task|
+      task.taskings.any? { |tasking| tasking.role == role }
+    end unless role.nil?
 
     # Task deletion (re-publishing)
     unless task_plan.out_to_students?(current_time: publish_time)
@@ -45,6 +55,8 @@ class DistributeTasks
     end
 
     itp_args = { task_plan: task_plan }
+
+    itp_args[:role] = role unless role.nil?
 
     # If preview is true, only assign to teacher_student roles
     itp_args[:role_type] = :teacher_student if preview

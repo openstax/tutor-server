@@ -1,10 +1,9 @@
 class IndividualizeTaskingPlans
-
   lev_routine express_output: :tasking_plans
 
   protected
 
-  def exec(task_plan:, role_type: nil)
+  def exec(task_plan:, role: nil, role_type: nil)
     outputs[:tasking_plans] = task_plan.tasking_plans.flat_map do |tasking_plan|
       target = tasking_plan.target
 
@@ -29,6 +28,8 @@ class IndividualizeTaskingPlans
 
       roles = [roles].flatten
 
+      roles = roles.select { |rr| rr == role } unless role.nil?
+
       roles = roles.select { |role| role.role_type == role_type.to_s } unless role_type.nil?
 
       roles.map do |role|
@@ -42,5 +43,4 @@ class IndividualizeTaskingPlans
       end
     end.uniq(&:target)
   end
-
 end

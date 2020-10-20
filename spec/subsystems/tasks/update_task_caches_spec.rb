@@ -104,7 +104,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         existing_task_ids = tasks.map(&:id)
         expect(configured_job).to(
           receive(:perform_later) do |task_ids:, queue:|
-            expect(task_ids.size).to eq 11
+            expect(task_ids.size).to eq 1
             expect(queue).to eq queue.to_s
             expect((task_ids - existing_task_ids).size).to eq 1
           end
@@ -191,7 +191,7 @@ RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
         existing_task_ids = tasks.map(&:id)
         expect(configured_job).to(
           receive(:perform_later) do |task_ids:, queue:|
-            expect(task_ids.size).to eq 11
+            expect(task_ids.size).to eq 1
             expect(queue).to eq queue.to_s
             expect((task_ids - existing_task_ids).size).to eq 1
           end

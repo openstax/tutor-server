@@ -19,7 +19,7 @@ class CourseMembership::AddTeacherStudent
                                                                       period: period)
     transfer_errors_from(teacher_student, { type: :verbatim }, true)
 
-    ReassignPublishedPeriodTaskPlans.perform_later(period: period) \
+    ReassignPublishedPeriodTaskPlans.perform_later(period: period, role: role) \
       if reassign_published_period_task_plans
   end
 end

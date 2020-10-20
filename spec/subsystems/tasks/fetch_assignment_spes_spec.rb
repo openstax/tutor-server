@@ -66,6 +66,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
 
       student = FactoryBot.create :course_membership_student
       period = student.period
+      AddUserAsPeriodStudent.call user: FactoryBot.create(:user_profile), period: period
       @course = period.course
       book = FactoryBot.create :content_book, :standard_contents_2, ecosystem: @course.ecosystem
 
@@ -91,7 +92,7 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
           target: period,
           settings: { 'page_ids' => [ page.id.to_s ] },
           assistant: assistant
-        ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }
+        )
       end
 
       current_time = @course.time_zone.now
@@ -101,30 +102,31 @@ RSpec.describe Tasks::FetchAssignmentSpes, type: :routine do
       task_plan_1.tasking_plans.each do |tasking_plan|
         tasking_plan.update_attribute :due_at, current_time + 1.hour
       end
-      @task_1 = task_plan_1.tasks.first
 
       @page_2_exercise_uuids = book.pages.second.exercises.map(&:uuid)
       task_plan_2 = task_plans.second
       task_plan_2.tasking_plans.each do |tasking_plan|
         tasking_plan.update_attribute :due_at, current_time + 1.day
       end
-      @task_2 = task_plan_2.tasks.first
 
       @page_3_exercise_uuids = book.pages.third.exercises.map(&:uuid)
       task_plan_3 = task_plans.third
       task_plan_3.tasking_plans.each do |tasking_plan|
         tasking_plan.update_attribute :due_at, current_time + 1.week
       end
-      @task_3 = task_plan_3.tasks.first
 
       @page_4_exercise_uuids = book.pages.fourth.exercises.map(&:uuid)
       task_plan_4 = task_plans.fourth
       task_plan_4.tasking_plans.each do |tasking_plan|
         tasking_plan.update_attribute :due_at, current_time + 1.month
       end
-      @task_4 = task_plan_4.tasks.first
 
-      AddUserAsPeriodStudent.call user: FactoryBot.create(:user_profile), period: period
+      task_plans.each { |task_plan| DistributeTasks.call task_plan: task_plan }
+
+      @task_1 = task_plan_1.tasks.first
+      @task_2 = task_plan_2.tasks.first
+      @task_3 = task_plan_3.tasks.first
+      @task_4 = task_plan_4.tasks.first
     end
     after(:all)   { DatabaseCleaner.clean }
 
