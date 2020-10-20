@@ -69,7 +69,7 @@ module Api::V1
       )
     end
 
-    api :POST, '/courses/:course_id/practice/:id/exit',
+    api :PUT, '/courses/:course_id/practice/:id/exit',
                'Exits and completes a practice'
     def exit
       OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
@@ -83,8 +83,7 @@ module Api::V1
       respond_with(
         task,
         represent_with: Api::V1::TaskRepresenter,
-        location: nil,
-        status: :ok
+        location: nil
       )
     end
 
