@@ -32,6 +32,8 @@ class Tasks::Models::Task < ApplicationRecord
   ]
 
   STEPLESS_TASK_TYPES = [ :external, :event ]
+  PRACTICE_TASK_TYPES = [ :chapter_practice, :page_practice,
+                          :practice_worst_topics, :practice_saved ]
 
   json_serialize :spy, Hash
 

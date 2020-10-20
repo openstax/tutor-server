@@ -69,6 +69,25 @@ module Api::V1
       )
     end
 
+    api :POST, '/courses/:course_id/practice/:id/exit',
+               'Exits and completes a practice'
+    def exit
+      OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
+
+      task = ::Tasks::GetPracticeTask[
+        id: params[:id],
+        role: @role,
+        task_type: [:practice_saved, :practice_worst_topics, :chapter_practice, :page_practice]
+      ]
+
+      respond_with(
+        task,
+        represent_with: Api::V1::TaskRepresenter,
+        location: nil,
+        status: :ok
+      )
+    end
+
     protected
 
     def get_course_and_practice_role
