@@ -20,8 +20,8 @@ test:
 
 production:
   adapter: postgresql
-  host: <%= ENV['OXT_DB_HOST'] %>
-  port: <%= ENV['OXT_DB_PORT'] %>
-  username: <%= ENV['OXT_DB_USER'] %>
-  password: <%= ENV['OXT_DB_PASS'] %>
-  database: <%= ENV['OXT_PROD_DB'] %>
+  host: <%= ENV['RDS_HOST'] %>
+  port: <%= ENV['RDS_PORT'] %>
+  username: <%= ENV['RDS_USERNAME'] %>
+  password: <%= ENV['RDS_PASSWORD'] %>
+  database: <%= ENV['RDS_DATABASE'] %>
