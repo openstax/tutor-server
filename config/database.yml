@@ -1,9 +1,9 @@
 default: &default
-  host: <%= ENV['OXT_DB_HOST'] || 'localhost' %>
   adapter: postgresql
+  host: <%= ENV['OXT_DB_HOST'] || 'localhost' %>
+  port: <%= ENV['OXT_DB_PORT'] || 5432 %>
   username: <%= ENV['OXT_DB_USER'] || 'ox_tutor' %>
   password: <%= ENV['OXT_DB_PASS'] || 'ox_tutor_secret_password' %>
-  port: <%= ENV['OXT_DB_PORT'] || 5432 %>
 
 development:
   <<: *default
@@ -18,4 +18,10 @@ test:
                  "_#{ENV['TEST_ENV_NUMBER']}" if !ENV['TEST_ENV_NUMBER'].blank? %>'
   reaping_frequency: 0 # 0 = disabled - incompatible with our DatabaseCleaner config
 
-# Production database is intentionally left unconfigured
+production:
+  adapter: postgresql
+  host: <%= ENV['OXT_DB_HOST'] %>
+  port: <%= ENV['OXT_DB_PORT'] %>
+  username: <%= ENV['OXT_DB_USER'] %>
+  password: <%= ENV['OXT_DB_PASS'] %>
+  database: <%= ENV['OXT_PROD_DB'] %>
