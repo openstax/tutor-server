@@ -1,6 +1,12 @@
 ---
 # This configuration file is used for Scout APM.
 # Environment variables can also be used to configure Scout. See our help docs at http://help.apm.scoutapp.com#environment-variables for more information.
+development:
+  monitor: false
+
+test:
+  monitor: false
+
 production:
   # key: Your Organization key for Scout APM. Found on the settings screen.
   # - Default: none
