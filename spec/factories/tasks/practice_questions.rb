@@ -1,8 +1,7 @@
 FactoryBot.define do
-  factory :practice_question do
-    tasked_exercise_id { 1 }
-    entity_role_id { 1 }
-    exercise_number { 1 }
-    exercise_version { 1 }
+  factory :tasks_practice_question, class: '::Tasks::Models::PracticeQuestion' do
+    association :role, factory: :entity_role
+    association :tasked_exercise, factory: :tasks_tasked_exercise
+    association :exercise, factory: :content_exercise
   end
 end

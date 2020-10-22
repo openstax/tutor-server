@@ -169,6 +169,7 @@ Rails.application.routes.draw do
       member do
         get :readings
         get :'exercises(/:pool_types)', action: :exercises
+        get :'practice_exercises', action: :practice_exercises
       end
 
       get :'pages/*cnx_id', controller: :pages, action: :show, format: false
