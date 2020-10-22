@@ -112,11 +112,7 @@ Rails.application.routes.draw do
       put :'practice/:id/exit(/role/:role_id)', controller: :practices, action: :exit
       get :'practice/saved(/role/:role_id)', controller: :practices, action: :find_saved
 
-      scope controller: :practice_questions do
-        get :'practice_questions(/role/role/:role_id)', action: :index
-        post :'practice_questions(/role/role/:role_id)', action: :create
-        delete :'practice_questions(/role/role/:role_id)/:id', action: :destroy
-      end
+      resources :practice_questions, only: [ :index, :create, :destroy ]
 
       scope controller: :guides do
         get :'guide(/role/:role_id)', action: :student

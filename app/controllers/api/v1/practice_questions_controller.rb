@@ -3,12 +3,12 @@ class Api::V1::PracticeQuestionsController < Api::V1::ApiController
   before_action :error_if_student_and_needs_to_pay, only: [:index, :create, :destroy]
 
   resource_description do
-      api_versions 'v1'
-      short_description 'Represents practice questions for a student'
-      description <<~DESCRIPTION
-        Allows questions to be saved by a student and selected for practice
-      DESCRIPTION
-    end
+    api_versions 'v1'
+    short_description 'Represents practice questions for a student'
+    description <<~DESCRIPTION
+      Allows questions to be saved by a student and selected for practice
+    DESCRIPTION
+  end
 
   api :GET, '/courses/:course_id/practice_questions',
             'Lists saved practice questions '
