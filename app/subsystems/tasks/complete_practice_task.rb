@@ -11,7 +11,7 @@ class Tasks::CompletePracticeTask
       role: role,
       task_type: ::Tasks::Models::Task::PRACTICE_TASK_TYPES
     ]
-    return unless task && task.practice?
+    return unless task
 
     task.task_steps.reject(&:completed?).map(&:delete)
     task.task_steps.reload
