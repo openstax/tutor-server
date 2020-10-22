@@ -13,7 +13,7 @@ stdout_redirect(
   ENV.fetch('PUMA_STDOUT_LOGFILE', "#{APP_DIR}/log/puma.stdout.log"),
   ENV.fetch('PUMA_STDERR_LOGFILE', "#{APP_DIR}/log/puma.stderr.log"),
   true
-) if ENV.fetch('PUMA_REDIRECT_STDOUT', false)
+) if ActiveModel::Type::Boolean.new.cast(ENV.fetch('PUMA_REDIRECT_STDOUT', false))
 
 before_fork do
   require 'puma_worker_killer'
@@ -78,7 +78,7 @@ workers NUM_WORKERS
 # before forking the application. This takes advantage of Copy On Write
 # process behavior so workers use less memory.
 #
-preload_app! if ENV.fetch('PUMA_PRELOAD_APP', false)
+preload_app! if ActiveModel::Type::Boolean.new.cast(ENV.fetch('PUMA_PRELOAD_APP', false))
 
 # Allow puma to be restarted by `rails restart` command.
 #
