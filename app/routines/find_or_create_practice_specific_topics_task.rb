@@ -12,7 +12,7 @@ class FindOrCreatePracticeSpecificTopicsTask
     ) if ecosystems.size > 1
     @ecosystem = ecosystems.first
     @pages = pages.reject { |page| page.practice_widget_exercise_ids.empty? }
-    @page_ids = @pages.map(&:id)
+    @page_ids = @pages.map(&:id).sort
 
     fatal_error(code: :invalid_page_ids) unless @course.ecosystems.include?(@ecosystem)
   end

@@ -394,7 +394,7 @@ class Tasks::Models::Task < ApplicationRecord
 
     gradable_steps = completed_exercise_steps.map(&:tasked).reject(&:can_be_auto_graded?)
 
-    self.core_page_ids = core_steps.map(&:content_page_id).uniq
+    self.core_page_ids = core_steps.map(&:content_page_id).uniq.sort
     self.steps_count = steps.count
     self.completed_steps_count = completed_steps.count
     self.core_steps_count = core_steps.count
