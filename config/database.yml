@@ -4,6 +4,7 @@ default: &default
   port: <%= ENV['OXT_DB_PORT'] || 5432 %>
   username: <%= ENV['OXT_DB_USER'] || 'ox_tutor' %>
   password: <%= ENV['OXT_DB_PASS'] || 'ox_tutor_secret_password' %>
+  pool: <%= ENV.fetch('PUMA_MAX_THREADS', 5).to_i %>
 
 development:
   <<: *default
@@ -25,3 +26,4 @@ production:
   username: <%= ENV['RDS_USERNAME'] %>
   password: <%= ENV['RDS_PASSWORD'] %>
   database: <%= ENV['RDS_DATABASE'] %>
+  pool: <%= ENV['PUMA_MAX_THREADS'] %>
