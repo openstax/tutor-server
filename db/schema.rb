@@ -859,7 +859,6 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.datetime "updated_at", null: false
     t.index ["content_exercise_id"], name: "index_tasks_practice_questions_on_content_exercise_id"
     t.index ["entity_role_id", "content_exercise_id"], name: "index_question_on_role_and_exercise", unique: true
-    t.index ["entity_role_id"], name: "index_tasks_practice_questions_on_entity_role_id"
     t.index ["tasks_tasked_exercise_id"], name: "index_tasks_practice_questions_on_tasks_tasked_exercise_id"
   end
 
