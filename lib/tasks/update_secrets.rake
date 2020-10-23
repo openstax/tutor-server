@@ -9,15 +9,13 @@ task :update_secrets do
 
   require 'aws-sdk-ssm'
 
+  # Rails/puma default settings
+
   secrets = {
-    PUMA_MAX_THREADS: 16,
-    PUMA_NUM_WORKERS: Etc.nprocessors,
-    PUMA_PIDFILE: Rails.root.join('tmp', 'pids'),
-    PUMA_PRELOAD_APP: true,
-    PUMA_REDIRECT_STDOUT: true,
-    PUMA_SOCKET: Rails.root.join('tmp', 'sockets'),
-    PUMA_STDERR_LOGFILE: Rails.root.join('log', 'puma.stdout.log'),
-    PUMA_STDOUT_LOGFILE: Rails.root.join('log', 'puma.stderr.log')
+    RAILS_MAX_THREADS: 16,
+    PRELOAD_APP: true,
+    REDIRECT_STDOUT: true,
+    SOCKET: Rails.root.join('tmp', 'sockets', 'puma.sock')
   }
 
   client = Aws::SSM::Client.new
