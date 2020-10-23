@@ -11,6 +11,7 @@ FactoryBot.define do
   factory :tasks_tasked_exercise, class: '::Tasks::Models::TaskedExercise' do
     transient do
       tasked_to { build(:entity_role) }
+      task_type { }
       skip_task { false }
     end
 
@@ -37,6 +38,7 @@ FactoryBot.define do
         # Remove the tasked from the task before validation due to creating the tasking
         # Because saving the tasked_exercise again without a free_response is not valid
         task = tasked.task_step.task
+        task.task_type = evaluator.task_type if evaluator.task_type
         task_steps = task.task_steps
         task.task_steps = task_steps - [tasked.task_step]
         task.taskings << FactoryBot.build(:tasks_tasking, role: evaluator.tasked_to, task: task)
