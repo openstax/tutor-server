@@ -89,9 +89,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
 
     respond_with(exercises,
                  represent_with: Api::V1::ExerciseSearchRepresenter,
-                 user_options: { for_student: true }) and return
-
-    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter, user_options: { for_student: false }
+                 user_options: { for_student: true })
   end
 
   protected
