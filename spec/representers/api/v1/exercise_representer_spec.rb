@@ -130,4 +130,15 @@ RSpec.describe Api::V1::ExerciseRepresenter, type: :representer do
       )
     end
   end
+
+  context 'for student' do
+    it 'does not contain answers' do
+      student_representation = Api::V1::ExerciseRepresenter.new(exercise).to_hash(
+        user_options: { for_student: true }
+      ).deep_symbolize_keys
+
+      keys = student_representation[:content][:questions][0][:answers].map(&:keys).flatten.uniq
+      expect(keys.any?(:correctness)).to be false
+    end
+  end
 end
