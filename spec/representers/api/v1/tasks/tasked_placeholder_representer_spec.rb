@@ -17,6 +17,7 @@ RSpec.describe Api::V1::Tasks::TaskedPlaceholderRepresenter, type: :representer 
   let(:tasked_placeholder) do
     instance_double(Tasks::Models::TaskedPlaceholder).tap do |placeholder|
       ## Avoid rspec double class when figuring out :type
+      allow(placeholder).to receive(:id).and_return(1)
       allow(placeholder).to receive(:class).and_return(Tasks::Models::TaskedPlaceholder)
       allow(placeholder).to receive(:task_step).and_return(task_step)
       allow(placeholder).to receive(:can_be_recovered?).and_return(false)
