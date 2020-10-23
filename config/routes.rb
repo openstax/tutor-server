@@ -108,6 +108,11 @@ Rails.application.routes.draw do
 
       resource :practices, path: :'practice/(/role/:role_id)', only: [ :create ]
       post :'practice/worst(/role/:role_id)', controller: :practices, action: :create_worst
+      post :'practice/saved(/role/:role_id)', controller: :practices, action: :create_saved
+      put :'practice/:id/exit(/role/:role_id)', controller: :practices, action: :exit
+      get :'practice/saved(/role/:role_id)', controller: :practices, action: :find_saved
+
+      resources :practice_questions, only: [ :index, :create, :destroy ]
 
       scope controller: :guides do
         get :'guide(/role/:role_id)', action: :student
@@ -160,6 +165,7 @@ Rails.application.routes.draw do
       member do
         get :readings
         get :'exercises(/:pool_types)', action: :exercises
+        get :'practice_exercises', action: :practice_exercises
       end
 
       get :'pages/*cnx_id', controller: :pages, action: :show, format: false

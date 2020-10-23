@@ -5,6 +5,16 @@ module Api::V1::Tasks
       user_options&.[](:include_content) && feedback_available?
     end
 
+    property :content_exercise_id,
+             as: :exercise_id,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "The id of the exercise tasked"
+             }
+
     property :title,
              type: String,
              writeable: false,

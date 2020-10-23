@@ -23,7 +23,8 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:task_step).and_return(task_step)
 
       ## TaskedExercise-specific properties
-
+      allow(exercise).to receive(:id).and_return(1)
+      allow(exercise).to receive(:content_exercise_id).and_return(1)
       allow(exercise).to receive(:title).and_return('Some title')
       allow(exercise).to receive(:context).and_return('Some Context')
 

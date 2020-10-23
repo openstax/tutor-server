@@ -25,6 +25,12 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
   let(:course)          { FactoryBot.create :course_profile_course }
   let(:period)          { FactoryBot.create :course_membership_period, course: course }
 
+  let(:student_user) { FactoryBot.create(:user_profile) }
+  let(:student_role) { AddUserAsPeriodStudent[user: student_user, period: period] }
+  let(:student_user_token) do
+    FactoryBot.create :doorkeeper_access_token, resource_owner_id: student_user.id
+  end
+
   context 'with a fake book' do
     let(:book)       { FactoryBot.create(:content_book, :standard_contents_1) }
     let!(:ecosystem) do
@@ -236,6 +242,33 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
           item_los = wrapper.los
           expect(item_los).not_to be_empty
         end
+      end
+    end
+
+    context '#practice_exercises' do
+      def exercises_api_ecosystem_path(ecosystem_id, **params)
+        url = "/api/ecosystems/#{ecosystem_id}/practice_exercises"
+        params.blank? ? url : "#{url}?#{params.to_query}"
+      end
+
+      it 'allows students to only see exercises that have been saved to practice' do
+        exercise_ids = Content::Models::Exercise.all.map(&:id)
+        exercise_id  = @ecosystem.exercises.first.id
+        FactoryBot.create(:tasks_practice_question,
+                          role: student_role,
+                          content_exercise_id: exercise_id)
+
+        api_get exercises_api_ecosystem_path(
+          @ecosystem.id, course_id: course.id, exercise_ids: exercise_ids, role_id: student_role.id
+        ), student_user_token
+
+        hash = response.body_as_hash
+        expect(hash[:total_count]).to eq(1)
+        expect(hash[:items].first[:id]).to eq(exercise_id.to_s)
+
+        # Ensure content_hash_for_student was used
+        keys = hash[:items][0][:content][:questions][0][:answers].map(&:keys).flatten.uniq
+        expect(keys.any?(:correctness)).to be false
       end
     end
   end

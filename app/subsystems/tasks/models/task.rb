@@ -27,10 +27,13 @@ class Tasks::Models::Task < ApplicationRecord
   enum task_type: [
     :homework, :reading, :chapter_practice,
     :page_practice, :mixed_practice, :external,
-    :event, :extra, :concept_coach, :practice_worst_topics
+    :event, :extra, :concept_coach, :practice_worst_topics,
+    :practice_saved
   ]
 
   STEPLESS_TASK_TYPES = [ :external, :event ]
+  PRACTICE_TASK_TYPES = [ :chapter_practice, :page_practice, :mixed_practice,
+                          :practice_worst_topics, :practice_saved ]
 
   json_serialize :spy, Hash
 
@@ -391,7 +394,7 @@ class Tasks::Models::Task < ApplicationRecord
 
     gradable_steps = completed_exercise_steps.map(&:tasked).reject(&:can_be_auto_graded?)
 
-    self.core_page_ids = core_steps.map(&:content_page_id).uniq
+    self.core_page_ids = core_steps.map(&:content_page_id).uniq.sort
     self.steps_count = steps.count
     self.completed_steps_count = completed_steps.count
     self.core_steps_count = core_steps.count
@@ -445,6 +448,10 @@ class Tasks::Models::Task < ApplicationRecord
 
   def stepless?
     STEPLESS_TASK_TYPES.include?(task_type.to_sym)
+  end
+
+  def practice?
+    PRACTICE_TASK_TYPES.include?(task_type.to_sym)
   end
 
   def is_shared?
@@ -611,10 +618,6 @@ class Tasks::Models::Task < ApplicationRecord
 
   def worked_on?
     last_worked_at.present?
-  end
-
-  def practice?
-    page_practice? || chapter_practice? || mixed_practice? || practice_worst_topics?
   end
 
   def student?

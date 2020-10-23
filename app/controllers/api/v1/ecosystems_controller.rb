@@ -1,4 +1,5 @@
 class Api::V1::EcosystemsController < Api::V1::ApiController
+  before_action :get_course_and_student_role, only: [:practice_exercises]
 
   resource_description do
     api_versions "v1"
@@ -68,7 +69,41 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
                              page_ids: params[:page_ids],
                              pool_types: params[:pool_types]]
 
-    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter
+    respond_with exercises, represent_with: Api::V1::ExerciseSearchRepresenter, user_options: { for_student: false }
   end
 
+  api :GET, '/ecosystems/:ecosystem_id/practice_exercises',
+              'Returns practice exercises for a given student role, filtered by the following params: ' +
+              'course_id'
+  description <<-EOS
+    Returns a list of practice exercises saved by a student in a course.
+    #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
+  EOS
+  def practice_exercises
+    exercise_ids = @role.practice_questions
+                    .where(content_exercise_id: params[:exercise_ids])
+                    .pluck(:content_exercise_id)
+
+    exercises = GetExercises.call(course: @course,
+                                  exercise_ids: exercise_ids).outputs.exercises
+
+    respond_with(exercises,
+                 represent_with: Api::V1::ExerciseSearchRepresenter,
+                 user_options: { for_student: true })
+  end
+
+  protected
+
+  def get_course_and_student_role
+    @course = CourseProfile::Models::Course.find(params[:course_id])
+    result = ChooseCourseRole.call(user: current_human_user,
+                                   course: @course,
+                                   role_id: params[:role_id],
+                                   allowed_role_types: [ :student, :teacher_student ])
+    if result.errors.any?
+      raise(SecurityTransgression, result.errors.map(&:message).to_sentence)
+    else
+      @role = result.outputs.role
+    end
+  end
 end

@@ -31,6 +31,15 @@ module Api::V1::Tasks
                description: 'The type of this TaskStep (exercise, reading, video, placeholder, etc)'
              }
 
+    property :tasked_id,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { id },
+             schema_info: {
+               required: true,
+               description: 'The tasked ID of this TaskStep'
+             }
+
     property :group,
              type: String,
              writeable: false,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_18_184342) do
+ActiveRecord::Schema.define(version: 2020_10_06_191442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -851,6 +851,17 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
     t.index ["entity_role_id", "course_profile_course_id"], name: "index_performance_report_exports_on_role_and_course"
   end
 
+  create_table "tasks_practice_questions", force: :cascade do |t|
+    t.bigint "tasks_tasked_exercise_id", null: false
+    t.bigint "content_exercise_id", null: false
+    t.bigint "entity_role_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["content_exercise_id"], name: "index_tasks_practice_questions_on_content_exercise_id"
+    t.index ["entity_role_id", "content_exercise_id"], name: "index_question_on_role_and_exercise", unique: true
+    t.index ["tasks_tasked_exercise_id"], name: "index_tasks_practice_questions_on_tasks_tasked_exercise_id"
+  end
+
   create_table "tasks_task_plans", id: :serial, force: :cascade do |t|
     t.integer "tasks_assistant_id", null: false
     t.integer "course_profile_course_id", null: false
@@ -1176,6 +1187,9 @@ ActiveRecord::Schema.define(version: 2020_08_18_184342) do
   add_foreign_key "tasks_grading_templates", "tasks_grading_templates", column: "cloned_from_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "tasks_performance_report_exports", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_performance_report_exports", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_practice_questions", "content_exercises", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_practice_questions", "entity_roles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_practice_questions", "tasks_tasked_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_grading_templates", on_update: :cascade, on_delete: :restrict
