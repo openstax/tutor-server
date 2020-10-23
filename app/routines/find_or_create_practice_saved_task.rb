@@ -7,9 +7,13 @@ class FindOrCreatePracticeSavedTask
   protected
 
   def setup(**args)
-    @exercise_ids = @role.practice_questions.where(id: args[:question_ids]).select(&:available?).pluck(:content_exercise_id)
+    @exercise_ids = available_questions.pluck(:content_exercise_id)
     @task_type = :practice_saved
     @ecosystem = run(:get_course_ecosystem, course: @course).outputs.ecosystem
+  end
+
+  def available_questions
+    @role.practice_questions.where(id: args[:question_ids]).select(&:available?)
   end
 
   def add_task_steps
