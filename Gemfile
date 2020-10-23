@@ -322,6 +322,9 @@ group :production, :test do
 end
 
 group :production do
+  # Used to fetch secrets from the parameter store
+  gem 'aws-sdk-ssm', require: false
+
   # Lograge for consistent logging
   gem 'lograge'
 end

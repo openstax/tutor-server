@@ -96,6 +96,9 @@ GEM
       aws-sdk-core (~> 3, >= 3.109.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
+    aws-sdk-ssm (1.95.0)
+      aws-sdk-core (~> 3, >= 3.109.0)
+      aws-sigv4 (~> 1.1)
     aws-sigv4 (1.2.2)
       aws-eventstream (~> 1, >= 1.0.2)
     axiom-types (0.1.1)
@@ -742,6 +745,7 @@ DEPENDENCIES
   ar-sequence
   awesome_print
   aws-sdk-s3
+  aws-sdk-ssm
   axlsx!
   best_in_place
   bootsnap (~> 1.4.0)
@@ -854,4 +858,4 @@ DEPENDENCIES
   will_paginate (~> 3.1.7)
 
 BUNDLED WITH
-   2.1.2
+   2.1.4
