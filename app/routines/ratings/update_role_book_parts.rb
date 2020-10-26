@@ -43,6 +43,7 @@ class Ratings::UpdateRoleBookParts
       .select(
         :id,
         :answer_ids,
+        :question_id,
         :correct_answer_id,
         :answer_id,
         :grader_points,
