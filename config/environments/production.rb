@@ -20,7 +20,7 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  config.public_file_server.enabled = false
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = Uglifier.new(harmony: true)
@@ -62,31 +62,29 @@ Rails.application.configure do
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
 
+  # Disable automatic flushing of the log to improve performance.
+  # config.autoflush_log = false
+
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
-  # Use a different logger for distributed setups.
-  # require 'syslog/logger'
-  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger    = ActiveSupport::TaggedLogging.new(logger)
-  end
-
-  # Do not dump schema after migrations.
-  config.active_record.dump_schema_after_migration = false
+  # Log to STDOUT and let systemd/journald handle the logs
+  logger           = ActiveSupport::Logger.new(STDOUT)
+  logger.formatter = config.log_formatter
+  config.logger    = ActiveSupport::TaggedLogging.new(logger)
 
   # Lograge configuration (one-line logs in production)
   config.lograge.enabled = true
   config.log_tags = [ :remote_ip ]
   config.lograge.custom_options = ->(event) do
     {
-      "params" => event.payload[:params].reject do |k|
+      'params' => event.payload[:params].reject do |k|
         ['controller', 'action', 'format'].include? k
       end
     }
   end
-  config.lograge.ignore_actions = ["static_pages#status"]
+  config.lograge.ignore_actions = ['static_pages#status']
+
+  # Do not dump schema after migrations.
+  config.active_record.dump_schema_after_migration = false
 end

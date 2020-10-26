@@ -12,9 +12,8 @@ task :update_secrets do
   # Rails/puma default settings
 
   secrets = {
-    RAILS_MAX_THREADS: 16,
     PRELOAD_APP: true,
-    REDIRECT_STDOUT: true,
+    RAILS_MAX_THREADS: 16,
     SOCKET: Rails.root.join('tmp', 'sockets', 'puma.sock')
   }
 
