@@ -177,7 +177,8 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
 
     context 'when there is an existing practice' do
       before do
-        FactoryBot.create(:tasks_tasked_exercise, :with_tasking, tasked_to: role, task_type: :practice_saved)
+        tasked = FactoryBot.create(:tasks_tasked_exercise, :with_tasking, tasked_to: role, task_type: :practice_saved)
+        tasked.task_step.task.update_attributes(due_at: nil, closes_at: nil)
       end
 
       it 'returns the practice id' do
