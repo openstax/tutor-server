@@ -677,6 +677,16 @@ class Tasks::Models::Task < ApplicationRecord
     handle_task_step_completion(completed_at: completed_at).save!
   end
 
+  def close_and_make_due(time: Time.current)
+    self.due_at = time
+    self.closes_at = time
+    self
+  end
+
+  def close_and_make_due!(time: Time.current)
+    close_and_make_due(time: time).save!
+  end
+
   def exercise_count
     exercise_steps_count
   end

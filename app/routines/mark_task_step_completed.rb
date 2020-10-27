@@ -22,6 +22,8 @@ class MarkTaskStepCompleted
 
     return unless errors.empty?
 
+    task.close_and_make_due if task.practice? && task_was_completed
+
     if save
       task_step.save!
       task.save!

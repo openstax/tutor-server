@@ -75,6 +75,17 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     end
   end
 
+  context '#close_and_make_due!' do
+    it 'sets closes_at and due_at' do
+      time = Time.current
+
+      task.close_and_make_due!(time: time)
+
+      expect(task.due_at_ntz).to eq(time)
+      expect(task.closes_at_ntz).to eq(time)
+    end
+  end
+
   it 'requires non-nil due_at to be after opens_at' do
     expect(task).to be_valid
 

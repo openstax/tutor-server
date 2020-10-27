@@ -8,6 +8,7 @@ class Tasks::GetPracticeTask
                  .joins(:taskings)
                  .where(taskings: { entity_role_id: role.id }, task_type: task_type)
                  .where('completed_steps_count < steps_count')
+                 .where(due_at_ntz: nil, closes_at_ntz: nil)
                  .order(:created_at)
 
     query = query.where(core_page_ids: [page_ids].flatten) if page_ids
