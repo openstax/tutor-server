@@ -27,8 +27,8 @@ class Lms::Launch
     :context_id
   ]
 
-  redis_secrets = Rails.application.secrets.redis
   # STORE needs to be an ActiveSupport::Cache::RedisStore to support TTL
+  redis_secrets = Rails.application.secrets.redis
   STORE = ActiveSupport::Cache::RedisStore.new(
     url: redis_secrets[:url],
     namespace: redis_secrets[:namespaces][:lms],
@@ -53,7 +53,7 @@ class Lms::Launch
     ).uuid
   end
 
-  # You MUST call validate! immediately after this method 
+  # You MUST call validate! immediately after this method
   # This is not done automatically in order to enable better error handling
   def self.from_uuid(uuid)
     launch_data = Lms::Models::TrustedLaunchData.find_by(uuid: uuid)
@@ -161,7 +161,7 @@ class Lms::Launch
     if app.owner.is_a? CourseProfile::Models::Course
       query = query.where(course: app.owner)
     end
-    
+
     if @tool_consumer.nil?
       query = query.joins(:tool_consumer)
                 .where(tool_consumer: { guid: tool_consumer_instance_guid })
