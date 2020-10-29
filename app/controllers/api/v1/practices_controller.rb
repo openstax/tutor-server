@@ -74,7 +74,7 @@ module Api::V1
     def exit
       OSU::AccessPolicy.require_action_allowed!(:create_practice, current_human_user, @course)
 
-      task = ::Tasks::CompletePracticeTask[
+      task = ::Tasks::ClosePracticeTask[
         id: params[:id],
         role: @role
       ]

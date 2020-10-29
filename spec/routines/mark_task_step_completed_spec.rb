@@ -45,4 +45,16 @@ RSpec.describe MarkTaskStepCompleted, type: :routine do
 
     expect(tasked_exercise.reload.task_step).not_to be_completed
   end
+
+  it 'closes a practice task when completing the remaining step' do
+    task = tasked_exercise.task_step.task
+    task.update_attributes!(due_at: nil, closes_at: nil, task_type: :practice_worst_topics)
+
+    expect_any_instance_of(tasked_exercise.class).to receive(:valid?)
+    expect_any_instance_of(tasked_exercise.class).to receive(:before_completion)
+    result = MarkTaskStepCompleted.call(task_step: tasked_exercise.task_step)
+
+    expect(task.due_at_ntz).not_to be(nil)
+    expect(task.closes_at_ntz).not_to be(nil)
+  end
 end

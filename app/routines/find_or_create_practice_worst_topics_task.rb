@@ -9,10 +9,7 @@ class FindOrCreatePracticeWorstTopicsTask
 
   def setup(**args)
     @task_type = :practice_worst_topics
-
     @ecosystem = run(:get_course_ecosystem, course: @course).outputs.ecosystem
-
-    @page_ids = []
   end
 
   def add_task_steps

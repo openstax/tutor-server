@@ -1,4 +1,4 @@
-class Tasks::CompletePracticeTask
+class Tasks::ClosePracticeTask
   lev_routine express_output: :task
 
   include Ratings::Concerns::RatingJobs
@@ -13,11 +13,7 @@ class Tasks::CompletePracticeTask
     ]
     return unless task
 
-    task.task_steps.reject(&:completed?).map(&:delete)
-    task.task_steps.reload
-    task.due_at = Time.current
-    task.closes_at = Time.current
-    task.save!
+    task.close_and_make_due!
 
     period = role&.course_member&.period
 
