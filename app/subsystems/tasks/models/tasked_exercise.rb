@@ -339,6 +339,13 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     )
   end
 
+  def parts
+    return [self] unless is_in_multipart?
+
+    task = task_step.task
+    task.task_steps.exercises.preload(:tasked).map(&:tasked).select{|tasked| tasked.content_exercise_id == content_exercise_id }
+  end
+
   protected
 
   def free_response_required_before_answer_id

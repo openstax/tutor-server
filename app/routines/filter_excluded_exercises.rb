@@ -27,23 +27,21 @@ class FilterExcludedExercises
       outputs.already_assigned_exercise_numbers = []
       []
     else
-      tasks = role.taskings.preload(task: :course).map(&:task)
+      tasks   = role.taskings
+                  .joins(:task)
+                  .where.not(task: { task_type: Tasks::Models::Task::PRACTICE_TASK_TYPES } )
+                  .preload(task: :course).map(&:task)
+      taskeds = Tasks::Models::TaskedExercise
+                  .joins(:exercise, task_step: :task)
+                  .where(task_step: { task: { id: tasks.map(&:id) } })
+                  .preload(:exercise, task_step: { task: { task_plan: :grading_template } })
 
-      exercise_numbers_by_task_id = Hash.new { |hash, key| hash[key] = [] }
-      Content::Models::Exercise
-        .joins(tasked_exercises: :task_step)
-        .where(tasked_exercises: { task_step: { tasks_task_id: tasks.map(&:id) } })
-        .pluck(:tasks_task_id, :number)
-        .each do |task_id, number|
-        exercise_numbers_by_task_id[task_id] << number
-      end
-
-      outputs.already_assigned_exercise_numbers = exercise_numbers_by_task_id.values.flatten.uniq
+      outputs.already_assigned_exercise_numbers = taskeds.map {|t| t.exercise.number }.flatten.uniq
 
       # Get tasks are not yet due or do not yet have feedback
-      exercise_numbers_by_task_id.values_at(
-        *tasks.reject(&:feedback_available?).map(&:id)
-      ).flatten.uniq
+      [].tap do |excluded|
+        taskeds.map {|t| excluded << t.exercise.number unless t.feedback_available? }
+      end.uniq
     end
 
     admin_excluded_uids_set = Set.new admin_excluded_uids

@@ -113,6 +113,38 @@ RSpec.describe FilterExcludedExercises, type: :routine do
       end
     end
 
+    context 'with a role' do
+      let(:course) { FactoryBot.create :course_profile_course }
+      let(:additional_excluded_numbers) { [] }
+      let(:role) { FactoryBot.create(:course_membership_student).role }
+      let(:taskeds) {
+        exercises.map {|ex| FactoryBot.create(:tasks_tasked_exercise, :with_tasking, tasked_to: role, exercise: ex) }
+      }
+      let(:multipart_exercise) { FactoryBot.create(:content_exercise, number_of_questions: 2) }
+      let(:multipart_taskeds) {
+        [].tap do |arr|
+          2.times {|i|
+            arr << FactoryBot.create(:tasks_tasked_exercise, :with_tasking,
+                     tasked_to: role, exercise: multipart_exercise, is_in_multipart: true
+                   )
+          }
+        end
+      }
+
+      it 'returns exercises not excluded by anti_cheating_excluded_numbers' do
+        Preview::AnswerExercise.call task_step: taskeds.last.task_step, is_correct: true, save: true
+        # Feedback being available on only one part of a multipart should still exclude the exercise
+        Preview::AnswerExercise.call task_step: multipart_taskeds.first.task_step, is_correct: true, save: true
+        allow_any_instance_of(Tasks::Models::Task).to receive(:auto_grading_feedback_on).and_return('answer')
+        outputs = described_class.call(**args, role: role, exercises: exercises + [multipart_exercise]).outputs
+
+        expect(outputs.exercises).to eq [exercises.last]
+        expect(outputs.admin_excluded_uids).to eq []
+        expect(outputs.course_excluded_uids).to eq []
+        expect(outputs.role_excluded_uids).to eq exercises.first(4).map(&:uid) << multipart_exercise.uid
+      end
+    end
+
     context 'without a course' do
       let(:course) { nil }
 

@@ -7,24 +7,17 @@ class FindOrCreatePracticeSavedTask
   protected
 
   def setup(**args)
-    @exercise_ids = available_questions(args[:question_ids]).pluck(:content_exercise_id)
+    @exercise_ids = questions(args[:question_ids]).pluck(:content_exercise_id)
     @task_type = :practice_saved
     @ecosystem = run(:get_course_ecosystem, course: @course).outputs.ecosystem
   end
 
-  def available_questions(question_ids)
-    @role.practice_questions.where(id: question_ids).select(&:available?)
+  def questions(question_ids)
+    @role.practice_questions.where(id: question_ids)
   end
 
   def add_task_steps
     exercises = Content::Models::Exercise.where(id: @exercise_ids)
-
-    fatal_error(
-      code: :no_exercises,
-      message: "No exercises available to build the Saved Practice." +
-               " [Course: #{@course.id} - Role: #{@role.id}" +
-               " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
-    ) if exercises.empty?
 
     exercises = FilterExcludedExercises.call(
       exercises: exercises,
@@ -32,6 +25,13 @@ class FindOrCreatePracticeSavedTask
       additional_excluded_numbers: [],
       current_time: Time.current
     ).outputs.exercises
+
+    fatal_error(
+      code: :no_exercises,
+      message: "No exercises available to build the Saved Practice." +
+               " [Course: #{@course.id} - Role: #{@role.id}" +
+               " - Task Type: #{@task_type} - Ecosystem: #{@ecosystem.title}]"
+    ) if exercises.empty?
 
     # Add the exercises as task steps
     exercises.each do |exercise|
