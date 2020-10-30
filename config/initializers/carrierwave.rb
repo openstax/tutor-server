@@ -15,7 +15,7 @@ CarrierWave.configure do |config|
     secrets = Rails.application.secrets
     s3_secrets = secrets.aws[:s3]
 
-    config.asset_host = s3_secrets[:exports_asset_host]
+    config.asset_host = "https://#{s3_secrets[:exports_bucket_name]}.s3.amazonaws.com"
     config.fog_directory = s3_secrets[:exports_bucket_name]
 
     fog_credentials = s3_secrets[:access_key_id].blank? ?
