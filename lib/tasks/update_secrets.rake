@@ -79,6 +79,6 @@ task :update_secrets do
   end
 
   File.open(Rails.root.join('.env'), 'w') do |env|
-    secrets.each { |key, value| env.puts "export #{key}=#{value}" unless value.nil? }
+    secrets.each { |key, value| env.puts "export #{key}=\"#{value}\"" unless value.nil? }
   end
 end
