@@ -11,7 +11,7 @@ task :update_secrets do
 
   # Rails/puma default settings
   secrets = {
-    ENVIRONMENT_NAME: ENV['ENVIRONMENT_NAME']
+    ENVIRONMENT_NAME: ENV['ENVIRONMENT_NAME'],
     PRELOAD_APP: true,
     RAILS_MAX_THREADS: 16,
     RDS_SECRET_ID: ENV['RDS_SECRET_ID'],
@@ -40,7 +40,9 @@ task :update_secrets do
     require 'aws-sdk-secretsmanager'
 
     rds_secret = JSON.parse(
-      Aws::SecretsManager::Client.new.get_secret_value(secret_id: rds_secret_id).secret_string
+      Aws::SecretsManager::Client.new.get_secret_value(
+        secret_id: secrets['RDS_SECRET_ID']
+      ).secret_string
     )
 
     # Save the superuser credentials for later use
@@ -49,11 +51,16 @@ task :update_secrets do
 
     # Create the application role if needed
 
-    # Override the connection info to use the postgres database and the superuser credentials
+    # Override the connection info to use the new secrets,
+    # postgres database and the superuser credentials
     database_configuration = Rails.configuration.database_configuration[Rails.env].merge(
-      username: secrets['RDS_SUPERUSER_USERNAME'],
-      password: secrets['RDS_SUPERUSER_PASSWORD'],
-      database: 'postgres'
+      {
+        host: secrets['RDS_HOST'],
+        port: secrets['RDS_PORT'],
+        username: secrets['RDS_SUPERUSER_USERNAME'],
+        password: secrets['RDS_SUPERUSER_PASSWORD'],
+        database: 'postgres'
+      }.stringify_keys
     )
     ActiveRecord::Base.establish_connection database_configuration
 
@@ -61,7 +68,7 @@ task :update_secrets do
     ActiveRecord::Base.connection.execute <<~SQL
       DO $$
         BEGIN
-          CREATE USER #{secrets['RDS_USERNAME']} CREATEDB PASSWORD '#{ENV['RDS_PASSWORD']}';
+          CREATE USER #{secrets['RDS_USERNAME']} CREATEDB PASSWORD '#{secrets['RDS_PASSWORD']}';
           EXCEPTION
             WHEN DUPLICATE_OBJECT THEN RAISE NOTICE '%, skipping', SQLERRM USING ERRCODE = SQLSTATE;
         END
