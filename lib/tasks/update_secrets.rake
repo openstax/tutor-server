@@ -86,6 +86,8 @@ task :update_secrets do
   end
 
   File.open(Rails.root.join('.env'), 'w') do |env|
-    secrets.each { |key, value| env.puts "export #{key}=\"#{value}\"" unless value.nil? }
+    secrets.each do |key, value|
+      env.puts "export #{Shellwords.escape key}=#{Shellwords.escape value}" unless value.nil?
+    end
   end
 end
