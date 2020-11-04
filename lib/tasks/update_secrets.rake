@@ -1,19 +1,26 @@
 task :update_secrets do
-  # This is initially set by the EC2 UserData
-  # In subsequent runs, it is read from .env
+  # These variables are initially set by the EC2 UserData
+  # In subsequent runs, they are read from .env
   if ENV['ENVIRONMENT_NAME'].blank?
     puts 'ENVIRONMENT_NAME environment variable missing'
 
     next
   end
 
+  if ENV['RELEASE_VERSION'].blank?
+    puts 'RELEASE_VERSION environment variable missing'
+
+    next
+  end
+
   require 'aws-sdk-ssm'
 
-  # Rails/puma default settings
+  # Rails and puma default settings
   secrets = {
     ENVIRONMENT_NAME: ENV['ENVIRONMENT_NAME'],
     PRELOAD_APP: true,
     RAILS_MAX_THREADS: 16,
+    RELEASE_VERSION: ENV['RELEASE_VERSION'],
     RDS_SECRET_ID: ENV['RDS_SECRET_ID'],
     SOCKET: Rails.root.join('tmp', 'sockets', 'puma.sock')
   }.stringify_keys
