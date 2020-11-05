@@ -18,15 +18,13 @@ Delayed::Worker.sleep_delay = 1
 # Default queue name if not specified in the job class
 Delayed::Worker.default_queue_name = :default
 
-# max_run_time must be longer than the longest-running job
-Delayed::Worker.max_run_time = 8.hours
-
 # Default queue priorities
 Delayed::Worker.queue_attributes = {
   default:     { priority:  0 },
-  dashboard:   { priority:  5 },
-  maintenance: { priority: 10 },
-  preview:     { priority: 15 }
+  dashboard:   { priority: 10 },
+  reassign:    { priority: 20 },
+  maintenance: { priority: 30 },
+  preview:     { priority: 40 }
 }
 
 # Allows us to use this gem in tests instead of setting the ActiveJob adapter to :inline
