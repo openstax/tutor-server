@@ -1,4 +1,4 @@
-# https://gitlab.com/gitlab-org/gitlab-foss/-/blob/multi-threading/config/puma.rb.example
+require 'active_model'
 
 APP_DIR = File.expand_path('..', __dir__)
 directory APP_DIR
@@ -45,7 +45,7 @@ end
 # and maximum; this matches the default thread size of Active Record.
 #
 max_threads = ENV.fetch('RAILS_MAX_THREADS', 5).to_i
-threads ENV.fetch('RAILS_MIN_THREADS', max_threads_count).to_i, max_threads
+threads ENV.fetch('RAILS_MIN_THREADS', max_threads).to_i, max_threads
 
 if ENV['SOCKET']
   # Specifies the `socket` to which Puma will bind to receive requests.
