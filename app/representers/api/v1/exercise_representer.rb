@@ -36,10 +36,19 @@ module Api::V1
              readable: true,
              writeable: false,
              getter: ->(user_options:, **) {
-              user_options&.[](:for_student) ? parser.content_hash_for_students :
-                respond_to?(:content_hash) ? content_hash : content
-            },
+               user_options&.[](:for_student) ? parser.content_hash_for_students :
+                 respond_to?(:content_hash) ? content_hash : content
+             },
              schema_info: { required: true }
+
+    property :files_path,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(user_options:, **) {
+      ''
+#               Rails.application.routes.url_helpers.rails_blob_path(self, only_path: true)
+             }
 
     collection :tags,
                readable: true,

@@ -11,6 +11,7 @@ class Content::Models::Exercise < IndestructibleRecord
   has_many :tags, through: :exercise_tags
 
   has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
+  has_many_attached :images
 
   validates :uuid, presence: true
   validates :group_uuid, presence: true

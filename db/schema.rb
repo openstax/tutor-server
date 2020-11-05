@@ -10,12 +10,33 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_06_191442) do
+ActiveRecord::Schema.define(version: 2020_10_28_182152) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
 
   create_table "catalog_offerings", id: :serial, force: :cascade do |t|
     t.string "salesforce_book_name", null: false
@@ -556,7 +577,6 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.datetime "updated_at", null: false
     t.integer "faculty_status", default: 0, null: false
     t.string "salesforce_contact_id"
-    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "role", default: 0, null: false
     t.citext "support_identifier"
     t.boolean "is_test"
@@ -564,6 +584,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.boolean "is_kip"
     t.integer "school_location", default: 0, null: false
     t.boolean "grant_tutor_access"
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }
     t.index ["access_token"], name: "index_openstax_accounts_accounts_on_access_token", unique: true
     t.index ["faculty_status"], name: "index_openstax_accounts_accounts_on_faculty_status"
     t.index ["first_name"], name: "index_openstax_accounts_accounts_on_first_name"
@@ -575,7 +596,6 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.index ["school_type"], name: "index_openstax_accounts_accounts_on_school_type"
     t.index ["support_identifier"], name: "index_openstax_accounts_accounts_on_support_identifier", unique: true
     t.index ["username"], name: "index_openstax_accounts_accounts_on_username"
-    t.index ["uuid"], name: "index_openstax_accounts_accounts_on_uuid", unique: true
   end
 
   create_table "openstax_salesforce_users", id: :serial, force: :cascade do |t|
@@ -859,6 +879,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.datetime "updated_at", null: false
     t.index ["content_exercise_id"], name: "index_tasks_practice_questions_on_content_exercise_id"
     t.index ["entity_role_id", "content_exercise_id"], name: "index_question_on_role_and_exercise", unique: true
+    t.index ["entity_role_id"], name: "index_tasks_practice_questions_on_entity_role_id"
     t.index ["tasks_tasked_exercise_id"], name: "index_tasks_practice_questions_on_tasks_tasked_exercise_id"
   end
 
@@ -1117,6 +1138,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.index ["identifier"], name: "index_user_tours_on_identifier", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "catalog_offerings", "content_ecosystems", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
