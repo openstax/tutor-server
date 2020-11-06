@@ -1,4 +1,6 @@
+require 'rails'
 require 'active_model'
+require 'dotenv/rails-now'
 
 APP_DIR = File.expand_path('..', __dir__)
 directory APP_DIR
