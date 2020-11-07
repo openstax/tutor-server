@@ -105,4 +105,12 @@ class Content::Models::Exercise < IndestructibleRecord
   def feature_ids
     cnxfeatures.map(&:data)
   end
+
+  def author
+    if author_id == User::Models::OpenStaxProfile::ID
+      User::Models::OpenStaxProfile
+    else
+      User::Models::Profile.find(author_id)
+    end
+  end
 end
