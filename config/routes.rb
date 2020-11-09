@@ -27,34 +27,12 @@ Rails.application.routes.draw do
     end
   end
 
-  # Static pages
-  scope controller: :static_pages do
-    get :about
-    get :contact
-    post :contact_form
-    get :copyright
-    get :developers
-    get :help
-    get :privacy
-    get :share
-    get :status
-    get :'auth/failure', action: :omniauth_failure
-    get :signup
-    get :stubbed_payments
-    get :browser_upgrade
-  end
+  mount OpenStax::Accounts::Engine => :accounts
 
-  scope :lms, controller: :lms, as: :lms do
-    get :configuration
-    post :launch
-    get :'launch_authenticate/:launch_uuid', action: :launch_authenticate, as: :launch_authenticate
-    get :complete_launch
-    get :pair
-    post :ci_launch
-  end
+  get :non_student_signup, to: redirect('/dashboard?block_sign_up=false&straight_to_sign_up=true')
 
-  get(:'specs/lms_error_page/:page(/:case)', controller: :lms_error_page_specs, action: :page) \
-    if Rails.env.test?
+  # Short codes
+  get :'@/:short_code(/:human_readable)', to: 'short_codes#redirect', as: :short_code
 
   # All API routes
   api :v1, default: true do
@@ -213,6 +191,40 @@ Rails.application.routes.draw do
 
     match :'*all', controller: :api, action: :options, via: :options
   end # end of API scope
+
+  # Static pages
+  scope controller: :static_pages do
+    get :about
+    get :contact
+    post :contact_form
+    get :copyright
+    get :developers
+    get :help
+    get :privacy
+    get :share
+    get :status
+    get :'auth/failure', action: :omniauth_failure
+    get :signup
+    get :stubbed_payments
+    get :browser_upgrade
+  end
+
+  # Static errors
+  scope controller: :static_errors do
+    [ 404, 422, 500, 503 ].each { |error_code| get error_code.to_s }
+  end
+
+  scope :lms, controller: :lms, as: :lms do
+    get :configuration
+    post :launch
+    get :'launch_authenticate/:launch_uuid', action: :launch_authenticate, as: :launch_authenticate
+    get :complete_launch
+    get :pair
+    post :ci_launch
+  end
+
+  get(:'specs/lms_error_page/:page(/:case)', controller: :lms_error_page_specs, action: :page) \
+    if Rails.env.test?
 
   # Teacher enrollment
   get :'teach/:teach_token(/:ignore)', controller: :courses, action: :teach, as: :teach_course
@@ -395,14 +407,7 @@ Rails.application.routes.draw do
     end
   end
 
-  mount OpenStax::Accounts::Engine => :accounts
-
-  get :non_student_signup, to: redirect('/dashboard?block_sign_up=false&straight_to_sign_up=true')
-
   get :'pardot/toa', controller: :pardot, action: :toa
-
-  # Short codes
-  get :'@/:short_code(/:human_readable)', to: 'short_codes#redirect', as: :short_code
 
   resources :purchases, only: :show
 

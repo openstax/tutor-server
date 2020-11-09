@@ -565,8 +565,6 @@ GEM
     redis-store (1.6.0)
       redis (>= 2.2, < 5)
     remotipart (1.4.2)
-    render_anywhere (0.0.12)
-      rails (>= 3.0.7)
     representable (3.0.4)
       declarative (< 0.1.0)
       declarative-option (< 0.2.0)
@@ -819,7 +817,6 @@ DEPENDENCIES
   rails-settings-ui
   redis-rails
   remotipart
-  render_anywhere
   request_store
   roar (~> 1.1.0)
   roo
