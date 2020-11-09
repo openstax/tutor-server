@@ -6,13 +6,14 @@ CarrierWave.configure do |config|
 
   # Upload to AWS only in the test and production environments
   # We default to file storage in the test environment but let specs opt into fog storage
-  unless Rails.env.development?
+  s3_secrets = Rails.application.secrets.aws[:s3]
+  if s3_secrets[:bucket_name].blank?
+    config.storage = :file
+  else
     config.fog_attributes = { 'Cache-Control' => 'max-age=31536000' }
     config.fog_provider = 'fog/aws'
     config.fog_public = false
     config.fog_authenticated_url_expiration = 1.hour
-
-    s3_secrets = Rails.application.secrets.aws[:s3]
 
     config.asset_host = s3_secrets[:asset_host]
     config.fog_directory  = s3_secrets[:bucket_name]
@@ -26,8 +27,8 @@ CarrierWave.configure do |config|
       region:   s3_secrets[:region],
       endpoint: s3_secrets[:endpoint_server]
     )
-  end
 
-  # This line must be after config.fog_credentials=
-  config.storage = Rails.env.production? ? :fog : :file
+    # This line must be after config.fog_credentials=
+    config.storage = Rails.env.production? ? :fog : :file
+  end
 end
