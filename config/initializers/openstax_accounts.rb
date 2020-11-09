@@ -6,8 +6,7 @@ approved_host_regexes = [
   /openstax\.org\z/,
   /cnx\.org\z/,
 ]
-
-approved_host_regexes.push(/localhost\z/) if !Rails.env.production?
+approved_host_regexes.push(/localhost\z/) unless Rails.env.production?
 
 OpenStax::Accounts.configure do |config|
   config.openstax_application_id = secrets[:client_id]
@@ -40,7 +39,7 @@ OpenStax::Accounts.configure do |config|
       false
     end
   end
-end
+end unless secrets[:url].nil?
 
 ActiveSupport::Reloader.to_prepare do
   OpenStax::Accounts::ApplicationController.class_exec do
