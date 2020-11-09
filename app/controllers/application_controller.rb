@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::Base
-
   respond_to :html, :js
 
   include Lev::HandleWith
@@ -61,5 +60,4 @@ class ApplicationController < ActionController::Base
       flash.delete(webview_flash_type)
     end
   end
-
 end
