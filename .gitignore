@@ -70,11 +70,6 @@ node_modules/
 yarn-debug.log*
 .yarn-integrity
 
-# Ignore auto-generated error pages (error_page_assets gem)
-/public/404.html
-/public/422.html
-/public/500.html
-
 # Ignore Cucumber and RSpec failure information
 cucumber_rerun.txt
 .rspec_last_failures
