@@ -27,6 +27,6 @@ RSpec.describe Content::Models::Exercise, type: :model do
   it 'defaults the author to OpenStax' do
     exercise = FactoryBot.create(:content_exercise)
 
-    expect(exercise.author_id).to eq User::Models::OpenStaxProfile::ID
+    expect(exercise.user_profile_id).to eq User::Models::OpenStaxProfile::ID
   end
 end

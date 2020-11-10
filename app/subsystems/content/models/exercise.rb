@@ -17,6 +17,7 @@ class Content::Models::Exercise < IndestructibleRecord
   validates :group_uuid, presence: true
   validates :number, presence: true
   validates :version, presence: true
+  validates :user_profile_id, presence: true
 
   # http://stackoverflow.com/a/7745635
   scope :latest, ->(scope = unscoped) do
@@ -107,10 +108,10 @@ class Content::Models::Exercise < IndestructibleRecord
   end
 
   def author
-    if author_id == User::Models::OpenStaxProfile::ID
+    if user_profile_id == User::Models::OpenStaxProfile::ID
       User::Models::OpenStaxProfile
     else
-      User::Models::Profile.find(author_id)
+      User::Models::Profile.find(user_profile_id)
     end
   end
 end
