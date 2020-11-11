@@ -209,11 +209,6 @@ Rails.application.routes.draw do
     get :browser_upgrade
   end
 
-  # Static errors
-  scope controller: :static_errors do
-    [ 404, 422, 500, 503 ].each { |error_code| get error_code.to_s }
-  end
-
   scope :lms, controller: :lms, as: :lms do
     get :configuration
     post :launch
@@ -433,6 +428,9 @@ Rails.application.routes.draw do
       post :generate, on: :collection
     end
   end
+
+  # Local dev redirect to static error pages (these are served as static files in real servers)
+  [ 404, 422, 500, 503 ].each { |code| get code.to_s, to: redirect("/assets/#{code}.html") }
 
   # Catch-all frontend route
   get :'*other', controller: :webview, action: :index

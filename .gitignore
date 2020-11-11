@@ -68,6 +68,12 @@ yarn-debug.log*
 !/storage/.keep
 /public/uploads
 
+# Ignore precompiled static error pages
+/public/404.html
+/public/422.html
+/public/500.html
+/public/503.html
+
 # Ignore exported files in development
 /public/exports
 
