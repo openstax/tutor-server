@@ -79,6 +79,11 @@ module Api::V1
                ).to_s
              end
 
+    property :profile_id,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { id }
+
     property :viewed_tour_stats
 
   end

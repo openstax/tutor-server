@@ -180,11 +180,6 @@ module Api::V1::Courses
                writeable: false,
                type: String
 
-      property :profile_id,
-               readable: true,
-               writeable: false,
-               type: String
-
       property :first_name,
                readable: true,
                writeable: false,
