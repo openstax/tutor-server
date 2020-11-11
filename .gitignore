@@ -62,6 +62,12 @@ bower.json
 /storage/*
 !/storage/.keep
 
+# Ignore precompiled static error pages
+/public/404.html
+/public/422.html
+/public/500.html
+/public/503.html
+
 # Ignore node_modules
 node_modules/
 

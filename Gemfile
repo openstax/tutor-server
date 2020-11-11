@@ -171,6 +171,10 @@ gem 'openstax_salesforce'
 gem 'rails-settings-cached'
 gem 'rails-settings-ui'
 
+# Nicely-styled static error pages
+gem 'error_page_assets'
+gem 'render_anywhere', require: false
+
 # Add P3P headers for IE
 gem 'p3p'
 

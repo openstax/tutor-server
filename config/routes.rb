@@ -218,11 +218,6 @@ Rails.application.routes.draw do
     get :browser_upgrade
   end
 
-  # Static errors
-  scope controller: :static_errors do
-    [ 404, 422, 500, 503 ].each { |error_code| get error_code.to_s }
-  end
-
   scope :lms, controller: :lms, as: :lms do
     get :configuration
     post :launch
@@ -444,10 +439,12 @@ Rails.application.routes.draw do
     end
   end
 
+  # Local dev redirect to static error pages (these are served as static files in real servers)
+  [ 404, 422, 500, 503 ].each { |code| get code.to_s, to: redirect("/assets/#{code}.html") }
+
   # Catch-all frontend route, excluding active_storage
-  # the constraint shouldn't be needed once upgraded to rails 6
+  # the constraint shouldn't be needed once upgrade to rails 6
   get :'*other', controller: :webview, action: :index, constraints: ->(req) do
     req.path.exclude? 'rails/active_storage'
   end
-
 end
