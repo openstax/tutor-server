@@ -19,6 +19,8 @@ class Content::Models::Exercise < IndestructibleRecord
   validates :version, presence: true
   validates :user_profile_id, presence: true
 
+  before_create :generate_teacher_exercise_number
+
   # http://stackoverflow.com/a/7745635
   scope :latest, ->(scope = unscoped) do
     ex = arel_table
@@ -113,5 +115,15 @@ class Content::Models::Exercise < IndestructibleRecord
     else
       User::Models::Profile.find(user_profile_id)
     end
+  end
+
+  def authored_by_teacher?
+    user_profile_id.present? && user_profile_id != User::Models::OpenStaxProfile::ID
+  end
+
+  def generate_teacher_exercise_number
+    return unless authored_by_teacher?
+
+    self.number = ActiveRecord::Base.connection.select_value("SELECT nextval('teacher_exercise_number')")
   end
 end

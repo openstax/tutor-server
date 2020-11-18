@@ -4,17 +4,47 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
 
   resource_description do
     api_versions "v1"
-    short_description 'Provides ways to get set options on exercises for the given course'
+    short_description 'Provides ways to create and exclude exercises for the given course'
   end
 
-  api :PATCH, '/courses/:course_id/exercises',
+  api :POST, '/courses/:course_id/exercises',
+              "Creates an exercise"
+  description <<-EOS
+    Creates an exercise.
+
+    #{json_schema(Api::V1::ExerciseRepresenter, include: :writeable)}
+  EOS
+  def create
+    OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
+
+    page = @course.ecosystem.pages.find(params[:exercise][:page_id])
+    # Stub, format TBD
+    content = BuildTeacherExerciseContentHash[
+      question: params[:exercise][:question],
+      answers: params[:exercise][:answers],
+      tags: params[:exercise][:tags]
+    ]
+
+    exercise = CreateTeacherExercise[
+      ecosystem: @course.ecosystem,
+      page: page,
+      content: content,
+      profile: current_human_user,
+      save: false
+    ]
+
+    respond_with exercise, represent_with: Api::V1::ExerciseRepresenter,
+                           responder: ResponderWithPutPatchDeleteContent
+  end
+
+  api :PATCH, '/courses/:course_id/exercises/exclude',
               "Updates the given exercise(s) to be excluded or not for the given course"
   description <<-EOS
     Updates the given exercise(s) to be excluded or not for the given course.
 
     #{json_schema(Api::V1::ExercisesRepresenter, include: :writeable)}
   EOS
-  def update
+  def exclude # TODO: update FE route
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
     exercise_params_array = []

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_05_003758) do
+ActiveRecord::Schema.define(version: 2020_11_17_191750) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -106,10 +106,10 @@ ActiveRecord::Schema.define(version: 2020_11_05_003758) do
   end
 
   create_table "content_exercises", id: :serial, force: :cascade do |t|
-    t.string "url", null: false
+    t.string "url"
     t.text "content"
     t.integer "content_page_id", null: false
-    t.integer "number", null: false
+    t.bigint "number", null: false
     t.integer "version", null: false
     t.string "title"
     t.datetime "created_at", null: false
