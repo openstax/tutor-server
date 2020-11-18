@@ -51,7 +51,8 @@ Rails.application.configure do
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
-  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  config.file_watcher = ActiveSupport::EventedFileUpdateChecker \
+    unless $0.split('/').last == 'delayed_job'
 
   # Don't error out when trying to connect to external sites
   WebMock.allow_net_connect!
