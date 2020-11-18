@@ -11,6 +11,7 @@ set :runner_command, "#{bundle_command} rails runner"
 
 every 1.minute do
   rake 'openstax:accounts:sync:accounts'
+  rake 'delayed:heartbeat:delete_timed_out_workers'
 end
 
 every 1.day, at: '8:30 AM' do  # ~ 2:30am central
