@@ -138,6 +138,7 @@ gem 'redis-rails'
 gem 'delayed_job_active_record', '~> 4.1.4.beta1'
 gem 'daemons'
 gem 'delayed_job_heartbeat_plugin'
+gem 'delayed_job_worker_pool'
 
 # Type coercion for Representable
 gem 'virtus'
