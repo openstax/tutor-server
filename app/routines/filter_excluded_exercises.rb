@@ -7,7 +7,8 @@ class FilterExcludedExercises
     role: nil,
     course: nil,
     additional_excluded_numbers: [],
-    current_time: Time.current
+    current_time: Time.current,
+    profile_ids: []
   )
     # Assumes tasks only have 1 tasking
     role ||= task&.taskings&.first&.role
@@ -23,10 +24,9 @@ class FilterExcludedExercises
     course_excluded_numbers = course.nil? ? [] : course.excluded_exercises.map(&:exercise_number)
 
     # Exclude exercises that aren't created by OS or course teacher(s)
-    profile_ids = [User::Models::OpenStaxProfile::ID]
-    profile_ids = profile_ids + course.related_teacher_profile_ids unless course.nil?
+    profile_ids << User::Models::OpenStaxProfile::ID
     no_ownership_excluded_numbers = exercises.map do |exercise|
-      exercise.number unless exercise.user_profile_id.in?(profile_ids)
+      exercise.number unless exercise.user_profile_id.in?(profile_ids.concat.uniq)
     end
 
     # Get exercises excluded due to anti-cheating rules

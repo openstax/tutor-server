@@ -44,9 +44,14 @@ class GetExercises
 
     # Build map of exercise uids to representations, with pool type
     hash = {}
+
     exercise_ids_by_pool_type.each do |pool_type, exercise_ids|
       pool_exercises = exercises_by_id.values_at(*exercise_ids).compact
-      pool_exercises = run(:filter, exercises: pool_exercises, course: course).outputs.exercises if filter_exercises
+
+      if filter_exercises
+        pool_exercises = run(:filter, exercises: pool_exercises,
+                                      profile_ids: profile_ids).outputs.exercises
+      end
 
       pool_exercises.each do |exercise|
         unless hash.has_key?(exercise.uid)
