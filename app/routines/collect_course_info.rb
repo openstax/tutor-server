@@ -59,6 +59,7 @@ class CollectCourseInfo
         periods: periods,
         students: students,
         roles: roles,
+        related_teacher_profile_ids: course.related_teacher_profile_ids,
         spy_info: course.spy_info
       )
     end

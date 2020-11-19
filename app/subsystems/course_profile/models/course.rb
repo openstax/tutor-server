@@ -150,6 +150,23 @@ class CourseProfile::Models::Course < ApplicationRecord
     ended?(current_time) && !cache&.teacher_performance_report.nil?
   end
 
+  def related_teacher_profiles
+    profiles = []
+    courses = [self]
+
+    courses.each do |c|
+      next unless c.present?
+      profiles << c.teachers.map {|t| t.role.profile }
+      courses << c.cloned_from
+    end
+
+    profiles.flatten.uniq
+  end
+
+  def related_teacher_profile_ids
+    related_teacher_profiles.map(&:id)
+  end
+
   protected
 
   def set_starts_at_and_ends_at

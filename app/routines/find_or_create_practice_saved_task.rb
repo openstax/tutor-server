@@ -30,7 +30,8 @@ class FindOrCreatePracticeSavedTask
       exercises: exercises,
       role: @role,
       additional_excluded_numbers: [],
-      current_time: Time.current
+      current_time: Time.current,
+      profile_ids: @course.related_teacher_profile_ids
     ).outputs.exercises
 
     # Add the exercises as task steps

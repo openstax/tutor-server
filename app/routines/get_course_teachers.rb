@@ -13,6 +13,7 @@ class GetCourseTeachers
       {
         id: teacher.id.to_s,
         role_id: teacher.entity_role_id.to_s,
+        profile_id: teacher.role.profile.id.to_s,
         deleted_at: teacher.deleted_at,
         first_name: teacher.first_name,
         last_name: teacher.last_name

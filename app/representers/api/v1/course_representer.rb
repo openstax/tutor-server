@@ -266,6 +266,10 @@ module Api::V1
                writeable: false,
                if: ->(*) { respond_to?(:roles) }
 
+    property :related_teacher_profile_ids,
+             readable: true,
+             writeable: false
+
     property :spy_info,
              type: Object,
              readable: true,

@@ -87,5 +87,8 @@ module Api::V1
              writeable: false,
              getter: ->(*) { respond_to?(:page_uuid) ? page_uuid : page.try(:uuid) },
              schema_info: { required: true }
+
+    property :author,
+             extend: Api::V1::ExerciseAuthorRepresenter
   end
 end

@@ -23,4 +23,10 @@ RSpec.describe Content::Models::Exercise, type: :model do
     expect(first['questions'].first['stem_html']).to match('(0)')
     expect(second['questions'].first['stem_html']).to match('(1)')
   end
+
+  it 'defaults the author to OpenStax' do
+    exercise = FactoryBot.create(:content_exercise)
+
+    expect(exercise.user_profile_id).to eq User::Models::OpenStaxProfile::ID
+  end
 end
