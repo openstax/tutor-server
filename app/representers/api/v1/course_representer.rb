@@ -270,6 +270,11 @@ module Api::V1
              readable: true,
              writeable: false
 
+    collection :teacher_profiles,
+              extend: Api::V1::UserProfileRepresenter,
+              readable: true,
+              writeable: false
+
     property :spy_info,
              type: Object,
              readable: true,
