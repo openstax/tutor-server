@@ -17,13 +17,8 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
   def create
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
-    page = @course.ecosystem.pages.find(params[:exercise][:page_id])
-    # Stub, format TBD
-    content = BuildTeacherExerciseContentHash[
-      question: params[:exercise][:question],
-      answers: params[:exercise][:answers],
-      tags: params[:exercise][:tags]
-    ]
+    page    = @course.ecosystem.pages.find(params[:exercise][:page_id])
+    content = BuildTeacherExerciseContentHash[data: params[:exercise]]
 
     exercise = CreateTeacherExercise[
       ecosystem: @course.ecosystem,
@@ -44,7 +39,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
 
     #{json_schema(Api::V1::ExercisesRepresenter, include: :writeable)}
   EOS
-  def exclude # TODO: update FE route
+  def exclude
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
     exercise_params_array = []

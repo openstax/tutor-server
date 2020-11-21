@@ -80,6 +80,22 @@ GEM
     autoprefixer-rails (9.5.0)
       execjs
     awesome_print (1.8.0)
+    aws-eventstream (1.1.0)
+    aws-partitions (1.396.0)
+    aws-sdk-core (3.109.3)
+      aws-eventstream (~> 1, >= 1.0.2)
+      aws-partitions (~> 1, >= 1.239.0)
+      aws-sigv4 (~> 1.1)
+      jmespath (~> 1.0)
+    aws-sdk-kms (1.39.0)
+      aws-sdk-core (~> 3, >= 3.109.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-s3 (1.84.1)
+      aws-sdk-core (~> 3, >= 3.109.0)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.1)
+    aws-sigv4 (1.2.2)
+      aws-eventstream (~> 1, >= 1.0.2)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -313,6 +329,7 @@ GEM
       simple_oauth (~> 0.3.1)
     ipaddress (0.8.3)
     jaro_winkler (1.5.2)
+    jmespath (1.4.0)
     jobba (1.8.0)
       oj (~> 3.7.6)
       redis (~> 3.2)
@@ -721,6 +738,7 @@ DEPENDENCIES
   addressable
   apipie-rails
   awesome_print
+  aws-sdk-s3
   axlsx!
   best_in_place
   bootsnap (~> 1.4.0)
