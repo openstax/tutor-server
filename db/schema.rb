@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_17_191750) do
+ActiveRecord::Schema.define(version: 2020_11_20_230022) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -124,6 +124,8 @@ ActiveRecord::Schema.define(version: 2020_11_17_191750) do
     t.jsonb "question_answer_ids", null: false
     t.integer "number_of_questions", null: false
     t.integer "user_profile_id", default: 0, null: false
+    t.boolean "is_copyable", default: true, null: false
+    t.boolean "anonymize_author", default: false, null: false
     t.index ["content_page_id"], name: "index_content_exercises_on_content_page_id"
     t.index ["group_uuid", "version"], name: "index_content_exercises_on_group_uuid_and_version"
     t.index ["number", "version"], name: "index_content_exercises_on_number_and_version"

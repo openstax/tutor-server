@@ -4,18 +4,18 @@ class CreateTeacherExercise
   uses_routine Content::Routines::TagResource, as: :tag
 
   ALLOWED_TAGS  = %w(a img b i iframe)
-  ALLOWED_ATTRS = %w(src title width height)
+  ALLOWED_ATTRS = %w(alt src title width height)
 
   protected
 
-  def exec(ecosystem:, page:, content:, profile:, tags: [], save: false)
+  def exec(ecosystem:, page:, content:, profile:, images: [], tags: [], anonymize: false, save: false)
     wrapper = OpenStax::Exercises::V1::Exercise.new(content: sanitize(content))
     tags << ['type:practice']
 
     exercise = Content::Models::Exercise.new(
       content: wrapper.content,
+      images: images,
       page: page,
-      number: number,
       version: 1,
       user_profile_id: profile.id,
       nickname: wrapper.nickname,
@@ -26,7 +26,8 @@ class CreateTeacherExercise
       number_of_questions: wrapper.questions.size,
       question_answer_ids: wrapper.question_answer_ids,
       has_interactive: wrapper.has_interactive?,
-      has_video: wrapper.has_video?
+      has_video: wrapper.has_video?,
+      anonymize_author: anonymize
     )
 
     exercise.save if save

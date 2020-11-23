@@ -1,14 +1,14 @@
 module User
   module Models
-    class OpenStaxProfile
-      ID = 0
+    class AnonymousAuthorProfile
+      ID = -1
 
       def self.id
         ID
       end
 
       def self.name
-        'OpenStax'
+        'OpenStax Community'
       end
     end
   end

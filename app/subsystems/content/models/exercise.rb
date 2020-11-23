@@ -112,6 +112,8 @@ class Content::Models::Exercise < IndestructibleRecord
   def author
     if user_profile_id == User::Models::OpenStaxProfile::ID
       User::Models::OpenStaxProfile
+    elsif anonymize_author
+      User::Models::AnonymousAuthorProfile
     else
       User::Models::Profile.find(user_profile_id)
     end

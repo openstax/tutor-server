@@ -19,12 +19,16 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
 
     page    = @course.ecosystem.pages.find(params[:exercise][:page_id])
     content = BuildTeacherExerciseContentHash[data: params[:exercise]]
+    images  = params[:exercise][:images]
+    profile = @course.teachers.map{|t| t.role.profile }.find{|p| p.id == params[:exercise][:authorId] } || current_human_user
 
     exercise = CreateTeacherExercise[
       ecosystem: @course.ecosystem,
       page: page,
       content: content,
-      profile: current_human_user,
+      images: images,
+      profile: profile,
+      anonymize: params[:exercise][:anonymize]
       save: false
     ]
 

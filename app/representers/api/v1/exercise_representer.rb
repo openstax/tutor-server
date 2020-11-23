@@ -90,5 +90,10 @@ module Api::V1
 
     property :author,
              extend: Api::V1::UserProfileRepresenter
+
+    property :is_copyable,
+             readable: true,
+             writeable: false,
+             schema_info: { type: 'boolean' }
   end
 end
