@@ -51,3 +51,19 @@ after_worker_shutdown do |worker_info|
   puts "Master #{Process.pid} detected dead worker #{worker_info.name} " \
        "with process id #{worker_info.process_id}"
 end
+
+# Monkeypatch to notify systemd when delayed_job_worker_pool is stopping (no hooks exist)
+DelayedJobWorkerPool::WorkerPool.class_exec do
+  private
+
+  def shutdown(signal)
+    SdNotify.stopping
+    log("Shutting down master #{Process.pid} with signal #{signal}")
+    self.shutting_down = true
+    registry.worker_pids.each do |child_pid|
+      group = registry.group(child_pid)
+      log("Telling worker #{child_pid} from group #{group} to shutdown with signal #{signal}")
+      Process.kill(signal, child_pid)
+    end
+  end
+end
