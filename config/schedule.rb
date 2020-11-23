@@ -14,6 +14,14 @@ every 1.minute do
   rake 'delayed:heartbeat:delete_timed_out_workers'
 end
 
+every 10.minutes do
+  runner "OpenStax::RescueFrom.this { CourseProfile::BuildPreviewCourses.call }"
+end
+
+every 1.hour do
+  runner "OpenStax::RescueFrom.this { Research::UpdateStudyActivations.call }"
+end
+
 every 1.day, at: '8:30 AM' do  # ~ 2:30am central
   runner "OpenStax::RescueFrom.this { GetSalesforceBookNames.call(true) }"
   runner "OpenStax::RescueFrom.this { PushSalesforceCourseStats.call }"
@@ -23,20 +31,12 @@ every 1.day, at: '10:30 AM' do
   runner "OpenStax::RescueFrom.this { Lms::Models::TrustedLaunchData.cleanup }"
 end
 
-every 10.minutes do
-  runner "OpenStax::RescueFrom.this { CourseProfile::BuildPreviewCourses.call }"
+every 1.week do
+  runner "OpenStax::RescueFrom.this { Stats::Generate.call start_at: 1.week.ago.beginning_of_week }"
 end
 
 every 1.month, at: '9 AM' do  # ~ 3am central
   runner "OpenStax::RescueFrom.this { Jobba.cleanup }"
-end
-
-every 1.hour do
-  runner "OpenStax::RescueFrom.this { Research::UpdateStudyActivations.call }"
-end
-
-every 1.week do
-  runner "OpenStax::RescueFrom.this { Stats::Generate.call start_at: 1.week.ago.beginning_of_week }"
 end
 
 # On the 1st of every odd month (normal courses only end on January, March, July, September)
