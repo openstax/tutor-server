@@ -134,11 +134,17 @@ gem 'faker'
 # Key-value store for caching
 gem 'redis-rails'
 
-# Background job queueing
+# Database-backed background jobs
 gem 'delayed_job_active_record', '~> 4.1.4.beta1'
-gem 'daemons'
-gem 'delayed_job_heartbeat_plugin'
+
+# Run delayed_job workers with a control process in the foreground
 gem 'delayed_job_worker_pool'
+
+# Ensure background jobs unlock if a delayed_job worker crashes
+gem 'delayed_job_heartbeat_plugin'
+
+# Notify systemd of delayed_job's main PID and when it's ready
+gem 'sd_notify', require: false
 
 # Type coercion for Representable
 gem 'virtus'
