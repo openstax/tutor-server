@@ -26,7 +26,7 @@ after_preload_app do
 
       SdNotify.watchdog
     end
-  end.priority = Integer(ENV['WATCHDOG_THREAD_PRIORITY'] || 100)
+  end.priority = Integer(ENV['WATCHDOG_THREAD_PRIORITY'] || 100) if SdNotify.watchdog?
 
   # Notify systemd of our PID and that we have finished booting up
   SdNotify.ready
