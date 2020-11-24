@@ -23,11 +23,12 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
     profile = @course.teachers.map{|t| t.role.profile }.find{|p| p.id == params[:exercise][:authorId] } || current_human_user
 
     exercise = CreateTeacherExercise[
-      ecosystem: @course.ecosystem,
+      course: @course,
       page: page,
       content: content,
       images: images,
       profile: profile,
+      derived_from_id: params[:exercise][:derived_from_id],
       anonymize: params[:exercise][:anonymize]
       save: false
     ]
