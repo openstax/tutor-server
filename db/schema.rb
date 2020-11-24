@@ -1149,6 +1149,7 @@ ActiveRecord::Schema.define(version: 2020_11_23_223824) do
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_exercises", "content_exercises", column: "derived_from_id"
   add_foreign_key "content_exercises", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id", on_update: :cascade, on_delete: :cascade

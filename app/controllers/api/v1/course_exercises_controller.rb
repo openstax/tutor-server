@@ -29,7 +29,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
       images: images,
       profile: profile,
       derived_from_id: params[:exercise][:derived_from_id],
-      anonymize: params[:exercise][:anonymize]
+      anonymize: params[:exercise][:anonymize],
       save: false
     ]
 

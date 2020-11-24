@@ -54,7 +54,6 @@ class CreateTeacherExercise
       save: save
     )
 
-
     outputs.exercise = exercise
   end
 
