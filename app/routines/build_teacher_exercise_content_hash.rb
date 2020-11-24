@@ -22,13 +22,7 @@ class BuildTeacherExerciseContentHash
       stimulus_html: "",
       stem_html: data[:questionText],
       title: data[:questionName],
-      collaborator_solutions: [
-        {
-          attachments: [],
-          solution_type: 'detailed',
-          content_html: data[:detailedSolution]
-        }
-      ]
+      collaborator_solutions: []
     }
 
     question[:answers] = (data[:options] || []).map do |option|
@@ -36,6 +30,14 @@ class BuildTeacherExerciseContentHash
         content_html: option[:content],
         correctness: option[:correctness],
         feedback_html: option[:feedback]
+      }
+    end
+
+    if data[:detailedSolution]
+      question[:collaborator_solutions] << {
+        attachments: [],
+        solution_type: 'detailed',
+        content_html: data[:detailedSolution]
       }
     end
 
