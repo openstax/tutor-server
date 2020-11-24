@@ -25,8 +25,9 @@ class BuildTeacherExerciseContentHash
       collaborator_solutions: []
     }
 
-    question[:answers] = (data[:options] || []).map do |option|
+    question[:answers] = (data[:options] || []).map.with_index do |option, i|
       {
+        id: i + 1,
         content_html: option[:content],
         correctness: option[:correctness],
         feedback_html: option[:feedback]

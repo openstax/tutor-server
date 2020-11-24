@@ -30,6 +30,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
       profile: profile,
       derived_from_id: params[:exercise][:derived_from_id],
       anonymize: params[:exercise][:anonymize],
+      copyable:  params[:exercise][:copyable],
       save: false
     ]
 

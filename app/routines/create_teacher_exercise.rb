@@ -9,7 +9,7 @@ class CreateTeacherExercise
 
   protected
 
-  def exec(course:, page:, content:, profile:, derived_from_id: nil, images: [], tags: [], anonymize: false, save: false)
+  def exec(course:, page:, content:, profile:, derived_from_id: nil, images: [], tags: [], copyable: true, anonymize: false, save: false)
     wrapper = OpenStax::Exercises::V1::Exercise.new(content: sanitize(content))
     tags << ['type:practice']
 
@@ -33,7 +33,8 @@ class CreateTeacherExercise
       has_interactive: wrapper.has_interactive?,
       has_video: wrapper.has_video?,
       derived_from: derived_from,
-      anonymize_author: anonymize
+      anonymize_author: anonymize,
+      is_copyable: copyable
     )
 
     exercise.save if save
