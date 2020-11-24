@@ -89,6 +89,6 @@ module Api::V1
              schema_info: { required: true }
 
     property :author,
-             extend: Api::V1::ExerciseAuthorRepresenter
+             extend: Api::V1::UserProfileRepresenter
   end
 end

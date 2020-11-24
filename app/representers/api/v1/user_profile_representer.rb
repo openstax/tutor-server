@@ -1,5 +1,5 @@
 module Api::V1
-  class ExerciseAuthorRepresenter < Roar::Decorator
+  class UserProfileRepresenter < Roar::Decorator
     include Roar::JSON
     include Representable::Coercion
 

@@ -14,6 +14,7 @@ class CollectCourseInfo
       offering = course.offering
       roles = roles_by_course_id.fetch(course.id, [])
       students = roles.map(&:student).compact
+      teacher_profiles = course.teachers.map {|t| t.role.profile }
 
       # If the user is an active teacher, return all course periods
       # Otherwise, return only the periods the user is in
@@ -60,6 +61,7 @@ class CollectCourseInfo
         students: students,
         roles: roles,
         related_teacher_profile_ids: course.related_teacher_profile_ids,
+        teacher_profiles: teacher_profiles,
         spy_info: course.spy_info
       )
     end
