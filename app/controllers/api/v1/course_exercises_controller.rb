@@ -17,7 +17,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
   def create
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
-    page    = @course.ecosystem.pages.find(params[:exercise][:page_id])
+    page    = @course.ecosystem.pages.find(params[:exercise][:selectedChapterSection])
     content = BuildTeacherExerciseContentHash[data: params[:exercise]]
     images  = params[:exercise][:images]
     profile = @course.teachers.map{|t| t.role.profile }.find{|p| p.id == params[:exercise][:authorId] } || current_human_user
