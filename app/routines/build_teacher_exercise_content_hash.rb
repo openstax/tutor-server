@@ -1,5 +1,5 @@
 class BuildTeacherExerciseContentHash
-  lev_routine
+  lev_routine express_output: :content_hash
 
   TIMES = { tag: 'time', key: 'tagTime', values: ['short', 'medium', 'long'] }
   DIFFICULTIES = { tag: 'difficulty', key: 'tagDifficulty', values: ['easy', 'medium', 'difficult'] }
@@ -18,6 +18,7 @@ class BuildTeacherExerciseContentHash
     content_hash[:tags].compact!
 
      question = {
+      id: 1,
       is_answer_order_important: true,
       stimulus_html: "",
       stem_html: data[:questionText],
@@ -59,6 +60,6 @@ class BuildTeacherExerciseContentHash
       group_uuid: ""
     })
 
-    outputs.content_hash = content_hash
+    outputs.content_hash = content_hash.to_json
   end
 end

@@ -1,5 +1,5 @@
 class CreateTeacherExercise
-  lev_routine transaction: :read_committed
+  lev_routine transaction: :read_committed, express_output: :exercise
 
   uses_routine Content::Routines::TagResource, as: :tag
   uses_routine Content::Routines::PopulateExercisePools, as: :populate_exercise_pools
@@ -9,7 +9,7 @@ class CreateTeacherExercise
 
   protected
 
-  def exec(course:, page:, content:, profile:, derived_from_id: nil, images: [], tags: [], copyable: true, anonymize: false, save: false)
+  def exec(course:, page:, content:, profile:, derived_from_id: nil, images: nil, tags: [], copyable: nil, anonymize: nil, save: false)
     wrapper = OpenStax::Exercises::V1::Exercise.new(content: sanitize(content))
     tags << ['type:practice']
 
@@ -18,7 +18,6 @@ class CreateTeacherExercise
 
     exercise = Content::Models::Exercise.new(
       content: wrapper.content,
-      images: images,
       page: page,
       number: derived_from&.number,
       version: version,
@@ -33,9 +32,10 @@ class CreateTeacherExercise
       has_interactive: wrapper.has_interactive?,
       has_video: wrapper.has_video?,
       derived_from: derived_from,
-      anonymize_author: anonymize,
-      is_copyable: copyable
+      anonymize_author: anonymize || false,
+      is_copyable: copyable || true
     )
+    exercise.images.attach(images) if images
 
     exercise.save if save
 

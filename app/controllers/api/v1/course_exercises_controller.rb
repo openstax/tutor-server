@@ -17,25 +17,25 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
   def create
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
-    page    = @course.ecosystem.pages.find(params[:exercise][:selectedChapterSection])
-    content = BuildTeacherExerciseContentHash[data: params[:exercise]]
-    images  = params[:exercise][:images]
-    profile = @course.teachers.map{|t| t.role.profile }.find{|p| p.id == params[:exercise][:authorId] } || current_human_user
+    page    = @course.ecosystem.pages.find(params[:selectedChapterSection])
+    content = BuildTeacherExerciseContentHash[data: params]
+    profile = @course.teachers.map{|t| t.role.profile }.find{|p| p.id == params[:authorId] } || current_human_user
 
     exercise = CreateTeacherExercise[
       course: @course,
       page: page,
       content: content,
-      images: images,
+      images: params[:images],
       profile: profile,
-      derived_from_id: params[:exercise][:derived_from_id],
-      anonymize: params[:exercise][:anonymize],
-      copyable:  params[:exercise][:copyable],
-      save: false
+      derived_from_id: params[:derived_from_id],
+      anonymize: params[:anonymize],
+      copyable:  params[:copyable],
+      save: true
     ]
 
     respond_with exercise, represent_with: Api::V1::ExerciseRepresenter,
-                           responder: ResponderWithPutPatchDeleteContent
+                           responder: ResponderWithPutPatchDeleteContent,
+                           location: nil
   end
 
   api :PATCH, '/courses/:course_id/exercises/exclude',

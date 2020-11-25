@@ -31,31 +31,29 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
       AddUserAsCourseTeacher.call(course: course, user: user_1)
     end
 
-    context '#show' do
-      context 'no pool_types' do
-        xit 'returns all course exercises' do
+    context '#create' do
+      let(:page) { @ecosystem.pages.first }
 
-        end
-      end
+      it 'creates an exercise by a teacher' do
+        params = {
+          selectedChapterSection: page.id,
+          questionText: 'Test'
+        }
 
-      context 'pool_types in path' do
-        xit 'returns all course exercises in the given pool type' do
-        end
-      end
-
-      context 'pool_types in query params' do
-        xit 'returns all course exercises in the given pool type' do
-        end
+        expect do
+          api_post api_course_exercises_url(course.id), user_1_token,
+                     params: params.to_json
+        end.to change { Content::Models::Exercise.count }.by(1)
       end
     end
 
-    context '#update' do
+    context '#exlude' do
       let(:exercise) { @ecosystem.exercises.first }
 
       context 'for anonymous' do
         it 'raises SecurityTransgression' do
           expect do
-            api_patch api_course_exercises_url(course.id), nil,
+            api_put exclude_api_course_exercises_url(course.id), nil,
                       params: [ { id: exercise.id, is_excluded: true } ].to_json
           end.to raise_error(SecurityTransgression)
         end
@@ -64,7 +62,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
       context 'for a user that is not a teacher' do
         it 'raises SecurityTransgression' do
           expect do
-            api_patch api_course_exercises_url(course.id), user_2_token,
+            api_put exclude_api_course_exercises_url(course.id), user_2_token,
                       params: [ { id: exercise.id, is_excluded: true } ].to_json
           end.to raise_error(SecurityTransgression)
         end
@@ -73,7 +71,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
       context 'for a teacher in the course' do
         it 'can exclude an exercise' do
           expect do
-            api_patch api_course_exercises_url(course.id), user_1_token,
+            api_put exclude_api_course_exercises_url(course.id), user_1_token,
                       params: [ { id: exercise.id, is_excluded: true } ].to_json
           end.to change { CourseContent::Models::ExcludedExercise.count }.by(1)
 
@@ -89,7 +87,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
                              course: course, exercise_number: exercise.number
 
           expect do
-            api_patch api_course_exercises_url(course.id), user_1_token,
+            api_put exclude_api_course_exercises_url(course.id), user_1_token,
                       params: [ { id: exercise.id, is_excluded: false } ].to_json
           end.to change { CourseContent::Models::ExcludedExercise.count }.by(-1)
 
