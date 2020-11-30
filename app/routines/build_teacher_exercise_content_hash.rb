@@ -63,6 +63,15 @@ class BuildTeacherExerciseContentHash
       group_uuid: ""
     })
 
+    if content_hash[:formats].any?('multiple-choice')
+      unless content_hash[:questions][0][:answers].one? {|a| a[:correctness] == '1.0' }
+        fatal_error(
+          code: :multiple_choice_must_have_valid_correctness,
+          message: 'Multiple choice must have 1 option with a correctness of 1.0'
+        )
+      end
+    end
+
     outputs.content_hash = content_hash
   end
 

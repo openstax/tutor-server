@@ -45,6 +45,30 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
                      params: params.to_json
         end.to change { Content::Models::Exercise.count }.by(1)
       end
+
+      it 'returns errors for invalid params' do
+        params = {
+          selectedChapterSection: page.id,
+          questionText: 'Test',
+          options: [
+            {
+              content: 'answer',
+              correctness: '0.0',
+              feedback: 'feedback'
+            },
+            {
+              content: 'answer',
+              correctness: '0.0',
+              feedback: 'feedback'
+            }
+          ]
+        }
+
+        expect do
+          api_post api_course_exercises_url(course.id), user_1_token,
+                     params: params.to_json
+        end.to raise_error
+      end
     end
 
     context '#exclude' do

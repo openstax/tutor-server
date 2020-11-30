@@ -54,8 +54,9 @@ RSpec.describe BuildTeacherExerciseContentHash, type: :routine do
       tags: { tagDifficulty: { value: 'easy' }, tagBloom: { value: '2' } }
     }
 
-    output_hash = described_class.call(data: data).outputs.content_hash
-    expect(output_hash.deep_symbolize_keys).to eq(expected_hash)
+    result = described_class.call(data: data)
+    expect(result.outputs.content_hash.deep_symbolize_keys).to eq(expected_hash)
+    expect(result.errors).to be_empty
   end
 
   it 'sanitizes' do
@@ -103,7 +104,31 @@ RSpec.describe BuildTeacherExerciseContentHash, type: :routine do
       tags: []
     }
 
-    content_hash = described_class.call(data: data).outputs.content_hash
-    expect(content_hash.deep_symbolize_keys).to eq(expected_hash)
+    result = described_class.call(data: data)
+    expect(result.outputs.content_hash.deep_symbolize_keys).to eq(expected_hash)
+    expect(result.errors).to be_empty
+  end
+
+  it 'validates' do
+    data = {
+      questionText: 'Question?',
+      questionName: 'Title',
+      options: [
+        {
+          content: 'answer',
+          correctness: '0.0',
+          feedback: 'feedback'
+        },
+        {
+          content: 'answer',
+          correctness: '0.0',
+          feedback: 'feedback'
+        }
+      ],
+      tags: { tagDifficulty: { value: 'easy' }, tagBloom: { value: '2' } }
+    }
+
+    errors = described_class.call(data: data).errors
+    expect(errors.first.code).to eq(:multiple_choice_must_have_valid_correctness)
   end
 end
