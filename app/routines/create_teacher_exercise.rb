@@ -61,7 +61,7 @@ class CreateTeacherExercise
       profile_ids: course.related_teacher_profile_ids
     ).outputs
 
-    if outs.exercises.empty?
+    if outs.exercises.select(&:is_copyable).empty?
       fatal_error(
         code:    :derived_from_not_accessible,
         message: 'User does not have access to derive the requested exercise'
