@@ -42,6 +42,9 @@ gem 'turbolinks'
 # PostgreSQL database
 gem 'pg'
 
+# Support systemd Type=notify services for puma and delayed_job
+gem 'sd_notify', require: false
+
 # Use the puma webserver
 gem 'puma'
 
@@ -143,9 +146,6 @@ gem 'delayed_job_worker_pool'
 # Ensure background jobs unlock if a delayed_job worker crashes
 gem 'delayed_job_heartbeat_plugin'
 
-# Notify systemd of delayed_job's main PID and when it's ready
-gem 'sd_notify', require: false
-
 # Type coercion for Representable
 gem 'virtus'
 
@@ -163,7 +163,6 @@ gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
 gem 'openstax_rescue_from'
-
 
 # Sentry integration (the require disables automatic Rails integration since we use rescue_from)
 gem 'sentry-raven', require: 'raven/base'
