@@ -1,18 +1,19 @@
 class BuildTeacherExerciseContentHash
   lev_routine express_output: :content_hash, transaction: :no_transaction
 
-  TIMES = { tag: 'time', key: 'tagTime', values: ['short', 'medium', 'long'] }
-  DIFFICULTIES = { tag: 'difficulty', key: 'tagDifficulty', values: ['easy', 'medium', 'difficult'] }
-  BLOOMS = { tag: 'blooms', key: 'tagBloom', values: ['1', '2', '3', '4', '5', '6'] }
-  DOKS = { tag: 'dok', key: 'tagDok', values: ['1', '2', '3', '4'] }
+  TIMES = { tag: 'time', key: :tagTime, values: ['short', 'medium', 'long'] }
+  DIFFICULTIES = { tag: 'difficulty', key: :tagDifficulty, values: ['easy', 'medium', 'difficult'] }
+  BLOOMS = { tag: 'blooms', key: :tagBloom, values: ['1', '2', '3', '4', '5', '6'] }
+  DOKS = { tag: 'dok', key: :tagDok, values: ['1', '2', '3', '4'] }
 
   protected
 
   def exec(data:)
     content_hash = {}
+    data.deep_symbolize_keys!
 
     content_hash[:tags] = [TIMES, DIFFICULTIES, BLOOMS, DOKS].map do |tag|
-      value = data.dig(tag[:key], 'value')
+      value = (data[:tags] || {}).dig(tag[:key], :value)
       "#{tag[:tag]}:#{value}" if tag[:values].include? value
     end
     content_hash[:tags].compact!
@@ -23,7 +24,9 @@ class BuildTeacherExerciseContentHash
       stimulus_html: "",
       stem_html: sanitize(data[:questionText]),
       title: sanitize(data[:questionName]),
-      collaborator_solutions: []
+      collaborator_solutions: [],
+      combo_choices: [],
+      community_solutions: []
     }
 
     question[:answers] = (data[:options] || []).map.with_index do |option, i|
@@ -51,7 +54,8 @@ class BuildTeacherExerciseContentHash
     content_hash[:questions] = [question]
 
     # Extraneous fields
-    content_hash.merge({
+    content_hash.merge!({
+      stimulus_html: "",
       derived_from: [],
       is_vocab: false,
       hints: [],
@@ -66,7 +70,7 @@ class BuildTeacherExerciseContentHash
   def sanitize(html)
     @sanitizer ||= Rails::Html::SafeListSanitizer.new
     @scrubber  ||= TeacherExerciseScrubber.new
-    @sanitizer.sanitize(html, scrubber: @scrubber)
+    @sanitizer.sanitize(html.to_s, scrubber: @scrubber)
   end
 end
 
@@ -94,6 +98,11 @@ class TeacherExerciseScrubber < Rails::Html::PermitScrubber
     sub
     sup
     hr
+    math
+    h1
+    h2
+    h3
+    h4
   )
   ALLOWED_ATTRS = %w(
     alt title src width height style data-math type contenteditable

@@ -4,13 +4,10 @@ class CreateTeacherExercise
   uses_routine Content::Routines::TagResource, as: :tag
   uses_routine Content::Routines::PopulateExercisePools, as: :populate_exercise_pools
 
-  ALLOWED_TAGS  = %w(a img b i iframe)
-  ALLOWED_ATTRS = %w(alt src title width height)
-
   protected
 
   def exec(course:, page:, content:, profile:, derived_from_id: nil, images: nil, tags: [], copyable: nil, anonymize: nil, save: false)
-    wrapper = OpenStax::Exercises::V1::Exercise.new(content: sanitize(content))
+    wrapper = OpenStax::Exercises::V1::Exercise.new(content: content)
     tags << ['type:practice']
 
     derived_from = derived_from_id && find_derivable_exercise(course, derived_from_id)
