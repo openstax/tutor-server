@@ -12,8 +12,7 @@ module Api::V1
     property :url,
              type: String,
              readable: true,
-             writeable: false,
-             schema_info: { required: true }
+             writeable: false
 
     property :title,
              type: String,

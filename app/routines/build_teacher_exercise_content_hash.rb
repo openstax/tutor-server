@@ -25,7 +25,8 @@ class BuildTeacherExerciseContentHash
       title: sanitize(data[:questionName]),
       collaborator_solutions: [],
       combo_choices: [],
-      community_solutions: []
+      community_solutions: [],
+      hints: []
     }
 
     question[:answers] = (data[:options] || []).map.with_index do |option, i|
@@ -45,7 +46,7 @@ class BuildTeacherExerciseContentHash
       }
     end
 
-    content_hash[:formats] = [].tap do |formats|
+    question[:formats] = [].tap do |formats|
       formats << "free-response" if data[:isTwoStep] || question[:answers].empty?
       formats << "multiple-choice" if question[:answers].any?
     end
@@ -54,16 +55,15 @@ class BuildTeacherExerciseContentHash
 
     # Extraneous fields
     content_hash.merge!({
-      stimulus_html: "",
+      stimulus_html: '',
       derived_from: [],
       is_vocab: false,
-      hints: [],
       authors: [],
-      uuid: "",
-      group_uuid: ""
+      uuid: '',
+      group_uuid: ''
     })
 
-    if content_hash[:formats].any?('multiple-choice')
+    if content_hash[:questions][0][:formats].any?('multiple-choice')
       unless content_hash[:questions][0][:answers].one? {|a| a[:correctness] == '1.0' }
         fatal_error(
           code: :multiple_choice_must_have_valid_correctness,

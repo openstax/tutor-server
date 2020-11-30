@@ -7,9 +7,9 @@ class CreateTeacherExercise
   protected
 
   def exec(course:, page:, content:, profile:, derived_from_id: nil, images: nil, tags: [], copyable: nil, anonymize: nil, save: false)
-    wrapper = OpenStax::Exercises::V1::Exercise.new(content: content.to_json)
     tags << ['type:practice']
 
+    wrapper = OpenStax::Exercises::V1::Exercise.new(content: content.to_json)
     derived_from = derived_from_id && find_derivable_exercise(course, derived_from_id)
     version = (derived_from&.version || 0) + 1
 
@@ -23,7 +23,6 @@ class CreateTeacherExercise
       title: wrapper.title,
       preview: wrapper.preview,
       context: wrapper.context,
-      content: wrapper.content,
       number_of_questions: wrapper.questions.size,
       question_answer_ids: wrapper.question_answer_ids,
       has_interactive: wrapper.has_interactive?,
@@ -34,7 +33,11 @@ class CreateTeacherExercise
     )
     exercise.images.attach(images) if images
 
-    exercise.save if save
+    if save
+      exercise.set_teacher_exercise_number
+      exercise.content_hash[:uid] = exercise.uid
+      exercise.save
+    end
 
     run(
       :tag,
