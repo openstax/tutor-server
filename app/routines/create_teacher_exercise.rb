@@ -73,9 +73,4 @@ class CreateTeacherExercise
 
     outs.exercises.first
   end
-
-  def sanitize(html)
-    sanitizer = Rails::Html::SafeListSanitizer.new
-    sanitizer.sanitize(html, tags: ALLOWED_TAGS, attributes: ALLOWED_ATTRS)
-  end
 end
