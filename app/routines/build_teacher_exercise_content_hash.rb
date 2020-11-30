@@ -104,7 +104,7 @@ class TeacherExerciseScrubber < Rails::Html::PermitScrubber
     h4
   )
   ALLOWED_ATTRS = %w(
-    alt title src width height style data-math type contenteditable
+    alt title src width height style data-math type
   )
   ALLOWED_IFRAME_ATTRS = %w(
     allowfullscreen class frameborder height mozallowfullscreen
@@ -125,10 +125,6 @@ class TeacherExerciseScrubber < Rails::Html::PermitScrubber
     self.tags = ALLOWED_TAGS
     self.attributes = ALLOWED_ATTRS
   end
-
-  # def skip_node?(node)
-  #   node.text?
-  # end
 
   def keep_node?(node)
     if node.name == 'iframe'
