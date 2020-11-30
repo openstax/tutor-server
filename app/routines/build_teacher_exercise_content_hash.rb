@@ -10,7 +10,6 @@ class BuildTeacherExerciseContentHash
 
   def exec(data:)
     content_hash = {}
-    data.deep_symbolize_keys!
 
     content_hash[:tags] = [TIMES, DIFFICULTIES, BLOOMS, DOKS].map do |tag|
       value = (data[:tags] || {}).dig(tag[:key], :value)

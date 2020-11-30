@@ -4,7 +4,7 @@ RSpec.describe CreateTeacherExercise, type: :routine do
   let(:course)    { FactoryBot.create :course_profile_course }
   let(:page)      { FactoryBot.create :content_page }
   let(:profile)   { FactoryBot.create :user_profile }
-  let(:content)   { OpenStax::Exercises::V1::FakeClient.new_exercise_hash.to_json }
+  let(:content)   { OpenStax::Exercises::V1::FakeClient.new_exercise_hash }
   let!(:valid_derived) { FactoryBot.create :content_exercise, user_profile_id: profile.id }
   let!(:invalid_derived) { FactoryBot.create :content_exercise, user_profile_id: -1 }
 

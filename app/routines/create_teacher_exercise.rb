@@ -7,7 +7,7 @@ class CreateTeacherExercise
   protected
 
   def exec(course:, page:, content:, profile:, derived_from_id: nil, images: nil, tags: [], copyable: nil, anonymize: nil, save: false)
-    wrapper = OpenStax::Exercises::V1::Exercise.new(content: content)
+    wrapper = OpenStax::Exercises::V1::Exercise.new(content: content.to_json)
     tags << ['type:practice']
 
     derived_from = derived_from_id && find_derivable_exercise(course, derived_from_id)
