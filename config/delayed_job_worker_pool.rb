@@ -19,14 +19,18 @@ after_preload_app do
   # Don't hang on to database connections from the master after we've completed initialization
   ActiveRecord::Base.connection_pool.disconnect!
 
-  # Start the watchdog thread with high priority
-  Thread.new do
-    loop do
-      sleep Integer(ENV['WATCHDOG_THREAD_SLEEP_INTERVAL'] || 10)
+  if SdNotify.watchdog?
+    watchdog_thread_sleep_interval = Integer(ENV['WATCHDOG_USEC']) / 2000000
 
-      SdNotify.watchdog
-    end
-  end.priority = Integer(ENV['WATCHDOG_THREAD_PRIORITY'] || 100) if SdNotify.watchdog?
+    # Start the watchdog thread with high priority
+    Thread.new do
+      loop do
+        sleep watchdog_thread_sleep_interval
+
+        SdNotify.watchdog
+      end
+    end.priority = Integer(ENV['WATCHDOG_PRIORITY'] || 100)
+  end
 
   # Notify systemd of our PID and that we have finished booting up
   SdNotify.ready
