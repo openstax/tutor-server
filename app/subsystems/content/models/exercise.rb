@@ -7,6 +7,9 @@ class Content::Models::Exercise < IndestructibleRecord
   has_one :book, through: :page
   has_one :ecosystem, through: :book
 
+  belongs_to :derived_from, class_name: 'Content::Models::Exercise', foreign_key: :derived_from_id, optional: true
+  has_many :derivatives, class_name: 'Content::Models::Exercise', foreign_key: :derived_from_id
+
   has_many :exercise_tags, dependent: :destroy, inverse_of: :exercise
   has_many :tags, through: :exercise_tags
 
@@ -18,6 +21,8 @@ class Content::Models::Exercise < IndestructibleRecord
   validates :number, presence: true
   validates :version, presence: true
   validates :user_profile_id, presence: true
+
+  before_validation :set_teacher_exercise_number, unless: :number?
 
   # http://stackoverflow.com/a/7745635
   scope :latest, ->(scope = unscoped) do
@@ -110,8 +115,24 @@ class Content::Models::Exercise < IndestructibleRecord
   def author
     if user_profile_id == User::Models::OpenStaxProfile::ID
       User::Models::OpenStaxProfile
+    elsif anonymize_author
+      User::Models::AnonymousAuthorProfile
     else
       User::Models::Profile.find(user_profile_id)
     end
+  end
+
+  def authored_by_teacher?
+    user_profile_id.present? && user_profile_id != User::Models::OpenStaxProfile::ID
+  end
+
+  def set_teacher_exercise_number
+    return unless authored_by_teacher?
+
+    self.number = generate_next_teacher_exercise_number
+  end
+
+  def generate_next_teacher_exercise_number
+    ActiveRecord::Base.connection.select_value("SELECT nextval('teacher_exercise_number')")
   end
 end

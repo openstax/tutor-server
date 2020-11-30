@@ -8,8 +8,6 @@ module ActsAsResource
       module ClassMethods
         def acts_as_resource
           class_exec do
-            validates :url, presence: true
-
             def content
               # TODO: Caching
               super

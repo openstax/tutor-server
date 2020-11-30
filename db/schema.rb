@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_05_003758) do
+ActiveRecord::Schema.define(version: 2020_11_23_223824) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -106,10 +106,10 @@ ActiveRecord::Schema.define(version: 2020_11_05_003758) do
   end
 
   create_table "content_exercises", id: :serial, force: :cascade do |t|
-    t.string "url", null: false
+    t.string "url"
     t.text "content"
     t.integer "content_page_id", null: false
-    t.integer "number", null: false
+    t.bigint "number", null: false
     t.integer "version", null: false
     t.string "title"
     t.datetime "created_at", null: false
@@ -124,7 +124,11 @@ ActiveRecord::Schema.define(version: 2020_11_05_003758) do
     t.jsonb "question_answer_ids", null: false
     t.integer "number_of_questions", null: false
     t.integer "user_profile_id", default: 0, null: false
+    t.boolean "is_copyable", default: true, null: false
+    t.boolean "anonymize_author", default: false, null: false
+    t.bigint "derived_from_id"
     t.index ["content_page_id"], name: "index_content_exercises_on_content_page_id"
+    t.index ["derived_from_id"], name: "index_content_exercises_on_derived_from_id"
     t.index ["group_uuid", "version"], name: "index_content_exercises_on_group_uuid_and_version"
     t.index ["number", "version"], name: "index_content_exercises_on_number_and_version"
     t.index ["title"], name: "index_content_exercises_on_title"
@@ -1145,6 +1149,7 @@ ActiveRecord::Schema.define(version: 2020_11_05_003758) do
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_exercises", "content_exercises", column: "derived_from_id"
   add_foreign_key "content_exercises", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id", on_update: :cascade, on_delete: :cascade

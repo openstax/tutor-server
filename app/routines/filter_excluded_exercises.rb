@@ -26,7 +26,7 @@ class FilterExcludedExercises
     # Exclude exercises that aren't created by OS or course teacher(s)
     profile_ids << User::Models::OpenStaxProfile::ID
     no_ownership_excluded_numbers = exercises.map do |exercise|
-      exercise.number unless exercise.user_profile_id.in?(profile_ids.concat.uniq)
+      exercise.number unless exercise.user_profile_id.in?(profile_ids.flatten.uniq)
     end
 
     # Get exercises excluded due to anti-cheating rules

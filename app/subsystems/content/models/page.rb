@@ -32,6 +32,7 @@ class Content::Models::Page < IndestructibleRecord
   validates :title, presence: true
   validates :uuid, presence: true
   validates :version, presence: true
+  validates :url, presence: true
 
   scope :with_exercises, -> { where('CARDINALITY("content_pages"."all_exercise_ids") > 0') }
 

@@ -121,7 +121,8 @@ Rails.application.routes.draw do
 
       post :dates, on: :collection
 
-      resource :exercises, controller: :course_exercises, only: :update do
+      resource :exercises, controller: :course_exercises, only: :create do
+        put :exclude
         get :'(/:pool_types)', action: :show
       end
 
