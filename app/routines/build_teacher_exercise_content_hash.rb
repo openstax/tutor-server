@@ -45,7 +45,7 @@ class BuildTeacherExerciseContentHash
       }
     end
 
-    content_hash[:formats] = [].tap do |formats|
+    question[:formats] = [].tap do |formats|
       formats << "free-response" if data[:isTwoStep] || question[:answers].empty?
       formats << "multiple-choice" if question[:answers].any?
     end
@@ -63,7 +63,7 @@ class BuildTeacherExerciseContentHash
       group_uuid: ""
     })
 
-    if content_hash[:formats].any?('multiple-choice')
+    if content_hash[:questions][0][:formats].any?('multiple-choice')
       unless content_hash[:questions][0][:answers].one? {|a| a[:correctness] == '1.0' }
         fatal_error(
           code: :multiple_choice_must_have_valid_correctness,
