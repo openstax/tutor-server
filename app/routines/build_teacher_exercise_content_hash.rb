@@ -25,7 +25,8 @@ class BuildTeacherExerciseContentHash
       title: sanitize(data[:questionName]),
       collaborator_solutions: [],
       combo_choices: [],
-      community_solutions: []
+      community_solutions: [],
+      hints: []
     }
 
     question[:answers] = (data[:options] || []).map.with_index do |option, i|
@@ -54,13 +55,12 @@ class BuildTeacherExerciseContentHash
 
     # Extraneous fields
     content_hash.merge!({
-      stimulus_html: "",
+      stimulus_html: '',
       derived_from: [],
       is_vocab: false,
-      hints: [],
       authors: [],
-      uuid: "",
-      group_uuid: ""
+      uuid: '',
+      group_uuid: ''
     })
 
     if content_hash[:questions][0][:formats].any?('multiple-choice')

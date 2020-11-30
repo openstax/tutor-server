@@ -10,6 +10,8 @@ RSpec.describe BuildTeacherExerciseContentHash, type: :routine do
           stimulus_html: '',
           title: 'Title',
           stem_html: 'Question?',
+          formats: ['multiple-choice'],
+          hints: [],
           answers: [
             { id: 1,
               content_html: 'answer',
@@ -28,11 +30,9 @@ RSpec.describe BuildTeacherExerciseContentHash, type: :routine do
       stimulus_html: '',
       derived_from: [],
       is_vocab: false,
-      hints: [],
       authors: [],
       uuid: '',
       group_uuid: '',
-      formats: ['multiple-choice'],
       tags: ['difficulty:easy', 'blooms:2']
     }
 
@@ -83,6 +83,8 @@ RSpec.describe BuildTeacherExerciseContentHash, type: :routine do
           collaborator_solutions: [],
           combo_choices: [],
           community_solutions: [],
+          formats: ['multiple-choice'],
+          hints: [],
           answers: [
             {
               id: 1,
@@ -96,11 +98,9 @@ RSpec.describe BuildTeacherExerciseContentHash, type: :routine do
       stimulus_html: '',
       derived_from: [],
       is_vocab: false,
-      hints: [],
       authors: [],
       uuid: '',
       group_uuid: '',
-      formats: ['multiple-choice'],
       tags: []
     }
 
