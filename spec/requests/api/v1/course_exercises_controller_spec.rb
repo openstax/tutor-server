@@ -47,7 +47,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
       end
     end
 
-    context '#exlude' do
+    context '#exclude' do
       let(:exercise) { @ecosystem.exercises.first }
 
       context 'for anonymous' do
