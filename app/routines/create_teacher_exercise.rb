@@ -15,7 +15,6 @@ class CreateTeacherExercise
     exercise = Content::Models::Exercise.new(
       content: wrapper.content,
       page: page,
-      number: derived_from&.number,
       user_profile_id: profile.id,
       nickname: wrapper.nickname,
       title: wrapper.title,

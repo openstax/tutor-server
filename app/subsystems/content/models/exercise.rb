@@ -129,7 +129,8 @@ class Content::Models::Exercise < IndestructibleRecord
   def set_teacher_exercise_number_and_version
     return unless authored_by_teacher?
 
-    if number?
+    if derived_from && derived_from.user_profile_id == user_profile_id
+      self.number = derived_from.number
       self.version = (Content::Models::Exercise.where(number: number).maximum(:version) || 0) + 1
     else
       self.number = generate_next_teacher_exercise_number

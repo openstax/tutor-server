@@ -30,7 +30,7 @@ RSpec.describe Content::Models::Exercise, type: :model do
     expect(exercise.user_profile_id).to eq User::Models::OpenStaxProfile::ID
   end
 
-  it 'generates a number if the exercise was created by a teacher' do
+  it 'generates a number if created by a teacher' do
     allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
     exercise = FactoryBot.create(:content_exercise, user_profile_id: 1, number: nil)
 
@@ -38,19 +38,31 @@ RSpec.describe Content::Models::Exercise, type: :model do
     expect(exercise.version).to eq(1)
   end
 
-  it 'bumps version number if the exercise is derived' do
+  it 'generates a number and resets version if the derivable does not belong to the teacher (other teachers or OpenStax)' do
     allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
-
-    derivable = FactoryBot.create(:content_exercise, version: 5)
+    derivable = FactoryBot.create(:content_exercise, version: 5, user_profile_id: 2)
     exercise  = FactoryBot.create(
       :content_exercise, user_profile_id: 1, number: derivable.number, derived_from_id: derivable.id
+    )
+
+    expect(exercise.number).to eq(derivable.number)
+    expect(exercise.version).to eq(1)
+  end
+
+  it 'uses derivable number and bumps version if the derivable belongs to the teacher' do
+    allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
+
+    derivable = FactoryBot.create(:content_exercise, user_profile_id: 1)
+    derivable.update_attributes(version: 5)
+    exercise  = FactoryBot.create(
+      :content_exercise, user_profile_id: 1, derived_from_id: derivable.id
     )
 
     expect(exercise.number).to eq(derivable.number)
     expect(exercise.version).to eq(6)
   end
 
-  it 'does not generate a number if the exercise was created by OpenStax' do
+  it 'skips generating a number when importing from OpenStax' do
     allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
     exercise = FactoryBot.create(:content_exercise, user_profile_id: 0)
 
