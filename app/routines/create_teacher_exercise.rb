@@ -11,13 +11,11 @@ class CreateTeacherExercise
 
     wrapper = OpenStax::Exercises::V1::Exercise.new(content: content.to_json)
     derived_from = derived_from_id && find_derivable_exercise(course, derived_from_id)
-    version = (derived_from&.version || 0) + 1
 
     exercise = Content::Models::Exercise.new(
       content: wrapper.content,
       page: page,
       number: derived_from&.number,
-      version: version,
       user_profile_id: profile.id,
       nickname: wrapper.nickname,
       title: wrapper.title,
@@ -32,13 +30,7 @@ class CreateTeacherExercise
       is_copyable: copyable || true
     )
     exercise.images.attach(images) if images
-
-    if save
-      exercise.set_teacher_exercise_number
-      exercise.content_hash[:uid] = exercise.uid
-      exercise.content = exercise.content_hash.to_json
-      exercise.save
-    end
+    exercise.save if save
 
     run(
       :tag,

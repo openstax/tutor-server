@@ -31,17 +31,29 @@ RSpec.describe Content::Models::Exercise, type: :model do
   end
 
   it 'generates a number if the exercise was created by a teacher' do
-    allow_any_instance_of(ActiveRecord::Base.connection).to receive(:select_value).and_return(1000001)
+    allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
+    exercise = FactoryBot.create(:content_exercise, user_profile_id: 1, number: nil)
 
-    exercise = FactoryBot.create(:content_exercise, user_profile_id: 1)
+    expect(exercise.number).to eq(1000001)
+    expect(exercise.version).to eq(1)
+  end
 
-    expect(exercise.number).to_eq 1000001
+  it 'bumps version number if the exercise is derived' do
+    allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
+
+    derivable = FactoryBot.create(:content_exercise, version: 5)
+    exercise  = FactoryBot.create(
+      :content_exercise, user_profile_id: 1, number: derivable.number, derived_from_id: derivable.id
+    )
+
+    expect(exercise.number).to eq(derivable.number)
+    expect(exercise.version).to eq(6)
   end
 
   it 'does not generate a number if the exercise was created by OpenStax' do
-    allow_any_instance_of(ActiveRecord::Base.connection).to receive(:select_value).and_return(1000001)
+    allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
     exercise = FactoryBot.create(:content_exercise, user_profile_id: 0)
 
-    expect(exercise.number).not_to_eq 1000001
+    expect(exercise.number).not_to eq(1000001)
   end
 end

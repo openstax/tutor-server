@@ -22,7 +22,7 @@ class Content::Models::Exercise < IndestructibleRecord
   validates :version, presence: true
   validates :user_profile_id, presence: true
 
-  before_validation :set_teacher_exercise_number, unless: :number?
+  before_validation :set_teacher_exercise_number_and_version, on: :create
 
   # http://stackoverflow.com/a/7745635
   scope :latest, ->(scope = unscoped) do
@@ -126,10 +126,20 @@ class Content::Models::Exercise < IndestructibleRecord
     user_profile_id.present? && user_profile_id != User::Models::OpenStaxProfile::ID
   end
 
-  def set_teacher_exercise_number
+  def set_teacher_exercise_number_and_version
     return unless authored_by_teacher?
 
-    self.number = generate_next_teacher_exercise_number
+    if number?
+      self.version = (Content::Models::Exercise.where(number: number).maximum(:version) || 0) + 1
+    else
+      self.number = generate_next_teacher_exercise_number
+      self.version = 1
+    end
+
+    content_hash[:number] = number
+    content_hash[:version] = version
+    content_hash[:uid] = uid
+    self.content = content_hash.to_json
   end
 
   def generate_next_teacher_exercise_number
