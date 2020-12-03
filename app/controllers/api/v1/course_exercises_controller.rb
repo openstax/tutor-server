@@ -20,6 +20,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
     page    = @course.ecosystem.pages.find(params[:selectedChapterSection])
     content = BuildTeacherExerciseContentHash[data: params]
     profile = @course.teachers.map{|t| t.role.profile }.find{|p| p.id == params[:authorId] } || current_human_user
+    params.permit(:images)
 
     exercise = CreateTeacherExercise[
       course: @course,
