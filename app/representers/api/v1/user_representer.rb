@@ -70,7 +70,7 @@ module Api::V1
     property :available_terms,
               readable: true,
               writeable: false,
-              getter: ->(*) { GetUserTermsInfos[self].map{|i| i.slice('id', 'name', 'title', 'signed', 'is_proxy_signed') } }
+              getter: ->(*) { GetUserTermsInfos[self].map{|i| i.slice('id', 'name', 'title', 'is_signed', 'is_proxy_signed') } }
 
     property :profile_url,
              getter: ->(*) do

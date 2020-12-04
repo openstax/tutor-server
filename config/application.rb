@@ -79,7 +79,7 @@ module Tutor
     )
 
     config.middleware.use Rack::Attack
-    config.railties_order = [:all, :main_app]
+
     config.after_initialize do
       require 'rack-attack-settings'
     end
