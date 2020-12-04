@@ -26,22 +26,16 @@ RSpec.describe Content::Models::Exercise, type: :model do
 
   it 'defaults the author to OpenStax' do
     exercise = FactoryBot.create(:content_exercise)
-
     expect(exercise.user_profile_id).to eq User::Models::OpenStaxProfile::ID
   end
 
   it 'generates a number if the exercise was created by a teacher' do
-    allow_any_instance_of(ActiveRecord::Base.connection).to receive(:select_value).and_return(1000001)
-
     exercise = FactoryBot.create(:content_exercise, user_profile_id: 1)
-
-    expect(exercise.number).to_eq 1000001
+    expect(exercise.number).to_be > 1000000
   end
 
   it 'does not generate a number if the exercise was created by OpenStax' do
-    allow_any_instance_of(ActiveRecord::Base.connection).to receive(:select_value).and_return(1000001)
     exercise = FactoryBot.create(:content_exercise, user_profile_id: 0)
-
-    expect(exercise.number).not_to_eq 1000001
+    expect(exercise.number).to_be < 100
   end
 end
