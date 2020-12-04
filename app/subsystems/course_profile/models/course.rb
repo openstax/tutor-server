@@ -32,6 +32,9 @@ class CourseProfile::Models::Course < ApplicationRecord
   has_many :periods, subsystem: :course_membership, inverse_of: :course
 
   has_many :teachers, subsystem: :course_membership, inverse_of: :course
+  has_many :teacher_roles, through: :teachers, source: :role, class_name: 'Entity::Role'
+  has_many :teacher_profiles, through: :teacher_roles, source: :profile, class_name: 'User::Models::Profile'
+
   has_many :students, subsystem: :course_membership, inverse_of: :course
   has_many :teacher_students, subsystem: :course_membership, inverse_of: :course
 
