@@ -25,9 +25,11 @@ class FilterExcludedExercises
 
     # Exclude exercises that aren't created by OS or course teacher(s)
     profile_ids << User::Models::OpenStaxProfile::ID
-    no_ownership_excluded_numbers = exercises.map do |exercise|
-      exercise.number unless exercise.user_profile_id.in?(profile_ids.flatten.uniq)
-    end
+    no_ownership_excluded_numbers = exercises.select do |exercise|
+      exercise.user_profile_id.in?(profile_ids.flatten.uniq)
+    end.map(&:number)
+
+    deleted_excluded_numbers = exercises.select(&:deleted?).map(&:number)
 
     # Get exercises excluded due to anti-cheating rules
     anti_cheating_excluded_numbers = if role.nil?
@@ -60,12 +62,14 @@ class FilterExcludedExercises
     anti_cheating_excluded_numbers_set = Set.new anti_cheating_excluded_numbers
     additional_excluded_numbers_set = Set.new additional_excluded_numbers.to_a
     no_ownership_excluded_numbers_set = Set.new no_ownership_excluded_numbers
+    deleted_excluded_numbers_set = Set.new deleted_excluded_numbers
 
     outputs.admin_excluded_uids = []
     outputs.course_excluded_uids = []
     outputs.role_excluded_uids = []
     outputs.additional_excluded_uids = []
     outputs.no_ownership_excluded_numbers = []
+    outputs.deleted_excluded_numbers = []
 
     outputs.exercises = exercises.select do |ex|
       if admin_excluded_uids_set.include?(ex.uid) || admin_excluded_numbers_set.include?(ex.number)
@@ -90,6 +94,11 @@ class FilterExcludedExercises
 
       if no_ownership_excluded_numbers_set.include?(ex.number)
         outputs.no_ownership_excluded_numbers << ex.uid
+        next false
+      end
+
+      if deleted_numbers_set.include?(ex.number)
+        outputs.deleted_excluded_numbers << ex.uid
         next false
       end
 

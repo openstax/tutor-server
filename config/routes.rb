@@ -121,9 +121,11 @@ Rails.application.routes.draw do
 
       post :dates, on: :collection
 
-      resource :exercises, controller: :course_exercises, only: :create do
-        put :exclude
-        get :'(/:pool_types)', action: :show
+      resources :exercises, controller: :course_exercises, only: [ :create, :destroy ] do
+        collection do
+          get :'(/:pool_types)', action: :index
+          put :exclude
+        end
       end
 
       resources :grading_templates, shallow: true, only: [ :index, :create, :update, :destroy ]

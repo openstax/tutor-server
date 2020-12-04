@@ -12,7 +12,14 @@ class GetExercises
   #   :pool_types (defaults to all)
   #
   # returns course-specific exclusion information with the exercises (if :course provided)
-  def exec(ecosystem: nil, course: nil, page_ids: nil, exercise_ids: nil, pool_types: nil)
+  def exec(
+    ecosystem: nil,
+    course: nil,
+    page_ids: nil,
+    exercise_ids: nil,
+    pool_types: nil,
+    include_deleted: false
+  )
     raise ArgumentError, "Either :ecosystem or :course must be provided" \
       if ecosystem.nil? && course.nil?
 
@@ -33,11 +40,12 @@ class GetExercises
     profile_ids << course.related_teacher_profile_ids if course
 
     # Preload exercises, pages and teks tags
-    exercises_by_id = Content::Models::Exercise
+    all_exercises = Content::Models::Exercise
       .where(id: exercise_ids_by_pool_type.values.flatten.uniq)
       .where(user_profile_id: profile_ids.flatten.uniq)
       .preload(:page, tags: :teks_tags)
-      .index_by(&:id)
+    all_exercises = all_exercises.not_deleted unless include_deleted
+    exercises_by_id = all_exercises.index_by(&:id)
 
     # Filter excluded exercises only if exercise_ids are not specified
     filter_exercises = exercise_ids.blank?
