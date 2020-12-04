@@ -16,7 +16,7 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
     expect(representation['faculty_status']).to eq user.faculty_status
     expect(representation['can_create_courses']).to eq user.can_create_courses?
     expect(representation['viewed_tour_stats']).to eq []
-    expect(representation['terms_signatures_needed']).to eq false
+    expect(representation['available_terms']).to eq []
     expect(representation['profile_url']).to eq Addressable::URI.join(
       OpenStax::Accounts.configuration.openstax_accounts_url, '/profile'
     ).to_s
@@ -37,6 +37,6 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
       contract.content = 'Placeholder for general terms of use, required for new installations to function'
     end
 
-    expect(representation).to include('terms_signatures_needed' => true)
+    expect(representation).to include('available_terms' => true)
   end
 end
