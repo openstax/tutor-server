@@ -26,16 +26,33 @@ RSpec.describe Content::Models::Exercise, type: :model do
 
   it 'defaults the author to OpenStax' do
     exercise = FactoryBot.create(:content_exercise)
+
     expect(exercise.user_profile_id).to eq User::Models::OpenStaxProfile::ID
   end
 
-  it 'generates a number if the exercise was created by a teacher' do
-    exercise = FactoryBot.create(:content_exercise, user_profile_id: 1)
-    expect(exercise.number).to_be > 1000000
-  end
+  describe('number generation') do
+    let(:exercise) {
+      FactoryBot.build(:content_exercise, user_profile_id: user_profile_id)
+    }
 
-  it 'does not generate a number if the exercise was created by OpenStax' do
-    exercise = FactoryBot.create(:content_exercise, user_profile_id: 0)
-    expect(exercise.number).to_be < 100
+    describe('created by a teacher') do
+      let(:user_profile_id) { 1 }
+
+      it 'has large number' do
+        expect(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return 10000
+        exercise.number = nil # override whatever factory set
+        expect(exercise.authored_by_teacher?).to be(true)
+        expect(exercise.save).to be true
+        expect(exercise.number).to be 10000
+      end
+    end
+
+    describe 'when created by OpenStax' do
+      let(:user_profile_id) { nil }
+      it 'has small number' do
+        expect(Content::Models::Exercise).not_to receive(:generate_next_teacher_exercise_number)
+        expect(exercise.number).to be < 100
+      end
+    end
   end
 end

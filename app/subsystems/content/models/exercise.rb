@@ -127,12 +127,13 @@ class Content::Models::Exercise < IndestructibleRecord
   end
 
   def set_teacher_exercise_number
+    puts 'valid set e'
     return unless authored_by_teacher?
 
-    self.number = generate_next_teacher_exercise_number
+    self.number = Content::Models::Exercise.generate_next_teacher_exercise_number
   end
 
-  def generate_next_teacher_exercise_number
+  def self.generate_next_teacher_exercise_number
     ActiveRecord::Base.connection.select_value("SELECT nextval('teacher_exercise_number')")
   end
 end

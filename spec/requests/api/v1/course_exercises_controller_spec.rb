@@ -39,7 +39,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
           selectedChapterSection: page.id,
           questionText: 'Test'
         }
-
+        expect(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return 10000
         expect do
           api_post api_course_exercises_url(course.id), user_1_token,
                      params: params.to_json
