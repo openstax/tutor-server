@@ -123,7 +123,7 @@ class Content::Models::Exercise < IndestructibleRecord
   end
 
   def authored_by_teacher?
-    user_profile_id.present? && user_profile_id != User::Models::OpenStaxProfile::ID
+    user_profile_id != User::Models::OpenStaxProfile::ID
   end
 
   def set_teacher_exercise_number_and_version
