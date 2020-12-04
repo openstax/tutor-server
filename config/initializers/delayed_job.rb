@@ -29,7 +29,8 @@ Delayed::Worker.queue_attributes = {
   dashboard:   { priority: 10 },
   reassign:    { priority: 20 },
   maintenance: { priority: 30 },
-  preview:     { priority: 40 }
+  preview:     { priority: 40 },
+  migration:   { priority: 50 }
 }
 
 # Allows us to use this gem in tests instead of setting the ActiveJob adapter to :inline

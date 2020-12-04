@@ -82,6 +82,9 @@ GEM
     awesome_print (1.8.0)
     aws-eventstream (1.1.0)
     aws-partitions (1.385.0)
+    aws-sdk-cloudwatch (1.46.0)
+      aws-sdk-core (~> 3, >= 3.109.0)
+      aws-sigv4 (~> 1.1)
     aws-sdk-core (3.109.1)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
@@ -742,6 +745,7 @@ DEPENDENCIES
   addressable
   apipie-rails
   awesome_print
+  aws-sdk-cloudwatch
   aws-sdk-secretsmanager
   aws-sdk-ssm
   axlsx!
