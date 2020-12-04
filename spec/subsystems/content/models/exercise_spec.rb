@@ -24,48 +24,55 @@ RSpec.describe Content::Models::Exercise, type: :model do
     expect(second['questions'].first['stem_html']).to match('(1)')
   end
 
-  it 'defaults the author to OpenStax' do
-    exercise = FactoryBot.create(:content_exercise)
+  context 'authored by OpenStax' do
+    it 'defaults the author to OpenStax' do
+      exercise = FactoryBot.create(:content_exercise)
 
-    expect(exercise.user_profile_id).to eq User::Models::OpenStaxProfile::ID
+      expect(exercise.user_profile_id).to eq User::Models::OpenStaxProfile::ID
+    end
+
+    it 'skips generating a number' do
+      allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
+      exercise = FactoryBot.create(:content_exercise, user_profile_id: 0)
+
+      expect(exercise.number).not_to eq(1000001)
+    end
   end
 
-  it 'generates a number if created by a teacher' do
-    allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
-    exercise = FactoryBot.create(:content_exercise, user_profile_id: 1, number: nil)
+  context 'authored by a teacher' do
+    it 'generates a number and uuid' do
+      allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
+      exercise = FactoryBot.create(:content_exercise, user_profile_id: 1, number: nil)
 
-    expect(exercise.number).to eq(1000001)
-    expect(exercise.version).to eq(1)
-  end
+      expect(exercise.number).to eq(1000001)
+      expect(exercise.uuid).not_to be_nil
+      expect(exercise.version).to eq(1)
+    end
 
-  it 'generates a number and resets version if the derivable does not belong to the teacher (other teachers or OpenStax)' do
-    allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
-    derivable = FactoryBot.create(:content_exercise, version: 5, user_profile_id: 2)
-    exercise  = FactoryBot.create(
-      :content_exercise, user_profile_id: 1, number: derivable.number, derived_from_id: derivable.id
-    )
+    it 'generates a number and resets version if the derivable does not belong to the teacher (other teachers or OpenStax)' do
+      derivable = FactoryBot.create(:content_exercise, version: 5, user_profile_id: 2)
+      allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
+      exercise  = FactoryBot.create(
+        :content_exercise, user_profile_id: 1, number: derivable.number, derived_from_id: derivable.id
+      )
 
-    expect(exercise.number).to eq(derivable.number)
-    expect(exercise.version).to eq(1)
-  end
+      expect(exercise.number).to eq(1000001)
+      expect(exercise.group_uuid).not_to eq(derivable.group_uuid)
+      expect(exercise.version).to eq(1)
+    end
 
-  it 'uses derivable number and bumps version if the derivable belongs to the teacher' do
-    allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
+    it 'uses derivable number and group_uuid, and bumps version if the derivable belongs to the teacher' do
+      allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
 
-    derivable = FactoryBot.create(:content_exercise, user_profile_id: 1)
-    derivable.update_attributes(version: 5)
-    exercise  = FactoryBot.create(
-      :content_exercise, user_profile_id: 1, derived_from_id: derivable.id
-    )
+      derivable = FactoryBot.create(:content_exercise, user_profile_id: 1)
+      derivable.update_attributes(version: 5)
+      exercise  = FactoryBot.create(
+        :content_exercise, user_profile_id: 1, derived_from_id: derivable.id
+      )
 
-    expect(exercise.number).to eq(derivable.number)
-    expect(exercise.version).to eq(6)
-  end
-
-  it 'skips generating a number when importing from OpenStax' do
-    allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1000001)
-    exercise = FactoryBot.create(:content_exercise, user_profile_id: 0)
-
-    expect(exercise.number).not_to eq(1000001)
+      expect(exercise.number).to eq(derivable.number)
+      expect(exercise.group_uuid).to eq(derivable.group_uuid)
+      expect(exercise.version).to eq(6)
+    end
   end
 end
