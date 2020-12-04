@@ -7,6 +7,7 @@
 every 1.minute do
   rake 'openstax:accounts:sync:accounts'
   rake 'delayed:heartbeat:delete_timed_out_workers'
+  rake 'aws:update_cloudwatch_metrics'
 end
 
 every 10.minutes do

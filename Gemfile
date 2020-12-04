@@ -329,6 +329,9 @@ group :production, :test do
 end
 
 group :production do
+  # Used to send custom delayed_job metrics to Cloudwatch
+  gem 'aws-sdk-cloudwatch', require: false
+
   # Used to fetch secrets from the AWS parameter store and secrets manager
   gem 'aws-sdk-ssm', require: false
   gem 'aws-sdk-secretsmanager', require: false
