@@ -27,14 +27,21 @@ namespace :aws do
       { name: 'Application', value: 'tutor' }, { name: 'Environment', value: environment_name }
     ]
 
-    ([ '' ] + Delayed::Worker.queue_attributes.keys.map(&:to_s)).each_slice(20) do |queues|
+    known_queues = Delayed::Worker.queue_attributes.keys.map(&:to_s)
+    ([ nil ] + known_queues + [ 'other' ]).each_slice(20) do |queues|
       client.put_metric_data(
         namespace: 'DelayedJob',
         metric_data: queues.map do |queue|
           dimensions = default_dimensions
           dimensions += [ { name: 'Queue', value: queue } ] unless queue.blank?
-          min_effective_run_at = queue.blank? ? min_effective_run_at_by_queue.values.compact.min :
-                                                min_effective_run_at_by_queue[queue]
+
+          min_effective_run_at = if queue.blank?
+            min_effective_run_at_by_queue.values.compact.min
+          elsif queue == 'other'
+            min_effective_run_at_by_queue.except(*known_queues).compact.min
+          else
+            min_effective_run_at_by_queue[queue]
+          end
 
           {
             metric_name: 'MaxWait',
