@@ -25,9 +25,14 @@ class FilterExcludedExercises
 
     # Exclude exercises that aren't created by OS or course teacher(s)
     profile_ids << User::Models::OpenStaxProfile::ID
+
+    profile_ids = profile_ids.flatten.uniq
+
     no_ownership_excluded_numbers = exercises.select do |exercise|
-      exercise.user_profile_id.in?(profile_ids.flatten.uniq)
+      profile_ids.none?(exercise.user_profile_id)
     end.map(&:number)
+
+    # no_ownership_excluded_numbers = []
 
     deleted_excluded_numbers = exercises.select(&:deleted?).map(&:number)
 
@@ -97,7 +102,7 @@ class FilterExcludedExercises
         next false
       end
 
-      if deleted_numbers_set.include?(ex.number)
+      if deleted_excluded_numbers_set.include?(ex.number)
         outputs.deleted_excluded_numbers << ex.uid
         next false
       end
