@@ -64,8 +64,8 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
 
     #{json_schema(Api::V1::ExerciseRepresenter, include: :writeable)}
   EOS
-  def delete
-    number = params[:id]
+  def destroy
+    number = params[:id].to_i
 
     exercises = Content::Models::Exercise.where(number: number).to_a
 
@@ -75,7 +75,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
       OSU::AccessPolicy.require_action_allowed!(:delete, current_api_user, exercise)
     end
 
-    DeleteTeacherExercise[number: number]
+    DeleteTeacherExercise.call number: number
 
     respond_with exercises, represent_with: Api::V1::ExercisesRepresenter,
                             responder: ResponderWithPutPatchDeleteContent,

@@ -12,6 +12,8 @@ class Content::Models::Exercise < IndestructibleRecord
   belongs_to :derived_from, class_name: 'Content::Models::Exercise', foreign_key: :derived_from_id, optional: true
   has_many :derivatives, class_name: 'Content::Models::Exercise', foreign_key: :derived_from_id
 
+  belongs_to :profile, subsystem: :user, optional: true
+
   has_many :exercise_tags, dependent: :destroy, inverse_of: :exercise
   has_many :tags, through: :exercise_tags
 

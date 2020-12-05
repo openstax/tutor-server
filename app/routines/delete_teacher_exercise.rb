@@ -1,13 +1,13 @@
 class DeleteTeacherExercise
-  MIN_TEACHER_EXERCISE_NUMBER = 1000000
-
   lev_routine
 
   protected
 
   def exec(number:)
-    raise "#{number} is not a teacher exercise number" if number < MIN_TEACHER_EXERCISE_NUMBER
+    updated = Content::Models::Exercise.where(number: number).where.not(
+      user_profile_id: 0
+    ).update_all(deleted_at: Time.current)
 
-    Content::Models::Exercise.where(number: number).update_all(deleted_at: Time.current)
+    raise "Invalid number: #{number}" if updated == 0
   end
 end

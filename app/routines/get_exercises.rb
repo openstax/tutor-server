@@ -44,7 +44,7 @@ class GetExercises
       .where(id: exercise_ids_by_pool_type.values.flatten.uniq)
       .where(user_profile_id: profile_ids.flatten.uniq)
       .preload(:page, tags: :teks_tags)
-    all_exercises = all_exercises.not_deleted unless include_deleted
+    all_exercises = all_exercises.without_deleted unless include_deleted
     exercises_by_id = all_exercises.index_by(&:id)
 
     # Filter excluded exercises only if exercise_ids are not specified
