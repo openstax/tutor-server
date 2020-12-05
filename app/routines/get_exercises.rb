@@ -33,10 +33,14 @@ class GetExercises
     profile_ids << course.related_teacher_profile_ids if course
 
     # Preload exercises, pages and teks tags
-    exercises_by_id = Content::Models::Exercise
+    exercises = Content::Models::Exercise
       .where(id: exercise_ids_by_pool_type.values.flatten.uniq)
       .where(user_profile_id: profile_ids.flatten.uniq)
       .preload(:page, tags: :teks_tags)
+
+    exercises_by_id = exercises
+      .group_by(&:number)
+      .map {|k, v| v.sort_by(&:version).last }
       .index_by(&:id)
 
     # Filter excluded exercises only if exercise_ids are not specified
