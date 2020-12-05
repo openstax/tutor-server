@@ -11,6 +11,8 @@ namespace :aws do
       <<~SELECT
         "delayed_jobs"."queue", MIN(
           GREATEST(
+            "delayed_jobs"."created_at",
+            "delayed_jobs"."updated_at",
             "delayed_jobs"."run_at",
             "delayed_jobs"."locked_at" + INTERVAL '#{max_run_time} seconds'
           )
