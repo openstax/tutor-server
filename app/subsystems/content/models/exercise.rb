@@ -155,7 +155,7 @@ class Content::Models::Exercise < IndestructibleRecord
       self.version = (Content::Models::Exercise.where(number: number).maximum(:version) || 0) + 1
       self.group_uuid = derived_from.group_uuid
     else
-      self.number = generate_next_teacher_exercise_number
+      self.number = Content::Models::Exercise.generate_next_teacher_exercise_number
       self.version = 1
       self.group_uuid = SecureRandom.uuid
     end
@@ -185,7 +185,7 @@ class Content::Models::Exercise < IndestructibleRecord
     self.coauthor_profile_ids = coauthor_ids
   end
 
-  def generate_next_teacher_exercise_number
+  def self.generate_next_teacher_exercise_number
     ActiveRecord::Base.connection.select_value("SELECT nextval('teacher_exercise_number')")
   end
 end
