@@ -11,13 +11,10 @@ class CreateTeacherExercise
 
     wrapper = OpenStax::Exercises::V1::Exercise.new(content: content.to_json)
     derived_from = derived_from_id && find_derivable_exercise(course, derived_from_id)
-    version = (derived_from&.version || 0) + 1
 
     exercise = Content::Models::Exercise.new(
       content: wrapper.content,
       page: page,
-      number: derived_from&.number,
-      version: version,
       user_profile_id: profile.id,
       nickname: wrapper.nickname,
       title: wrapper.title,
