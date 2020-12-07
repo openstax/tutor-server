@@ -101,7 +101,6 @@ RSpec.describe CollectCourseInfo, type: :routine do
             course_1.past_due_unattempted_ungraded_wrq_are_zero,
           related_teacher_profile_ids: course_1.related_teacher_profile_ids,
           last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
-          related_teacher_profile_ids: course_1.related_teacher_profile_ids,
           school_name: course_1.school_name,
           salesforce_book_name: course_1.offering.salesforce_book_name,
           appearance_code: course_1.offering.appearance_code,
