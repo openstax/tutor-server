@@ -44,6 +44,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           past_due_unattempted_ungraded_wrq_are_zero:
             course_1.past_due_unattempted_ungraded_wrq_are_zero,
           last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
+          related_teacher_profile_ids: course_1.related_teacher_profile_ids,
           school_name: course_1.school_name,
           salesforce_book_name: course_1.offering.salesforce_book_name,
           appearance_code: course_1.offering.appearance_code,
@@ -55,6 +56,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           periods: [],
           spy_info: { research_studies: [] },
           students: [],
+          teacher_profiles: course_1.teacher_profiles,
           roles: []
         }
       ]
@@ -97,7 +99,9 @@ RSpec.describe CollectCourseInfo, type: :routine do
           pre_wrm_scores?: course_1.pre_wrm_scores?,
           past_due_unattempted_ungraded_wrq_are_zero:
             course_1.past_due_unattempted_ungraded_wrq_are_zero,
+          related_teacher_profile_ids: course_1.related_teacher_profile_ids,
           last_lms_scores_push_job_id: course_1.last_lms_scores_push_job_id,
+          related_teacher_profile_ids: course_1.related_teacher_profile_ids,
           school_name: course_1.school_name,
           salesforce_book_name: course_1.offering.salesforce_book_name,
           appearance_code: course_1.offering.appearance_code,
@@ -109,6 +113,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           periods: [],
           spy_info: { research_studies: [] },
           students: [],
+          teacher_profiles: course_1.teacher_profiles,
           roles: []
         },
         {
@@ -135,6 +140,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           past_due_unattempted_ungraded_wrq_are_zero:
             course_2.past_due_unattempted_ungraded_wrq_are_zero,
           last_lms_scores_push_job_id: course_2.last_lms_scores_push_job_id,
+          related_teacher_profile_ids: course_1.related_teacher_profile_ids,
           school_name: course_2.school_name,
           salesforce_book_name: course_2.offering.salesforce_book_name,
           appearance_code: course_2.offering.appearance_code,
@@ -146,6 +152,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           periods: [],
           spy_info: { research_studies: [] },
           students: [],
+          teacher_profiles: course_1.teacher_profiles,
           roles: []
         }
       ]
@@ -193,11 +200,13 @@ RSpec.describe CollectCourseInfo, type: :routine do
             cloned_from_id: course_1.cloned_from_id,
             homework_weight: course_1.homework_weight,
             reading_weight: course_1.reading_weight,
+            related_teacher_profile_ids: course_1.related_teacher_profile_ids,
             ecosystem: course_1.ecosystem,
             should_reuse_preview?: course_1.should_reuse_preview?,
             periods: a_collection_containing_exactly(period_1, period_2),
             spy_info: { research_studies: [] },
             students: [],
+            teacher_profiles: course_1.teacher_profiles,
             roles: a_collection_containing_exactly(teacher_role, teacher_student_role)
           }
         ]
@@ -240,11 +249,13 @@ RSpec.describe CollectCourseInfo, type: :routine do
             cloned_from_id: course_1.cloned_from_id,
             homework_weight: course_1.homework_weight,
             reading_weight: course_1.reading_weight,
+            related_teacher_profile_ids: course_1.related_teacher_profile_ids,
             ecosystem: course_1.ecosystem,
             should_reuse_preview?: course_1.should_reuse_preview?,
             periods: [ student.period ],
             spy_info: { research_studies: [] },
             students: [ student ],
+            teacher_profiles: course_1.teacher_profiles,
             roles: [ student_role ]
           }
         ]

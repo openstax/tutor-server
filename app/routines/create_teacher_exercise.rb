@@ -31,12 +31,7 @@ class CreateTeacherExercise
 
     exercise.images.attach(images) if images.present?
 
-    if save
-      exercise.set_teacher_exercise_number
-      exercise.content_hash[:uid] = exercise.uid
-      exercise.content = exercise.content_hash.to_json
-      exercise.save
-    end
+    exercise.save if save
 
     run(
       :tag,
