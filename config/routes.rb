@@ -121,9 +121,11 @@ Rails.application.routes.draw do
 
       post :dates, on: :collection
 
-      resource :exercises, controller: :course_exercises, only: :create do
-        put :exclude
-        get :'(/:pool_types)', action: :show
+      resources :exercises, controller: :course_exercises, only: [ :create, :destroy ] do
+        collection do
+          get :'(/:pool_types)', action: :index
+          put :exclude
+        end
       end
 
       resources :grading_templates, shallow: true, only: [ :index, :create, :update, :destroy ]
@@ -422,6 +424,7 @@ Rails.application.routes.draw do
   end
 
   mount FinePrint::Engine => :fine_print
+  mount ActiveStorage::Engine, at: '/rails/active_storage'
 
   # API docs
   apipie
@@ -436,6 +439,10 @@ Rails.application.routes.draw do
     end
   end
 
-  # Catch-all frontend route
-  get :'*other', controller: :webview, action: :index
+  # Catch-all frontend route, excluding active_storage
+  # the constraint shouldn't be needed once upgraded to rails 6
+  get :'*other', controller: :webview, action: :index, constraints: ->(req) do
+    req.path.exclude? 'rails/active_storage'
+  end
+
 end

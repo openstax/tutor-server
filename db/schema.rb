@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_23_223824) do
+ActiveRecord::Schema.define(version: 2020_12_04_222351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -127,6 +127,8 @@ ActiveRecord::Schema.define(version: 2020_11_23_223824) do
     t.boolean "is_copyable", default: true, null: false
     t.boolean "anonymize_author", default: false, null: false
     t.bigint "derived_from_id"
+    t.datetime "deleted_at"
+    t.integer "coauthor_profile_ids", default: [], array: true
     t.index ["content_page_id"], name: "index_content_exercises_on_content_page_id"
     t.index ["derived_from_id"], name: "index_content_exercises_on_derived_from_id"
     t.index ["group_uuid", "version"], name: "index_content_exercises_on_group_uuid_and_version"
@@ -583,6 +585,7 @@ ActiveRecord::Schema.define(version: 2020_11_23_223824) do
     t.datetime "updated_at", null: false
     t.integer "faculty_status", default: 0, null: false
     t.string "salesforce_contact_id"
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "role", default: 0, null: false
     t.citext "support_identifier"
     t.boolean "is_test"
@@ -590,7 +593,6 @@ ActiveRecord::Schema.define(version: 2020_11_23_223824) do
     t.boolean "is_kip"
     t.integer "school_location", default: 0, null: false
     t.boolean "grant_tutor_access"
-    t.uuid "uuid", default: -> { "gen_random_uuid()" }
     t.index ["access_token"], name: "index_openstax_accounts_accounts_on_access_token", unique: true
     t.index ["faculty_status"], name: "index_openstax_accounts_accounts_on_faculty_status"
     t.index ["first_name"], name: "index_openstax_accounts_accounts_on_first_name"
@@ -602,6 +604,7 @@ ActiveRecord::Schema.define(version: 2020_11_23_223824) do
     t.index ["school_type"], name: "index_openstax_accounts_accounts_on_school_type"
     t.index ["support_identifier"], name: "index_openstax_accounts_accounts_on_support_identifier", unique: true
     t.index ["username"], name: "index_openstax_accounts_accounts_on_username"
+    t.index ["uuid"], name: "index_openstax_accounts_accounts_on_uuid", unique: true
   end
 
   create_table "openstax_salesforce_users", id: :serial, force: :cascade do |t|
@@ -885,7 +888,6 @@ ActiveRecord::Schema.define(version: 2020_11_23_223824) do
     t.datetime "updated_at", null: false
     t.index ["content_exercise_id"], name: "index_tasks_practice_questions_on_content_exercise_id"
     t.index ["entity_role_id", "content_exercise_id"], name: "index_question_on_role_and_exercise", unique: true
-    t.index ["entity_role_id"], name: "index_tasks_practice_questions_on_entity_role_id"
     t.index ["tasks_tasked_exercise_id"], name: "index_tasks_practice_questions_on_tasks_tasked_exercise_id"
   end
 
@@ -943,7 +945,7 @@ ActiveRecord::Schema.define(version: 2020_11_23_223824) do
 
   create_table "tasks_tasked_exercises", id: :serial, force: :cascade do |t|
     t.integer "content_exercise_id", null: false
-    t.string "url", null: false
+    t.string "url"
     t.string "title"
     t.text "free_response"
     t.string "answer_id"

@@ -39,7 +39,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
           selectedChapterSection: page.id,
           questionText: 'Test'
         }
-
+        expect(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return 10000
         expect do
           api_post api_course_exercises_url(course.id), user_1_token,
                      params: params.to_json
@@ -120,6 +120,42 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
           expect(exclusions).to be_an Array
           expect(exclusions.first[:id]).to eq exercise.id.to_s
           expect(exclusions.first[:is_excluded]).to eq false
+        end
+      end
+    end
+
+    context '#destroy' do
+      let(:exercise) { @ecosystem.exercises.first }
+
+      before { exercise.update_attribute :profile, user_2 }
+
+      context 'for anonymous' do
+        it 'raises SecurityTransgression' do
+          expect(DeleteTeacherExercise).not_to receive(:call)
+
+          expect do
+            api_delete api_course_exercise_url(course.id, exercise.number), nil
+          end.to raise_error(SecurityTransgression)
+        end
+      end
+
+      context 'for a user that is not the author' do
+        it 'raises SecurityTransgression' do
+          expect(DeleteTeacherExercise).not_to receive(:call)
+
+          expect do
+            api_delete api_course_exercise_url(course.id, exercise.number), user_1_token
+          end.to raise_error(SecurityTransgression)
+        end
+      end
+
+      context 'for the exercise author' do
+        it 'deletes the exercise' do
+          expect(DeleteTeacherExercise).to receive(:call).with(number: exercise.number)
+
+          api_delete api_course_exercise_url(course.id, exercise.number), user_2_token
+
+          expect(response).to have_http_status(:success)
         end
       end
     end
