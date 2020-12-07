@@ -19,6 +19,8 @@ class Content::Models::Exercise < IndestructibleRecord
 
   has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
 
+  TEACHER_NUMBER_START = 1000000
+
   if respond_to?(:has_many_attached)
     has_many_attached :images
   else

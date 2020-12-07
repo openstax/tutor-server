@@ -41,6 +41,7 @@ gem 'turbolinks'
 
 # PostgreSQL database
 gem 'pg'
+gem 'ar-sequence'
 
 # Use the puma webserver
 gem 'puma'

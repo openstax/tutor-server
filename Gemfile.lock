@@ -75,6 +75,8 @@ GEM
     aes_key_wrap (1.0.1)
     apipie-rails (0.5.15)
       rails (>= 4.1)
+    ar-sequence (0.1.2)
+      activerecord
     arel (9.0.0)
     ast (2.4.0)
     autoprefixer-rails (9.5.0)
@@ -737,6 +739,7 @@ DEPENDENCIES
   activerecord-import
   addressable
   apipie-rails
+  ar-sequence
   awesome_print
   aws-sdk-s3
   axlsx!
