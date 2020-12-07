@@ -63,7 +63,7 @@ class OpenStax::Exercises::V1::FakeClient
         }
       ],
       questions: num_questions.times.map do |index|
-        question_number = number + index
+        question_number = (number || -1) + index
 
         {
           id: "#{question_number}",
