@@ -8,7 +8,7 @@ module User
       end
 
       def self.name
-        'OpenStax Community'
+        'OpenStax user'
       end
     end
   end
