@@ -28,8 +28,15 @@ class CreateTeacherExercise
       anonymize_author: anonymize || false,
       is_copyable: copyable || true
     )
-    exercise.images.attach(images) if images
-    exercise.save if save
+
+    exercise.images.attach(images) if images.present?
+
+    if save
+      exercise.set_teacher_exercise_number
+      exercise.content_hash[:uid] = exercise.uid
+      exercise.content = exercise.content_hash.to_json
+      exercise.save
+    end
 
     run(
       :tag,

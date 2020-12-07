@@ -40,14 +40,10 @@ module Api::V1
              },
              schema_info: { required: true }
 
-    property :files_path,
+    property :images,
              type: String,
              readable: true,
-             writeable: false,
-             getter: ->(user_options:, **) {
-      ''
-#               Rails.application.routes.url_helpers.rails_blob_path(self, only_path: true)
-             }
+             writeable: true
 
     collection :tags,
                readable: true,
