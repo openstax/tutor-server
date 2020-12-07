@@ -62,19 +62,17 @@ context 'timezone updates' do
     expect(task.closes_at).to eq task_time
     task.save validate: false
 
-    test_tz_names = [ 'UTC' ] + CourseProfile::Models::Course::VALID_TIMEZONES
-    test_tz_names.each do |tz_name|
-      expect do
-        task.course.update_attribute :timezone, tz_name
-      end.to change { task.reload.closes_at.zone }
+    test_tz_names = CourseProfile::Models::Course::VALID_TIMEZONES + [ 'UTC' ]- [ 'US/Central' ]
+    expect do
+      task.course.update_attribute :timezone, test_tz_names.sample
+    end.to change { task.reload.closes_at.zone }
 
-      # The zone changes but the numbers remain the same
-      expect(task.reload.closes_at.year).to eq task_time.year
-      expect(task.closes_at.month).to eq task_time.month
-      expect(task.closes_at.day).to eq task_time.day
-      expect(task.closes_at.hour).to eq task_time.hour
-      expect(task.closes_at.min).to eq task_time.min
-      expect(task.closes_at.sec).to eq task_time.sec
-    end
+    # The zone changes but the numbers remain the same
+    expect(task.reload.closes_at.year).to eq task_time.year
+    expect(task.closes_at.month).to eq task_time.month
+    expect(task.closes_at.day).to eq task_time.day
+    expect(task.closes_at.hour).to eq task_time.hour
+    expect(task.closes_at.min).to eq task_time.min
+    expect(task.closes_at.sec).to eq task_time.sec
   end
 end
