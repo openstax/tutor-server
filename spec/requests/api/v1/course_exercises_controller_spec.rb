@@ -67,7 +67,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
         expect do
           api_post api_course_exercises_url(course.id), user_1_token,
                      params: params.to_json
-        end.to raise_error
+        end.to raise_error(StandardError)
       end
     end
 
