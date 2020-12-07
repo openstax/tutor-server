@@ -4,7 +4,9 @@ class GetUserTermsInfos
   uses_routine GetUserCourses, translations: { outputs: { type: :verbatim } }
   uses_routine Legal::GetContractNames, translations: { outputs: { type: :verbatim } }
 
-  CONTRACT_NAMES_SIGNED_BY_EVERYONE = [:general_terms_of_use, :privacy_policy]
+  # even though exercise_editing is a teacher-only activity, we include it in the terms
+  # so the front-end can make decisions about when to show the prompt for it
+  CONTRACT_NAMES_SIGNED_BY_EVERYONE = [:general_terms_of_use, :privacy_policy, :exercise_editing]
 
   def exec(user)
     # Get contracts that apply to the user's current courses; some of these

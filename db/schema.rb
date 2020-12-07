@@ -128,6 +128,7 @@ ActiveRecord::Schema.define(version: 2020_12_04_222351) do
     t.boolean "anonymize_author", default: false, null: false
     t.bigint "derived_from_id"
     t.datetime "deleted_at"
+    t.integer "coauthor_profile_ids", default: [], array: true
     t.index ["content_page_id"], name: "index_content_exercises_on_content_page_id"
     t.index ["derived_from_id"], name: "index_content_exercises_on_derived_from_id"
     t.index ["group_uuid", "version"], name: "index_content_exercises_on_group_uuid_and_version"
@@ -944,7 +945,7 @@ ActiveRecord::Schema.define(version: 2020_12_04_222351) do
 
   create_table "tasks_tasked_exercises", id: :serial, force: :cascade do |t|
     t.integer "content_exercise_id", null: false
-    t.string "url", null: false
+    t.string "url"
     t.string "title"
     t.text "free_response"
     t.string "answer_id"

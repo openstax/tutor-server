@@ -14,7 +14,7 @@ RSpec.describe CreateTeacherExercise, type: :routine do
 
   context 'creating a teacher exercise' do
     it 'works with valid data' do
-      allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1)
+      allow(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1)
 
       expect do
         @result = described_class.call(
@@ -30,7 +30,7 @@ RSpec.describe CreateTeacherExercise, type: :routine do
     end
 
     it 'works with an owned source' do
-      allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1)
+      allow(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1)
 
       expect do
         @result = described_class.call(
@@ -47,7 +47,7 @@ RSpec.describe CreateTeacherExercise, type: :routine do
     end
 
     it 'does not work with an unowned source' do
-      allow_any_instance_of(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1)
+      allow(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return(1)
 
       expect do
         @result = described_class.call(
