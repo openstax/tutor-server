@@ -153,6 +153,7 @@ class CourseProfile::Models::Course < ApplicationRecord
     ended?(current_time) && !cache&.teacher_performance_report.nil?
   end
 
+  # Includes teachers the course was cloned from
   def related_teacher_profiles
     profiles = []
     courses = [self]
@@ -168,6 +169,10 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   def related_teacher_profile_ids
     related_teacher_profiles.map(&:id)
+  end
+
+  def teacher_profiles
+    teachers.map {|t| t.role.profile }
   end
 
   protected

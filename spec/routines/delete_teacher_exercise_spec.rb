@@ -4,9 +4,15 @@ RSpec.describe DeleteTeacherExercise, type: :routine do
   let(:author)      { FactoryBot.create :user_profile }
 
   let!(:exercise_1) { FactoryBot.create :content_exercise, user_profile_id: 0 }
-  let!(:exercise_2) { FactoryBot.create :content_exercise, profile: author, number: 1000000 }
+  let!(:exercise_2) do
+    exercise = FactoryBot.build :content_exercise, user_profile_id: author.id, number: 1000000
+    exercise.save(validate: false)
+    exercise
+  end
   let!(:exercise_3) do
-    FactoryBot.create :content_exercise, profile: author, number: exercise_2.number
+    exercise = FactoryBot.build :content_exercise, user_profile_id: author.id, number: exercise_2.number
+    exercise.save(validate: false)
+    exercise
   end
 
   context 'when the given number is invalid' do
