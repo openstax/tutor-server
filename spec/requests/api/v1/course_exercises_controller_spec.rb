@@ -123,5 +123,41 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
         end
       end
     end
+
+    context '#destroy' do
+      let(:exercise) { @ecosystem.exercises.first }
+
+      before { exercise.update_attribute :profile, user_2 }
+
+      context 'for anonymous' do
+        it 'raises SecurityTransgression' do
+          expect(DeleteTeacherExercise).not_to receive(:call)
+
+          expect do
+            api_delete api_course_exercise_url(course.id, exercise.number), nil
+          end.to raise_error(SecurityTransgression)
+        end
+      end
+
+      context 'for a user that is not the author' do
+        it 'raises SecurityTransgression' do
+          expect(DeleteTeacherExercise).not_to receive(:call)
+
+          expect do
+            api_delete api_course_exercise_url(course.id, exercise.number), user_1_token
+          end.to raise_error(SecurityTransgression)
+        end
+      end
+
+      context 'for the exercise author' do
+        it 'deletes the exercise' do
+          expect(DeleteTeacherExercise).to receive(:call).with(number: exercise.number)
+
+          api_delete api_course_exercise_url(course.id, exercise.number), user_2_token
+
+          expect(response).to have_http_status(:success)
+        end
+      end
+    end
   end
 end

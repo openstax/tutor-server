@@ -1,4 +1,6 @@
 class Content::Models::Exercise < IndestructibleRecord
+  acts_as_paranoid without_default_scope: true
+
   attr_accessor :pool_types, :is_excluded
 
   acts_as_resource
@@ -10,11 +12,20 @@ class Content::Models::Exercise < IndestructibleRecord
   belongs_to :derived_from, class_name: 'Content::Models::Exercise', foreign_key: :derived_from_id, optional: true
   has_many :derivatives, class_name: 'Content::Models::Exercise', foreign_key: :derived_from_id
 
+  belongs_to :profile, subsystem: :user, optional: true
+
   has_many :exercise_tags, dependent: :destroy, inverse_of: :exercise
   has_many :tags, through: :exercise_tags
 
   has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
-  has_many_attached :images
+
+  if respond_to?(:has_many_attached)
+    has_many_attached :images
+  else
+    Rails.application.config.after_initialize do
+      Content::Models::Exercise.has_many_attached :images
+    end
+  end
 
   validates :uuid, presence: true
   validates :group_uuid, presence: true

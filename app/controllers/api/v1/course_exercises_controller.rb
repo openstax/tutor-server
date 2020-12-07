@@ -7,8 +7,7 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
     short_description 'Provides ways to create and exclude exercises for the given course'
   end
 
-  api :POST, '/courses/:course_id/exercises',
-              "Creates an exercise"
+  api :POST, '/courses/:course_id/exercises', "Creates an exercise"
   description <<-EOS
     Creates an exercise.
 
@@ -60,10 +59,33 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
                                            responder: ResponderWithPutPatchDeleteContent
   end
 
+  api :DELETE, '/courses/:course_id/exercises/:number', "Deletes an exercise"
+  description <<-EOS
+    Deletes an exercise.
+
+    #{json_schema(Api::V1::ExerciseRepresenter, include: :writeable)}
+  EOS
+  def destroy
+    number = params[:id].to_i
+
+    exercises = Content::Models::Exercise.where(number: number).to_a
+
+    raise ActiveRecord::RecordNotFound if exercises.empty?
+
+    exercises.each do |exercise|
+      OSU::AccessPolicy.require_action_allowed!(:delete, current_api_user, exercise)
+    end
+
+    DeleteTeacherExercise.call number: number
+
+    respond_with exercises, represent_with: Api::V1::ExercisesRepresenter,
+                            responder: ResponderWithPutPatchDeleteContent,
+                            location: nil
+  end
+
   protected
 
   def get_course
     @course = CourseProfile::Models::Course.find(params[:course_id])
   end
-
 end
