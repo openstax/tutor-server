@@ -8,6 +8,6 @@ Raven.configure do |config|
   config.processors -= [ Raven::Processor::Cookies, Raven::Processor::PostData ]
   config.release = secrets.release_version
 
-  # Don't log Sentry info messages
-  config.logger.level = Logger::WARN
+  # Don't log "Sentry is ready" message
+  config.silence_ready = true
 end if Rails.env.production?
