@@ -88,7 +88,7 @@ RSpec.describe Content::Models::Exercise, type: :model do
           :content_exercise, user_profile_id: profile_two.id, number: derivable.number, derived_from: derivable
         )
 
-        expect(exercise.coauthor_profile_ids).to eq([User::Models::OpenStaxProfile::ID, profile_one.id, profile_two.id])
+        expect(exercise.coauthor_profile_ids).to eq([User::Models::OpenStaxProfile::ID, profile_one.id])
       end
 
       it 'saves anonymously and avoids adding real id duplicates' do
