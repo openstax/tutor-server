@@ -7,4 +7,7 @@ Raven.configure do |config|
   # Send POST data and cookies to Sentry
   config.processors -= [ Raven::Processor::Cookies, Raven::Processor::PostData ]
   config.release = secrets.release_version
+
+  # Don't log Sentry info messages
+  config.logger.level = Logger::WARN
 end if Rails.env.production?
