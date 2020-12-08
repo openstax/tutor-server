@@ -136,6 +136,8 @@ class Content::Models::Exercise < IndestructibleRecord
     end
   end
 
+  # This is a list of derived authors, not a definitive list of contributors,
+  # for that you'll need #author + #coauthors
   def coauthors
     real_ids = coauthor_profile_ids.reject {|id| id.in?(abstract_profile_ids) }
 
@@ -190,9 +192,10 @@ class Content::Models::Exercise < IndestructibleRecord
     return if derived_from.coauthor_profile_ids.empty? && derived_from_same_profile?
 
     coauthor_ids = derived_from.coauthor_profile_ids.dup
+    coauthor_id = derived_from.author.id
 
-    [derived_from.author.id, author.id].each do |id|
-      coauthor_ids << id unless !id.in?(abstract_profile_ids) && id.in?(coauthor_ids)
+    if coauthor_id == User::Models::AnonymousAuthorProfile::ID || !coauthor_id.in?(coauthor_ids)
+      coauthor_ids << coauthor_id
     end
 
     self.coauthor_profile_ids = coauthor_ids
