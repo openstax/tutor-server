@@ -12,8 +12,7 @@ module Api::V1
     property :url,
              type: String,
              readable: true,
-             writeable: false,
-             schema_info: { required: true }
+             writeable: false
 
     property :title,
              type: String,
@@ -36,10 +35,15 @@ module Api::V1
              readable: true,
              writeable: false,
              getter: ->(user_options:, **) {
-              user_options&.[](:for_student) ? parser.content_hash_for_students :
-                respond_to?(:content_hash) ? content_hash : content
-            },
+               user_options&.[](:for_student) ? parser.content_hash_for_students :
+                 respond_to?(:content_hash) ? content_hash : content
+             },
              schema_info: { required: true }
+
+    property :images,
+             type: String,
+             readable: true,
+             writeable: true
 
     collection :tags,
                readable: true,
@@ -78,5 +82,13 @@ module Api::V1
              writeable: false,
              getter: ->(*) { respond_to?(:page_uuid) ? page_uuid : page.try(:uuid) },
              schema_info: { required: true }
+
+    property :author,
+             extend: Api::V1::UserProfileRepresenter
+
+    property :is_copyable,
+             readable: true,
+             writeable: false,
+             schema_info: { type: 'boolean' }
   end
 end

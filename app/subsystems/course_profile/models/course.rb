@@ -32,6 +32,7 @@ class CourseProfile::Models::Course < ApplicationRecord
   has_many :periods, subsystem: :course_membership, inverse_of: :course
 
   has_many :teachers, subsystem: :course_membership, inverse_of: :course
+
   has_many :students, subsystem: :course_membership, inverse_of: :course
   has_many :teacher_students, subsystem: :course_membership, inverse_of: :course
 
@@ -148,6 +149,28 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   def frozen_scores?(current_time = Time.current)
     ended?(current_time) && !cache&.teacher_performance_report.nil?
+  end
+
+  # Includes teachers the course was cloned from
+  def related_teacher_profiles
+    profiles = []
+    courses = [self]
+
+    courses.each do |c|
+      next unless c.present?
+      profiles << c.teachers.map {|t| t.role.profile }
+      courses << c.cloned_from
+    end
+
+    profiles.flatten.uniq
+  end
+
+  def related_teacher_profile_ids
+    related_teacher_profiles.map(&:id)
+  end
+
+  def teacher_profiles
+    teachers.map {|t| t.role.profile }
   end
 
   protected

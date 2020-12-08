@@ -4,17 +4,48 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
 
   resource_description do
     api_versions "v1"
-    short_description 'Provides ways to get set options on exercises for the given course'
+    short_description 'Provides ways to create and exclude exercises for the given course'
   end
 
-  api :PATCH, '/courses/:course_id/exercises',
+  api :POST, '/courses/:course_id/exercises', "Creates an exercise"
+  description <<-EOS
+    Creates an exercise.
+
+    #{json_schema(Api::V1::ExerciseRepresenter, include: :writeable)}
+  EOS
+  def create
+    OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
+
+    page    = @course.ecosystem.pages.find(params[:selectedChapterSection])
+    content = BuildTeacherExerciseContentHash[data: params]
+    profile = @course.teachers.map{|t| t.role.profile }.find{|p| p.id == params[:authorId] } || current_human_user
+    params.permit(:images)
+
+    exercise = CreateTeacherExercise[
+      course: @course,
+      page: page,
+      content: content,
+      images: params[:images],
+      profile: profile,
+      derived_from_id: params[:derived_from_id],
+      anonymize: params[:anonymize],
+      copyable:  params[:copyable],
+      save: true
+    ]
+
+    respond_with exercise, represent_with: Api::V1::ExerciseRepresenter,
+                           responder: ResponderWithPutPatchDeleteContent,
+                           location: nil
+  end
+
+  api :PATCH, '/courses/:course_id/exercises/exclude',
               "Updates the given exercise(s) to be excluded or not for the given course"
   description <<-EOS
     Updates the given exercise(s) to be excluded or not for the given course.
 
     #{json_schema(Api::V1::ExercisesRepresenter, include: :writeable)}
   EOS
-  def update
+  def exclude
     OSU::AccessPolicy.require_action_allowed!(:exercises, current_api_user, @course)
 
     exercise_params_array = []
@@ -28,10 +59,33 @@ class Api::V1::CourseExercisesController < Api::V1::ApiController
                                            responder: ResponderWithPutPatchDeleteContent
   end
 
+  api :DELETE, '/courses/:course_id/exercises/:number', "Deletes an exercise"
+  description <<-EOS
+    Deletes an exercise.
+
+    #{json_schema(Api::V1::ExerciseRepresenter, include: :writeable)}
+  EOS
+  def destroy
+    number = params[:id].to_i
+
+    exercises = Content::Models::Exercise.where(number: number).to_a
+
+    raise ActiveRecord::RecordNotFound if exercises.empty?
+
+    exercises.each do |exercise|
+      OSU::AccessPolicy.require_action_allowed!(:delete, current_api_user, exercise)
+    end
+
+    DeleteTeacherExercise.call number: number
+
+    respond_with exercises, represent_with: Api::V1::ExercisesRepresenter,
+                            responder: ResponderWithPutPatchDeleteContent,
+                            location: nil
+  end
+
   protected
 
   def get_course
     @course = CourseProfile::Models::Course.find(params[:course_id])
   end
-
 end

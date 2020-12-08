@@ -31,31 +31,53 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
       AddUserAsCourseTeacher.call(course: course, user: user_1)
     end
 
-    context '#show' do
-      context 'no pool_types' do
-        xit 'returns all course exercises' do
+    context '#create' do
+      let(:page) { @ecosystem.pages.first }
 
-        end
+      it 'creates an exercise by a teacher' do
+        params = {
+          selectedChapterSection: page.id,
+          questionText: 'Test'
+        }
+        expect(Content::Models::Exercise).to receive(:generate_next_teacher_exercise_number).and_return 10000
+        expect do
+          api_post api_course_exercises_url(course.id), user_1_token,
+                     params: params.to_json
+        end.to change { Content::Models::Exercise.count }.by(1)
       end
 
-      context 'pool_types in path' do
-        xit 'returns all course exercises in the given pool type' do
-        end
-      end
+      it 'returns errors for invalid params' do
+        params = {
+          selectedChapterSection: page.id,
+          questionText: 'Test',
+          options: [
+            {
+              content: 'answer',
+              correctness: '0.0',
+              feedback: 'feedback'
+            },
+            {
+              content: 'answer',
+              correctness: '0.0',
+              feedback: 'feedback'
+            }
+          ]
+        }
 
-      context 'pool_types in query params' do
-        xit 'returns all course exercises in the given pool type' do
-        end
+        expect do
+          api_post api_course_exercises_url(course.id), user_1_token,
+                     params: params.to_json
+        end.to raise_error(StandardError)
       end
     end
 
-    context '#update' do
+    context '#exclude' do
       let(:exercise) { @ecosystem.exercises.first }
 
       context 'for anonymous' do
         it 'raises SecurityTransgression' do
           expect do
-            api_patch api_course_exercises_url(course.id), nil,
+            api_put exclude_api_course_exercises_url(course.id), nil,
                       params: [ { id: exercise.id, is_excluded: true } ].to_json
           end.to raise_error(SecurityTransgression)
         end
@@ -64,7 +86,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
       context 'for a user that is not a teacher' do
         it 'raises SecurityTransgression' do
           expect do
-            api_patch api_course_exercises_url(course.id), user_2_token,
+            api_put exclude_api_course_exercises_url(course.id), user_2_token,
                       params: [ { id: exercise.id, is_excluded: true } ].to_json
           end.to raise_error(SecurityTransgression)
         end
@@ -73,7 +95,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
       context 'for a teacher in the course' do
         it 'can exclude an exercise' do
           expect do
-            api_patch api_course_exercises_url(course.id), user_1_token,
+            api_put exclude_api_course_exercises_url(course.id), user_1_token,
                       params: [ { id: exercise.id, is_excluded: true } ].to_json
           end.to change { CourseContent::Models::ExcludedExercise.count }.by(1)
 
@@ -89,7 +111,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
                              course: course, exercise_number: exercise.number
 
           expect do
-            api_patch api_course_exercises_url(course.id), user_1_token,
+            api_put exclude_api_course_exercises_url(course.id), user_1_token,
                       params: [ { id: exercise.id, is_excluded: false } ].to_json
           end.to change { CourseContent::Models::ExcludedExercise.count }.by(-1)
 
@@ -98,6 +120,42 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
           expect(exclusions).to be_an Array
           expect(exclusions.first[:id]).to eq exercise.id.to_s
           expect(exclusions.first[:is_excluded]).to eq false
+        end
+      end
+    end
+
+    context '#destroy' do
+      let(:exercise) { @ecosystem.exercises.first }
+
+      before { exercise.update_attribute :profile, user_2 }
+
+      context 'for anonymous' do
+        it 'raises SecurityTransgression' do
+          expect(DeleteTeacherExercise).not_to receive(:call)
+
+          expect do
+            api_delete api_course_exercise_url(course.id, exercise.number), nil
+          end.to raise_error(SecurityTransgression)
+        end
+      end
+
+      context 'for a user that is not the author' do
+        it 'raises SecurityTransgression' do
+          expect(DeleteTeacherExercise).not_to receive(:call)
+
+          expect do
+            api_delete api_course_exercise_url(course.id, exercise.number), user_1_token
+          end.to raise_error(SecurityTransgression)
+        end
+      end
+
+      context 'for the exercise author' do
+        it 'deletes the exercise' do
+          expect(DeleteTeacherExercise).to receive(:call).with(number: exercise.number)
+
+          api_delete api_course_exercise_url(course.id, exercise.number), user_2_token
+
+          expect(response).to have_http_status(:success)
         end
       end
     end

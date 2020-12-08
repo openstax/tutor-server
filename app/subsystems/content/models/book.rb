@@ -16,6 +16,7 @@ class Content::Models::Book < IndestructibleRecord
   validates :title, presence: true
   validates :uuid, presence: true
   validates :version, presence: true
+  validates :url, presence: true
 
   scope :preloaded, -> { preload :pages }
 

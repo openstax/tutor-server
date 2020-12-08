@@ -10,12 +10,118 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_06_191442) do
+ActiveRecord::Schema.define(version: 2020_12_04_222351) do
+
+  create_sequence "active_storage_attachments_id_seq"
+  create_sequence "active_storage_blobs_id_seq"
+  create_sequence "catalog_offerings_id_seq"
+  create_sequence "content_books_id_seq"
+  create_sequence "content_ecosystems_id_seq"
+  create_sequence "content_exercise_tags_id_seq"
+  create_sequence "content_exercises_id_seq"
+  create_sequence "content_lo_teks_tags_id_seq"
+  create_sequence "content_maps_id_seq"
+  create_sequence "content_notes_id_seq"
+  create_sequence "content_page_tags_id_seq"
+  create_sequence "content_pages_id_seq"
+  create_sequence "content_tags_id_seq"
+  create_sequence "course_content_course_ecosystems_id_seq"
+  create_sequence "course_content_excluded_exercises_id_seq"
+  create_sequence "course_membership_enrollment_changes_id_seq"
+  create_sequence "course_membership_enrollments_id_seq"
+  create_sequence "course_membership_periods_id_seq"
+  create_sequence "course_membership_students_id_seq"
+  create_sequence "course_membership_teacher_students_id_seq"
+  create_sequence "course_membership_teachers_id_seq"
+  create_sequence "course_profile_caches_id_seq"
+  create_sequence "course_profile_courses_id_seq"
+  create_sequence "delayed_jobs_id_seq"
+  create_sequence "entity_roles_id_seq"
+  create_sequence "environments_id_seq"
+  create_sequence "fine_print_contracts_id_seq"
+  create_sequence "fine_print_signatures_id_seq"
+  create_sequence "legal_targeted_contracts_id_seq"
+  create_sequence "lms_apps_id_seq"
+  create_sequence "lms_contexts_id_seq"
+  create_sequence "lms_course_score_callbacks_id_seq"
+  create_sequence "lms_nonces_id_seq"
+  create_sequence "lms_tool_consumers_id_seq"
+  create_sequence "lms_trusted_launch_data_id_seq"
+  create_sequence "lms_users_id_seq"
+  create_sequence "oauth_access_grants_id_seq"
+  create_sequence "oauth_access_tokens_id_seq"
+  create_sequence "oauth_applications_id_seq"
+  create_sequence "openstax_accounts_accounts_id_seq"
+  create_sequence "openstax_salesforce_users_id_seq"
+  create_sequence "ratings_exercise_group_book_parts_id_seq"
+  create_sequence "ratings_period_book_parts_id_seq"
+  create_sequence "ratings_role_book_parts_id_seq"
+  create_sequence "research_cohort_members_id_seq"
+  create_sequence "research_cohorts_id_seq"
+  create_sequence "research_manipulations_id_seq"
+  create_sequence "research_studies_id_seq"
+  create_sequence "research_study_brains_id_seq"
+  create_sequence "research_study_courses_id_seq"
+  create_sequence "research_survey_plans_id_seq"
+  create_sequence "research_surveys_id_seq"
+  create_sequence "school_district_districts_id_seq"
+  create_sequence "school_district_schools_id_seq"
+  create_sequence "settings_id_seq"
+  create_sequence "short_code_short_codes_id_seq"
+  create_sequence "stats_intervals_id_seq"
+  create_sequence "tasks_assistants_id_seq"
+  create_sequence "tasks_concept_coach_tasks_id_seq"
+  create_sequence "tasks_course_assistants_id_seq"
+  create_sequence "tasks_dropped_questions_id_seq"
+  create_sequence "tasks_extensions_id_seq"
+  create_sequence "tasks_grading_templates_id_seq"
+  create_sequence "tasks_performance_report_exports_id_seq"
+  create_sequence "tasks_practice_questions_id_seq"
+  create_sequence "tasks_task_plans_id_seq"
+  create_sequence "tasks_task_steps_id_seq"
+  create_sequence "tasks_tasked_exercises_id_seq"
+  create_sequence "tasks_tasked_external_urls_id_seq"
+  create_sequence "tasks_tasked_interactives_id_seq"
+  create_sequence "tasks_tasked_placeholders_id_seq"
+  create_sequence "tasks_tasked_readings_id_seq"
+  create_sequence "tasks_tasked_videos_id_seq"
+  create_sequence "tasks_tasking_plans_id_seq"
+  create_sequence "tasks_taskings_id_seq"
+  create_sequence "tasks_tasks_id_seq"
+  create_sequence "teacher_exercise_number", start: 100000
+  create_sequence "user_administrators_id_seq"
+  create_sequence "user_content_analysts_id_seq"
+  create_sequence "user_customer_services_id_seq"
+  create_sequence "user_profiles_id_seq"
+  create_sequence "user_researchers_id_seq"
+  create_sequence "user_tour_views_id_seq"
+  create_sequence "user_tours_id_seq"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
 
   create_table "catalog_offerings", id: :serial, force: :cascade do |t|
     t.string "salesforce_book_name", null: false
@@ -85,10 +191,10 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
   end
 
   create_table "content_exercises", id: :serial, force: :cascade do |t|
-    t.string "url", null: false
+    t.string "url"
     t.text "content"
     t.integer "content_page_id", null: false
-    t.integer "number", null: false
+    t.bigint "number", null: false
     t.integer "version", null: false
     t.string "title"
     t.datetime "created_at", null: false
@@ -102,11 +208,19 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.string "nickname"
     t.jsonb "question_answer_ids", null: false
     t.integer "number_of_questions", null: false
+    t.integer "user_profile_id", default: 0, null: false
+    t.boolean "is_copyable", default: true, null: false
+    t.boolean "anonymize_author", default: false, null: false
+    t.bigint "derived_from_id"
+    t.datetime "deleted_at"
+    t.integer "coauthor_profile_ids", default: [], array: true
     t.index ["content_page_id"], name: "index_content_exercises_on_content_page_id"
+    t.index ["derived_from_id"], name: "index_content_exercises_on_derived_from_id"
     t.index ["group_uuid", "version"], name: "index_content_exercises_on_group_uuid_and_version"
     t.index ["number", "version"], name: "index_content_exercises_on_number_and_version"
     t.index ["title"], name: "index_content_exercises_on_title"
     t.index ["url"], name: "index_content_exercises_on_url"
+    t.index ["user_profile_id"], name: "index_content_exercises_on_user_profile_id"
     t.index ["uuid"], name: "index_content_exercises_on_uuid"
   end
 
@@ -916,7 +1030,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
 
   create_table "tasks_tasked_exercises", id: :serial, force: :cascade do |t|
     t.integer "content_exercise_id", null: false
-    t.string "url", null: false
+    t.string "url"
     t.string "title"
     t.text "free_response"
     t.string "answer_id"
@@ -1117,10 +1231,12 @@ ActiveRecord::Schema.define(version: 2020_10_06_191442) do
     t.index ["identifier"], name: "index_user_tours_on_identifier", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "catalog_offerings", "content_ecosystems", on_update: :cascade, on_delete: :nullify
   add_foreign_key "content_books", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_exercise_tags", "content_tags", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "content_exercises", "content_exercises", column: "derived_from_id"
   add_foreign_key "content_exercises", "content_pages", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "lo_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "content_lo_teks_tags", "content_tags", column: "teks_id", on_update: :cascade, on_delete: :cascade

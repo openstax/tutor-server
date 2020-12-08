@@ -67,10 +67,10 @@ module Api::V1
              writeable: false,
              readable: true
 
-    property :terms_signatures_needed,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { GetUserTermsInfos[self].any?{|info| !info.is_signed} }
+    property :available_terms,
+              readable: true,
+              writeable: false,
+              getter: ->(*) { GetUserTermsInfos[self].map{|i| i.slice('id', 'name', 'title', 'is_signed', 'is_proxy_signed') } }
 
     property :profile_url,
              getter: ->(*) do
@@ -78,6 +78,11 @@ module Api::V1
                  OpenStax::Accounts.configuration.openstax_accounts_url, '/profile'
                ).to_s
              end
+
+    property :profile_id,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { id }
 
     property :viewed_tour_stats
 

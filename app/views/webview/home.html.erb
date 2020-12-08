@@ -16,53 +16,53 @@
 </head>
 
 <body id="home" role="main" aria-label="main content">
-<div class="body tutor-home">
+  <div class="body tutor-home">
 
-<!-- HEADER
-============================================= -->
-<header>
-  <nav class="navbar navbar-default navbar-fixed-top top-nav" role="navigation">
-    <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#home" aria-label="home"></a>
-      </div>
-      <ul class="nav navbar-nav navbar-right links">
-        <li><a href="<%= TUTOR_HELPDESK_URL %>" target="_blank">Help</a></li>
-        <li><a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank" aria-label="rice university"></a></li>
-      </ul>
+    <!-- HEADER
+         ============================================= -->
+    <header>
+      <nav class="navbar navbar-default navbar-fixed-top top-nav" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#home" aria-label="home"></a>
+          </div>
+          <ul class="nav navbar-nav navbar-right links">
+            <li><a href="<%= TUTOR_HELPDESK_URL %>" target="_blank">Help</a></li>
+            <li><a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank" aria-label="rice university"></a></li>
+          </ul>
+        </div>
+        <!-- /.container -->
+      </nav>
+    </header>
+    <!-- HEADER
+         ============================================= -->
+
+
+    <div class="body-container">
+      <h1>
+        Discover a new frontier in education.
+      </h1>
+
+      <p class="lead">
+        OpenStax Tutor Beta is courseware for college and high school courses.
+        Available for College Physics, Biology 2e, Introduction to Sociology 2e,
+        AP U.S. History, AP Physics, and AP Biology.
+      </p>
+
+      <a class="learn-more" href="https://openstax.org/openstax-tutor">LEARN MORE</a>
+
+      <%= link_to 'LOG IN', openstax_accounts_login_path, class: 'login' %>
+
     </div>
-    <!-- /.container -->
-  </nav>
-</header>
-<!-- HEADER
-============================================= -->
 
-
-<div class="body-container">
-  <h1>
-    Discover a new frontier in education.
-  </h1>
-
-  <p class="lead">
-    OpenStax Tutor Beta is courseware for college and high school courses.
-    Available for College Physics, Biology 2e, Introduction to Sociology 2e,
-    AP U.S. History, AP Physics, and AP Biology.
-  </p>
-
-  <a class="learn-more" href="https://openstax.org/openstax-tutor">LEARN MORE</a>
-
-  <%= link_to 'LOG IN', openstax_accounts_login_path, class: 'login' %>
-
-</div>
-
-<footer>
-  <p>
-    <%= render 'layouts/copyright_terms' %>
-    &middot;
-    <a href="http://gdpr.rice.edu/" target="_blank">GDPR</a>
-  </p>
-  <p class="disclaimer">
-    Advanced Placement® and AP® are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.
+    <footer>
+      <p>
+        <%= render 'layouts/copyright_terms' %>
+        &middot;
+        <a href="http://gdpr.rice.edu/" target="_blank">GDPR</a>
+      </p>
+      <p class="disclaimer">
+        Advanced Placement® and AP® are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.
   </p>
 </footer>
 <!-- FOOTER
