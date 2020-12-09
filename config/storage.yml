@@ -12,3 +12,6 @@ amazon:
   secret_access_key: <%= ENV['AWS_S3_SECRET_ACCESS_KEY'] %>
   bucket: <%= ENV['AWS_S3_BUCKET_NAME'] %>
   region: <%= ENV['AWS_S3_REGION'] %>
+  http_open_timeout: <%= ENV.fetch('AWS_S3_OPEN_TIMEOUT', 60).to_i %>
+  http_read_timeout: <%= ENV.fetch('AWS_S3_READ_TIMEOUT', 60).to_i %>
+  retry_limit: <%= ENV.fetch('AWS_S3_RETRY_LIMIT', 3).to_i %>
