@@ -9,7 +9,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   before_validation :set_correct_answer_id, on: :create, if: :has_answers?
 
-  validates :url, :question_id, :question_index, :content, presence: true
+  validates :question_id, :question_index, :content, presence: true
   validates :correct_answer_id, presence: true, if: :has_answers?
   validates :free_response, length: { maximum: 10000 }
   validates :grader_points, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
