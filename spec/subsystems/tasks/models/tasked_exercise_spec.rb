@@ -6,7 +6,6 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     FactoryBot.create :tasks_tasked_exercise, exercise: content_exercise
   end
 
-  it { is_expected.to validate_presence_of(:url) }
   it { is_expected.to validate_presence_of(:question_id) }
   it { is_expected.to validate_presence_of(:question_index) }
   it { is_expected.to validate_presence_of(:correct_answer_id) }
