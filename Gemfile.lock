@@ -361,7 +361,7 @@ GEM
       hashie
       transaction_isolation
       transaction_retry
-    libv8 (7.3.492.27.1)
+    libv8 (8.4.255.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -854,4 +854,4 @@ DEPENDENCIES
   will_paginate (~> 3.1.7)
 
 BUNDLED WITH
-   2.1.2
+   2.1.4
