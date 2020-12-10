@@ -7,10 +7,10 @@ test:
   root: <%= Rails.root.join("tmp/storage") %>
 
 amazon:
-  service: TutorS3
+  service: S3
   access_key_id: <%= ENV['AWS_S3_ACCESS_KEY_ID'] %>
   secret_access_key: <%= ENV['AWS_S3_SECRET_ACCESS_KEY'] %>
-  bucket: <%= ENV['AWS_S3_BUCKET_NAME'] %>
+  bucket: <%= ENV['AWS_S3_UPLOADS_BUCKET_NAME'] %>
   region: <%= ENV['AWS_S3_REGION'] %>
   http_open_timeout: <%= ENV.fetch('AWS_S3_OPEN_TIMEOUT', 60).to_i %>
   http_read_timeout: <%= ENV.fetch('AWS_S3_READ_TIMEOUT', 60).to_i %>

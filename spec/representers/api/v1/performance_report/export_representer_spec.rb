@@ -9,9 +9,10 @@ RSpec.describe Api::V1::PerformanceReport::ExportRepresenter, type: :representer
     # filename is the hash for a blank file
     filename = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.xlsx'
 
+    secrets = Rails.application.secrets
     expect(representation).to include(
       filename: filename,
-      url: "#{Rails.application.secrets.aws[:s3][:asset_host]}/exports/#{filename}",
+      url: "#{secrets.aws[:s3][:exports_asset_host]}/#{secrets.environment_name}/#{filename}",
       created_at: DateTimeUtilities.to_api_s(performance_report_export.created_at)
     )
   end

@@ -12,10 +12,11 @@ CarrierWave.configure do |config|
     config.fog_public = false
     config.fog_authenticated_url_expiration = 1.hour
 
-    s3_secrets = Rails.application.secrets.aws[:s3]
+    secrets = Rails.application.secrets
+    s3_secrets = secrets.aws[:s3]
 
-    config.asset_host = s3_secrets[:asset_host]
-    config.fog_directory  = s3_secrets[:bucket_name]
+    config.asset_host = s3_secrets[:exports_asset_host]
+    config.fog_directory  = "#{s3_secrets[:exports_bucket_name]}/#{secrets.environment_name}"
 
     fog_credentials = s3_secrets[:access_key_id].blank? ? \
                         { use_iam_profile: true } : \
