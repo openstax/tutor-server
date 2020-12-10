@@ -14,7 +14,7 @@ class ExportUploader < CarrierWave::Uploader::Base
   end
 
   def store_dir
-    'exports'
+    Rails.application.secrets.environment_name
   end
 
   def filename

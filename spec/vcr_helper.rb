@@ -76,7 +76,9 @@ VCR.configure do |c|
     c.filter_secret(['box', field_name])
   end
 
-  c.filter_secret(['aws', 's3', 'bucket_name'])
+  [ 'exports_bucket_name', 'uploads_bucket_name' ].each do |field_name|
+    c.filter_secret(['aws', 's3', field_name])
+  end
 
   c.filter_request_header 'Authorization'
 

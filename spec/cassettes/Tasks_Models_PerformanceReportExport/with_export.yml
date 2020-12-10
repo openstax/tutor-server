@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: put
-    uri: https://<aws_s3_bucket_name>.s3.amazonaws.com/exports/f30204859d1220abd380bda909d7cfba6744c9455668affd2f0e03d94872dc75.xlsx
+    uri: https://<aws_s3_exports_bucket_name>.s3.amazonaws.com/test/f30204859d1220abd380bda909d7cfba6744c9455668affd2f0e03d94872dc75.xlsx
     body:
       encoding: US-ASCII
       string: ''
