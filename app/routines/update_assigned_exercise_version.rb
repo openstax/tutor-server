@@ -31,11 +31,13 @@ class UpdateAssignedExerciseVersion
       plan.settings['page_ids'].uniq!
       plan.save
 
-      Tasks::Models::TaskedExercise.where(id: tasked_ids).update_all(content_exercise_id: new_version.id)
-
       updated_task_plan_ids << plan.id
       updated_tasked_exercise_ids << tasked_ids
     end
+
+    Tasks::Models::TaskedExercise.where(id: updated_tasked_exercise_ids)
+                                 .in_batches
+                                 .update_all(content_exercise_id: new_version.id)
 
     outputs.updated_task_plan_ids = updated_task_plan_ids
     outputs.updated_tasked_exercise_ids = updated_tasked_exercise_ids.flatten
