@@ -85,7 +85,7 @@ RSpec.describe UpdateAssignedExerciseVersion, type: :routine do
       homework_plan.reload
       tasked = homework_plan.tasks.first.task_steps.first.tasked
 
-      expect(result.outputs.updated_task_plan_ids).to eq([homework_plan.id])
+      expect(result.outputs.updated_task_plan_ids).to be_empty
       expect(homework_plan.settings['exercises'][0]['id']).to eq(exercise_v1.id.to_s)
       expect(tasked.content_exercise_id).to eq(exercise_v1.id)
     end

@@ -4,13 +4,14 @@ class UpdateAssignedExerciseVersion
   protected
 
   def exec(number:, profile:)
-    task_ids     = profile.roles.select {|r| r.role_type == 'teacher' }.map(&:course).map(&:tasks).flatten.map(&:id)
+    updated_task_plan_ids = []
+    updated_tasked_exercise_ids = []
+
     all_versions = Content::Models::Exercise.where(number: number)
     new_version  = all_versions.max_by(&:version)
     old_ids      = all_versions.without(new_version).map {|v| v.id.to_s }
     update_ids   = Content::Models::Exercise
                      .joins(tasked_exercises: { task_step: { task: :task_plan } })
-                     .where(tasked_exercises: { task_step: { tasks_task_id: task_ids } })
                      .where(number: number)
                      .where.not(version: new_version.version)
                      .pluck('tasks_task_plans.id', 'tasks_tasked_exercises.id')
@@ -28,10 +29,13 @@ class UpdateAssignedExerciseVersion
       plan.save
 
       Tasks::Models::TaskedExercise.where(id: tasked_ids).update_all(content_exercise_id: new_version.id)
+
+      updated_task_plan_ids << plan.id
+      updated_tasked_exercise_ids << tasked_ids
     end
 
-    outputs.updated_task_plan_ids = taskeds_by_plan_id.keys
-    outputs.updated_tasked_exercise_ids = taskeds_by_plan_id.values.flatten
+    outputs.updated_task_plan_ids = updated_task_plan_ids
+    outputs.updated_tasked_exercise_ids = updated_tasked_exercise_ids.flatten
     outputs.content_exercise_ids = all_versions.map(&:id)
   end
 end
