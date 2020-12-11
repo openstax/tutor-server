@@ -3,7 +3,7 @@ class UpdateAssignedExerciseVersion
 
   protected
 
-  def exec(number:, profile:)
+  def exec(number:)
     updated_task_plan_ids = []
     updated_tasked_exercise_ids = []
 
@@ -13,6 +13,7 @@ class UpdateAssignedExerciseVersion
     update_ids   = Content::Models::Exercise
                      .joins(tasked_exercises: { task_step: { task: :task_plan } })
                      .where(number: number)
+                     .where.not(user_profile_id: User::Models::OpenStaxProfile::ID)
                      .where.not(version: new_version.version)
                      .pluck('tasks_task_plans.id', 'tasks_tasked_exercises.id')
 

@@ -67,7 +67,7 @@ RSpec.describe UpdateAssignedExerciseVersion, type: :routine do
 
   context 'given a number with an old version' do
     it 'updates assignments that have not gone out to students with the new version' do
-      result = described_class.call number: 1, profile: teacher_profile
+      result = described_class.call number: 1
       homework_plan.reload
       tasked = homework_plan.tasks.first.task_steps.first.tasked
       expect(result.outputs.updated_task_plan_ids).to eq([homework_plan.id])
@@ -81,7 +81,7 @@ RSpec.describe UpdateAssignedExerciseVersion, type: :routine do
       end
       DistributeTasks[task_plan: homework_plan]
 
-      result = described_class.call number: 1, profile: teacher_profile
+      result = described_class.call number: 1
       homework_plan.reload
       tasked = homework_plan.tasks.first.task_steps.first.tasked
 
@@ -92,7 +92,7 @@ RSpec.describe UpdateAssignedExerciseVersion, type: :routine do
 
     it 'updates page ids if the new version changed pages' do
       exercise_v2.update_attribute(:content_page_id, page2.id)
-      result = described_class.call number: 1, profile: teacher_profile
+      result = described_class.call number: 1
       expect(homework_plan.reload.settings['page_ids']).to include(page2.id.to_s)
     end
   end
