@@ -24,7 +24,7 @@ class UpdateAssignedExerciseVersion
       next if plan.out_to_students?
 
       plan.settings['exercises'].each {|ex| ex['id'] = new_version.id.to_s if ex['id'].in?(old_ids) }
-      plan.settings['page_ids'] << new_version.page.id.to_s
+      (plan.settings['page_ids'] ||= []) << new_version.page.id.to_s
       plan.settings['page_ids'].uniq!
       plan.save
 
