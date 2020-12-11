@@ -50,7 +50,7 @@ class CreateTeacherExercise
       save: save
     )
 
-    if save && version > 1
+    if save && exercise.version > 1
       run(
         :update_assigned_exercise_version,
         number: exercise.number,
