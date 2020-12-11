@@ -24,14 +24,17 @@ class UpdateAssignedExerciseVersion
       plan = Tasks::Models::TaskPlan.find(plan_id)
       next if plan.out_to_students?
 
-      (plan.settings['exercises'] ||= []).each do |ex|
-        ex['id'] = new_version.id.to_s if ex['id'].in?(old_ids)
-      end
-      (plan.settings['page_ids'] ||= []) << new_version.page.id.to_s
-      plan.settings['page_ids'].uniq!
-      plan.save
+      if plan.settings['exercises']
+        plan.settings['exercises'].each do |ex|
+          ex['id'] = new_version.id.to_s if ex['id'].in?(old_ids)
+        end
+        (plan.settings['page_ids'] ||= []) << new_version.page.id.to_s
+        plan.settings['page_ids'].uniq!
+        plan.save
 
-      updated_task_plan_ids << plan.id
+        updated_task_plan_ids << plan.id
+      end
+
       updated_tasked_exercise_ids << tasked_ids
     end
 
