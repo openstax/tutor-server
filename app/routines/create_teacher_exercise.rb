@@ -3,6 +3,7 @@ class CreateTeacherExercise
 
   uses_routine Content::Routines::TagResource, as: :tag
   uses_routine Content::Routines::PopulateExercisePools, as: :populate_exercise_pools
+  uses_routine UpdateAssignedExerciseVersion, as: :update_assigned_exercise_version
 
   protected
 
@@ -48,6 +49,13 @@ class CreateTeacherExercise
       pages: [page],
       save: save
     )
+
+    if save && exercise.version > 1
+      run(
+        :update_assigned_exercise_version,
+        number: exercise.number
+      )
+    end
 
     outputs.exercise = exercise
   end
