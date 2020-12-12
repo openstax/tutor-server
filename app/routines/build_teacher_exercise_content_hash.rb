@@ -17,8 +17,8 @@ class BuildTeacherExerciseContentHash
     end
     content_hash[:tags].compact!
 
-     question = {
-      id: 1,
+    question = {
+      id: SecureRandom.uuid,
       is_answer_order_important: true,
       stimulus_html: "",
       stem_html: sanitize(data[:questionText]),
@@ -31,7 +31,7 @@ class BuildTeacherExerciseContentHash
 
     question[:answers] = (data[:options] || []).map.with_index do |option, i|
       {
-        id: i + 1,
+        id: SecureRandom.uuid,
         content_html: sanitize(option[:content]),
         correctness: sanitize(option[:correctness]),
         feedback_html: sanitize(option[:feedback])
