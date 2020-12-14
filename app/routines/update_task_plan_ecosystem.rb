@@ -19,8 +19,6 @@ class UpdateTaskPlanEcosystem
 
     old_ecosystem = outputs.task_plan.set_and_return_ecosystem
 
-    return if old_ecosystem == ecosystem
-
     outputs.task_plan.ecosystem = ecosystem
 
     return if old_ecosystem.nil? || !TPS_THAT_NEED_UPDATES.include?(outputs.task_plan.type)
@@ -63,7 +61,7 @@ class UpdateTaskPlanEcosystem
 
     return unless exercises.present?
 
-    # Update exercises to the new ecosystem by exercise number
+    # Update exercises to the new ecosystem or new version by exercise number
     exercise_number_by_id = Content::Models::Exercise.where(
       id: exercises.map { |ex| ex['id'] }
     ).pluck(:id, :number).to_h
@@ -71,9 +69,15 @@ class UpdateTaskPlanEcosystem
     new_exercise_id_by_number = ecosystem.exercises.where(
       number: exercise_numbers
     ).pluck(:number, :id).to_h
+    page_id_by_exercise_id = ecosystem.exercises.where(
+      number: exercise_numbers
+    ).pluck(:id, :content_page_id).to_h
     outputs.task_plan.settings['exercises'] = exercises.each_with_index.map do |hash, index|
       id = new_exercise_id_by_number[exercise_numbers[index]]
       next if id.nil?
+
+      (outputs.task_plan.settings['page_ids'] ||= []) << page_id_by_exercise_id[id].to_s
+      outputs.task_plan.settings['page_ids'].uniq!
 
       { 'id' => id.to_s, 'points' => hash['points'] }
     end.compact
