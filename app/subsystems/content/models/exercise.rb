@@ -61,6 +61,9 @@ class Content::Models::Exercise < IndestructibleRecord
       ).arel.exists
     )
   end
+  scope :created_by_teacher, -> do
+    where.not(user_profile_id: User::Models::OpenStaxProfile::ID)
+  end
 
   def parser
     @parser ||= OpenStax::Exercises::V1::Exercise.new content: content
