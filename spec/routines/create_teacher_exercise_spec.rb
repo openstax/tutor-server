@@ -4,7 +4,8 @@ RSpec.describe CreateTeacherExercise, type: :routine do
   let(:course)    { FactoryBot.create :course_profile_course }
   let(:page)      { FactoryBot.create :content_page }
   let(:profile)   { FactoryBot.create :user_profile }
-  let(:content)   { OpenStax::Exercises::V1::FakeClient.new_exercise_hash }
+  let(:tags)      { ['time:medium', 'difficulty:medium', 'blooms:1', 'dok:2'] }
+  let(:content)   { OpenStax::Exercises::V1::FakeClient.new_exercise_hash(tags: tags) }
   let!(:valid_derived) { FactoryBot.create :content_exercise, user_profile_id: profile.id }
   let!(:invalid_derived) { FactoryBot.create :content_exercise, user_profile_id: -1 }
 
@@ -26,6 +27,7 @@ RSpec.describe CreateTeacherExercise, type: :routine do
         )
       end.to change { Content::Models::Exercise.count }.by(1)
 
+      expect(@result.outputs.exercise.tags.count).to eq(tags.count + 1) # Plus default type:practice
       expect(@result.errors).to be_empty
     end
 
