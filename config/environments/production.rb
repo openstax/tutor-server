@@ -38,8 +38,10 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
 
-  # Store uploaded files on the local file system (see config/storage.yml for options)
-  config.active_storage.service = :amazon
+  # Store uploaded files on the local file system when precompiling assets and on S3 afterwards
+  config.active_storage.service = ActiveModel::Type::Boolean.new.cast(
+    ENV.fetch('DISABLE_S3', false)
+  ) ? :local : :amazon
 
   # Mount Action Cable outside main process or domain
   # config.action_cable.mount_path = nil
