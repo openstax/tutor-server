@@ -8,17 +8,15 @@ class Content::Routines::RemapTeacherExercises
   def exec(ecosystem:, save: false)
     updated_exercise_ids_by_page_id = {}
 
-    ecosystem_ids = Content::Models::Exercise
-                      .created_by_teacher
-                      .joins(:book)
-                      .distinct
-                      .pluck(:content_ecosystem_id)
-    page_ids      = Content::Models::Exercise
-                      .created_by_teacher
-                      .distinct
-                      .pluck(:content_page_id)
+    ecosystem_ids, page_ids = Content::Models::Exercise
+                                .created_by_teacher
+                                .joins(:book)
+                                .pluck(:content_ecosystem_id, :content_page_id)
+                                .transpose
 
-    ecosystems = Content::Models::Ecosystem.where(id: ecosystem_ids)
+    return unless ecosystem_ids && page_ids
+
+    ecosystems = Content::Models::Ecosystem.where(id: ecosystem_ids.uniq)
 
     map = Content::Map.find_or_create_by(
       from_ecosystems: ecosystems, to_ecosystem: ecosystem
