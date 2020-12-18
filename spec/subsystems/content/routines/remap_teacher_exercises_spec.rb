@@ -4,16 +4,15 @@ RSpec.describe Content::Routines::RemapTeacherExercises, type: :routine do
   context 'with a teacher-created exercise' do
     context 'in an old ecosystem' do
       let!(:exercise) do
-        exercise = FactoryBot.build :content_exercise, user_profile_id: 1, number: 1
-        exercise.save(validate: false)
-
-        exercise.tags << FactoryBot.create(:content_tag, value: 'test:tag')
-        exercise
+        FactoryBot.build(:content_exercise, user_profile_id: 1, number: 1).tap do |e|
+          e.save(validate: false)
+          e.tags << FactoryBot.create(:content_tag, value: 'test:tag')
+        end
       end
       let!(:unmapped) do
-        FactoryBot.build(:content_exercise,
-                         user_profile_id: 1,
-                         number: 1).tap {|exercise| exercise.save(validate: false) }
+        FactoryBot.build(:content_exercise, user_profile_id: 1, number: 1).tap do |e|
+          e.save(validate: false)
+        end
       end
 
       let!(:page) { FactoryBot.create :content_page, uuid: exercise.page.uuid }
