@@ -5,11 +5,8 @@ class Content::Routines::RemapPracticeQuestionExercises
 
   def exec(ecosystem:, course:, save: false)
     mapped_ids = {}
-    new_ids_by_number = {}
-    old_ids_by_number = {}
-
-    role_ids = [course.students, course.teacher_students]
-                 .map {|p| p.pluck(:entity_role_id) }.flatten.uniq
+    role_ids   = [course.students, course.teacher_students]
+                   .map {|p| p.pluck(:entity_role_id) }.flatten.uniq
     new_ids_by_number = ecosystem.exercises.pluck(:number, :id).to_h
     old_ids_by_number = Tasks::Models::PracticeQuestion
                           .joins(:exercise)
