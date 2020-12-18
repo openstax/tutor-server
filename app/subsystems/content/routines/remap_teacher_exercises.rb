@@ -29,7 +29,7 @@ class Content::Routines::RemapTeacherExercises
 
     mapped.each do |from, to|
       exercises = Content::Models::Exercise.created_by_teacher.where(content_page_id: from)
-      updated_exercise_ids_by_page_id[from.to_s] = exercises.map(&:id)
+      updated_exercise_ids_by_page_id[from.to_s] = exercises.map(&:id).sort
       exercises.update_all(content_page_id: to) if save
 
       next unless save
