@@ -40,6 +40,7 @@ class Content::Routines::RemapTeacherExercises
           resource: exercise,
           tags: exercise.tags.pluck(:value),
           tagging_class: Content::Models::ExerciseTag,
+          all_tags: exercise.tags,
           save_tags: save
         )
       end
