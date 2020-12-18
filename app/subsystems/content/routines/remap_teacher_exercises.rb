@@ -9,11 +9,10 @@ class Content::Routines::RemapTeacherExercises
     updated_exercise_ids_by_page_id = {}
 
     ecosystem_ids = Content::Models::Exercise
-                                .created_by_teacher
-                                .joins(:book)
-                                .distinct
-                                .pluck(:content_ecosystem_id)
-
+                      .created_by_teacher
+                      .joins(:book)
+                      .distinct
+                      .pluck(:content_ecosystem_id)
     page_ids      = Content::Models::Exercise
                       .created_by_teacher
                       .distinct
@@ -33,6 +32,8 @@ class Content::Routines::RemapTeacherExercises
       updated_exercise_ids_by_page_id[from.to_s] = exercises.map(&:id)
       exercises.update_all(content_page_id: to) if save
 
+      next unless save
+
       exercises.each do |exercise|
         run(
           :tag,
@@ -40,8 +41,7 @@ class Content::Routines::RemapTeacherExercises
           resource: exercise,
           tags: exercise.tags.pluck(:value),
           tagging_class: Content::Models::ExerciseTag,
-          all_tags: exercise.tags,
-          save_tags: save
+          save_tags: true
         )
       end
     end
