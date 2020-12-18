@@ -16,7 +16,7 @@ class Content::Routines::RemapPracticeQuestionExercises
 
     old_ids_by_number.each do |number, old_id|
       new_id = new_ids_by_number[number]
-      mapped_ids[old_id] = new_id if old_id != new_id
+      mapped_ids[old_id] = new_id if new_id && old_id != new_id
     end
 
     outputs.mapped_ids = mapped_ids
