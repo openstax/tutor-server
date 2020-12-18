@@ -6,6 +6,7 @@ class Content::ImportBook
   uses_routine Content::Routines::TransformAndCachePageContent, as: :transform_and_cache_content
   uses_routine Content::Routines::PopulateExercisePools, as: :populate_exercise_pools
   uses_routine Content::Routines::RemapTeacherExercises, as: :remap_teacher_exercises
+  uses_routine Content::Routines::RemapPracticeQuestionExercises, as: :remap_practice_exercises
 
   protected
 
@@ -135,6 +136,10 @@ class Content::ImportBook
 
     run(
       :remap_teacher_exercises, ecosystem: ecosystem, save: true
+    )
+
+    run(
+      :remap_practice_exercises, ecosystem: ecosystem, save: true
     )
 
     ordered_pages = run(
