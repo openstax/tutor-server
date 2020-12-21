@@ -59,16 +59,16 @@ namespace :jobs do
     timeout_time = current_time - Delayed::Worker.max_run_time
     dj = Delayed::Job.arel_table
 
+    total = Delayed::Job.count
     not_failed_jobs = Delayed::Job.where(failed_at: nil)
+    not_failed = not_failed_jobs.count
     waiting_jobs = not_failed_jobs.where(dj[:run_at].gt(current_time))
     waiting_to_run = waiting_jobs.where(attempts: 0).count
     waiting_to_retry = waiting_jobs.where(dj[:attempts].gt(0)).count
     wait_range = job_time_range waiting_jobs, :run_at, current_time
     ready_jobs = not_failed_jobs.where(dj[:run_at].lteq(current_time))
-    queued_jobs = ready_jobs.where(locked_by: nil).or(
-      ready_jobs.where(locked_at: nil).or(
-        ready_jobs.where(dj[:locked_at].lteq(timeout_time))
-      )
+    queued_jobs = ready_jobs.where(locked_at: nil).or(
+      ready_jobs.where(dj[:locked_at].lteq(timeout_time))
     )
     queued = queued_jobs.count
     queued_range = job_time_range queued_jobs, :run_at, current_time
@@ -98,16 +98,23 @@ namespace :jobs do
 
     Rails.logger.info do
       <<~STATUS
-        Waiting to run: #{waiting_to_run}
-        Waiting to retry: #{waiting_to_retry}
-        Waiting for: #{wait_range}
+        Total: #{total}
+        Total excluding failed: #{not_failed}
+
         Queued: #{queued}
         Queued for: #{queued_range}
+
         Running/Locked: #{running}
         Running/Locked for: #{running_range}
+
+        Running in the future: #{waiting_to_run}
+        Retrying in the future: #{waiting_to_retry}
+        Future range: #{wait_range}
+
         Failed: #{failed}
         Failed for: #{failed_range}
-        Errors:#{errors}
+
+        Errors#{errors}:
 
         Last error that caused a retry: #{last_retry_error}
 
