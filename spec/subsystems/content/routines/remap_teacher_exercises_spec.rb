@@ -40,6 +40,14 @@ RSpec.describe Content::Routines::RemapTeacherExercises, type: :routine do
         expect(unmapped.content_page_id).not_to eq(page.id)
         expect(exercise.tags.map(&:ecosystem)).to include page.ecosystem
         expect(exercise.tags).to include new_eco_tag
+        expect(result.mapped_page_ids).to eq({ old_page_id.to_s => page.id })
+      end
+
+      it 'does nothing if no updated mappings are found' do
+        exercise.update_column(:content_page_id, page.id)
+        exercise2.update_column(:content_page_id, page.id)
+        result = described_class.call(ecosystem: ecosystem, save: true).outputs
+        expect(result.updated_exercise_ids_by_page_id).to be_empty
       end
     end
   end
