@@ -7,16 +7,23 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 # FinePrint Contracts
-FinePrint::Contract.create do |contract|
-  contract.name    = 'general_terms_of_use'
-  contract.version = 1
-  contract.title   = 'Terms of Use'
-  contract.content = 'Placeholder for general terms of use, required for new installations to function'
-end
+FinePrint::Contract.create(
+  name:    'general_terms_of_use',
+  version: 1,
+  title:   'Terms of Use',
+  content: 'Placeholder for general terms of use, required for new installations to function.'
+)
 
-FinePrint::Contract.create do |contract|
-  contract.name    = 'privacy_policy'
-  contract.version = 1
-  contract.title   = 'Privacy Policy'
-  contract.content = 'Placeholder for privacy policy, required for new installations to function'
-end
+FinePrint::Contract.create(
+  name:    'privacy_policy',
+  version: 1,
+  title:   'Privacy Policy',
+  content: 'Placeholder for privacy policy, required for new installations to function.'
+)
+
+FinePrint::Contract.create(
+  name:    'exercise_editing',
+  version: 1,
+  title:   'Authorship Terms of Use',
+  content: 'Placeholder for authorship terms of use, required for new installations to function.'
+)
