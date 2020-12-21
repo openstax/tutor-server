@@ -127,7 +127,8 @@ class Api::V1::DemoController < Api::V1::ApiController
   end
 
   def parse_book_indices!(obj)
-    course = obj['course']
+    assign = obj['assign'] || obj
+    course = assign['course']
     return obj if course.nil?
 
     task_plans = course['task_plans']
