@@ -149,6 +149,48 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
       new_exercise_ids = updated_homework_plan.settings['exercises'].map { |ex| ex['id'] }
       expect(@ecosystem.exercises.where(id: new_exercise_ids).count).to eq new_exercise_ids.length
     end
+
+    context 'inside unchanged ecosystem' do
+      let!(:old_version) do
+        FactoryBot.build(:content_exercise, content_page_id: page_ids.first).tap do |exercise|
+          exercise.number = 1000000
+          exercise.version = 1
+          exercise.save(validate: false)
+        end
+      end
+      let!(:new_version) do
+        FactoryBot.build(:content_exercise, content_page_id: page_ids.last).tap do |exercise|
+          exercise.number = 1000000
+          exercise.version = 2
+          exercise.save(validate: false)
+        end
+      end
+
+      let(:original_homework_plan) do
+        FactoryBot.create(
+          :tasks_task_plan,
+          type: 'homework',
+          ecosystem: @old_ecosystem,
+          course: @old_course,
+          settings: {
+            page_ids: [old_version.content_page_id],
+            exercises: [{ id: old_version.id.to_s, points: [1.0] * old_version.number_of_questions }],
+            exercises_count_dynamic: 1
+          }
+        )
+      end
+
+      it 'can update teacher-created exercises to the latest version and page ids' do
+        updated_homework_plan = described_class.call(
+          task_plan: original_homework_plan, ecosystem: @old_ecosystem
+        ).outputs.task_plan
+
+        new_exercise_settings = [{ id: new_version.id.to_s, points: [1.0] }.stringify_keys]
+        expect(updated_homework_plan.settings['exercises']).to eq(new_exercise_settings)
+
+        expect(updated_homework_plan.settings['page_ids']).to include new_version.page.id.to_s
+      end
+    end
   end
 
   context 'extra task plan' do
