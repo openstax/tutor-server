@@ -11,6 +11,7 @@ class Content::Routines::RemapTeacherExercises
     ecosystem_ids, page_ids = Content::Models::Exercise
                                 .created_by_teacher
                                 .joins(:book)
+                                .distinct
                                 .pluck(:content_ecosystem_id, :content_page_id)
                                 .transpose
 
@@ -27,20 +28,27 @@ class Content::Routines::RemapTeacherExercises
 
     mapped.each do |from, to|
       exercises = Content::Models::Exercise.created_by_teacher.where(content_page_id: from)
-      updated_exercise_ids_by_page_id[from.to_s] = exercises.map(&:id).sort
-      exercises.update_all(content_page_id: to) if save
+
+      updated_exercise_ids_by_page_id[from.to_s] = []
 
       next unless save
 
-      exercises.each do |exercise|
+      exercises.find_each do |exercise|
+        dup_exercise = exercise.dup
+        dup_exercise.content_page_id = to
+        dup_exercise.save(validate: false)
+        tag_values = exercise.tags.pluck(:value)
+
         run(
           :tag,
           ecosystem: ecosystem,
-          resource: exercise,
-          tags: exercise.tags.pluck(:value),
+          resource: dup_exercise,
+          tags: tag_values,
           tagging_class: Content::Models::ExerciseTag,
           save_tags: true
         )
+
+        updated_exercise_ids_by_page_id[from.to_s] << [exercise.id, dup_exercise.id]
       end
     end
 

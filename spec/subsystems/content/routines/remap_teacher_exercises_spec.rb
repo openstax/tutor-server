@@ -33,13 +33,18 @@ RSpec.describe Content::Routines::RemapTeacherExercises, type: :routine do
         exercise.reload
         unmapped.reload
 
+        dup_exercise  = ecosystem.exercises.find_by(number: exercise.number)
+        dup_exercise2 = ecosystem.exercises.find_by(number: exercise2.number)
+
         expect(result.updated_exercise_ids_by_page_id).to(
-          eq({ old_page_id.to_s => [exercise.id, exercise2.id] })
+          eq({ old_page_id.to_s => [[exercise.id, dup_exercise.id], [exercise2.id, dup_exercise2.id]] })
         )
-        expect(exercise.content_page_id).to eq(page.id)
+        expect(exercise.content_page_id).to eq(old_page_id)
+        expect(dup_exercise.content_page_id).to eq(page.id)
+        expect(dup_exercise.ecosystem).to eq(ecosystem)
         expect(unmapped.content_page_id).not_to eq(page.id)
-        expect(exercise.tags.map(&:ecosystem)).to include page.ecosystem
-        expect(exercise.tags).to include new_eco_tag
+        expect(dup_exercise.tags.map(&:ecosystem)).to include page.ecosystem
+        expect(dup_exercise.tags).to include new_eco_tag
         expect(result.mapped_page_ids).to eq({ old_page_id.to_s => page.id })
       end
 
