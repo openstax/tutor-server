@@ -19,6 +19,8 @@ class Content::Models::Exercise < IndestructibleRecord
 
   has_many :tasked_exercises, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
 
+  has_many :practice_questions, subsystem: :tasks, dependent: :destroy, inverse_of: :exercise
+
   TEACHER_NUMBER_START = 1000000
 
   if respond_to?(:has_many_attached)
@@ -60,6 +62,9 @@ class Content::Models::Exercise < IndestructibleRecord
         '"content_exercise_tags"."content_exercise_id" = "content_exercises"."id"'
       ).arel.exists
     )
+  end
+  scope :created_by_teacher, -> do
+    where.not(user_profile_id: User::Models::OpenStaxProfile::ID)
   end
 
   def parser

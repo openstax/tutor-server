@@ -2,6 +2,8 @@
 class CourseContent::AddEcosystemToCourse
   lev_routine express_output: :ecosystem_map, use_jobba: true
 
+  uses_routine Content::Routines::RemapPracticeQuestionExercises, as: :remap_practice_exercises
+
   protected
 
   def exec(course:, ecosystem:)
@@ -26,6 +28,8 @@ class CourseContent::AddEcosystemToCourse
       .joins(taskings: { role: :student })
       .where(taskings: { role: { student: { course_profile_course_id: course.id } } })
       .pluck(:id)
+
+    run(:remap_practice_exercises, ecosystem: ecosystem, course: course, save: true)
 
     queue = course.is_preview ? :preview : :dashboard
     all_task_ids.each_slice(100) do |task_ids|
