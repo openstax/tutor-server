@@ -5,12 +5,6 @@ class StaticPagesController < ApplicationController
 
   before_action :use_openstax_logo
 
-  # GET /status
-  # Used by AWS (and others) to make sure the site is still up
-  def status
-    head :ok
-  end
-
   def contact_form
     render text: "<h1 style='line-height: 300px;text-align: center'>Sorry, delivering messages from the contact form is not yet implemented</h1>"
   end

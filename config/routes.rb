@@ -211,7 +211,6 @@ Rails.application.routes.draw do
     get :help
     get :privacy
     get :share
-    get :status
     get :'auth/failure', action: :omniauth_failure
     get :signup
     get :stubbed_payments
@@ -425,6 +424,7 @@ Rails.application.routes.draw do
 
   mount FinePrint::Engine => :fine_print
   mount ActiveStorage::Engine, at: '/rails/active_storage'
+  mount OpenStax::Utilities::Engine => :status
 
   # API docs
   apipie

@@ -59,7 +59,7 @@ gem 'rails-html-sanitizer', '~> 1.0'
 gem 'addressable'
 
 # Utilities for OpenStax websites
-gem 'openstax_utilities', '~> 4.3.0'
+gem 'openstax_utilities', '~> 4.4.0'
 
 # Cron job scheduling
 gem 'whenever'
