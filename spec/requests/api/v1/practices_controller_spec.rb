@@ -208,7 +208,7 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
       let(:num_practice_exercises) { 5 }
 
       before do
-        allow_any_instance_of(FindOrCreatePracticeSavedTask).to receive(:available_questions).and_return(
+        allow_any_instance_of(FindOrCreatePracticeSavedTask).to receive(:questions).and_return(
           num_practice_exercises.times.map { FactoryBot.create(:tasks_practice_question) }
         )
       end
@@ -260,7 +260,7 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
     context 'with no practice exercises' do
       before do
         expect_any_instance_of(
-          allow_any_instance_of(FindOrCreatePracticeSavedTask).to receive(:available_questions).and_return([])
+          allow_any_instance_of(FindOrCreatePracticeSavedTask).to receive(:questions).and_return([])
         )
       end
 

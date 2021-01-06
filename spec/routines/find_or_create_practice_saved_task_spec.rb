@@ -15,14 +15,13 @@ RSpec.describe FindOrCreatePracticeSavedTask, type: :routine do
     exercises = 5.times.map { FactoryBot.create(:content_exercise, page: @page) }
 
     exercises.each do |exercise|
-      FactoryBot.create :tasks_practice_question, role: @role, exercise: exercise
+      tasked = FactoryBot.create(:tasks_tasked_exercise, :with_tasking, tasked_to: @role, exercise: exercise)
+      FactoryBot.create(:tasks_practice_question, role: @role, exercise: exercise, tasked_exercise: tasked)
     end
 
     @course.course_ecosystems.delete_all :delete_all
     AddEcosystemToCourse[course: @course, ecosystem: @ecosystem]
   end
-
-  after(:all) { DatabaseCleaner.clean }
 
   before do
     @course.reload
@@ -31,18 +30,22 @@ RSpec.describe FindOrCreatePracticeSavedTask, type: :routine do
     @ecosystem.reload
   end
 
-  let(:question_id)   { @role.practice_questions.first.id }
+  after(:all) { DatabaseCleaner.clean }
+
+  let(:question) { @role.practice_questions.first }
 
   it 'creates a task with practice questions' do
-    allow_any_instance_of(Tasks::Models::PracticeQuestion).to receive(:available?).and_return(true)
-    result = described_class.call(course: @course, role: @role, question_ids: [question_id])
+    Preview::AnswerExercise.call task_step: question.tasked_exercise.task_step, is_correct: true, save: true
+    allow_any_instance_of(Tasks::Models::Task).to receive(:auto_grading_feedback_on).and_return('answer')
+    result = described_class.call(course: @course, role: @role, question_ids: [question.id])
+
     expect(result.outputs.task).not_to be_nil
     expect(result.outputs.task.task_steps.count).to eq(1)
     expect(result.errors).to be_empty
   end
 
   it 'filters out unavailable exercises' do
-    result = described_class.call(course: @course, role: @role, question_ids: [question_id])
+    result = described_class.call(course: @course, role: @role, question_ids: [question.id])
     expect(result.outputs.task).to be_nil
     expect(result.errors).not_to be_empty
   end
