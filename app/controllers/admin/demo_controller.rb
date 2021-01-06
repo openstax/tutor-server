@@ -61,7 +61,9 @@ class Admin::DemoController < Admin::BaseController
       )
     end
 
-    (@model.course&.task_plans || []).each do |task_plan|
+    assign = @model&.assign || @model
+
+    (assign.course&.task_plans || []).each do |task_plan|
       task_plan.book_indices = task_plan.book_indices.to_json unless task_plan.book_indices.blank?
     end
   end
