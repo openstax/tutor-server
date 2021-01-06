@@ -68,7 +68,7 @@ class UpdateTaskPlanEcosystem
     exercise_numbers = exercises.map { |exercise| exercise_number_by_id[exercise['id'].to_i] }
     new_exercise_id_by_number = ecosystem.exercises.where(
       number: exercise_numbers
-    ).pluck(:number, :id).to_h
+    ).order(:version).pluck(:number, :id).to_h
     page_id_by_exercise_id = ecosystem.exercises.where(
       number: exercise_numbers
     ).pluck(:id, :content_page_id).to_h
