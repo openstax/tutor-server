@@ -1,6 +1,6 @@
-[![Migration Status](https://github.com/openstax/tutor-server/workflows/Migrations/badge.svg)](https://github.com/openstax/tutor-server)
-[![Build Status](https://github.com/openstax/tutor-server/workflows/Tests/badge.svg)](https://github.com/openstax/tutor-server)
-[![Coverage Status](https://img.shields.io/codecov/c/github/openstax/tutor-server.svg)](https://codecov.io/gh/openstax/tutor-server)
+[![Tests](https://github.com/openstax/tutor-server/workflows/Tests/badge.svg)](https://github.com/openstax/tutor-server/actions?query=workflow:Tests)
+[![Migrations](https://github.com/openstax/tutor-server/workflows/Migrations/badge.svg)](https://github.com/openstax/tutor-server/actions?query=workflow:Migrations)
+[![Coverage](https://img.shields.io/codecov/c/github/openstax/tutor-server.svg)](https://codecov.io/gh/openstax/tutor-server)
 
 # OpenStax Tutor Backend Server
 
