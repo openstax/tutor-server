@@ -40,9 +40,11 @@ config/deploy_settings.yml
 cucumber_rerun.txt
 .rspec_last_failures
 
-# Ignore uploaded files and exports
+# Ignore public precompiled assets, uploaded files, exports and test files
+public/assets/**/*
 public/uploads/**/*
 public/exports/**/*
+public/test/**/*
 
 # Ignore vagrant and berkshelf files
 .vagrant*
@@ -55,9 +57,9 @@ brakeman.html
 # Ignore coverage reports
 coverage/*
 vendor/bundle
-# Ignore ERD diagrams and source maps
+
+# Ignore ERD diagrams
 erd*.pdf
-public/assets/source_maps/
 
 # Ignore misc files
 notes
@@ -67,9 +69,6 @@ doc
 
 # Ignore profiling logs from Pilfer
 pilfer.log
-
-# Ignore asset stuff
-public/assets/**
 
 # Ignore webdrivers lock file
 .webdrivers_update

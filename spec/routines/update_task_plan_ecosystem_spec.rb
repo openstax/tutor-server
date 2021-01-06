@@ -174,7 +174,9 @@ RSpec.describe UpdateTaskPlanEcosystem, type: :routine do
           course: @old_course,
           settings: {
             page_ids: [old_version.content_page_id],
-            exercises: [{ id: old_version.id.to_s, points: [1.0] * old_version.number_of_questions }],
+            exercises: [
+              { id: old_version.id.to_s, points: [1.0] * old_version.number_of_questions }
+            ],
             exercises_count_dynamic: 1
           }
         )

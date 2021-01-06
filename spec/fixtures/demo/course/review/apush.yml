@@ -4,6 +4,8 @@ catalog_offering:
 course:
   name: AP US History Review
 
+  year: 2019
+
   teachers:
     - username: reviewteacher
 
