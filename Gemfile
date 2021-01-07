@@ -43,6 +43,9 @@ gem 'turbolinks'
 gem 'pg'
 gem 'ar-sequence'
 
+# Support systemd Type=notify services for puma and delayed_job
+gem 'sd_notify', require: false
+
 # Use the puma webserver
 gem 'puma'
 
@@ -56,7 +59,7 @@ gem 'rails-html-sanitizer', '~> 1.0'
 gem 'addressable'
 
 # Utilities for OpenStax websites
-gem 'openstax_utilities', '~> 4.3.0'
+gem 'openstax_utilities', '~> 4.4.0'
 
 # Cron job scheduling
 gem 'whenever'
@@ -135,9 +138,14 @@ gem 'faker'
 # Key-value store for caching
 gem 'redis-rails'
 
-# Background job queueing
+# Database-backed background jobs
 gem 'delayed_job_active_record', '~> 4.1.4.beta1'
-gem 'daemons'
+
+# Run delayed_job workers with a control process in the foreground
+gem 'delayed_job_worker_pool'
+
+# Ensure background jobs unlock if a delayed_job worker crashes
+gem 'delayed_job_heartbeat_plugin'
 
 # Type coercion for Representable
 gem 'virtus'
@@ -156,7 +164,6 @@ gem 'activerecord-import'
 
 # Notify developers of Exceptions in production
 gem 'openstax_rescue_from'
-
 
 # Sentry integration (the require disables automatic Rails integration since we use rescue_from)
 gem 'sentry-raven', require: 'raven/base'
@@ -210,14 +217,14 @@ gem 'openstax_healthcheck'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '~> 1.4.0', require: false
 
+# Get env variables from .env file
+gem 'dotenv-rails'
+
 gem "aws-sdk-s3", require: false
 
 group :development, :test do
   # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
   gem 'awesome_print'
-
-  # Get env variables from .env file
-  gem 'dotenv-rails'
 
   # lint files
   gem 'rubocop'
@@ -322,6 +329,13 @@ group :production, :test do
 end
 
 group :production do
+  # Used to send custom delayed_job metrics to Cloudwatch
+  gem 'aws-sdk-cloudwatch', require: false
+
+  # Used to fetch secrets from the AWS parameter store and secrets manager
+  gem 'aws-sdk-ssm', require: false
+  gem 'aws-sdk-secretsmanager', require: false
+
   # Lograge for consistent logging
   gem 'lograge'
 end

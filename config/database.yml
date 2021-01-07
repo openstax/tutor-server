@@ -1,9 +1,10 @@
 default: &default
-  host: <%= ENV['OXT_DB_HOST'] || 'localhost' %>
   adapter: postgresql
+  host: <%= ENV['OXT_DB_HOST'] || 'localhost' %>
+  port: <%= ENV['OXT_DB_PORT'] || 5432 %>
   username: <%= ENV['OXT_DB_USER'] || 'ox_tutor' %>
   password: <%= ENV['OXT_DB_PASS'] || 'ox_tutor_secret_password' %>
-  port: <%= ENV['OXT_DB_PORT'] || 5432 %>
+  pool: <%= ENV.fetch('RAILS_MAX_THREADS', 5).to_i %>
 
 development:
   <<: *default
@@ -18,4 +19,13 @@ test:
                  "_#{ENV['TEST_ENV_NUMBER']}" if !ENV['TEST_ENV_NUMBER'].blank? %>'
   reaping_frequency: 0 # 0 = disabled - incompatible with our DatabaseCleaner config
 
-# Production database is intentionally left unconfigured
+production:
+  adapter: postgresql
+  host: <%= ENV['RDS_HOST'] %>
+  port: <%= ENV['RDS_PORT'] %>
+  username: <%= ENV['RDS_USERNAME'] %>
+  password: <%= ENV['RDS_PASSWORD'] %>
+  database: <%= ENV['RDS_DATABASE'] %>
+  pool: <%= ENV['RAILS_MAX_THREADS'] %>
+  sslmode: verify-full
+  sslrootcert: /etc/ssl/certs/rds.pem

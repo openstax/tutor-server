@@ -3,10 +3,9 @@ class InitializeGlickoRatings < ActiveRecord::Migration[5.2]
 
   include Ratings::Concerns::RatingJobs
 
-  redis_secrets = Rails.application.secrets.redis
   # STORE needs to be an ActiveSupport::Cache::RedisStore to support TTL
   STORE = ActiveSupport::Cache::RedisStore.new(
-    url: redis_secrets[:url],
+    url: Rails.application.secrets.redis[:url],
     namespace: 'migration',
     expires_in: 1.year
   )

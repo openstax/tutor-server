@@ -15,18 +15,22 @@ Delayed::Worker.destroy_failed_jobs = false
 # Poll the database every second to reduce delay (number of workers = number of queries per second)
 Delayed::Worker.sleep_delay = 1
 
+# max_run_time must be longer than the longest-running job
+# more than 1 hour would require heartbeats for the lifecycle hook
+# when terminating background job instances
+Delayed::Worker.max_run_time = 1.hour
+
 # Default queue name if not specified in the job class
 Delayed::Worker.default_queue_name = :default
-
-# max_run_time must be longer than the longest-running job
-Delayed::Worker.max_run_time = 8.hours
 
 # Default queue priorities
 Delayed::Worker.queue_attributes = {
   default:     { priority:  0 },
-  dashboard:   { priority:  5 },
-  maintenance: { priority: 10 },
-  preview:     { priority: 15 }
+  dashboard:   { priority: 10 },
+  reassign:    { priority: 20 },
+  maintenance: { priority: 30 },
+  preview:     { priority: 40 },
+  migration:   { priority: 50 }
 }
 
 # Allows us to use this gem in tests instead of setting the ActiveJob adapter to :inline

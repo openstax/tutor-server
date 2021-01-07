@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 2020_12_04_222351) do
   create_sequence "course_profile_caches_id_seq"
   create_sequence "course_profile_courses_id_seq"
   create_sequence "delayed_jobs_id_seq"
+  create_sequence "delayed_workers_id_seq"
   create_sequence "entity_roles_id_seq"
   create_sequence "environments_id_seq"
   create_sequence "fine_print_contracts_id_seq"
@@ -485,6 +486,14 @@ ActiveRecord::Schema.define(version: 2020_12_04_222351) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
+  create_table "delayed_workers", force: :cascade do |t|
+    t.string "name"
+    t.string "version"
+    t.datetime "last_heartbeat_at"
+    t.string "host_name"
+    t.string "label"
   end
 
   create_table "entity_roles", id: :serial, force: :cascade do |t|

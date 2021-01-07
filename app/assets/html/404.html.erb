@@ -1,6 +1,7 @@
 <%=
   require 'error_page_builder'
-  ErrorPageBuilder.build(view: self,
-                         code: 404,
-                         heading: 'We couldn\'t find what you were looking for.')
+
+  ErrorPageBuilder.build(
+    view: self, code: 404, heading: "We couldn't find what you were looking for."
+  )
 %>

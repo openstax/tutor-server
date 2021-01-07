@@ -51,10 +51,15 @@ module Tutor
     # add concern folders to the autoload path
     config.eager_load_paths << Rails.root.join('app', 'routines', 'concerns')
 
+    redis_secrets = secrets.redis
+    redis_secrets[:url] ||= "redis#{'s' unless redis_secrets[:password].blank?}://#{
+      ":#{redis_secrets[:password]}@" unless redis_secrets[:password].blank? }#{
+      redis_secrets[:host]}#{":#{redis_secrets[:port]}" unless redis_secrets[:port].blank?}/#{
+      "/#{redis_secrets[:db]}" unless redis_secrets[:db].blank?}"
+
     # Use Redis as the cache store
     # This setting cannot be set from an initializer
     # See https://github.com/rails/rails/issues/10908
-    redis_secrets = secrets.redis
     config.cache_store = :redis_store, {
       url: redis_secrets[:url],
       namespace: redis_secrets[:namespaces][:cache],
@@ -74,7 +79,7 @@ module Tutor
 
     # rack-attack for throttling
     Rack::Attack.cache.store = ActiveSupport::Cache::RedisStore.new(
-      url: redis_secrets[:url],
+      url: Rails.application.secrets.redis[:url],
       expires_in: 2.days
     )
 

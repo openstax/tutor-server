@@ -1,17 +1,7 @@
-VALID_IFRAME_ORIGINS = Rails.application.secrets.cc_origins ?
-  Rails.application.secrets.cc_origins.map{ |origin| Regexp.new("\\A#{origin}") } : []
-
-
 OpenStax::Api.configure do |config|
   config.user_class_name = 'User::Models::Profile'
   config.current_user_method = 'current_user'
   config.routing_error_app = ->(env) { [404, {"Content-Type" => 'application/json'}, ['']] }
-
-  if VALID_IFRAME_ORIGINS.any?
-    config.validate_cors_origin = lambda do |request|
-      VALID_IFRAME_ORIGINS.any?{ | origin | origin.match(request.headers["HTTP_ORIGIN"]) }
-    end
-  end
 end
 
 ActiveSupport::Reloader.to_prepare do
