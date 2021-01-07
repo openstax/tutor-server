@@ -9,9 +9,10 @@ RSpec.describe Api::V1::PerformanceReport::ExportRepresenter, type: :representer
 
   it 'includes filename, url and created_at' do
     secrets = Rails.application.secrets
+    url = "#{CarrierWave::Uploader::Base.asset_host}/#{secrets.environment_name}/#{BLANK_FILENAME}"
     expect(representation).to include(
       filename: BLANK_FILENAME,
-      url: "#{secrets.aws[:s3][:exports_asset_host]}/#{secrets.environment_name}/#{BLANK_FILENAME}",
+      url: url,
       created_at: DateTimeUtilities.to_api_s(performance_report_export.created_at)
     )
   end
