@@ -46,6 +46,38 @@ RSpec.describe Api::V1::UsersController, type: :request, api: true, version: :v1
     end
   end
 
+  context "#bootstrap" do
+    context "caller has an authorization token" do
+      it "should return an ok (200) code" do
+        api_get bootstrap_api_user_url, user_1_token
+        expect(response.code).to eq('200')
+        expect(response.body_as_hash).to(
+          match Api::V1::BootstrapDataRepresenter.new(user_1).to_hash(
+                  user_options: {
+                    tutor_api_url: api_root_url,
+                    flash: {},
+                    is_impersonating: false,
+                  }
+                ).deep_symbolize_keys
+        )
+      end
+    end
+
+    context "caller does not have an authorization token" do
+      it "should return a forbidden (403) code" do
+        api_get bootstrap_api_user_url, nil
+        expect(response.code).to eq('403')
+      end
+    end
+
+    context "caller has an application/client credentials authorization token" do
+      it "should return a forbidden (403) code" do
+        api_get bootstrap_api_user_url, userless_token
+        expect(response.code).to eq('403')
+      end
+    end
+  end
+
   context "#ui-settings" do
     it "saves to profile" do
       api_put ui_settings_api_user_url, user_1_token, params: {

@@ -47,17 +47,6 @@ RSpec.describe WebviewController, type: :request do
     context 'as a signed in user' do
       before { sign_in! registered_user }
 
-      it 'sets boostrap data in script tag' do
-        get "/#{SecureRandom.hex}", headers: headers
-        expect(response).to have_http_status(:success)
-        doc = Nokogiri::HTML(response.body)
-        data = ::JSON.parse(doc.css('body script#tutor-boostrap-data').inner_text)
-        expect(data).to include(
-          'courses'=> CollectCourseInfo[user: registered_user].as_json,
-          'user' => Api::V1::UserRepresenter.new(registered_user).as_json
-        )
-      end
-
       it 'has url to tutor js asset' do
         get "/#{SecureRandom.hex}", headers: headers
         expect(response.body).to include "src='#{OpenStax::Utilities::Assets.url_for('tutor.js')}'"
