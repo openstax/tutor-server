@@ -113,7 +113,7 @@ class TeacherExerciseScrubber < Rails::Html::PermitScrubber
     h4
   )
   ALLOWED_ATTRS = %w(
-    alt title src width height style data-math type
+    alt title src width height style data-math type align
   )
   ALLOWED_IFRAME_ATTRS = %w(
     allowfullscreen class frameborder height mozallowfullscreen
