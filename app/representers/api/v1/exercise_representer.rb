@@ -40,8 +40,8 @@ module Api::V1
              },
              schema_info: { required: true }
 
-    property :images,
-             type: String,
+    collection :images,
+             extend: ExerciseImageRepresenter,
              readable: true,
              writeable: true
 
