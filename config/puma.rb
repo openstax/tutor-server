@@ -28,7 +28,7 @@ before_fork do
 
     config.frequency = 10
 
-    config.percent_usage = 1.0
+    config.percent_usage = 0.8
 
     config.rolling_restart_frequency = false
 
