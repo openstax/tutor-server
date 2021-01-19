@@ -234,7 +234,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
         expect(hash[:total_count]).to eq(
-          @ecosystem.exercises.count {|e| e.tags.detect { |t| t.value == 'type:practice' } }
+          @ecosystem.exercises.count {|e| e.tags.detect { |t| t.value == 'assignment-type:practice' } }
         )
         hash[:items].each do |item|
           expect(item[:pool_types]).to eq ['homework_core']

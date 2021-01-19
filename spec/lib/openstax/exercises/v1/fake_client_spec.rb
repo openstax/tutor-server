@@ -30,7 +30,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, type: :external do
             number: -1,
             version: 1,
             uid: '-1@1',
-            tags: ['type:practice', 'k12phys', 'apbio', 'os-practice-problems', 'jean'],
+            tags: ['assignment-type:practice', 'k12phys', 'apbio', 'os-practice-problems', 'jean'],
             stimulus_html: "This is fake exercise -1. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
             attachments: [ {id: '-1', asset: 'https://somewhere.com/something.png'} ],
             questions: [
@@ -54,7 +54,7 @@ RSpec.describe OpenStax::Exercises::V1::FakeClient, type: :external do
             number: -2,
             version: 1,
             uid: '-2@1',
-            tags: ['type:conceptual-or-recall', 'k12phys', 'apbio', 'os-practice-concepts', 'jean'],
+            tags: ['assignment-type:reading', 'k12phys', 'apbio', 'os-practice-concepts', 'jean'],
             stimulus_html: "This is fake exercise -2. <span data-math='\\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'></span>",
             attachments: [ {id: '-2', asset: 'https://somewhere.com/something.png'} ],
             questions: [

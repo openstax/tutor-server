@@ -1,7 +1,7 @@
 class OpenStax::Exercises::V1::FakeClient
   STANDARD_TAGS = [
-    [ 'type:practice', 'k12phys', 'apbio', 'os-practice-problems' ],
-    [ 'type:conceptual-or-recall', 'k12phys', 'apbio', 'os-practice-concepts' ]
+    ['assignment-type:practice', 'k12phys', 'apbio', 'os-practice-problems' ],
+    ['assignment-type:homework', 'assignment-type:reading', 'k12phys', 'apbio', 'os-practice-concepts' ]
   ]
 
   attr_reader :store
