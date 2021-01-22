@@ -84,6 +84,12 @@ module Api::V1
              writeable: false,
              getter: ->(*) { id }
 
+    property :created_at,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(created_at) }
+
     property :viewed_tour_stats
 
   end
