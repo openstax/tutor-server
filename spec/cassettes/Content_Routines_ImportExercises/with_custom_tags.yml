@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509
     body:
       encoding: US-ASCII
       string: ''
@@ -45,7 +45,7 @@ http_interactions:
   recorded_at: Wed, 01 Jun 2016 19:17:28 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@9.json
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@9.json
     body:
       encoding: US-ASCII
       string: ''
@@ -259,7 +259,7 @@ http_interactions:
         from positive to negative while the man is moving. We will come back to this
         animation and look at the &#8220;Charts&#8221; view when we study graphical
         representation of motion.</p><figure id=\"eip-idp10072272\" class=\"ost-embed-container\"><figcaption><a
-        href=\"https://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/\"
+        href=\"https://openstax.org/apps/archive/20201222.172624/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/\"
         class=\"os-embed\">Click here for the Moving Man simulation</a>\n  </figcaption><span
         data-type=\"media\" id=\"eip-idp39684176\" data-alt=\"...\">\n    <img src=\"/resources/c965beb24bbbe1a0b8a47c569fcb7c41f36d7d47/Moving_Man_Sim.jpg\"
         data-media-type=\"image/jpeg\" alt=\"...\"/>\n  </span>\n  \n</figure><div

@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4.json
     body:
       encoding: US-ASCII
       string: ''
@@ -189,7 +189,7 @@ http_interactions:
   recorded_at: Wed, 30 Mar 2016 02:02:33 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/4e40d43d-cfee-412e-919c-facccdf0535d@3
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/4e40d43d-cfee-412e-919c-facccdf0535d@3.json
     body:
       encoding: US-ASCII
       string: ''
@@ -333,7 +333,7 @@ http_interactions:
   recorded_at: Wed, 30 Mar 2016 02:02:33 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@9
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/0e58aa87-2e09-40a7-8bf3-269b2fa16509@9.json
     body:
       encoding: US-ASCII
       string: ''
@@ -547,7 +547,7 @@ http_interactions:
         from positive to negative while the man is moving. We will come back to this
         animation and look at the &#8220;Charts&#8221; view when we study graphical
         representation of motion.</p><figure id=\"eip-idp10072272\" class=\"ost-embed-container\"><figcaption><a
-        href=\"https://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/\"
+        href=\"https://openstax.org/apps/archive/20201222.172624/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/\"
         class=\"os-embed\">Click here for the Moving Man simulation</a>\n  </figcaption><span
         data-type=\"media\" id=\"eip-idp39684176\" data-alt=\"...\">\n    <img src=\"/resources/c965beb24bbbe1a0b8a47c569fcb7c41f36d7d47/Moving_Man_Sim.jpg\"
         data-media-type=\"image/jpeg\" alt=\"...\"/>\n  </span>\n  \n</figure><div
@@ -869,7 +869,7 @@ http_interactions:
   recorded_at: Wed, 30 Mar 2016 02:02:33 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/3005b86b-d993-4048-aff0-500256001f42@7
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/3005b86b-d993-4048-aff0-500256001f42@7.json
     body:
       encoding: US-ASCII
       string: ''
@@ -1766,7 +1766,7 @@ http_interactions:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2.json
     body:
       encoding: US-ASCII
       string: ''
@@ -1885,7 +1885,7 @@ http_interactions:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/95e61258-2faf-41d4-af92-f62e1414175a@4.json
     body:
       encoding: US-ASCII
       string: ''
@@ -2207,7 +2207,7 @@ http_interactions:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4.json
     body:
       encoding: US-ASCII
       string: ''
@@ -2651,7 +2651,7 @@ http_interactions:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3.json
     body:
       encoding: US-ASCII
       string: ''
@@ -3240,7 +3240,7 @@ http_interactions:
   recorded_at: Wed, 30 Mar 2016 02:02:34 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/dbc79576-8c66-41d2-929a-74bcd036a1df@4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/dbc79576-8c66-41d2-929a-74bcd036a1df@4.json
     body:
       encoding: US-ASCII
       string: ''

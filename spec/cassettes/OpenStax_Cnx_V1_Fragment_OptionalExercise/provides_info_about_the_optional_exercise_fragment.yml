@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3.json
     body:
       encoding: US-ASCII
       string: ''
@@ -587,6 +587,6 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:22:50Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 Apr 2016 23:50:15 GMT
 recorded_with: VCR 2.9.3

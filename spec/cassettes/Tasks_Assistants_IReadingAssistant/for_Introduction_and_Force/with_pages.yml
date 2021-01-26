@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851
     body:
       encoding: US-ASCII
       string: ''
@@ -41,11 +41,11 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:10 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2.json
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/1bb611e9-0ded-48d6-a107-fbb9bd900851@2.json
     body:
       encoding: US-ASCII
       string: ''
@@ -160,7 +160,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:17:14Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:10 GMT
 - request:
     method: post
@@ -218,11 +218,11 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"total_count":0,"items":[]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:12 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/95e61258-2faf-41d4-af92-f62e1414175a
     body:
       encoding: US-ASCII
       string: ''
@@ -261,11 +261,11 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:12 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/95e61258-2faf-41d4-af92-f62e1414175a@4.json
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/95e61258-2faf-41d4-af92-f62e1414175a@4.json
     body:
       encoding: US-ASCII
       string: ''
@@ -583,7 +583,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:18:52Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:12 GMT
 - request:
     method: post
@@ -2184,6 +2184,6 @@ http_interactions:
         ZWFzdC4ifV0sImNvbW11bml0eV9zb2x1dGlvbnMiOltdLCJoaW50cyI6W10s
         ImZvcm1hdHMiOlsiZnJlZS1yZXNwb25zZSIsIm11bHRpcGxlLWNob2ljZSJd
         LCJjb21ib19jaG9pY2VzIjpbXX1dfV19
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:23:14 GMT
 recorded_with: VCR 2.9.3

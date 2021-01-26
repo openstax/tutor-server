@@ -8,7 +8,7 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow 
     before(:all) do
       DatabaseCleaner.start
 
-      @phys_cnx_book = OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b')
+      @phys_cnx_book = OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b@6.1')
       @ecosystem = FactoryBot.create :content_ecosystem
       VCR.use_cassette('Content_ImportBook/with_the_phys_book', VCR_OPTS) do
         described_class.call(ecosystem: @ecosystem, cnx_book: @phys_cnx_book)
@@ -50,9 +50,9 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow 
     before(:all) do
       DatabaseCleaner.start
 
-      bio_cnx_book = OpenStax::Cnx::V1::Book.new(id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2')
+      bio_cnx_book = OpenStax::Cnx::V1::Book.new(id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2@22.1')
       @ecosystem = FactoryBot.create :content_ecosystem
-      OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents') do
+      OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/') do
         OpenStax::Exercises::V1.use_fake_client do
           VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
             described_class.call(ecosystem: @ecosystem, cnx_book: bio_cnx_book)
@@ -115,7 +115,7 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow 
     before(:all) do
       DatabaseCleaner.start
 
-      demo_cnx_book = OpenStax::Cnx::V1::Book.new(id: 'dc10e469-5816-411d-8ea3-39a9b0706a48')
+      demo_cnx_book = OpenStax::Cnx::V1::Book.new(id: 'dc10e469-5816-411d-8ea3-39a9b0706a48@2.16')
       @ecosystem = FactoryBot.create :content_ecosystem
       VCR.use_cassette('Demo_Import/imports_the_demo_book', VCR_OPTS) do
         described_class.call(ecosystem: @ecosystem, cnx_book: demo_cnx_book)

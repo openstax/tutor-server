@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:1bb611e9-0ded-48d6-a107-fbb9bd900851
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:1bb611e9-0ded-48d6-a107-fbb9bd900851
     body:
       encoding: US-ASCII
       string: ''
@@ -45,7 +45,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:23:27 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:1bb611e9-0ded-48d6-a107-fbb9bd900851@2.json
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:1bb611e9-0ded-48d6-a107-fbb9bd900851@2.json
     body:
       encoding: US-ASCII
       string: ''
@@ -164,7 +164,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:23:27 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:95e61258-2faf-41d4-af92-f62e1414175a
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:95e61258-2faf-41d4-af92-f62e1414175a
     body:
       encoding: US-ASCII
       string: ''
@@ -207,7 +207,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:23:28 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:95e61258-2faf-41d4-af92-f62e1414175a@4.json
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:95e61258-2faf-41d4-af92-f62e1414175a@4.json
     body:
       encoding: US-ASCII
       string: ''

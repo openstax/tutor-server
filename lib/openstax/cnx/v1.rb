@@ -76,7 +76,7 @@ module OpenStax::Cnx::V1
       url = "#{path}.#{format}"
 
       begin
-        Rails.logger.debug { "Fetching #{url}.json" }
+        Rails.logger.debug { "Fetching #{url}" }
         JSON.parse open(url, 'ACCEPT' => 'text/json').read
       rescue OpenURI::HTTPError => exception
         raise OpenStax::HTTPError, "#{exception.message} for URL #{url}"

@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/102e9604-daa7-4a09-9f9e-232251d1a4ee@7
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/102e9604-daa7-4a09-9f9e-232251d1a4ee@7.json
     body:
       encoding: US-ASCII
       string: ''
@@ -1322,7 +1322,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:23:38 GMT
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2.json
     body:
       encoding: US-ASCII
       string: ''

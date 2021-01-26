@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/9545b9a2-c371-4a31-abb9-3a4a1fff497b@8
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/9545b9a2-c371-4a31-abb9-3a4a1fff497b@8.json
     body:
       encoding: US-ASCII
       string: ''
@@ -510,6 +510,6 @@ http_interactions:
         "id": "words_hsphysics"}}, {"changes": ".", "version": "1", "revised": "2015-05-23T10:17:13Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Words",
         "title": "", "fullname": "Words HSPhysics", "id": "words_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Mon, 17 Aug 2015 15:56:33 GMT
 recorded_with: VCR 2.9.3

@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4.json
     body:
       encoding: US-ASCII
       string: ''
@@ -185,11 +185,11 @@ http_interactions:
         1 and 2", "version": "1.1", "revised": "2015-05-29T19:29:09Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:45 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:4e40d43d-cfee-412e-919c-facccdf0535d@3
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:4e40d43d-cfee-412e-919c-facccdf0535d@3
     body:
       encoding: US-ASCII
       string: ''
@@ -329,11 +329,11 @@ http_interactions:
         "version": "1", "revised": "2015-05-29T19:05:07Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:45 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:0e58aa87-2e09-40a7-8bf3-269b2fa16509@9
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:0e58aa87-2e09-40a7-8bf3-269b2fa16509@9
     body:
       encoding: US-ASCII
       string: ''
@@ -547,7 +547,7 @@ http_interactions:
         from positive to negative while the man is moving. We will come back to this
         animation and look at the &#8220;Charts&#8221; view when we study graphical
         representation of motion.</p><figure id=\"eip-idp10072272\" class=\"ost-embed-container\"><figcaption><a
-        href=\"https://archive.cnx.org/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/\"
+        href=\"https://openstax.org/apps/archive/20201222.172624/specials/e2ca52af-8c6b-450e-ac2f-9300b38e8739/moving-man/\"
         class=\"os-embed\">Click here for the Moving Man simulation</a>\n  </figcaption><span
         data-type=\"media\" id=\"eip-idp39684176\" data-alt=\"...\">\n    <img src=\"/resources/c965beb24bbbe1a0b8a47c569fcb7c41f36d7d47/Moving_Man_Sim.jpg\"
         data-media-type=\"image/jpeg\" alt=\"...\"/>\n  </span>\n  \n</figure><div
@@ -865,11 +865,11 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:07:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:45 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:3005b86b-d993-4048-aff0-500256001f42@7
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:3005b86b-d993-4048-aff0-500256001f42@7
     body:
       encoding: US-ASCII
       string: ''
@@ -1762,11 +1762,11 @@ http_interactions:
         module", "version": "1", "revised": "2015-05-29T19:10:15Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:45 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:1bb611e9-0ded-48d6-a107-fbb9bd900851@2
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:1bb611e9-0ded-48d6-a107-fbb9bd900851@2
     body:
       encoding: US-ASCII
       string: ''
@@ -1881,11 +1881,11 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:17:14Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:46 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:95e61258-2faf-41d4-af92-f62e1414175a@4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:95e61258-2faf-41d4-af92-f62e1414175a@4
     body:
       encoding: US-ASCII
       string: ''
@@ -2203,11 +2203,11 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:18:52Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:46 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4
     body:
       encoding: US-ASCII
       string: ''
@@ -2647,11 +2647,11 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:21:00Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:46 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3
     body:
       encoding: US-ASCII
       string: ''
@@ -3236,11 +3236,11 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:22:50Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:47 GMT
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:dbc79576-8c66-41d2-929a-74bcd036a1df@4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:dbc79576-8c66-41d2-929a-74bcd036a1df@4
     body:
       encoding: US-ASCII
       string: ''
@@ -3959,7 +3959,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:27:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:47 GMT
 - request:
     method: post
@@ -15537,6 +15537,6 @@ http_interactions:
         Tn08L3NwYW4+In1dLCJjb21tdW5pdHlfc29sdXRpb25zIjpbXSwiaGludHMi
         OltdLCJmb3JtYXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9p
         Y2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:02 GMT
 recorded_with: VCR 2.9.3
