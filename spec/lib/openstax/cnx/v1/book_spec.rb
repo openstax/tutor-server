@@ -5,7 +5,7 @@ RSpec.describe OpenStax::Cnx::V1::Book, type: :external, vcr: VCR_OPTS do
   cnx_book_id = '93e2b09d-261c-4007-a987-0b3062fe154b'
 
   let(:expected_book_url) {
-    'https://archive-staging-tutor.cnx.org/contents/93e2b09d-261c-4007-a987-0b3062fe154b'
+    'https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b'
   }
 
   it "provides info about the book with the given id" do

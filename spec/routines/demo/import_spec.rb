@@ -37,7 +37,7 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
     expect(book.title).to eq 'APUSH'
     expect(book.uuid).to eq 'dc10e469-5816-411d-8ea3-39a9b0706a48'
     expect(book.url).to include(
-      'https://archive-staging-tutor.cnx.org/contents/dc10e469-5816-411d-8ea3-39a9b0706a48'
+      'https://openstax.org/apps/archive/20201222.172624/contents/dc10e469-5816-411d-8ea3-39a9b0706a48'
     )
     expect(book.reading_processing_instructions.size).to eq 4
     book.reading_processing_instructions.each do |reading_processing_instruction|

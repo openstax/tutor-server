@@ -7,10 +7,10 @@ RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
 
   it "can generate url's for resources in the cnx archive" do
     expect(OpenStax::Cnx::V1.archive_url_for('module_id@version')).to(
-      eq('https://archive-staging-tutor.cnx.org/contents/module_id@version'))
+      eq('https://openstax.org/apps/archive/20201222.172624/contents/module_id@version'))
 
     expect(OpenStax::Cnx::V1.archive_url_for('/resources/image.jpg')).to(
-      eq('https://archive-staging-tutor.cnx.org/resources/image.jpg'))
+      eq('https://openstax.org/apps/archive/20201222.172624/resources/image.jpg'))
 
     OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents') do
       expect(OpenStax::Cnx::V1.archive_url_for('module_id@version')).to(
@@ -45,7 +45,7 @@ RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
       OpenStax::Cnx::V1.fetch(OpenStax::Cnx::V1.archive_url_for('no-exist'))
     }.to raise_error(
       OpenStax::HTTPError,
-      "404 Not Found for URL https://archive-staging-tutor.cnx.org/contents/no-exist"
+      "404 Not Found for URL https://openstax.org/apps/archive/20201222.172624/contents/no-exist"
     )
   end
 end

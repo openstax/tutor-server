@@ -11,7 +11,7 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
   end
 
   context 'tutor book' do
-    let(:archive_url) { 'https://archive-staging-tutor.cnx.org/contents/' }
+    let(:archive_url) { 'https://openstax.org/apps/archive/20201222.172624/contents/' }
     let(:book_cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
 
     it 'imports books and exercises as ecosystems' do
