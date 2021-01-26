@@ -37,11 +37,12 @@ class Content::Models::Book < IndestructibleRecord
   end
 
   def archive_url
-    Addressable::URI.parse(url).site
+    Rails.application.secrets.openstax[:cnx][:archive_url]
   end
 
+  # TODO: This is deprecated and needs to be removed
   def webview_url
-    archive_url.sub(/archive[\.-]?/, '')
+    archive_url
   end
 
   def cnx_id

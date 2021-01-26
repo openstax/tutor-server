@@ -79,7 +79,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
         id: '6a0568d8-23d7-439b-9a01-16e4e73886b3', title: 'The Science of Biology'
       )
     end
-    let(:archive_url)  { 'https://archive.cnx.org/contents/' }
+    let(:archive_url)  { 'https://openstax.org/apps/archive/20201222.172624/contents/' }
     let(:book_indices) { [1, 1] }
 
     it 'creates a new Page' do

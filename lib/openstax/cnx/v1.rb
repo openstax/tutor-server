@@ -58,17 +58,20 @@ module OpenStax::Cnx::V1
       end
     end
 
-
+    # Archive url for the given path
+    # Forces /contents/ to be prepended to the path, unless the path begins with /
     def archive_url_for(path)
-      UrlPath.join(configuration.archive_url_base, '/contents/', path.to_s)
+      prefix = path.to_s.start_with?('/') ? '' : '/contents/'
+      UrlPath.join(configuration.archive_url_base, prefix, path.to_s)
     end
 
     # Webview url for the given path
     # Forces /contents/ to be prepended to the path, unless the path begins with /
     def webview_url_for(path)
-      UrlPath.join(configuration.webview_url_base, '/contents/', path.to_s)
+      prefix = path.to_s.start_with?('/') ? '' : '/contents/'
+      UrlPath.join(configuration.webview_url_base, prefix, path.to_s)
     end
- 
+
     def fetch(path, format: 'json')
       url = "#{path}.#{format}"
 

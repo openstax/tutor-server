@@ -153,7 +153,7 @@ RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
           DatabaseCleaner.start
 
           VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
-            OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents') do
+            OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents') do
               OpenStax::Exercises::V1.use_fake_client do
                 CreateStudentHistory[
                   course: @course.reload,

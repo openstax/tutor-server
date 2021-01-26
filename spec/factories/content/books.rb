@@ -7,7 +7,7 @@ FactoryBot.define do
     version    { Random.rand(1..10) }
     short_id   { SecureRandom.urlsafe_base64(8).first(8) }
     tutor_uuid { SecureRandom.uuid }
-    url        { "https://archive.cnx.org/contents/#{uuid}@#{version}" }
+    url        { "https://openstax.org/apps/archive/20201222.172624/contents/#{uuid}@#{version}" }
     reading_processing_instructions {
       [
         {

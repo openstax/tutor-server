@@ -15,7 +15,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
 
       @book = FactoryBot.create :content_book
 
-      @pages = OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
+      @pages = OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents/') do
         VCR.use_cassette("Content_Routines_TransformAndCachePageContent/with_book", VCR_OPTS) do
           [
             Content::Routines::ImportPage[
@@ -38,9 +38,9 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
     end
 
     ORIGINAL_HREFS = [
-      'https://cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
-      'https://cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
-      'https://cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
+      'https://openstax.org/apps/archive/20201222.172624/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
+      'https://openstax.org/apps/archive/20201222.172624/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
+      'https://openstax.org/apps/archive/20201222.172624/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
     ]
 
     let(:link_text) do
@@ -54,17 +54,17 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
     before { @page_1.reload }
 
     [
-      'http://cnx.org', 'http://archive.cnx.org', 'https://cnx.org', 'https://archive.cnx.org', ''
+      'http://cnx.org', 'http://archive.cnx.org', 'https://openstax.org/apps/archive/20201222.172624', 'https://openstax.org/apps/archive/20201222.172624', ''
     ].each do |link_prefix|
       context "#{link_prefix.blank? ? 'no' : link_prefix} link prefix" do
         before(:all) do
           DatabaseCleaner.start
 
           @link_prefix_hrefs = ORIGINAL_HREFS.map do |original_href|
-            original_href.sub 'https://cnx.org', link_prefix
+            original_href.sub 'https://openstax.org/apps/archive/20201222.172624', link_prefix
           end
           @pages.each do |page|
-            page.url.sub! 'https://cnx.org', link_prefix
+            page.url.sub! 'https://openstax.org/apps/archive/20201222.172624', link_prefix
 
             ORIGINAL_HREFS.each_with_index do |original_href, index|
               page.content.gsub! original_href, @link_prefix_hrefs[index]

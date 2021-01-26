@@ -142,7 +142,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
                       uuid: ecosystem.books.first.chapters.second.pages.first.uuid,
                       version: ecosystem.books.first.chapters.second.pages.first.version,
                       cnx_id: ecosystem.books.first.chapters.second.pages.first.cnx_id,
-                      short_id: ecosystem.books.first.chapters.second.pages.first.short_id,
+                      short_id: ecosystem.books.first.as_toc.pages.third.short_id,
                       title: 'third page',
                       chapter_section: [2, 1],
                       type: 'page'
@@ -161,7 +161,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
     before(:all) do
       VCR.use_cassette('Api_V1_EcosystemsController/with_book', VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
-          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+          book_cnx_id: '031da8d3-b525-429c-80cf-6c8ed997733a@23.16'
         ]
       end
     end
@@ -219,7 +219,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
-        expect(hash[:total_count]).to eq(215)
+        expect(hash[:total_count]).to eq(1870)
         hash[:items].each do |item|
           expect(item[:is_excluded]).to eq false
         end
@@ -238,9 +238,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
         )
         hash[:items].each do |item|
           expect(item[:pool_types]).to eq ['homework_core']
-          wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
-          item_los = wrapper.los
-          expect(item_los).not_to be_empty
         end
       end
     end
@@ -276,10 +273,10 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
   context 'with the bio book' do
     before(:all) do
       VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
-        OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents') do
+        OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/') do
           OpenStax::Exercises::V1.use_fake_client do
             @ecosystem = FetchAndImportBookAndCreateEcosystem[
-              book_cnx_id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2'
+              book_cnx_id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2@26.6'
             ]
           end
         end
@@ -302,14 +299,12 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
           [
             {
               id: book.id.to_s,
+              is_collated: false,
               uuid: book.uuid,
               version: book.version,
               cnx_id: book.cnx_id,
-              short_id: book.short_id,
-              archive_url: 'https://archive.cnx.org',
-              webview_url: 'https://cnx.org',
-              is_collated: true,
-              baked_at: kind_of(String),
+              archive_url: 'https://openstax.org/apps/archive/20201222.172624/',
+              webview_url: 'https://openstax.org/apps/archive/20201222.172624/',
               title: book.title,
               type: 'book',
               chapter_section: [],
@@ -319,8 +314,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
                   uuid: book.as_toc.pages.first.uuid,
                   version: book.as_toc.pages.first.version,
                   cnx_id: book.as_toc.pages.first.cnx_id,
-                  short_id: book.as_toc.pages.first.short_id,
-                  title: a_string_matching('Preface'),
+                  title: a_string_matching(/Preface/),
                   chapter_section: [],
                   type: 'page'
                 },
@@ -328,9 +322,9 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
                   {
                     uuid: unit.uuid,
                     cnx_id: unit.uuid,
-                    title: a_string_matching("Unit #{unit_index + 1}"),
+                    title: a_string_matching(/Unit.+#{unit_index + 1}/),
                     type: 'unit',
-                    chapter_section: [],
+                    chapter_section: [unit_index + 1],
                     children: unit.chapters.each.map do |chapter|
                       {
                         uuid: chapter.uuid,
@@ -344,7 +338,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
                             uuid: page.uuid,
                             version: page.version,
                             cnx_id: page.cnx_id,
-                            short_id: page.short_id,
                             title: page.title,
                             type: 'page',
                             chapter_section: page.book_location
@@ -365,8 +358,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
                     uuid: page.uuid,
                     version: page.version,
                     cnx_id: page.cnx_id,
-                    short_id: page.short_id,
-                    title: a_string_matching(title),
+                    title: a_string_including(title),
                     chapter_section: [],
                     type: 'page'
                   }

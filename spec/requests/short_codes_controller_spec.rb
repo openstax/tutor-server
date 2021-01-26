@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ShortCodesController, type: :request do
   let(:user) { FactoryBot.create(:user_profile) }
 
-  let(:absolute_url) { FactoryBot.create(:short_code_short_code, uri: 'https://cnx.org') }
+  let(:absolute_url) { FactoryBot.create(:short_code_short_code, uri: 'https://openstax.org/apps/archive/20201222.172624') }
   let(:relative_url) { FactoryBot.create(:short_code_short_code, uri: '/dashboard') }
 
   let(:course) { FactoryBot.create :course_profile_course }
@@ -37,7 +37,7 @@ RSpec.describe ShortCodesController, type: :request do
   it 'redirects users to absolute urls' do
     sign_in! teacher
     get short_code_url(absolute_url.code)
-    expect(response).to redirect_to('https://cnx.org')
+    expect(response).to redirect_to('https://openstax.org/apps/archive/20201222.172624')
   end
 
   it 'redirects users to relative urls' do

@@ -52,7 +52,7 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow 
 
       bio_cnx_book = OpenStax::Cnx::V1::Book.new(id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2')
       @ecosystem = FactoryBot.create :content_ecosystem
-      OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents') do
+      OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents') do
         OpenStax::Exercises::V1.use_fake_client do
           VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
             described_class.call(ecosystem: @ecosystem, cnx_book: bio_cnx_book)

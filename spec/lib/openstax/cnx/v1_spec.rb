@@ -12,14 +12,14 @@ RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
     expect(OpenStax::Cnx::V1.archive_url_for('/resources/image.jpg')).to(
       eq('https://openstax.org/apps/archive/20201222.172624/resources/image.jpg'))
 
-    OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents') do
+    OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents') do
       expect(OpenStax::Cnx::V1.archive_url_for('module_id@version')).to(
-        eq('https://archive.cnx.org/contents/module_id@version'))
+        eq('https://openstax.org/apps/archive/20201222.172624/contents/module_id@version'))
     end
 
-    OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
+    OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents/') do
       expect(OpenStax::Cnx::V1.archive_url_for('module_id@version')).to(
-        eq('https://archive.cnx.org/contents/module_id@version'))
+        eq('https://openstax.org/apps/archive/20201222.172624/contents/module_id@version'))
     end
   end
 
