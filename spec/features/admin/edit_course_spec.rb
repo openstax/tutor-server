@@ -191,10 +191,10 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   end
 
   scenario 'bulk updating course ecosystem', vcr: VCR_OPTS do
-    physics_old_cnx_id = '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
+    physics_old_cnx_id = 'cce64fde-f448-43b8-ae88-27705cceb0da@14.4'
     physics_old = FetchAndImportBookAndCreateEcosystem[
       book_cnx_id: physics_old_cnx_id]
-    physics_new_cnx_id = '93e2b09d-261c-4007-a987-0b3062fe154b@5.1'
+    physics_new_cnx_id = 'cce64fde-f448-43b8-ae88-27705cceb0da@14.7'
     physics_new = FetchAndImportBookAndCreateEcosystem[
       book_cnx_id: physics_new_cnx_id]
 
@@ -203,7 +203,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
     click_on 'Set Ecosystem'
 
     expect(page).to have_content('Course ecosystem updates have been queued')
-    expect(@course.ecosystem.books.first.version).to eq('4.4')
+    expect(@course.ecosystem.books.first.version).to eq('14.4')
 
     click_on 'Add Course'
     fill_in 'Name', with: 'Physics II'
@@ -215,8 +215,8 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
     find(:id, :ecosystem_id).find("option[value='#{physics_new.id}']").select_option
     click_on 'Set Ecosystem'
     expect(page).to have_content('Course ecosystem updates have been queued')
-    expect(@course.ecosystem.books.first.version).to eq('5.1')
-    expect(course_2.ecosystem.books.first.version).to eq('5.1')
+    expect(@course.ecosystem.books.first.version).to eq('14.7')
+    expect(course_2.ecosystem.books.first.version).to eq('14.7')
   end
 
   scenario 'Check payment fields on student roster', js: true do
