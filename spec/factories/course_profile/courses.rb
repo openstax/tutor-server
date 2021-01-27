@@ -21,6 +21,8 @@ FactoryBot.define do
 
     timezone              { 'US/Central' }
 
+    code                  { 'OX-1' }
+
     starts_at             { consistent_times ? term_year.starts_at : Time.current - 3.months }
     ends_at               { consistent_times ? term_year.ends_at : Time.current + 3.months }
 

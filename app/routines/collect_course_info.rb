@@ -61,7 +61,8 @@ class CollectCourseInfo
         roles: roles,
         related_teacher_profile_ids: course.related_teacher_profile_ids,
         teacher_profiles: course.teacher_profiles,
-        spy_info: course.spy_info
+        spy_info: course.spy_info,
+        code: course.code.nil? ? "" : course.code,
       )
     end
   end

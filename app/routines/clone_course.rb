@@ -40,7 +40,8 @@ class CloneCourse
       reading_weight: course.reading_weight,
       homework_weight: course.homework_weight,
       grading_templates: grading_templates,
-      past_due_unattempted_ungraded_wrq_are_zero: course.past_due_unattempted_ungraded_wrq_are_zero
+      past_due_unattempted_ungraded_wrq_are_zero: course.past_due_unattempted_ungraded_wrq_are_zero,
+      code: course.code
     }
 
     run(:create_course, attrs)
