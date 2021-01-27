@@ -7,7 +7,9 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
 
   context 'tutor page' do
     let(:cnx_page)  do
-      cnx_book = OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b@6.1')
+      cnx_book = OpenStax::Cnx::V1::Book.new(
+        hash: { id: '93e2b09d-261c-4007-a987-0b3062fe154b', version: '6.1' }.deep_stringify_keys
+      )
       OpenStax::Cnx::V1::Page.new(
         id: '95e61258-2faf-41d4-af92-f62e1414175a',
         title: 'Force',
@@ -79,9 +81,13 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
   end
 
   context 'cc page' do
+
     let(:cnx_page)  do
+      cnx_book = OpenStax::Cnx::V1::Book.new(
+        hash: { id: '93e2b09d-261c-4007-a987-0b3062fe154b', version: '6.1' }.deep_stringify_keys
+      )
       OpenStax::Cnx::V1::Page.new(
-        id: '6a0568d8-23d7-439b-9a01-16e4e73886b3', title: 'The Science of Biology'
+        id: '6a0568d8-23d7-439b-9a01-16e4e73886b3', title: 'The Science of Biology', book: cnx_book
       )
     end
     let(:archive_url)  { 'https://openstax.org/apps/archive/20201222.172624/' }
