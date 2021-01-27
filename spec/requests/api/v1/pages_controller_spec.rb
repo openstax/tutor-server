@@ -6,7 +6,7 @@ RSpec.describe Api::V1::PagesController, type: :request, api: true, version: :v1
     before(:all) do
       VCR.use_cassette("Api_V1_PagesController/with_book", VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
-          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b@6.1'
         ]
       end
 
@@ -49,7 +49,10 @@ RSpec.describe Api::V1::PagesController, type: :request, api: true, version: :v1
 
       context 'with an old version of force' do
         before(:all) do
-          page_hash = { id: "#{@page_uuid}@2", title: 'Force' }
+          cnx_book = OpenStax::Cnx::V1::Book.new(
+            hash: { id: '93e2b09d-261c-4007-a987-0b3062fe154b', version: '4.4' }.deep_stringify_keys
+          )
+          page_hash = { id: "#{@page_uuid}@2", title: 'Force', book: cnx_book }
 
           book = FactoryBot.create :content_book
           @old_ecosystem = book.ecosystem

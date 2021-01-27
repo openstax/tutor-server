@@ -4,7 +4,7 @@ require 'vcr_helper'
 RSpec.describe WorkPreviewCourseTasks, type: :routine, speed: :slow do
   before(:all) do
     ecosystem = VCR.use_cassette('PopulatePreviewCourseContent/with_book', VCR_OPTS) do
-      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
+      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b@6.1']
     end
 
     offering = FactoryBot.create :catalog_offering, ecosystem: ecosystem

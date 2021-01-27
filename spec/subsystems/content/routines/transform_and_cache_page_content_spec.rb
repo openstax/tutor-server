@@ -4,18 +4,24 @@ require 'vcr_helper'
 RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, vcr: VCR_OPTS do
   context 'with real content' do
     before(:all) do
+      cnx_book = OpenStax::Cnx::V1::Book.new hash: {
+        id: '93e2b09d-261c-4007-a987-0b3062fe154b',
+        version: '4.4'
+      }.deep_stringify_keys
       cnx_page_1 = OpenStax::Cnx::V1::Page.new(
         id: '102e9604-daa7-4a09-9f9e-232251d1a4ee@7',
-        title: 'Physical Quantities and Units'
+        title: 'Physical Quantities and Units',
+        book: cnx_book
       )
       cnx_page_2 = OpenStax::Cnx::V1::Page.new(
         id: '127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
-        title: "Introduction to Electric Current, Resistance, and Ohm's Law"
+        title: "Introduction to Electric Current, Resistance, and Ohm's Law",
+        book: cnx_book
       )
 
       @book = FactoryBot.create :content_book
 
-      @pages = OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents/') do
+      @pages = OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/') do
         VCR.use_cassette("Content_Routines_TransformAndCachePageContent/with_book", VCR_OPTS) do
           [
             Content::Routines::ImportPage[
@@ -594,11 +600,15 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
 
     before(:all) do
       @book = FactoryBot.create :content_book
+      cnx_book = OpenStax::Cnx::V1::Book.new hash: {
+        id: '93e2b09d-261c-4007-a987-0b3062fe154b',
+        version: '4.4'
+      }.deep_stringify_keys
 
       @ecosystem = @book.ecosystem
 
       cnx_page = OpenStax::Cnx::V1::Page.new(
-        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration'
+        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration', book: cnx_book
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do

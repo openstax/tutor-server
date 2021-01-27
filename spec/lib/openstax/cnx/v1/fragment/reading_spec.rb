@@ -9,7 +9,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Reading, type: :external, vcr: VCR_O
   let(:fragment_splitter)  do
     OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
-  let(:cnx_page_id)        { '95e61258-2faf-41d4-af92-f62e1414175a@4' }
+  let(:cnx_page_id)        { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4:95e61258-2faf-41d4-af92-f62e1414175a' }
   let(:cnx_page)           { OpenStax::Cnx::V1::Page.new(id: cnx_page_id) }
   let(:fragments)          { fragment_splitter.split_into_fragments(cnx_page.root) }
   let(:reading_fragments)  { fragments.select { |f| f.instance_of? described_class } }

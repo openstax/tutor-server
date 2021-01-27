@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/no-exist
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/no-exist.json
     body:
       encoding: US-ASCII
       string: ''

@@ -235,6 +235,9 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
   protected
 
   def page_for(hash)
-    OpenStax::Cnx::V1::Page.new(hash: HashWithIndifferentAccess.new(hash).except(:expected))
+    cnx_book = OpenStax::Cnx::V1::Book.new(
+      hash: { id: '93e2b09d-261c-4007-a987-0b3062fe154b', version: '4.4' }.deep_stringify_keys
+    )
+    OpenStax::Cnx::V1::Page.new(hash: HashWithIndifferentAccess.new(hash).except(:expected), book: cnx_book)
   end
 end

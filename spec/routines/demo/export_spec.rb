@@ -55,7 +55,7 @@ RSpec.describe Demo::Export, type: :routine do
       when "config/demo/spec/import/#{offering.title}.yml"
         expect(YAML.load(data).deep_symbolize_keys).to eq(
           book: {
-            archive_url_base: 'https://openstax.org/apps/archive/20201222.172624/contents/',
+            archive_url_base: 'https://openstax.org/apps/archive/20201222.172624/',
             uuid: book.uuid,
             version: book.version.to_s,
             reading_processing_instructions: [

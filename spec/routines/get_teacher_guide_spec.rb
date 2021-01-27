@@ -328,12 +328,12 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
       DatabaseCleaner.start
 
       VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
-        OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents') do
+        OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/') do
           OpenStax::Exercises::V1.use_fake_client do
             CreateStudentHistory[
               course: @course.reload,
               roles: [@role.reload, @second_role.reload],
-              book_id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2'
+              book_id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2@22.1'
             ]
           end
         end

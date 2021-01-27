@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/9545b9a2-c371-4a31-abb9-3a4a1fff497b@8.json
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@4.4:9545b9a2-c371-4a31-abb9-3a4a1fff497b.json
     body:
       encoding: US-ASCII
       string: ''

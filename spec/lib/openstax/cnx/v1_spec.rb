@@ -2,8 +2,8 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
-  let(:cnx_collection_id) { '93e2b09d-261c-4007-a987-0b3062fe154b' }
-  let(:cnx_module_id)     { '95e61258-2faf-41d4-af92-f62e1414175a' }
+  let(:cnx_collection_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@3.6' }
+  let(:cnx_module_id)     { '95e61258-2faf-41d4-af92-f62e1414175a@4' }
 
   it "can generate url's for resources in the cnx archive" do
     expect(OpenStax::Cnx::V1.archive_url_for('module_id@version')).to(
@@ -12,7 +12,7 @@ RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
     expect(OpenStax::Cnx::V1.archive_url_for('/resources/image.jpg')).to(
       eq('https://openstax.org/apps/archive/20201222.172624/resources/image.jpg'))
 
-    OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents') do
+    OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/') do
       expect(OpenStax::Cnx::V1.archive_url_for('module_id@version')).to(
         eq('https://openstax.org/apps/archive/20201222.172624/contents/module_id@version'))
     end
@@ -45,7 +45,7 @@ RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
       OpenStax::Cnx::V1.fetch(OpenStax::Cnx::V1.archive_url_for('no-exist'))
     }.to raise_error(
       OpenStax::HTTPError,
-      "404 Not Found for URL https://openstax.org/apps/archive/20201222.172624/contents/no-exist"
+      "404 Not Found for URL https://openstax.org/apps/archive/20201222.172624/contents/no-exist.json"
     )
   end
 end

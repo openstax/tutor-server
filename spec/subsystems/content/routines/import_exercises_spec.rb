@@ -109,11 +109,14 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
 
     before(:all) do
       book = FactoryBot.create :content_book
+      cnx_book = OpenStax::Cnx::V1::Book.new(
+        hash: { id: '93e2b09d-261c-4007-a987-0b3062fe154b', version: '4.4' }.deep_stringify_keys
+      )
 
       @ecosystem = book.ecosystem
 
       cnx_page = OpenStax::Cnx::V1::Page.new(
-        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration'
+        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration', book: cnx_book
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
@@ -154,10 +157,14 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
   context 'incoming free response exercises' do
     before(:all) do
       book = FactoryBot.create :content_book
+      cnx_book = OpenStax::Cnx::V1::Book.new(
+        hash: { id: '93e2b09d-261c-4007-a987-0b3062fe154b', version: '4.4' }.deep_stringify_keys
+      )
+
       @ecosystem = book.ecosystem
 
       cnx_page = OpenStax::Cnx::V1::Page.new(
-        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration'
+        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration', book: cnx_book
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do

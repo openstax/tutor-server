@@ -4,7 +4,7 @@ require 'vcr_helper'
 RSpec.describe Admin::EcosystemsController, type: :request, vcr: VCR_OPTS, speed: :medium do
   let(:admin)        { FactoryBot.create(:user_profile, :administrator) }
 
-  let(:book_1)       { FactoryBot.create :content_book, title: 'Intro to Sociology', version: '1' }
+  let(:book_1)       { FactoryBot.create :content_book, title: 'Physics', version: '1' }
   let!(:ecosystem_1) { Content::Models::Ecosystem.find(book_1.ecosystem.id) }
   let(:book_2)       { FactoryBot.create :content_book, title: 'AP Biology', version: '2' }
   let!(:ecosystem_2) { Content::Models::Ecosystem.find(book_2.ecosystem.id) }

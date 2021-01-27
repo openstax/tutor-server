@@ -7,7 +7,12 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
 
   context 'tutor page' do
     let(:cnx_page)  do
-      OpenStax::Cnx::V1::Page.new(id: '95e61258-2faf-41d4-af92-f62e1414175a', title: 'Force')
+      cnx_book = OpenStax::Cnx::V1::Book.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b@6.1')
+      OpenStax::Cnx::V1::Page.new(
+        id: '95e61258-2faf-41d4-af92-f62e1414175a',
+        title: 'Force',
+        book: cnx_book
+      )
     end
     let(:archive_url)           { OpenStax::Cnx::V1.archive_url_base }
     let(:book_indices)          { [4, 1] }
@@ -79,7 +84,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
         id: '6a0568d8-23d7-439b-9a01-16e4e73886b3', title: 'The Science of Biology'
       )
     end
-    let(:archive_url)  { 'https://openstax.org/apps/archive/20201222.172624/contents/' }
+    let(:archive_url)  { 'https://openstax.org/apps/archive/20201222.172624/' }
     let(:book_indices) { [1, 1] }
 
     it 'creates a new Page' do

@@ -21,7 +21,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
     before(:all) do
       VCR.use_cassette('Api_V1_CourseExercisesController/with_book', VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
-          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b@6.1'
         ]
       end
     end

@@ -15,7 +15,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
     before(:all) do
       @cnx_page_fragment_infos = [
         {
-          id: '3005b86b-d993-4048-aff0-500256001f42',
+          id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4:3005b86b-d993-4048-aff0-500256001f42',
           expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading,
                                          OpenStax::Cnx::V1::Fragment::Interactive,
                                          OpenStax::Cnx::V1::Fragment::Exercise,
@@ -36,15 +36,15 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
                                                      OpenStax::Cnx::V1::Fragment::Reading]
         },
         {
-          id: '1bb611e9-0ded-48d6-a107-fbb9bd900851',
+          id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4:1bb611e9-0ded-48d6-a107-fbb9bd900851',
           expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading]
         },
         {
-          id: '95e61258-2faf-41d4-af92-f62e1414175a',
+          id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4:95e61258-2faf-41d4-af92-f62e1414175a',
           expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading]
         },
         {
-          id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+          id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
           expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading,
                                          OpenStax::Cnx::V1::Fragment::Video,
                                          OpenStax::Cnx::V1::Fragment::Exercise,
@@ -101,8 +101,8 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
   context 'with footnotes' do
     before(:all) do
       VCR.use_cassette('OpenStax_Cnx_V1_FragmentSplitter/with_footnotes', VCR_OPTS) do
-        OpenStax::Cnx::V1.with_archive_url('https://archive-content05.cnx.org/contents/') do
-          @page = OpenStax::Cnx::V1::Page.new(id: '482ba886-c771-4533-96a6-ac6bf1c6889d')
+        OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/') do
+          @page = OpenStax::Cnx::V1::Page.new(id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4:482ba886-c771-4533-96a6-ac6bf1c6889d')
           @page.convert_content!
         end
       end

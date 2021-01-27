@@ -12,10 +12,13 @@ RSpec.describe Content::Models::Page, type: :model, vcr: VCR_OPTS do
   context 'with snap lab page' do
 
     before(:all) do
+      cnx_book = OpenStax::Cnx::V1::Book.new(
+        hash: { id: '93e2b09d-261c-4007-a987-0b3062fe154b', version: '4.4' }.deep_stringify_keys
+      )
       snap_lab_page_content = VCR.use_cassette(
         'Content_Models_Page/with_snap_lab_page', VCR_OPTS
       ) do
-        OpenStax::Cnx::V1::Page.new(id: '9545b9a2-c371-4a31-abb9-3a4a1fff497b@8').content
+        OpenStax::Cnx::V1::Page.new(id: '9545b9a2-c371-4a31-abb9-3a4a1fff497b@8', book: cnx_book).content
       end
 
       @snap_lab_page = FactoryBot.create :content_page, content: snap_lab_page_content

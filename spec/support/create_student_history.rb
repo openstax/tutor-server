@@ -9,7 +9,7 @@ class CreateStudentHistory
 
   private
 
-  def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b')
+  def exec(course:, roles: setup_student_role, book_id: '93e2b09d-261c-4007-a987-0b3062fe154b@6.1')
     raise(ArgumentError, 'Role not in given course', caller) if roles.any? do |role|
       role.course != course
     end

@@ -60,7 +60,7 @@ RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
       )
       expect(expected_manifest_hash[:title]).to include manifest_hash[:title]
       expect(book_hash.except(:archive_url)).to eq expected_book_hash.except(:archive_url)
-      expect(book_hash[:archive_url] + '/').to eq expected_book_hash[:archive_url]
+      expect(book_hash[:archive_url]).to eq expected_book_hash[:archive_url]
     end
   end
 

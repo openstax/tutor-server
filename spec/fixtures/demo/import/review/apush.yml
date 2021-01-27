@@ -1,7 +1,7 @@
 book:
-  archive_url_base: https://archive-staging-tutor.cnx.org/contents/
-
+  archive_url_base: https://openstax.org/apps/archive/20201222.172624/
   uuid: dc10e469-5816-411d-8ea3-39a9b0706a48
+  version: 2.16
 
   reading_processing_instructions:
   - css: .conceptual-questions, .problems-exercises, [data-element-type="conceptual-questions"],

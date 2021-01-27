@@ -61,7 +61,11 @@ module OpenStax::Cnx::V1
     # Archive url for the given path
     # Forces /contents/ to be prepended to the path, unless the path begins with /
     def archive_url_for(path)
-      prefix = path.to_s.start_with?('/') ? '' : '/contents/'
+      if path.to_s.start_with?('/') || configuration.archive_url_base.ends_with?('/contents/', '/contents')
+        prefix = ''
+      else
+        prefix = '/contents'
+      end
       UrlPath.join(configuration.archive_url_base, prefix, path.to_s)
     end
 

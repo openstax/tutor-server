@@ -33,7 +33,11 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
         { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }
       ]
 
-      cnx_pages = cnx_page_hashes.map{ |hash| OpenStax::Cnx::V1::Page.new(hash: hash) }
+      cnx_book = OpenStax::Cnx::V1::Book.new(
+        hash: { id: '405335a3-7cff-4df2-a9ad-29062a4af261', version: '8.10' }.deep_stringify_keys
+      )
+
+      cnx_pages = cnx_page_hashes.map{ |hash| OpenStax::Cnx::V1::Page.new(hash: hash, book: cnx_book) }
 
       book = FactoryBot.create :content_book, title: 'College Physics with Courseware'
 
@@ -271,7 +275,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       ]
     end
 
-    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let(:cnx_book) do
+      OpenStax::Cnx::V1::Book.new(
+        hash: { id: '405335a3-7cff-4df2-a9ad-29062a4af261', version: '8.10' }.deep_stringify_keys
+      )
+    end
+    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash, book: cnx_book) }
 
     let(:book)      { FactoryBot.create :content_book, title: 'College Physics with Courseware' }
 
@@ -356,8 +365,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
         'title' => "Newton's Second Law of Motion"
       }
     end
-
-    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
+    let(:cnx_book) do
+      OpenStax::Cnx::V1::Book.new(
+        hash: { id: '405335a3-7cff-4df2-a9ad-29062a4af261', version: '8.10'}.deep_stringify_keys
+      )
+    end
+    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash, book: cnx_book) }
 
     let(:book)      { FactoryBot.create :content_book, title: 'College Physics with Courseware' }
 

@@ -11,7 +11,7 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
   end
 
   context 'tutor book' do
-    let(:archive_url) { 'https://openstax.org/apps/archive/20201222.172624/contents/' }
+    let(:archive_url) { 'https://openstax.org/apps/archive/20201222.172624/' }
     let(:book_cnx_id) { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
 
     it 'imports books and exercises as ecosystems' do
@@ -48,7 +48,7 @@ RSpec.describe FetchAndImportBookAndCreateEcosystem, type: :routine,
   end
 
   context 'cc book' do
-    let(:archive_url) { 'https://openstax.org/apps/archive/20201222.172624/contents/' }
+    let(:archive_url) { 'https://openstax.org/apps/archive/20201222.172624/' }
     let(:book_cnx_id) { 'f10533ca-f803-490d-b935-88899941197f@2.1' }
 
     it 'imports books and exercises as ecosystems' do

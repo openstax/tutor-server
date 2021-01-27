@@ -62,7 +62,7 @@ FactoryBot.define do
     ecosystem do
       FactoryBot.create(:content_ecosystem).tap do |ecosystem|
         VCR.use_cassette('TaskedTaskPlan/with_inertia', VCR_OPTS) do
-          OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/contents/') do
+          OpenStax::Cnx::V1.with_archive_url('https://openstax.org/apps/archive/20201222.172624/') do
             Content::ImportBook[
               cnx_book: cnx_book,
               ecosystem: ecosystem,

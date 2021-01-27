@@ -2,49 +2,6 @@
 http_interactions:
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 302
-      message: Found
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Thu, 07 Apr 2016 22:36:10 GMT
-      Content-Type:
-      - text/plain
-      Content-Length:
-      - '0'
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Location:
-      - "/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1.json"
-      Strict-Transport-Security:
-      - max-age=63072000; includeSubDomains
-    body:
-      encoding: UTF-8
-      string: ''
-    http_version:
-  recorded_at: Thu, 07 Apr 2016 22:19:53 GMT
-- request:
-    method: get
     uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1.json
     body:
       encoding: US-ASCII
@@ -238,7 +195,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:19:53 GMT
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:4e40d43d-cfee-412e-919c-facccdf0535d@3
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:4e40d43d-cfee-412e-919c-facccdf0535d.json
     body:
       encoding: US-ASCII
       string: ''
@@ -382,7 +339,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:19:53 GMT
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:0e58aa87-2e09-40a7-8bf3-269b2fa16509@9
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:0e58aa87-2e09-40a7-8bf3-269b2fa16509.json
     body:
       encoding: US-ASCII
       string: ''
@@ -918,7 +875,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:19:53 GMT
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:3005b86b-d993-4048-aff0-500256001f42@7
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:3005b86b-d993-4048-aff0-500256001f42.json
     body:
       encoding: US-ASCII
       string: ''
@@ -1815,7 +1772,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:19:53 GMT
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:1bb611e9-0ded-48d6-a107-fbb9bd900851@2
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:1bb611e9-0ded-48d6-a107-fbb9bd900851.json
     body:
       encoding: US-ASCII
       string: ''
@@ -1934,7 +1891,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:19:54 GMT
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:95e61258-2faf-41d4-af92-f62e1414175a@4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:95e61258-2faf-41d4-af92-f62e1414175a.json
     body:
       encoding: US-ASCII
       string: ''
@@ -2256,7 +2213,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:19:54 GMT
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:640e3e84-09a5-4033-b2a7-b7fe5ec29dc6.json
     body:
       encoding: US-ASCII
       string: ''
@@ -2700,7 +2657,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:19:54 GMT
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:548a8717-71e1-4d65-80f0-7b8c6ed4b4c0.json
     body:
       encoding: US-ASCII
       string: ''
@@ -3289,7 +3246,7 @@ http_interactions:
   recorded_at: Thu, 07 Apr 2016 22:19:54 GMT
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:dbc79576-8c66-41d2-929a-74bcd036a1df@4
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/93e2b09d-261c-4007-a987-0b3062fe154b@6.1:dbc79576-8c66-41d2-929a-74bcd036a1df.json
     body:
       encoding: US-ASCII
       string: ''

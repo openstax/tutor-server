@@ -2,50 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 302
-      message: Found
-    headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Fri, 15 Apr 2016 22:39:30 GMT
-      Content-Type:
-      - text/plain
-      Content-Length:
-      - '0'
-      Connection:
-      - keep-alive
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Location:
-      - "/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3.json"
-      Strict-Transport-Security:
-      - max-age=63072000; includeSubDomains
-    body:
-      encoding: UTF-8
-      string: ''
-    http_version:
-  recorded_at: Fri, 15 Apr 2016 22:23:09 GMT
-- request:
-    method: get
-    uri: https://openstax.org/apps/archive/20201222.172624/contents/548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3.json
+    uri: https://openstax.org/apps/archive/20201222.172624/contents/405335a3-7cff-4df2-a9ad-29062a4af261@8.10:548a8717-71e1-4d65-80f0-7b8c6ed4b4c0.json
     body:
       encoding: US-ASCII
       string: ''

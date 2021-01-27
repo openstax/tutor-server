@@ -9,7 +9,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, v
   let(:fragment_splitter)  do
     OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
-  let(:cnx_page_id)        { '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0@3' }
+  let(:cnx_page_id)        { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4:548a8717-71e1-4d65-80f0-7b8c6ed4b4c0' }
   let(:cnx_page)           do
     OpenStax::Cnx::V1::Page.new(id: cnx_page_id).tap { |page| page.convert_content! }
   end

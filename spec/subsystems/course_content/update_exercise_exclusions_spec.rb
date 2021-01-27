@@ -10,7 +10,7 @@ RSpec.describe CourseContent::UpdateExerciseExclusions, type: :routine do
     before(:all) do
       VCR.use_cassette('CourseContent_UpdateExerciseExclusions/with_book', VCR_OPTS) do
         @ecosystem = FetchAndImportBookAndCreateEcosystem[
-          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
+          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b@6.1'
         ]
       end
     end
