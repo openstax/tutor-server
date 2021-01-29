@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_26_223119) do
+ActiveRecord::Schema.define(version: 2021_01_29_203307) do
 
   create_sequence "active_storage_attachments_id_seq"
   create_sequence "active_storage_blobs_id_seq"
@@ -143,6 +143,7 @@ ActiveRecord::Schema.define(version: 2021_01_26_223119) do
     t.boolean "is_preview_available", null: false
     t.text "preview_message"
     t.datetime "deleted_at"
+    t.string "subject"
     t.index ["content_ecosystem_id"], name: "index_catalog_offerings_on_content_ecosystem_id"
     t.index ["number"], name: "index_catalog_offerings_on_number", unique: true
     t.index ["salesforce_book_name"], name: "index_catalog_offerings_on_salesforce_book_name"
