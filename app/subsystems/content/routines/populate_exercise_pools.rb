@@ -31,7 +31,7 @@ class Content::Routines::PopulateExercisePools
 
         # Reading Dynamic (Concept Coach)
         page.reading_dynamic_exercise_ids << exercise.id \
-          if tags.include?('assignment-type:readingl') ||
+          if tags.include?('assignment-type:reading') ||
             tags.include?('assignment-type:homework')
 
         # Reading Context-Dependent

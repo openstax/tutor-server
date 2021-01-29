@@ -135,13 +135,13 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       page.reload
     end
 
-    it "imports simple exercises that don't require context into the practice wiget pool" do
+    it "imports simple exercises that don't require context into the practice widget pool" do
       expect(Set.new page.practice_widget_exercise_ids).to eq(
         simple_exercise_ids_set - [requires_context_exercise.id]
       )
     end
 
-    it 'imports simple homeowork & reading into the reading dynamic pool' do
+    it 'imports simple homework & reading into the reading dynamic pool' do
       expect(Set.new page.reading_dynamic_exercise_ids).to eq Set[
         reading_exercise.id,
         homeowkr_exercise.id,
