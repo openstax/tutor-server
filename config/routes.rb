@@ -36,8 +36,10 @@ Rails.application.routes.draw do
 
   # All API routes
   api :v1, default: true do
+
     resources :users, only: :index
     resource :user, only: :show do
+      get :bootstrap
       get :tasks
       put :ui_settings
       put :'tours/:tour_id', action: :record_tour_view

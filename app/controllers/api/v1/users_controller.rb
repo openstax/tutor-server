@@ -1,4 +1,5 @@
 class Api::V1::UsersController < Api::V1::ApiController
+
   resource_description do
     api_versions "v1"
     short_description 'Represents a user in the system'
@@ -21,6 +22,27 @@ class Api::V1::UsersController < Api::V1::ApiController
       respond_with current_human_user, represent_with: Api::V1::UserRepresenter
     end
   end
+
+
+  api :GET, '/bootstrap', 'Returns initial of data application needs to start up'
+  description <<-EOS
+    Includes user information, current courses, and terms of use.
+    #{json_schema(Api::V1::BootstrapDataRepresenter, include: :readable)}
+  EOS
+  def bootstrap
+    if current_human_user.nil? || current_human_user.is_anonymous?
+      head :forbidden
+    else
+      respond_with current_human_user,
+                   represent_with: Api::V1::BootstrapDataRepresenter,
+                   user_options: {
+                     tutor_api_url: api_root_url,
+                     flash: flash.to_hash,
+                     is_impersonating: session[:admin_user_id].present?
+                   }
+    end
+  end
+
 
   api :PUT, '/ui-settings', 'Save settings about the currently logged in user'
   description <<-EOS
