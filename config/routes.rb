@@ -36,8 +36,10 @@ Rails.application.routes.draw do
 
   # All API routes
   api :v1, default: true do
+
     resources :users, only: :index
     resource :user, only: :show do
+      get :bootstrap
       get :tasks
       put :ui_settings
       put :'tours/:tour_id', action: :record_tour_view
@@ -441,6 +443,9 @@ Rails.application.routes.draw do
 
   # Local dev redirect to static error pages (these are served as static files in real servers)
   [ 404, 422, 500, 503 ].each { |code| get code.to_s, to: redirect("/assets/#{code}.html") }
+
+  # Return a 404 error for missing assets
+  get :'assets/*other', to: ->(env) { [404, {}, ['']] }
 
   # Catch-all frontend route, excluding active_storage
   # the constraint shouldn't be needed once upgrade to rails 6
