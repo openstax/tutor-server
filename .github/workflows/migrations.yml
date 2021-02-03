@@ -67,7 +67,7 @@ jobs:
           bundle exec rake db:create db:schema:load db:seed --trace
           bundle exec rake demo[soc]
           bundle exec rake jobs:workoff
-          git checkout -
+          git checkout --force -
 
       # Retrieve gem cache for PR merge commit
       - uses: actions/cache@v2
