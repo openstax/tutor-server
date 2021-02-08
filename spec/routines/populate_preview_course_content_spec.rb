@@ -3,14 +3,10 @@ require 'vcr_helper'
 
 RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
   before(:all) do
-    ecosystem = VCR.use_cassette('PopulatePreviewCourseContent/with_book', VCR_OPTS) do
-      FetchAndImportBookAndCreateEcosystem[book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b']
-    end
-
+    ecosystem = generate_mini_ecosystem
     offering = FactoryBot.create :catalog_offering, ecosystem: ecosystem
-
     @course = FactoryBot.create :course_profile_course, :with_grading_templates,
-                                                        offering: offering, is_preview: true
+                                offering: offering, is_preview: true
   end
 
   before do
@@ -27,8 +23,8 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
       expect { result = described_class.call(course: @course) }
         .to  change { @course.students.reload.size }.by(6)
         .and change { @course.periods.reload.size }.from(0).to(1)
-        .and change { Tasks::Models::TaskPlan.where(course: @course).size }.by(4)
-        .and change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }.by(24)
+        .and change { Tasks::Models::TaskPlan.where(course: @course).size }.by(2)
+        .and change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }.by(12)
         .and change { Tasks::Models::TaskStep.where.not(first_completed_at: nil).count }
 
       # all task plans should be marked as "is_preview"
@@ -72,9 +68,9 @@ RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
         result = described_class.call(course: @course)
       end.to not_change { @course.periods.count }
          .and change { @course.students.count }.by(6)
-         .and change { Tasks::Models::TaskPlan.where(course: @course).size }.by(4)
+         .and change { Tasks::Models::TaskPlan.where(course: @course).size }.by(2)
          .and(
-           change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }.by(24)
+           change { Tasks::Models::TaskPlan.where(course: @course).flat_map(&:tasks).size }.by(12)
          )
          .and change { Tasks::Models::TaskStep.where.not(first_completed_at: nil).count }
 

@@ -2,95 +2,45 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow do
-  before(:all) do
-    @number_of_students = 8
+  let(:ecosystem) { generate_mini_ecosystem }
+  let(:book) { ecosystem.books.first }
+  let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+  let(:course) {
+    FactoryBot.create :course_profile_course, :with_grading_templates,
+                      offering: offering, is_preview: true
+  }
+  let(:period) { FactoryBot.create :course_membership_period, course: course }
+  let(:number_of_students) { 8 }
+  let(:task_plan) { FactoryBot.create :tasked_task_plan,
+                                      number_of_students: number_of_students,
+    course: course,
+    ecosystem: ecosystem
+  }
 
+
+  before(:all) do
     begin
       RSpec::Mocks.setup
-
-      @task_plan = FactoryBot.create :tasked_task_plan, number_of_students: @number_of_students
-      @period = @task_plan.course.periods.first
     ensure
       RSpec::Mocks.teardown
     end
   end
 
-  before do
-    @task_plan.reload
-    @period.reload
-  end
-
   let(:student_tasks) do
-    @task_plan.tasks.joins(taskings: { role: :student }).preload(
+    task_plan.tasks.joins(taskings: { role: :student }).preload(
       taskings: { role: :profile }
     ).to_a
   end
 
   context 'with an unworked plan' do
-    let(:stats) { described_class.call(tasks: @task_plan.tasks).outputs.stats }
+    let(:stats) { described_class.call(tasks: task_plan.tasks).outputs.stats }
+    let(:student) { FactoryBot.create(:user_profile) }
+    let(:student_role) { AddUserAsPeriodStudent.call(user: student, period: period) }
 
     it 'is all nil or zero for an unworked task_plan' do
       expect(stats.first.total_count).to eq student_tasks.length
       expect(stats.first.complete_count).to eq 0
       expect(stats.first.partially_complete_count).to eq 0
-    end
-
-    it 'does not break if an exercise has more than one tag' do
-      cnx_page_hashes = [
-        { id: 'e26d1433-f8e4-41db-a757-0e061d6d2737', title: 'Prokaryotic Cells' }
-      ]
-
-      cnx_chapter_hashes = [
-        { title: 'Prokaryotic Cells', contents: cnx_page_hashes }
-      ]
-
-      cnx_unit_hashes = [
-        { title: 'Unit 2', contents: cnx_chapter_hashes }
-      ]
-
-      cnx_book_hash = {
-        id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2',
-        version: '22.1',
-        title: 'Biology for AP® Courses',
-        tree: {
-          id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2@22.1',
-          title: 'Biology for AP® Courses',
-          contents: cnx_chapter_hashes
-        }
-      }
-
-      cnx_book = OpenStax::Cnx::V1::Book.new hash: cnx_book_hash.deep_stringify_keys
-
-      @ecosystem = FactoryBot.create :content_ecosystem
-
-      reading_processing_instructions = FactoryBot.build(
-        :content_book
-      ).reading_processing_instructions
-
-      @book = Content::ImportBook.call(
-        cnx_book: cnx_book,
-        ecosystem: @ecosystem,
-        reading_processing_instructions: reading_processing_instructions
-      ).outputs.book
-
-      course = FactoryBot.create :course_profile_course, :with_assistants
-      AddEcosystemToCourse[course: course, ecosystem: @ecosystem]
-
-      period = FactoryBot.create :course_membership_period, course: course
-      student = FactoryBot.create(:user_profile)
-      AddUserAsPeriodStudent.call(user: student, period: period)
-
-      task_plan = FactoryBot.create(
-        :tasks_task_plan,
-        course: course,
-        ecosystem: @ecosystem,
-        settings: { 'page_ids' => [ @book.pages.first.id.to_s ] },
-        assistant: get_assistant(course: course, task_plan_type: 'reading')
-      )
-
-      DistributeTasks.call(task_plan: task_plan)
-
-      expect(stats.first.complete_count).to eq 0
     end
   end
 
@@ -99,57 +49,56 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       first_task = student_tasks.first
       step = first_task.task_steps.find_by(tasked_type: 'Tasks::Models::TaskedReading')
       MarkTaskStepCompleted[task_step: step]
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+      stats = described_class.call(tasks: task_plan.tasks).outputs.stats
 
-      expect(stats.first.complete_count).to eq 0
-      expect(stats.first.partially_complete_count).to eq 1
+      expect(stats.first.complete_count).to eq 1
+      expect(stats.first.partially_complete_count).to eq 0
 
       work_task(task: first_task, is_correct: false)
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+      stats = described_class.call(tasks: task_plan.tasks).outputs.stats
 
       expect(stats.first.complete_count).to eq 1
       expect(stats.first.partially_complete_count).to eq 0
 
       last_task = student_tasks.last
       MarkTaskStepCompleted[task_step: last_task.task_steps.first]
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
-      expect(stats.first.complete_count).to eq 1
-      expect(stats.first.partially_complete_count).to eq 1
+      stats = described_class.call(tasks: task_plan.tasks).outputs.stats
+      expect(stats.first.complete_count).to eq 2
+      expect(stats.first.partially_complete_count).to eq 0
     end
   end
 
   context 'after task steps are marked as correct or incorrect' do
     it 'records them' do
       work_task(task: student_tasks[0], is_correct: true)
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+      stats = described_class.call(tasks: task_plan.tasks).outputs.stats
 
       expect(stats.first.complete_count).to eq 1
       expect(stats.first.partially_complete_count).to eq 0
 
       work_task(task: student_tasks[1], is_correct: false)
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+      stats = described_class.call(tasks: task_plan.tasks).outputs.stats
       expect(stats.first.complete_count).to eq 2
       expect(stats.first.partially_complete_count).to eq 0
 
       work_task(task: student_tasks[2], is_correct: true)
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+      stats = described_class.call(tasks: task_plan.tasks).outputs.stats
       expect(stats.first.complete_count).to eq 3
       expect(stats.first.partially_complete_count).to eq 0
 
       work_task(task: student_tasks[3], is_correct: true)
-      stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+      stats = described_class.call(tasks: task_plan.tasks).outputs.stats
       expect(stats.first.complete_count).to eq 4
       expect(stats.first.partially_complete_count).to eq 0
     end
   end
 
   context 'with multiple course periods' do
-    let(:course)   { @task_plan.course }
     let(:period_2) { FactoryBot.create :course_membership_period, course: course }
-    let(:stats)    { described_class.call(tasks: @task_plan.tasks).outputs.stats }
+    let(:stats)    { described_class.call(tasks: task_plan.tasks).outputs.stats }
 
     before do
-      student_tasks.last(@number_of_students/2).each do |task|
+      student_tasks.last(number_of_students/2).each do |task|
         task.taskings.each do |tasking|
           ::MoveStudent.call(period: period_2, student: tasking.role.student)
         end
@@ -186,14 +135,14 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
         task = student_tasks.detect { |task| task.taskings.first.role.student == student }
         work_task(task: task, is_correct: true)
 
-        stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+        stats = described_class.call(tasks: task_plan.tasks).outputs.stats
 
         expect(stats.first.complete_count).to eq 1
         expect(stats.first.partially_complete_count).to eq 0
 
         student.destroy!
 
-        stats = described_class.call(tasks: @task_plan.reload.tasks).outputs.stats
+        stats = described_class.call(tasks: task_plan.reload.tasks).outputs.stats
 
         expect(stats.first.total_count).to eq student_tasks.length/2 - 1
         expect(stats.first.complete_count).to eq 0

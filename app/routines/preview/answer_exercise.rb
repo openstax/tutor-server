@@ -34,8 +34,7 @@ class Preview::AnswerExercise
 
     tasked.free_response = free_response
     tasked.answer_id = answer_id
-
-    tasked.save if save
+    tasked.save! if save
 
     run(
       :mark_completed,

@@ -71,6 +71,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         title: task_plan.title,
         type: 'homework',
         dropped_questions: [],
+        ecosystem_id: course.ecosystem.id.to_s,
         wrq_count: 0,
         gradable_step_count: 0,
         ungraded_step_count: 0,

@@ -1,28 +1,57 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::UpdateTaskPlanCaches, type: :routine, speed: :medium do
-  let(:course)                  { @task_plan.course }
+  let(:ecosystem) { generate_mini_ecosystem }
+  let(:book) { ecosystem.books.first }
+  let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+  let(:queue) { :dashboard }
+  let(:course) {
+    FactoryBot.create :course_profile_course, :with_grading_templates,
+                      offering: offering,
+                      is_preview: queue == :preview
+  }
   let(:periods)                 { course.periods.to_a }
   let(:period_ids)              { periods.map(&:id) }
   let(:first_period)            { periods.first }
+  let(:task_plan_type) { :homework }
+  let(:task_plan_settings) do
+    {
+      page_ids: book.pages.map(&:id).map(&:to_s),
+      exercises: book.pages.first.exercises.first(5).map do |exercise|
+        { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
+      end,
+      exercises_count_dynamic: 3
+    }
+  end
+  let(:task_plan_assistant) {
+    FactoryBot.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant')
+  }
+  let(:task_plan) {
+    FactoryBot.create :tasked_task_plan,
+                      course: course,
+                      type: task_plan_type,
+                      ecosystem: ecosystem,
+                      assistant: task_plan_assistant,
+                      is_preview: queue == :preview,
+                      settings: task_plan_settings
+  }
+  let(:tasks)                   { task_plan.tasks.to_a }
+  let(:task_ids)                { tasks.map(&:id) }
+
   let(:first_task)              do
-    @task_plan.tasks.find do |task|
+    task_plan.tasks.find do |task|
       task.taskings.any? { |tasking| tasking.role.student&.period == first_period }
     end
   end
   let(:num_period_caches)       { periods.size }
-  let(:ecosystem)               { course.ecosystem }
-  let(:task_plan_ids)           { [ @task_plan.id ] }
+  let(:task_plan_ids)           { [ task_plan.id ] }
 
   context 'reading' do
+
     before(:all)                do
       DatabaseCleaner.start
-
-      @task_plan = FactoryBot.create :tasked_task_plan
-      withdrawn = FactoryBot.create :tasked_task_plan
-      withdrawn.destroy!
     end
-    before                      { @task_plan.reload }
+    before                      { task_plan.reload }
     after(:all)                 { DatabaseCleaner.clean }
 
     context 'with mock ConfiguredJob' do
@@ -36,11 +65,6 @@ RSpec.describe Tasks::UpdateTaskPlanCaches, type: :routine, speed: :medium do
       end
 
       context 'preview' do
-        before do
-          course.update_attribute :is_preview, true
-          @task_plan.update_attribute :is_preview, true
-        end
-
         let(:queue) { :preview }
 
         it 'calls update_gradable_step_counts for the given task_plans' do
@@ -117,34 +141,16 @@ RSpec.describe Tasks::UpdateTaskPlanCaches, type: :routine, speed: :medium do
   end
 
   context 'external' do
-    before(:all)                do
-      DatabaseCleaner.start
-
-      assistant = Tasks::Models::Assistant.find_by(
-        code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant'
-      ) || FactoryBot.create(
+    let(:task_plan_type) { :external }
+    let(:task_plan_assistant) {
+      FactoryBot.create(
         :tasks_assistant, code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant'
       )
-
-      @task_plan = FactoryBot.create(
-        :tasked_task_plan,
-        type: 'external',
-        assistant: assistant,
-        settings: { external_url: 'https://www.example.com' }
-      )
-
-      withdrawn = FactoryBot.create(
-        :tasked_task_plan,
-        type: 'external',
-        assistant: assistant,
-        settings: { external_url: 'https://not.here' }
-      )
-      withdrawn.destroy!
-    end
-    before                      { @task_plan.reload }
-    after(:all)                 { DatabaseCleaner.clean }
-
-    let(:queue)                 { :dashboard }
+    }
+    let(:task_plan_settings) {
+      { external_url: 'https://www.example.com' }
+    }
+    let(:queue) { :dashboard }
 
     it 'works' do
       described_class.call(task_plan_ids: task_plan_ids, queue: queue.to_s)

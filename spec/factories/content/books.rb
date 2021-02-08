@@ -18,6 +18,7 @@ FactoryBot.define do
         {
           fragments: ['node', 'optional_exercise'],
           css: <<~CSS.strip
+            [data-type="exercise"],
             .ost-feature:has-descendants(".os-exercise",2),
             .ost-feature:has-descendants(".ost-exercise-choice"),
             .ost-assessed-feature:has-descendants(".os-exercise",2),
@@ -27,6 +28,7 @@ FactoryBot.define do
         {
           fragments: ['node', 'exercise'],
           css: <<~CSS.strip
+
             .ost-feature:has-descendants(".os-exercise, .ost-exercise-choice"),
             .ost-assessed-feature:has-descendants(".os-exercise, .ost-exercise-choice")
           CSS

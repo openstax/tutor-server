@@ -23,7 +23,7 @@ class Content::Routines::PopulateExercisePools
 
         # Homework Core (Assignment Builder)
         page.homework_core_exercise_ids << exercise.id \
-          if tags.include?('assignment-type:practice')
+          if tags.include?('assignment-type:homework')
 
         # Multiparts (except for APUSH) and tree response only exercises are
         # limited to the All Exercises and Homework Core pools
@@ -31,15 +31,14 @@ class Content::Routines::PopulateExercisePools
 
         # Reading Dynamic (Concept Coach)
         page.reading_dynamic_exercise_ids << exercise.id \
-          if tags.include?('assignment-type:reading') ||
-            tags.include?('assignment-type:homework')
+          if tags.include?('assignment-type:reading')
 
         # Reading Context-Dependent
         page.reading_context_exercise_ids << exercise.id
 
         # Homework Dynamic
         page.homework_dynamic_exercise_ids << exercise.id \
-          if tags.include?('assignment-type:practice')
+          if tags.include?('assignment-type:homework')
 
         # Practice Widget
         page.practice_widget_exercise_ids << exercise.id \

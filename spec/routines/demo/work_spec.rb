@@ -45,9 +45,8 @@ RSpec.describe Demo::Work, type: :routine do
 
   let!(:course)           do
     Demo::Users.call user_config
-    VCR.use_cassette('Demo_Import/imports_the_demo_book', VCR_OPTS) do
-      Demo::Import.call import_config
-    end
+    ecosystem = generate_mini_ecosystem
+    FactoryBot.create :catalog_offering, ecosystem: ecosystem, title: 'AP US History'
     Demo::Course.call(course_config).outputs.course
   end
   let!(:task_plans)       { Demo::Assign.call(assign_config).outputs.task_plans }

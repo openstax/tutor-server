@@ -2,70 +2,68 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :slow do
-  before(:all) do
-    @number_of_students = 8
+  let(:ecosystem) { generate_mini_ecosystem }
+  let(:book) { ecosystem.books.first }
+  let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+  let(:course) {
+    FactoryBot.create :course_profile_course, :with_grading_templates,
+                      offering: offering, is_preview: true
+  }
+  let(:reading_pages) { book.pages[0..2] }
+  let(:homework_pages) { book.pages[0..2] }
+  let(:number_of_students) { 8 }
+  let(:reading_task_plan) {
+    FactoryBot.create :tasked_task_plan,
+      type: :reading,
+      ecosystem: ecosystem,
+      number_of_students: number_of_students,
+      course: course,
+      ecosystem: ecosystem
+  }
+  let(:homework_task_plan) {
+    FactoryBot.create :tasked_task_plan,
+      type: :homework,
+      ecosystem: ecosystem,
+      course: course,
+      number_of_students: number_of_students,
+      assistant: FactoryBot.create(
+        :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant',
+      ),
+      target: course.periods.first,
+      settings: {
+        page_ids: homework_pages.map(&:id).map(&:to_s),
+        exercises: homework_pages.first.exercises.first(5).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
+        end,
+        exercises_count_dynamic: 3
+      }
+  }
 
-    begin
-      RSpec::Mocks.setup
+  let(:external_task_plan) {
+    FactoryBot.create(
+      :tasked_task_plan,
+      type: :external,
+      ecosystem: ecosystem,
+      course: course,
+      assistant: FactoryBot.create(
+        :tasks_assistant, code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant',
+      ),
+      target: course.periods.first,
+      settings: { external_url: 'https://www.example.com' }
+    )
+  }
 
-      @reading_task_plan = FactoryBot.create(
-        :tasked_task_plan, number_of_students: @number_of_students
-      )
-      course = @reading_task_plan.course
-      reading_pages = Content::Models::Page.where(id: @reading_task_plan.core_page_ids)
-
-      @homework_task_plan = FactoryBot.create(
-        :tasks_task_plan,
-        type: :homework,
-        course: course,
-        assistant_code_class_name: 'Tasks::Assistants::HomeworkAssistant',
-        target: course.periods.first,
-        settings: {
-          page_ids: reading_pages.map(&:id).map(&:to_s),
-          exercises: reading_pages.first.exercises.first(5).map do |exercise|
-            { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
-          end,
-          exercises_count_dynamic: 3
-        }
-      )
-      @period = @homework_task_plan.course.periods.first
-      @period_2 = FactoryBot.create :course_membership_period, course: @period.course
-      FactoryBot.create(
-        :tasks_tasking_plan,
-        task_plan: @homework_task_plan,
-        target: @period_2,
-        opens_at: Time.current - 1.day,
-        due_at: Time.current - 1.day
-      )
-      DistributeTasks.call task_plan: @homework_task_plan
-
-      @external_task_plan = FactoryBot.create(
-        :tasks_task_plan,
-        type: :external,
-        course: course,
-        assistant_code_class_name: 'Tasks::Assistants::ExternalAssignmentAssistant',
-        target: course.periods.first,
-        settings: { external_url: 'https://www.example.com' }
-      )
-      DistributeTasks.call task_plan: @external_task_plan
-    ensure
-      RSpec::Mocks.teardown
-    end
-  end
-
-  # Workaround for Rails/PostgreSQL bug where the task records
-  # stop existing in SELECT ... FOR UPDATE queries (but not in regular SELECTs)
-  # after the transaction rollback that happens in-between spec examples
-  before(:each) { task_plan.tasks.each(&:touch).each(&:reload) }
+  before(:each) {
+    task_plan.tasks.each(&:touch).each(&:reload)
+  }
 
   let(:tasking_plans) { task_plan.tasking_plans.sort_by { |tp| tp.target.name } }
-  let(:tasks)         do
+  let(:tasks) do
     task_plan.tasks.joins(
       taskings: { role: :student }
     ).preload(taskings: { role: :student }).sort_by do |task|
       student = task.taskings.first.role.student
-
-      [ student.last_name, student.first_name ]
+      [student.last_name, student.first_name]
     end
   end
 
@@ -74,7 +72,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
   subject(:scores) { described_class.call(task_plan: task_plan).outputs.scores }
 
   context 'homework' do
-    let(:task_plan) { @homework_task_plan }
+    let(:task_plan) { homework_task_plan }
 
     context 'with an unworked plan' do
       it 'shows available points but no total points/scores' do
@@ -118,6 +116,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           expect(tasking_plan_output.ungraded_step_count).to eq 0
           expect(tasking_plan_output.grades_need_publishing).to eq false
 
+          available_points = tasking_plan_output.question_headings.sum{ |h| h.points_without_dropping }
+
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
             tasks.map do |task|
               student = task.taskings.first.role.student
@@ -125,7 +125,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               {
                 role_id: task.taskings.first.entity_role_id,
                 task_id: task.id,
-                available_points: 8.0,
+                available_points: available_points,
                 first_name: student.first_name,
                 last_name: student.last_name,
                 late_work_point_penalty: 0.0,
@@ -171,6 +171,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
     end
 
     context 'after task steps are marked as completed' do
+      let(:task_plan) { homework_task_plan }
+
       it 'shows available points and total points/scores' do
         work_task(task: tasks.first, is_correct: false)
 
@@ -222,6 +224,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           grades_need_publishing = task_plan.grading_template.auto_grading_feedback_on_publish?
           expect(tasking_plan_output.grades_need_publishing).to eq grades_need_publishing
 
+          available_points = tasking_plan_output.question_headings.sum{ |h| h.points_without_dropping }
+
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
             tasks.each_with_index.map do |task, index|
               student = task.taskings.first.role.student
@@ -230,7 +234,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               {
                 role_id: task.taskings.first.entity_role_id,
                 task_id: task.id,
-                available_points: 8.0,
+                available_points: available_points,
                 first_name: student.first_name,
                 last_name: student.last_name,
                 late_work_point_penalty: 0.0,
@@ -326,6 +330,8 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           grades_need_publishing = task_plan.grading_template.auto_grading_feedback_on_publish?
           expect(tasking_plan_output.grades_need_publishing).to eq grades_need_publishing
 
+          available_points = tasking_plan_output.question_headings.sum{ |h| h.points_without_dropping }
+
           expect(tasking_plan_output.students.map(&:deep_symbolize_keys)).to eq(
             tasks.each_with_index.map do |task, index|
               student = task.taskings.first.role.student
@@ -335,7 +341,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
               {
                 role_id: task.taskings.first.entity_role_id,
                 task_id: task.id,
-                available_points: 8.0,
+                available_points: available_points,
                 first_name: student.first_name,
                 last_name: student.last_name,
                 late_work_point_penalty: is_correct ? task.late_work_point_penalty : 0.0,
@@ -387,7 +393,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
   end
 
   context 'external' do
-    let(:task_plan) { @external_task_plan }
+    let(:task_plan) { external_task_plan }
 
     context 'with an unworked plan' do
       it 'shows all steps as incomplete' do

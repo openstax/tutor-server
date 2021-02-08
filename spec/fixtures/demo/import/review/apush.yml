@@ -1,7 +1,7 @@
 book:
-  archive_url_base: https://archive-staging-tutor.cnx.org/contents/
+  archive_url_base: https://archive.cnx.org/contents/
 
-  uuid: dc10e469-5816-411d-8ea3-39a9b0706a48
+  uuid: 36004586-651c-4ded-af87-203aca22d946
 
   reading_processing_instructions:
   - css: .conceptual-questions, .problems-exercises, [data-element-type="conceptual-questions"],

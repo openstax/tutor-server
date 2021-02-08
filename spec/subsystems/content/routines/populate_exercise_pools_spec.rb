@@ -22,8 +22,6 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
                                                                 ecosystem: ecosystem }
   let(:type_homework_tag)    { FactoryBot.create :content_tag, value: 'assignment-type:homework',
                                                                 ecosystem: ecosystem }
-  let(:type_practice_tag)    { FactoryBot.create :content_tag, value: 'assignment-type:practice',
-                                                                ecosystem: ecosystem }
 
   let(:review_tag)           { FactoryBot.create :content_tag, value: 'review',
                                                                 ecosystem: ecosystem }
@@ -105,13 +103,13 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       chapter_review_exercise   => [chapter_review_tag],
       reading_exercise          => [type_reading_tag],
       homework_exercise         => [type_homework_tag],
-      practice_exercise         => [type_practice_tag],
+
       requires_context_exercise => [requires_context_tag],
       untagged_multi_exercise   => [],
       reading_multi_exercise    => [type_reading_tag],
       homework_multi_exercise   => [type_homework_tag],
-      practice_multi_exercise   => [type_practice_tag],
-      fr_only_exercise          => [type_practice_tag],
+      practice_multi_exercise   => [type_homework_tag],
+      fr_only_exercise          => [type_homework_tag],
     }
   end
 
@@ -141,29 +139,14 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       )
     end
 
-    it 'imports simple homework & reading into the reading dynamic pool' do
+    it 'imports reading into the reading dynamic pool' do
       expect(Set.new page.reading_dynamic_exercise_ids).to eq Set[
         reading_exercise.id,
-        homeowkr_exercise.id,
       ]
     end
 
     it 'imports all simple exercises into the reading context pool' do
       expect(Set.new page.reading_context_exercise_ids).to eq simple_exercise_ids_set
-    end
-
-    it 'imports practice exercises into the homework core pool' do
-      expect(Set.new page.homework_core_exercise_ids).to eq Set[
-        practice_exercise.id,
-        fr_only_exercise.id,
-        practice_multi_exercise.id
-      ]
-    end
-
-    it 'imports simple practice exercises into the homework dynamic pool' do
-      expect(page.homework_dynamic_exercise_ids).to eq [
-        practice_exercise.id
-      ]
     end
   end
 end

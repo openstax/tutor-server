@@ -15,7 +15,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
     before(:all) do
       @cnx_page_fragment_infos = [
         {
-          id: '3005b86b-d993-4048-aff0-500256001f42',
+          id: 'b0ffd0a2-9c83-4d73-b899-7f2ade2acda6@3',
           expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading,
                                          OpenStax::Cnx::V1::Fragment::Interactive,
                                          OpenStax::Cnx::V1::Fragment::Exercise,
@@ -35,22 +35,22 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
                                                      OpenStax::Cnx::V1::Fragment::OptionalExercise,
                                                      OpenStax::Cnx::V1::Fragment::Reading]
         },
-        {
-          id: '1bb611e9-0ded-48d6-a107-fbb9bd900851',
-          expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading]
-        },
-        {
-          id: '95e61258-2faf-41d4-af92-f62e1414175a',
-          expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading]
-        },
-        {
-          id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-          expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading,
-                                         OpenStax::Cnx::V1::Fragment::Video,
-                                         OpenStax::Cnx::V1::Fragment::Exercise,
-                                         OpenStax::Cnx::V1::Fragment::Interactive,
-                                         OpenStax::Cnx::V1::Fragment::Exercise]
-        }
+        # {
+        #   id: '1bb611e9-0ded-48d6-a107-fbb9bd900851',
+        #   expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading]
+        # },
+        # {
+        #   id: '95e61258-2faf-41d4-af92-f62e1414175a',
+        #   expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading]
+        # },
+        # {
+        #   id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
+        #   expected_hs_fragment_classes: [OpenStax::Cnx::V1::Fragment::Reading,
+        #                                  OpenStax::Cnx::V1::Fragment::Video,
+        #                                  OpenStax::Cnx::V1::Fragment::Exercise,
+        #                                  OpenStax::Cnx::V1::Fragment::Interactive,
+        #                                  OpenStax::Cnx::V1::Fragment::Exercise]
+        # }
       ]
 
       VCR.use_cassette('OpenStax_Cnx_V1_FragmentSplitter/with_pages', VCR_OPTS) do
@@ -101,8 +101,8 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
   context 'with footnotes' do
     before(:all) do
       VCR.use_cassette('OpenStax_Cnx_V1_FragmentSplitter/with_footnotes', VCR_OPTS) do
-        OpenStax::Cnx::V1.with_archive_url('https://archive-content05.cnx.org/contents/') do
-          @page = OpenStax::Cnx::V1::Page.new(id: '482ba886-c771-4533-96a6-ac6bf1c6889d')
+        OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents/') do
+          @page = OpenStax::Cnx::V1::Page.new(id: 'b0ffd0a2-9c83-4d73-b899-7f2ade2acda6@3')
           @page.convert_content!
         end
       end

@@ -33,12 +33,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
   context 'with book and performance report data' do
     before(:all) do
       DatabaseCleaner.start
-
-      VCR.use_cassette("Api_V1_PerformanceReportsController/with_book", VCR_OPTS) do
-        @ecosystem = FetchAndImportBookAndCreateEcosystem[
-          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
-        ]
-      end
+      @ecosystem = generate_mini_ecosystem
 
       CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
@@ -105,7 +100,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
 
             expect(data['Exercise JSON URL']).to eq("#{tasked.url.gsub("org", "org/api")}.json")
             expect(data['Exercise Editor URL']).to eq(tasked.url)
-            expect((data['Exercise Tags'] || '').split(',')).to match_array(tags)
+            expect((data['Exercise Tags'] || '').split(',').reject { |tag| tag.start_with? 'context-cnxmod' }).to match_array(tags)
             expect(data['Question Number']).to eq '1'
             expect(data['Question Correct Answer ID']).to eq(correct_answer_id)
             expect(data['Question Chosen Answer ID']).to eq(answer_id)

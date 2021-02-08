@@ -2,69 +2,6 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-content05.cnx.org/contents/482ba886-c771-4533-96a6-ac6bf1c6889d
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 302
-      message: Found
-    headers:
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Cache-Control:
-      - max-age=60, public
-      Content-Length:
-      - '128'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Tue, 10 Dec 2019 18:03:49 GMT
-      Etag:
-      - '"1B2M2Y8AsgTpgAmY7PhCfg"'
-      Location:
-      - https://archive-content05.cnx.org/contents/482ba886-c771-4533-96a6-ac6bf1c6889d@3
-      Server:
-      - waitress
-      X-Varnish-Status:
-      - cacheable - Cache-Control in backend response
-      X-Varnish-Backend:
-      - content05_archive0
-      X-Varnish-Ttl:
-      - '60.000'
-      X-Varnish:
-      - '1708764'
-      Age:
-      - '0'
-      Via:
-      - 1.1 varnish-v4
-      X-Varnish-Cache:
-      - MISS
-      Strict-Transport-Security:
-      - max-age=16000000
-    body:
-      encoding: UTF-8
-      string: |+
-        302 Found
-
-        The resource was found at /contents/482ba886-c771-4533-96a6-ac6bf1c6889d@3; you should be redirected automatically.
-
-    http_version: 
-  recorded_at: Tue, 10 Dec 2019 18:03:49 GMT
-- request:
-    method: get
     uri: https://archive-content05.cnx.org/contents/482ba886-c771-4533-96a6-ac6bf1c6889d@3
     body:
       encoding: US-ASCII
@@ -369,4 +306,301 @@ http_interactions:
         Last", "id": "xml_apush"}}]}'
     http_version: 
   recorded_at: Tue, 10 Dec 2019 18:03:49 GMT
+- request:
+    method: get
+    uri: https://archive-content05.cnx.org/contents/482ba886-c771-4533-96a6-ac6bf1c6889d
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Length:
+      - '52'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Fri, 12 Feb 2021 18:27:15 GMT
+      Etag:
+      - '"1B2M2Y8AsgTpgAmY7PhCfg"'
+      Server:
+      - waitress
+      X-Varnish-Status:
+      - cacheable (override) - no Cache-Control in backend response
+      Cache-Control:
+      - public, max-age=60
+      X-Varnish-Backend:
+      - content05_archive0
+      X-Varnish-Ttl:
+      - '60.000'
+      X-Varnish:
+      - '2078055'
+      Age:
+      - '0'
+      Via:
+      - 1.1 varnish-v4
+      X-Varnish-Cache:
+      - MISS
+      Strict-Transport-Security:
+      - max-age=16000000
+    body:
+      encoding: UTF-8
+      string: |+
+        404 Not Found
+
+        The resource could not be found.
+
+
+
+
+    http_version: 
+  recorded_at: Fri, 12 Feb 2021 18:27:15 GMT
+- request:
+    method: get
+    uri: https://archive.cnx.org/contents/b0ffd0a2-9c83-4d73-b899-7f2ade2acda6@3
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - max-age=31536000, public
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 12 Feb 2021 17:09:52 GMT
+      Etag:
+      - '"/EJ79jgscQJhGYALaerOcw"'
+      Expires:
+      - Sat, 12 Feb 2022 17:09:52 GMT
+      Link:
+      - <https://cnx.org/contents/405335a3-7cff-4df2-a9ad-29062a4af261:b0ffd0a2-9c83-4d73-b899-7f2ade2acda6/Newton%E2%80%99s-First-Law-of-Motion:-Inertia>
+        ;rel="Canonical"
+      Server:
+      - waitress
+      X-Varnish-Status:
+      - cacheable - Cache-Control in backend response
+      X-Varnish-Backend:
+      - prod07_archive3
+      X-Varnish-Ttl:
+      - '31536000.000'
+      X-Varnish:
+      - 5246297 3660659
+      Age:
+      - '4722'
+      Via:
+      - 1.1 varnish-v4
+      X-Varnish-Cache:
+      - HIT
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=16000000
+    body:
+      encoding: ASCII-8BIT
+      string: '{"googleAnalytics": ["UA-30227798-1"], "version": "3", "submitlog":
+        "corrected short code spelling", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://www.w3.org/TR/html5/dom.html#custom-data-attribute\"><ul>\n<li>Define
+        mass and inertia.</li>\n<li>Understand Newton''s first law of motion.</li>\n</ul></div>",
+        "revised": "2016-07-08T16:34:03Z", "printStyle": null, "roles": null, "keywords":
+        ["inertia", "mass", "Newton\u2019s first law of motion"], "id": "b0ffd0a2-9c83-4d73-b899-7f2ade2acda6",
+        "canonical": "405335a3-7cff-4df2-a9ad-29062a4af261", "title": "Newton\u2019s
+        First Law of Motion: Inertia", "mediaType": "application/vnd.org.cnx.module",
+        "canon_url": "https://cnx.org/contents/405335a3-7cff-4df2-a9ad-29062a4af261:b0ffd0a2-9c83-4d73-b899-7f2ade2acda6/Newton%E2%80%99s-First-Law-of-Motion:-Inertia",
+        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Newton&#8217;s First Law of Motion:
+        Inertia</title><meta name=\"created-time\" content=\"2016/05/02 14:46:19 -0500\"/><meta
+        name=\"revised-time\" content=\"2016/07/08 11:34:03.241 GMT-5\"/><meta name=\"author\"
+        content=\"cnxphyscw\"/><meta name=\"acl-list\" content=\"cnxphyscw\"/><meta
+        name=\"licensor\" content=\"cnxphyscw\"/><meta name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
+        name=\"keywords\" content=\"inertia, mass, Newton&#8217;s first law of motion\"/><meta
+        name=\"subject\" content=\"Science and Technology\"/><meta name=\"subject\"
+        content=\"Science and Technology\"/><meta name=\"subject\" content=\"Science
+        and Technology\"/><meta name=\"subject\" content=\"Science and Technology\"/></head>\n\n<body
+        xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\" xmlns:qml=\"http://cnx.rice.edu/qml/1.0\"
+        xmlns:mod=\"http://cnx.rice.edu/#moduleIds\" xmlns:bib=\"http://bibtexml.sf.net/\"
+        xmlns:data=\"http://www.w3.org/TR/html5/dom.html#custom-data-attribute\" data-cnxml-to-html-ver=\"1.7.3\"><div
+        data-type=\"document-title\">Newton&#8217;s First Law of Motion: Inertia</div><div
+        data-type=\"abstract\"><ul>\n<li>Define mass and inertia.</li>\n<li>Understand
+        Newton''s first law of motion.</li>\n</ul></div>\n        <p id=\"import-auto-id2654505\">Experience
+        suggests that an object at rest will remain at rest if left alone, and that
+        an object in motion tends to slow down and stop unless some effort is made
+        to keep it moving. What <span data-type=\"term\" id=\"import-auto-id1777407\">Newton&#8217;s
+        first law of motion</span><strong data-effect=\"bold\"><!-- no-selfclose --></strong>
+        states, however, is the following:</p>\n      \n        <div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-id2690663\" data-label=\"\"><div data-type=\"title\">Newton&#8217;s
+        First Law of Motion</div>\n        <p id=\"fs-id1694182\">A body at rest remains
+        at rest, or, if in motion, remains in motion at a constant velocity unless
+        acted on by a net external force. </p></div>\n        <p id=\"import-auto-id1741367\">Note
+        the repeated use of the verb &#8220;remains.&#8221; We can think of this law
+        as preserving the status quo of motion. </p>\n        <p id=\"import-auto-id1904217\">Rather
+        than contradicting our experience, <span data-type=\"term\">Newton&#8217;s
+        first law of motion</span> states that there must be a <em data-effect=\"italics\">cause</em>
+        (which is a net external force) <em data-effect=\"italics\">for there to be
+        any change in velocity (either a change in magnitude or direction)</em>. We
+        will define <em data-effect=\"italics\">net external force</em> in the next
+        section. An object sliding across a table or floor slows down due to the net
+        force of friction acting on the object. If friction disappeared, would the
+        object still slow down?</p><p id=\"import-auto-id1416969\">The idea of cause
+        and effect is crucial in accurately describing what happens in various situations.
+        For example, consider what happens to an object sliding along a rough horizontal
+        surface. The object quickly grinds to a halt. If we spray the surface with
+        talcum powder to make the surface smoother, the object slides farther. If
+        we make the surface even smoother by rubbing lubricating oil on it, the object
+        slides farther yet. Extrapolating to a frictionless surface, we can imagine
+        the object sliding in a straight line indefinitely. Friction is thus the <em
+        data-effect=\"italics\">cause</em> <em data-effect=\"italics\"><!-- no-selfclose
+        --></em>of the slowing (consistent with Newton&#8217;s first law). The object
+        would not slow down at all if friction were completely eliminated. Consider
+        an air hockey table. When the air is turned off, the puck slides only a short
+        distance before friction slows it to a stop. However, when the air is turned
+        on, it creates a nearly frictionless surface, and the puck glides long distances
+        without slowing down. Additionally, if we know enough about the friction,
+        we can accurately predict how quickly the object will slow down. Friction
+        is an external force. </p><p id=\"import-auto-id1486790\">Newton&#8217;s first
+        law is completely general and can be applied to anything from an object sliding
+        on a table to a satellite in orbit to blood pumped from the heart. Experiments
+        have thoroughly verified that any change in velocity (speed or direction)
+        must be caused by an external force. The idea of <em data-effect=\"italics\">generally
+        applicable or universal laws</em> is important not only here&#8212;it is a
+        basic feature of all laws of physics. Identifying these laws is like recognizing
+        patterns in nature from which further patterns can be discovered. The genius
+        of Galileo, who first developed the idea for the first law, and Newton, who
+        clarified it, was to ask the fundamental question, &#8220;What is the cause?&#8221;
+        Thinking in terms of cause and effect is a worldview fundamentally different
+        from the typical ancient Greek approach when questions such as &#8220;Why
+        does a tiger have stripes?&#8221; would have been answered in Aristotelian
+        fashion, &#8220;That is the nature of the beast.&#8221; True perhaps, but
+        not a useful insight.</p>\n      \n        <section data-depth=\"1\" id=\"fs-id1737594\"><h3
+        data-type=\"title\">Mass</h3>\n        <p id=\"import-auto-id2712510\">The
+        property of a body to remain at rest or to remain in motion with constant
+        velocity is called <span data-type=\"term\" id=\"import-auto-id2134480\">inertia</span>.
+        Newton&#8217;s first law is often called the <span data-type=\"term\" id=\"import-auto-id1408275\">law
+        of inertia</span>. As we know from experience, some objects have more inertia
+        than others. It is obviously more difficult to change the motion of a large
+        boulder than that of a basketball, for example. The inertia of an object is
+        measured by its <span data-type=\"term\" id=\"import-auto-id1500464\">mass</span>.
+        Roughly speaking, mass is a measure of the amount of &#8220;stuff&#8221; (or
+        matter) in something. The quantity or amount of matter in an object is determined
+        by the numbers of atoms and molecules of various types it contains. Unlike
+        weight, mass does not vary with location. The mass of an object is the same
+        on Earth, in orbit, or on the surface of the Moon. In practice, it is very
+        difficult to count and identify all of the atoms and molecules in an object,
+        so masses are not often determined in this manner. Operationally, the masses
+        of objects are determined by comparison with the standard kilogram.</p></section>\n        <div
+        data-type=\"exercise\" id=\"fs-id2448968\" data-element-type=\"check-understanding\"
+        data-label=\"\"><div data-type=\"title\">Check Your Understanding</div>\n<div
+        data-type=\"problem\" id=\"fs-id3175448\">\n        <p id=\"import-auto-id1678252\">Which
+        has more mass: a kilogram of cotton balls or a kilogram of gold?</p>\n        </div>\n        <div
+        data-type=\"solution\" id=\"fs-id3255910\" data-label=\"\"><div data-type=\"title\">Answer</div>\n        <p
+        id=\"import-auto-id2438567\">They are equal. A kilogram of one substance is
+        equal in mass to a kilogram of another substance. The quantities that might
+        differ between them are volume and density.</p></div></div>\n<div data-type=\"note\"
+        data-has-label=\"true\" id=\"fs-id1169085651531\" class=\"watch-physics\"
+        data-label=\"\"><div data-type=\"title\">Watch Physics: Newton&#8217;s First
+        Law of Motion</div>\n\n<p id=\"fs-id1169085756824\">This video introduces
+        and explains Newton&#8217;s first law of motion.</p>\n<div data-type=\"media\"
+        id=\"fs-id1169086146737\" data-alt=\"This tutorial explains Newton&#8217;s
+        first law of motion.\">\n<iframe width=\"660\" height=\"371.4\" src=\"https://www.openstaxcollege.org/l/02newlawone\"><!--
+        no-selfclose --></iframe>\n</div>\n</div><section data-depth=\"1\" id=\"fs-id1651376\"
+        class=\"section-summary\"><h3 data-type=\"title\">Section Summary</h3><ul
+        id=\"fs-id2410016\"><li><span data-type=\"term\">Newton&#8217;s first law
+        of motion</span> states that a body at rest remains at rest, or, if in motion,
+        remains in motion at a constant velocity unless acted on by a net external
+        force. This is also known as the <span data-type=\"term\">law of inertia</span>.</li>\n        <li><span
+        data-type=\"term\">Inertia</span><strong data-effect=\"bold\"><!-- no-selfclose
+        --></strong> is the tendency of an object to remain at rest or remain in motion.
+        Inertia is related to an object&#8217;s mass.</li>\n        <li><span data-type=\"term\">Mass</span>
+        is the quantity of matter in a substance.</li>\n        </ul></section><section
+        data-depth=\"1\" id=\"fs-id2668844\" class=\"conceptual-questions\" data-element-type=\"conceptual-questions\"><h3
+        data-type=\"title\">Conceptual Questions</h3>\n<div data-type=\"exercise\"
+        id=\"fs-id1263177\" data-element-type=\"conceptual-questions\"><div data-type=\"problem\"
+        id=\"fs-id1248749\">\n        <p id=\"import-auto-id1518142\">How are inertia
+        and mass related?</p>\n            </div></div>\n            \n            <div
+        data-type=\"exercise\" id=\"fs-id1561865\" data-element-type=\"conceptual-questions\"><div
+        data-type=\"problem\" id=\"fs-id2674431\">\n        <p id=\"import-auto-id2314210\">What
+        is the relationship between weight and mass? Which is an intrinsic, unchanging
+        property of a body?</p>\n        </div></div>\n        </section>\n    <div
+        data-type=\"glossary\"><h3 data-type=\"glossary-title\">Glossary</h3>\n        <dl
+        id=\"import-auto-id1323961\"><dt>inertia</dt><dd id=\"fs-id1572254\">the tendency
+        of an object to remain at rest or remain in motion</dd></dl>\n        <dl
+        id=\"import-auto-id966062\"><dt>law of inertia</dt> <dd id=\"fs-id1398514\">see
+        Newton&#8217;s first law of motion</dd></dl>\n        <dl id=\"import-auto-id1571848\"><dt>mass</dt>
+        <dd id=\"fs-id2355712\">the quantity of matter in a substance; measured in
+        kilograms</dd></dl>\n        <dl id=\"import-auto-id2667112\"><dt>Newton&#8217;s
+        first law of motion</dt> <dd id=\"fs-id1501023\">a body at rest remains at
+        rest, or, if in motion, remains in motion at a constant velocity unless acted
+        on by a net external force; also known as the law of inertia</dd></dl>\n    </div></body>\n\n</html>",
+        "subjects": ["Science and Technology"], "legacy_id": "m60689", "parentId":
+        "e4084c4d-df8b-43d3-af14-c2ea68d59f92", "resources": [{"media_type": "text/xml",
+        "id": "0d48c6359a9048310ff90facf2cef4d2851b575b", "filename": "index.cnxml.html"},
+        {"media_type": "application/octet-stream", "id": "a51992d3e14b44cf9ba044a51cee74b7a349b114",
+        "filename": "index.cnxml"}], "publishers": [{"surname": "with Courseware",
+        "suffix": null, "firstname": "OpenStax Physics", "title": "", "fullname":
+        "OpenStax Physics with Courseware", "id": "cnxphyscw"}], "parent": {"authors":
+        [{"surname": "OpenStax College", "suffix": "", "firstname": "", "title": "",
+        "fullname": "OpenStax", "id": "OpenStaxCollege"}], "shortId": "5AhMTd-L",
+        "version": "2", "id": "e4084c4d-df8b-43d3-af14-c2ea68d59f92", "title": "Newton\u2019s
+        First Law of Motion: Inertia"}, "stateid": 1, "parentTitle": "Newton\u2019s
+        First Law of Motion: Inertia", "shortId": "sP_QopyD", "authors": [{"surname":
+        "with Courseware", "suffix": null, "firstname": "OpenStax Physics", "title":
+        "", "fullname": "OpenStax Physics with Courseware", "id": "cnxphyscw"}], "parentVersion":
+        "2", "legacy_version": "1.3", "licensors": [{"surname": "with Courseware",
+        "suffix": null, "firstname": "OpenStax Physics", "title": "", "fullname":
+        "OpenStax Physics with Courseware", "id": "cnxphyscw"}], "language": "en",
+        "license": {"url": "http://creativecommons.org/licenses/by/4.0/", "code":
+        "by", "version": "4.0", "name": "Creative Commons Attribution License"}, "created":
+        "2016-05-02T19:46:19Z", "doctype": "", "buyLink": null, "submitter": {"surname":
+        "with Courseware", "suffix": null, "firstname": "OpenStax Physics", "title":
+        "", "fullname": "OpenStax Physics with Courseware", "id": "cnxphyscw"}, "baked":
+        null, "parentAuthors": [{"surname": "OpenStax College", "suffix": "", "firstname":
+        "", "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}], "history":
+        [{"changes": "corrected short code spelling", "version": "3", "revised": "2016-07-08T16:34:03Z",
+        "publisher": {"surname": "with Courseware", "suffix": null, "firstname": "OpenStax
+        Physics", "title": "", "fullname": "OpenStax Physics with Courseware", "id":
+        "cnxphyscw"}}, {"changes": "        --\r\n    ", "version": "2", "revised":
+        "2016-06-23T14:44:20Z", "publisher": {"surname": "with Courseware", "suffix":
+        null, "firstname": "OpenStax Physics", "title": "", "fullname": "OpenStax
+        Physics with Courseware", "id": "cnxphyscw"}}, {"changes": "created", "version":
+        "1", "revised": "2016-05-02T20:01:38Z", "publisher": {"surname": "with Courseware",
+        "suffix": null, "firstname": "OpenStax Physics", "title": "", "fullname":
+        "OpenStax Physics with Courseware", "id": "cnxphyscw"}}]}'
+    http_version: 
+  recorded_at: Fri, 12 Feb 2021 18:28:34 GMT
 recorded_with: VCR 4.0.0

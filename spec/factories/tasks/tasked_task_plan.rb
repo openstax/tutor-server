@@ -5,6 +5,7 @@ if Rails.env.development?
 end
 
 FactoryBot.define do
+
   factory :tasked_task_plan, parent: :tasks_task_plan do
     type      { 'reading' }
 
@@ -57,23 +58,12 @@ FactoryBot.define do
       number_of_students { 10 }
     end
 
-    course    { FactoryBot.build :course_profile_course, offering: nil }
 
     ecosystem do
-      FactoryBot.create(:content_ecosystem).tap do |ecosystem|
-        VCR.use_cassette('TaskedTaskPlan/with_inertia', VCR_OPTS) do
-          OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
-            Content::ImportBook[
-              cnx_book: cnx_book,
-              ecosystem: ecosystem,
-              reading_processing_instructions: reading_processing_instructions
-            ]
-          end
-        end
-
-        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-      end
+      PopulateMiniEcosystem.generate_mini_ecosystem
     end
+
+    course    { FactoryBot.build :course_profile_course, offering: nil }
 
     settings { { page_ids: [ ecosystem.pages.last.id.to_s ] } }
 

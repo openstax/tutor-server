@@ -1,6 +1,6 @@
 class OpenStax::Exercises::V1::FakeClient
   STANDARD_TAGS = [
-    ['assignment-type:practice', 'k12phys', 'apbio', 'os-practice-problems' ],
+    ['k12phys', 'apbio', 'os-practice-problems'],
     ['assignment-type:homework', 'assignment-type:reading', 'k12phys', 'apbio', 'os-practice-concepts' ]
   ]
 
