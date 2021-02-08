@@ -81,6 +81,11 @@ class Api::V1::OfferingRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
+  property :os_book_id,
+           type: String,
+           readable: true,
+           writeable: false
+
   collection :active_term_years,
              class: TermYear,
              extend: Api::V1::TermYearRepresenter,
