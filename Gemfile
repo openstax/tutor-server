@@ -237,12 +237,6 @@ group :development, :test do
   # Call 'debugger' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
 
-  # Call 'binding.pry' anywhere in the code to stop execution and get a debugger console
-  gem 'pry' # needed when debugging without 'rails_helper'
-  gem 'pry-nav'
-  gem 'pry-rails'
-  gem 'pry-stack_explorer'
-
   # Nail down n+1 queries and unused eager loading
   gem 'bullet'
 

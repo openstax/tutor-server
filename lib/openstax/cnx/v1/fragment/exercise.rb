@@ -45,7 +45,7 @@ module OpenStax::Cnx::V1
         match = ABSOLUTIZED_EMBED_URL_REGEX.match(url)
         next if match.nil?
 
-        [ match[1].to_sym, URI.unescape(match[2]) ]
+        [ match[1].to_sym, URI.decode_www_form_component(match[2]) ]
       end.compact
     end
 
