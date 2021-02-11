@@ -43,6 +43,7 @@ Rails.application.routes.draw do
       get :tasks
       put :ui_settings
       put :'tours/:tour_id', action: :record_tour_view
+      post :suggest
 
       resources :courses, only: :index do
         put :'student(/role/:role_id)', controller: :students, action: :update_self

@@ -102,4 +102,17 @@ RSpec.describe Api::V1::UsersController, type: :request, api: true, version: :v1
       end.to change { User::Models::TourView.count }.by(1)
     end
   end
+
+  context '#suggest' do
+    def suggest_api_user_url
+      "/api/user/suggest"
+    end
+
+    it 'stores a subject suggestion' do
+      expect do
+        api_post suggest_api_user_url, user_1_token, params: { data: 'Astronomy' }.to_json
+        expect(response).to have_http_status(:success)
+      end.to change { User::Models::Suggestion.count }.by(1)
+    end
+  end
 end
