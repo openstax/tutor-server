@@ -75,9 +75,9 @@ class Api::V1::UsersController < Api::V1::ApiController
     Saves a user suggestion. The current default only supports teachers suggesting subjects.
   EOS
   def suggest
-    OSU::AccessPolicy.require_action_allowed!(:create, current_api_user, User::Models::Suggestion)
+    OSU::AccessPolicy.require_action_allowed!(:create, current_human_user, User::Models::Suggestion)
 
-    User::Models::Suggestion.create(content: params[:data])
+    User::Models::Suggestion.create(profile: current_human_user, content: params[:data])
     head :ok
   end
 end

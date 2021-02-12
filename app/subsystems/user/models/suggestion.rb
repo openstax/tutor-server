@@ -1,8 +1,11 @@
 module User
   module Models
     class Suggestion < ApplicationRecord
+      belongs_to :profile, subsystem: :user
+
       validates :content, presence: true
       validates :topic, presence: true
+      validates :profile, presence: true
 
       enum topic: [:subject]
 

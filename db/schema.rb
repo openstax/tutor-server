@@ -1232,6 +1232,8 @@ ActiveRecord::Schema.define(version: 2021_02_08_231233) do
   create_table "user_suggestions", force: :cascade do |t|
     t.text "content", null: false
     t.integer "topic", default: 0, null: false
+    t.bigint "user_profile_id", null: false
+    t.index ["user_profile_id"], name: "index_user_suggestions_on_user_profile_id"
   end
 
   create_table "user_tour_views", id: :serial, force: :cascade do |t|
@@ -1341,6 +1343,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_231233) do
   add_foreign_key "user_customer_services", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profiles", "openstax_accounts_accounts", column: "account_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_researchers", "user_profiles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_suggestions", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_tour_views", "user_profiles"
   add_foreign_key "user_tour_views", "user_tours"
 end
