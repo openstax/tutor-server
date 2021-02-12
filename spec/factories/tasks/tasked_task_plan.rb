@@ -18,43 +18,6 @@ FactoryBot.define do
     end
 
     transient do
-      page_hash do
-        {
-          id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-          title: "<span class=\"os-number\">1.1</span><span class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Newton's First Law of Motion: Inertia</span>"
-        }
-      end
-
-      chapter_hash do
-        {
-          title: "<span class=\"os-number\">1</span><span class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Dynamics: Force and Newton's Laws of Motion</span>",
-          contents: [ page_hash ]
-        }
-      end
-
-      unit_hash do
-        { title: 'Not a real Unit', contents: [ chapter_hash ] }
-      end
-
-      book_hash do
-        {
-          id: '93e2b09d-261c-4007-a987-0b3062fe154b',
-          version: '4.4',
-          title: 'College Physics with Courseware',
-          tree: {
-            id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4',
-            title: 'College Physics with Courseware',
-            contents: [ unit_hash ]
-          }
-        }
-      end
-
-      cnx_book { OpenStax::Cnx::V1::Book.new hash: book_hash.deep_stringify_keys }
-
-      reading_processing_instructions do
-        FactoryBot.build(:content_book).reading_processing_instructions
-      end
-
       number_of_students { 10 }
     end
 

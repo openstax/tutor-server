@@ -32,7 +32,6 @@ RSpec.describe Tasks::PopulatePlaceholderSteps, type: :routine do
       pes = @task.task_steps.filter do |task_step|
         task_step.placeholder? && task_step.group_type == 'personalized_group'
     end
-      debugger
 
       expect(@task).not_to be_core_task_steps_completed
     }
