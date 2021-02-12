@@ -28,7 +28,7 @@ FactoryBot.define do
 
     course    { FactoryBot.build :course_profile_course, offering: nil }
 
-    settings { { page_ids: [ ecosystem.pages.last.id.to_s ] } }
+    settings { { page_ids: ecosystem.pages[0...3].map { |pg| pg.id.to_s } } }
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.course

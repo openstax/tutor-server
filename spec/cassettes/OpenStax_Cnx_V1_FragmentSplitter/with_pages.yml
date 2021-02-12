@@ -2084,6 +2084,407 @@ http_interactions:
   recorded_at: Fri, 12 Feb 2021 18:36:53 GMT
 - request:
     method: get
+    uri: https://archive.cnx.org/contents/2242a8c5-e8b1-4287-b801-af74ef6f1e5b@7
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - max-age=31536000, public
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 12 Feb 2021 02:56:02 GMT
+      Etag:
+      - '"YCitj53qg/RgtvwhZd1KKQ"'
+      Expires:
+      - Sat, 12 Feb 2022 02:56:02 GMT
+      Link:
+      - <https://cnx.org/contents/405335a3-7cff-4df2-a9ad-29062a4af261:2242a8c5-e8b1-4287-b801-af74ef6f1e5b/Kinematics-in-Two-Dimensions:-An-Introduction>
+        ;rel="Canonical"
+      Server:
+      - waitress
+      X-Varnish-Status:
+      - cacheable - Cache-Control in backend response
+      X-Varnish-Backend:
+      - prod07_archive3
+      X-Varnish-Ttl:
+      - '31536000.000'
+      X-Varnish:
+      - 5164567 18423
+      Age:
+      - '63009'
+      Via:
+      - 1.1 varnish-v4
+      X-Varnish-Cache:
+      - HIT
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+      Strict-Transport-Security:
+      - max-age=16000000
+    body:
+      encoding: ASCII-8BIT
+      string: '{"googleAnalytics": ["UA-30227798-1"], "version": "7", "submitlog":
+        "revised and embedded phet simulations", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://www.w3.org/TR/html5/dom.html#custom-data-attribute\"><ul>\n<li>Observe
+        that motion in two dimensions consists of horizontal and vertical components.</li>\n<li>Understand
+        the independence of horizontal and vertical vectors in two-dimensional motion.</li>\n</ul></div>",
+        "revised": "2020-05-05T19:13:42Z", "printStyle": null, "roles": null, "keywords":
+        ["Kinematics", "Motion", "Vector", "Pythagorean theorem"], "id": "2242a8c5-e8b1-4287-b801-af74ef6f1e5b",
+        "canonical": "405335a3-7cff-4df2-a9ad-29062a4af261", "title": "Kinematics
+        in Two Dimensions: An Introduction", "mediaType": "application/vnd.org.cnx.module",
+        "canon_url": "https://cnx.org/contents/405335a3-7cff-4df2-a9ad-29062a4af261:2242a8c5-e8b1-4287-b801-af74ef6f1e5b/Kinematics-in-Two-Dimensions:-An-Introduction",
+        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
+        xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Kinematics in Two Dimensions:
+        An Introduction</title><meta name=\"created-time\" content=\"2016/05/02 19:12:25
+        +0000\"/><meta name=\"revised-time\" content=\"2018/07/25 11:07:41.062 GMT-5\"/><meta
+        name=\"author\" content=\"cnxphyscw\"/><meta name=\"acl-list\" content=\"cnxphyscw\"/><meta
+        name=\"licensor\" content=\"cnxphyscw\"/><meta name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
+        name=\"keywords\" content=\"Kinematics, Motion, Pythagorean theorem, Vector\"/><meta
+        name=\"subject\" content=\"Science and Technology\"/></head>\n\n<body xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
+        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
+        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://www.w3.org/TR/html5/dom.html#custom-data-attribute\"
+        data-cnxml-to-html-ver=\"1.7.3\"><div data-type=\"document-title\">Kinematics
+        in Two Dimensions: An Introduction</div><div data-type=\"abstract\"><ul>\n<li>Observe
+        that motion in two dimensions consists of horizontal and vertical components.</li>\n<li>Understand
+        the independence of horizontal and vertical vectors in two-dimensional motion.</li>\n</ul></div>\n\n    <figure
+        id=\"import-auto-id1165298608692\"><figcaption>Walkers and drivers in a city
+        like New York are rarely able to travel in straight lines to reach their destinations.
+        Instead, they must follow roads and sidewalks, making two-dimensional, zigzagged
+        paths. (credit: Margaret W. Carruthers)</figcaption><span data-type=\"media\"
+        id=\"import-auto-id1165296572209\" data-alt=\"A busy traffic intersection
+        in New York showing vehicles moving on the road.\">\n        <img src=\"/resources/fb7c5f8fe285e235727fae06c2ecb0dd11106b79/Figure_03_01_00.jpg\"
+        data-media-type=\"image/jpg\" alt=\"A busy traffic intersection in New York
+        showing vehicles moving on the road.\" width=\"300\"/>\n      </span>\n\n    </figure><section
+        data-depth=\"1\" id=\"fs-id1165298595412\"><h3 data-type=\"title\">Two-Dimensional
+        Motion: Walking in a City</h3>\n    <p id=\"import-auto-id1165298535384\">Suppose
+        you want to walk from one point to another in a city with uniform square blocks,
+        as pictured in <a href=\"#import-auto-id1165296250183\" class=\"autogenerated-content\">[link]</a>.</p>\n\n    <figure
+        id=\"import-auto-id1165296250183\"><figcaption>A pedestrian walks a two-dimensional
+        path between two points in a city. In this scene, all blocks are square and
+        are the same size.</figcaption><span data-type=\"media\" id=\"import-auto-id1165298550797\"
+        data-alt=\"An X Y graph with origin at zero zero with x axis labeled nine
+        blocks east and y axis labeled five blocks north. Starting point at the origin
+        and destination at point nine on the x axis and point five on the y axis.\">\n        <img
+        src=\"/resources/2dca7613815b1ddc825c471fa6107b64cfff9690/Figure_03_01_01.jpg\"
+        data-media-type=\"image/jpg\" alt=\"An X Y graph with origin at zero zero
+        with x axis labeled nine blocks east and y axis labeled five blocks north.
+        Starting point at the origin and destination at point nine on the x axis and
+        point five on the y axis.\" width=\"400\"/>\n      </span>\n\n    </figure><p
+        id=\"import-auto-id1165296716128\">The straight-line path that a helicopter
+        might fly is blocked to you as a pedestrian, and so you are forced to take
+        a two-dimensional path, such as the one shown. You walk 14 blocks in all,
+        9 east followed by 5 north. What is the straight-line distance?</p>\n    <p
+        id=\"import-auto-id1165296310636\">An old adage states that the shortest distance
+        between two points is a straight line. The two legs of the trip and the straight-line
+        path form a right triangle, and so the Pythagorean theorem, <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>&#160;+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>&#160;=&#160;</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>&#160;+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>&#160;=&#160;</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{a rSup { size 8{2} } \"&#160;+&#160;\"b
+        rSup { size 8{2} } \"&#160;=&#160;\"c rSup { size 8{2} } } {}</annotation></semantics></annotation-xml></semantics></math>,
+        can be used to find the straight-line distance.</p><figure id=\"import-auto-id1165298608693\"><figcaption>The
+        Pythagorean theorem relates the length of the legs of a right triangle, labeled
+        <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mrow><mi>a</mi></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>a</mi></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{a} {}</annotation></semantics></annotation-xml></semantics></math>
+        and <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mrow><mi>b</mi></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>b</mi></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{b} {}</annotation></semantics></annotation-xml></semantics></math>,
+        with the hypotenuse, labeled <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow><mrow><mrow><mi>c</mi></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>c</mi></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{c} {}</annotation></semantics></annotation-xml></semantics></math>.
+        The relationship is given by: <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>=&#160;</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>=&#160;</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{a rSup { size 8{2} } &#160;\"+&#160;\"b
+        rSup { size 8{2} } &#160;\"=&#160;\"c rSup { size 8{2} } } {}</annotation></semantics></annotation-xml></semantics></math>.
+        This can be rewritten, solving for <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow><mrow><mrow><mi>c</mi></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>c</mi></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{A} {}</annotation></semantics></annotation-xml></semantics></math>
+        : <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mrow><mrow><mi>c</mi><mtext>&#160;=&#160;</mtext><msqrt><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup></mrow></msqrt></mrow></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><mi>c</mi><mtext>&#160;=&#160;</mtext><msqrt><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup></mrow></msqrt></mrow></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{c\"&#160;=&#160;\" sqrt {a rSup { size
+        8{2} } &#160;\"+&#160;\"b rSup { size 8{2} } } } {}</annotation></semantics></annotation-xml></semantics></math>.</figcaption><span
+        data-type=\"media\" id=\"import-auto-id1165296572210\" data-alt=\"A right-angled
+        triangle with base labeled a height labeled b and hypotenuse labeled c is
+        shown. Using Pythagorean theorem c is calculated as square root of a squared
+        plus b squared.\">\n        <img src=\"/resources/e13e08e675ccad684e14ded83e58876d6b0a0068/Figure_03_01_02.jpg\"
+        data-media-type=\"image/jpg\" alt=\"A right-angled triangle with base labeled
+        a height labeled b and hypotenuse labeled c is shown. Using Pythagorean theorem
+        c is calculated as square root of a squared plus b squared.\" width=\"200\"/>\n      </span>\n\n    </figure>\n    <p
+        id=\"import-auto-id1165298883906\">The hypotenuse of the triangle is the straight-line
+        path, and so in this case its length in units of city blocks is <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
+        display=\"inline\"><semantics><mrow><mrow><mrow><mrow><msqrt><mrow><mo stretchy=\"false\">(</mo><mtext>9
+        blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><mo
+        stretchy=\"false\">(</mo><mtext>5 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup></mrow></msqrt><mtext>=&#160;10</mtext><mtext>.</mtext><mtext>3
+        blocks</mtext></mrow></mrow><mrow/></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><msqrt><mrow><mo
+        stretchy=\"false\">(</mo><mtext>9 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><mo
+        stretchy=\"false\">(</mo><mtext>5 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup></mrow></msqrt><mtext>=&#160;10</mtext><mtext>.</mtext><mtext>3
+        blocks</mtext></mrow></mrow><mrow/></mrow><annotation encoding=\"StarMath
+        5.0\"> size 12{ sqrt { \\( \"9 blocks\" \\)  rSup { size 8{2} } &#160;\"+&#160;\"
+        \\( \"5 blocks\" \\)  rSup { size 8{2} } } &#160;\"=&#160;10\" \".\" \"3 blocks\"}
+        {}</annotation></semantics></annotation-xml></semantics></math>, considerably
+        shorter than the 14 blocks you walked. (Note that we are using three significant
+        figures in the answer. Although it appears that &#8220;9&#8221; and &#8220;5&#8221;
+        have only one significant digit, they are discrete numbers. In this case &#8220;9
+        blocks&#8221; is the same as &#8220;9.0 or 9.00 blocks.&#8221; We have decided
+        to use three significant figures in the answer in order to show the result
+        more precisely.)</p><figure id=\"import-auto-id1165298535408\"><figcaption>The
+        straight-line path followed by a helicopter between the two points is shorter
+        than the 14 blocks walked by the pedestrian. All blocks are square and the
+        same size.</figcaption><span data-type=\"media\" id=\"import-auto-id1165298666630\"
+        data-alt=\"An X Y graph with origin at zero zero with x-axis labeled nine
+        blocks east and y axis labeled five blocks north. A diagonal vector arrow
+        joining starting point at point zero on x axis and destination at point five
+        on y axis with its direction northeast is shown. A helicopter is flying along
+        the diagonal vector arrow with helicopter path of ten point three blocks.
+        The angle formed by diagonal vector arrow and the x-axis is equal to twenty-nine
+        point one degrees.\">\n        <img src=\"/resources/8d90bace3c41073bc136d8ca2351a42509498171/Figure_03_01_03.jpg\"
+        data-media-type=\"image/jpg\" alt=\"An X Y graph with origin at zero zero
+        with x-axis labeled nine blocks east and y axis labeled five blocks north.
+        A diagonal vector arrow joining starting point at point zero on x axis and
+        destination at point five on y axis with its direction northeast is shown.
+        A helicopter is flying along the diagonal vector arrow with helicopter path
+        of ten point three blocks. The angle formed by diagonal vector arrow and the
+        x-axis is equal to twenty-nine point one degrees.\" width=\"350\"/>\n      </span>\n\n    </figure><p
+        id=\"import-auto-id1165298981862\">The fact that the straight-line distance
+        (10.3 blocks) in <a href=\"#import-auto-id1165298535408\" class=\"autogenerated-content\">[link]</a>
+        is less than the total distance walked (14 blocks) is one example of a general
+        characteristic of vectors. (Recall that <span data-type=\"term\" id=\"import-auto-id1165298541000\">vectors</span>
+        are quantities that have both magnitude and direction.)</p>\n    <p id=\"import-auto-id1165298648314\">As
+        for one-dimensional kinematics, we use arrows to represent vectors. The length
+        of the arrow is proportional to the vector&#8217;s magnitude. The arrow&#8217;s
+        length is indicated by hash marks in <a href=\"#import-auto-id1165296250183\"
+        class=\"autogenerated-content\">[link]</a> and <a href=\"#import-auto-id1165298535408\"
+        class=\"autogenerated-content\">[link]</a>. The arrow points in the same direction
+        as the vector. For two-dimensional motion, the path of an object can be represented
+        with three vectors: one vector shows the straight-line path between the initial
+        and final points of the motion, one vector shows the horizontal component
+        of the motion, and one vector shows the vertical component of the motion.
+        The horizontal and vertical components of the motion add together to give
+        the straight-line path. For example, observe the three vectors in <a href=\"#import-auto-id1165298535408\"
+        class=\"autogenerated-content\">[link]</a>. The first represents a 9-block
+        displacement east. The second represents a 5-block displacement north. These
+        vectors are added to give the third vector, with a 10.3-block total displacement.
+        The third vector is the straight-line path between the two points. Note that
+        in this example, the vectors that we are adding are perpendicular to each
+        other and thus form a right triangle. This means that we can use the Pythagorean
+        theorem to calculate the magnitude of the total displacement. (Note that we
+        cannot use the Pythagorean theorem to add vectors that are not perpendicular.
+        We will develop techniques for adding vectors having any direction, not just
+        those perpendicular to one another, in <a href=\"/contents/ffc5c46e-3da2-42be-b747-88b8641a844b\">Vector
+        Addition and Subtraction: Graphical Methods</a> and <a href=\"/contents/26a3d0a5-c3b8-45b9-a763-f0047e12fd7d\">Vector
+        Addition and Subtraction: Analytical Methods</a>.)</p></section>\n\n<div data-type=\"example\"
+        id=\"fs-id1169083561662\" class=\"example-video\"><div data-type=\"title\">Finding
+        the Components of Vectors</div>\n<p id=\"fs-id1169083894428\">Calculate the
+        <strong data-effect=\"bold\"><em data-effect=\"italics\">x</em></strong>-
+        and <strong data-effect=\"bold\"><em data-effect=\"italics\">y</em></strong>-
+        components of the following two vectors:</p>\n<p id=\"fs-id1169084759513\">a)
+        Vector <strong data-effect=\"bold\">A</strong>: <strong data-effect=\"bold\">45
+        N</strong> at <strong data-effect=\"bold\">123&#176;</strong></p>\n<p id=\"fs-id1169084553919\">b)
+        Vector <strong data-effect=\"bold\">B</strong>: <strong data-effect=\"bold\">33.3
+        m/s</strong> at <strong data-effect=\"bold\">220&#176;</strong></p>\n<p id=\"fs-id1169084532952\">Note:
+        <strong data-effect=\"bold\">0&#176;</strong> on the coordinate plane is the
+        positive x-axis.</p>\n<p id=\"fs-id1169084750854\">Study the problem and its
+        solution in this video:</p>\n<div data-type=\"media\" id=\"fs-id1169084672162\"
+        data-alt=\"\">\n<iframe width=\"660\" height=\"371.4\" src=\"https://www.openstaxcollege.org/l/02compvect\"><!--
+        no-selfclose --></iframe>\n</div>\n</div>\n\n<div data-type=\"example\" id=\"fs-id1169084524110\"
+        class=\"example-video\"><div data-type=\"title\">Finding the Magnitudes and
+        Directions of Vectors</div>\n<p id=\"fs-id1169084769030\">Given the <strong
+        data-effect=\"bold\"><em data-effect=\"italics\">x</em></strong> &amp; <strong
+        data-effect=\"bold\"><em data-effect=\"italics\">y</em></strong> components
+        of two vectors <strong data-effect=\"bold\">A</strong> and <strong data-effect=\"bold\">B</strong>,
+        determine the magnitude and direction for each.</p>\n<p id=\"fs-id1169084681347\">a)
+        vector <strong data-effect=\"bold\">A</strong></p>\n<p id=\"fs-id1169084635170\"><strong
+        data-effect=\"bold\"><em data-effect=\"italics\">x</em></strong>-component
+        = <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mo>+</mo><mn>7.20</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><mrow><mo>+</mo><mn>7.20</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></annotation-xml></semantics></math></p>\n<p
+        id=\"fs-id1169084704953\"><strong data-effect=\"bold\"><em data-effect=\"italics\">y</em></strong>-component
+        = <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mo>&#8722;</mo><mn>3.60</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><mrow><mo>&#8722;</mo><mn>3.60</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></annotation-xml></semantics></math></p>\n<p
+        id=\"fs-id1169084522273\">b) vector <strong data-effect=\"bold\">B</strong></p>\n<p
+        id=\"fs-id1169083802312\"><strong data-effect=\"bold\"><em data-effect=\"italics\">x</em></strong>-component
+        =  <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mo>&#8722;</mo><mn>91.0</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><mrow><mo>&#8722;</mo><mn>91.0</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></annotation-xml></semantics></math></p>\n<p
+        id=\"fs-id1169084579321\"><strong data-effect=\"bold\"><em data-effect=\"italics\">y</em></strong>-component
+        =  <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mo>+</mo><mn>67.0</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><mrow><mo>+</mo><mn>67.0</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></annotation-xml></semantics></math></p>\n<p
+        id=\"fs-id1169084660848\">Study the problem and its solution in this video:</p>\n<div
+        data-type=\"media\" id=\"fs-id1169084663740\" data-alt=\"\">\n<iframe width=\"660\"
+        height=\"371.4\" src=\"https://www.openstaxcollege.org/l/02magnvecto\"><!--
+        no-selfclose --></iframe>\n</div>\n</div>\n\n    <section data-depth=\"1\"
+        id=\"fs-id1165298695671\"><h3 data-type=\"title\">The Independence of Perpendicular
+        Motions</h3>\n    <p id=\"import-auto-id1165298748280\">The person taking
+        the path shown in <a href=\"#import-auto-id1165298535408\" class=\"autogenerated-content\">[link]</a>
+        walks east and then north (two perpendicular directions). How far he or she
+        walks east is only affected by his or her motion eastward. Similarly, how
+        far he or she walks north is only affected by his or her motion northward.</p><div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-id1165298714031\" data-label=\"\"><div
+        data-type=\"title\">Independence of Motion</div>\n    <p id=\"import-auto-id1165298709689\">The
+        horizontal and vertical components of two-dimensional motion are independent
+        of each other. Any motion in the horizontal direction does not affect motion
+        in the vertical direction, and vice versa.</p>\n    </div>\n    <p id=\"import-auto-id1165298786219\">This
+        is true in a simple scenario like that of walking in one direction first,
+        followed by another. It is also true of more complicated motion involving
+        movement in two directions at once. For example, let&#8217;s compare the motions
+        of two baseballs. One baseball is dropped from rest. At the same instant,
+        another is thrown horizontally from the same height and follows a curved path.
+        A stroboscope has captured the positions of the balls at fixed time intervals
+        as they fall.</p>\n\n    <figure id=\"import-auto-id1165296248287\"><figcaption>This
+        shows the motions of two identical balls&#8212;one falls from rest, the other
+        has an initial horizontal velocity. Each subsequent position is an equal time
+        interval. Arrows represent horizontal and vertical velocities at each position.
+        The ball on the right has an initial horizontal velocity, while the ball on
+        the left has no horizontal velocity. Despite the difference in horizontal
+        velocities, the vertical velocities and positions are identical for both balls.
+        This shows that the vertical and horizontal motions are independent.</figcaption><span
+        data-type=\"media\" id=\"import-auto-id1165296709055\" data-alt=\"Two identical
+        balls one red and another blue are falling. Five positions of the balls during
+        fall are shown. The horizontal velocity vectors for blue ball towards right
+        are of same magnitude for all the positions. The vertical velocity vectors
+        shown downwards for red ball are increasing with each position.\">\n        <img
+        src=\"/resources/0a765a44d8902d273bec6f0a64fa852eeb03132a/Figure_03_01_04a.jpg\"
+        data-media-type=\"image/jpg\" alt=\"Two identical balls one red and another
+        blue are falling. Five positions of the balls during fall are shown. The horizontal
+        velocity vectors for blue ball towards right are of same magnitude for all
+        the positions. The vertical velocity vectors shown downwards for red ball
+        are increasing with each position.\" width=\"175\"/>\n      </span>\n\n    </figure><p
+        id=\"import-auto-id1165298681613\">It is remarkable that for each flash of
+        the strobe, the vertical positions of the two balls are the same. This similarity
+        implies that the vertical motion is independent of whether or not the ball
+        is moving horizontally. (Assuming no air resistance, the vertical motion of
+        a falling object is influenced by gravity only, and not by any horizontal
+        forces.) Careful examination of the ball thrown horizontally shows that it
+        travels the same horizontal distance between flashes. This is due to the fact
+        that there are no additional forces on the ball in the horizontal direction
+        after it is thrown. This result means that the horizontal velocity is constant,
+        and affected neither by vertical motion nor by gravity (which is vertical).
+        Note that this case is true only for ideal conditions. In the real world,
+        air resistance will affect the speed of the balls in both directions.</p>\n    <p
+        id=\"import-auto-id1165296226966\">The two-dimensional curved path of the
+        horizontally thrown ball is composed of two independent one-dimensional motions
+        (horizontal and vertical). The key to analyzing such motion, called <em data-effect=\"italics\"><em
+        data-effect=\"italics\">projectile motion</em></em>, is to <em data-effect=\"italics\"><em
+        data-effect=\"italics\">resolve</em></em> (break) it into motions along perpendicular
+        directions. Resolving two-dimensional motion into perpendicular components
+        is possible because the components are independent. We shall see how to resolve
+        vectors in <a href=\"/contents/ffc5c46e-3da2-42be-b747-88b8641a844b\">Vector
+        Addition and Subtraction: Graphical Methods</a> and <a href=\"/contents/26a3d0a5-c3b8-45b9-a763-f0047e12fd7d\">Vector
+        Addition and Subtraction: Analytical Methods</a>. We will find such techniques
+        to be useful in many areas of physics.</p></section>\n   <div data-type=\"note\"
+        data-has-label=\"true\" id=\"eip-652\" class=\"interactive\" data-label=\"\"><div
+        data-type=\"title\">PhET Explorations: Ladybug Motion</div>\n<p id=\"eip-id1169736812332\">Learn
+        about position, velocity and acceleration vectors. Move the ladybug by setting
+        the position, velocity or acceleration, and see how the vectors change. Choose
+        linear, circular or elliptical motion, and record and playback the motion
+        to analyze the behavior.</p>\n\n<figure id=\"fs-id1169416946830\"><div data-type=\"media\"
+        id=\"LadybugMotion\" data-alt=\"In this simulation you can explore how circular
+        motion relates to the bug''s x,y position, velocity, and acceleration using
+        vectors or graphs.\">\n<iframe width=\"660\" height=\"371.4\" src=\"https://openstax.org/l/21ladybug\"><!--
+        no-selfclose --></iframe>\n</div>\n</figure>\n</div><section data-depth=\"1\"
+        id=\"fs-id1165298944131\" class=\"section-summary\"><h3 data-type=\"title\">Summary</h3>\n    <ul
+        id=\"fs-id1165298708756\"><li xmlns:fo=\"urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0\"
+        id=\"import-auto-id1165296313373\" fo:font-weight=\"normal\">The shortest
+        path between any two points is a straight line. In two dimensions, this path
+        can be represented by a vector with horizontal and vertical components.</li>\n    <li
+        xmlns:fo=\"urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0\" id=\"import-auto-id1165296414067\"
+        fo:font-weight=\"normal\">The horizontal and vertical components of a vector
+        are independent of one another. Motion in the horizontal direction does not
+        affect motion in the vertical direction, and vice versa.</li>\n    </ul></section>\n<div
+        data-type=\"glossary\"><h3 data-type=\"glossary-title\">Glossary</h3>\n    <dl
+        id=\"import-auto-id1165298860990\"><dt>vector</dt> <dd id=\"fs-id1165298731999\">a
+        quantity that has both magnitude and direction; an arrow used to represent
+        quantities with both magnitude and direction</dd></dl>\n    </div></body>\n\n</html>",
+        "subjects": ["Science and Technology"], "legacy_id": "m60645", "parentId":
+        "21d0e217-d50f-4901-af75-905e738eb4c4", "resources": [{"media_type": "image/png",
+        "id": "075500ad9f71890a85fe3f7a4137ac08e2b7907c", "filename": "copy_of_PhET_Icon.png"},
+        {"media_type": "image/png", "id": "075500ad9f71890a85fe3f7a4137ac08e2b7907c",
+        "filename": "PhET_Icon.png"}, {"media_type": "image/jpeg", "id": "0a765a44d8902d273bec6f0a64fa852eeb03132a",
+        "filename": "Figure_03_01_04a.jpg"}, {"media_type": "image/jpeg", "id": "16f3266f152dca1a4c19fe779574110ac51caf8e",
+        "filename": "Picture 3.jpg"}, {"media_type": "image/jpeg", "id": "2dca7613815b1ddc825c471fa6107b64cfff9690",
+        "filename": "Figure_03_01_01.jpg"}, {"media_type": "text/xml", "id": "5a144860da8ad2664eaa1b9bfbb5a382b4474241",
+        "filename": "index.cnxml"}, {"media_type": "image/jpeg", "id": "5af4f3fe9db3fc97932b1080ee19bf980fa978db",
+        "filename": "Picture 12.jpg"}, {"media_type": "image/jpeg", "id": "8d90bace3c41073bc136d8ca2351a42509498171",
+        "filename": "Figure_03_01_03.jpg"}, {"media_type": "text/html", "id": "9d9e3bb7d724724df4495fe1fbba17e918bd6296",
+        "filename": "index.cnxml.html"}, {"media_type": "image/jpeg", "id": "e13e08e675ccad684e14ded83e58876d6b0a0068",
+        "filename": "Figure_03_01_02.jpg"}, {"media_type": "image/jpeg", "id": "e4dd448d1a636c12d5e91debd527e2177fde7690",
+        "filename": "ch03mod01.jpg"}, {"media_type": "image/jpeg", "id": "fb7c5f8fe285e235727fae06c2ecb0dd11106b79",
+        "filename": "Figure_03_01_00.jpg"}, {"media_type": "image/jpeg", "id": "ffc8c919f552c147262f3e2fedd6887479bc5a0c",
+        "filename": "Icon.jpg"}], "publishers": [{"surname": "with Courseware", "suffix":
+        null, "firstname": "OpenStax Physics", "title": "", "fullname": "OpenStax
+        Physics with Courseware", "id": "cnxphyscw"}], "parent": {"authors": [{"surname":
+        "OpenStax College", "suffix": "", "firstname": "", "title": "", "fullname":
+        "OpenStax", "id": "OpenStaxCollege"}], "shortId": "IdDiF9UP", "version": "4",
+        "id": "21d0e217-d50f-4901-af75-905e738eb4c4", "title": "Kinematics in Two
+        Dimensions: An Introduction"}, "stateid": 1, "parentTitle": "Kinematics in
+        Two Dimensions: An Introduction", "shortId": "IkKoxeix", "authors": [{"surname":
+        "with Courseware", "suffix": null, "firstname": "OpenStax Physics", "title":
+        "", "fullname": "OpenStax Physics with Courseware", "id": "cnxphyscw"}], "parentVersion":
+        "4", "legacy_version": "1.7", "licensors": [{"surname": "with Courseware",
+        "suffix": null, "firstname": "OpenStax Physics", "title": "", "fullname":
+        "OpenStax Physics with Courseware", "id": "cnxphyscw"}], "language": "en",
+        "license": {"url": "http://creativecommons.org/licenses/by/4.0/", "code":
+        "by", "version": "4.0", "name": "Creative Commons Attribution License"}, "created":
+        "2016-05-02T19:12:25Z", "doctype": "", "buyLink": null, "submitter": {"surname":
+        "OpenStax College", "suffix": "", "firstname": "", "title": "", "fullname":
+        "OpenStax", "id": "OpenStaxCollege"}, "baked": null, "parentAuthors": [{"surname":
+        "OpenStax College", "suffix": "", "firstname": "", "title": "", "fullname":
+        "OpenStax", "id": "OpenStaxCollege"}], "history": [{"changes": "revised and
+        embedded phet simulations", "version": "7", "revised": "2020-05-05T19:13:42Z",
+        "publisher": {"surname": "OpenStax College", "suffix": "", "firstname": "",
+        "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}}, {"changes":
+        "embedded on phet, changed class from phet to interactive", "version": "6",
+        "revised": "2020-04-01T16:59:00Z", "publisher": {"surname": "OpenStax College",
+        "suffix": "", "firstname": "", "title": "", "fullname": "OpenStax", "id":
+        "OpenStaxCollege"}}, {"changes": "link fixes", "version": "5", "revised":
+        "2018-07-25T16:07:41Z", "publisher": {"surname": "with Courseware", "suffix":
+        null, "firstname": "OpenStax Physics", "title": "", "fullname": "OpenStax
+        Physics with Courseware", "id": "cnxphyscw"}}, {"changes": "changed phet to
+        embedded", "version": "4", "revised": "2016-07-14T19:27:15Z", "publisher":
+        {"surname": "with Courseware", "suffix": null, "firstname": "OpenStax Physics",
+        "title": "", "fullname": "OpenStax Physics with Courseware", "id": "cnxphyscw"}},
+        {"changes": "phet .jar to html", "version": "3", "revised": "2016-07-07T00:26:34Z",
+        "publisher": {"surname": "with Courseware", "suffix": null, "firstname": "OpenStax
+        Physics", "title": "", "fullname": "OpenStax Physics with Courseware", "id":
+        "cnxphyscw"}}, {"changes": "        --\r\n    ", "version": "2", "revised":
+        "2016-06-23T14:24:52Z", "publisher": {"surname": "with Courseware", "suffix":
+        null, "firstname": "OpenStax Physics", "title": "", "fullname": "OpenStax
+        Physics with Courseware", "id": "cnxphyscw"}}, {"changes": "created", "version":
+        "1", "revised": "2016-05-02T19:36:32Z", "publisher": {"surname": "with Courseware",
+        "suffix": null, "firstname": "OpenStax Physics", "title": "", "fullname":
+        "OpenStax Physics with Courseware", "id": "cnxphyscw"}}]}'
+    http_version: 
+  recorded_at: Fri, 12 Feb 2021 20:26:11 GMT
+- request:
+    method: get
     uri: https://archive.cnx.org/contents/b0ffd0a2-9c83-4d73-b899-7f2ade2acda6@3
     body:
       encoding: US-ASCII
@@ -2128,9 +2529,9 @@ http_interactions:
       X-Varnish-Ttl:
       - '31536000.000'
       X-Varnish:
-      - 4471525 3660659
+      - 5127023 3660659
       Age:
-      - '5285'
+      - '11872'
       Via:
       - 1.1 varnish-v4
       X-Varnish-Cache:
@@ -2314,5 +2715,5 @@ http_interactions:
         "suffix": null, "firstname": "OpenStax Physics", "title": "", "fullname":
         "OpenStax Physics with Courseware", "id": "cnxphyscw"}}]}'
     http_version: 
-  recorded_at: Fri, 12 Feb 2021 18:37:57 GMT
+  recorded_at: Fri, 12 Feb 2021 20:27:44 GMT
 recorded_with: VCR 4.0.0

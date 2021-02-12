@@ -32,7 +32,7 @@ module PopulateMiniEcosystem
   end
 
   def self.generate_mini_ecosystem
-    ecosystem = FactoryBot.create :content_ecosystem
+    ecosystem = FactoryBot.create :content_ecosystem, title: 'Mini Test Ecosystem'
 
     reading_processing_instructions = FactoryBot.build(
       :content_book
