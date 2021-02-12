@@ -51,8 +51,8 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       MarkTaskStepCompleted[task_step: step]
       stats = described_class.call(tasks: task_plan.tasks).outputs.stats
 
-      expect(stats.first.complete_count).to eq 1
-      expect(stats.first.partially_complete_count).to eq 0
+      expect(stats.first.complete_count).to eq 0
+      expect(stats.first.partially_complete_count).to eq 1
 
       work_task(task: first_task, is_correct: false)
       stats = described_class.call(tasks: task_plan.tasks).outputs.stats
@@ -63,8 +63,8 @@ RSpec.describe CalculateTaskStats, type: :routine, vcr: VCR_OPTS, speed: :slow d
       last_task = student_tasks.last
       MarkTaskStepCompleted[task_step: last_task.task_steps.first]
       stats = described_class.call(tasks: task_plan.tasks).outputs.stats
-      expect(stats.first.complete_count).to eq 2
-      expect(stats.first.partially_complete_count).to eq 0
+      expect(stats.first.complete_count).to eq 1
+      expect(stats.first.partially_complete_count).to eq 1
     end
   end
 

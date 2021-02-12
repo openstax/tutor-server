@@ -27,7 +27,6 @@ RSpec.describe CreateTeacherExercise, type: :routine do
         )
       end.to change { Content::Models::Exercise.count }.by(1)
 
-      expect(@result.outputs.exercise.tags.count).to eq(tags.count + 1) # Plus default type:practice
       expect(@result.errors).to be_empty
     end
 

@@ -1,7 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe GetTaskCorePageIds, type: :routine do
-  before(:all) do
+  before do
+
+
     homework_assistant = FactoryBot.create(
       :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
     )
@@ -84,20 +86,22 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
                                             .find_by(taskings: { entity_role_id: @role.id })
   end
 
-  let(:reading_tasks)  { [@reading_task_1,   @reading_task_2,    @reading_task_3] }
-  let(:homework_tasks) { [@homework_task_1,  @homework_task_2,  @homework_task_3] }
-
-  let(:expected_core_page_ids) { [@page_ids_1, @page_ids_2, @page_ids_3] }
+  let(:tasks) {
+    [@reading_task_1,   @reading_task_2,    @reading_task_3,
+     @homework_task_1,  @homework_task_2,  @homework_task_3]
+  }
 
   it 'returns the correct core_page_ids for all tasks' do
-    task_id_to_core_page_ids_map = described_class[tasks: reading_tasks + homework_tasks]
+    task_id_to_core_page_ids_map = described_class[tasks: tasks]
 
-    reading_tasks.each_with_index do |task, index|
-      expect(task_id_to_core_page_ids_map[task.id]).to eq expected_core_page_ids[index]
-    end
-
-    homework_tasks.each_with_index do |task, index|
-      expect(task_id_to_core_page_ids_map[task.id]).to eq expected_core_page_ids[index]
+    tasks.each do |task|
+      plan = task.task_plan
+      page_ids = if plan.homework?
+                   plan.settings['exercises'].map{|e| Content::Models::Exercise.find(e['id']).page.id }.uniq
+                 else
+                   task.task_plan.settings['page_ids'].map(&:to_i)
+                 end
+      expect(task_id_to_core_page_ids_map[task.id.to_s]).to eq page_ids
     end
   end
 end

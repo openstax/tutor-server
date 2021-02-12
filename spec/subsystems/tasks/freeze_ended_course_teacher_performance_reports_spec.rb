@@ -24,7 +24,7 @@ RSpec.describe Tasks::FreezeEndedCourseTeacherPerformanceReports, type: :routine
       teacher: @teacher,
       students: [@student_1, @student_2, @student_3, @student_4],
       teacher_students: [@teacher_student],
-      ecosystem: @ecosystem
+      ecosystem: ecosystem
     ]
 
     # External assignment
@@ -38,7 +38,7 @@ RSpec.describe Tasks::FreezeEndedCourseTeacherPerformanceReports, type: :routine
       course: course,
       type: 'external',
       assistant: external_assistant,
-      content_ecosystem_id: @ecosystem.id,
+      content_ecosystem_id: ecosystem.id,
       settings: { external_url: 'https://www.example.com' },
       num_tasking_plans: 0
     )
@@ -67,7 +67,7 @@ RSpec.describe Tasks::FreezeEndedCourseTeacherPerformanceReports, type: :routine
       course: course,
       type: 'event',
       assistant: event_assistant,
-      content_ecosystem_id: @ecosystem.id,
+      content_ecosystem_id: ecosystem.id,
       num_tasking_plans: 0
     )
 
@@ -95,8 +95,8 @@ RSpec.describe Tasks::FreezeEndedCourseTeacherPerformanceReports, type: :routine
       course: course,
       type: 'reading',
       assistant: reading_assistant,
-      content_ecosystem_id: @ecosystem.id,
-      settings: { page_ids: @ecosystem.pages.first(2).map(&:id).map(&:to_s) },
+      content_ecosystem_id: ecosystem.id,
+      settings: { page_ids: ecosystem.pages.first(2).map(&:id).map(&:to_s) },
       num_tasking_plans: 0
     )
 

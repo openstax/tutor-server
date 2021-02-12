@@ -134,7 +134,6 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             page = pages_by_url.fetch(data['CNX HTML URL'])
             book = page.book
             fragment = page.fragments[data['HTML Fragment Number'].to_i - 1]
-
             expect(data['CNX JSON URL']).to eq("#{page.url}.json")
             expect(data['CNX Book Name']).to eq(book.title)
             expect(data['CNX Section Number']).to eq(page.book_location.join('.'))
