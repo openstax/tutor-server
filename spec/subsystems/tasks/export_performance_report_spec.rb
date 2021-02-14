@@ -3,11 +3,8 @@ require 'vcr_helper'
 
 RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
   before(:all) do
-    VCR.use_cassette("Tasks_ExportPerformanceReport/with_book", VCR_OPTS) do
-      @ecosystem = FetchAndImportBookAndCreateEcosystem[
-        book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
-      ]
-    end
+    @ecosystem = generate_mini_ecosystem
+
     @course = FactoryBot.create :course_profile_course, :with_assistants
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
