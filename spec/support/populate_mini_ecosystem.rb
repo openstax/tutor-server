@@ -28,7 +28,7 @@ module PopulateMiniEcosystem
         title: 'College Physics with Courseware',
         contents: cnx_chapter_hashes
       }
-    }.deep_stringify_keys
+    }
   end
 
   def self.generate_mini_ecosystem
@@ -44,7 +44,7 @@ module PopulateMiniEcosystem
       VCR_OPTS.merge({ allow_unused_http_interactions: true })
     ) do
       Content::ImportBook.call(
-        cnx_book: OpenStax::Cnx::V1::Book.new(hash: cnx_book_hash),
+        cnx_book: OpenStax::Cnx::V1::Book.new(hash: cnx_book_hash.deep_stringify_keys),
         ecosystem: ecosystem,
         reading_processing_instructions: reading_processing_instructions
       ).outputs.book
