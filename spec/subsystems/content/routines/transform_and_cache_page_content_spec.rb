@@ -593,7 +593,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
       cnx_page = OpenStax::Cnx::V1::Page.new(
         id: '2242a8c5-e8b1-4287-b801-af74ef6f1e5b', title: 'Acceleration'
       )
-      @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
+      @page = VCR.use_cassette('Content_Routines_TransformAndCachePageContent/with_custom_tags', VCR_OPTS) do
         Content::Routines::ImportPage[
           cnx_page: cnx_page,
           book: @book,
