@@ -598,7 +598,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
           cnx_page: cnx_page,
           book: @book,
           book_indices: [3, 1],
-          parent_book_part_uuid: PopulateMiniEcosystem.cnx_book_hash['id'],
+          parent_book_part_uuid: PopulateMiniEcosystem.cnx_book_hash[:id],
         ]
       end
       @exercise_with_context = @book.exercises.find{|ex| ex.cnxfeatures.any? }
