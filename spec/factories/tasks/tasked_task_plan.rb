@@ -7,13 +7,14 @@ end
 FactoryBot.define do
 
   factory :tasked_task_plan, parent: :tasks_task_plan do
-    type      { 'reading' }
+    type { :reading }
 
     assistant do
+      assist = type == :reading ? 'IReadingAssistant' : 'HomeworkAssistant'
       Tasks::Models::Assistant.find_by(
-        code_class_name: 'Tasks::Assistants::IReadingAssistant'
+        code_class_name: "Tasks::Assistants::#{assist}"
       ) || FactoryBot.create(
-        :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
+        :tasks_assistant, code_class_name: "Tasks::Assistants::#{assist}"
       )
     end
 
@@ -21,14 +22,28 @@ FactoryBot.define do
       number_of_students { 10 }
     end
 
+    transient do
+      number_of_exercises_per_page { 5 }
+    end
 
     ecosystem do
       PopulateMiniEcosystem.generate_mini_ecosystem
     end
 
-    course    { FactoryBot.build :course_profile_course, offering: nil }
+    course { FactoryBot.build :course_profile_course, offering: nil }
 
-    settings { { page_ids: ecosystem.pages[0...3].map { |pg| pg.id.to_s } } }
+    settings {
+      s = { page_ids: ecosystem.pages[0...3].map { |pg| pg.id.to_s } }
+      if type == :homework
+        s.merge!({
+          exercises: s[:page_ids].map{ |pg_id|
+            ecosystem.pages.find(pg_id).exercises.sample(number_of_exercises_per_page)
+          }.flatten.map{ |ex| { id: ex.id.to_s, points: [1.0]*ex.number_of_questions } },
+          exercises_count_dynamic: 3
+        })
+      end
+      s
+    }
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.course

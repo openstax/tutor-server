@@ -593,13 +593,12 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
       cnx_page = OpenStax::Cnx::V1::Page.new(
         id: '2242a8c5-e8b1-4287-b801-af74ef6f1e5b', title: 'Acceleration'
       )
-
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
         Content::Routines::ImportPage[
           cnx_page: cnx_page,
           book: @book,
           book_indices: [3, 1],
-          parent_book_part_uuid: SecureRandom.uuid
+          parent_book_part_uuid: PopulateMiniEcosystem.cnx_book_hash['id'],
         ]
       end
       @exercise_with_context = @book.exercises.find{|ex| ex.cnxfeatures.any? }
@@ -626,7 +625,6 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
     it 'assigns context for exercises that require context' do
       imported_exercises = @ecosystem.exercises.order(:number).to_a
       imported_exercises.each { |ex| expect(ex.context).to be_nil }
-      # exercise_with_context.update_attributes!(context: nil)
 
       expect(@exercise_with_context.context).to be_nil
       expect { described_class.call book: @book }.not_to change { Content::Models::Exercise.count }
