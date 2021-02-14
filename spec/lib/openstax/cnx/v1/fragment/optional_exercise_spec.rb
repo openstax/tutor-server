@@ -1,7 +1,9 @@
 require 'rails_helper'
 require 'vcr_helper'
 
-RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, vcr: VCR_OPTS do
+RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise,
+  type: :external, vcr: VCR_OPTS,
+  skip: 'unable to locate any optional exercises in current books' do
   let(:reading_processing_instructions) do
     FactoryBot.build(:content_book).reading_processing_instructions
   end
@@ -10,9 +12,9 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise, type: :external, v
     OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
   let(:cnx_book) {
-    OpenStax::Cnx::V1::Book.new(id: '405335a3-7cff-4df2-a9ad-29062a4af261')
+    OpenStax::Cnx::V1::Book.new(id: PopulateMiniEcosystem.cnx_book_hash[:id])
   }
-  let(:cnx_page_id)        { '32b51dcb-a8a8-5a9d-b938-b737bb40a289' }
+  let(:cnx_page_id)        { 'b0ffd0a2-9c83-4d73-b899-7f2ade2acda6@3' }
   let(:cnx_page)           do
     OpenStax::Cnx::V1::Page.new(id: cnx_page_id, book: cnx_book).tap { |page| page.convert_content! }
   end
