@@ -8,10 +8,10 @@ RSpec.describe 'exercises:remove', type: :rake do
 
   before do
     # Each tasked TP has its own ecosystem and course and some number of students
-    task_plan_1 = FactoryBot.create :tasked_task_plan, type: 'homework',
+    task_plan_1 = FactoryBot.create :tasked_task_plan, type: :homework,
       number_of_exercises_per_page: 1,
       ecosystem: ecosystem, number_of_students: 2
-    task_plan_2 = FactoryBot.create :tasked_task_plan, type: 'homework',
+    task_plan_2 = FactoryBot.create :tasked_task_plan, type: :homework,
       number_of_exercises_per_page: 1,
       ecosystem: ecosystem, number_of_students: 1
     @tasks = task_plan_1.tasks + task_plan_2.tasks
