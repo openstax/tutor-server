@@ -13,7 +13,7 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
 
   context 'with page' do
     before(:all) do
-#      @ecosystem = generate_mini_ecosystem
+      @ecosystem = generate_mini_ecosystem
       @cnx_page_fragment_infos = [
         {
           id: PopulateMiniEcosystem.cnx_page_hashes[0][:id],
