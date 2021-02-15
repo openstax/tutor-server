@@ -25,9 +25,7 @@ RSpec.describe 'exercises:remove', type: :rake do
   end
 
   let(:uid)       { @tasks.first.tasked_exercises.first.exercise.uid }
-  let(:num_tasks) {
-    @tasks.map{|t|t.tasked_exercises.map{|t|t.exercise.uid}}.flatten.count{|t| t == uid }
-  }
+  let(:num_tasks) { 2 }
   let(:queue)          { :dashboard }
   let(:configured_job) { Lev::ActiveJob::ConfiguredJob.new(Tasks::UpdateTaskCaches, queue: queue) }
 

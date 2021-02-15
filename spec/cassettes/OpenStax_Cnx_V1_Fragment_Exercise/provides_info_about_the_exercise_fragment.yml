@@ -2,6 +2,69 @@
 http_interactions:
 - request:
     method: get
+    uri: https://archive.cnx.org/contents/b0ffd0a2-9c83-4d73-b899-7f2ade2acda6
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - text/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 302
+      message: Found
+    headers:
+      Access-Control-Allow-Headers:
+      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - max-age=60, public
+      Content-Length:
+      - '128'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Mon, 15 Feb 2021 18:16:16 GMT
+      Etag:
+      - '"1B2M2Y8AsgTpgAmY7PhCfg"'
+      Location:
+      - https://archive.cnx.org/contents/b0ffd0a2-9c83-4d73-b899-7f2ade2acda6@3
+      Server:
+      - waitress
+      X-Varnish-Status:
+      - cacheable - Cache-Control in backend response
+      X-Varnish-Backend:
+      - prod08_archive0
+      X-Varnish-Ttl:
+      - '60.000'
+      X-Varnish:
+      - '3748624'
+      Age:
+      - '0'
+      Via:
+      - 1.1 varnish-v4
+      X-Varnish-Cache:
+      - MISS
+      Strict-Transport-Security:
+      - max-age=16000000
+    body:
+      encoding: UTF-8
+      string: |+
+        302 Found
+
+        The resource was found at /contents/b0ffd0a2-9c83-4d73-b899-7f2ade2acda6@3; you should be redirected automatically.
+
+    http_version: 
+  recorded_at: Mon, 15 Feb 2021 18:16:16 GMT
+- request:
+    method: get
     uri: https://archive.cnx.org/contents/b0ffd0a2-9c83-4d73-b899-7f2ade2acda6@3
     body:
       encoding: US-ASCII
@@ -46,9 +109,9 @@ http_interactions:
       X-Varnish-Ttl:
       - '31536000.000'
       X-Varnish:
-      - 3304360 3660659
+      - 10238452 3660659
       Age:
-      - '186139'
+      - '263185'
       Via:
       - 1.1 varnish-v4
       X-Varnish-Cache:
@@ -232,5 +295,5 @@ http_interactions:
         "suffix": null, "firstname": "OpenStax Physics", "title": "", "fullname":
         "OpenStax Physics with Courseware", "id": "cnxphyscw"}}]}'
     http_version: 
-  recorded_at: Sun, 14 Feb 2021 20:52:11 GMT
+  recorded_at: Mon, 15 Feb 2021 18:16:17 GMT
 recorded_with: VCR 4.0.0
