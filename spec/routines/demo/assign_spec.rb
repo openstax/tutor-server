@@ -96,7 +96,7 @@ RSpec.describe Demo::Assign, type: :routine do
 
       expected_num_steps = case task_plan.type
       when 'reading'
-        (8..20)
+        (10..30)
       when 'homework'
         (5..10)
       when 'external'

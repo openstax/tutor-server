@@ -18,7 +18,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Video, type: :external, vcr: VCR_OPT
   let(:video_fragments)    { fragments.select { |f| f.instance_of? described_class } }
 
   let(:expected_title)     { "Watch Physics: Newton’s First Law of Motion" }
-  let(:expected_url)       { 'https://www.khanacademy.org/embed_video?v=5-ZFOhHQS68' }
+  let(:expected_url)       { 'https://www.openstaxcollege.org/l/02newlawone' }
   let(:expected_content)   do
     <<~EOF
 <div data-type="note" data-has-label="true" id="fs-id1169085651531" class="watch-physics" data-label="" data-tutor-transform="true">

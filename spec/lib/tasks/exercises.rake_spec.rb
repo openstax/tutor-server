@@ -25,7 +25,7 @@ RSpec.describe 'exercises:remove', type: :rake do
   end
 
   let(:uid)       { @tasks.first.tasked_exercises.first.exercise.uid }
-  let(:num_tasks) { 2 }
+  let(:num_tasks) { 3 }
   let(:queue)          { :dashboard }
   let(:configured_job) { Lev::ActiveJob::ConfiguredJob.new(Tasks::UpdateTaskCaches, queue: queue) }
 
@@ -37,7 +37,7 @@ RSpec.describe 'exercises:remove', type: :rake do
   end
 
   it 'removes the given exercises from the assignments, scores and caches' do
-    expect(configured_job).to receive(:perform_later).exactly(num_tasks).times.and_call_original
+    expect(configured_job).to receive(:perform_later).at_least(:once).and_call_original
 
 
     expect do
