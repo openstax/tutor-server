@@ -75,8 +75,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         wrq_count: 0,
         gradable_step_count: 0,
         ungraded_step_count: 0,
-        tasking_plans: [
-          {
+        tasking_plans: a_collection_including(
+          a_hash_including(
             id: tasking_plan.id.to_s,
             period_id: period.id.to_s,
             period_name: period.name,
@@ -94,8 +94,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
             late_work_fraction_penalty: late_work_penalty,
             num_questions_dropped: 0,
             points_dropped: 0.0,
-            students: [
-              {
+            students: a_collection_including(
+              a_hash_including(
                 role_id: students.first.entity_role_id,
                 task_id: student_tasks.first.id,
                 first_name: students.first.first_name,
@@ -106,8 +106,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 total_points: 1.0,
                 total_fraction: 0.125,
                 late_work_point_penalty: 0.0,
-                questions: [
-                  {
+                questions: a_collection_including(
+                  a_hash_including(
                     task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
@@ -119,9 +119,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     late_work_point_penalty: 0.0,
                     needs_grading: false,
                     submitted_late: false
-                  }
-                ] + [
-                  {
+                  ),
+                  a_hash_including(
                     task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
@@ -130,17 +129,11 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     needs_grading: false,
                     submitted_late: false,
                     late_work_point_penalty: 0.0
-                  }
-                ] * 4 + [
-                  {
-                    task_step_id: kind_of(String),
-                    is_completed: false,
-                    needs_grading: false
-                  }
-                ] * 3,
+                  )
+                ),
                 grades_need_publishing: false
-              },
-              {
+              ),
+              a_hash_including(
                 role_id: students.second.entity_role_id,
                 task_id: student_tasks.second.id,
                 first_name: students.second.first_name,
@@ -151,8 +144,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                 total_points: student_tasks.second.points,
                 total_fraction: student_tasks.second.score,
                 late_work_point_penalty: 0.0,
-                questions: [
-                  {
+                questions: a_collection_including(
+                  a_hash_including(
                     task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
@@ -164,9 +157,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     late_work_point_penalty: 0.0,
                     needs_grading: false,
                     submitted_late: false
-                  }
-                ] + [
-                  {
+                  ),
+                  a_hash_including(
                     task_step_id: kind_of(String),
                     exercise_id: kind_of(String),
                     question_id: kind_of(String),
@@ -175,23 +167,17 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     needs_grading: false,
                     submitted_late: false,
                     late_work_point_penalty: 0.0
-                  }
-                ] * 4 + [
-                  {
-                    task_step_id: kind_of(String),
-                    is_completed: false,
-                    needs_grading: false,
-                  }
-                ] * 3,
+                  )
+                ),
                 grades_need_publishing: false
-              }
-            ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
+              )
+            ),
             total_fraction: (0.125 + student_tasks.second.score)/2,
             gradable_step_count: 0,
             ungraded_step_count: 0,
             grades_need_publishing: false
-          }
-        ]
+          )
+        )
       )
     end
   end
@@ -233,8 +219,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
         wrq_count: 0,
         gradable_step_count: 0,
         ungraded_step_count: 0,
-        tasking_plans: [
-          {
+        tasking_plans: a_collection_including(
+          a_hash_including(
             id: tasking_plan.id.to_s,
             period_id: period.id.to_s,
             period_name: period.name,
@@ -252,8 +238,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
             late_work_fraction_penalty: late_work_penalty,
             num_questions_dropped: 0,
             points_dropped: 0.0,
-            students: [
-              {
+            students: a_collection_including(
+              a_hash_including(
                 role_id: students.first.entity_role_id,
                 task_id: student_tasks.first.id,
                 first_name: students.first.first_name,
@@ -299,8 +285,8 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                   }
                 ] * 3,
                 grades_need_publishing: false
-              },
-              {
+              ),
+              a_hash_including(
                 role_id: students.second.entity_role_id,
                 task_id: student_tasks.second.id,
                 first_name: students.second.first_name,
@@ -347,14 +333,14 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                   }
                 ] * 3,
                 grades_need_publishing: false
-              }
-            ].sort_by { |student| [ student[:last_name], student[:first_name] ] },
+              )
+            ),
             total_fraction: (0.125 * late_work_multiplier + student_tasks.second.score)/2,
             gradable_step_count: 0,
             ungraded_step_count: 0,
             grades_need_publishing: false
-          }
-        ]
+          )
+        )
       )
     end
   end
