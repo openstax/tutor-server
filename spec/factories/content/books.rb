@@ -16,7 +16,43 @@ FactoryBot.define do
         {:css=>"[data-type=\"footnote-refs\"]", :fragments=>["media"]},
         {:css=>"[data-type=\"note\"].interactive", :fragments=>["interactive", "exercise"], :labels=>["phet-explorations"]},
         {:css=>".watch-physics", :fragments=>["video", "exercise"], :labels=>["watch-physics"]},
-        {:css=>".example-video, [data-type=\"example\"]", :fragments=>["reading"], :labels=>["example"]}
+        {:css=>".example-video, [data-type=\"example\"]", :fragments=>["reading"], :labels=>["example"]},
+        {
+          css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]',
+          fragments: [],
+          except: ['snap-lab']
+        },
+        {
+          fragments: ['node', 'optional_exercise'],
+          css: <<~CSS.strip
+            .ost-feature:has-descendants(".os-exercise",2),
+            .ost-feature:has-descendants(".ost-exercise-choice"),
+            .ost-assessed-feature:has-descendants(".os-exercise",2),
+            .ost-assessed-feature:has-descendants(".ost-exercise-choice")
+          CSS
+        },
+        {
+          fragments: ['node', 'exercise'],
+          css: <<~CSS.strip
+            .ost-feature:has-descendants(".os-exercise, .ost-exercise-choice"),
+            .ost-assessed-feature:has-descendants(".os-exercise, .ost-exercise-choice")
+          CSS
+        },
+        {
+          fragments: [],
+          css: <<~CSS.strip
+            .ost-feature .ost-exercise-choice,
+            .ost-assessed-feature .ost-exercise-choice,
+            .ost-feature .os-exercise,
+            .ost-assessed-feature .os-exercise
+          CSS
+        },
+        { css: '.ost-exercise-choice', fragments: ['exercise', 'optional_exercise'] },
+        { css: '.os-exercise', fragments: ['exercise'] },
+        { css: '.ost-video', fragments: ['video'] },
+        { css: '.os-interactive, .ost-interactive', fragments: ['interactive'] },
+        { css: '.worked-example', fragments: ['reading'], labels: ['worked-example'] },
+        { css: '.ost-feature, .ost-assessed-feature', fragments: ['reading'] }
       ]
     }
     tree do

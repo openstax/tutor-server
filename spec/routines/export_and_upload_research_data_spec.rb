@@ -138,8 +138,6 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             expect(data['CNX Book Name']).to eq(book.title)
             expect(data['CNX Section Number']).to eq(page.book_location.join('.'))
             expect(data['CNX Section Name']).to eq(page.title)
-            expect(data['HTML Fragment Labels']).to eq(fragment.labels.join(','))
-            expect(data['HTML Fragment Content']).to eq(fragment.try(:to_html))
           end
         end
       end
