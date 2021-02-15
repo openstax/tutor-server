@@ -208,13 +208,14 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         )
         expect(first_period_report.overall_homework_progress).to be_within(1e-6).of(
           (1.0 + (4.0/7.0 + 0.25)/2)/2
-                                                                 )
+        )
         rd_score = 0.45
         expect(first_period_report.overall_reading_score).to be_within(1e-6).of(rd_score)
 
         expect(first_period_report.overall_reading_progress).to be_within(1e-6).of(
-          (1.0 + 1.0/11.0)/2
-                                                                )
+          first_period_report['students'].sum(&:reading_progress) / first_period_report['students'].length
+        )
+
         expect(first_period_report.overall_course_average).to be_within(1e-6).of(
           (hw_score * course.homework_weight) + (rd_score * course.reading_weight)
         )
@@ -244,8 +245,8 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(first_period_report.data_headings[1].type).to eq 'reading'
         expect(first_period_report.data_headings[1].due_at).to be_a Time
         expect(first_period_report.data_headings[1].average_score).to be_within(1e-6).of(0.45)
-        expect(first_period_report.data_headings[1].average_progress).to(
-          be_within(1e-6).of((1.0 + 1.0/11.0)/2)
+        expect(first_period_report.data_headings[1].average_progress).to eq(
+          first_period_report['students'].sum(&:reading_progress) / first_period_report['students'].length
         )
 
         expect(second_period_report.data_headings[1].title).to eq 'Reading task plan'
@@ -310,7 +311,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           be_within(1e-6).of(0.9), 0.0
         ]
         expect(first_period_students.map(&:reading_progress)).to match_array [
-          1.0, be_within(1e-6).of(1.0/11.0)
+          0.05263157894736842, 1.0,
         ]
 
         expect(first_period_students.map(&:course_average)).to eq(
@@ -380,7 +381,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           (4.0/7.0 + 0.25)/2
         )
         expect(first_period_report.overall_reading_score).to eq 0.0
-        expect(first_period_report.overall_reading_progress).to be_within(1e-6).of(1.0/11.0)
+        expect(first_period_report.overall_reading_progress).to eq(
+          first_period_report['students'].sum(&:reading_progress) / first_period_report['students'].length
+        )
         expect(first_period_report.overall_course_average).to eq(
           first_period_report.students.sum{ |s|
             (s.homework_score * course.homework_weight) +
@@ -441,11 +444,11 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           ((1.0 + 0.75)/2 + (2.0/7.0 + 0.25)/2)/2
         )
         expect(first_period_report.overall_homework_progress).to be_within(1e-6).of(
-          (1.0 + (4.0/7.0 + 0.25)/2)/2
+          first_period_report['students'].sum(&:homework_progress) / first_period_report['students'].length
         )
         expect(first_period_report.overall_reading_score).to be_within(1e-6).of(0.45)
         expect(first_period_report.overall_reading_progress).to be_within(1e-6).of(
-          (1.0 + 1.0/11.0)/2
+          first_period_report['students'].sum(&:reading_progress) / first_period_report['students'].length
         )
         expect(first_period_report.overall_course_average).to eq(
           first_period_report.overall_homework_score * course.homework_weight +
@@ -477,8 +480,10 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(first_period_report.data_headings[1].type).to eq 'reading'
         expect(first_period_report.data_headings[1].due_at).to be_a Time
         expect(first_period_report.data_headings[1].average_score).to be_within(1e-6).of(0.45)
-        expect(first_period_report.data_headings[1].average_progress).to(
-          be_within(1e-6).of((1.0 + 1.0/11.0)/2)
+
+        expect(first_period_report.data_headings[1].average_progress).to eq(
+          first_period_report['students'].sum{ |s| s['data'][1]['progress'] } /
+            first_period_report['students'].length
         )
 
         expect(second_period_report.data_headings[1].title).to eq 'Reading task plan'
@@ -543,7 +548,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           be_within(1e-6).of(0.9), 0.0
         ]
         expect(first_period_students.map(&:reading_progress)).to match_array [
-          1.0, be_within(1e-6).of(1.0/11.0)
+          0.05263157894736842, 1.0
         ]
         expect(first_period_students.map(&:course_average)).to eq(
           first_period_report.students.map{ |s|
@@ -619,8 +624,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           (1.0 + (4.0/7.0 + 0.25)/2)/2
         )
         expect(first_period_report.overall_reading_score).to eq 0.0
+
         expect(first_period_report.overall_reading_progress).to be_within(1e-6).of(
-          (1.0 + 1.0/11.0)/2
+          first_period_report['students'].sum(&:reading_progress) / first_period_report['students'].length
         )
         expect(first_period_report.overall_course_average).to eq(
           first_period_report.overall_homework_score
@@ -651,8 +657,9 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         expect(first_period_report.data_headings[1].type).to eq 'reading'
         expect(first_period_report.data_headings[1].due_at).to be_a Time
         expect(first_period_report.data_headings[1].average_score).to eq 0.0
-        expect(first_period_report.data_headings[1].average_progress).to(
-          be_within(1e-6).of((1.0 + 1.0/11.0)/2)
+        expect(first_period_report.data_headings[1].average_progress).to eq(
+          first_period_report['students'].sum{ |s| s['data'][1]['progress'] } /
+            first_period_report['students'].length
         )
 
         expect(second_period_report.data_headings[1].title).to eq 'Reading task plan'
@@ -717,11 +724,12 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           0.0, nil
         ]
         expect(first_period_students.map(&:reading_progress)).to match_array [
-          1.0, be_within(1e-6).of(1.0/11.0)
+          0.05263157894736842, 1.0,
         ]
-        expect(first_period_students.map(&:course_average)).to eq(
-          first_period_students.map(&:homework_score)
-        )
+
+        expect(first_period_students.map(&:course_average)).to  match_array [
+          0.0, nil,
+        ]
 
         second_period_students = second_period_report.students
         expect(second_period_students.map(&:name)).to match_array [

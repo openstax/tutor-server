@@ -22,7 +22,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
     homework_plan_1 = FactoryBot.create(
       :tasked_task_plan,
       course: course,
-      type: 'homework',
+      type: :homework,
       assistant: homework_assistant,
       ecosystem: pages_1.first.ecosystem,
       number_of_students: 0,
@@ -41,7 +41,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
     homework_plan_2 = FactoryBot.create(
       :tasked_task_plan,
       course: course,
-      type: 'homework',
+      type: :homework,
       assistant: homework_assistant,
       ecosystem: pages_2.first.ecosystem,
       number_of_students: 0,
@@ -60,7 +60,7 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
     homework_plan_3 = FactoryBot.create(
       :tasked_task_plan,
       course: course,
-      type: 'homework',
+      type: :homework,
       assistant: homework_assistant,
       ecosystem: pages_3.first.ecosystem,
       number_of_students: 0,
