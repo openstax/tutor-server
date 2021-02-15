@@ -635,14 +635,4 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
     end
   end
 
-  # context 'with an exercise that requires context from a Section Summary' do
-  #   let(:manifest_path)   { 'spec/fixtures/manifests/Section Summary Context Exercise.yml' }
-  #   let(:manifest_string) { File.read manifest_path }
-
-  #   it "sets the exercise's context from the Section Summary"  do
-  #     ecosystem = ImportEcosystemManifest[manifest: manifest_string]
-  #     exercise = ecosystem.exercises.first
-  #     expect(exercise.context).not_to be_blank
-  #   end
-  # end
 end
