@@ -33,7 +33,7 @@ FactoryBot.define do
     course { FactoryBot.build :course_profile_course, offering: nil }
 
     settings {
-      s = { page_ids: ecosystem.pages[0...3].map { |pg| pg.id.to_s } }
+      s = { page_ids: ecosystem.pages.sort_by(&:book_indices)[0...3].map { |pg| pg.id.to_s } }
       if type == :homework
         s.merge!({
           exercises: s[:page_ids].map{ |pg_id|
