@@ -125,7 +125,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
     @related_exercise_ids ||= {}
 
     unless @related_exercise_ids.has_key?(exercise_fragment)
-      pool_exercise_ids = page.reading_context_exercises_ids
+      pool_exercise_ids = page.reading_context_exercise_ids
       pool_exercises = page.exercises.where(id: pool_exercise_ids).preload(:tags).to_a
       tasked = previous_step.tasked
 

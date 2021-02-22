@@ -10,7 +10,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Interactive, type: :external, vcr: V
   let(:fragment_splitter)     do
     OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
-  let(:cnx_page_id)           { '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6@4' }
+  let(:cnx_page_id)           { PopulateMiniEcosystem.cnx_page_hashes.first[:id] }
   let(:cnx_page)              do
     OpenStax::Cnx::V1::Page.new(id: cnx_page_id).tap { |page| page.convert_content! }
   end

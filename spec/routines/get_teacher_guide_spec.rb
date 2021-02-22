@@ -1,39 +1,26 @@
 require 'rails_helper'
 require 'vcr_helper'
-require 'database_cleaner'
 
 RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
-  before(:all) do
-    @course = FactoryBot.create :course_profile_course
+  let(:ecosystem) { generate_mini_ecosystem }
+  let(:book) { ecosystem.books.first }
+  let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+  let(:course) {
+    FactoryBot.create :course_profile_course, :with_grading_templates,
+                      offering: offering, is_preview: true
+  }
+  let(:period) { FactoryBot.create :course_membership_period, course: course }
+  let(:second_period) { FactoryBot.create :course_membership_period, course: course }
 
-    @period = FactoryBot.create :course_membership_period, course: @course
-    @second_period = FactoryBot.create :course_membership_period, course: @course
+  let(:teacher) { FactoryBot.create(:user_profile) }
+  let(:student) { FactoryBot.create(:user_profile) }
+  let(:second_student) { FactoryBot.create(:user_profile) }
 
-    @teacher = FactoryBot.create(:user_profile)
-    @student = FactoryBot.create(:user_profile)
-    @second_student = FactoryBot.create(:user_profile)
+  let(:role) { AddUserAsPeriodStudent[period: period, user: student] }
+  let(:second_role) { AddUserAsPeriodStudent[period: second_period, user: second_student] }
+  let(:teacher_role) { AddUserAsCourseTeacher[course: course, user: teacher] }
 
-    @role = AddUserAsPeriodStudent[period: @period, user: @student]
-    @second_role = AddUserAsPeriodStudent[period: @second_period, user: @second_student]
-    @teacher_role = AddUserAsCourseTeacher[course: @course, user: @teacher]
-  end
-
-  before do
-    @course.reload
-
-    @period.reload
-    @second_period.reload
-
-    @teacher.reload
-    @student.reload
-    @second_student.reload
-
-    @role.reload
-    @second_role.reload
-    @teacher_role.reload
-  end
-
-  subject(:guide)                { described_class[role: @teacher_role].map(&:deep_symbolize_keys) }
+  subject(:guide)                { described_class[role: teacher_role].map(&:deep_symbolize_keys) }
 
   let(:period_1_chapters)        { guide.first[:children] }
   let(:period_1_worked_chapters) do
@@ -54,24 +41,11 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
   end
 
   context 'without work' do
-    before(:all) do
-      DatabaseCleaner.start
-
-      book = FactoryBot.create :content_book, title: 'Physics (Demo)'
-      AddEcosystemToCourse[course: @course.reload, ecosystem: book.ecosystem]
-    end
-
-    after(:all) { DatabaseCleaner.clean }
-
     context 'without periods' do
-      before(:all) do
-        DatabaseCleaner.start
-
-        @period.reload.destroy
-        @second_period.reload.destroy
+      before(:each) do
+        period.reload.destroy
+        second_period.reload.destroy
       end
-
-      after(:all)  { DatabaseCleaner.clean }
 
       it 'returns an empty array' do
         expect(guide).to eq []
@@ -80,629 +54,89 @@ RSpec.describe GetTeacherGuide, type: :routine, speed: :slow do
 
     context 'with periods' do
       it 'returns an empty guide per period' do
+        period
+        second_period
         expect(guide).to match [
           {
-            period_id: @period.id,
-            title: 'Physics (Demo)',
+            period_id: period.id,
+            title: book.title,
             page_ids: [],
             children: []
           },
           {
-            period_id: @second_period.id,
-            title: 'Physics (Demo)',
+            period_id: second_period.id,
+            title: book.title,
             page_ids: [],
             children: []
           }
         ]
       end
     end
-
   end
 
   context 'with work' do
-    before(:all) do
-      DatabaseCleaner.start
-
-      VCR.use_cassette('GetCourseGuide/setup_course_guide', VCR_OPTS) do
-        CreateStudentHistory[course: @course.reload, roles: [@role.reload, @second_role.reload]]
-      end
+    before(:each) do
+      role
+      second_role
+      teacher_role
+      CreateStudentHistory[course: course.reload, roles: [role.reload, second_role.reload]]
     end
 
-    after(:all)  { DatabaseCleaner.clean }
-
     it 'returns all course guide periods for teachers' do
-      expect(guide).to match [
-        {
-          period_id: @period.id,
-          title: 'Physics (Demo)',
-          page_ids: [kind_of(Integer)]*6,
-          children: [kind_of(Hash)]*2
-        },
-        {
-          period_id: @second_period.id,
-          title: 'Physics (Demo)',
-          page_ids: [kind_of(Integer)]*6,
-          children: [kind_of(Hash)]*2
-        }
-      ]
-
+      expect(guide).to include(
+        a_hash_including(
+          period_id: period.id,
+          title: book.title,
+          page_ids: [kind_of(Integer)]*5,
+          children: [kind_of(Hash)]
+        )
+      )
       expect(period_1_worked_chapters).to eq period_1_chapters
       expect(period_2_worked_chapters).to eq period_2_chapters
     end
 
     it 'includes chapter stats for each period' do
       period_1_chapter_1 = period_1_chapters.first
-      expect(period_1_chapter_1).to match(
-        title: 'Acceleration',
+      expect(period_1_chapter_1).to include(
+        title: "Dynamics: Force and Newton's Laws of Motion",
         book_location: [],
         student_count: 1,
-        questions_answered_count: 2,
+        questions_answered_count: 7,
         clue: clue_matcher,
-        page_ids: [kind_of(Integer)]*2,
-        children: [kind_of(Hash)]*2,
-        first_worked_at: kind_of(Time),
-        last_worked_at: kind_of(Time)
-      )
-
-      period_1_chapter_2 = period_1_chapters.second
-      expect(period_1_chapter_2).to match(
-        title: "Force and Newton's Laws of Motion",
-        book_location: [],
-        student_count: 1,
-        questions_answered_count: 5,
-        clue: clue_matcher,
-        page_ids: [kind_of(Integer)]*4,
-        children: [kind_of(Hash)]*4,
+        page_ids: [kind_of(Integer)]*5,
+        children: [kind_of(Hash)]*5,
         first_worked_at: kind_of(Time),
         last_worked_at: kind_of(Time)
       )
 
       period_2_chapter_1 = period_2_chapters.first
-      expect(period_2_chapter_1).to match(
-        title: 'Acceleration',
+      expect(period_2_chapter_1).to include(
+        title: "Dynamics: Force and Newton's Laws of Motion",
         book_location: [],
         student_count: 1,
-        questions_answered_count: 2,
+        questions_answered_count: 7,
         clue: clue_matcher,
-        page_ids: [kind_of(Integer)]*2,
-        children: [kind_of(Hash)]*2,
+        page_ids: [kind_of(Integer)]*5,
         first_worked_at: kind_of(Time),
-        last_worked_at: kind_of(Time)
-      )
-
-      period_2_chapter_2 = period_2_chapters.second
-      expect(period_2_chapter_2).to match(
-        title: "Force and Newton's Laws of Motion",
-        book_location: [],
-        student_count: 1,
-        questions_answered_count: 5,
-        clue: clue_matcher,
-        page_ids: [kind_of(Integer)]*4,
-        children: [kind_of(Hash)]*4,
-        first_worked_at: kind_of(Time),
-        last_worked_at: kind_of(Time)
+        last_worked_at: kind_of(Time),
+        children: [kind_of(Hash)]*5,
       )
     end
 
     it 'includes page stats for each period and each chapter' do
       period_1_chapter_1_pages = period_1_chapters.first[:children]
-      expect(period_1_chapter_1_pages).to match [
-        {
-          title: 'Acceleration',
+      expect(period_1_chapter_1_pages).to include(
+        a_hash_including(
+          title: 'Newtons First Law of Motion: Inertia',
           book_location: [],
           student_count: 1,
-          questions_answered_count: 2,
+          questions_answered_count: 7,
           clue: clue_matcher,
           page_ids: [kind_of(Integer)],
           first_worked_at: kind_of(Time),
           last_worked_at: kind_of(Time)
-        },
-        {
-          title: 'Representing Acceleration with Equations and Graphs',
-          book_location: [],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      period_1_chapter_2_pages = period_1_chapters.second[:children]
-      expect(period_1_chapter_2_pages).to match [
-        {
-          title: 'Force',
-          book_location: [],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: "Newton's First Law of Motion: Inertia",
-          book_location: [],
-          student_count: 1,
-          questions_answered_count: 5,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: kind_of(Time),
-          last_worked_at: kind_of(Time)
-        },
-        {
-          title: "Newton's Second Law of Motion",
-          book_location: [],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: "Newton's Third Law of Motion",
-          book_location: [],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      period_2_chapter_1_pages = period_2_chapters.first[:children]
-      expect(period_2_chapter_1_pages).to match [
-        {
-          title: 'Acceleration',
-          book_location: [],
-          student_count: 1,
-          questions_answered_count: 2,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: kind_of(Time),
-          last_worked_at: kind_of(Time)
-        },
-        {
-          title: 'Representing Acceleration with Equations and Graphs',
-          book_location: [],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      period_2_chapter_2_pages = period_2_chapters.second[:children]
-      expect(period_2_chapter_2_pages).to match [
-        {
-          title: 'Force',
-          book_location: [],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: "Newton's First Law of Motion: Inertia",
-          book_location: [],
-          student_count: 1,
-          questions_answered_count: 5,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: kind_of(Time),
-          last_worked_at: kind_of(Time)
-        },
-        {
-          title: "Newton's Second Law of Motion",
-          book_location: [],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: "Newton's Third Law of Motion",
-          book_location: [],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-    end
-  end
-
-  context 'with the bio book' do
-    before(:all) do
-      DatabaseCleaner.start
-
-      VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
-        OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents') do
-          OpenStax::Exercises::V1.use_fake_client do
-            CreateStudentHistory[
-              course: @course.reload,
-              roles: [@role.reload, @second_role.reload],
-              book_id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2'
-            ]
-          end
-        end
-      end
-    end
-
-    after(:all)  { DatabaseCleaner.clean }
-
-    before { Tasks::Models::Task.update_all due_at_ntz: Time.current - 1.day }
-
-    it 'displays unworked chapters and ignores units' do
-      expect(period_1_worked_chapters).not_to eq period_1_chapters
-      expect(period_2_worked_chapters).not_to eq period_2_chapters
-
-      period_1_chapter_1_pages = period_1_chapters.first[:children]
-      expect(period_1_chapter_1_pages).to match [
-        {
-          title: a_string_matching('The Science of Biology'),
-          book_location: [1, 1],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Themes and Concepts of Biology'),
-          book_location: [1, 2],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      period_1_chapter_2_pages = period_1_chapters.second[:children]
-      expect(period_1_chapter_2_pages).to match [
-        {
-          title: a_string_matching('Atoms, Isotopes, Ions, and Molecules: The Building Blocks'),
-          book_location: [2, 1],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Water'),
-          book_location: [2, 2],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Carbon'),
-          book_location: [2, 3],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      expect(period_1_chapters.third).to eq period_1_worked_chapters.first
-      period_1_chapter_3_pages = period_1_chapters.third[:children]
-      expect(period_1_chapter_3_pages).to match [
-        {
-          title: a_string_matching('Synthesis of Biological Macromolecules'),
-          book_location: [3, 1],
-          student_count: 1,
-          questions_answered_count: 1,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: kind_of(Time),
-          last_worked_at: kind_of(Time)
-        },
-        {
-          title: a_string_matching('Carbohydrates'),
-          book_location: [3, 2],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Lipids'),
-          book_location: [3, 3],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Proteins'),
-          book_location: [3, 4],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Nucleic Acids'),
-          book_location: [3, 5],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      expect(period_1_chapters.fourth).to eq period_1_worked_chapters.second
-      period_1_chapter_4_pages = period_1_chapters.fourth[:children]
-      expect(period_1_chapter_4_pages).to match [
-        {
-          title: a_string_matching('Studying Cells'),
-          book_location: [4, 1],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Prokaryotic Cells'),
-          book_location: [4, 2],
-          student_count: 1,
-          questions_answered_count: 5,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: kind_of(Time),
-          last_worked_at: kind_of(Time)
-        },
-        {
-          title: a_string_matching('Eukaryotic Cells'),
-          book_location: [4, 3],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('The Endomembrane System and Proteins'),
-          book_location: [4, 4],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Cytoskeleton'),
-          book_location: [4, 5],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Connections between Cells and Cellular Activities'),
-          book_location: [4, 6],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      period_2_chapter_1_pages = period_2_chapters.first[:children]
-      expect(period_2_chapter_1_pages).to match [
-        {
-          title: a_string_matching('The Science of Biology'),
-          book_location: [1, 1],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Themes and Concepts of Biology'),
-          book_location: [1, 2],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      period_2_chapter_2_pages = period_2_chapters.second[:children]
-      expect(period_2_chapter_2_pages).to match [
-        {
-          title: a_string_matching('Atoms, Isotopes, Ions, and Molecules: The Building Blocks'),
-          book_location: [2, 1],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Water'),
-          book_location: [2, 2],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Carbon'),
-          book_location: [2, 3],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      expect(period_2_chapters.third).to eq period_2_worked_chapters.first
-      period_2_chapter_3_pages = period_2_chapters.third[:children]
-      expect(period_2_chapter_3_pages).to match [
-        {
-          title: a_string_matching('Synthesis of Biological Macromolecules'),
-          book_location: [3, 1],
-          student_count: 1,
-          questions_answered_count: 1,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: kind_of(Time),
-          last_worked_at: kind_of(Time)
-        },
-        {
-          title: a_string_matching('Carbohydrates'),
-          book_location: [3, 2],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Lipids'),
-          book_location: [3, 3],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Proteins'),
-          book_location: [3, 4],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Nucleic Acids'),
-          book_location: [3, 5],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
-
-      expect(period_2_chapters.fourth).to eq period_2_worked_chapters.second
-      period_2_chapter_4_pages = period_2_chapters.fourth[:children]
-      expect(period_2_chapter_4_pages).to match [
-        {
-          title: a_string_matching('Studying Cells'),
-          book_location: [4, 1],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Prokaryotic Cells'),
-          book_location: [4, 2],
-          student_count: 1,
-          questions_answered_count: 5,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: kind_of(Time),
-          last_worked_at: kind_of(Time)
-        },
-        {
-          title: a_string_matching('Eukaryotic Cells'),
-          book_location: [4, 3],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('The Endomembrane System and Proteins'),
-          book_location: [4, 4],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Cytoskeleton'),
-          book_location: [4, 5],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        },
-        {
-          title: a_string_matching('Connections between Cells and Cellular Activities'),
-          book_location: [4, 6],
-          student_count: 0,
-          questions_answered_count: 0,
-          clue: clue_matcher,
-          page_ids: [kind_of(Integer)],
-          first_worked_at: nil,
-          last_worked_at: nil
-        }
-      ]
+        )
+      )
     end
   end
 end

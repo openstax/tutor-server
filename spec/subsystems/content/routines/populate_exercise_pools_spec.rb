@@ -18,13 +18,9 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
   let(:chapter_review_tag)   { FactoryBot.create :content_tag, value: 'ost-chapter-review',
                                                                 ecosystem: ecosystem }
 
-  let(:type_conceptual_tag)  { FactoryBot.create :content_tag, value: 'type:conceptual',
+  let(:type_reading_tag)     { FactoryBot.create :content_tag, value: 'assignment-type:reading',
                                                                 ecosystem: ecosystem }
-  let(:type_recall_tag)      { FactoryBot.create :content_tag, value: 'type:recall',
-                                                                ecosystem: ecosystem }
-  let(:type_conc_recall_tag) { FactoryBot.create :content_tag, value: 'type:conceptual-or-recall',
-                                                                ecosystem: ecosystem }
-  let(:type_practice_tag)    { FactoryBot.create :content_tag, value: 'type:practice',
+  let(:type_homework_tag)    { FactoryBot.create :content_tag, value: 'assignment-type:homework',
                                                                 ecosystem: ecosystem }
 
   let(:review_tag)           { FactoryBot.create :content_tag, value: 'review',
@@ -49,9 +45,6 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
                                                                 tag_type: :requires_context,
                                                                 ecosystem: ecosystem }
 
-  let(:concept_coach_tag)    { FactoryBot.create :content_tag, value: 'ost-type:concept-coach',
-                                                                ecosystem: ecosystem }
-
   let(:untagged_exercise)         { FactoryBot.create :content_exercise, page: page }
 
   let(:k12phys_read_dyn_exercise) { FactoryBot.create :content_exercise, page: page }
@@ -69,26 +62,20 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
   let(:prac_prob_exercise)        { FactoryBot.create :content_exercise, page: page }
   let(:chapter_review_exercise)   { FactoryBot.create :content_exercise, page: page }
 
-  let(:conceptual_exercise)       { FactoryBot.create :content_exercise, page: page }
-  let(:recall_exercise)           { FactoryBot.create :content_exercise, page: page }
-  let(:conc_recall_exercise)      { FactoryBot.create :content_exercise, page: page }
+  let(:reading_exercise)          { FactoryBot.create :content_exercise, page: page }
+  let(:homework_exercise)         { FactoryBot.create :content_exercise, page: page }
   let(:practice_exercise)         { FactoryBot.create :content_exercise, page: page }
   let(:requires_context_exercise) { FactoryBot.create :content_exercise, page: page }
   let(:fr_only_exercise)          { FactoryBot.create :content_exercise, :free_response_only, page: page }
-
-  let(:concept_coach_exercise)    { FactoryBot.create :content_exercise, page: page }
 
   let(:untagged_multi_exercise)   do
     FactoryBot.create :content_exercise, page: page, num_questions: 2
   end
 
-  let(:conc_multi_exercise)       do
+  let(:reading_multi_exercise)       do
     FactoryBot.create :content_exercise, page: page, num_questions: 2
   end
-  let(:recall_multi_exercise)     do
-    FactoryBot.create :content_exercise, page: page, num_questions: 2
-  end
-  let(:c_or_r_multi_exercise)     do
+  let(:homework_multi_exercise)     do
     FactoryBot.create :content_exercise, page: page, num_questions: 2
   end
   let(:practice_multi_exercise)   do
@@ -105,7 +92,7 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       k12phys_read_dyn_exercise => [k12phys_tag, os_prac_conc_tag],
       apbio_read_dyn_exercise   => [apbio_tag, chapter_review_tag, review_tag, time_short_tag],
       k12phys_hw_dyn_exercise_1 => [k12phys_tag, os_prac_prob_tag],
-      k12phys_hw_dyn_exercise_2 => [k12phys_tag, chapter_review_tag, concept_tag],
+      k12phys_hw_dyn_exercise_2 => [k12phys_tag, chapter_review_tag],
       k12phys_hw_dyn_exercise_3 => [k12phys_tag, chapter_review_tag, problem_tag],
       k12phys_hw_dyn_exercise_4 => [k12phys_tag, chapter_review_tag, crit_think_tag],
       apbio_hw_dyn_exercise_1   => [apbio_tag, chapter_review_tag, crit_think_tag],
@@ -114,19 +101,15 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       apbio_hw_dyn_exercise_4   => [apbio_tag, chapter_review_tag, review_tag, time_long_tag],
       prac_prob_exercise        => [os_prac_prob_tag],
       chapter_review_exercise   => [chapter_review_tag],
-      conceptual_exercise       => [type_conceptual_tag],
-      recall_exercise           => [type_recall_tag],
-      conc_recall_exercise      => [type_conc_recall_tag],
-      practice_exercise         => [type_practice_tag],
+      reading_exercise          => [type_reading_tag],
+      homework_exercise         => [type_homework_tag],
+
       requires_context_exercise => [requires_context_tag],
-      concept_coach_exercise    => [concept_coach_tag],
       untagged_multi_exercise   => [],
-      conc_multi_exercise       => [type_conceptual_tag],
-      recall_multi_exercise     => [type_recall_tag],
-      c_or_r_multi_exercise     => [type_conc_recall_tag],
-      practice_multi_exercise   => [type_practice_tag],
-      fr_only_exercise          => [type_practice_tag],
-      cc_multi_exercise         => [concept_coach_tag]
+      reading_multi_exercise    => [type_reading_tag],
+      homework_multi_exercise   => [type_homework_tag],
+      practice_multi_exercise   => [type_homework_tag],
+      fr_only_exercise          => [type_homework_tag],
     }
   end
 
@@ -150,36 +133,20 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       page.reload
     end
 
-    it "imports simple exercises that don't require context into the practice wiget pool" do
+    it "imports simple exercises that don't require context into the practice widget pool" do
       expect(Set.new page.practice_widget_exercise_ids).to eq(
         simple_exercise_ids_set - [requires_context_exercise.id]
       )
     end
 
-    it 'imports simple recall, conceptual and c-or-r exercises into the reading dynamic pool' do
+    it 'imports reading into the reading dynamic pool' do
       expect(Set.new page.reading_dynamic_exercise_ids).to eq Set[
-        conceptual_exercise.id,
-        recall_exercise.id,
-        conc_recall_exercise.id
+        reading_exercise.id,
       ]
     end
 
     it 'imports all simple exercises into the reading context pool' do
       expect(Set.new page.reading_context_exercise_ids).to eq simple_exercise_ids_set
-    end
-
-    it 'imports practice exercises into the homework core pool' do
-      expect(Set.new page.homework_core_exercise_ids).to eq Set[
-        practice_exercise.id,
-        fr_only_exercise.id,
-        practice_multi_exercise.id
-      ]
-    end
-
-    it 'imports simple practice exercises into the homework dynamic pool' do
-      expect(page.homework_dynamic_exercise_ids).to eq [
-        practice_exercise.id
-      ]
     end
   end
 end

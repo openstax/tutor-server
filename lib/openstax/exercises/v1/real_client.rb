@@ -51,9 +51,8 @@ class OpenStax::Exercises::V1::RealClient
 
       oauth_client = OAuth2::Client.new(@client_id, @secret, site: @server_url)
 
-      # Don't record access token requests in cassettes
       oauth_token = oauth_client.client_credentials.get_token \
-        unless @client_id.nil? || Rails.env.test?
+        unless @client_id.nil?
 
       @oauth_worker = oauth_token || oauth_client
     end

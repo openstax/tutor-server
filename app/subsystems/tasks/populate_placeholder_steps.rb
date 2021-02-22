@@ -80,6 +80,7 @@ class Tasks::PopulatePlaceholderSteps
     placeholder_steps = task.task_steps.filter do |task_step|
       task_step.placeholder? && task_step.group_type == group_type.to_s
     end
+
     if placeholder_steps.empty?
       task.update_attribute boolean_attribute, true
       return

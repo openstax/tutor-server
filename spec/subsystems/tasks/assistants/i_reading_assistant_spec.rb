@@ -2,58 +2,34 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_OPTS do
-  before(:all) do
-    @assistant = \
-      FactoryBot.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant')
-  end
+  let(:ecosystem) { generate_mini_ecosystem }
+  let(:book) { ecosystem.books.first }
+  let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+  let(:pools) { Content::Routines::PopulateExercisePools[book: page.book] }
 
-  let(:personalized_step_gold_data) do
-    [ { group_type: 'personalized_group', klass: Tasks::Models::TaskedPlaceholder } ] * 3
-  end
+  let(:course) {
+    FactoryBot.create :course_profile_course, :with_grading_templates,
+                      offering: offering
+  }
+  let(:period) { FactoryBot.create :course_membership_period, course: course }
+  let(:assistant) {
+    FactoryBot.create(:tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant')
+  }
+  let(:content_pages) {
+    ecosystem.books.first.pages
+  }
 
-  let(:spaced_practice_step_gold_data) do
-    [
-      {
-        labels: [ 'review' ],
-        group_type: 'spaced_practice_group',
-        is_core: false,
-        klass: Tasks::Models::TaskedPlaceholder
-      }
-    ] * 3
-  end
+    let(:num_taskees) { 3 }
 
-  let(:task_step_gold_data) do
-    core_step_gold_data + personalized_step_gold_data + spaced_practice_step_gold_data
-  end
-
-  context 'for Introduction and Force' do
-    before(:all) do
-      cnx_page_hashes = [
-        { 'id' => '1bb611e9-0ded-48d6-a107-fbb9bd900851', 'title' => 'Introduction' },
-        { 'id' => '95e61258-2faf-41d4-af92-f62e1414175a', 'title' => 'Force' }
-      ]
-
-      cnx_pages = cnx_page_hashes.map{ |hash| OpenStax::Cnx::V1::Page.new(hash: hash) }
-
-      book = FactoryBot.create :content_book, title: 'College Physics with Courseware'
-
-      @ecosystem = book.ecosystem
-
-      @content_pages = VCR.use_cassette(
-        'Tasks_Assistants_IReadingAssistant/for_Introduction_and_Force/with_pages', VCR_OPTS
-      ) do
-        cnx_pages.map.with_index do |cnx_page, ii|
-          Content::Routines::ImportPage.call(
-            cnx_page:  cnx_page,
-            book: book,
-            book_indices: [8, ii+1],
-            parent_book_part_uuid: SecureRandom.uuid
-          ).outputs.page.reload
+    let(:taskee_users) do
+      num_taskees.times.map do
+        FactoryBot.create(:user_profile).tap do |profile|
+          AddUserAsPeriodStudent.call(user: profile, period: period)
         end
       end
-
-      Content::Routines::PopulateExercisePools[book: book]
     end
+
+    context 'for Introduction and Force' do
 
     let(:intro_step_gold_data) do
       {
@@ -85,25 +61,12 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
     let(:task_plan) do
       FactoryBot.build(
         :tasks_task_plan,
-        assistant: @assistant,
-        content_ecosystem_id: @ecosystem.id,
-        settings: { 'page_ids' => @content_pages.map { |page| page.id.to_s } },
+        assistant: assistant,
+        course: course,
+        ecosystem: ecosystem,
+        settings: { 'page_ids' => content_pages.map { |page| page.id.to_s } },
         num_tasking_plans: 0
       )
-    end
-
-    let(:course) { task_plan.course }
-
-    let(:period) { FactoryBot.create :course_membership_period, course: course }
-
-    let(:num_taskees) { 3 }
-
-    let(:taskee_users) do
-      num_taskees.times.map do
-        FactoryBot.create(:user_profile).tap do |user|
-          AddUserAsPeriodStudent.call(user: user, period: period)
-        end
-      end
     end
 
     let!(:tasking_plans) do
@@ -154,7 +117,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
         expect(core_task_steps.count).to eq(core_step_gold_data.count)
 
         core_task_steps.each_with_index do |task_step, i|
-          page = (i == 0) ? @content_pages.first : @content_pages.last
+          page = (i == 0) ? content_pages.first : content_pages.last
 
           expect(task_step.tasked.content).not_to include('snap-lab')
 
@@ -185,7 +148,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
     end
 
     it 'does not assign dynamic exercises if the dynamic exercises pool is empty' do
-      task_plan.update_attribute(:settings, { 'page_ids' => [ @content_pages.first.id.to_s ] })
+      task_plan.update_attribute(:settings, { 'page_ids' => [ content_pages.first.id.to_s ] })
       tasks = DistributeTasks.call(task_plan: task_plan).outputs.tasks
       expect(tasks.length).to eq num_taskees
 
@@ -271,44 +234,16 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       ]
     end
 
-    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
-
-    let(:book)      { FactoryBot.create :content_book, title: 'College Physics with Courseware' }
-
-    let(:ecosystem) { book.ecosystem }
-
-    let(:page) do
-      Content::Routines::ImportPage.call(
-        cnx_page:  cnx_page,
-        book: book,
-        book_indices: [1, 1],
-        parent_book_part_uuid: SecureRandom.uuid
-      ).outputs.page.reload
-    end
-
-    let!(:pools) { Content::Routines::PopulateExercisePools[book: page.book] }
+    let(:page) { book.pages[1] }
 
     let(:task_plan) do
       FactoryBot.build(:tasks_task_plan,
-        assistant: @assistant,
+        assistant: assistant,
         content_ecosystem_id: ecosystem.id,
         settings: { 'page_ids' => [page.id.to_s] },
-        num_tasking_plans: 0
+        num_tasking_plans: 0,
+        course: course,
       )
-    end
-
-    let(:course) { task_plan.course }
-
-    let(:period) { FactoryBot.create :course_membership_period, course: course }
-
-    let(:num_taskees) { 3 }
-
-    let(:taskee_users) do
-      num_taskees.times.map do
-        FactoryBot.create(:user_profile).tap do |profile|
-          AddUserAsPeriodStudent.call(user: profile, period: period)
-        end
-      end
     end
 
     let!(:tasking_plans) do
@@ -357,46 +292,19 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
       }
     end
 
-    let(:cnx_page)  { OpenStax::Cnx::V1::Page.new(hash: cnx_page_hash) }
-
-    let(:book)      { FactoryBot.create :content_book, title: 'College Physics with Courseware' }
-
-    let(:ecosystem) { book.ecosystem }
-
-    let(:page) do
-      Content::Routines::ImportPage.call(
-        cnx_page:  cnx_page,
-        book: book,
-        book_indices: [1, 1],
-        parent_book_part_uuid: SecureRandom.uuid
-      ).outputs.page.reload
-    end
-
-    let!(:pools) { Content::Routines::PopulateExercisePools[book: page.book] }
+    let(:page) { content_pages[1] }
 
     let(:task_plan) do
       FactoryBot.build(
         :tasks_task_plan,
-        assistant: @assistant,
+        assistant: assistant,
+        course: course,
         content_ecosystem_id: ecosystem.id,
         settings: { 'page_ids' => [page.id.to_s] },
         num_tasking_plans: 0
       )
     end
 
-    let(:course) { task_plan.course }
-
-    let(:period) { FactoryBot.create :course_membership_period, course: course }
-
-    let(:num_taskees) { 3 }
-
-    let(:taskee_users) do
-      num_taskees.times.map do
-        FactoryBot.create(:user_profile).tap do |profile|
-          AddUserAsPeriodStudent.call(user: profile, period: period)
-        end
-      end
-    end
 
     let!(:tasking_plans) do
       tps = taskee_users.map do |taskee|
@@ -490,7 +398,6 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
         end
       end
     end
-
   end
 
   context "for a fake cnx page" do
@@ -558,7 +465,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
     let(:task_plan) do
       FactoryBot.build(
         :tasks_task_plan,
-        assistant: @assistant,
+        assistant: assistant,
         content_ecosystem_id: ecosystem.id,
         settings: { 'page_ids' => [page.id.to_s] },
         num_tasking_plans: 0

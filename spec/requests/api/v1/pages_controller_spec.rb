@@ -4,13 +4,8 @@ require 'vcr_helper'
 RSpec.describe Api::V1::PagesController, type: :request, api: true, version: :v1, vcr: VCR_OPTS do
   context 'with book' do
     before(:all) do
-      VCR.use_cassette("Api_V1_PagesController/with_book", VCR_OPTS) do
-        @ecosystem = FetchAndImportBookAndCreateEcosystem[
-          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
-        ]
-      end
-
-      @page_uuid = '95e61258-2faf-41d4-af92-f62e1414175a'
+      @ecosystem = generate_mini_ecosystem
+      @page_uuid = 'b0ffd0a2-9c83-4d73-b899-7f2ade2acda6'
     end
 
     context '#show' do
@@ -32,19 +27,6 @@ RSpec.describe Api::V1::PagesController, type: :request, api: true, version: :v1
       it 'returns not found if the version is not a number' do
         api_get page_api_ecosystem_path(@ecosystem.id, "#{@page_uuid}@x"), nil
         expect(response).to have_http_status(404)
-      end
-
-      it 'returns absolutized exercise urls' do
-        api_get page_api_ecosystem_path(@ecosystem.id, @page_uuid), nil
-
-        expect(response.body_as_hash[:content_html]).not_to include(
-          '#ost/api/ex/k12phys-ch04-ex001'
-        )
-
-        exercises_url_base = Rails.application.secrets.openstax[:exercises][:url]
-        expect(response.body_as_hash[:content_html]).to include(
-          "#{exercises_url_base}/api/exercises?q=tag%3A%22k12phys-ch04-ex001%22"
-        )
       end
 
       context 'with an old version of force' do

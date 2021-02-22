@@ -2,10 +2,15 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::GetTaskPlans, type: :routine do
-  let!(:task_plan_1) { FactoryBot.create :tasked_task_plan }
-  let(:course)       { task_plan_1.course }
-  let!(:task_plan_2) { FactoryBot.create :tasks_task_plan, course: course }
-  let!(:task_plan_3) { FactoryBot.create :tasks_task_plan, course: course }
+  let(:ecosystem) { generate_mini_ecosystem }
+  let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+  let(:course) {
+    FactoryBot.create :course_profile_course, :with_grading_templates,
+                      offering: offering
+  }
+  let!(:task_plan_1) { FactoryBot.create :tasked_task_plan, ecosystem: ecosystem, course: course }
+  let!(:task_plan_2) { FactoryBot.create :tasks_task_plan, ecosystem: ecosystem, course: course }
+  let!(:task_plan_3) { FactoryBot.create :tasks_task_plan, ecosystem: ecosystem, course: course }
 
   it 'gets all task_plans in a course' do
     out = described_class.call(course: course).outputs

@@ -84,6 +84,7 @@ module OpenStax::Cnx::V1
       return [ root ] if node.nil?
 
       num_fragments = processing_instruction.fragments.size
+
       if num_fragments == 0 # No splitting needed
         # Remove the match node and any empty parents from the tree
         recursive_compact(node, root)

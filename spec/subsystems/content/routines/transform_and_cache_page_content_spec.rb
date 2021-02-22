@@ -5,11 +5,11 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
   context 'with real content' do
     before(:all) do
       cnx_page_1 = OpenStax::Cnx::V1::Page.new(
-        id: '102e9604-daa7-4a09-9f9e-232251d1a4ee@7',
+        id: '1b79a450-f691-4301-aef3-d065268ab4a9@6',
         title: 'Physical Quantities and Units'
       )
       cnx_page_2 = OpenStax::Cnx::V1::Page.new(
-        id: '127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
+        id: '20ecccca-ce8d-4067-9d78-b1cd34d9b582@2',
         title: "Introduction to Electric Current, Resistance, and Ohm's Law"
       )
 
@@ -38,16 +38,14 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
     end
 
     ORIGINAL_HREFS = [
-      'https://cnx.org/contents/127f63f7-d67f-4710-8625-2b1d4128ef6b@2',
-      'https://cnx.org/contents/4bba6a1c-a0e6-45c0-988c-0d5c23425670@7',
-      'https://cnx.org/contents/aaf30a54-a356-4c5f-8c0d-2f55e4d20556@3'
+      'https://cnx.org/contents/20ecccca-ce8d-4067-9d78-b1cd34d9b582',
+      'https://cnx.org/contents/b187ab4d-299a-4be7-8ee1-cb71b10a54cf',
     ]
 
     let(:link_text) do
       [
         "Introduction to Electric Current, Resistance, and Ohm's Law",
         'Accuracy, Precision, and Significant Figures',
-        'Appendix A'
       ]
     end
 
@@ -588,30 +586,29 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
       end
     end
 
-    let(:expected_context_node_ids) do
-      [nil, nil, 'fs-idp56122560', 'fs-idp42721584']
-    end
-
     before(:all) do
       @book = FactoryBot.create :content_book
-
       @ecosystem = @book.ecosystem
 
       cnx_page = OpenStax::Cnx::V1::Page.new(
-        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration'
+        id: '2242a8c5-e8b1-4287-b801-af74ef6f1e5b', title: 'Acceleration'
       )
-
-      @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
+      @page = VCR.use_cassette('Content_Routines_TransformAndCachePageContent/with_custom_tags', VCR_OPTS) do
         Content::Routines::ImportPage[
           cnx_page: cnx_page,
           book: @book,
           book_indices: [3, 1],
-          parent_book_part_uuid: SecureRandom.uuid
+          parent_book_part_uuid: PopulateMiniEcosystem.cnx_book_hash[:id],
         ]
       end
+      @exercise_with_context = @book.exercises.find{|ex| ex.cnxfeatures.any? }
+      @cnxfeature_id = @exercise_with_context.feature_ids.first
     end
 
+    after(:all) { DatabaseCleaner.clean }
+
     before do
+      DatabaseCleaner.start
       expect(OpenStax::Exercises::V1).to receive(:exercises).once do |_, &block|
         block.call(wrappers)
       end
@@ -619,7 +616,7 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
       Content::Routines::ImportExercises.call(
         ecosystem: @ecosystem,
         page: @page,
-        query_hash: { tag: ['k12phys-ch03-s01-lo01', 'k12phys-ch03-s01-lo02'] }
+        query_hash: {  }
       )
 
       Content::Routines::PopulateExercisePools.call book: @book
@@ -629,29 +626,13 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
       imported_exercises = @ecosystem.exercises.order(:number).to_a
       imported_exercises.each { |ex| expect(ex.context).to be_nil }
 
+      expect(@exercise_with_context.context).to be_nil
       expect { described_class.call book: @book }.not_to change { Content::Models::Exercise.count }
-
-      imported_exercises.map(&:reload).each_with_index do |exercise, index|
-        expected_context_node_id = expected_context_node_ids[index]
-
-        if expected_context_node_id.nil?
-          expect(exercise.context).to be_nil
-        else
-          context_node = Nokogiri::HTML.fragment(exercise.context).children.first
-          expect(context_node.attr('id')).to eq expected_context_node_id
-        end
-      end
+      @exercise_with_context.reload
+      expect(@exercise_with_context.context).not_to be_nil
+      context_node = Nokogiri::HTML.fragment(@exercise_with_context.context).children.first
+      expect(@exercise_with_context.feature_ids).to include context_node.attr('id')
     end
   end
 
-  context 'with an exercise that requires context from a Section Summary' do
-    let(:manifest_path)   { 'spec/fixtures/manifests/Section Summary Context Exercise.yml' }
-    let(:manifest_string) { File.read manifest_path }
-
-    it "sets the exercise's context from the Section Summary"  do
-      ecosystem = ImportEcosystemManifest[manifest: manifest_string]
-      exercise = ecosystem.exercises.first
-      expect(exercise.context).not_to be_blank
-    end
-  end
 end

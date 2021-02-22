@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive-staging-tutor.cnx.org/contents/no-exist
+    uri: https://archive.cnx.org/contents/no-exist
     body:
       encoding: US-ASCII
       string: ''
@@ -18,25 +18,50 @@ http_interactions:
       code: 404
       message: Not Found
     headers:
-      Server:
-      - nginx/1.4.6 (Ubuntu)
-      Date:
-      - Tue, 01 Dec 2015 19:46:41 GMT
-      Content-Type:
-      - text/plain
-      Content-Length:
-      - '9'
-      Connection:
-      - keep-alive
       Access-Control-Allow-Headers:
       - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
       Access-Control-Allow-Methods:
       - GET, OPTIONS
       Access-Control-Allow-Origin:
       - "*"
+      Content-Length:
+      - '52'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Sun, 14 Feb 2021 20:17:54 GMT
+      Etag:
+      - '"1B2M2Y8AsgTpgAmY7PhCfg"'
+      Server:
+      - waitress
+      X-Varnish-Status:
+      - cacheable (override) - no Cache-Control in backend response
+      Cache-Control:
+      - public, max-age=60
+      X-Varnish-Backend:
+      - prod08_archive5
+      X-Varnish-Ttl:
+      - '60.000'
+      X-Varnish:
+      - 8110150 8468274
+      Age:
+      - '47'
+      Via:
+      - 1.1 varnish-v4
+      X-Varnish-Cache:
+      - HIT
+      Strict-Transport-Security:
+      - max-age=16000000
     body:
       encoding: UTF-8
-      string: Not Found
+      string: |+
+        404 Not Found
+
+        The resource could not be found.
+
+
+
+
     http_version: 
-  recorded_at: Tue, 01 Dec 2015 19:34:44 GMT
-recorded_with: VCR 2.9.3
+  recorded_at: Sun, 14 Feb 2021 20:18:41 GMT
+recorded_with: VCR 4.0.0

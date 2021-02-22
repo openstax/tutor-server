@@ -49,7 +49,7 @@ VCR.configure do |c|
   c.allow_http_connections_when_no_cassette = Rails.env.development?
   c.ignore_localhost = true
   c.ignore_request { |request| Addressable::URI.parse(request.uri).path == '/oauth/token' } \
-    if Rails.env.development?
+    if ENV['CI'] || Rails.env.development?
   c.preserve_exact_body_bytes { |http_message| !http_message.body.valid_encoding? }
 
   # Turn on debug logging, works in Travis too tho in full runs results

@@ -33,12 +33,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
   context 'with book and performance report data' do
     before(:all) do
       DatabaseCleaner.start
-
-      VCR.use_cassette("Api_V1_PerformanceReportsController/with_book", VCR_OPTS) do
-        @ecosystem = FetchAndImportBookAndCreateEcosystem[
-          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
-        ]
-      end
+      @ecosystem = generate_mini_ecosystem
 
       CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 
@@ -105,7 +100,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
 
             expect(data['Exercise JSON URL']).to eq("#{tasked.url.gsub("org", "org/api")}.json")
             expect(data['Exercise Editor URL']).to eq(tasked.url)
-            expect((data['Exercise Tags'] || '').split(',')).to match_array(tags)
+            expect((data['Exercise Tags'] || '').split(',').reject { |tag| tag.start_with? 'context-cnxmod' }).to match_array(tags)
             expect(data['Question Number']).to eq '1'
             expect(data['Question Correct Answer ID']).to eq(correct_answer_id)
             expect(data['Question Chosen Answer ID']).to eq(answer_id)
@@ -139,13 +134,10 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             page = pages_by_url.fetch(data['CNX HTML URL'])
             book = page.book
             fragment = page.fragments[data['HTML Fragment Number'].to_i - 1]
-
             expect(data['CNX JSON URL']).to eq("#{page.url}.json")
             expect(data['CNX Book Name']).to eq(book.title)
             expect(data['CNX Section Number']).to eq(page.book_location.join('.'))
             expect(data['CNX Section Name']).to eq(page.title)
-            expect(data['HTML Fragment Labels']).to eq(fragment.labels.join(','))
-            expect(data['HTML Fragment Content']).to eq(fragment.try(:to_html))
           end
         end
       end

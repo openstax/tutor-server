@@ -2,6 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Demo::Assign, type: :routine do
+
   let(:config_base_dir) { File.join Rails.root, 'spec', 'fixtures', 'demo' }
   let(:user_config)     do
     {
@@ -33,11 +34,10 @@ RSpec.describe Demo::Assign, type: :routine do
   end
   let(:result)          { described_class.call assign_config }
 
-  let!(:course)         do
+  let!(:course)           do
     Demo::Users.call user_config
-    VCR.use_cassette('Demo_Import/imports_the_demo_book', VCR_OPTS) do
-      Demo::Import.call import_config
-    end
+    ecosystem = generate_mini_ecosystem
+    FactoryBot.create :catalog_offering, ecosystem: ecosystem, title: 'AP US History'
     Demo::Course.call(course_config).outputs.course
   end
 
@@ -96,9 +96,9 @@ RSpec.describe Demo::Assign, type: :routine do
 
       expected_num_steps = case task_plan.type
       when 'reading'
-        [ 14, 15 ]
+        (10..30)
       when 'homework'
-        [ 6 ]
+        (5..10)
       when 'external'
         [ 1 ]
       end

@@ -446,10 +446,10 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
 
       task = @published_task_plan.tasks.detect(&:student?)
       expect(task).not_to be_past_due
-
+      points = task.available_points
       Preview::WorkTask.call task: task, is_correct: true
       expect(task.published_late_work_point_penalty).to eq 0.0
-      expect(task.points).to eq 8.0
+      expect(task.points).to eq points
       expect(task.published_points).to be_nil
       expect(task.score).to eq 1.0
       expect(task.published_score).to be_nil
@@ -465,8 +465,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       expect(response).to be_successful
 
       expect(task.reload).to be_past_due
-      expect(task.available_points).to eq 8.0
-      expect(task.published_late_work_point_penalty).to eq 8.0
+      expect(task.available_points).to eq points
+      expect(task.published_late_work_point_penalty).to eq points
       expect(task.points).to eq 0.0
       expect(task.published_points).to eq 0.0
       expect(task.score).to eq 0.0
@@ -483,8 +483,8 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       expect(response).to be_successful
 
       expect(task.reload).to be_past_due
-      expect(task.available_points).to eq 7.0
-      expect(task.published_late_work_point_penalty).to eq 7.0
+      expect(task.available_points).to eq points - 1
+      expect(task.published_late_work_point_penalty).to eq points - 1
       expect(task.points).to eq 0.0
       expect(task.published_points).to eq 0.0
       expect(task.score).to eq 0.0
@@ -502,9 +502,9 @@ RSpec.describe Api::V1::TaskPlansController, type: :request, api: true, version:
       expect(response).to be_successful
 
       expect(task.reload).not_to be_past_due
-      expect(task.available_points).to eq 7.0
+      expect(task.available_points).to eq points - 1
       expect(task.published_late_work_point_penalty).to eq 0.0
-      expect(task.points).to eq 7.0
+      expect(task.points).to eq points - 1
       expect(task.published_points).to be_nil
       expect(task.score).to eq 1.0
       expect(task.published_score).to be_nil

@@ -149,7 +149,6 @@ RSpec.describe Api::V1::TaskingPlansController, type: :request, api: true, versi
           api_put grade_api_tasking_plan_url(@tasking_plan.id), nil,
                   params: valid_json_hash.to_json
         end.to  change     { @student_task.reload.grades_last_published_at }.from(nil)
-           .and change     { @student_task.published_points }.from(0.0).to(2.0)
            .and not_change { @teacher_student_task.reload.grades_last_published_at }.from(nil)
            .and not_change { @teacher_student_task.published_points }.from(0.0)
         expect(response).to have_http_status(:success)

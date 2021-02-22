@@ -158,16 +158,15 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
   end
 
   context 'with a real book' do
-    before(:all) do
-      VCR.use_cassette('Api_V1_EcosystemsController/with_book', VCR_OPTS) do
-        @ecosystem = FetchAndImportBookAndCreateEcosystem[
-          book_cnx_id: '93e2b09d-261c-4007-a987-0b3062fe154b'
-        ]
-      end
-    end
+    let(:ecosystem) { generate_mini_ecosystem }
+    let(:book) { ecosystem.books.first }
+    let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+    let(:course) {
+      FactoryBot.create :course_profile_course, :with_grading_templates,
+                        offering: offering, is_preview: true
+    }
 
     before(:each) do
-      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem)
       AddUserAsCourseTeacher.call(course: course, user: user_1)
     end
 
@@ -181,45 +180,42 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
         page_ids = Content::Models::Page.all.map(&:id)
 
         expect do
-          api_get exercises_api_ecosystem_path(@ecosystem.id, page_ids: page_ids), nil
+          api_get exercises_api_ecosystem_path(ecosystem.id, page_ids: page_ids), nil
         end.to raise_error(SecurityTransgression)
 
         expect do
-          api_get exercises_api_ecosystem_path(@ecosystem.id, page_ids: page_ids), user_2_token
+          api_get exercises_api_ecosystem_path(ecosystem.id, page_ids: page_ids), user_2_token
         end.to raise_error(SecurityTransgression)
       end
 
       it 'should return all exercises if page_ids is ommitted' do
-        api_get exercises_api_ecosystem_path(@ecosystem.id), user_1_token
+        api_get exercises_api_ecosystem_path(ecosystem.id), user_1_token
 
         expect(response).to have_http_status(:success)
-        expect(response.body_as_hash[:total_count]).to eq(@ecosystem.exercises.size)
+        expect(response.body_as_hash[:total_count]).to eq(ecosystem.exercises.size)
       end
 
       it 'works for teachers in the course' do
         page_ids = Content::Models::Page.all.map(&:id)
-        api_get exercises_api_ecosystem_path(@ecosystem.id, page_ids: page_ids), user_1_token
+        api_get exercises_api_ecosystem_path(ecosystem.id, page_ids: page_ids), user_1_token
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
-        expect(hash[:total_count]).to eq(215)
+        expect(hash[:total_count]).to eq(165)
         hash[:items].each do |item|
           expect(item[:pool_types]).not_to be_empty
-          wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
-          item_los = wrapper.los
-          expect(item_los).not_to be_empty
         end
       end
 
       it 'returns exercise exclusion information if a course_id is given' do
         page_ids = Content::Models::Page.all.map(&:id)
         api_get exercises_api_ecosystem_path(
-          @ecosystem.id, page_ids: page_ids, course_id: course.id
+          ecosystem.id, page_ids: page_ids, course_id: course.id
         ), user_1_token
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
-        expect(hash[:total_count]).to eq(215)
+        expect(hash[:total_count]).to eq(165)
         hash[:items].each do |item|
           expect(item[:is_excluded]).to eq false
         end
@@ -228,19 +224,16 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
       it 'returns only exercises in certain pools if pool_types are given' do
         page_ids = Content::Models::Page.all.map(&:id)
         api_get exercises_api_ecosystem_path(
-          @ecosystem.id, page_ids: page_ids, pool_types: 'homework_core'
+          ecosystem.id, page_ids: page_ids, pool_types: 'homework_core'
         ), user_1_token
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
         expect(hash[:total_count]).to eq(
-          @ecosystem.exercises.count {|e| e.tags.detect { |t| t.value == 'type:practice' } }
+          ecosystem.exercises.count {|e| e.tags.detect { |t| t.value == 'assignment-type:homework' } }
         )
         hash[:items].each do |item|
           expect(item[:pool_types]).to eq ['homework_core']
-          wrapper = OpenStax::Exercises::V1::Exercise.new(content: item[:content].to_json)
-          item_los = wrapper.los
-          expect(item_los).not_to be_empty
         end
       end
     end
@@ -253,13 +246,13 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
 
       it 'allows students to only see exercises that have been saved to practice' do
         exercise_ids = Content::Models::Exercise.all.map(&:id)
-        exercise_id  = @ecosystem.exercises.first.id
+        exercise_id  = ecosystem.exercises.first.id
         FactoryBot.create(:tasks_practice_question,
                           role: student_role,
                           content_exercise_id: exercise_id)
 
         api_get exercises_api_ecosystem_path(
-          @ecosystem.id, course_id: course.id, exercise_ids: exercise_ids, role_id: student_role.id
+          ecosystem.id, course_id: course.id, exercise_ids: exercise_ids, role_id: student_role.id
         ), student_user_token
 
         hash = response.body_as_hash
@@ -269,112 +262,6 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
         # Ensure content_hash_for_student was used
         keys = hash[:items][0][:content][:questions][0][:answers].map(&:keys).flatten.uniq
         expect(keys.any?(:correctness)).to be false
-      end
-    end
-  end
-
-  context 'with the bio book' do
-    before(:all) do
-      VCR.use_cassette('Content_ImportBook/with_the_bio_book', VCR_OPTS) do
-        OpenStax::Cnx::V1.with_archive_url('https://archive.cnx.org/contents') do
-          OpenStax::Exercises::V1.use_fake_client do
-            @ecosystem = FetchAndImportBookAndCreateEcosystem[
-              book_cnx_id: '6c322e32-9fb0-4c4d-a1d7-20c95c5c7af2'
-            ]
-          end
-        end
-      end
-    end
-
-    before do
-      CourseContent::AddEcosystemToCourse.call(course: course, ecosystem: @ecosystem.reload)
-      AddUserAsCourseTeacher.call(course: course, user: user_1)
-    end
-
-    let(:book) { @ecosystem.books.first }
-
-    context '#readings' do
-      it 'renders prefaces, units and appendices' do
-        api_get readings_api_ecosystem_url(@ecosystem.id), user_1_token
-        expect(response).to have_http_status(:success)
-        chapter_index = 0
-        expect(response.body_as_hash).to match(
-          [
-            {
-              id: book.id.to_s,
-              uuid: book.uuid,
-              version: book.version,
-              cnx_id: book.cnx_id,
-              short_id: book.short_id,
-              archive_url: 'https://archive.cnx.org',
-              webview_url: 'https://cnx.org',
-              is_collated: true,
-              baked_at: kind_of(String),
-              title: book.title,
-              type: 'book',
-              chapter_section: [],
-              children: [
-                {
-                  id: book.as_toc.pages.first.id.to_s,
-                  uuid: book.as_toc.pages.first.uuid,
-                  version: book.as_toc.pages.first.version,
-                  cnx_id: book.as_toc.pages.first.cnx_id,
-                  short_id: book.as_toc.pages.first.short_id,
-                  title: a_string_matching('Preface'),
-                  chapter_section: [],
-                  type: 'page'
-                },
-                *book.units.each_with_index.map do |unit, unit_index|
-                  {
-                    uuid: unit.uuid,
-                    cnx_id: unit.uuid,
-                    title: a_string_matching("Unit #{unit_index + 1}"),
-                    type: 'unit',
-                    chapter_section: [],
-                    children: unit.chapters.each.map do |chapter|
-                      {
-                        uuid: chapter.uuid,
-                        cnx_id: chapter.uuid,
-                        title: chapter.title,
-                        type: 'chapter',
-                        chapter_section: [chapter_index += 1],
-                        children: chapter.pages.each.map do |page|
-                          {
-                            id: page.id.to_s,
-                            uuid: page.uuid,
-                            version: page.version,
-                            cnx_id: page.cnx_id,
-                            short_id: page.short_id,
-                            title: page.title,
-                            type: 'page',
-                            chapter_section: page.book_location
-                          }
-                        end
-                      }
-                    end
-                  }
-                end,
-                *book.as_toc.pages.last(4).zip([
-                  'The Periodic Table of Elements',
-                  'Geological Time',
-                  'Measurements and the Metric System',
-                  'Index'
-                ]).map do |page, title|
-                  {
-                    id: page.id.to_s,
-                    uuid: page.uuid,
-                    version: page.version,
-                    cnx_id: page.cnx_id,
-                    short_id: page.short_id,
-                    title: a_string_matching(title),
-                    chapter_section: [],
-                    type: 'page'
-                  }
-                end
-              ]
-            }
-          ]
-        )
       end
     end
   end

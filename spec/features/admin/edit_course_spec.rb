@@ -190,20 +190,15 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
     expect(page).to have_content('first happy restrictions Edit')
   end
 
-  scenario 'bulk updating course ecosystem', vcr: VCR_OPTS do
-    physics_old_cnx_id = '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
-    physics_old = FetchAndImportBookAndCreateEcosystem[
-      book_cnx_id: physics_old_cnx_id]
-    physics_new_cnx_id = '93e2b09d-261c-4007-a987-0b3062fe154b@5.1'
-    physics_new = FetchAndImportBookAndCreateEcosystem[
-      book_cnx_id: physics_new_cnx_id]
+  scenario 'bulk updating course ecosystem' do
+    ecosystem = generate_mini_ecosystem
 
     visit admin_courses_path(query: '')
-    find(:id, :ecosystem_id).find("option[value='#{physics_old.id}']").select_option
+    find(:id, :ecosystem_id).find("option[value='#{ecosystem.id}']").select_option
     click_on 'Set Ecosystem'
 
     expect(page).to have_content('Course ecosystem updates have been queued')
-    expect(@course.ecosystem.books.first.version).to eq('4.4')
+    expect(@course.ecosystem.books.first.version).to eq(ecosystem.books.first.version)
 
     click_on 'Add Course'
     fill_in 'Name', with: 'Physics II'
@@ -212,11 +207,11 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
 
     course_2 = CourseProfile::Models::Course.order(:id).last
     visit admin_courses_path(query: '')
-    find(:id, :ecosystem_id).find("option[value='#{physics_new.id}']").select_option
+    find(:id, :ecosystem_id).find("option[value='#{ecosystem.id}']").select_option
     click_on 'Set Ecosystem'
     expect(page).to have_content('Course ecosystem updates have been queued')
-    expect(@course.ecosystem.books.first.version).to eq('5.1')
-    expect(course_2.ecosystem.books.first.version).to eq('5.1')
+    expect(@course.ecosystem.books.first.version).to eq(ecosystem.books.first.version)
+    expect(course_2.ecosystem.books.first.version).to eq(ecosystem.books.first.version)
   end
 
   scenario 'Check payment fields on student roster', js: true do

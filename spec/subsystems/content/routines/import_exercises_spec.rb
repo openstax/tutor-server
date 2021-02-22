@@ -49,10 +49,10 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
       expect do
         described_class.call(ecosystem: ecosystem, page: page, query_hash: {tag: tags})
-      end.to change{ Content::Models::Exercise.count }.by(33)
+      end.to change{ Content::Models::Exercise.count }.by(32)
 
       exercises = ecosystem.exercises.order(:created_at).to_a
-      exercises[-33..-1].each do |exercise|
+      exercises[(exercises.length * -1)..-1].each do |exercise|
         expect(exercise.exercise_tags.map{|et| et.tag.value} & tags).not_to be_empty
       end
     end
@@ -62,10 +62,10 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       tags = ['k12phys-ch04-s01-lo01', 'k12phys-ch04-s01-lo02']
       expect do
         result = described_class.call(ecosystem: ecosystem, page: page, query_hash: {tag: tags})
-      end.to change{ Content::Models::Tag.count }.by(59)
+      end.to change{ Content::Models::Tag.count }.by(110)
 
       exercises = ecosystem.exercises.order(:created_at).to_a
-      exercises[-33..-1].each do |exercise|
+      exercises[(exercises.length * -1)..-1].each do |exercise|
         wrapper = OpenStax::Exercises::V1::Exercise.new(content: exercise.content)
 
         exercise.exercise_tags.map{|et| et.tag.value}.each do |tag|
@@ -113,7 +113,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       @ecosystem = book.ecosystem
 
       cnx_page = OpenStax::Cnx::V1::Page.new(
-        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration'
+        id: '21d0e217-d50f-4901-af75-905e738eb4c4', title: 'Kinematics in Two Dimensions: An Introduction'
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
@@ -157,7 +157,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       @ecosystem = book.ecosystem
 
       cnx_page = OpenStax::Cnx::V1::Page.new(
-        id: '0e58aa87-2e09-40a7-8bf3-269b2fa16509', title: 'Acceleration'
+        id: '21d0e217-d50f-4901-af75-905e738eb4c4', title: 'Kinematics in Two Dimensions: An Introduction'
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do

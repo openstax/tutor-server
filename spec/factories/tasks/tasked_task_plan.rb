@@ -5,77 +5,45 @@ if Rails.env.development?
 end
 
 FactoryBot.define do
+
   factory :tasked_task_plan, parent: :tasks_task_plan do
-    type      { 'reading' }
+    type { :reading }
 
     assistant do
+      assist = type == :reading ? 'IReadingAssistant' : 'HomeworkAssistant'
       Tasks::Models::Assistant.find_by(
-        code_class_name: 'Tasks::Assistants::IReadingAssistant'
+        code_class_name: "Tasks::Assistants::#{assist}"
       ) || FactoryBot.create(
-        :tasks_assistant, code_class_name: 'Tasks::Assistants::IReadingAssistant'
+        :tasks_assistant, code_class_name: "Tasks::Assistants::#{assist}"
       )
     end
 
     transient do
-      page_hash do
-        {
-          id: '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
-          title: "<span class=\"os-number\">1.1</span><span class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Newton's First Law of Motion: Inertia</span>"
-        }
-      end
-
-      chapter_hash do
-        {
-          title: "<span class=\"os-number\">1</span><span class=\"os-divider\"> </span><span data-type=\"\" itemprop=\"\" class=\"os-text\">Dynamics: Force and Newton's Laws of Motion</span>",
-          contents: [ page_hash ]
-        }
-      end
-
-      unit_hash do
-        { title: 'Not a real Unit', contents: [ chapter_hash ] }
-      end
-
-      book_hash do
-        {
-          id: '93e2b09d-261c-4007-a987-0b3062fe154b',
-          version: '4.4',
-          title: 'College Physics with Courseware',
-          tree: {
-            id: '93e2b09d-261c-4007-a987-0b3062fe154b@4.4',
-            title: 'College Physics with Courseware',
-            contents: [ unit_hash ]
-          }
-        }
-      end
-
-      cnx_book { OpenStax::Cnx::V1::Book.new hash: book_hash.deep_stringify_keys }
-
-      reading_processing_instructions do
-        FactoryBot.build(:content_book).reading_processing_instructions
-      end
-
       number_of_students { 10 }
     end
 
-    course    { FactoryBot.build :course_profile_course, offering: nil }
-
-    ecosystem do
-      FactoryBot.create(:content_ecosystem).tap do |ecosystem|
-        VCR.use_cassette('TaskedTaskPlan/with_inertia', VCR_OPTS) do
-          OpenStax::Cnx::V1.with_archive_url('https://archive-staging-tutor.cnx.org/contents/') do
-            Content::ImportBook[
-              cnx_book: cnx_book,
-              ecosystem: ecosystem,
-              reading_processing_instructions: reading_processing_instructions
-            ]
-          end
-        end
-
-        AddEcosystemToCourse[course: course, ecosystem: ecosystem]
-      end
+    transient do
+      number_of_exercises_per_page { 5 }
     end
 
-    settings { { page_ids: [ ecosystem.pages.last.id.to_s ] } }
+    ecosystem do
+      PopulateMiniEcosystem.generate_mini_ecosystem
+    end
+
+    course { FactoryBot.build :course_profile_course, offering: nil }
+
+    settings {
+      s = { page_ids: ecosystem.pages[0...3].map { |pg| pg.id.to_s } }
+      if type == :homework
+        s.merge!({
+          exercises: s[:page_ids].map{ |pg_id|
+            ecosystem.pages.find(pg_id).exercises.sample(number_of_exercises_per_page)
+          }.flatten.map{ |ex| { id: ex.id.to_s, points: [1.0]*ex.number_of_questions } },
+          exercises_count_dynamic: 3
+        })
+      end
+      s
+    }
 
     after(:build) do |task_plan, evaluator|
       course = task_plan.course

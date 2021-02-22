@@ -1,11 +1,8 @@
 class CreateStudentHistory
   lev_routine
 
-  uses_routine AddEcosystemToCourse
   uses_routine AddUserAsPeriodStudent
   uses_routine DistributeTasks, translations: { outputs: { type: :verbatim } }
-  uses_routine FetchAndImportBookAndCreateEcosystem,
-               translations: { outputs: { type: :verbatim } }
 
   private
 
@@ -14,26 +11,27 @@ class CreateStudentHistory
       role.course != course
     end
 
-    ecosystem = setup_course_book(course, book_id)
+    create_assignments(course, course.periods.reload)
 
-    create_assignments(ecosystem, course, course.periods.reload)
+    ecosystem = course.ecosystem
+    chapter = ecosystem.chapters.first
 
     [roles].flatten.each_with_index do |role, i|
+      page_ids = [chapter.pages[(i % 2)].id]
       Rails.logger.debug { "=== Set Role##{role.id} history ===" }
-
       # practice widgets assign 5 task steps to the role
       practice_task = create_practice_widget(
-        course: course, role: role, page_ids: [ecosystem.chapters[3 - (i % 2)].pages[1].id]
+        course: course, role: role, page_ids: page_ids
       )
       answer_correctly(practice_task, 2 + i) # 2 or 3 out of 5
 
       practice_task = create_practice_widget(
-        course: course, role: role, page_ids: [ecosystem.chapters[3].pages[2].id]
+        course: course, role: role, page_ids: page_ids
       )
       answer_correctly(practice_task, 5) # 5 out of 5
 
       create_practice_widget(
-        course: course, role: role, page_ids: [ecosystem.pages.map(&:id)]
+        course: course, role: role, page_ids: page_ids
       ) # Not started
     end
   end
@@ -49,25 +47,17 @@ class CreateStudentHistory
     run(:add_user_as_period_student, period: outputs.period, user: student).outputs.role
   end
 
-  def setup_course_book(course, book_id)
-    Rails.logger.debug { '=== Fetch & import book ===' }
-    run(:fetch_and_import_book_and_create_ecosystem, book_cnx_id: book_id)
 
-    Rails.logger.debug { '=== Add ecosystem to course ===' }
-    run(:add_ecosystem_to_course, course: course, ecosystem: outputs.ecosystem)
-
-    outputs.ecosystem
-  end
-
-  def create_assignments(ecosystem, course, periods)
+  def create_assignments(course, periods)
+    ecosystem = course.ecosystem
     periods = [periods].flatten.compact
     run(:distribute_tasks, task_plan: create_ireading_task_plan(ecosystem, course, periods))
 
-    withdrawn = create_homework_task_plan(ecosystem, course, periods, 3, 2, 0)
+    withdrawn = create_homework_task_plan(ecosystem, course, periods, 1)
     run(:distribute_tasks, task_plan: withdrawn)
     withdrawn.destroy!
 
-    homework = create_homework_task_plan(ecosystem, course, periods, 2, 1, 0)
+    homework = create_homework_task_plan(ecosystem, course, periods, 0)
     tasks = run(:distribute_tasks, task_plan: homework).outputs.tasks
     tasks.each { |task| answer_correctly(task, 2) }
   end
@@ -127,8 +117,8 @@ class CreateStudentHistory
     end
   end
 
-  def create_homework_task_plan(ecosystem, course, periods, chapter, page, exercise)
-    exercise_id = ecosystem.chapters[chapter].pages[page].homework_core_exercise_ids[exercise]
+  def create_homework_task_plan(ecosystem, course, periods, page)
+    exercise_id = ecosystem.chapters.first.pages[page].homework_core_exercise_ids.first
     exercise = Content::Models::Exercise.find(exercise_id)
     exercises = [ { id: exercise_id.to_s, points: [ 1 ] * exercise.number_of_questions } ]
 

@@ -10,6 +10,13 @@ FactoryBot.define do
     url        { "https://archive.cnx.org/contents/#{uuid}@#{version}" }
     reading_processing_instructions {
       [
+        {:css=>
+         ".conceptual-questions, .problems-exercises, [data-element-type=\"conceptual-questions\"], [data-element-type=\"problems-exercises\"], [data-element-type=\"check-understanding\"], [data-type=\"glossary\"]",
+         :fragments=>[]},
+        {:css=>"[data-type=\"footnote-refs\"]", :fragments=>["media"]},
+        {:css=>"[data-type=\"note\"].interactive", :fragments=>["interactive", "exercise"], :labels=>["phet-explorations"]},
+        {:css=>".watch-physics", :fragments=>["video", "exercise"], :labels=>["watch-physics"]},
+        {:css=>".example-video, [data-type=\"example\"]", :fragments=>["reading"], :labels=>["example"]},
         {
           css: '.ost-reading-discard, .os-teacher, [data-type="glossary"]',
           fragments: [],

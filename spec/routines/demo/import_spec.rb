@@ -2,6 +2,8 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
+  before { skip("disabled since it imports entire book, which we only want to run manually") }
+
   let(:config_base_dir) { File.join Rails.root, 'spec', 'fixtures', 'demo' }
   let(:import_config)   do
     {
