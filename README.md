@@ -29,7 +29,7 @@ cd tutor-server
 Then install the proper version of ruby using rbenv:
 
 ```
-rbenv install 2.6.1
+rbenv install 2.7.2
 ```
 
 Make sure that `which ruby` and `which gem` point to your `.rbenv` folder,

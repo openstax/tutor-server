@@ -33,7 +33,7 @@ RSpec.describe Content::Routines::ImportPage, type: :routine, vcr: VCR_OPTS do
       doc = Nokogiri::HTML(page.content)
 
       doc.css('[src]').each do |tag|
-        uri = URI.parse(URI.escape(tag.attributes['src'].value))
+        uri = URI.parse(Addressable::URI.escape(tag.attributes['src'].value))
         expect(uri.absolute?).to eq true
       end
     end

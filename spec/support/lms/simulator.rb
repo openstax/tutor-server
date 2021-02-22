@@ -174,7 +174,7 @@ class Lms::Simulator
                   .split(',')
                   .each_with_object({}) do |ff, hash|
                     key = ff.split("=")[0].gsub("OAuth ", '').strip
-                    value = URI.unescape(ff.split("=")[1].gsub(/"/,'').strip)
+                    value = URI.decode_www_form_component(ff.split("=")[1].gsub(/"/,'').strip)
                     hash[key.to_sym] = value
                   end
     )
