@@ -69,16 +69,15 @@ RSpec.describe Demo::Work, type: :routine do
           expect(task.completion).to be_within(1.0/task.steps_count).of(expected_completion)
 
           expected_score = EXPECTED_SCORES[student_index]
-          # Only 100% accurate if the expected score is 0 or 1
+          # Only 100% accurate if the expected score is 0
           # Any other value depends on chance
+          # Even 1.0 depends on having no WRQs
           if expected_score == 0.0
             if expected_completion == 0.0
               expect(task.score).to eq(0.0)
             elsif expected_completion == 1.0
               expect(task.score).to eq(task.completion_weight)
             end
-          elsif expected_score == 1.0
-            expect(task.score).to eq(expected_score)
           end
         else
           expect(task.completion).to eq 0
