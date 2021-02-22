@@ -279,5 +279,11 @@ module Api::V1
              type: Object,
              readable: true,
              writeable: false
+    
+    property :code,
+             type: String,
+             readable: true,
+             writeable: true
+
   end
 end

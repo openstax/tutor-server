@@ -76,6 +76,16 @@ class Api::V1::OfferingRepresenter < Roar::Decorator
               description: "If true, courses generated from this offering will require students to pay"
            }
 
+  property :subject,
+           type: String,
+           readable: true,
+           writeable: false
+
+  property :os_book_id,
+           type: String,
+           readable: true,
+           writeable: false
+
   collection :active_term_years,
              class: TermYear,
              extend: Api::V1::TermYearRepresenter,

@@ -1057,6 +1057,7 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
         Api::V1::CourseRepresenter.new(@course).as_json.deep_symbolize_keys.merge(
           id: a_kind_of(String),
           uuid: a_kind_of(String),
+          code: @course.code,
           year: expected_year,
           is_preview: false,
           starts_at: DateTimeUtilities.to_api_s(expected_term_year.starts_at),

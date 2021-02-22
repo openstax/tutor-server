@@ -10,7 +10,7 @@ class CreateCourse
 
   uses_routine AddEcosystemToCourse, as: :add_ecosystem
 
-  def exec(name:, is_preview:, is_test:, is_college: nil, is_concept_coach: nil, term: nil,
+  def exec(name:, is_preview:, is_test:, code: nil, is_college: nil, is_concept_coach: nil, term: nil,
            year: nil, num_sections: 1, catalog_offering: nil, appearance_code: nil, starts_at: nil,
            ends_at: nil, school: nil, timezone: nil, cloned_from: nil,
            estimated_student_count: nil, does_cost: nil, reading_weight: nil, homework_weight: nil,
@@ -59,7 +59,8 @@ class CreateCourse
       reading_weight: reading_weight,
       homework_weight: homework_weight,
       grading_templates: grading_templates,
-      past_due_unattempted_ungraded_wrq_are_zero: past_due_unattempted_ungraded_wrq_are_zero
+      past_due_unattempted_ungraded_wrq_are_zero: past_due_unattempted_ungraded_wrq_are_zero,
+      code: code
     )
 
     unless catalog_offering.blank?
