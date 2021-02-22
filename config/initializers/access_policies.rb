@@ -26,3 +26,4 @@ OSU::AccessPolicy.register(TrackTutorOnboardingEvent, TrackTutorOnboardingEventP
 OSU::AccessPolicy.register(OpenStax::Payments::FakePurchasedItem, AllowAllAccessPolicy)
 OSU::AccessPolicy.register(Research::Models::Survey, ResearchSurveyAccessPolicy)
 OSU::AccessPolicy.register(Entity::Role, RoleAccessPolicy)
+OSU::AccessPolicy.register(User::Models::Suggestion, SuggestionAccessPolicy)

@@ -69,4 +69,15 @@ class Api::V1::UsersController < Api::V1::ApiController
     result = User::RecordTourView.call(user: current_human_user, tour_identifier: params[:tour_id])
     render_api_errors(result.errors) || head(:no_content)
   end
+
+  api :POST, '/suggest'
+  description <<-EOS
+    Saves a user suggestion. The current default only supports teachers suggesting subjects.
+  EOS
+  def suggest
+    OSU::AccessPolicy.require_action_allowed!(:create, current_human_user, User::Models::Suggestion)
+
+    User::Models::Suggestion.create(profile: current_human_user, content: params[:data])
+    head :ok
+  end
 end

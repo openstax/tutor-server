@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_08_180911) do
+ActiveRecord::Schema.define(version: 2021_02_08_231233) do
 
   create_sequence "active_storage_attachments_id_seq"
   create_sequence "active_storage_blobs_id_seq"
@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
   create_sequence "user_customer_services_id_seq"
   create_sequence "user_profiles_id_seq"
   create_sequence "user_researchers_id_seq"
+  create_sequence "user_suggestions_id_seq"
   create_sequence "user_tour_views_id_seq"
   create_sequence "user_tours_id_seq"
 
@@ -162,7 +163,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.datetime "updated_at", null: false
     t.string "short_id"
     t.text "reading_processing_instructions", default: "[]", null: false
-    t.uuid "tutor_uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "tutor_uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "baked_at"
     t.boolean "is_collated", default: false
     t.jsonb "tree", null: false
@@ -177,7 +178,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "comments"
-    t.uuid "tutor_uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "tutor_uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "deleted_at"
     t.index ["created_at"], name: "index_content_ecosystems_on_created_at"
     t.index ["title"], name: "index_content_ecosystems_on_title"
@@ -281,7 +282,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.string "short_id"
     t.text "fragments", default: "[]", null: false
     t.text "snap_labs", default: "[]", null: false
-    t.uuid "tutor_uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "tutor_uuid", default: -> { "gen_random_uuid()" }, null: false
     t.text "book_location", default: "[]", null: false
     t.bigint "content_book_id", null: false
     t.integer "all_exercise_ids", default: [], null: false, array: true
@@ -366,7 +367,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.datetime "updated_at", null: false
     t.string "enrollment_code", null: false
     t.datetime "archived_at"
-    t.uuid "uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.index ["archived_at"], name: "index_course_membership_periods_on_archived_at"
     t.index ["course_profile_course_id"], name: "index_course_membership_periods_on_course_profile_course_id"
     t.index ["enrollment_code"], name: "index_course_membership_periods_on_enrollment_code", unique: true
@@ -381,7 +382,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "student_identifier"
-    t.uuid "uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "first_paid_at"
     t.boolean "is_paid", default: false, null: false
     t.boolean "is_comped", default: false, null: false
@@ -400,7 +401,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.integer "course_profile_course_id", null: false
     t.integer "course_membership_period_id", null: false
     t.integer "entity_role_id", null: false
-    t.uuid "uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -445,7 +446,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.integer "cloned_from_id"
     t.boolean "is_preview", null: false
     t.boolean "is_excluded_from_salesforce", default: false, null: false
-    t.uuid "uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.boolean "is_test", default: false, null: false
     t.boolean "does_cost", default: false, null: false
     t.integer "estimated_student_count"
@@ -614,7 +615,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.string "request_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.index ["created_at"], name: "index_lms_trusted_launch_data_on_created_at"
     t.index ["uuid"], name: "index_lms_trusted_launch_data_on_uuid", unique: true
   end
@@ -682,7 +683,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.datetime "updated_at", null: false
     t.integer "faculty_status", default: 0, null: false
     t.string "salesforce_contact_id"
-    t.uuid "uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "role", default: 0, null: false
     t.citext "support_identifier"
     t.boolean "is_test"
@@ -985,7 +986,6 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.datetime "updated_at", null: false
     t.index ["content_exercise_id"], name: "index_tasks_practice_questions_on_content_exercise_id"
     t.index ["entity_role_id", "content_exercise_id"], name: "index_question_on_role_and_exercise", unique: true
-    t.index ["entity_role_id"], name: "index_tasks_practice_questions_on_entity_role_id"
     t.index ["tasks_tasked_exercise_id"], name: "index_tasks_practice_questions_on_tasks_tasked_exercise_id"
   end
 
@@ -1052,7 +1052,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.string "correct_answer_id"
     t.boolean "is_in_multipart", default: false, null: false
     t.string "question_id", null: false
-    t.uuid "uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "question_index", null: false
     t.jsonb "response_validation"
     t.text "content"
@@ -1159,7 +1159,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.integer "completed_on_time_exercise_steps_count", default: 0, null: false
     t.integer "completed_on_time_steps_count", default: 0, null: false
     t.datetime "hidden_at"
-    t.uuid "uuid", default: -> { "public.gen_random_uuid()" }, null: false
+    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.integer "content_ecosystem_id", null: false
     t.boolean "spes_are_assigned", default: false, null: false
     t.boolean "pes_are_assigned", default: false, null: false
@@ -1227,6 +1227,13 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_profile_id"], name: "index_user_researchers_on_user_profile_id", unique: true
+  end
+
+  create_table "user_suggestions", force: :cascade do |t|
+    t.text "content", null: false
+    t.integer "topic", default: 0, null: false
+    t.bigint "user_profile_id", null: false
+    t.index ["user_profile_id"], name: "index_user_suggestions_on_user_profile_id"
   end
 
   create_table "user_tour_views", id: :serial, force: :cascade do |t|
@@ -1336,6 +1343,7 @@ ActiveRecord::Schema.define(version: 2021_02_08_180911) do
   add_foreign_key "user_customer_services", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_profiles", "openstax_accounts_accounts", column: "account_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_researchers", "user_profiles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "user_suggestions", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_tour_views", "user_profiles"
   add_foreign_key "user_tour_views", "user_tours"
 end
