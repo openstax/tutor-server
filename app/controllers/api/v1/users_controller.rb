@@ -39,7 +39,7 @@ class Api::V1::UsersController < Api::V1::ApiController
                      tutor_api_url: api_root_url,
                      flash: flash.to_hash,
                      is_impersonating: session[:admin_user_id].present?,
-                     is_teacher: current_human_user.roles.any?(&:teacher?)
+                     is_teacher: current_human_user.can_create_courses?
                    }
     end
   end
