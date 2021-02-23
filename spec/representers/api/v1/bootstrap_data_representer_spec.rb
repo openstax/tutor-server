@@ -46,6 +46,7 @@ RSpec.describe Api::V1::BootstrapDataRepresenter, type: :representer do
         },
         ui_settings: {},
         is_impersonating: false,
+        offerings: Catalog::Models::Offering.without_deleted.map {|o| Api::V1::OfferingRepresenter.new(o).as_json },
         flash: { alert: 'Nothing!' }
       }.deep_stringify_keys
     )
