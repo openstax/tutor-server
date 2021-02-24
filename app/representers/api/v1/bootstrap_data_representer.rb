@@ -104,5 +104,13 @@ module Api::V1
                readable: true,
                writeable: false,
                getter: ->(user_options:, **) { CollectCourseInfo[user: self] }
+
+    collection :offerings,
+               extend: Api::V1::OfferingRepresenter,
+               readable: true,
+               writeable: false,
+               getter: ->(user_options:, **) {
+                 user_options&.[](:is_teacher) ? Catalog::Models::Offering.without_deleted : []
+               }
   end
 end
