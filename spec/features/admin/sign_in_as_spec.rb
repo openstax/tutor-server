@@ -8,8 +8,8 @@ RSpec.feature 'Administrator' do
     admin = FactoryBot.create(:user_profile, :administrator)
 
     # Not logged in
-    visit dashboard_path
-    expect(current_path).not_to eq(dashboard_path)
+    visit courses_path
+    expect(current_path).not_to eq(courses_path)
 
     # Pretend we are an admin
     stub_current_user(admin)
@@ -20,14 +20,14 @@ RSpec.feature 'Administrator' do
     click_button 'Search'
     click_link 'Sign in as', match: :first
 
-    expect(current_path).to eq(dashboard_path)
+    expect(current_path).to eq(courses_path)
 
     # Remove the admin user stub so we can see the changes
     unstub_current_user
 
     # Still logged in
-    visit dashboard_path
-    expect(current_path).to eq(dashboard_path)
+    visit courses_path
+    expect(current_path).to eq(courses_path)
 
     # a_user is not an admin so should not be able to see the admin console
     expect { visit admin_root_path }.to raise_error(SecurityTransgression)

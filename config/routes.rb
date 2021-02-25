@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     # but we define them so we can use them as helpers that point to certain FE pages
     scope action: :index do
       # routes that are handled by the FE
-      get :dashboard
+      get :courses, as: :courses
       get :'course/:id', as: :course_dashboard
       get :'course/:course_id/task/:task_id', as: :student_task
       get :'course/:course_id/assignment/review/:task_id', as: :teacher_task_plan_review

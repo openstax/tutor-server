@@ -43,7 +43,7 @@ RSpec.describe ShortCodesController, type: :request do
   it 'redirects users to relative urls' do
     sign_in! student
     get short_code_url(relative_url.code)
-    expect(response).to redirect_to(dashboard_path)
+    expect(response).to redirect_to(courses_path)
   end
 
   it 'redirects teachers to edit task plan page' do
