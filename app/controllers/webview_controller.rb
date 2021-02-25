@@ -10,7 +10,7 @@ class WebviewController < ApplicationController
     if params[:cc] == "1"
       redirect_to 'http://cc.openstax.org'
     elsif current_user.is_signed_in?
-      redirect_to courses_path
+      redirect_to dashboard_path
     end
   end
 

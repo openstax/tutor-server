@@ -125,7 +125,7 @@ RSpec.describe WebviewController, type: :request do
     it 'lets teachers signup' do
       get non_student_signup_url
 
-      expect(redirect_path).to eq courses_path
+      expect(redirect_path).to eq dashboard_path
       expect(redirect_query_hash).to include(block_sign_up: 'false', straight_to_sign_up: 'true')
 
       follow_redirect!
