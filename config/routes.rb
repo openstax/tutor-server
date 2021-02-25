@@ -29,7 +29,7 @@ Rails.application.routes.draw do
 
   mount OpenStax::Accounts::Engine => :accounts
 
-  get :non_student_signup, to: redirect('/dashboard?block_sign_up=false&straight_to_sign_up=true')
+  get :non_student_signup, to: redirect('/courses?block_sign_up=false&straight_to_sign_up=true')
 
   # Short codes
   get :'@/:short_code(/:human_readable)', to: 'short_codes#redirect', as: :short_code
