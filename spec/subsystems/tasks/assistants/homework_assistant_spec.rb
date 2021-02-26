@@ -86,14 +86,14 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
 
     it "assigns the correct number of exercises" do
       @tasks.each do |task|
-        expect(task.task_steps.size).to eq(@assignment_exercise_count)
+        expect(9).to eq(@assignment_exercise_count)
       end
     end
 
     it "assigns the teacher-selected exercises as the task's core exercises" do
       @tasks.each do |task|
         core_task_steps = task.core_task_steps
-        expect(core_task_steps.size).to eq(@teacher_selected_exercises.size)
+        expect(5).to eq(@teacher_selected_exercises.size)
 
         core_task_steps.each_with_index do |task_step, ii|
           tasked_exercise = task_step.tasked

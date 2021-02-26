@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     # but we define them so we can use them as helpers that point to certain FE pages
     scope action: :index do
       # routes that are handled by the FE
-      get :dashboard
+      get :courses, as: :dashboard
       get :'course/:id', as: :course_dashboard
       get :'course/:course_id/task/:task_id', as: :student_task
       get :'course/:course_id/assignment/review/:task_id', as: :teacher_task_plan_review
@@ -29,7 +29,7 @@ Rails.application.routes.draw do
 
   mount OpenStax::Accounts::Engine => :accounts
 
-  get :non_student_signup, to: redirect('/dashboard?block_sign_up=false&straight_to_sign_up=true')
+  get :non_student_signup, to: redirect('/courses?block_sign_up=false&straight_to_sign_up=true')
 
   # Short codes
   get :'@/:short_code(/:human_readable)', to: 'short_codes#redirect', as: :short_code

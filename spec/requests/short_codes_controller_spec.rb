@@ -4,7 +4,7 @@ RSpec.describe ShortCodesController, type: :request do
   let(:user) { FactoryBot.create(:user_profile) }
 
   let(:absolute_url) { FactoryBot.create(:short_code_short_code, uri: 'https://cnx.org') }
-  let(:relative_url) { FactoryBot.create(:short_code_short_code, uri: '/dashboard') }
+  let(:relative_url) { FactoryBot.create(:short_code_short_code, uri: '/courses') }
 
   let(:course) { FactoryBot.create :course_profile_course }
   let(:period) { FactoryBot.create :course_membership_period, course: course }
