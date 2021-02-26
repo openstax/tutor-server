@@ -109,8 +109,6 @@ module Api::V1
                extend: Api::V1::OfferingRepresenter,
                readable: true,
                writeable: false,
-               getter: ->(user_options:, **) {
-                 user_options&.[](:is_teacher) ? Catalog::Models::Offering.without_deleted : []
-               }
+               getter: ->(*) { Catalog::Models::Offering.without_deleted }
   end
 end
