@@ -103,7 +103,7 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
           expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
           expect(tasked_exercise.url).to eq(exercise.url)
           expect(tasked_exercise.title).to eq(exercise.title)
-          expect(tasked_exercise.content).to eq(exercise.content)
+          expect(JSON.parse(tasked_exercise.content)).to eq(JSON.parse(exercise.content))
         end
       end
     end
