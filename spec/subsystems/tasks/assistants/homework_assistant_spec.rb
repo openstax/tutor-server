@@ -103,7 +103,10 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
           expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
           expect(tasked_exercise.url).to eq(exercise.url)
           expect(tasked_exercise.title).to eq(exercise.title)
-          expect(JSON.parse(tasked_exercise.content)).to eq(JSON.parse(exercise.content))
+
+          # This check is not valid for multipart exercises
+          expect(JSON.parse(tasked_exercise.content)).to eq(JSON.parse(exercise.content)) \
+            unless exercise.is_multipart?
         end
       end
     end

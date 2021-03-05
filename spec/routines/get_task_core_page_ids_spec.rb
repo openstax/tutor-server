@@ -2,8 +2,6 @@ require 'rails_helper'
 
 RSpec.describe GetTaskCorePageIds, type: :routine do
   before do
-
-
     homework_assistant = FactoryBot.create(
       :tasks_assistant, code_class_name: 'Tasks::Assistants::HomeworkAssistant'
     )
