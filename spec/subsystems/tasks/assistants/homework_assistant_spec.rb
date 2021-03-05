@@ -95,18 +95,30 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
         core_task_steps = task.core_task_steps
         expect(5).to eq(@teacher_selected_exercises.size)
 
-        core_task_steps.each_with_index do |task_step, ii|
+        exercise_index = 0
+        question_index = 0
+        core_task_steps.each do |task_step|
           tasked_exercise = task_step.tasked
 
-          exercise = @teacher_selected_exercises[ii]
+          exercise = @teacher_selected_exercises[exercise_index]
 
           expect(tasked_exercise).to be_a(Tasks::Models::TaskedExercise)
           expect(tasked_exercise.url).to eq(exercise.url)
           expect(tasked_exercise.title).to eq(exercise.title)
 
-          # This check is not valid for multipart exercises
-          expect(JSON.parse(tasked_exercise.content)).to eq(JSON.parse(exercise.content)) \
-            unless exercise.is_multipart?
+          tasked_content = JSON.parse(tasked_exercise.content)
+          exercise_content = JSON.parse(exercise.content)
+          expect(tasked_content.except('questions')).to eq(exercise_content.except('questions'))
+          expect(tasked_content['questions'].first).to(
+            eq(exercise_content['questions'][question_index])
+          )
+
+          if exercise_content['questions'].size > question_index + 1
+            question_index += 1
+          else
+            exercise_index += 1
+            question_index = 0
+          end
         end
       end
     end
