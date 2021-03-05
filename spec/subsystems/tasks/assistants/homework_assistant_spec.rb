@@ -109,8 +109,8 @@ RSpec.describe Tasks::Assistants::HomeworkAssistant, type: :assistant, vcr: VCR_
           tasked_content = JSON.parse(tasked_exercise.content)
           exercise_content = JSON.parse(exercise.content)
           expect(tasked_content.except('questions')).to eq(exercise_content.except('questions'))
-          expect(tasked_content['questions'].first).to(
-            eq(exercise_content['questions'][question_index])
+          expect(tasked_content['questions']).to(
+            eq([ exercise_content['questions'][question_index] ])
           )
 
           if exercise_content['questions'].size > question_index + 1
