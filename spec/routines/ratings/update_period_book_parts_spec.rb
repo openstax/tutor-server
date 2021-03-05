@@ -91,6 +91,19 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
     )
   end
 
+  it 'does not error for dropped WRQs that were previously completed' do
+    task = tasks.first.reload
+    task_plan = task.task_plan
+    wrq = task.task_steps.first.tasked
+    wrq.update_attribute :answer_ids, []
+    wrq.task_step.complete
+    wrq.task_step.valid? # For whatever reason we have to call this or the task_step won't save
+    wrq.task_step.save!
+    FactoryBot.create :tasks_dropped_question, task_plan: task_plan, question_id: wrq.question_id
+
+    described_class.call period: period.reload, task: task.reload, run_at_due: false
+  end
+
   it "requeues itself if run_at_due and the task's due_at changed" do
     task = tasks.first
     task.update_attribute :due_at, Time.current + 1.month
