@@ -29,15 +29,40 @@ VCR::Configuration.class_exec do
     end
   end
 
-  def filter_request_header(header)
-    filter_sensitive_data("<#{header}>") do |interaction|
-      interaction.request.headers[header]&.first
+  # Reference: https://github.com/vcr/vcr/blob/master/lib/vcr/configuration.rb#L225
+  def filter_request_header(header, tag = nil)
+    before_record(tag) do |interaction|
+      (interaction.request.headers[header] || []).each_with_index do |orig_text, index|
+        placeholder = "<#{header} #{index + 1}>"
+        log "before_record: replacing #{orig_text.inspect} with #{placeholder.inspect}"
+        interaction.filter!(orig_text, placeholder)
+      end
+    end
+
+    before_playback(tag) do |interaction|
+      (interaction.request.headers[header] || []).each_with_index do |orig_text, index|
+        placeholder = "<#{header} #{index + 1}>"
+        log "before_playback: replacing #{orig_text.inspect} with #{placeholder.inspect}"
+        interaction.filter!(placeholder, orig_text)
+      end
     end
   end
 
-  def filter_response_header(header)
-    filter_sensitive_data("<#{header}>") do |interaction|
-      interaction.response.headers[header]&.first
+  def filter_response_header(header, tag = nil)
+    before_record(tag) do |interaction|
+      (interaction.response.headers[header] || []).each_with_index do |orig_text, index|
+        placeholder = "<#{header} #{index + 1}>"
+        log "before_record: replacing #{orig_text.inspect} with #{placeholder.inspect}"
+        interaction.filter!(orig_text, placeholder)
+      end
+    end
+
+    before_playback(tag) do |interaction|
+      (interaction.response.headers[header] || []).each_with_index do |orig_text, index|
+        placeholder = "<#{header} #{index + 1}>"
+        log "before_playback: replacing #{orig_text.inspect} with #{placeholder.inspect}"
+        interaction.filter!(placeholder, orig_text)
+      end
     end
   end
 end
@@ -48,8 +73,7 @@ VCR.configure do |c|
   c.configure_rspec_metadata!
   c.allow_http_connections_when_no_cassette = Rails.env.development?
   c.ignore_localhost = true
-  c.ignore_request { |request| Addressable::URI.parse(request.uri).path == '/oauth/token' } \
-    if ENV['CI'] || Rails.env.development?
+  c.ignore_request { |request| Addressable::URI.parse(request.uri).path == '/oauth/token' }
   c.preserve_exact_body_bytes { |http_message| !http_message.body.valid_encoding? }
 
   # Turn on debug logging, works in Travis too tho in full runs results
@@ -81,6 +105,8 @@ VCR.configure do |c|
   end
 
   c.filter_request_header 'Authorization'
+  c.filter_request_header 'Cookie'
+  c.filter_response_header 'Set-Cookie'
 
   ['X-Amz-Request-Id', 'X-Amz-Id-2'].each do |response_header|
     c.filter_response_header response_header

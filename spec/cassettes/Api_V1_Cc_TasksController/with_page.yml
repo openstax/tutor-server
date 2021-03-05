@@ -276,8 +276,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=OTdrUm84RUdPcVUxMXo3ZzlIYjBta3E2MVI0ZlZpQVBsRGxVQnE2YXZYT1pmbFQrWTJnNXhCa3Y2MWhHT0hQMEFMUnpsWkJoNVlGRVBxemJrQ3JYblE9PS0teHZqT093ZEV1QU1OYkVzNzVpdlQ4Zz09--f3300d0f65334d98a041bc8e66ca8ad4e5ba3512;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - 19ba0674-4c66-465f-b9d0-1ef674d3e5f2
       X-Runtime:

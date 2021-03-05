@@ -234,8 +234,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=TlNiNlRTZHVKM1YxNEdJb3g3YnFzUlgwRE10VGtaYUhXM3ptamZKcGdVeWNCMlNpRmYxS0FBekljZkZmbkVDYllQbU9lUkMyWnlqMWp5clpDR0E0V3c9PS0tNEEydWcvRlJuU25Ia3UyeHp0SVNTZz09--3218bb7557848757aca291b66248508c8861fd33;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - 9703c7f5-8150-4f82-85c4-4a5b2b6ec068
       X-Runtime:
@@ -1430,8 +1429,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=bDQ5OVp3UE1DVnMrZzM1Sm1QQXh0QnQ0VTBUZGlzMFRqRWV4alg3U09BS3VjQ25jeGZ2QURYZGRFSFNJWk5zU1Eyak9HYVB0NkUzZjMzUnlmL2dISVE9PS0tK2VZVmZCUXBRZ0F4WkdDdUszRDRyUT09--0c2ebb6473b247a4aaf3293169921e544fc825cd;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - 197aaf93-c269-4c16-b49b-dab5037cb9d1
       X-Runtime:
@@ -2768,8 +2766,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=WnRHMmlSMjJ5NEhHTEZETHY4dWpiU1FtWmhoOEdPVUdObEs2U1I2cVBUZTYrS1dyNklsdXZKZVYzemx2Zmcvdm5iV2x4dXVjWi90enZNc0M2UzdTdHc9PS0tVDBBQXptRXJPWWNocUplMFpOZVJXQT09--50865d6baf2f40877ebc46dd142477d9ea01146a;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - ed93c69e-2e83-4162-b4bb-9d34688fbd3a
       X-Runtime:

@@ -61,7 +61,7 @@ http_interactions:
 
         The resource was found at /contents/de43ae15-d1fa-4265-98f6-9820ff31a270@9; you should be redirected automatically.
 
-    http_version: 
+    http_version:
   recorded_at: Thu, 11 Feb 2021 20:32:08 GMT
 - request:
     method: get
@@ -337,7 +337,7 @@ http_interactions:
         "Created module", "version": "1", "revised": "2011-12-21T17:43:32Z", "publisher":
         {"surname": "Physics", "suffix": "", "firstname": "College", "title": "",
         "fullname": "OSC Physics Maintainer", "id": "cnxcap"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 11 Feb 2021 20:32:08 GMT
 - request:
     method: post
@@ -351,7 +351,7 @@ http_interactions:
       Accept:
       - application/vnd.openstax.v1
       Authorization:
-      - "<Authorization>"
+      - "<Authorization 1>"
       Content-Type:
       - application/x-www-form-urlencoded
       Accept-Encoding:
@@ -390,8 +390,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=ta%2BhmLkwfltNcn4B7DujUDBepIfkK4o5%2BefPh3b9MGJlPK6HEWA91VNGIjJNvPJ%2FXWisKa6FsCc%2FTIzbQHoAek9XKX83B8go1VeUhkLT1jDrZRyYRhMUntrpv%2ByemUbTS4LrHin8W3c0NmoSpNL0jG6DUfxT4cXYa0XOXqBBdU%2BW6af1DeYh8lIW--U8W3NUOrFbX2MI4K--Y2Z0vH8XAsPrxZNkCjding%3D%3D;
-        path=/; HttpOnly; SameSite=Lax
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - 6b383aa4-882a-4f8b-9f0e-a6a1d47a40c0
       X-Runtime:
@@ -419,6 +418,6 @@ http_interactions:
         or False: Force is a scalar quantity.","answers":[{"id":498593,"content_html":"True","correctness":"0.0"},{"id":498594,"content_html":"False","correctness":"1.0"}],"hints":[],"formats":["multiple-choice"],"combo_choices":[],"collaborator_solutions":[{"images":[],"solution_type":"detailed","content_html":"This
         is False. Force has both a magnitude and a direction. Thus, it is a vector
         quantity."}],"community_solutions":[]}],"delegations":[{"delegator_id":1,"delegate_id":64,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":false,"can_read":true,"can_update":false},{"delegator_id":1,"delegate_id":86,"delegate_type":"User","can_assign_authorship":true,"can_assign_copyright":false,"can_read":false,"can_update":false},{"delegator_id":1,"delegate_id":16,"delegate_type":"User","can_assign_authorship":true,"can_assign_copyright":false,"can_read":false,"can_update":false},{"delegator_id":1,"delegate_id":17,"delegate_type":"User","can_assign_authorship":true,"can_assign_copyright":false,"can_read":false,"can_update":false},{"delegator_id":1,"delegate_id":18,"delegate_type":"User","can_assign_authorship":true,"can_assign_copyright":false,"can_read":false,"can_update":false},{"delegator_id":1,"delegate_id":19,"delegate_type":"User","can_assign_authorship":true,"can_assign_copyright":false,"can_read":false,"can_update":false},{"delegator_id":1,"delegate_id":22,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":false,"can_read":true,"can_update":false},{"delegator_id":1,"delegate_id":91,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":false,"can_read":true,"can_update":false},{"delegator_id":1,"delegate_id":6,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":false,"can_read":true,"can_update":false},{"delegator_id":2,"delegate_id":64,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":false,"can_read":true,"can_update":false},{"delegator_id":2,"delegate_id":86,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":true,"can_read":false,"can_update":false},{"delegator_id":2,"delegate_id":16,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":true,"can_read":false,"can_update":false},{"delegator_id":2,"delegate_id":17,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":true,"can_read":false,"can_update":false},{"delegator_id":2,"delegate_id":18,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":true,"can_read":false,"can_update":false},{"delegator_id":2,"delegate_id":19,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":true,"can_read":false,"can_update":false},{"delegator_id":2,"delegate_id":22,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":false,"can_read":true,"can_update":false},{"delegator_id":2,"delegate_id":91,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":false,"can_read":true,"can_update":false},{"delegator_id":2,"delegate_id":6,"delegate_type":"User","can_assign_authorship":false,"can_assign_copyright":false,"can_read":true,"can_update":false}],"versions":[5,4,3,2,1]}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 11 Feb 2021 20:32:09 GMT
 recorded_with: VCR 4.0.0

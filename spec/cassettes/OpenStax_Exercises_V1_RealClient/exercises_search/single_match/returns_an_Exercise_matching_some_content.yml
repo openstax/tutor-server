@@ -43,8 +43,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=Wm1qbzFURG4zTkhlTzRwR2IzZXhETHNYTUw3WGk2VHZnd2VtcDg3SkcwNzErQVVCRVpjMWRCWXlIS25NWi9QRjRTWkE0SlRrUjk0RFVrNWgrTllqK0E9PS0tanpZVjVucnlYc21uTmhVM1pXa2NrZz09--e9f5cc6bedc2789485c56740faa526c79ce07911;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - f565213f-c424-4565-925a-ebda01a33f71
       X-Runtime:
@@ -66,6 +65,6 @@ http_interactions:
         a body is studied under kinematics."}],"solutions":[{"uid":"2060@1","number":2060,"version":1,"published_at":"2015-09-16T20:13:57.253Z","editors":[],"authors":[{"user_id":1,"name":"OpenStax"}],"copyright_holders":[{"user_id":2,"name":"Rice
         University"}],"derived_from":[],"attachments":[],"solution_type":"detailed","content_html":"Kinematics
         is the study of motion."}],"hints":[],"formats":["free-response","multiple-choice"],"combo_choices":[]}]}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 28 Oct 2015 20:06:38 GMT
 recorded_with: VCR 2.9.3

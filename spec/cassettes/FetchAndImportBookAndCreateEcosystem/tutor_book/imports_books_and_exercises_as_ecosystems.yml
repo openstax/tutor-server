@@ -185,7 +185,7 @@ http_interactions:
         1 and 2", "version": "1.1", "revised": "2015-05-29T19:29:09Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:05 GMT
 - request:
     method: get
@@ -329,7 +329,7 @@ http_interactions:
         "version": "1", "revised": "2015-05-29T19:05:07Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:05 GMT
 - request:
     method: get
@@ -865,7 +865,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:07:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:05 GMT
 - request:
     method: get
@@ -1762,7 +1762,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-05-29T19:10:15Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:05 GMT
 - request:
     method: get
@@ -1881,7 +1881,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:17:14Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:06 GMT
 - request:
     method: get
@@ -2203,7 +2203,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:18:52Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:06 GMT
 - request:
     method: get
@@ -2647,7 +2647,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:21:00Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:06 GMT
 - request:
     method: get
@@ -3236,7 +3236,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:22:50Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:06 GMT
 - request:
     method: get
@@ -3959,7 +3959,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:27:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:06 GMT
 - request:
     method: post
@@ -4006,8 +4006,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=UDc3ZUw5b0ZidEVoSG9vZS9IbnpEbjNpMHRIUTBlL2k2dUMrZ2szSnZqWTMxN0cwMDA2ZjN1Z2hjYm5CL3ZwZk85ak90UyswZDJFNXh1aGJVK3B0N0E9PS0tWUZmalNneSsvMURxTitLY3puWUM0dz09--e68fd9faf31e1c5897d76efe8462d4737b44808c;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - 4610d2dc-5567-4a64-ab50-0ad6c33d81a9
       X-Runtime:
@@ -15537,6 +15536,6 @@ http_interactions:
         Tn08L3NwYW4+In1dLCJjb21tdW5pdHlfc29sdXRpb25zIjpbXSwiaGludHMi
         OltdLCJmb3JtYXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9p
         Y2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:19 GMT
 recorded_with: VCR 2.9.3
