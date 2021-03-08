@@ -1066,6 +1066,7 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
           is_access_switchable: be_in([true, false]),
           periods: [a_kind_of(Hash)] * @course.num_sections,
           students: [],
+          teachers: [a_kind_of(Hash)],
           roles: [a_kind_of(Hash)],
           is_lms_enabling_allowed: true,
           ecosystem_id: @course.offering.content_ecosystem_id.to_s,
@@ -1083,9 +1084,10 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
 
         expect(response).to have_http_status(:success)
         new_course = response.body_as_hash
-        # the new course will have a different id and uuid
+        # the new course will have a different id, uuid and teachers
         expect(new_course[:id]).not_to eq(expected_response[:id])
         expect(new_course[:uuid]).not_to eq(expected_response[:uuid])
+        expect(new_course[:teachers]).not_to eq(expected_response[:teachers])
         # but will otherwise be the same
         expect(new_course).to match expected_response
       end

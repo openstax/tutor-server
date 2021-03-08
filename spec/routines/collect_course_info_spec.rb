@@ -57,6 +57,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           periods: [],
           spy_info: { research_studies: [] },
           students: [],
+          teachers: [],
           teacher_profiles: course_1.teacher_profiles,
           roles: []
         }
@@ -114,6 +115,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           periods: [],
           spy_info: { research_studies: [] },
           students: [],
+          teachers: [],
           teacher_profiles: course_1.teacher_profiles,
           roles: []
         },
@@ -154,6 +156,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
           periods: [],
           spy_info: { research_studies: [] },
           students: [],
+          teachers: [],
           teacher_profiles: course_1.teacher_profiles,
           roles: []
         }
@@ -167,6 +170,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
     context "when the user is a teacher" do
       let!(:teacher_role)         { AddUserAsCourseTeacher[user: user_1, course: course_1] }
       let!(:teacher_student_role) { CreateOrResetTeacherStudent[user: user_1, period: period_1] }
+      let(:teacher)               { teacher_role.teacher }
 
       before { period_2.destroy! }
 
@@ -209,6 +213,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             periods: a_collection_containing_exactly(period_1, period_2),
             spy_info: { research_studies: [] },
             students: [],
+            teachers: [ teacher ],
             teacher_profiles: course_1.teacher_profiles,
             roles: a_collection_containing_exactly(teacher_role, teacher_student_role)
           }
@@ -259,6 +264,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
             periods: [ student.period ],
             spy_info: { research_studies: [] },
             students: [ student ],
+            teachers: [],
             teacher_profiles: course_1.teacher_profiles,
             roles: [ student_role ]
           }
@@ -277,15 +283,14 @@ RSpec.describe CollectCourseInfo, type: :routine do
 
     context "when the user is a teacher and students" do
       before do
-        AddUserAsCourseTeacher[user: user_1, course: course_1]
-        result = AddUserAsPeriodStudent.call(user: user_1, period: period_1)
-        @student1 = result.outputs.student
-        result = AddUserAsPeriodStudent.call(user: user_1, period: period_2)
-        @student2 = result.outputs.student
+        @teacher = AddUserAsCourseTeacher[user: user_1, course: course_1].teacher
+        @student1 = AddUserAsPeriodStudent[user: user_1, period: period_1].student
+        @student2 = AddUserAsPeriodStudent[user: user_1, period: period_2].student
       end
 
       it "returns student info for the user" do
-        expect(Set.new result.first.students.map(&:id)).to eq Set[@student1.id, @student2.id]
+        expect(Set.new result.first.students.map(&:id)).to eq Set[ @student1.id, @student2.id ]
+        expect(Set.new result.first.teachers.map(&:id)).to eq Set[ @teacher.id ]
       end
     end
   end
