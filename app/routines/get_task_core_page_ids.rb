@@ -10,7 +10,7 @@ class GetTaskCorePageIds
 
     unloaded_task_steps = Tasks::Models::TaskStep.where(
       tasks_task_id: unloaded_tasks.map(&:id), is_core: true
-    ).pluck(:tasks_task_id, :content_page_id).group_by(&:first)
+    ).order(:number).pluck(:tasks_task_id, :content_page_id).group_by(&:first)
 
     task_id_to_core_page_ids_map = {}
     loaded_tasks.each do |task|
