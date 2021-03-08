@@ -35,6 +35,7 @@ class Ratings::UpdatePeriodBookParts
     tasked_exercises_by_id = Tasks::Models::TaskedExercise
       .select(
         :id,
+        :question_id,
         :answer_ids,
         :correct_answer_id,
         :answer_id,
