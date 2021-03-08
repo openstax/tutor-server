@@ -14,10 +14,11 @@ class CollectCourseInfo
       offering = course.offering
       roles = roles_by_course_id.fetch(course.id, [])
       students = roles.map(&:student).compact
+      teachers = roles.map(&:teacher).compact
 
       # If the user is an active teacher, return all course periods
       # Otherwise, return only the periods the user is in
-      is_teacher = roles.any? { |role| role.teacher? && !role.teacher&.deleted? }
+      is_teacher = teachers.any? { |teacher| !teacher.deleted? }
       periods = is_teacher ? course.periods : students.map(&:period)
 
       #       This routine returns the entire Course object + some extra attributes
@@ -58,6 +59,7 @@ class CollectCourseInfo
         should_reuse_preview?: course.should_reuse_preview?,
         periods: periods,
         students: students,
+        teachers: teachers,
         roles: roles,
         related_teacher_profile_ids: course.related_teacher_profile_ids,
         teacher_profiles: course.teacher_profiles,
