@@ -182,7 +182,7 @@ http_interactions:
         1 and 2", "version": "1.1", "revised": "2015-05-29T19:29:09Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:26 GMT
 - request:
     method: get
@@ -326,7 +326,7 @@ http_interactions:
         "version": "1", "revised": "2015-05-29T19:05:07Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:27 GMT
 - request:
     method: get
@@ -860,7 +860,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:07:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:27 GMT
 - request:
     method: get
@@ -1757,7 +1757,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-05-29T19:10:15Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:27 GMT
 - request:
     method: get
@@ -1876,7 +1876,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:17:14Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:27 GMT
 - request:
     method: get
@@ -2198,7 +2198,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:18:52Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:27 GMT
 - request:
     method: get
@@ -2642,7 +2642,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:21:00Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:28 GMT
 - request:
     method: get
@@ -3231,7 +3231,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:22:50Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:28 GMT
 - request:
     method: get
@@ -3954,7 +3954,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:27:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:28 GMT
 - request:
     method: post
@@ -4001,8 +4001,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=NWxWeVFlTFlXbHUyODNHWk5DY1UxTW16bHV3YmJnc2ZpdmIybWl1SmNGVzZsMmV1dk8wU2hGK053QTZSRVBEbDdLMWxGMS9TRng1U0gwbERpZ3duQWc9PS0tV0N4QTdPeG80OHVjWS9Tc1pTS1hzdz09--fb02bd6fb9bdf5429a95b2400ec475263aa21f1a;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - d71653a9-f5e9-4162-b329-ba1a89e19f2f
       X-Runtime:
@@ -15532,6 +15531,6 @@ http_interactions:
         Tn08L3NwYW4+In1dLCJjb21tdW5pdHlfc29sdXRpb25zIjpbXSwiaGludHMi
         OltdLCJmb3JtYXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9p
         Y2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:41 GMT
 recorded_with: VCR 2.9.3

@@ -95,7 +95,9 @@ RSpec.describe GetTaskCorePageIds, type: :routine do
     tasks.each do |task|
       plan = task.task_plan
       page_ids = if plan.homework?
-                   plan.settings['exercises'].map{|e| Content::Models::Exercise.find(e['id']).page.id }.uniq
+                   plan.settings['exercises'].map do |exercise|
+                     Content::Models::Exercise.find(exercise['id']).page.id
+                   end.uniq
                  else
                    task.task_plan.settings['page_ids'].map(&:to_i)
                  end

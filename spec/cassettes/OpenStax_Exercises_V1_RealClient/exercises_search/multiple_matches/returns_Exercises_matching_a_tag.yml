@@ -43,8 +43,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=SzVXQUo5UG1xVUw1NXZONExSOHB2WW1oYkt0Y1M3RnpXN2NYSk9ueU11bm1FY2NFUGRuSGdPeDcwNythdDdoRXpaWGZ3OGkwV09aTXVWcklvbktvWEE9PS0tMWtES0pNdFppTGpTVzZPNlNiODludz09--43e1e7249b8bd05583ee6f750dd22c88054a7369;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - 663316b0-bb6c-43dc-a16e-accda48b18b1
       X-Runtime:
@@ -714,6 +713,6 @@ http_interactions:
         Yjwvc3Bhbj4uIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsiZnJlZS1yZXNw
         b25zZSIsIm11bHRpcGxlLWNob2ljZSJdLCJjb21ib19jaG9pY2VzIjpbXX1d
         fV19
-    http_version: 
+    http_version:
   recorded_at: Wed, 28 Oct 2015 20:06:50 GMT
 recorded_with: VCR 2.9.3

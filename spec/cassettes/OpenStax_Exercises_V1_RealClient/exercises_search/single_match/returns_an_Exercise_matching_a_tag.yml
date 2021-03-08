@@ -43,8 +43,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=R3Q0YUZHU3EvQUV5TU1ndGdxOXBzQy93WnJnWXdxUnNidWMwZmhVYVI3S01aM3R3NDlBWVF3K1psdFJIRjRNSmZVY2VrUW9zSFEwS0g0N3A2UVZZc1E9PS0tQTE3Qyt4TDZWM01rQXN1bXRvTThLQT09--39a3b8c0a39a57ad267b893b3216847001611798;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - 880fe44b-0f16-43ff-ba15-ffc05e48dd4d
       X-Runtime:
@@ -72,6 +71,6 @@ http_interactions:
         University"}],"derived_from":[],"attachments":[],"solution_type":"detailed","content_html":"No.
         The gravitational force can act between objects without the objects touching
         each other."}],"hints":[],"formats":["free-response","multiple-choice"],"combo_choices":[]}]}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 28 Oct 2015 20:06:38 GMT
 recorded_with: VCR 2.9.3

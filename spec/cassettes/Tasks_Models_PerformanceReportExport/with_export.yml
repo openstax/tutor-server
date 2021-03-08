@@ -24,7 +24,7 @@ http_interactions:
       X-Amz-Decoded-Content-Length:
       - '12425'
       Authorization:
-      - "<Authorization>"
+      - "<Authorization 1>"
   response:
     status:
       code: 200

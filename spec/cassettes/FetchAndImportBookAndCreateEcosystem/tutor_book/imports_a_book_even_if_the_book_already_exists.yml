@@ -185,7 +185,7 @@ http_interactions:
         1 and 2", "version": "1.1", "revised": "2015-05-29T19:29:09Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:45 GMT
 - request:
     method: get
@@ -329,7 +329,7 @@ http_interactions:
         "version": "1", "revised": "2015-05-29T19:05:07Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:45 GMT
 - request:
     method: get
@@ -865,7 +865,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:07:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:45 GMT
 - request:
     method: get
@@ -1762,7 +1762,7 @@ http_interactions:
         module", "version": "1", "revised": "2015-05-29T19:10:15Z", "publisher": {"surname":
         "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "", "fullname":
         "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:45 GMT
 - request:
     method: get
@@ -1881,7 +1881,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:17:14Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:46 GMT
 - request:
     method: get
@@ -2203,7 +2203,7 @@ http_interactions:
         "Created, imported module for editing", "version": "1", "revised": "2015-05-29T19:18:52Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:46 GMT
 - request:
     method: get
@@ -2647,7 +2647,7 @@ http_interactions:
         module for editing", "version": "1", "revised": "2015-05-29T19:21:00Z", "publisher":
         {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor", "title": "",
         "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:46 GMT
 - request:
     method: get
@@ -3236,7 +3236,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:22:50Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:47 GMT
 - request:
     method: get
@@ -3959,7 +3959,7 @@ http_interactions:
         imported module for editing", "version": "1", "revised": "2015-05-29T19:27:11Z",
         "publisher": {"surname": "HSPhysics", "suffix": null, "firstname": "Tutor",
         "title": "", "fullname": "Tutor HSPhysics", "id": "tutor_hsphysics"}}]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:21:47 GMT
 - request:
     method: post
@@ -4006,8 +4006,7 @@ http_interactions:
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
-      - _exercises_session=V2ZkeXd5N1hGYXcvSnl0RElLbStLSXU4VlBzSUdXNE90bFFKYkphWXhXeVM5dElhdDkxc0ozbFpwY2tUbjJoUDdtOCt0bHZNUUdXUmhvcnNacVliRnc9PS0tQ1BFRHhDaGRlNmhRK3FKZDhHSUxYQT09--89e93f7cbac55e4bdd22c9702ba2e510672c8482;
-        path=/; HttpOnly
+      - "<Set-Cookie 1>"
       X-Request-Id:
       - 7bc619c4-2440-49ef-a3c1-b6ea752955cf
       X-Runtime:
@@ -15537,6 +15536,6 @@ http_interactions:
         Tn08L3NwYW4+In1dLCJjb21tdW5pdHlfc29sdXRpb25zIjpbXSwiaGludHMi
         OltdLCJmb3JtYXRzIjpbImZyZWUtcmVzcG9uc2UiLCJtdWx0aXBsZS1jaG9p
         Y2UiXSwiY29tYm9fY2hvaWNlcyI6W119XX1dfQ==
-    http_version: 
+    http_version:
   recorded_at: Thu, 07 Apr 2016 22:22:02 GMT
 recorded_with: VCR 2.9.3
