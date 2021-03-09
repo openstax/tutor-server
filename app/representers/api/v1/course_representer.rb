@@ -260,6 +260,11 @@ module Api::V1
                writeable: false,
                extend: Api::V1::StudentRepresenter
 
+    collection :teachers,
+               readable: true,
+               writeable: false,
+               extend: Api::V1::TeacherRepresenter
+
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,
@@ -279,7 +284,7 @@ module Api::V1
              type: Object,
              readable: true,
              writeable: false
-    
+
     property :code,
              type: String,
              readable: true,
