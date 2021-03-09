@@ -100,7 +100,8 @@ module Admin
     end
 
     def get_books
-      @books = Content::Models::Book.all.map {|b| ["#{b.title} - #{b.cnx_id}", b.id] }
+      @books = Content::Models::Book.all.map {|b| ["#{b.title} - #{b.cnx_id}", b.id] }.sort
+
     end
   end
 end
