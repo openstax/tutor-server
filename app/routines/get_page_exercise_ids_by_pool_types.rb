@@ -1,9 +1,16 @@
 class GetPageExerciseIdsByPoolTypes
   lev_routine transaction: :no_transaction, express_output: :exercise_ids_by_pool_type
 
+  uses_routine GetCourseEcosystem, as: :get_ecosystem
+
   protected
 
-  def exec(ecosystem:, page_ids: nil, exercise_ids: nil, pool_types: nil)
+  def exec(ecosystem: nil, course: nil, page_ids: nil, exercise_ids: nil, pool_types: nil)
+    raise ArgumentError, "Either :ecosystem or :course must be provided" \
+      if ecosystem.nil? && course.nil?
+
+    ecosystem ||= run(:get_ecosystem, course: course).outputs.ecosystem
+
     exercise_ids_set = Set.new(exercise_ids.map(&:to_i)) unless exercise_ids.nil?
     pool_types = [ pool_types ].flatten.compact.uniq
 
@@ -33,6 +40,17 @@ class GetPageExerciseIdsByPoolTypes
 
         page_exercise_ids.select { |exercise_id| exercise_ids_set.include? exercise_id }
       end
+    end
+
+    # Add teacher-created exercises if course is provided
+    return if course.nil?
+
+    teacher_exercise_ids = Content::Models::Exercise.where(
+      content_page_id: pages.map(&:id), user_profile_id: course.related_teacher_profile_ids
+    ).pluck(:id)
+
+    pool_types.each do |pool_type|
+      outputs.exercise_ids_by_pool_type[pool_type].concat teacher_exercise_ids
     end
   end
 end
