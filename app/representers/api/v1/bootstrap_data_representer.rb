@@ -109,6 +109,7 @@ module Api::V1
                extend: Api::V1::OfferingRepresenter,
                readable: true,
                writeable: false,
-               getter: ->(*) { Catalog::Models::Offering.without_deleted }
+               #  if offering's real course and preview courses are not available, put it at the bottom of the array
+               getter: ->(*) { Catalog::Models::Offering.without_deleted.sort_by { |o| o.is_available && o.is_preview_available ? 0 : 1 } }
   end
 end
