@@ -155,8 +155,12 @@ class Content::Models::Exercise < IndestructibleRecord
     coauthor_profile_ids.map {|id| profiles[id] }
   end
 
+  def authored_by_openstax?
+    user_profile_id == User::Models::OpenStaxProfile::ID
+  end
+
   def authored_by_teacher?
-    user_profile_id != User::Models::OpenStaxProfile::ID
+    !authored_by_openstax?
   end
 
   def derived_from_same_profile?

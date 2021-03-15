@@ -15,7 +15,7 @@ class Content::Routines::PopulateExercisePools
     dynamic_multipart = DYNAMIC_MPQ_UUIDS.include?(book.uuid)
 
     pages.each do |page|
-      page.exercises.each do |exercise|
+      page.exercises.filter(&:authored_by_openstax?).each do |exercise|
         # All Exercises
         page.all_exercise_ids << exercise.id
 

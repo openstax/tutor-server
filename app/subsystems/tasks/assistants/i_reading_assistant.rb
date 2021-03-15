@@ -28,6 +28,12 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
     page_ids = task_plan.core_page_ids.map(&:to_i)
     pages_by_id = ecosystem.pages.where(id: page_ids).index_by(&:id)
     @pages = pages_by_id.values_at(*page_ids).compact
+
+    @page_ids_with_teacher_exercises = Set.new(
+      Content::Models::Exercise.where(
+        content_page_id: @pages.map(&:id), user_profile_id: course.related_teacher_profile_ids
+      ).pluck(:content_page_id)
+    )
   end
 
   def build_tasks
@@ -74,7 +80,8 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
       # Don't add dynamic exercises if all the reading dynamic exercise pools are empty
       # This happens, for example, on intro pages
-      next if page.reading_dynamic_exercise_ids.empty?
+      next if !@page_ids_with_teacher_exercises.include?(page.id) &&
+              page.reading_dynamic_exercise_ids.empty?
 
       add_placeholder_steps!(
         task: task,
