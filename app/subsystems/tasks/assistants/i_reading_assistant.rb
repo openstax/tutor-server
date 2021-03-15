@@ -31,7 +31,8 @@ class Tasks::Assistants::IReadingAssistant < Tasks::Assistants::FragmentAssistan
 
     @page_ids_with_teacher_exercises = Set.new(
       Content::Models::Exercise.where(
-        content_page_id: @pages.map(&:id), user_profile_id: course.related_teacher_profile_ids
+        content_page_id: @pages.map(&:id),
+        user_profile_id: task_plan.course.related_teacher_profile_ids
       ).pluck(:content_page_id)
     )
   end
