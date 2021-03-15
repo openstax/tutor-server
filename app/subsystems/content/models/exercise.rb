@@ -63,6 +63,9 @@ class Content::Models::Exercise < IndestructibleRecord
       ).arel.exists
     )
   end
+  scope :created_by_openstax, -> do
+    where(user_profile_id: User::Models::OpenStaxProfile::ID)
+  end
   scope :created_by_teacher, -> do
     where.not(user_profile_id: User::Models::OpenStaxProfile::ID)
   end
