@@ -4,7 +4,8 @@ class Tasks::FetchPracticeWorstAreasExercises
   def exec(student:, max_num_exercises: FindOrCreatePracticeTaskRoutine::NUM_EXERCISES)
     outputs.exercises = []
 
-    ecosystem = student.course.ecosystem
+    course = student.course
+    ecosystem = course.ecosystem
 
     return if ecosystem.nil?
 
@@ -15,13 +16,25 @@ class Tasks::FetchPracticeWorstAreasExercises
       role_book_part.clue['is_real'] ? role_book_part.clue['most_likely'] : 1.5
     end.first(max_num_exercises).map(&:book_part_uuid)
 
-    exercise_ids_by_page_uuid = ecosystem
+    page_id_by_uuid = Content::Models::Page.where(uuid: page_uuids).pluck(:uuid, :id).to_h
+    page_ids = page_id_by_uuid.values_at(*page_uuids)
+
+    exercise_ids_by_page_id = ecosystem
       .pages
-      .where(uuid: page_uuids)
-      .pluck(:uuid, :practice_widget_exercise_ids)
+      .where(id: page_ids)
+      .pluck(:id, :practice_widget_exercise_ids)
       .to_h
 
-    pools = page_uuids.map { |page_uuid| exercise_ids_by_page_uuid[page_uuid] }.reject(&:blank?)
+    # Add teacher-created exercises
+    Content::Models::Exercise
+      .where(content_page_id: page_ids, user_profile_id: course.related_teacher_profile_ids)
+      .pluck(:content_page_id, :id)
+      .group_by(&:first).each do |page_id, exercises|
+      exercise_ids_by_page_id[page_id] ||= []
+      exercise_ids_by_page_id.concat exercises
+    end
+
+    pools = exercise_ids_by_page_id.values_at(*page_ids).reject(&:blank?)
     num_pools = pools.size
 
     return if num_pools == 0

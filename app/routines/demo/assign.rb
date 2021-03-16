@@ -3,6 +3,7 @@ class Demo::Assign < Demo::Base
   lev_routine transaction: :read_committed, use_jobba: true
 
   uses_routine DistributeTasks, as: :distribute_tasks
+  uses_routine FilterExcludedExercises, as: :filter_exercises
 
   protected
 
@@ -92,8 +93,11 @@ class Demo::Assign < Demo::Base
           "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"
         ) if exercise_ids.size < task_plan[:exercises_count_core]
 
-        exercises = Content::Models::Exercise.select(:id, :number_of_questions)
-                                             .where(id: exercise_ids)
+        ex = Content::Models::Exercise.select(
+          :id, :user_profile_id, :number, :version, :number_of_questions, :deleted_at
+        ).where(id: exercise_ids).to_a
+        exercises = run(:filter_exercises, exercises: ex, course: course_model).outputs.exercises
+
         attrs[:settings].merge!(
           page_ids: page_ids,
           exercises: exercises.shuffle.take(task_plan[:exercises_count_core]).map do |exercise|
