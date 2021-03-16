@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:fb="http://ogp.me/ns/fb#" lang="en" xml:lang="en">
+<html lang="en" xml:lang="en">
 <head>
   <title>OpenStax Tutor</title>
 
@@ -9,66 +9,48 @@
 
   <meta http-equiv="content-type" content="text/html; charset=UTF8" />
   <%= render 'layouts/meta' %>
-  <%= stylesheet_link_tag 'home', media: 'all' %>
-  <%= javascript_include_tag 'home' %>
+  <%= javascript_pack_tag 'homepage' %>
   <%= csrf_meta_tags %>
   <%= render 'webview/google_analytics' %>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
 </head>
 
-<body id="home" role="main" aria-label="main content">
-  <div class="body tutor-home">
+<body id="home" class="layout-<%= @homepage[:layout] %> appearance-<%= @homepage[:layout] %>" role="main" aria-label="main content">
 
-    <!-- HEADER
-         ============================================= -->
+  <div class="wrapper">
     <header>
-      <nav class="navbar navbar-default navbar-fixed-top top-nav" role="navigation">
-        <div class="container">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="#home" aria-label="home"></a>
-          </div>
-          <ul class="nav navbar-nav navbar-right links">
-            <li><a href="<%= TUTOR_HELPDESK_URL %>" target="_blank">Help</a></li>
-            <li><a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank" aria-label="rice university"></a></li>
-          </ul>
-        </div>
-        <!-- /.container -->
+      <nav role="navigation">
+        <a class="logo" href="#home" aria-label="home"></a>
       </nav>
     </header>
-    <!-- HEADER
-         ============================================= -->
 
-
-    <div class="body-container">
-      <h1>
-        Discover a new frontier in education.
+    <div class="content">
+      <h1 class="header">
+        <%= @homepage[:content][:header] %>
       </h1>
 
-      <p class="lead">
-        OpenStax Tutor Beta is courseware for college and high school courses.
-        Available for College Physics, Biology 2e, Introduction to Sociology 2e,
-        AP U.S. History, AP Physics, and AP Biology.
+      <p class="body">
+        <%= @homepage[:content][:body] %>
       </p>
 
-      <a class="learn-more" href="https://openstax.org/openstax-tutor">LEARN MORE</a>
-
-      <%= link_to 'LOG IN', openstax_accounts_login_path, class: 'login' %>
+      <div class="login-buttons">
+        <%= link_to 'Log in', openstax_accounts_login_path, class: 'button primary' %>
+        <a class="button" href="https://openstax.org/openstax-tutor">Sign up</a>
+      </div>
+      Log in with your OpenStax credentials or sign up for an account.
     </div>
 
     <footer>
       <p>
         <%= render 'layouts/copyright_terms' %>
-        &middot;
+        <span>&middot;</span>
         <a href="http://gdpr.rice.edu/" target="_blank">GDPR</a>
       </p>
       <p class="disclaimer">
         Advanced Placement® and AP® are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.
-  </p>
-</footer>
-<!-- FOOTER
-============================================= -->
-
-</div>
-
-
+      </p>
+    </footer>
+  </div>
 </body>
 </html>

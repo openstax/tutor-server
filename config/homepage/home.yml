@@ -1,0 +1,7 @@
+default:
+  appearance: default
+  layout: default
+  content:
+    header: Add your own questions or edit ours
+    body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
+          Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
