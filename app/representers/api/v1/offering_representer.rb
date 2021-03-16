@@ -86,9 +86,8 @@ class Api::V1::OfferingRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
-  
   property :number,
-           type: String,
+           type: Integer,
            readable: true,
            writeable: false
 
