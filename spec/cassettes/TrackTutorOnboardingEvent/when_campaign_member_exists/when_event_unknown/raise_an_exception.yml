@@ -2,17 +2,17 @@
 http_interactions:
 - request:
     method: post
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/CampaignMember"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/CampaignMember"
     body:
       encoding: UTF-8
-      string: '{"CampaignId":"70155000000faNkAAI","ContactId":"0035500000aJm4mAAC"}'
+      string: '{"CampaignId":"7010v000000kbaZAAQ","ContactId":"0030v00000Uz8YmAAJ"}'
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -23,28 +23,21 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:25 GMT
+      - Tue, 16 Mar 2021 21:37:56 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=O_uj2wdAEeq7ER2DQvQAAA;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:25 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=980/51000
+      - api-usage=490/5000000
       Location:
-      - "/services/data/v37.0/sobjects/CampaignMember/00v55000003s5pYAAQ"
+      - "/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzd6AAA"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -53,20 +46,20 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"00v55000003s5pYAAQ","success":true,"errors":[]}'
+      string: '{"id":"00v0v000002jzd6AAA","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:25 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:56 GMT
 - request:
     method: delete
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/CampaignMember/00v55000003s5pYAAQ"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzd6AAA"
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -77,29 +70,22 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:25 GMT
+      - Tue, 16 Mar 2021 21:37:56 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=PC9ekQdAEeq2I1sJYWcR6A;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:25 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=981/51000
+      - api-usage=491/5000000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:25 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:56 GMT
 recorded_with: VCR 4.0.0

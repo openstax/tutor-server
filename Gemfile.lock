@@ -6,6 +6,16 @@ GIT
     keyword_search (1.6.0)
 
 GIT
+  remote: https://github.com/openstax/openstax_salesforce.git
+  revision: 8547001ed96a08e8cce224358560d3619fd70a5d
+  ref: 8547001ed96a08e8cce224358560d3619fd70a5d
+  specs:
+    openstax_salesforce (5.1.1)
+      openstax_active_force
+      rails (>= 5.0, < 7.0)
+      restforce
+
+GIT
   remote: https://github.com/openstax/transaction_retry.git
   revision: 5a148396c3b332a7e6a1ad5c7e6eb86b68f09829
   specs:
@@ -477,10 +487,6 @@ GEM
       rails (>= 3.0)
     openstax_rescue_from (4.2.0)
       rails (>= 3.1, < 7.0)
-    openstax_salesforce (5.1.0)
-      openstax_active_force
-      rails (>= 5.0, < 7.0)
-      restforce
     openstax_utilities (4.4.2)
       aws-sdk-autoscaling
       faraday
@@ -824,7 +830,7 @@ DEPENDENCIES
   openstax_api
   openstax_healthcheck
   openstax_rescue_from
-  openstax_salesforce
+  openstax_salesforce!
   openstax_utilities (~> 4.4.1)
   p3p
   parallel_tests

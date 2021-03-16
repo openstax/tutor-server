@@ -175,7 +175,8 @@ gem 'sentry-raven', require: 'raven/base'
 gem 'paranoia', '~> 2.4.1'
 
 # Salesforce
-gem 'openstax_salesforce'
+gem 'openstax_salesforce', github: 'openstax/openstax_salesforce',
+                           ref: '8547001ed96a08e8cce224358560d3619fd70a5d'
 
 # Global settings
 gem 'rails-settings-cached'

@@ -1,18 +1,64 @@
 ---
 http_interactions:
 - request:
-    method: post
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/Contact"
+    method: get
+    uri: "<salesforce_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Name,%20BillingCity,%20BillingState,%20Type,%20School_Location__c,%20SheerID_School_Name__c,%20K_I_P__c,%20child_of_kip__c%20FROM%20Account%20WHERE%20(RecordType.Name%20=%20%27School%27)%20AND%20(Name%20IN%20(%27JP%20University%27))"
     body:
-      encoding: UTF-8
-      string: '{"FirstName":"Hung","LastName":"Mills","AccountId":"0015500000dS49ZAAS"}'
+      encoding: US-ASCII
+      string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
+      Authorization:
+      - "<Authorization 1>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 16 Mar 2021 21:54:52 GMT
+      Strict-Transport-Security:
+      - max-age=31536002; includeSubDomains
+      Expect-Ct:
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
+      X-Robots-Tag:
+      - none
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
+      Set-Cookie:
+      - "<Set-Cookie 1>"
+      Sforce-Limit-Info:
+      - api-usage=600/5000000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0010v00000bM8kQAAS"},"Id":"0010v00000bM8kQAAS","Name":"JP
+        University","BillingCity":null,"BillingState":null,"Type":null,"School_Location__c":"Domestic","SheerID_School_Name__c":null,"K_I_P__c":false,"child_of_kip__c":false}]}'
+    http_version: 
+  recorded_at: Tue, 16 Mar 2021 21:54:52 GMT
+- request:
+    method: post
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/Contact"
+    body:
+      encoding: UTF-8
+      string: '{"FirstName":"Tom","LastName":"Jones","AccountId":"0010v00000bM8kQAAS"}'
+    headers:
+      User-Agent:
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -23,28 +69,21 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:44:05 GMT
+      - Tue, 16 Mar 2021 21:54:52 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=Bq6C_QdBEeqs3Hu2SQlNfQ;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:44:05 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=1117/51000
+      - api-usage=604/5000000
       Location:
-      - "/services/data/v37.0/sobjects/Contact/0035500000aJm8BAAS"
+      - "/services/data/v37.0/sobjects/Contact/0030v00000Uz97WAAR"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -53,20 +92,20 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"0035500000aJm8BAAS","success":true,"errors":[]}'
+      string: '{"id":"0030v00000Uz97WAAR","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:44:06 GMT
+  recorded_at: Tue, 16 Mar 2021 21:54:53 GMT
 - request:
     method: get
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/query?q=SELECT%20Id,%20Active_Teachers__c,%20Base_Year__c,%20Book_Name__c,%20Contact__c,%20Course_Code__c,%20Course_Name__c,%20Course_Start_Date__c,%20E_Created_Date__c,%20Email__c,%20Error__c,%20Estimated_Enrollment__c,%20External_ID__c,%20External_UUID__c,%20Latest_Adoption_Decision__c,%20Paid_Course__c,%20Research_Project__c,%20Sections__c,%20Status__c,%20Students_Comped__c,%20Students_Dropped__c,%20Students_Paid__c,%20Students_Refunded__c,%20Students_Using__c,%20Students_With_Work__c,%20Period_UUID__c,%20Term__c,%20Tutor_Pilot__c%20FROM%20Tutor_Course__c%20WHERE%20(Period_UUID__c%20IN%20(%27<PERIOD1_UUID>%27,%27<PERIOD2_UUID>%27,%27<PERIOD3_UUID>%27))"
+    uri: "<salesforce_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Active_Teachers__c,%20Base_Year__c,%20Book_Name__c,%20Contact__c,%20Course_Code__c,%20Course_Name__c,%20Course_Start_Date__c,%20E_Created_Date__c,%20Email__c,%20Error__c,%20Estimated_Enrollment__c,%20External_ID__c,%20External_UUID__c,%20Latest_Adoption_Decision__c,%20Paid_Course__c,%20Research_Project__c,%20Sections__c,%20Status__c,%20Students_Comped__c,%20Students_Dropped__c,%20Students_Paid__c,%20Students_Refunded__c,%20Students_Using__c,%20Students_With_Work__c,%20Period_UUID__c,%20Term__c,%20Tutor_Pilot__c%20FROM%20Tutor_Course__c%20WHERE%20(Period_UUID__c%20IN%20(%27<PERIOD1_UUID>%27,%27<PERIOD2_UUID>%27,%27<PERIOD3_UUID>%27))"
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -77,26 +116,19 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:44:06 GMT
+      - Tue, 16 Mar 2021 21:54:54 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=B3iwKAdBEeqf7-3s1Lyc5g;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:44:06 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=1115/51000
+      - api-usage=604/5000000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -105,28 +137,28 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":3,"done":true,"records":[{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c55000001suL6AAI"},"Id":"a0c55000001suL6AAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":"Chemistry","Contact__c":"0035500000aJm86AAC","Course_Code__c":null,"Course_Name__c":"A
-        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2019-11-15","Email__c":null,"Error__c":null,"Estimated_Enrollment__c":14.0,"External_ID__c":"9","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
-        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"Approved","Students_Comped__c":0.0,"Students_Dropped__c":1.0,"Students_Paid__c":0.0,"Students_Refunded__c":0.0,"Students_Using__c":2.0,"Students_With_Work__c":0.0,"Period_UUID__c":"<PERIOD2_UUID>","Term__c":"Spring","Tutor_Pilot__c":false},{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c55000001suLBAAY"},"Id":"a0c55000001suLBAAY","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":"Chemistry","Contact__c":"0035500000aJm86AAC","Course_Code__c":null,"Course_Name__c":"A
-        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2019-11-15","Email__c":null,"Error__c":null,"Estimated_Enrollment__c":14.0,"External_ID__c":"9","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
-        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"ArchivedPeriod","Students_Comped__c":0.0,"Students_Dropped__c":0.0,"Students_Paid__c":0.0,"Students_Refunded__c":0.0,"Students_Using__c":6.0,"Students_With_Work__c":0.0,"Period_UUID__c":"<PERIOD3_UUID>","Term__c":"Spring","Tutor_Pilot__c":false},{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c55000001suL1AAI"},"Id":"a0c55000001suL1AAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":"Chemistry","Contact__c":"0035500000aJm86AAC","Course_Code__c":null,"Course_Name__c":"A
-        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2019-11-15","Email__c":null,"Error__c":null,"Estimated_Enrollment__c":14.0,"External_ID__c":"9","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
-        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"Approved","Students_Comped__c":2.0,"Students_Dropped__c":0.0,"Students_Paid__c":1.0,"Students_Refunded__c":1.0,"Students_Using__c":4.0,"Students_With_Work__c":2.0,"Period_UUID__c":"<PERIOD1_UUID>","Term__c":"Spring","Tutor_Pilot__c":false}]}'
+      string: '{"totalSize":3,"done":true,"records":[{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c0v0000025cCyAAI"},"Id":"a0c0v0000025cCyAAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":null,"Contact__c":"0030v00000Uz96yAAB","Course_Code__c":null,"Course_Name__c":"A
+        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2021-03-16","Email__c":null,"Error__c":null,"Estimated_Enrollment__c":14.0,"External_ID__c":"1","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
+        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"Approved","Students_Comped__c":0.0,"Students_Dropped__c":1.0,"Students_Paid__c":0.0,"Students_Refunded__c":0.0,"Students_Using__c":2.0,"Students_With_Work__c":0.0,"Period_UUID__c":"<PERIOD2_UUID>","Term__c":"Spring","Tutor_Pilot__c":false},{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c0v0000025cCtAAI"},"Id":"a0c0v0000025cCtAAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":null,"Contact__c":"0030v00000Uz96yAAB","Course_Code__c":null,"Course_Name__c":"A
+        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2021-03-16","Email__c":null,"Error__c":null,"Estimated_Enrollment__c":14.0,"External_ID__c":"1","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
+        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"Approved","Students_Comped__c":2.0,"Students_Dropped__c":0.0,"Students_Paid__c":1.0,"Students_Refunded__c":1.0,"Students_Using__c":4.0,"Students_With_Work__c":2.0,"Period_UUID__c":"<PERIOD1_UUID>","Term__c":"Spring","Tutor_Pilot__c":false},{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c0v0000025cD3AAI"},"Id":"a0c0v0000025cD3AAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":null,"Contact__c":"0030v00000Uz96yAAB","Course_Code__c":null,"Course_Name__c":"A
+        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2021-03-16","Email__c":null,"Error__c":null,"Estimated_Enrollment__c":14.0,"External_ID__c":"1","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
+        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"ArchivedPeriod","Students_Comped__c":0.0,"Students_Dropped__c":0.0,"Students_Paid__c":0.0,"Students_Refunded__c":0.0,"Students_Using__c":6.0,"Students_With_Work__c":0.0,"Period_UUID__c":"<PERIOD3_UUID>","Term__c":"Spring","Tutor_Pilot__c":false}]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:44:06 GMT
+  recorded_at: Tue, 16 Mar 2021 21:54:54 GMT
 - request:
     method: patch
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/Tutor_Course__c/a0c55000001suL1AAI"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/Tutor_Course__c/a0c0v0000025cCtAAI"
     body:
       encoding: UTF-8
       string: '{"Error__c":"Unable to update stats: kaboom"}'
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -137,44 +169,37 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:44:07 GMT
+      - Tue, 16 Mar 2021 21:54:54 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=B5ppkgdBEeqZ_3fhaaNu7A;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:44:07 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=1115/51000
+      - api-usage=606/5000000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:44:07 GMT
+  recorded_at: Tue, 16 Mar 2021 21:54:55 GMT
 - request:
     method: patch
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/Tutor_Course__c/a0c55000001suL6AAI"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/Tutor_Course__c/a0c0v0000025cCyAAI"
     body:
       encoding: UTF-8
       string: '{"Error__c":"Unable to update stats: kaboom"}'
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -185,44 +210,37 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:44:08 GMT
+      - Tue, 16 Mar 2021 21:54:55 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=CEBGJAdBEeq7ER2DQvQAAA;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:44:08 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=1116/51000
+      - api-usage=605/5000000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:44:09 GMT
+  recorded_at: Tue, 16 Mar 2021 21:54:56 GMT
 - request:
     method: patch
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/Tutor_Course__c/a0c55000001suLBAAY"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/Tutor_Course__c/a0c0v0000025cD3AAI"
     body:
       encoding: UTF-8
       string: '{"Error__c":"Unable to update stats: kaboom"}'
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -233,42 +251,35 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:44:09 GMT
+      - Tue, 16 Mar 2021 21:54:57 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=CPjAdQdBEeqs3Hu2SQlNfQ;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:44:09 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=1118/51000
+      - api-usage=603/5000000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:44:10 GMT
+  recorded_at: Tue, 16 Mar 2021 21:54:58 GMT
 - request:
     method: get
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/query?q=SELECT%20Id,%20Active_Teachers__c,%20Base_Year__c,%20Book_Name__c,%20Contact__c,%20Course_Code__c,%20Course_Name__c,%20Course_Start_Date__c,%20E_Created_Date__c,%20Email__c,%20Error__c,%20Estimated_Enrollment__c,%20External_ID__c,%20External_UUID__c,%20Latest_Adoption_Decision__c,%20Paid_Course__c,%20Research_Project__c,%20Sections__c,%20Status__c,%20Students_Comped__c,%20Students_Dropped__c,%20Students_Paid__c,%20Students_Refunded__c,%20Students_Using__c,%20Students_With_Work__c,%20Period_UUID__c,%20Term__c,%20Tutor_Pilot__c%20FROM%20Tutor_Course__c%20WHERE%20(Period_UUID__c%20IN%20(%27<PERIOD1_UUID>%27,%27<PERIOD2_UUID>%27,%27<PERIOD3_UUID>%27))"
+    uri: "<salesforce_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Active_Teachers__c,%20Base_Year__c,%20Book_Name__c,%20Contact__c,%20Course_Code__c,%20Course_Name__c,%20Course_Start_Date__c,%20E_Created_Date__c,%20Email__c,%20Error__c,%20Estimated_Enrollment__c,%20External_ID__c,%20External_UUID__c,%20Latest_Adoption_Decision__c,%20Paid_Course__c,%20Research_Project__c,%20Sections__c,%20Status__c,%20Students_Comped__c,%20Students_Dropped__c,%20Students_Paid__c,%20Students_Refunded__c,%20Students_Using__c,%20Students_With_Work__c,%20Period_UUID__c,%20Term__c,%20Tutor_Pilot__c%20FROM%20Tutor_Course__c%20WHERE%20(Period_UUID__c%20IN%20(%27<PERIOD1_UUID>%27,%27<PERIOD2_UUID>%27,%27<PERIOD3_UUID>%27))"
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -279,26 +290,19 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:44:10 GMT
+      - Tue, 16 Mar 2021 21:54:58 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=CaOm_AdBEeqRlLuN3cSsJQ;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:44:10 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=1116/51000
+      - api-usage=607/5000000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -307,16 +311,16 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":3,"done":true,"records":[{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c55000001suL6AAI"},"Id":"a0c55000001suL6AAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":"Chemistry","Contact__c":"0035500000aJm86AAC","Course_Code__c":null,"Course_Name__c":"A
-        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2019-11-15","Email__c":null,"Error__c":"Unable
-        to update stats: kaboom","Estimated_Enrollment__c":14.0,"External_ID__c":"9","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
-        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"Approved","Students_Comped__c":0.0,"Students_Dropped__c":1.0,"Students_Paid__c":0.0,"Students_Refunded__c":0.0,"Students_Using__c":2.0,"Students_With_Work__c":0.0,"Period_UUID__c":"<PERIOD2_UUID>","Term__c":"Spring","Tutor_Pilot__c":false},{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c55000001suLBAAY"},"Id":"a0c55000001suLBAAY","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":"Chemistry","Contact__c":"0035500000aJm86AAC","Course_Code__c":null,"Course_Name__c":"A
-        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2019-11-15","Email__c":null,"Error__c":"Unable
-        to update stats: kaboom","Estimated_Enrollment__c":14.0,"External_ID__c":"9","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
-        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"ArchivedPeriod","Students_Comped__c":0.0,"Students_Dropped__c":0.0,"Students_Paid__c":0.0,"Students_Refunded__c":0.0,"Students_Using__c":6.0,"Students_With_Work__c":0.0,"Period_UUID__c":"<PERIOD3_UUID>","Term__c":"Spring","Tutor_Pilot__c":false},{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c55000001suL1AAI"},"Id":"a0c55000001suL1AAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":"Chemistry","Contact__c":"0035500000aJm86AAC","Course_Code__c":null,"Course_Name__c":"A
-        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2019-11-15","Email__c":null,"Error__c":"Unable
-        to update stats: kaboom","Estimated_Enrollment__c":14.0,"External_ID__c":"9","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
-        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"Approved","Students_Comped__c":2.0,"Students_Dropped__c":0.0,"Students_Paid__c":1.0,"Students_Refunded__c":1.0,"Students_Using__c":4.0,"Students_With_Work__c":2.0,"Period_UUID__c":"<PERIOD1_UUID>","Term__c":"Spring","Tutor_Pilot__c":false}]}'
+      string: '{"totalSize":3,"done":true,"records":[{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c0v0000025cCyAAI"},"Id":"a0c0v0000025cCyAAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":null,"Contact__c":"0030v00000Uz96yAAB","Course_Code__c":null,"Course_Name__c":"A
+        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2021-03-16","Email__c":null,"Error__c":"Unable
+        to update stats: kaboom","Estimated_Enrollment__c":14.0,"External_ID__c":"1","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
+        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"Approved","Students_Comped__c":0.0,"Students_Dropped__c":1.0,"Students_Paid__c":0.0,"Students_Refunded__c":0.0,"Students_Using__c":2.0,"Students_With_Work__c":0.0,"Period_UUID__c":"<PERIOD2_UUID>","Term__c":"Spring","Tutor_Pilot__c":false},{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c0v0000025cCtAAI"},"Id":"a0c0v0000025cCtAAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":null,"Contact__c":"0030v00000Uz96yAAB","Course_Code__c":null,"Course_Name__c":"A
+        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2021-03-16","Email__c":null,"Error__c":"Unable
+        to update stats: kaboom","Estimated_Enrollment__c":14.0,"External_ID__c":"1","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
+        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"Approved","Students_Comped__c":2.0,"Students_Dropped__c":0.0,"Students_Paid__c":1.0,"Students_Refunded__c":1.0,"Students_Using__c":4.0,"Students_With_Work__c":2.0,"Period_UUID__c":"<PERIOD1_UUID>","Term__c":"Spring","Tutor_Pilot__c":false},{"attributes":{"type":"Tutor_Course__c","url":"/services/data/v37.0/sobjects/Tutor_Course__c/a0c0v0000025cD3AAI"},"Id":"a0c0v0000025cD3AAI","Active_Teachers__c":1.0,"Base_Year__c":2016.0,"Book_Name__c":null,"Contact__c":"0030v00000Uz96yAAB","Course_Code__c":null,"Course_Name__c":"A
+        Fun Course","Course_Start_Date__c":"2017-01-01","E_Created_Date__c":"2021-03-16","Email__c":null,"Error__c":"Unable
+        to update stats: kaboom","Estimated_Enrollment__c":14.0,"External_ID__c":"1","External_UUID__c":"<COURSE_UUID>","Latest_Adoption_Decision__c":"For
+        course credit","Paid_Course__c":true,"Research_Project__c":false,"Sections__c":3.0,"Status__c":"ArchivedPeriod","Students_Comped__c":0.0,"Students_Dropped__c":0.0,"Students_Paid__c":0.0,"Students_Refunded__c":0.0,"Students_Using__c":6.0,"Students_With_Work__c":0.0,"Period_UUID__c":"<PERIOD3_UUID>","Term__c":"Spring","Tutor_Pilot__c":false}]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:44:10 GMT
+  recorded_at: Tue, 16 Mar 2021 21:54:58 GMT
 recorded_with: VCR 4.0.0

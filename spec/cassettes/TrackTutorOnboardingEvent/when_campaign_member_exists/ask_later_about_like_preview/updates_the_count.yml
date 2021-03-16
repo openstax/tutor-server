@@ -2,17 +2,17 @@
 http_interactions:
 - request:
     method: post
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/CampaignMember"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/CampaignMember"
     body:
       encoding: UTF-8
-      string: '{"CampaignId":"70155000000faNkAAI","ContactId":"0035500000aJm4mAAC"}'
+      string: '{"CampaignId":"7010v000000kbaZAAQ","ContactId":"0030v00000Uz8YmAAJ"}'
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -23,28 +23,21 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:12 GMT
+      - Tue, 16 Mar 2021 21:37:40 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=NHnzaAdAEeq7ER2DQvQAAA;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:12 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=974/51000
+      - api-usage=479/5000000
       Location:
-      - "/services/data/v37.0/sobjects/CampaignMember/00v55000003s5p9AAA"
+      - "/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzcXAAQ"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -53,20 +46,20 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"00v55000003s5p9AAA","success":true,"errors":[]}'
+      string: '{"id":"00v0v000002jzcXAAQ","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:12 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:40 GMT
 - request:
     method: get
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%270035500000aJm4mAAC%27)%20AND%20(CampaignId%20=%20%2770155000000faNkAAI%27)%20LIMIT%201"
+    uri: "<salesforce_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%270030v00000Uz8YmAAJ%27)%20AND%20(CampaignId%20=%20%277010v000000kbaZAAQ%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -77,26 +70,19 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:13 GMT
+      - Tue, 16 Mar 2021 21:37:41 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=NKuKOwdAEeq2I1sJYWcR6A;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:13 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=974/51000
+      - api-usage=480/5000000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -105,22 +91,22 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00v55000003s5p9AAA"},"Id":"00v55000003s5p9AAA","CampaignId":"70155000000faNkAAI","ContactId":"0035500000aJm4mAAC","accounts_uuid__c":null,"pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":null,"arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzcXAAQ"},"Id":"00v0v000002jzcXAAQ","CampaignId":"7010v000000kbaZAAQ","ContactId":"0030v00000Uz8YmAAJ","accounts_uuid__c":null,"pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":null,"arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":null,"like_preview_yes_at__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:13 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:41 GMT
 - request:
     method: patch
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/CampaignMember/00v55000003s5p9AAA"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzcXAAQ"
     body:
       encoding: UTF-8
-      string: '{"accounts_uuid__c":"<USER_SF_A_UUID>","first_teacher_contact_id__c":"0035500000aJm4mAAC","like_preview_ask_later_count__c":1}'
+      string: '{"accounts_uuid__c":"<USER_SF_A_UUID>","first_teacher_contact_id__c":"0030v00000Uz8YmAAJ","like_preview_ask_later_count__c":1}'
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -131,42 +117,35 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:13 GMT
+      - Tue, 16 Mar 2021 21:37:41 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=NMrR-gdAEeqZ_3fhaaNu7A;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:13 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=976/51000
+      - api-usage=481/5000000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:13 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:41 GMT
 - request:
     method: get
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(Id%20=%20%2700v55000003s5p9AAA%27)%20LIMIT%201"
+    uri: "<salesforce_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(Id%20=%20%2700v0v000002jzcXAAQ%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -177,26 +156,19 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:13 GMT
+      - Tue, 16 Mar 2021 21:37:41 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=NPWLhQdAEeqZ_3fhaaNu7A;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:13 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=977/51000
+      - api-usage=479/5000000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -205,20 +177,20 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00v55000003s5p9AAA"},"Id":"00v55000003s5p9AAA","CampaignId":"70155000000faNkAAI","ContactId":"0035500000aJm4mAAC","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"0035500000aJm4mAAC","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":1.0,"like_preview_yes_at__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzcXAAQ"},"Id":"00v0v000002jzcXAAQ","CampaignId":"7010v000000kbaZAAQ","ContactId":"0030v00000Uz8YmAAJ","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"0030v00000Uz8YmAAJ","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":1.0,"like_preview_yes_at__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:13 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:41 GMT
 - request:
     method: get
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%270035500000aJm4mAAC%27)%20AND%20(CampaignId%20=%20%2770155000000faNkAAI%27)%20LIMIT%201"
+    uri: "<salesforce_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(ContactId%20=%20%270030v00000Uz8YmAAJ%27)%20AND%20(CampaignId%20=%20%277010v000000kbaZAAQ%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -229,26 +201,19 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:13 GMT
+      - Tue, 16 Mar 2021 21:37:41 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=NRWWUwdAEeqRlLuN3cSsJQ;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:13 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=976/51000
+      - api-usage=478/5000000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -257,22 +222,22 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00v55000003s5p9AAA"},"Id":"00v55000003s5p9AAA","CampaignId":"70155000000faNkAAI","ContactId":"0035500000aJm4mAAC","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"0035500000aJm4mAAC","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":1.0,"like_preview_yes_at__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzcXAAQ"},"Id":"00v0v000002jzcXAAQ","CampaignId":"7010v000000kbaZAAQ","ContactId":"0030v00000Uz8YmAAJ","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"0030v00000Uz8YmAAJ","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":1.0,"like_preview_yes_at__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:13 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:42 GMT
 - request:
     method: patch
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/CampaignMember/00v55000003s5p9AAA"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzcXAAQ"
     body:
       encoding: UTF-8
       string: '{"like_preview_ask_later_count__c":2}'
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -283,42 +248,35 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:14 GMT
+      - Tue, 16 Mar 2021 21:37:42 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=NTSQ-wdAEeq7ER2DQvQAAA;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:14 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=975/51000
+      - api-usage=477/5000000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:14 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:42 GMT
 - request:
     method: get
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(Id%20=%20%2700v55000003s5p9AAA%27)%20LIMIT%201"
+    uri: "<salesforce_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20CampaignId,%20ContactId,%20accounts_uuid__c,%20pardot_reported_contact_id__c,%20pardot_reported_piaid__c,%20pardot_reported_picid__c,%20first_teacher_contact_id__c,%20arrived_marketing_page_from_pardot_at__c,%20arrived_marketing_page_not_from_pardot_a__c,%20first_arrived_my_courses_at__c,%20preview_created_at__c,%20real_course_created_at__c,%20like_preview_ask_later_count__c,%20like_preview_yes_at__c,%20latest_adoption_decision__c,%20latest_adoption_decision_at__c,%20Estimated_Enrollment__c,%20Ignored_OSAs__c,%20Percent_Enrolled__c,%20School_Type__c,%20Students_Registered__c,%20Students_Reported_by_Teacher__c,%20Students_with_work__c,%20SyncField__c%20FROM%20CampaignMember%20WHERE%20(Id%20=%20%2700v0v000002jzcXAAQ%27)%20LIMIT%201"
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -329,26 +287,19 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:14 GMT
+      - Tue, 16 Mar 2021 21:37:42 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=NV3DVgdAEeqUocGjt54-9A;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:14 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=976/51000
+      - api-usage=482/5000000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -357,20 +308,20 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00v55000003s5p9AAA"},"Id":"00v55000003s5p9AAA","CampaignId":"70155000000faNkAAI","ContactId":"0035500000aJm4mAAC","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"0035500000aJm4mAAC","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":2.0,"like_preview_yes_at__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CampaignMember","url":"/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzcXAAQ"},"Id":"00v0v000002jzcXAAQ","CampaignId":"7010v000000kbaZAAQ","ContactId":"0030v00000Uz8YmAAJ","accounts_uuid__c":"<USER_SF_A_UUID>","pardot_reported_contact_id__c":null,"pardot_reported_piaid__c":null,"pardot_reported_picid__c":null,"first_teacher_contact_id__c":"0030v00000Uz8YmAAJ","arrived_marketing_page_from_pardot_at__c":null,"arrived_marketing_page_not_from_pardot_a__c":null,"first_arrived_my_courses_at__c":null,"preview_created_at__c":null,"real_course_created_at__c":null,"like_preview_ask_later_count__c":2.0,"like_preview_yes_at__c":null,"latest_adoption_decision__c":null,"latest_adoption_decision_at__c":null,"Estimated_Enrollment__c":null,"Ignored_OSAs__c":false,"Percent_Enrolled__c":null,"School_Type__c":null,"Students_Registered__c":null,"Students_Reported_by_Teacher__c":null,"Students_with_work__c":null,"SyncField__c":null}]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:14 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:42 GMT
 - request:
     method: delete
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/CampaignMember/00v55000003s5p9AAA"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/CampaignMember/00v0v000002jzcXAAQ"
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -381,29 +332,22 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:14 GMT
+      - Tue, 16 Mar 2021 21:37:42 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=NXxH3wdAEeq2I1sJYWcR6A;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:14 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=975/51000
+      - api-usage=479/5000000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:14 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:42 GMT
 recorded_with: VCR 4.0.0
