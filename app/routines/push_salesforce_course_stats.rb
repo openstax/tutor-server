@@ -107,15 +107,21 @@ class PushSalesforceCourseStats
 
       begin
         sf_tutor_course_period.period_uuid = period.uuid
-        sf_tutor_course_period.status = period.archived? ?
-          OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_ARCHIVED :
+        sf_tutor_course_period.status = if period.archived?
+          OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_ARCHIVED
+        elsif course_wide_stats[:contact_id].nil?
+          OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_DROPPED
+        else
           OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_APPROVED
+        end
 
         sf_tutor_course_period.reset_stats
 
         sf_tutor_course_period.created_at = period.created_at.iso8601
 
         course_wide_stats.each do |field, value|
+          next if field == :contact_id && value.nil?
+
           sf_tutor_course_period.public_send("#{field}=", value)
         end
 
@@ -166,8 +172,8 @@ class PushSalesforceCourseStats
   end
 
   def best_sf_contact_id_for_course(course)
-    course.teachers.sort_by(&:created_at)
-          .map{ |tt| tt.role.profile.account.salesforce_contact_id }
+    course.teachers.reject(&:deleted?).sort_by(&:created_at)
+          .map { |tt| tt.role.profile.account.salesforce_contact_id }
           .compact.first.tap do |contact_id|
       skip!(message: 'No teachers have a SF contact ID', course: course) if contact_id.nil?
     end
