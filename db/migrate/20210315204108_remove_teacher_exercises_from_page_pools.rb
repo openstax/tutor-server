@@ -16,6 +16,25 @@ class RemoveTeacherExercisesFromPagePools < ActiveRecord::Migration[5.2]
       page.practice_widget_exercise_ids -= teacher_exercise_ids
       page.save!
     end
+
+    # Invalidate preview courses that accidentally got teacher-created exercises
+    CourseProfile::Models::Course.where(
+      is_preview: true, preview_claimed_at: nil
+    ).where(
+      <<~WHERE
+        EXISTS (
+          SELECT * FROM "tasks_tasks"
+          INNER JOIN "tasks_task_steps"
+            ON "tasks_task_steps"."tasks_task_id" = "tasks_tasks"."id"
+          INNER JOIN "tasks_tasked_exercises"
+            ON "tasks_task_steps"."tasked_type" = 'Tasks::Models::TaskedExercise' AND
+               "tasks_task_steps"."tasked_id" = "tasks_tasked_exercises"."id"
+          INNER JOIN "content_exercises"
+            ON "tasks_tasked_exercises"."content_exercise_id" = "content_exercises"."id"
+          WHERE "content_exercises"."user_profile_id" != 0
+        )
+      WHERE
+    ).update_all(preview_claimed_at: Time.now)
   end
 
   def down
