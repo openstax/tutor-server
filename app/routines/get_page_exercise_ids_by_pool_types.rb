@@ -49,7 +49,7 @@ class GetPageExerciseIdsByPoolTypes
       content_page_id: pages.map(&:id), user_profile_id: course.related_teacher_profile_ids
     ).pluck(:id)
 
-    pool_types.each do |pool_type|
+    (pool_types - [ :reading_context, :reading_dynamic ]).each do |pool_type|
       outputs.exercise_ids_by_pool_type[pool_type].concat teacher_exercise_ids
     end
   end
