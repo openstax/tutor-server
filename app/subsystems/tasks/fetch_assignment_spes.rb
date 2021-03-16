@@ -69,13 +69,16 @@ class Tasks::FetchAssignmentSpes
       page_ids: page_ids, pool_type: pool_type
     )
 
-    # Add teacher-created exercises
-    mapped_page_ids = ecosystem_map.map_page_ids(page_ids: page_ids)
-    Content::Models::Exercise.where(
-      content_page_id: mapped_page_ids, user_profile_id: task.course.related_teacher_profile_ids
-    ).pluck(:content_page_id, :id).each do |page_id, exercise_id|
-      exercise_ids_by_page_id[page_id] ||= []
-      exercise_ids_by_page_id[page_id] << exercise_id
+    unless task.reading?
+      # Add teacher-created exercises
+      mapped_page_ids = ecosystem_map.map_page_ids(page_ids: page_ids)
+
+      Content::Models::Exercise.where(
+        content_page_id: mapped_page_ids, user_profile_id: task.course.related_teacher_profile_ids
+      ).pluck(:content_page_id, :id).each do |page_id, exercise_id|
+        exercise_ids_by_page_id[page_id] ||= []
+        exercise_ids_by_page_id[page_id] << exercise_id
+      end
     end
 
     exercises_by_id = Content::Models::Exercise.where(

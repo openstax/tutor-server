@@ -26,11 +26,12 @@ class Tasks::FetchAssignmentPes
     page_ids = task.task_steps.map(&:content_page_id).compact.uniq
     pool_exercise_ids = Content::Models::Page.where(id: page_ids).pluck(pool_method).flatten
 
-    # Add teacher-created exercises
-    exercises = Content::Models::Exercise.where(id: pool_exercise_ids).to_a +
-                Content::Models::Exercise.where(
+    exercises = Content::Models::Exercise.where(id: pool_exercise_ids).to_a
+
+    # Add teacher-created exercises (except for reading assignments)
+    exercises += Content::Models::Exercise.where(
       content_page_id: page_ids, user_profile_id: task.course.related_teacher_profile_ids
-    ).to_a
+    ).to_a unless task.reading?
 
     exercises_by_page_id = exercises.group_by(&:content_page_id)
 
