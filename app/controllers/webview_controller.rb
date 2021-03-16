@@ -12,6 +12,8 @@ class WebviewController < ApplicationController
     elsif current_user.is_signed_in?
       redirect_to dashboard_path
     end
+
+    @homepage = HOMEPAGE_CONFIG[:default]
   end
 
   def index

@@ -1,0 +1,127 @@
+$orange: #F36B32;
+
+html {
+  font-size: 10px;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+#home {
+  background: url('../images/homepage/default.png') no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  font-size: 1.4rem;
+
+  a {
+    text-decoration: none;
+    color: #fff;
+    &:not(.button):hover {
+      text-decoration: underline;
+    }
+  }
+
+  .button {
+    display: block;
+    width: 200px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #fff;
+    border-radius: 2px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.8rem;
+
+    &.primary {
+      background: $orange;
+      color: #fff;
+      border: 0;
+    }
+  }
+
+  .login-buttons {
+    display: flex;
+    margin-bottom: 20px;
+
+    .button + .button {
+      margin-lefT: 32px;
+    }
+  }
+
+  &.layout-default {
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      max-width: 639px;
+      min-height: 100vh;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+      nav .logo {
+        background-size: cover;
+        width: 227px;
+        height: 40px;
+        display: block;
+      }
+
+      header, .content, footer {
+        align-self: center;
+        width: 500px;
+      }
+      header {
+        margin-top: 40px;
+      }
+      .content {
+        margin-top: 145px;
+        flex-grow: 1;
+
+        .body {
+          margin: 2.4rem 0 3.2rem;
+          font-size: 1.6rem;
+          line-height: 2.4rem;
+        }
+      }
+      footer {
+        margin-bottom: 3.2rem;
+        span {
+          margin: 0 8px;
+        }
+        .disclaimer {
+          display: none;
+        }
+      }
+
+      .content {
+        .header {
+          font-family: 'Libre Baskerville', serif;
+          font-size: 6rem;
+          letter-spacing: -1px;
+          line-height: 75px;
+        }
+      }
+    }
+  }
+
+  &.appearance-default {
+    color: #fff;
+
+    .button {
+      border-color: #fff;
+    }
+
+    nav .logo {
+      background: url('../images/homepage/OST_light.png') no-repeat;
+    }
+
+    .wrapper {
+      background: #000;
+    }
+  }
+}
+
