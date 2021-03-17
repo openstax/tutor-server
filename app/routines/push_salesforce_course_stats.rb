@@ -71,7 +71,7 @@ class PushSalesforceCourseStats
       num_periods = course.periods.length
       course_wide_stats = {
         base_year: base_year_for_course(course),
-        book_name: course.offering.try!(:salesforce_book_name),
+        book_name: course.offering&.salesforce_book_name,
         contact_id: best_sf_contact_id_for_course(course),
         course_id: course.id,
         course_name: course.name,
@@ -173,10 +173,7 @@ class PushSalesforceCourseStats
 
   def best_sf_contact_id_for_course(course)
     course.teachers.reject(&:deleted?).sort_by(&:created_at)
-          .map { |tt| tt.role.profile.account.salesforce_contact_id }
-          .compact.first.tap do |contact_id|
-      skip!(message: 'No teachers have a SF contact ID', course: course) if contact_id.nil?
-    end
+          .map { |tt| tt.role.profile.account.salesforce_contact_id }.compact.first
   end
 
   def log(level = :info, *args, &block)
