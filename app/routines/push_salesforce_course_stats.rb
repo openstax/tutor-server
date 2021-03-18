@@ -65,10 +65,10 @@ class PushSalesforceCourseStats
 
   def process_course(course, sf_tutor_course_periods_by_period_uuid)
     begin
-      num_teachers = course.teachers.length
-      skip!(message: 'No teachers', course: course) if num_teachers == 0
+      skip!(message: 'No teachers', course: course) if course.teachers.length == 0
+      num_teachers = course.teachers.reject(&:deleted?).length
 
-      num_periods = course.periods.length
+      num_periods = course.periods.reject(&:archived?).length
       course_wide_stats = {
         base_year: base_year_for_course(course),
         book_name: course.offering&.salesforce_book_name,

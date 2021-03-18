@@ -104,16 +104,6 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
         call_expecting_skips 'No teachers'
       end
     end
-
-    context 'when no teachers have a SF Contact ID' do
-      before { AddUserAsCourseTeacher[course: @course, user: @user] }
-
-      it 'does not log the error to Sentry or send error emails' do
-        expect(Raven).not_to receive(:capture_message)
-        expect(Raven).not_to receive(:capture_exception)
-        call_expecting_skips(/No teachers have a SF contact ID/)
-      end
-    end
   end
 
   context 'when some teacher has a Salesforce Contact' do
@@ -210,7 +200,7 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
 
         outputs = call.outputs
         expect(outputs.num_courses).to eq 2
-        expect(outputs.num_periods).to eq 3
+        expect(outputs.num_periods).to eq 2
         expect(outputs.num_updates).to eq 3
         expect(outputs.num_errors).to eq 1
         expect(outputs.num_skips).to eq 0
