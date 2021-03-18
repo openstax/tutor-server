@@ -44,11 +44,26 @@ class PushSalesforceCourseStats
     # Don't update courses that have ended
     terms = CourseProfile::Models::Course.terms.values_at(:spring, :summer, :fall, :winter)
 
-    CourseProfile::Models::Course
+    courses = CourseProfile::Models::Course
       .not_ended
-      .where(is_test: false, is_preview: false, is_excluded_from_salesforce: false, term: terms)
-      .preload(:offering, periods: { students: { role: { taskings: :task } } },
-               teachers: { role: { profile: :account } })
+      .where(is_test: false, is_excluded_from_salesforce: false, term: terms)
+      .where(
+        <<~WHERE_SQL
+          EXISTS (
+            SELECT *
+            FROM "course_membership_teachers"
+            WHERE "course_membership_teachers"."course_profile_course_id" =
+              "course_profile_courses"."id"
+          )
+        WHERE_SQL
+      )
+
+    courses = courses.where(is_preview: false).or(courses.where.not(preview_claimed_at: nil))
+
+    courses.preload(
+      :offering, periods: { students: { role: { taskings: :task } } },
+                 teachers: { role: { profile: :account } }
+    )
   end
 
   def process_courses(courses)
@@ -65,7 +80,6 @@ class PushSalesforceCourseStats
 
   def process_course(course, sf_tutor_course_periods_by_period_uuid)
     begin
-      skip!(message: 'No teachers', course: course) if course.teachers.length == 0
       num_teachers = course.teachers.reject(&:deleted?).length
 
       num_periods = course.periods.reject(&:archived?).length
@@ -107,7 +121,9 @@ class PushSalesforceCourseStats
 
       begin
         sf_tutor_course_period.period_uuid = period.uuid
-        sf_tutor_course_period.status = if period.archived?
+        sf_tutor_course_period.status = if course.is_preview?
+          OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_PREVIEW
+        elsif period.archived?
           OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_ARCHIVED
         elsif course_wide_stats[:contact_id].nil?
           OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_DROPPED
@@ -117,7 +133,8 @@ class PushSalesforceCourseStats
 
         sf_tutor_course_period.reset_stats
 
-        sf_tutor_course_period.created_at = period.created_at.iso8601
+        created_at = [ course.preview_claimed_at, period.created_at ].compact.max.iso8601
+        sf_tutor_course_period.created_at = created_at
 
         course_wide_stats.each do |field, value|
           next if field == :contact_id && value.nil?

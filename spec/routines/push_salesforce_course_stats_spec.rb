@@ -68,6 +68,8 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
       b = FactoryBot.create(:course_profile_course, starts_at: Chronic.parse("1/1/2017"),
                                                      ends_at: Chronic.parse("7/2/2017"),
                                                      term: "spring")
+      FactoryBot.create :course_membership_teacher, course: a
+      FactoryBot.create :course_membership_teacher, course: b
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
         expect(instance.applicable_courses).to contain_exactly(b)
@@ -80,10 +82,12 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
     it 'excludes excluded courses' do
       a = FactoryBot.create(:course_profile_course, consistent_times: true,
-                                                     term: :fall, year: 2018,
-                                                     is_excluded_from_salesforce: true)
+                                                    term: :fall, year: 2018,
+                                                    is_excluded_from_salesforce: true)
       b = FactoryBot.create(:course_profile_course, consistent_times: true,
-                                                     term: :fall, year: 2018)
+                                                    term: :fall, year: 2018)
+      FactoryBot.create :course_membership_teacher, course: a
+      FactoryBot.create :course_membership_teacher, course: b
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
         expect(instance.applicable_courses).to contain_exactly(b)
@@ -92,10 +96,12 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
     it 'excludes test courses' do
       a = FactoryBot.create(:course_profile_course, consistent_times: true,
-                                                     term: :fall, year: 2018,
-                                                     is_test: true)
+                                                    term: :fall, year: 2018,
+                                                    is_test: true)
       b = FactoryBot.create(:course_profile_course, consistent_times: true,
-                                                     term: :fall, year: 2018)
+                                                    term: :fall, year: 2018)
+      FactoryBot.create :course_membership_teacher, course: a
+      FactoryBot.create :course_membership_teacher, course: b
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
         expect(instance.applicable_courses).to contain_exactly(b)
@@ -152,12 +158,17 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
       ).and_return([ tcp ])
     end
 
-    it 'sets approved status for active courses' do
+    it 'sets preview status for preview courses' do
+      preview_claimed_at = Time.current + 1.hour
+      course.update_attributes is_preview: true, preview_claimed_at: preview_claimed_at
+
       expect(tcp).to receive(:status=).with(
-        OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_APPROVED
+        OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_PREVIEW
       )
 
       described_class.call
+
+      expect(tcp.created_at).to eq preview_claimed_at.iso8601
     end
 
     it 'sets archived status for archived periods' do
@@ -168,6 +179,8 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
       )
 
       described_class.call
+
+      expect(tcp.created_at).to eq course.created_at.iso8601
     end
 
     it 'sets dropped status for courses with no teachers' do
@@ -178,6 +191,18 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
       )
 
       described_class.call
+
+      expect(tcp.created_at).to eq course.created_at.iso8601
+    end
+
+    it 'sets approved status for active courses' do
+      expect(tcp).to receive(:status=).with(
+        OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_APPROVED
+      )
+
+      described_class.call
+
+      expect(tcp.created_at).to eq course.created_at.iso8601
     end
   end
 end

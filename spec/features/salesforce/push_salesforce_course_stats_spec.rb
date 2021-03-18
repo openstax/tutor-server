@@ -101,7 +101,9 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
   context 'skips happen' do
     context 'when the course has no teachers' do
       it 'skips the course' do
-        call_expecting_skips 'No teachers'
+        expect_any_instance_of(PushSalesforceCourseStats).not_to receive(:process_course)
+
+        instance.call
       end
     end
   end
@@ -242,15 +244,6 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
     expect(instance).to receive(:error!).at_least(:once)
                                         .with(hash_including(hash))
                                         .and_call_original
-
-    instance.call
-  end
-
-  def call_expecting_skips(hash_or_message)
-    hash = hash_or_message.is_a?(Hash) ? hash_or_message : { message: hash_or_message }
-    expect(instance).to receive(:skip!).at_least(:once)
-                                       .with(hash_including(hash))
-                                       .and_call_original
 
     instance.call
   end
