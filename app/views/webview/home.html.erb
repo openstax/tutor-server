@@ -23,6 +23,7 @@
       <nav role="navigation">
         <a class="logo" href="#home" aria-label="home"></a>
       </nav>
+      <div class="rice-logo" aria-label="Rice University"></div>
     </header>
 
     <div class="content">
@@ -38,15 +39,16 @@
         <%= link_to 'Log in', openstax_accounts_login_path, class: 'button primary' %>
         <a class="button" href="https://openstax.org/openstax-tutor">Sign up</a>
       </div>
-      Log in with your OpenStax credentials or sign up for an account.
+      <p class="hint">Log in with your OpenStax credentials or sign up for an account.</p>
     </div>
 
     <footer>
-      <p>
+      <div class="rice-logo" aria-label="Rice University"></div>
+      <div class="links">
         <%= render 'layouts/copyright_terms' %>
-        <span>&middot;</span>
+        <span class="sep">&middot;</span>
         <a href="http://gdpr.rice.edu/" target="_blank">GDPR</a>
-      </p>
+      </div>
       <p class="disclaimer">
         Advanced Placement® and AP® are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.
       </p>

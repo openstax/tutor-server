@@ -1,1 +1,1 @@
-&copy; <%= year = Time.current.year; 2015 == year ? "2015" : "2015&ndash;#{year}".html_safe %> <span>&middot;</span> <a href="http://www.rice.edu" target="_blank">Rice University</a> <span>&middot;</span> <%= link_to "Terms", main_app.terms_path %>
+<span class="copyright">&copy; <%= year = Time.current.year; 2015 == year ? "2015" : "2015&ndash;#{year}".html_safe %></span> <span class="sep">&middot;</span> <a href="http://www.rice.edu" target="_blank">Rice University</a> <span class="sep">&middot;</span> <%= link_to "Terms", main_app.terms_path %>
