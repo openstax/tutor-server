@@ -1,5 +1,32 @@
 $orange: #F36B32;
 
+@mixin mobile {
+  @media screen and (max-width: 600px) { @content }
+}
+
+@mixin tablet {
+  @media screen and (min-width: 601px) and (max-width: 999px) { @content }
+}
+
+@mixin desktop {
+  @media screen and (min-width: 1000px) { @content }
+}
+
+.layout-default {
+  @include mobile {
+    --body-padding: 1.6rem;
+    --content-top-margin: 4.2rem;
+  }
+  @include tablet {
+    --body-padding: 3.2rem;
+    --content-top-margin: 10.4rem;
+  }
+  @include desktop {
+    --body-padding: 0;
+    --content-top-margin: 14.5rem;
+  }
+}
+
 html {
   font-size: 10px;
   height: 100%;
@@ -11,20 +38,25 @@ html {
   padding: 0;
 }
 
+a {
+  text-decoration: none;
+}
+
+.header {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 6rem;
+  letter-spacing: -1px;
+  line-height: 75px;
+}
+
+.wrapper {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
 
 #home {
-  background: url('../images/homepage/default.png') no-repeat center center fixed;
-  background-size: cover;
   margin: 0;
+  padding: var(--body-padding);
   font-size: 1.4rem;
-
-  a {
-    text-decoration: none;
-    color: #fff;
-    &:not(.button):hover {
-      text-decoration: underline;
-    }
-  }
 
   .button {
     display: block;
@@ -46,81 +78,167 @@ html {
     }
   }
 
-  .login-buttons {
-    display: flex;
-    margin-bottom: 20px;
-
-    .button + .button {
-      margin-lefT: 32px;
-    }
+  .rice-logo {
+    width: 82px;
+    height: 30px;
+    display: inline-block;
   }
 
   &.layout-default {
+    text-align: center;
+
     .wrapper {
       display: flex;
       flex-direction: column;
-      max-width: 639px;
       min-height: 100vh;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
 
-      nav .logo {
-        background-size: cover;
-        width: 227px;
-        height: 40px;
-        display: block;
+    nav .logo {
+      background-size: cover;
+      width: 227px;
+      height: 40px;
+      display: block;
+    }
+
+    header, .content, footer {
+      width: 100%;
+    }
+    header {
+      align-self: flex-start;
+      .rice-logo { display: none; }
+    }
+    .content {
+      flex-grow: 1;
+      margin-top: var(--content-top-margin);
+
+      .body {
+        margin: 2.4rem 0 3.2rem;
+        font-size: 1.6rem;
+        line-height: 2.4rem;
       }
+    }
+
+    .login-buttons {
+      flex-direction: column;
+      max-width: 480px;
+      margin: 0 auto;
+      .button { width: 100%; }
+      .button + .button { margin: 2.4rem 0; }
+    }
+
+    footer {
+      max-width: 680px;
+      margin-bottom: 3.2rem;
+      .links {
+        margin: 1.4rem 0 1.6rem;
+      }
+      .sep {
+        margin: 0 0.8rem;
+      }
+      .disclaimer {
+        margin: 0 2rem 2.4rem 1.2rem;
+        line-height: 2rem;
+      }
+      .rice-logo {
+        margin-top: 5rem;
+      }
+    }
+
+    //=========== LAYOUT BREAKPOINTS
+    @include tablet {
+      .wrapper {
+        max-width: initial;
+        width: 100%;
+
+        .content, footer {
+          max-width: 680px;
+        }
+      }
+
+      footer {
+        .disclaimer {
+          margin: 0 auto;
+          max-width: 640px;
+        }
+      }
+    }
+
+    @include desktop {
+      text-align: unset;
 
       header, .content, footer {
-        align-self: center;
-        width: 500px;
+        max-width: 500px;
+        margin-left: 8rem;
       }
       header {
-        margin-top: 40px;
+        margin: 4rem 0 0 8rem;
+        .rice-logo {
+          display: block;
+          position: absolute;
+          top: 4rem;
+          right: 3.2rem;
+        }
       }
-      .content {
-        margin-top: 145px;
-        flex-grow: 1;
+      .wrapper {
+        max-width: 640px;
+      }
+      .login-buttons {
+        display: flex;
+        flex-direction: row;
+        margin: 0 0 20px;
 
-        .body {
-          margin: 2.4rem 0 3.2rem;
-          font-size: 1.6rem;
-          line-height: 2.4rem;
+        .button {
+          max-width: 200px;
+        }
+        .button + .button {
+          margin: 0 0 0 3.2rem;
         }
       }
-      footer {
-        margin-bottom: 3.2rem;
-        span {
-          margin: 0 8px;
-        }
-        .disclaimer {
-          display: none;
-        }
-      }
-
-      .content {
-        .header {
-          font-family: 'Libre Baskerville', serif;
-          font-size: 6rem;
-          letter-spacing: -1px;
-          line-height: 75px;
-        }
+      footer .rice-logo {
+        display: none;
       }
     }
   }
 
   &.appearance-default {
-    color: #fff;
+    a          { color: #007297; }
+    .logo      { background: url('../images/homepage/OST_color.png') no-repeat; }
+    .rice-logo { background: url('../images/homepage/rice_logo_dark.png') no-repeat center center/cover; }
+    .hint      { color: #6F6F6F; }
+    .wrapper   { background: #fff; }
+    background: #fff;
+    color: #424242;
 
-    .button {
-      border-color: #fff;
+    .button:not(.primary) {
+      background: #fff;
+      border-color: #D5D5D5;
+      filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1));
+      color: #5E6062;
     }
 
-    nav .logo {
-      background: url('../images/homepage/OST_light.png') no-repeat;
-    }
+    //=========== APPEARANCE BREAKPOINTS
+    @include desktop {
+      color: #fff;
+      background: url('../images/homepage/default.png') no-repeat center center fixed;
+      background-size: cover;
 
-    .wrapper {
-      background: #000;
+      a           { color: #fff; }
+      .wrapper    { background: #000; }
+      .copyright  { color: #fff; }
+      .disclaimer { color: #fff; }
+      .hint       { color: #fff; }
+      .button:not(.primary) {
+        border-color: #fff;
+        background: #000;
+        color: #fff;
+      }
+      .logo {
+        background: url('../images/homepage/OST_light.png') no-repeat;
+      }
+      .rice-logo {
+        background: url('../images/homepage/rice_logo_light.png') repeat center center/cover;
+      }
+      .disclaimer { display: none; }
     }
   }
 }
