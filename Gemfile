@@ -94,6 +94,9 @@ gem 'nokogiri'
 # Background job status store
 gem 'jobba', '~> 1.8.0'
 
+# Retry failed database transactions
+gem 'transaction_retry', github: 'openstax/transaction_retry'
+
 # Lev framework
 gem 'lev', '~> 10.1.0'
 
