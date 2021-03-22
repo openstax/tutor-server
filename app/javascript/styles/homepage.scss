@@ -53,6 +53,10 @@ a {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+#playbutton {
+  display: none;
+}
+
 #home {
   margin: 0;
   padding: var(--body-padding);
@@ -152,6 +156,11 @@ a {
 
         .content, footer {
           max-width: 680px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .login-buttons {
+          margin-top: 6.6rem;
         }
       }
 
@@ -165,6 +174,7 @@ a {
 
     @include desktop {
       text-align: unset;
+      --wrapper-width: 640px;
 
       header, .content, footer {
         max-width: 500px;
@@ -180,7 +190,7 @@ a {
         }
       }
       .wrapper {
-        max-width: 640px;
+        max-width: var(--wrapper-width);
       }
       .login-buttons {
         display: flex;
@@ -196,6 +206,14 @@ a {
       }
       footer .rice-logo {
         display: none;
+      }
+      #playbutton {
+        display: block;
+        height: 150px;
+        width: 150px;
+        position: absolute;
+        top: calc((90vh - 150px) / 2);
+        right: calc((100vw - var(--wrapper-width) - 150px) / 2;
       }
     }
   }
@@ -239,6 +257,7 @@ a {
         background: url('../images/homepage/rice_logo_light.png') repeat center center/cover;
       }
       .disclaimer { display: none; }
+      #playbutton:hover path { opacity: 0.75; }
     }
   }
 }
