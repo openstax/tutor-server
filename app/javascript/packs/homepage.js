@@ -14,5 +14,20 @@
 // const imagePath = (name) => images(name, true)
 
 const images = require.context('../images', true)
+import MicroModal from 'micromodal'
 
 import 'styles/homepage'
+
+document.addEventListener('DOMContentLoaded', () => {
+  MicroModal.init({
+    onClose: (modal) => {
+      const doc = document.getElementById('modal-video').contentWindow
+      doc.postMessage('{"event":"command", "func":"pauseVideo","args":""}', '*')
+    }
+  })
+
+  const el = document.getElementById('video-modal')
+  el.addEventListener('click', () => {
+    MicroModal.close('video-modal')
+  }, false)
+})

@@ -55,6 +55,64 @@ a {
 
 #playbutton {
   display: none;
+  height: 150px;
+  width: 150px;
+  position: fixed;
+  top: calc((90vh - 150px) / 2);
+  right: calc((100vw - var(--wrapper-width) - 150px) / 2;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:not(.is-open) {
+    display: none;
+  }
+
+  .modal-wrapper {
+    width: 100vw;
+    max-width: 1200px;
+  }
+
+  .modal-close {
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    color: #fff;
+    font-size: 4rem;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1;
+    &:before {
+      content: "\2715";
+    }
+  }
+  .modal-content {
+    height: 0;
+    width: 100%;
+    position: relative;
+    padding-bottom: 56.25%;
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  }
 }
 
 #home {
@@ -104,10 +162,10 @@ a {
       display: block;
     }
 
-    header, .content, footer {
+    .content-header, .content, .content-footer {
       width: 100%;
     }
-    header {
+    .content-header {
       align-self: flex-start;
       .rice-logo { display: none; }
     }
@@ -130,7 +188,7 @@ a {
       .button + .button { margin: 2.4rem 0; }
     }
 
-    footer {
+    .content-footer {
       max-width: 680px;
       margin-bottom: 3.2rem;
       .links {
@@ -154,7 +212,7 @@ a {
         max-width: initial;
         width: 100%;
 
-        .content, footer {
+        .content, .content-footer {
           max-width: 680px;
           margin-left: auto;
           margin-right: auto;
@@ -164,7 +222,7 @@ a {
         }
       }
 
-      footer {
+      .content-footer {
         .disclaimer {
           margin: 0 auto;
           max-width: 640px;
@@ -176,11 +234,11 @@ a {
       text-align: unset;
       --wrapper-width: 640px;
 
-      header, .content, footer {
+      .content-header, .content, .content-footer {
         max-width: 500px;
         margin-left: 8rem;
       }
-      header {
+      .content-header {
         margin: 4rem 0 0 8rem;
         .rice-logo {
           display: block;
@@ -204,16 +262,11 @@ a {
           margin: 0 0 0 3.2rem;
         }
       }
-      footer .rice-logo {
+      .content-footer .rice-logo {
         display: none;
       }
       #playbutton {
         display: block;
-        height: 150px;
-        width: 150px;
-        position: absolute;
-        top: calc((90vh - 150px) / 2);
-        right: calc((100vw - var(--wrapper-width) - 150px) / 2;
       }
     }
   }
