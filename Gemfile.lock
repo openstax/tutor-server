@@ -375,8 +375,9 @@ GEM
       hashie
       transaction_isolation
       transaction_retry
-    libv8 (7.3.492.27.1)
-    libv8 (7.3.492.27.1-x86_64-linux)
+    libv8 (8.4.255.0)
+    libv8 (8.4.255.0-x86_64-darwin-20)
+    libv8 (8.4.255.0-x86_64-linux)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -403,8 +404,8 @@ GEM
     mini_magick (4.9.4)
     mini_mime (1.0.2)
     mini_portile2 (2.5.0)
-    mini_racer (0.2.6)
-      libv8 (>= 6.9.411)
+    mini_racer (0.3.1)
+      libv8 (~> 8.4.255)
     minitest (5.14.4)
     msgpack (1.3.3)
     multi_json (1.14.1)
@@ -415,6 +416,8 @@ GEM
     nio4r (2.5.5)
     nokogiri (1.11.1)
       mini_portile2 (~> 2.5.0)
+      racc (~> 1.4)
+    nokogiri (1.11.1-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.11.1-x86_64-linux)
       racc (~> 1.4)
@@ -754,6 +757,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86_64-darwin-20
   x86_64-linux
 
 DEPENDENCIES
@@ -816,7 +820,7 @@ DEPENDENCIES
   lograge
   maruku
   mini_magick
-  mini_racer
+  mini_racer (= 0.3.1)
   nifty-generators
   nokogiri
   oauth (~> 0.5.1)
