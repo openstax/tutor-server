@@ -1,8 +1,20 @@
+# Images should be inside app/javascript/images/homepage
+
 default:
-  appearance: default
-  layout: default
+  appearance: dark-with-light-bg
+  carousel: false
   content:
+    image: add_edit.jpg
     header: Add your own questions or edit ours
     body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
           Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
     video_url: https://www.youtube-nocookie.com/embed/3d4zK7aGW8k
+
+new_subjects:
+  appearance: dark
+  carousel: true
+  content:
+    image: new_subjects.jpg
+    header: Three new OpenStax Tutor subject
+    body: American Government, U.S. History and the third edition of Introduction to Sociology are now available. Create
+          interactive readings with embedded questions to keep your students engaged, and build your own homework assignments.

@@ -13,7 +13,8 @@ class WebviewController < ApplicationController
       redirect_to dashboard_path
     end
 
-    @homepage = HOMEPAGE_CONFIG[:default]
+    # For demo only
+    @homepage = HOMEPAGE_CONFIG[params[:view]&.to_sym || :default]
   end
 
   def index
