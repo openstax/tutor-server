@@ -27,7 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
   const el = document.getElementById('video-modal')
-  el.addEventListener('click', () => {
-    MicroModal.close('video-modal')
-  }, false)
+  if (el) {
+    el.addEventListener('click', () => {
+      MicroModal.close('video-modal')
+    }, false)
+  }
 })

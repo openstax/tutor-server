@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
 </head>
 
-<body id="home" class="layout-<%= @homepage[:layout] %> appearance-<%= @homepage[:layout] %>" role="main" aria-label="main content">
+<body id="home" class="appearance-<%= @homepage[:appearance] %>" role="main" aria-label="main content" style='background-image: url(<%= asset_pack_path("media/images/homepage/#{@homepage[:content][:image]}")%>'>
 
   <div class="wrapper">
     <header class="content-header">
@@ -42,12 +42,6 @@
       <p class="hint">Log in with your OpenStax credentials or sign up for an account.</p>
     </div>
 
-    <button id="playbutton" data-type="iframe" aria-label="Play video" data-micromodal-trigger="video-modal">
-      <svg  width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M75 0C33.5686 0 0 33.5686 0 75C0 116.431 33.5686 150 75 150C116.431 150 150 116.431 150 75C150 33.5686 116.431 0 75 0ZM109.99 82.2581L56.7641 112.802C51.9859 115.464 45.9677 112.046 45.9677 106.452V43.5484C45.9677 37.9839 51.9556 34.5363 56.7641 37.1976L109.99 69.5565C114.95 72.3387 114.95 79.5061 109.99 82.2581Z" fill="black" fill-opacity="0.3"/>
-      </svg>
-    </button>
-
     <footer class="content-footer">
       <div class="rice-logo" aria-label="Rice University"></div>
       <div class="links">
@@ -60,17 +54,24 @@
       </p>
     </footer>
   </div>
-  <div id="video-modal" class="modal" aria-hidden="true">
-    <div tabindex="-1" data-micromodal-close>
-      <div role="dialog" aria-modal="true" aria-label="Video Player" class="modal-wrapper">
-        <header>
-          <button class="modal-close" aria-label="Close video" data-micromodal-close></button>
-        </header>
-        <div class="modal-content">
-          <iframe id="modal-video" src="<%= @homepage[:content][:video_url] %>?enablejsapi=true&html5=true" title="YouTube video player" frameborder="0" allow="picture-in-picture" allowfullscreen></iframe>
+  <% if @homepage[:content][:video_url] %>
+    <button id="playbutton" data-type="iframe" aria-label="Play video" data-micromodal-trigger="video-modal">
+      <svg  width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M75 0C33.5686 0 0 33.5686 0 75C0 116.431 33.5686 150 75 150C116.431 150 150 116.431 150 75C150 33.5686 116.431 0 75 0ZM109.99 82.2581L56.7641 112.802C51.9859 115.464 45.9677 112.046 45.9677 106.452V43.5484C45.9677 37.9839 51.9556 34.5363 56.7641 37.1976L109.99 69.5565C114.95 72.3387 114.95 79.5061 109.99 82.2581Z" fill="black" fill-opacity="0.3"/>
+      </svg>
+    </button>
+    <div id="video-modal" class="modal" aria-hidden="true">
+      <div tabindex="-1" data-micromodal-close>
+        <div role="dialog" aria-modal="true" aria-label="Video Player" class="modal-wrapper">
+          <header>
+            <button class="modal-close" aria-label="Close video" data-micromodal-close></button>
+          </header>
+          <div class="modal-content">
+            <iframe id="modal-video" src="<%= @homepage[:content][:video_url] %>?enablejsapi=true&html5=true" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  <% end %>
 </body>
 </html>
