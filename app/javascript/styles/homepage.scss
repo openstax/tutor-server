@@ -290,7 +290,7 @@ a {
     //=========== APPEARANCE BREAKPOINTS
     @include desktop {
       color: #fff;
-      background: url('../images/homepage/default.png') no-repeat center center fixed;
+      background: url('../images/homepage/default.jpg') no-repeat center center fixed;
       background-size: cover;
 
       a           { color: #fff; }
