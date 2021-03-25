@@ -168,9 +168,14 @@ $orange: #F36B32;
     margin-bottom: calc((var(--body-padding) * 1.5) - var(--body-padding));
 
     .links {
-      margin: 1.4rem 0 1.6rem;
+      margin: 0.8rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
       a {
         padding: 0.8rem;
+        line-height: 2rem;
       }
     }
     .sep {
@@ -182,7 +187,6 @@ $orange: #F36B32;
     .disclaimer {
       margin: 0 2rem 2.4rem 1.2rem;
       line-height: 2rem;
-      display: none;
     }
     .rice-logo {
       margin-top: 5rem;
@@ -222,6 +226,10 @@ $orange: #F36B32;
     }
 
     .content-footer {
+      .links {
+        font-size: 1.8rem;
+        margin: 1.2rem 0 1.6rem;
+      }
       .disclaimer {
         margin: 0 auto;
         max-width: 640px;
@@ -235,6 +243,10 @@ $orange: #F36B32;
     .content-header, .content, .content-footer:not([data-carousel=true]) {
       max-width: 500px;
       margin-left: 8rem;
+
+      .disclaimer {
+        display: none;
+      }
     }
     .content-header {
       margin: 4rem 0 0 8rem;
