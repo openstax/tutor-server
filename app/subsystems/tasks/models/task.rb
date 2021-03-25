@@ -560,9 +560,15 @@ class Tasks::Models::Task < ApplicationRecord
 
     # At this point we know a score is being displayed and the assignment has both MCQs and WRQs,
     # so we check if any feedback is unavailable or if the manual grading has not been completed
-    !auto_grading_feedback_available?(past_due: past_due) ||
-    !manual_grading_feedback_available? ||
-    !manual_grading_complete?
+    # Even if feedback is unavailable, that only makes the score provisional
+    # if the student actually completed any of the relevant task_steps
+    (
+      !auto_grading_feedback_available?(past_due: past_due) &&
+      auto_graded_steps.any?(&:completed?)
+    ) || (
+      !manual_grading_feedback_available? &&
+      manually_graded_steps.any?(&:completed?)
+    ) || !manual_grading_complete?
   end
 
   def withdrawn?
