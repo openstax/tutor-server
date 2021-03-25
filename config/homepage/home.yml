@@ -1,8 +1,7 @@
 # Images should be inside app/javascript/images/homepage
 
 default:
-  appearance: dark-with-light-bg
-  carousel: false
+  appearance: dark with-light-bg
   content:
     image: add_edit.jpg
     header: Add your own questions or edit ours
