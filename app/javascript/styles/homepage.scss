@@ -152,9 +152,15 @@ $orange: #F36B32;
 
     .links {
       margin: 1.4rem 0 1.6rem;
+      a {
+        padding: 0.8rem;
+      }
     }
     .sep {
-      margin: 0 0.8rem;
+      margin: 0;
+    }
+    .copyright {
+      margin-right: 0.8rem;
     }
     .disclaimer {
       margin: 0 2rem 2.4rem 1.2rem;
@@ -328,14 +334,21 @@ $orange: #F36B32;
   @include mobile {
     --body-padding: 1.6rem;
     --content-top-margin: 4.2rem;
+    --header-font-size: 3.2rem;
+    --header-line-height: 4rem;
   }
   @include tablet {
     --body-padding: 3.2rem;
     --content-top-margin: 10.4rem;
+    --header-font-size: 6rem;
+    --header-line-height: 7.5rem;
   }
   @include desktop {
     --body-padding: 0;
     --content-top-margin: 14.5rem;
+    --header-font-size: 6rem;
+    --header-line-height: 7.5rem;
+    --header-letter-spacing: -0.1rem;
   }
 
   --carousel-side-padding: 8rem;
@@ -362,9 +375,9 @@ a {
 
 .header {
   font-family: 'Libre Baskerville', serif;
-  font-size: 6rem;
-  letter-spacing: -1px;
-  line-height: 75px;
+  font-size: var(--header-font-size);
+  letter-spacing: var(--header-letter-spacing);
+  line-height: var(--header-line-height);
 }
 
 .wrapper {
