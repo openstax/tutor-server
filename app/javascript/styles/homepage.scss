@@ -37,8 +37,10 @@ $orange: #F36B32;
   @include desktop {
     color: #fff;
     background: #424242;
-    background-position: fixed;
+    background-position: center;
     background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
 
     a           { color: #fff; }
     .copyright  { color: #fff; }
@@ -105,7 +107,7 @@ $orange: #F36B32;
   .wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: calc(100vh - (var(--body-padding) * 2));
   }
 
   nav .logo {
@@ -143,7 +145,8 @@ $orange: #F36B32;
 
   .content-footer {
     max-width: 680px;
-    margin-bottom: 3.2rem;
+    margin-bottom: calc((var(--body-padding) * 1.5) - var(--body-padding));
+
     .links {
       margin: 1.4rem 0 1.6rem;
     }
@@ -213,7 +216,7 @@ $orange: #F36B32;
       }
     }
     .wrapper {
-      max-width: var(--wrapper-width);
+      min-height: 100vh;
     }
     .login-buttons {
       display: flex;
@@ -339,12 +342,11 @@ a {
   &.appearance-gray {
     @include gray;
   }
-  &.appearance-dark-with-light-bg {
-    @include dark;
-
+  &.appearance-dark.with-light-bg {
     @include desktop {
       .wrapper {
         background: #000;
+        max-width: 640px;
       }
     }
   }
