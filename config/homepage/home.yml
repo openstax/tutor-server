@@ -14,7 +14,7 @@ new_subjects:
   content:
     image: new_subjects.jpg
     header: Three new OpenStax Tutor subjects
-    body: American Government, U.S. History and the third edition of Introduction to Sociology are now available. Create
+    body: <i>American Government</i>, <i>U.S. History</i> and the third edition of <i>Introduction to Sociology</i> are now available. Create
           interactive readings with embedded questions to keep your students engaged, and build your own homework assignments.
     books:
       - title: American Government 2e
