@@ -21,6 +21,12 @@ import 'styles/homepage'
 
 document.addEventListener('DOMContentLoaded', () => {
   MicroModal.init({
+    onShow: (modal) => {
+      const iframe = document.getElementById('modal-video')
+      if (!iframe.getAttribute('src')) {
+        iframe.setAttribute('src', iframe.getAttribute('data-src'))
+      }
+    },
     onClose: (modal) => {
       const doc = document.getElementById('modal-video').contentWindow
       doc.postMessage('{"event":"command", "func":"pauseVideo","args":""}', '*')
