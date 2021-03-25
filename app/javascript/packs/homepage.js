@@ -28,11 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
   const el = document.getElementById('video-modal')
-  if (el) {
-    el.addEventListener('click', () => {
-      MicroModal.close('video-modal')
-    }, false)
-  }
+  el?.addEventListener('click', () => {
+    MicroModal.close('video-modal')
+  }, false)
 
   const carousel = Carousel({
     wrapper: document.querySelector('[data-carousel-wrapper]'),
