@@ -22,7 +22,7 @@ $orange: #F36B32;
     background-repeat: no-repeat;
 
     a, .copyright, .disclaimer, .hint {
-      color: #fff;
+      color: rgba(255, 255, 255, 0.9);
     }
     .button:not(.primary) {
       background: transparent;
@@ -309,7 +309,7 @@ $orange: #F36B32;
           img {
             width: 140px;
             height: 140px;
-            margin-right: 6.3rem;
+            margin-right: 4.8rem;
           }
         }
 
