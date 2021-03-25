@@ -15,8 +15,9 @@
 
 const images = require.context('../images', true)
 import MicroModal from 'micromodal'
-
+import Carousel from './carousel'
 import 'styles/homepage'
+
 
 document.addEventListener('DOMContentLoaded', () => {
   MicroModal.init({
@@ -32,4 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
       MicroModal.close('video-modal')
     }, false)
   }
+
+  const carousel = Carousel({
+    wrapper: document.querySelector('[data-carousel-wrapper]'),
+    prevButton: document.querySelector('[data-carousel-prev]'),
+    nextButton: document.querySelector('[data-carousel-next]'),
+  })
 })
