@@ -34,7 +34,7 @@
       </h1>
 
       <p class="body">
-        <%= @homepage[:content][:body] %>
+        <%= sanitize @homepage[:content][:body], tags: %w(b i) %>
       </p>
 
       <div class="login-buttons">
