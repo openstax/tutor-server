@@ -401,8 +401,12 @@ a {
     top: 1rem;
     right: 1rem;
     z-index: 1;
+    padding: 1rem 2rem;
     &:before {
       content: "\2715";
+    }
+    &:focus {
+      box-shadow: inset 0 0 0 2px #007297;
     }
   }
   .modal-content {
