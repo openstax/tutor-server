@@ -16,6 +16,7 @@ class PopulatePreviewCourseContent
   uses_routine User::FindOrCreateUser, as: :find_or_create_user
   uses_routine CourseMembership::CreatePeriod, as: :create_period
   uses_routine AddUserAsPeriodStudent, as: :add_student
+  uses_routine FilterExcludedExercises, as: :filter_exercises
   uses_routine Tasks::GetAssistant, as: :get_assistant
   uses_routine DistributeTasks, as: :distribute_tasks
   uses_routine WorkPreviewCourseTasks, as: :work_tasks
@@ -90,8 +91,11 @@ class PopulatePreviewCourseContent
       pages = chapter.pages
       page_ids = pages.map { |page| page.id.to_s }
       exercise_ids = pages.flat_map { |page| page.homework_core_exercise_ids.sample }.compact
-      ex = Content::Models::Exercise.select(:id, :number_of_questions).where(id: exercise_ids)
-      exercises = ex.map do |exercise|
+      ex = Content::Models::Exercise.select(
+        :id, :user_profile_id, :number, :version, :number_of_questions, :deleted_at
+      ).where(id: exercise_ids)
+      filtered_exercises = run(:filter_exercises, exercises: ex, course: course).outputs.exercises
+      exercises = filtered_exercises.map do |exercise|
         { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
       end
 

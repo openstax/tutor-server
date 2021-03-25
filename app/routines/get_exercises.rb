@@ -28,6 +28,7 @@ class GetExercises
     exercise_ids_by_pool_type = run(
       :get_page_exercise_ids,
       ecosystem: ecosystem,
+      course: course,
       page_ids: page_ids,
       exercise_ids: exercise_ids,
       pool_types: pool_types
@@ -36,7 +37,7 @@ class GetExercises
     excl_exercise_numbers_set = Set.new(course.excluded_exercises.pluck(:exercise_number)) \
       unless course.nil?
 
-    profile_ids = [User::Models::OpenStaxProfile::ID]
+    profile_ids = [ User::Models::OpenStaxProfile::ID ]
     profile_ids << course.related_teacher_profile_ids if course
 
     # Preload exercises, pages and teks tags

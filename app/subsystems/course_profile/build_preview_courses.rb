@@ -1,5 +1,4 @@
 class CourseProfile::BuildPreviewCourses
-
   lev_routine transaction: :no_transaction
 
   # We really want no transaction here, so we don't call uses_routine
@@ -110,9 +109,8 @@ class CourseProfile::BuildPreviewCourses
       )
       .where(is_preview_available: true)
       .where(preview_course_count.lt(desired_count))
-      .reorder(preview_course_count, :number)                  # Work on lower counts first
+      .reorder(preview_course_count, :number)                       # Work on lower counts first
       .lock('FOR NO KEY UPDATE OF "catalog_offerings" SKIP LOCKED') # Skip offerings being worked on
       .first                                                        # Lock 1 offering at a time
   end
-
 end
