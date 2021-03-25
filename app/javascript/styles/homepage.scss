@@ -60,6 +60,9 @@ $orange: #F36B32;
     }
     .disclaimer { display: none; }
     #playbutton:hover path { opacity: 0.75; }
+    .content-footer[data-carousel=true] {
+      background: #000;
+    }
   }
 }
 
@@ -160,6 +163,10 @@ $orange: #F36B32;
     .rice-logo {
       margin-top: 5rem;
     }
+
+    .carousel {
+      display: none;
+    }
   }
 
   #playbutton {
@@ -200,9 +207,8 @@ $orange: #F36B32;
 
   @include desktop {
     text-align: unset;
-    --wrapper-width: 640px;
 
-    .content-header, .content, .content-footer {
+    .content-header, .content, .content-footer:not([data-carousel=true]) {
       max-width: 500px;
       margin-left: 8rem;
     }
@@ -230,8 +236,86 @@ $orange: #F36B32;
         margin: 0 0 0 3.2rem;
       }
     }
-    .content-footer .rice-logo {
-      display: none;
+    .content-footer {
+      &[data-carousel=true] {
+        max-width: none;
+        margin: 2.4rem 0 0;
+
+        .carousel {
+          display: block;
+          padding: 4rem var(--carousel-side-padding) 1.6rem;
+          position: relative;
+
+          button {
+            display: none;
+            position: absolute;
+            border: 0;
+            background: none;
+            height: 32px;
+            width: 20px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &.previous {
+              left: 29px;
+              top: 94px;
+            }
+            &.next {
+              right: 29px;
+              top: 94px;
+            }
+            &[data-carousel-prev=true] {
+              display: flex;
+            }
+            &[data-carousel-next=true] {
+              display: flex;
+            }
+          }
+
+          .books {
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+              display: none;
+            }
+
+            & > * {
+              scroll-snap-align: center;
+            }
+          }
+
+          img {
+            width: 140px;
+            margin-right: 6.3rem;
+          }
+        }
+
+        .links-and-disclaimer {
+          background: #000;
+          padding: 0 var(--carousel-side-padding) 3.2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          flex-wrap: wrap;
+
+          .links, .disclaimer {
+            margin: 0;
+            display: block;
+          }
+          .links {
+            flex-shrink: 0;
+            margin-right: 2.4rem;
+          }
+        }
+      }
+      .rice-logo {
+        display: none;
+      }
     }
     #playbutton {
       display: block;
@@ -252,6 +336,12 @@ $orange: #F36B32;
     --body-padding: 0;
     --content-top-margin: 14.5rem;
   }
+
+  --carousel-side-padding: 8rem;
+
+  // Helps the play button find its center when
+  // using appearance-dark.with-light-bg
+  --wrapper-width: 640px;
 }
 
 html {
