@@ -8,6 +8,7 @@
   <% end %>
 
   <meta http-equiv="content-type" content="text/html; charset=UTF8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <%= render 'layouts/meta' %>
   <%= javascript_pack_tag 'homepage' %>
   <%= csrf_meta_tags %>
@@ -52,7 +53,7 @@
           </button>
           <div class="books" data-carousel-wrapper>
             <% @homepage[:content][:books].each do |book| %>
-              <%= image_pack_tag("media/images/homepage/books/#{book[:image]}", title: book[:title]) %>
+              <%= image_pack_tag("media/images/homepage/books/#{book[:image]}", alt: book[:title]) %>
             <% end %>
           </div>
           <button class="next" data-carousel-next>
@@ -67,7 +68,7 @@
         <div class="links">
           <%= render 'layouts/copyright_terms' %>
           <span class="sep" aria-hidden="true">&middot;</span>
-          <a href="http://gdpr.rice.edu/" target="_blank">GDPR</a>
+          <a href="http://gdpr.rice.edu/" target="_blank" rel="noopener">GDPR</a>
         </div>
         <p class="disclaimer">
           Advanced Placement® and AP® are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.

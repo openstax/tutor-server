@@ -13,29 +13,29 @@ new_subjects:
   appearance: dark
   content:
     image: new_subjects.jpg
-    header: Three new OpenStax Tutor subject
+    header: Three new OpenStax Tutor subjects
     body: American Government, U.S. History and the third edition of Introduction to Sociology are now available. Create
           interactive readings with embedded questions to keep your students engaged, and build your own homework assignments.
     books:
       - title: American Government 2e
         image: american-government-2e.png
-      - title: Example title
-        image: anatomy-physiology.png
-      - title: Example title
-        image: biology-2e.png
-      - title: Example title
-        image: biology-for-ap-courses.png
-      - title: Example title
-        image: college-physics-for-ap-course.png
-      - title: Example title
-        image: college-physics.png
-      - title: Example title
-        image: entrepreneurship.png
-      - title: Example title
+      - title: Sociology 2e
         image: introduction-to-sociology-2e.png
-      - title: Example title
-        image: life_libery_and_the_pursuit_of_happiness.png
-      - title: Example title
-        image: psychology_2e.png
-      - title: Example title
+      - title: U.S. History
         image: us-history.png
+      - title: Anatomy and Physiology
+        image: anatomy-physiology.png
+      - title: Biology 2e
+        image: biology-2e.png
+      - title: College Physics
+        image: college-physics.png
+      - title: Psychology 2e
+        image: psychology-2e.png
+      - title: Entrepreneurship
+        image: entrepreneurship.png
+      - title: Life liberty and the pursuit of happiness
+        image: life-liberty-and-the-pursuit-of-happiness.png
+      - title: Biology for AP® Courses
+        image: biology-for-ap-courses.png
+      - title: College Physics for AP® Courses
+        image: college-physics-for-ap-courses.png
