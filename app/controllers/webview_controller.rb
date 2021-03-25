@@ -14,9 +14,7 @@ class WebviewController < ApplicationController
     end
 
     expires_in 1.minute, public: true
-
-    view = params[:view]&.to_sym || :default # For demo only
-    @homepage = HOMEPAGE_CONFIG[view]
+    @homepage = HOMEPAGE_CONFIG[params[:view]&.to_sym] || HOMEPAGE_CONFIG[:default]
   end
 
   def index

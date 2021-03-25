@@ -13,6 +13,55 @@ $orange: #F36B32;
 }
 
 @mixin dark {
+  @include desktop {
+    color: #fff;
+    background: #424242;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+
+    a, .copyright, .disclaimer, .hint {
+      color: #fff;
+    }
+    .button:not(.primary) {
+      background: transparent;
+      border-color: #fff;
+      color: #fff;
+      filter: none;
+    }
+    .logo {
+      background: url('../images/homepage/OST_light.png') no-repeat center center/cover;
+    }
+    .rice-logo {
+      background: url('../images/homepage/rice_logo_light.png') repeat center center/cover;
+    }
+    #playbutton:hover path { opacity: 0.75; }
+    .content-footer[data-carousel=true] {
+      background: #000;
+    }
+  }
+}
+
+@mixin light {
+
+}
+
+@mixin gray {
+  @include desktop {
+    color: #000;
+    background: #F5F5F5;
+
+    a, .copyright, .disclaimer, .hint {
+      color: #000;
+    }
+    .logo {
+      background: url('../images/homepage/OST_dark.png') no-repeat center center/cover;
+    }
+  }
+}
+
+@mixin base_appearance {
   a          { color: #007297; }
   .logo      { background: url('../images/homepage/OST_color.png') no-repeat center center/cover; }
   .rice-logo { background: url('../images/homepage/rice_logo_dark.png') no-repeat center center/cover; }
@@ -27,51 +76,12 @@ $orange: #F36B32;
     color: #5E6062;
   }
 
-  //=========== APPEARANCE BREAKPOINTS
   @include mobile {
     background-image: none !important;
   }
   @include tablet {
     background-image: none !important;
   }
-  @include desktop {
-    color: #fff;
-    background: #424242;
-    background-position: center;
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-
-    a           { color: #fff; }
-    .copyright  { color: #fff; }
-    .disclaimer { color: #fff; }
-    .hint       { color: #fff; }
-    .button:not(.primary) {
-      background: transparent;
-      border-color: #fff;
-      color: #fff;
-      filter: none;
-    }
-    .logo {
-      background: url('../images/homepage/OST_light.png') no-repeat center center/cover;
-    }
-    .rice-logo {
-      background: url('../images/homepage/rice_logo_light.png') repeat center center/cover;
-    }
-    .disclaimer { display: none; }
-    #playbutton:hover path { opacity: 0.75; }
-    .content-footer[data-carousel=true] {
-      background: #000;
-    }
-  }
-}
-
-@mixin light {
-
-}
-
-@mixin gray {
-
 }
 
 @mixin base_layout {
@@ -165,6 +175,7 @@ $orange: #F36B32;
     .disclaimer {
       margin: 0 2rem 2.4rem 1.2rem;
       line-height: 2rem;
+      display: none;
     }
     .rice-logo {
       margin-top: 5rem;
@@ -440,23 +451,24 @@ a {
 
 #home {
   @include base_layout;
+  @include base_appearance; // Right now, Mobile & Tablet are always the same appearance
 
   &.appearance-dark {
     @include dark;
+    &.with-light-bg {
+      @include desktop {
+        .wrapper {
+          background: #000;
+          max-width: 640px;
+        }
+      }
+    }
   }
   &.appearance-light {
     @include light;
   }
   &.appearance-gray {
     @include gray;
-  }
-  &.appearance-dark.with-light-bg {
-    @include desktop {
-      .wrapper {
-        background: #000;
-        max-width: 640px;
-      }
-    }
   }
 }
 

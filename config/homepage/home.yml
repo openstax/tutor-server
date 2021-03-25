@@ -39,3 +39,24 @@ new_subjects:
         image: biology-for-ap-courses.png
       - title: College Physics for AP® Courses
         image: college-physics-for-ap-courses.png
+
+light:
+  appearance: light
+  content:
+    header: Three lines of header text in serif font
+    body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
+          Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
+
+gray:
+  appearance: gray
+  content:
+    header: Three lines of header text in serif font
+    body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
+          Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
+
+dark:
+  appearance: dark
+  content:
+    header: Three lines of header text in serif font
+    body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
+          Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
