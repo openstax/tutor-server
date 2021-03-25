@@ -37,9 +37,6 @@ $orange: #F36B32;
       background: url('../images/homepage/rice_logo_light.png') repeat center center/cover;
     }
     #playbutton:hover path { opacity: 0.75; }
-    .content-footer[data-carousel=true] {
-      background: #000;
-    }
   }
 }
 
@@ -62,12 +59,13 @@ $orange: #F36B32;
 }
 
 @mixin base_appearance {
+  background: #fff;
+  color: #424242;
+
   a          { color: #007297; }
   .logo      { background: url('../images/homepage/OST_color.png') no-repeat center center/cover; }
   .rice-logo { background: url('../images/homepage/rice_logo_dark.png') no-repeat center center/cover; }
-  .hint      { color: #6F6F6F; }
-  background: #fff;
-  color: #424242;
+  .hint, .copyright, .disclaimer { color: #6F6F6F; }
 
   .button:not(.primary) {
     border-color: #D5D5D5;
@@ -81,6 +79,15 @@ $orange: #F36B32;
   }
   @include tablet {
     background-image: none !important;
+  }
+  @include desktop {
+    .content-footer[data-carousel=true] {
+      background: #000;
+
+      &, a, .copyright, .disclaimer {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
   }
 }
 
