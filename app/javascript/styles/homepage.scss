@@ -255,6 +255,10 @@ $orange: #F36B32;
       max-width: 500px;
       margin-left: 8rem;
 
+      .links {
+        justify-content: start;
+        margin: 1.4rem 0 2.4rem;
+      }
       .disclaimer {
         display: none;
       }
