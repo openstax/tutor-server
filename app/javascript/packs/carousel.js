@@ -2,11 +2,22 @@ export default function Carousel({ wrapper, prevButton, nextButton }) {
   var prevElement
   var nextElement
 
-  wrapper.addEventListener('scroll', onScroll, { passive: true })
-  prevButton.addEventListener('click', onPrev)
-  nextButton.addEventListener('click', onNext)
-  window.addEventListener('resize', () => updateElements(wrapper), { passive: true })
-  window.setTimeout(() => updateElements(wrapper), 10)
+  wrapper?.addEventListener('scroll', onScroll, { passive: true })
+  prevButton?.addEventListener('click', onPrev)
+  nextButton?.addEventListener('click', onNext)
+
+  if (wrapper) {
+    window.addEventListener('resize', () => updateElements(wrapper), { passive: true })
+    window.setTimeout(() => updateElements(wrapper), 10)
+  }
+
+  function addListener(element, event, callback) {
+    if (element) {
+      element.addEventListener(event, callback)
+    }
+
+    return element
+  }
 
   function getPrevElement(list) {
     const sibling = list[0].previousElementSibling
@@ -55,8 +66,8 @@ export default function Carousel({ wrapper, prevButton, nextButton }) {
       prevElement = getPrevElement(visibleElements)
       nextElement = getNextElement(visibleElements)
 
-      prevButton.setAttribute('data-carousel-prev', !!prevElement)
-      nextButton.setAttribute('data-carousel-next', !!nextElement)
+      prevButton?.setAttribute('data-carousel-prev', !!prevElement)
+      nextButton?.setAttribute('data-carousel-next', !!nextElement)
     }
 
     return null
