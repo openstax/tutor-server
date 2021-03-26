@@ -8,7 +8,7 @@ default:
     header: Add your own questions or edit ours
     body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
           Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
-    video_url: https://www.youtube-nocookie.com/embed/3d4zK7aGW8k
+    video_url: https://www.youtube-nocookie.com/embed/SEAUYy4NTWk
 
 new_subjects:
   appearance: dark
@@ -42,15 +42,15 @@ new_subjects:
       - title: College Physics for AP® Courses
         image: college-physics-for-ap-courses.png
 
-light:
-  appearance: light
+white:
+  appearance: white
   content:
     header: Three lines of header text in serif font
     body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
           Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
 
-gray:
-  appearance: gray
+light:
+  appearance: light
   content:
     header: Three lines of header text in serif font
     body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?

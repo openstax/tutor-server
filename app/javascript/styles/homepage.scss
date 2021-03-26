@@ -41,11 +41,11 @@
   }
 }
 
-@mixin light {
+@mixin white {
 
 }
 
-@mixin gray {
+@mixin light {
   @include desktop {
     color: #000;
     background: #F5F5F5;
@@ -497,11 +497,11 @@ a {
       }
     }
   }
+  &.appearance-white {
+    @include white;
+  }
   &.appearance-light {
     @include light;
-  }
-  &.appearance-gray {
-    @include gray;
   }
 }
 
