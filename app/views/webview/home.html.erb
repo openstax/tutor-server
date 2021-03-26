@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:fb="http://ogp.me/ns/fb#" lang="en" xml:lang="en">
+<html lang="en" xml:lang="en">
 <head>
   <title>OpenStax Tutor</title>
 
@@ -8,67 +8,93 @@
   <% end %>
 
   <meta http-equiv="content-type" content="text/html; charset=UTF8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <%= render 'layouts/meta' %>
-  <%= stylesheet_link_tag 'home', media: 'all' %>
-  <%= javascript_include_tag 'home' %>
+  <%= stylesheet_pack_tag 'homepage' %>
+  <%= javascript_pack_tag 'homepage' %>
   <%= csrf_meta_tags %>
   <%= render 'webview/google_analytics' %>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="preload" media="screen" as="style" onload="this.onload=null;this.rel='stylesheet'">
 </head>
 
-<body id="home" role="main" aria-label="main content">
-  <div class="body tutor-home">
+<body id="home" class="appearance-<%= @homepage[:appearance] %>" role="main" aria-label="main content" style='<%= homepage_background_style(@homepage[:content][:image]) %>' data-highdpi-path="<%= homepage_background_pack_path(@homepage[:content][:image_highdpi]) %>">
 
-    <!-- HEADER
-         ============================================= -->
-    <header>
-      <nav class="navbar navbar-default navbar-fixed-top top-nav" role="navigation">
-        <div class="container">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="#home" aria-label="home"></a>
-          </div>
-          <ul class="nav navbar-nav navbar-right links">
-            <li><a href="<%= TUTOR_HELPDESK_URL %>" target="_blank">Help</a></li>
-            <li><a class="navbar-brand-rice" href="http://www.rice.edu" target="_blank" aria-label="rice university"></a></li>
-          </ul>
-        </div>
-        <!-- /.container -->
+  <div class="wrapper">
+    <header class="content-header">
+      <nav role="navigation">
+        <a class="logo" href="/" aria-label="home"></a>
       </nav>
+      <div class="rice-logo" aria-label="Rice University"></div>
     </header>
-    <!-- HEADER
-         ============================================= -->
 
-
-    <div class="body-container">
-      <h1>
-        Discover a new frontier in education.
+    <div class="content">
+      <h1 class="header">
+        <%= @homepage[:content][:header] %>
       </h1>
 
-      <p class="lead">
-        OpenStax Tutor Beta is courseware for college and high school courses.
-        Available for College Physics, Biology 2e, Introduction to Sociology 2e,
-        AP U.S. History, AP Physics, and AP Biology.
+      <p class="body">
+        <%= sanitize @homepage[:content][:body], tags: %w(b i) %>
       </p>
 
-      <a class="learn-more" href="https://openstax.org/openstax-tutor">LEARN MORE</a>
-
-      <%= link_to 'LOG IN', openstax_accounts_login_path, class: 'login' %>
+      <div class="login-buttons">
+        <%= link_to 'Log in', openstax_accounts_login_path, class: 'button primary' %>
+        <a class="button" href="https://accounts.openstax.org/i/signup">Sign up</a>
+      </div>
+      <p class="hint">Log in with your OpenStax credentials or sign up for an account.</p>
     </div>
 
-    <footer>
-      <p>
-        <%= render 'layouts/copyright_terms' %>
-        &middot;
-        <a href="http://gdpr.rice.edu/" target="_blank">GDPR</a>
-      </p>
-      <p class="disclaimer">
-        Advanced Placement® and AP® are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.
-  </p>
-</footer>
-<!-- FOOTER
-============================================= -->
-
-</div>
-
-
+    <footer class="content-footer" data-carousel="<%= @homepage[:content][:books].present? %>">
+      <% if @homepage[:content][:books] %>
+        <div class="carousel" role="region" aria-label="Available books">
+          <button class="previous" data-carousel-prev aria-label="Previous slide">
+            <svg width="20" height="32" viewBox="0 0 20 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.514971 14.7561L14.7568 0.514971C15.4434 -0.171657 16.5573 -0.171657 17.2439 0.514971L18.9052 2.17621C19.5911 2.86211 19.5918 3.97302 18.9081 4.66038L7.62087 15.9996L18.9074 27.3396C19.5918 28.027 19.5903 29.1379 18.9044 29.8238L17.2432 31.485C16.5566 32.1717 15.4427 32.1717 14.7561 31.485L0.514971 17.2432C-0.171657 16.5566 -0.171657 15.4427 0.514971 14.7561Z" fill="white" fill-opacity="0.8"/>
+            </svg>
+          </button>
+          <div class="books" data-carousel-wrapper>
+            <% @homepage[:content][:books].each do |book| %>
+              <%= image_pack_tag("media/images/homepage/books/#{book[:image]}", alt: book[:title], title: book[:title], width: 140, height: 140) %>
+            <% end %>
+          </div>
+          <button class="next" data-carousel-next aria-label="Next slide">
+            <svg width="20" height="32" viewBox="0 0 20 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18.9047 17.2436L4.6633 31.4849C3.97646 32.1717 2.86291 32.1717 2.17613 31.4849L0.515117 29.8238C-0.170556 29.1382 -0.171875 28.0269 0.512186 27.3396L11.7987 16L0.512186 4.66039C-0.171875 3.9731 -0.170556 2.86182 0.515117 2.17615L2.17613 0.515134C2.86298 -0.171711 3.97653 -0.171711 4.6633 0.515134L18.9046 14.7564C19.5914 15.4432 19.5914 16.5567 18.9047 17.2436Z" fill="white" fill-opacity="0.8"/>
+            </svg>
+          </button>
+        </div>
+      <% end %>
+      <div class="rice-logo" aria-label="Rice University"></div>
+      <div class="links-and-disclaimer">
+        <div class="links">
+          <%= render 'layouts/copyright_terms' %>
+          <span class="sep" aria-hidden="true">&middot;</span>
+          <a href="http://gdpr.rice.edu/" target="_blank" rel="noopener">GDPR</a>
+        </div>
+        <p class="disclaimer">
+          Advanced Placement® and AP® are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.
+        </p>
+      </div>
+    </footer>
+  </div>
+  <% if @homepage[:content][:video_url] %>
+    <button id="playbutton" aria-label="Play video" data-micromodal-trigger="video-modal">
+      <svg  width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M75 0C33.5686 0 0 33.5686 0 75C0 116.431 33.5686 150 75 150C116.431 150 150 116.431 150 75C150 33.5686 116.431 0 75 0ZM109.99 82.2581L56.7641 112.802C51.9859 115.464 45.9677 112.046 45.9677 106.452V43.5484C45.9677 37.9839 51.9556 34.5363 56.7641 37.1976L109.99 69.5565C114.95 72.3387 114.95 79.5061 109.99 82.2581Z" fill="black" fill-opacity="0.3"/>
+      </svg>
+    </button>
+    <div id="video-modal" class="modal" aria-hidden="true">
+      <div tabindex="-1" data-micromodal-close>
+        <div role="dialog" aria-modal="true" aria-label="Video Player" class="modal-wrapper">
+          <header>
+            <button class="modal-close" aria-label="Close video" data-micromodal-close></button>
+          </header>
+          <div class="modal-content">
+            <iframe id="modal-video" data-src="<%= @homepage[:content][:video_url] %>?enablejsapi=1&html5=1&autoplay=1" title="YouTube video player" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </body>
 </html>

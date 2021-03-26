@@ -1,0 +1,507 @@
+@mixin mobile {
+  @media screen and (max-width: 600px) { @content }
+}
+
+@mixin tablet {
+  @media screen and (min-width: 601px) and (max-width: 999px) { @content }
+}
+
+@mixin desktop {
+  @media screen and (min-width: 1000px) { @content }
+}
+
+@mixin dark {
+  @include desktop {
+    color: #fff;
+    background: #424242;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+
+    a, .copyright, .disclaimer {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .hint {
+      color: #fff;
+    }
+    .button:not(.primary) {
+      background: transparent;
+      border-color: #fff;
+      color: #fff;
+      filter: none;
+    }
+    .logo {
+      background: url('../images/homepage/OST_light.png') no-repeat center center/cover;
+    }
+    .rice-logo {
+      background: url('../images/homepage/rice_logo_light.png') repeat center center/cover;
+    }
+    #playbutton:hover path { opacity: 0.75; }
+  }
+}
+
+@mixin white {
+
+}
+
+@mixin light {
+  @include desktop {
+    color: #000;
+    background: #F5F5F5;
+
+    a, .copyright, .disclaimer, .hint {
+      color: #000;
+    }
+    .logo {
+      background: url('../images/homepage/OST_dark.png') no-repeat center center/cover;
+    }
+  }
+}
+
+@mixin base_appearance {
+  background: #fff;
+  color: #424242;
+
+  a          { color: #007297; }
+  .logo      { background: url('../images/homepage/OST_color.png') no-repeat center center/cover; }
+  .rice-logo { background: url('../images/homepage/rice_logo_dark.png') no-repeat center center/cover; }
+  .hint, .copyright, .disclaimer { color: #6F6F6F; }
+
+  .button {
+    border: 1px solid #fff;
+    color: #fff;
+
+    &.primary {
+      background: #F36B32;
+      color: #fff;
+      border: 0;
+    }
+    &:not(.primary) {
+      border-color: #D5D5D5;
+      background: #fff;
+      filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1));
+      color: #5E6062;
+    }
+  }
+
+  @include mobile {
+    background-image: none !important;
+  }
+  @include tablet {
+    background-image: none !important;
+  }
+  @include desktop {
+    .content-footer[data-carousel=true] {
+      background: #000;
+
+      &, a, .copyright, .disclaimer {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+  }
+}
+
+@mixin base_layout {
+  margin: 0;
+  padding: var(--body-padding);
+  font-size: 1.4rem;
+  text-align: center;
+
+  .button {
+    display: block;
+    width: 200px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    font-weight: bold;
+    font-size: 1.8rem;
+  }
+
+  .header {
+    font-family: 'Libre Baskerville', serif;
+    font-size: var(--header-font-size);
+    letter-spacing: var(--header-letter-spacing);
+    line-height: var(--header-line-height);
+  }
+
+  .wrapper {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  .rice-logo {
+    width: 82px;
+    height: 30px;
+    display: inline-block;
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - (var(--body-padding) * 2));
+  }
+
+  nav .logo {
+    background-size: cover;
+    width: 227px;
+    height: 40px;
+    display: block;
+  }
+
+  .content-header, .content, .content-footer {
+    width: 100%;
+  }
+  .content-header {
+    align-self: flex-start;
+    .rice-logo { display: none; }
+  }
+  .content {
+    flex-grow: 1;
+    margin-top: var(--content-top-margin);
+
+    .body {
+      margin: 2.4rem 0 3.2rem;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+    }
+  }
+
+  .login-buttons {
+    flex-direction: column;
+    max-width: 480px;
+    margin: 0 auto;
+    .button { width: 100%; }
+    .button + .button { margin: 2.4rem 0; }
+  }
+
+  .content-footer {
+    max-width: 680px;
+    margin-bottom: calc((var(--body-padding) * 1.5) - var(--body-padding));
+
+    .links {
+      margin: 0.8rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      a {
+        padding: 0.8rem;
+        line-height: 2rem;
+      }
+    }
+    .sep {
+      margin: 0;
+    }
+    .copyright {
+      margin-right: 0.8rem;
+    }
+    .disclaimer {
+      margin: 0 2rem 2.4rem 1.2rem;
+      line-height: 2rem;
+    }
+    .rice-logo {
+      margin-top: 5rem;
+    }
+
+    .carousel {
+      display: none;
+    }
+  }
+
+  #playbutton {
+    display: none;
+    height: 150px;
+    width: 150px;
+    position: fixed;
+    top: calc((90vh - 150px) / 2);
+    right: calc((100vw - var(--wrapper-width) - 150px) / 2;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+
+  //=========== LAYOUT BREAKPOINTS
+  @media screen and (max-width: 320px) {
+    .content-footer .copyright {
+      flex-basis: 100%;
+      margin: 0.5rem 0 1rem;
+
+      & + .sep {
+        display: none;
+      }
+    }
+  }
+
+  @include tablet {
+    .wrapper {
+      max-width: initial;
+      width: 100%;
+
+      .content, .content-footer {
+        max-width: 680px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .login-buttons {
+        margin-top: 6.6rem;
+      }
+    }
+
+    .content-footer {
+      .links {
+        font-size: 1.8rem;
+        margin: 1.2rem 0 1.6rem;
+      }
+      .disclaimer {
+        margin: 0 auto;
+        max-width: 640px;
+      }
+    }
+  }
+
+  @include desktop {
+    text-align: unset;
+
+    .content-header, .content, .content-footer:not([data-carousel=true]) {
+      max-width: 500px;
+      margin-left: 8rem;
+
+      .links {
+        justify-content: start;
+        margin: 1.4rem 0 2.4rem;
+      }
+      .disclaimer {
+        display: none;
+      }
+    }
+    .content-header {
+      margin: 4rem 0 0 8rem;
+      .rice-logo {
+        display: block;
+        position: absolute;
+        top: 4rem;
+        right: 3.2rem;
+      }
+    }
+    .wrapper {
+      min-height: 100vh;
+    }
+    .login-buttons {
+      display: flex;
+      flex-direction: row;
+      margin: 0 0 20px;
+
+      .button {
+        max-width: 200px;
+      }
+      .button + .button {
+        margin: 0 0 0 3.2rem;
+      }
+    }
+    .content-footer {
+      &[data-carousel=true] {
+        max-width: none;
+        margin: 2.4rem 0 0;
+
+        .carousel {
+          display: block;
+          padding: 4rem var(--carousel-side-padding) 1.6rem;
+          position: relative;
+
+          button {
+            display: none;
+            position: absolute;
+            border: 0;
+            background: none;
+            height: 32px;
+            width: 20px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &.previous {
+              left: 29px;
+              top: 94px;
+            }
+            &.next {
+              right: 29px;
+              top: 94px;
+            }
+            &[data-carousel-prev=true] {
+              display: flex;
+            }
+            &[data-carousel-next=true] {
+              display: flex;
+            }
+          }
+
+          .books {
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+              display: none;
+            }
+
+            & > * {
+              scroll-snap-align: center;
+            }
+          }
+
+          img {
+            width: 140px;
+            height: 140px;
+            margin-right: 4.8rem;
+          }
+        }
+
+        .links-and-disclaimer {
+          background: #000;
+          padding: 0 var(--carousel-side-padding) 3.2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          flex-wrap: wrap;
+
+          .links, .disclaimer {
+            margin: 0;
+            display: block;
+          }
+          .links {
+            flex-shrink: 0;
+            margin-right: 2.4rem;
+          }
+        }
+      }
+      .rice-logo {
+        display: none;
+      }
+    }
+    #playbutton {
+      display: block;
+    }
+  }
+}
+
+:root {
+  @include mobile {
+    --body-padding: 1.6rem;
+    --content-top-margin: 4.2rem;
+    --header-font-size: 3.2rem;
+    --header-line-height: 4rem;
+  }
+  @include tablet {
+    --body-padding: 3.2rem;
+    --content-top-margin: 10.4rem;
+    --header-font-size: 6rem;
+    --header-line-height: 7.5rem;
+  }
+  @include desktop {
+    --body-padding: 0;
+    --content-top-margin: 14.5rem;
+    --header-font-size: 6rem;
+    --header-line-height: 7.5rem;
+    --header-letter-spacing: -0.1rem;
+  }
+
+  --carousel-side-padding: 8rem;
+
+  // Helps the play button find its center when
+  // using appearance-dark.with-light-bg
+  --wrapper-width: 640px;
+}
+
+html {
+  font-size: 10px;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:not(.is-open) {
+    display: none;
+  }
+
+  .modal-wrapper {
+    width: 100vw;
+    max-width: 1200px;
+  }
+
+  .modal-close {
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    color: #fff;
+    font-size: 4rem;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1;
+    padding: 1rem 2rem;
+    &:before {
+      content: "\2715";
+    }
+  }
+  .modal-content {
+    height: 0;
+    width: 100%;
+    position: relative;
+    padding-bottom: 56.25%;
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  }
+}
+
+#home {
+  @include base_layout;
+  @include base_appearance; // Right now, Mobile & Tablet are always the same appearance
+
+  &.appearance-dark {
+    @include dark;
+    &.with-light-bg {
+      @include desktop {
+        .wrapper {
+          background: #000;
+          max-width: 640px;
+        }
+      }
+    }
+  }
+  &.appearance-white {
+    @include white;
+  }
+  &.appearance-light {
+    @include light;
+  }
+}
+

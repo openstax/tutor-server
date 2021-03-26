@@ -1,0 +1,64 @@
+# Images should be inside app/javascript/images/homepage
+
+default:
+  appearance: dark with-light-bg
+  content:
+    image: add_edit.jpg
+    image_highdpi: add_edit@2x.jpg
+    header: Add your own questions or edit ours
+    body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
+          Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
+    video_url: https://www.youtube-nocookie.com/embed/SEAUYy4NTWk
+
+new_subjects:
+  appearance: dark
+  content:
+    image: new_subjects.jpg
+    image_highdpi: new_subjects.jpg
+    header: Three new OpenStax Tutor subjects
+    body: <i>American Government</i>, <i>U.S. History</i> and the third edition of <i>Introduction to Sociology</i> are now available. Create
+          interactive readings with embedded questions to keep your students engaged, and build your own homework assignments.
+    books:
+      - title: American Government 2e
+        image: american-government-2e.png
+      - title: Sociology 2e
+        image: introduction-to-sociology-2e.png
+      - title: U.S. History
+        image: us-history.png
+      - title: Anatomy and Physiology
+        image: anatomy-physiology.png
+      - title: Biology 2e
+        image: biology-2e.png
+      - title: College Physics
+        image: college-physics.png
+      - title: Psychology 2e
+        image: psychology-2e.png
+      - title: Entrepreneurship
+        image: entrepreneurship.png
+      - title: Life liberty and the pursuit of happiness
+        image: life-liberty-and-the-pursuit-of-happiness.png
+      - title: Biology for AP® Courses
+        image: biology-for-ap-courses.png
+      - title: College Physics for AP® Courses
+        image: college-physics-for-ap-courses.png
+
+white:
+  appearance: white
+  content:
+    header: Three lines of header text in serif font
+    body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
+          Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
+
+light:
+  appearance: light
+  content:
+    header: Three lines of header text in serif font
+    body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
+          Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
+
+dark:
+  appearance: dark
+  content:
+    header: Three lines of header text in serif font
+    body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
+          Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.

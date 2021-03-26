@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@rails/webpacker": "5.2.1",
+    "micromodal": "^0.4.6"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.11.2"
+  }
+}

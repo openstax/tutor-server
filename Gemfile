@@ -30,7 +30,7 @@ gem 'browser', '~> 2.5'
 gem 'coffee-rails', '~> 4.2.2'
 
 # JavaScript asset compiler
-gem 'mini_racer'
+gem 'mini_racer', '0.3.1'
 
 # jQuery library
 gem 'jquery-rails'
@@ -223,7 +223,9 @@ gem 'bootsnap', '~> 1.4.0', require: false
 # Get env variables from .env file
 gem 'dotenv-rails'
 
-gem "aws-sdk-s3", require: false
+gem 'aws-sdk-s3', require: false
+
+gem 'webpacker', '~> 5.2.x'
 
 group :development, :test do
   # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
