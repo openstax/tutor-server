@@ -82,6 +82,7 @@ gem 'apipie-rails'
 gem 'maruku'
 
 # LTI helper
+gem 'simple_oauth', github: 'openstax/simple_oauth'
 gem 'ims-lti', '~> 2.2.1'
 
 # API JSON rendering/parsing

@@ -6,6 +6,12 @@ GIT
     keyword_search (1.6.0)
 
 GIT
+  remote: https://github.com/openstax/simple_oauth.git
+  revision: 5ed7a97c51e0b3a41655b121ead9171d0374f674
+  specs:
+    simple_oauth (0.3.2)
+
+GIT
   remote: https://github.com/openstax/transaction_retry.git
   revision: 5a148396c3b332a7e6a1ad5c7e6eb86b68f09829
   specs:
@@ -479,7 +485,7 @@ GEM
     openstax_healthcheck (0.0.3)
       rails (>= 3.0)
     openstax_rescue_from (4.2.0)
-      rails (>= 3.1, < 6.0)
+      rails (>= 3.1, < 7.0)
     openstax_salesforce (5.1.1)
       openstax_active_force
       rails (>= 5.0, < 7.0)
@@ -684,7 +690,6 @@ GEM
     shellany (0.0.1)
     shoulda-matchers (4.0.1)
       activesupport (>= 4.2.0)
-    simple_oauth (0.3.1)
     simplecov (0.19.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -870,6 +875,7 @@ DEPENDENCIES
   sd_notify
   sentry-raven
   shoulda-matchers
+  simple_oauth!
   sortability
   spring
   spring-commands-rspec
