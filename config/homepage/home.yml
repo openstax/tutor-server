@@ -4,6 +4,7 @@ default:
   appearance: dark with-light-bg
   content:
     image: add_edit.jpg
+    image_highdpi: add_edit@2x.jpg
     header: Add your own questions or edit ours
     body: Instructors, you can add your own questions to homework assignments. Don’t have time to author your own questions?
           Use and edit assessments from the 1000+ peer-reviewed questions preloaded in your OpenStax Tutor course.
@@ -13,6 +14,7 @@ new_subjects:
   appearance: dark
   content:
     image: new_subjects.jpg
+    image_highdpi: new_subjects.jpg
     header: Three new OpenStax Tutor subjects
     body: <i>American Government</i>, <i>U.S. History</i> and the third edition of <i>Introduction to Sociology</i> are now available. Create
           interactive readings with embedded questions to keep your students engaged, and build your own homework assignments.

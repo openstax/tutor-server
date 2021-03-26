@@ -20,6 +20,22 @@ import 'styles/homepage'
 
 
 document.addEventListener('DOMContentLoaded', () => {
+  const highDpiPath = document.getElementById('home')?.getAttribute('data-highdpi-path')
+  if (highDpiPath) {
+    document.styleSheets[0].insertRule(`
+      @media only screen and (-o-min-device-pixel-ratio: 5/4),
+      only screen and (-webkit-min-device-pixel-ratio: 1.25),
+      only screen and (min--moz-device-pixel-ratio: 1.25),
+      only screen and (min-device-pixel-ratio: 1.25),
+      only screen and (min-resolution: 1.25dppx) {
+        #home {
+          background-image: url(${highDpiPath}) !important;
+        }
+      }
+      `
+    )
+  }
+
   MicroModal.init({
     onShow: (modal) => {
       const iframe = document.getElementById('modal-video')

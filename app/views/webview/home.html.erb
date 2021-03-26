@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="preload" media="screen" as="style" onload="this.onload=null;this.rel='stylesheet'">
 </head>
 
-<body id="home" class="appearance-<%= @homepage[:appearance] %>" role="main" aria-label="main content" style='<%= homepage_background_pack_path(@homepage[:content][:image]) %>'>
+<body id="home" class="appearance-<%= @homepage[:appearance] %>" role="main" aria-label="main content" style='<%= homepage_background_style(@homepage[:content][:image]) %>' data-highdpi-path="<%= homepage_background_pack_path(@homepage[:content][:image_highdpi]) %>">
 
   <div class="wrapper">
     <header class="content-header">
