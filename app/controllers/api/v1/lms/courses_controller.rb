@@ -16,7 +16,11 @@ class Api::V1::Lms::CoursesController < Api::V1::ApiController
   def show
     OSU::AccessPolicy.require_action_allowed!(:lms_connection_info, current_api_user, @course)
 
-    app = ::Lms::Models::App.find_or_create_by(owner: @course)
+    app = if @course.environment.current?
+      ::Lms::Models::App.find_or_create_by owner: @course
+    else
+      ::Lms::Models::StubbedApp.new @course.environment
+    end
 
     respond_with(
       app,

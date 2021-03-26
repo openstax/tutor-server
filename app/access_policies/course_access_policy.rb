@@ -11,7 +11,7 @@ class CourseAccessPolicy
     when :read_task_plans
       UserIsCourseTeacher[user: requestor, course: course] ||
       course.cloned_courses.any? { |clone| UserIsCourseTeacher[user: requestor, course: clone] }
-    when :export, :roster, :add_period, :update, :stats, :exercises
+    when :export, :roster, :add_period, :update, :stats, :exercises, :lms_connection_info
       UserIsCourseTeacher[user: requestor, course: course]
     when :create
       requestor.can_create_courses?
@@ -19,7 +19,7 @@ class CourseAccessPolicy
       requestor.can_create_courses? &&
       (course.offering.nil? || course.offering.is_available) &&
       UserIsCourseTeacher[user: requestor, course: course]
-    when :lms_connection_info, :lms_sync_scores, :lms_course_pair
+    when :lms_sync_scores, :lms_course_pair
       course.environment.current? && UserIsCourseTeacher[user: requestor, course: course]
     else
       false

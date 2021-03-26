@@ -758,7 +758,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
       [
         :index, :create, :read, :create_practice, :performance, :read_task_plans,
-        :export, :roster, :add_period, :update, :stats, :exercises, :clone
+        :export, :roster, :add_period, :update, :stats, :exercises, :clone, :lms_connection_info
       ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
@@ -767,7 +767,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
         end
       end
 
-      [ :lms_connection_info, :lms_sync_scores, :lms_course_pair ].each do |test_action|
+      [ :lms_sync_scores, :lms_course_pair ].each do |test_action|
         context test_action.to_s do
           let(:action) { test_action }
 
@@ -785,7 +785,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
           [
             :index, :create, :read, :create_practice, :performance, :read_task_plans,
-            :export, :roster, :add_period, :update, :stats, :exercises, :clone
+            :export, :roster, :add_period, :update, :stats, :exercises, :clone, :lms_connection_info
           ].each do |test_action|
             context test_action.to_s do
               let(:action) { test_action }
@@ -794,7 +794,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
             end
           end
 
-          [ :lms_connection_info, :lms_sync_scores, :lms_course_pair ].each do |test_action|
+          [ :lms_sync_scores, :lms_course_pair ].each do |test_action|
             context test_action.to_s do
               let(:action) { test_action }
 
@@ -820,7 +820,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
 
           [
             :index, :read, :create_practice, :performance, :read_task_plans,
-            :export, :roster, :add_period, :update, :stats, :exercises
+            :export, :roster, :add_period, :update, :stats, :exercises, :lms_connection_info
           ].each do |test_action|
             context test_action.to_s do
               let(:action) { test_action }
@@ -829,7 +829,7 @@ RSpec.describe CourseAccessPolicy, type: :access_policy do
             end
           end
 
-          [ :lms_connection_info, :lms_sync_scores, :lms_course_pair ].each do |test_action|
+          [ :lms_sync_scores, :lms_course_pair ].each do |test_action|
             context test_action.to_s do
               let(:action) { test_action }
 
