@@ -54,7 +54,7 @@
           </button>
           <div class="books" data-carousel-wrapper>
             <% @homepage[:content][:books].each do |book| %>
-              <%= image_pack_tag("media/images/homepage/books/#{book[:image]}", alt: book[:title], title: book[:title]) %>
+              <%= image_pack_tag("media/images/homepage/books/#{book[:image]}", alt: book[:title], title: book[:title], width: 140, height: 140) %>
             <% end %>
           </div>
           <button class="next" data-carousel-next aria-label="Next slide">
