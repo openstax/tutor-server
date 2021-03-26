@@ -19,8 +19,11 @@
     background-attachment: fixed;
     background-repeat: no-repeat;
 
-    a, .copyright, .disclaimer, .hint {
+    a, .copyright, .disclaimer {
       color: rgba(255, 255, 255, 0.9);
+    }
+    .hint {
+      color: #fff;
     }
     .button:not(.primary) {
       background: transparent;
