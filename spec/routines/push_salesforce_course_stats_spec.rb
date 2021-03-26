@@ -4,21 +4,12 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
   subject(:instance) { described_class.new }
 
   context "#best_sf_contact_id_for_course" do
-    let(:course)        { FactoryBot.create :course_profile_course }
-    let(:user_no_sf)    { FactoryBot.create(:user_profile) }
-    let(:user_sf_a)     { FactoryBot.create(:user_profile, salesforce_contact_id: 'a') }
-    let(:user_sf_b)     { FactoryBot.create(:user_profile, salesforce_contact_id: 'b') }
+    let(:course)     { FactoryBot.create :course_profile_course }
+    let(:user_no_sf) { FactoryBot.create(:user_profile) }
+    let(:user_sf_a)  { FactoryBot.create(:user_profile, salesforce_contact_id: 'a') }
+    let(:user_sf_b)  { FactoryBot.create(:user_profile, salesforce_contact_id: 'b') }
 
     subject { instance.best_sf_contact_id_for_course(course) }
-
-    it 'errors if there are no teachers' do
-      expect{ subject }.to throw_symbol(:go_to_next_record)
-    end
-
-    it 'returns nil if there are no teachers with a SF contact ID' do
-      AddUserAsCourseTeacher[course: course, user: user_no_sf]
-      expect{ subject }.to throw_symbol(:go_to_next_record)
-    end
 
     it 'returns the SF ID when there is one teacher with a SF ID' do
       AddUserAsCourseTeacher[course: course, user: user_sf_b]
@@ -77,6 +68,8 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
       b = FactoryBot.create(:course_profile_course, starts_at: Chronic.parse("1/1/2017"),
                                                      ends_at: Chronic.parse("7/2/2017"),
                                                      term: "spring")
+      FactoryBot.create :course_membership_teacher, course: a
+      FactoryBot.create :course_membership_teacher, course: b
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
         expect(instance.applicable_courses).to contain_exactly(b)
@@ -89,10 +82,12 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
     it 'excludes excluded courses' do
       a = FactoryBot.create(:course_profile_course, consistent_times: true,
-                                                     term: :fall, year: 2018,
-                                                     is_excluded_from_salesforce: true)
+                                                    term: :fall, year: 2018,
+                                                    is_excluded_from_salesforce: true)
       b = FactoryBot.create(:course_profile_course, consistent_times: true,
-                                                     term: :fall, year: 2018)
+                                                    term: :fall, year: 2018)
+      FactoryBot.create :course_membership_teacher, course: a
+      FactoryBot.create :course_membership_teacher, course: b
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
         expect(instance.applicable_courses).to contain_exactly(b)
@@ -101,10 +96,12 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
     it 'excludes test courses' do
       a = FactoryBot.create(:course_profile_course, consistent_times: true,
-                                                     term: :fall, year: 2018,
-                                                     is_test: true)
+                                                    term: :fall, year: 2018,
+                                                    is_test: true)
       b = FactoryBot.create(:course_profile_course, consistent_times: true,
-                                                     term: :fall, year: 2018)
+                                                    term: :fall, year: 2018)
+      FactoryBot.create :course_membership_teacher, course: a
+      FactoryBot.create :course_membership_teacher, course: b
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
         expect(instance.applicable_courses).to contain_exactly(b)
@@ -140,6 +137,72 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
     def run_notify_errors(message = nil)
       instance.error!(message: message) if message.present?
       instance.notify_errors
+    end
+  end
+
+  context 'course with teachers and periods' do
+    let(:course)   do
+      FactoryBot.create :course_profile_course, term: [ :winter, :spring, :summer, :fall ].sample
+    end
+    let!(:teacher) do
+      FactoryBot.create(:course_membership_teacher, course: course).tap do |teacher|
+        teacher.role.profile.account.update_attribute :salesforce_contact_id, ''
+      end
+    end
+    let!(:period)  { FactoryBot.create :course_membership_period, course: course }
+    let(:tcp)      { OpenStax::Salesforce::Remote::TutorCoursePeriod.new period_uuid: period.uuid }
+
+    before do
+      expect(OpenStax::Salesforce::Remote::TutorCoursePeriod).to(
+        receive(:where).with(period_uuid: [ period.uuid ])
+      ).and_return([ tcp ])
+    end
+
+    it 'sets preview status for preview courses' do
+      preview_claimed_at = Time.current + 1.hour
+      course.update_attributes is_preview: true, preview_claimed_at: preview_claimed_at
+
+      expect(tcp).to receive(:status=).with(
+        OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_PREVIEW
+      )
+
+      described_class.call
+
+      expect(tcp.created_at).to eq preview_claimed_at.iso8601
+    end
+
+    it 'sets archived status for archived periods' do
+      period.destroy
+
+      expect(tcp).to receive(:status=).with(
+        OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_ARCHIVED
+      )
+
+      described_class.call
+
+      expect(tcp.created_at).to eq course.created_at.iso8601
+    end
+
+    it 'sets dropped status for courses with no teachers' do
+      teacher.destroy
+
+      expect(tcp).to receive(:status=).with(
+        OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_DROPPED
+      )
+
+      described_class.call
+
+      expect(tcp.created_at).to eq course.created_at.iso8601
+    end
+
+    it 'sets approved status for active courses' do
+      expect(tcp).to receive(:status=).with(
+        OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_APPROVED
+      )
+
+      described_class.call
+
+      expect(tcp.created_at).to eq course.created_at.iso8601
     end
   end
 end

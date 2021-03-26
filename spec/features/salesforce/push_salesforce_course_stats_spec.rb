@@ -101,17 +101,9 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
   context 'skips happen' do
     context 'when the course has no teachers' do
       it 'skips the course' do
-        call_expecting_skips 'No teachers'
-      end
-    end
+        expect_any_instance_of(PushSalesforceCourseStats).not_to receive(:process_course)
 
-    context 'when no teachers have a SF Contact ID' do
-      before { AddUserAsCourseTeacher[course: @course, user: @user] }
-
-      it 'does not log the error to Sentry or send error emails' do
-        expect(Raven).not_to receive(:capture_message)
-        expect(Raven).not_to receive(:capture_exception)
-        call_expecting_skips(/No teachers have a SF contact ID/)
+        instance.call
       end
     end
   end
@@ -210,7 +202,7 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
 
         outputs = call.outputs
         expect(outputs.num_courses).to eq 2
-        expect(outputs.num_periods).to eq 3
+        expect(outputs.num_periods).to eq 2
         expect(outputs.num_updates).to eq 3
         expect(outputs.num_errors).to eq 1
         expect(outputs.num_skips).to eq 0
@@ -252,15 +244,6 @@ RSpec.describe 'PushSalesforceCourseStats', vcr: VCR_OPTS do
     expect(instance).to receive(:error!).at_least(:once)
                                         .with(hash_including(hash))
                                         .and_call_original
-
-    instance.call
-  end
-
-  def call_expecting_skips(hash_or_message)
-    hash = hash_or_message.is_a?(Hash) ? hash_or_message : { message: hash_or_message }
-    expect(instance).to receive(:skip!).at_least(:once)
-                                       .with(hash_including(hash))
-                                       .and_call_original
 
     instance.call
   end

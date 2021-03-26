@@ -5,10 +5,10 @@ http_interactions:
     uri: https://test.salesforce.com/services/oauth2/token
     body:
       encoding: US-ASCII
-      string: grant_type=password&client_id=<salesforce_consumer_key>&consumer_secret=<salesforce_consumer_secret>&username=<salesforce_username_url>&password=<salesforce_password><salesforce_security_token>
+      string: grant_type=password&client_id=<salesforce_consumer_key>&client_secret=<salesforce_consumer_secret>&username=<salesforce_username_url>&password=<salesforce_password_url><salesforce_security_token>
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/x-www-form-urlencoded
       Accept-Encoding:
@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:37:57 GMT
+      - Tue, 16 Mar 2021 21:37:18 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -31,8 +31,7 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=K3dt0AdAEeqMsXf4MFHAEA;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:37:57 GMT;Max-Age=5184000
+      - "<Set-Cookie 1>"
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       X-Readonlymode:
@@ -45,18 +44,18 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"access_token":"<salesforce_access_token>","instance_url":"<salesforce_instance_url>","id":"<salesforce_id>","token_type":"Bearer","issued_at":"1573778277847","signature":"<salesforce_signature>"}'
+      string: '{"access_token":"<salesforce_access_token>","instance_url":"<salesforce_instance_url>","id":"<salesforce_id>","token_type":"Bearer","issued_at":"1615930638725","signature":"<salesforce_signature>"}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:37:57 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:18 GMT
 - request:
     method: post
     uri: https://test.salesforce.com/services/oauth2/token
     body:
       encoding: US-ASCII
-      string: grant_type=password&client_id=<salesforce_consumer_key>&consumer_secret=<salesforce_consumer_secret>&username=<salesforce_username_url>&password=<salesforce_password><salesforce_security_token>
+      string: grant_type=password&client_id=<salesforce_consumer_key>&client_secret=<salesforce_consumer_secret>&username=<salesforce_username_url>&password=<salesforce_password_url><salesforce_security_token>
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/x-www-form-urlencoded
       Accept-Encoding:
@@ -69,7 +68,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:37:58 GMT
+      - Tue, 16 Mar 2021 21:37:19 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains
       X-Content-Type-Options:
@@ -79,8 +78,7 @@ http_interactions:
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=K68giAdAEeqBpAvAxFC_OA;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:37:58 GMT;Max-Age=5184000
+      - "<Set-Cookie 1>"
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       X-Readonlymode:
@@ -93,20 +91,20 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"access_token":"<salesforce_access_token>","instance_url":"<salesforce_instance_url>","id":"<salesforce_id>","token_type":"Bearer","issued_at":"1573778278266","signature":"R8kzYWpooW8s11Oz93ihrcZ8z6NSZP9SAMPmsdGhY7I="}'
+      string: '{"access_token":"<salesforce_access_token>","instance_url":"<salesforce_instance_url>","id":"<salesforce_id>","token_type":"Bearer","issued_at":"1615930639374","signature":"1idijiEOLLZQFfR7sSvZhOdE6s9C//2p+NtCGkSB+WE="}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:37:58 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:19 GMT
 - request:
     method: get
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/query?q=SELECT%20Id,%20Name%20FROM%20Account"
+    uri: "<salesforce_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Name,%20BillingCity,%20BillingState,%20Type,%20School_Location__c,%20SheerID_School_Name__c,%20K_I_P__c,%20child_of_kip__c%20FROM%20Account%20WHERE%20(RecordType.Name%20=%20%27School%27)%20AND%20(Name%20IN%20(%27JP%20University%27))"
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -117,26 +115,19 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:37:58 GMT
+      - Tue, 16 Mar 2021 21:37:19 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=K_qoRAdAEeqs3Hu2SQlNfQ;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:37:58 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=967/51000
+      - api-usage=471/5000000
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -145,23 +136,69 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0015500000dS49ZAAS"},"Id":"0015500000dS49ZAAS","Name":"JP
-        University"}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0010v00000bM8kQAAS"},"Id":"0010v00000bM8kQAAS","Name":"JP
+        University","BillingCity":null,"BillingState":null,"Type":null,"School_Location__c":"Domestic","SheerID_School_Name__c":null,"K_I_P__c":false,"child_of_kip__c":false}]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:37:58 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:19 GMT
 - request:
-    method: post
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/Contact"
+    method: get
+    uri: "<salesforce_instance_url>/services/data/v37.0/query?q=SELECT%20Id,%20Name,%20BillingCity,%20BillingState,%20Type,%20School_Location__c,%20SheerID_School_Name__c,%20K_I_P__c,%20child_of_kip__c%20FROM%20Account%20WHERE%20(RecordType.Name%20=%20%27School%27)%20AND%20(Name%20IN%20(%27JP%20University%27))"
     body:
-      encoding: UTF-8
-      string: '{"FirstName":"Sunshine","LastName":"Corwin","AccountId":"0015500000dS49ZAAS"}'
+      encoding: US-ASCII
+      string: ''
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
+      Authorization:
+      - "<Authorization 1>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 16 Mar 2021 21:37:20 GMT
+      Strict-Transport-Security:
+      - max-age=31536002; includeSubDomains
+      Expect-Ct:
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
+      X-Robots-Tag:
+      - none
+      Cache-Control:
+      - no-cache,must-revalidate,max-age=0,no-store,private
+      Set-Cookie:
+      - "<Set-Cookie 1>"
+      Sforce-Limit-Info:
+      - api-usage=471/5000000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v37.0/sobjects/Account/0010v00000bM8kQAAS"},"Id":"0010v00000bM8kQAAS","Name":"JP
+        University","BillingCity":null,"BillingState":null,"Type":null,"School_Location__c":"Domestic","SheerID_School_Name__c":null,"K_I_P__c":false,"child_of_kip__c":false}]}'
+    http_version: 
+  recorded_at: Tue, 16 Mar 2021 21:37:20 GMT
+- request:
+    method: post
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/Contact"
+    body:
+      encoding: UTF-8
+      string: '{"FirstName":"Deeanna","LastName":"Marvin","AccountId":"0010v00000bM8kQAAS"}'
+    headers:
+      User-Agent:
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -172,28 +209,21 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:37:58 GMT
+      - Tue, 16 Mar 2021 21:37:20 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=LCsuLAdAEeqs3Hu2SQlNfQ;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:37:58 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=968/51000
+      - api-usage=471/5000000
       Location:
-      - "/services/data/v37.0/sobjects/Contact/0035500000aJm4mAAC"
+      - "/services/data/v37.0/sobjects/Contact/0030v00000Uz8YmAAJ"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -202,22 +232,22 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"0035500000aJm4mAAC","success":true,"errors":[]}'
+      string: '{"id":"0030v00000Uz8YmAAJ","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:37:59 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:22 GMT
 - request:
     method: post
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/Campaign"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/Campaign"
     body:
       encoding: UTF-8
-      string: '{"Name":"37025e1d41314cda"}'
+      string: '{"Name":"cbe04e2e6a24edaa"}'
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -228,28 +258,21 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:37:59 GMT
+      - Tue, 16 Mar 2021 21:37:22 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=LNDjxgdAEeq7ER2DQvQAAA;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:37:59 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=967/51000
+      - api-usage=471/5000000
       Location:
-      - "/services/data/v37.0/sobjects/Campaign/70155000000faNkAAI"
+      - "/services/data/v37.0/sobjects/Campaign/7010v000000kbaZAAQ"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -258,22 +281,22 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"70155000000faNkAAI","success":true,"errors":[]}'
+      string: '{"id":"7010v000000kbaZAAQ","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:00 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:23 GMT
 - request:
     method: post
-    uri: "<salesforce_instance_url_lower>/services/data/v37.0/sobjects/Campaign"
+    uri: "<salesforce_instance_url>/services/data/v37.0/sobjects/Campaign"
     body:
       encoding: UTF-8
-      string: '{"Name":"5309da0d47ac418f"}'
+      string: '{"Name":"04adca78cea45b5c"}'
     headers:
       User-Agent:
-      - Faraday v0.15.4
+      - Faraday v0.17.4
       Content-Type:
       - application/json
       Authorization:
-      - OAuth <salesforce_access_token>
+      - "<Authorization 1>"
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -284,28 +307,21 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Fri, 15 Nov 2019 00:38:00 GMT
+      - Tue, 16 Mar 2021 21:37:23 GMT
       Strict-Transport-Security:
       - max-age=31536002; includeSubDomains
-      Public-Key-Pins-Report-Only:
-      - pin-sha256="9n0izTnSRF+W4W4JTq51avSXkWhQB8duS2bxVLfzXsY="; pin-sha256="5kJvNEMw0KjrCAu7eXY5HZdvyCS13BbA0VJG1RSP91w=";
-        pin-sha256="njN4rRG+22dNXAi+yb8e3UMypgzPUPHlv4+foULwl1g="; max-age=86400;
-        includeSubDomains; report-uri="https://a.forcesslreports.com/hpkp-report/00D550000000cu7m";
       Expect-Ct:
-      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D550000000cu7m"
+      - max-age=86400, report-uri="https://a.forcesslreports.com/Expect-CT-report/00D0v0000005T7Um"
       X-Robots-Tag:
       - none
       Cache-Control:
       - no-cache,must-revalidate,max-age=0,no-store,private
       Set-Cookie:
-      - BrowserId=LQmnjQdAEeqUocGjt54-9A;Path=/;Domain=.salesforce.com;Expires=Tue,
-        14-Jan-2020 00:38:00 GMT;Max-Age=5184000
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
+      - "<Set-Cookie 1>"
       Sforce-Limit-Info:
-      - api-usage=967/51000
+      - api-usage=471/5000000
       Location:
-      - "/services/data/v37.0/sobjects/Campaign/70155000000faNpAAI"
+      - "/services/data/v37.0/sobjects/Campaign/7010v000000kbaeAAA"
       Content-Type:
       - application/json;charset=UTF-8
       Vary:
@@ -314,7 +330,7 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"70155000000faNpAAI","success":true,"errors":[]}'
+      string: '{"id":"7010v000000kbaeAAA","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Fri, 15 Nov 2019 00:38:00 GMT
+  recorded_at: Tue, 16 Mar 2021 21:37:23 GMT
 recorded_with: VCR 4.0.0

@@ -44,11 +44,26 @@ class PushSalesforceCourseStats
     # Don't update courses that have ended
     terms = CourseProfile::Models::Course.terms.values_at(:spring, :summer, :fall, :winter)
 
-    CourseProfile::Models::Course
+    courses = CourseProfile::Models::Course
       .not_ended
-      .where(is_test: false, is_preview: false, is_excluded_from_salesforce: false, term: terms)
-      .preload(:offering, periods: { students: { role: { taskings: :task } } },
-               teachers: { role: { profile: :account } })
+      .where(is_test: false, is_excluded_from_salesforce: false, term: terms)
+      .where(
+        <<~WHERE_SQL
+          EXISTS (
+            SELECT *
+            FROM "course_membership_teachers"
+            WHERE "course_membership_teachers"."course_profile_course_id" =
+              "course_profile_courses"."id"
+          )
+        WHERE_SQL
+      )
+
+    courses = courses.where(is_preview: false).or(courses.where.not(preview_claimed_at: nil))
+
+    courses.preload(
+      :offering, periods: { students: { role: { taskings: :task } } },
+                 teachers: { role: { profile: :account } }
+    )
   end
 
   def process_courses(courses)
@@ -65,13 +80,12 @@ class PushSalesforceCourseStats
 
   def process_course(course, sf_tutor_course_periods_by_period_uuid)
     begin
-      num_teachers = course.teachers.length
-      skip!(message: 'No teachers', course: course) if num_teachers == 0
+      num_teachers = course.teachers.reject(&:deleted?).length
 
-      num_periods = course.periods.length
+      num_periods = course.periods.reject(&:archived?).length
       course_wide_stats = {
         base_year: base_year_for_course(course),
-        book_name: course.offering.try!(:salesforce_book_name),
+        book_name: course.offering&.salesforce_book_name,
         contact_id: best_sf_contact_id_for_course(course),
         course_id: course.id,
         course_name: course.name,
@@ -107,15 +121,24 @@ class PushSalesforceCourseStats
 
       begin
         sf_tutor_course_period.period_uuid = period.uuid
-        sf_tutor_course_period.status = period.archived? ?
-          OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_ARCHIVED :
+        sf_tutor_course_period.status = if course.is_preview?
+          OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_PREVIEW
+        elsif period.archived?
+          OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_ARCHIVED
+        elsif course_wide_stats[:contact_id].nil?
+          OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_DROPPED
+        else
           OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_APPROVED
+        end
 
         sf_tutor_course_period.reset_stats
 
-        sf_tutor_course_period.created_at = period.created_at.iso8601
+        created_at = [ course.preview_claimed_at, period.created_at ].compact.max.iso8601
+        sf_tutor_course_period.created_at = created_at
 
         course_wide_stats.each do |field, value|
+          next if field == :contact_id && value.nil?
+
           sf_tutor_course_period.public_send("#{field}=", value)
         end
 
@@ -166,11 +189,8 @@ class PushSalesforceCourseStats
   end
 
   def best_sf_contact_id_for_course(course)
-    course.teachers.sort_by(&:created_at)
-          .map{ |tt| tt.role.profile.account.salesforce_contact_id }
-          .compact.first.tap do |contact_id|
-      skip!(message: 'No teachers have a SF contact ID', course: course) if contact_id.nil?
-    end
+    course.teachers.reject(&:deleted?).sort_by(&:created_at)
+          .map { |tt| tt.role.profile.account.salesforce_contact_id }.compact.first
   end
 
   def log(level = :info, *args, &block)
