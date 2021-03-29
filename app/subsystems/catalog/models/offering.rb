@@ -8,7 +8,6 @@ class Catalog::Models::Offering < ApplicationRecord
   has_many :courses, subsystem: :course_profile
 
   validates :salesforce_book_name,  presence: true
-  validates :webview_url, presence: true
   validates :title, presence: true
   validates :description, presence: true
 end

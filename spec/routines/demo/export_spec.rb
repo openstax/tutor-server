@@ -61,9 +61,7 @@ RSpec.describe Demo::Export, type: :routine do
             description: offering.description,
             appearance_code: offering.appearance_code,
             salesforce_book_name: offering.salesforce_book_name,
-            default_course_name: offering.default_course_name,
-            webview_url_base: "#{offering.webview_url}/contents/",
-            pdf_url_base: "#{offering.pdf_url}/exports/"
+            default_course_name: offering.default_course_name
           }
         )
       when 'config/demo/spec/users/Spec Course 1.yml.erb'

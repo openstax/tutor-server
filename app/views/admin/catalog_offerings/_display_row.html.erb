@@ -52,12 +52,6 @@
     <b>Costs students:</b> <%= tf_to_yn(offering.does_cost) %>
   </div>
   <div>
-    <b>PDF URL:</b> <%= link_to offering.pdf_url, offering.pdf_url %>
-  </div>
-  <div>
-    <b>Webview:</b> <%= link_to offering.webview_url, offering.webview_url %>
-  </div>
-  <div>
     <b>Default Course Name:</b> <%= offering.default_course_name || '[not set]' %>
     <span style="float: right">
       <b>Full Tutor?</b>&nbsp;&nbsp;&nbsp;<%= tf_to_yn(offering.is_tutor) %>&nbsp;&nbsp;&nbsp;&nbsp;

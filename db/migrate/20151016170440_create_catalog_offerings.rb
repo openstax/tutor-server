@@ -1,5 +1,4 @@
 class CreateCatalogOfferings < ActiveRecord::Migration[4.2]
-
   def change
     create_table :catalog_offerings do |t|
       t.string :identifier, null: false, index: { unique: true }
@@ -13,5 +12,4 @@ class CreateCatalogOfferings < ActiveRecord::Migration[4.2]
 
     add_column :course_profile_profiles, :catalog_offering_identifier, :string
   end
-
 end

@@ -54,12 +54,12 @@ RSpec.describe Admin::CatalogOfferingsController, type: :request do
   context '#update' do
     it 'complains about blank fields' do
       attrs = attributes.dup
-      attrs['webview_url'] = ''
+      attrs['salesforce_book_name'] = ''
 
       expect do
         put admin_catalog_offering_url(offering.id), params: { offering: attrs }
       end.to_not change(Catalog::Models::Offering, :count)
-      expect(flash.now[:error]).to eq("Webview url can't be blank")
+      expect(flash.now[:error]).to eq("Salesforce book name can't be blank")
     end
 
     it 'can update an offering' do
