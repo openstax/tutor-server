@@ -24,11 +24,10 @@ jobs:
           POSTGRES_PASSWORD: postgres
     strategy:
       matrix:
-        tests:
-            - { name: 'fast'  , args: 'TAG=speed:fast'   }
-            - { name: 'medium', args: 'TAG=speed:medium' }
-            - { name: 'slow'  , args: 'TAG=speed:slow'   }
-            - { name: 'assets', args: 'ASSETS=true'      }
+        speed:
+          - fast
+          - medium
+          - slow
 
     steps:
       - uses: actions/checkout@v2
@@ -53,4 +52,5 @@ jobs:
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
           bin/rails assets:precompile
-          ${{ matrix.tests.args }} ./bin/ci
+          bundle exec rake parallel:create parallel:load_schema parallel:seed --trace
+          bundle exec parallel_rspec ./spec --test-options "--tag speed:${{ matrix.speed }}"
