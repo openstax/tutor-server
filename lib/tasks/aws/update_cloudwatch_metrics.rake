@@ -8,7 +8,7 @@ namespace :aws do
     Delayed::Job.where(locked_at: nil).or(
       Delayed::Job.where(dj[:locked_at].lt current_time - max_run_time)
     ).where(dj[:run_at].lteq current_time).where(failed_at: nil).group(:queue).pluck(
-      <<~SELECT
+      Arel.sql <<~SELECT
         "delayed_jobs"."queue", MIN(
           GREATEST(
             "delayed_jobs"."created_at",
