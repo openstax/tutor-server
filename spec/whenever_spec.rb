@@ -7,20 +7,15 @@ RSpec.describe 'whenever schedule' do
     before(:each) { expect(OpenStax::RescueFrom).not_to receive(:perform_rescue) }
 
     it 'makes sure `runner` statements exist' do
-      expect(schedule.jobs[:runner].count).to be >= 5
+      expect(schedule.jobs[:rake].count).to be >= 3
+      expect(schedule.jobs[:runner].count).to be >= 1
 
-      expect_any_instance_of(PushSalesforceCourseStats).to receive(:call)
-      expect_any_instance_of(GetSalesforceBookNames).to receive(:call)
-      expect_any_instance_of(CourseProfile::BuildPreviewCourses).to receive(:call)
-      expect(Lms::Models::TrustedLaunchData).to receive(:where).and_call_original
+      # Make sure all constants and methods exist
 
-      # Executes the actual ruby statement to make sure all constants and methods exist:
+      schedule.jobs[:rake].each { |job| expect { Rake::Task[job[:task]] }.not_to raise_error }
+
+      expect(CourseProfile::BuildPreviewCourses).to receive(:call)
       schedule.jobs[:runner].each { |job| eval job[:task] }
     end
-  end
-
-  # For running one specific runner task, e.g. `eval_runner_tasks('ImportSalesforceCourses')`
-  def eval_runner_tasks(regex)
-    schedule.jobs[:runner].each { |job| eval job[:task] if job[:task].match(regex)}
   end
 end
