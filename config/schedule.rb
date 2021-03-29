@@ -4,38 +4,14 @@
 #   * https://github.com/javan/whenever/issues/481
 #   * https://github.com/javan/whenever/pull/239
 
-every 1.minute do
-  rake 'openstax:accounts:sync:accounts'
-  rake 'delayed:heartbeat:delete_timed_out_workers'
-  rake 'aws:update_cloudwatch_metrics'
-end
+every(1.minute) { rake 'cron:minute' }
 
 every 10.minutes do
   runner "OpenStax::RescueFrom.this { CourseProfile::BuildPreviewCourses.call }"
 end
 
-every 1.hour do
-  runner "OpenStax::RescueFrom.this { Research::UpdateStudyActivations.call }"
-end
+# These hours are chosen to allow plenty of space between them
+# and to place them in low traffic hours for US timezones
+every(1.day, at: '8 AM') { rake 'cron:day' }  # Midnight-1AM Pacific/2-3AM Central/3-4AM Eastern
 
-every 1.day, at: '8:30 AM' do  # ~ 2:30am central
-  runner "OpenStax::RescueFrom.this { GetSalesforceBookNames.call(true) }"
-  runner "OpenStax::RescueFrom.this { PushSalesforceCourseStats.call }"
-end
-
-every 1.day, at: '10:30 AM' do
-  runner "OpenStax::RescueFrom.this { Lms::Models::TrustedLaunchData.cleanup }"
-end
-
-every 1.week do
-  runner "OpenStax::RescueFrom.this { Stats::Generate.call start_at: 1.week.ago.beginning_of_week }"
-end
-
-every 1.month, at: '9 AM' do  # ~ 3am central
-  runner "OpenStax::RescueFrom.this { Jobba.cleanup }"
-end
-
-# On the 1st of every odd month (normal courses only end on January, March, July, September)
-every 2.month do
-  runner 'OpenStax::RescueFrom.this { Tasks::FreezeEndedCourseTeacherPerformanceReports.call }'
-end
+every(1.month, at: '10 AM') { rake 'cron:month' } # 5-6AM Eastern/4-5AM Central/2-3AM Pacific
