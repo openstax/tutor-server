@@ -174,7 +174,6 @@ class PushSalesforceCourseStats
           sf_tutor_course_period.num_students_refunded += 1 \
             if student.first_paid_at.present? && !student.is_paid
 
-          num_steps_completed = student.num_steps_completed
           sf_tutor_course_period.num_students_with_work += 1 if student.num_steps_completed >= 10
         end
 
