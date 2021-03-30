@@ -200,7 +200,7 @@ class PushSalesforceCourseStats
 
   def base_year_for_course(course)
     case course.term
-    when 'fall'
+    when 'fall', 'preview'
       course.year
     when 'spring', 'summer', 'winter'
       course.year - 1

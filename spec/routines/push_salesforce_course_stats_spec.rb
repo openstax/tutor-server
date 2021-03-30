@@ -58,6 +58,12 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
       @year = 2017
       is_expected.to eq 2016
     end
+
+    it "gives 2016 for Preview 2016" do
+      @term = :preview
+      @year = 2016
+      is_expected.to eq 2016
+    end
   end
 
   context "#applicable_courses" do
@@ -148,7 +154,8 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
   context 'course with teachers and periods' do
     let(:course)   do
-      FactoryBot.create :course_profile_course, term: [ :winter, :spring, :summer, :fall ].sample
+      FactoryBot.create :course_profile_course,
+                        term: [ :winter, :spring, :summer, :fall, :preview ].sample
     end
     let!(:teacher) do
       FactoryBot.create(:course_membership_teacher, course: course).tap do |teacher|
