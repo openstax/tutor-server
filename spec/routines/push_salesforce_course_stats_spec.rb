@@ -3,30 +3,30 @@ require 'rails_helper'
 RSpec.describe PushSalesforceCourseStats, type: :routine do
   subject(:instance) { described_class.new }
 
-  context "#best_sf_contact_id_for_course" do
+  context "#best_sf_teacher" do
     let(:course)     { FactoryBot.create :course_profile_course }
     let(:user_no_sf) { FactoryBot.create(:user_profile) }
     let(:user_sf_a)  { FactoryBot.create(:user_profile, salesforce_contact_id: 'a') }
     let(:user_sf_b)  { FactoryBot.create(:user_profile, salesforce_contact_id: 'b') }
 
-    subject { instance.best_sf_contact_id_for_course(course) }
+    subject { instance.best_sf_teacher(course) }
 
-    it 'returns the SF ID when there is one teacher with a SF ID' do
-      AddUserAsCourseTeacher[course: course, user: user_sf_b]
-      expect(subject).to eq "b"
+    it 'returns the teacher when there is one teacher with a SF ID' do
+      teacher = AddUserAsCourseTeacher[course: course, user: user_sf_b].teacher
+      expect(subject).to eq teacher
     end
 
     context "order matters when multiple teachers" do
       it 'returns "b" when "b" added first' do
-        AddUserAsCourseTeacher[course: course, user: user_sf_b]
+        teacher_b = AddUserAsCourseTeacher[course: course, user: user_sf_b].teacher
         AddUserAsCourseTeacher[course: course, user: user_sf_a]
-        expect(subject).to eq "b"
+        expect(subject).to eq teacher_b
       end
 
       it 'returns "a" when "a" added first' do
-        AddUserAsCourseTeacher[course: course, user: user_sf_a]
+        teacher_a = AddUserAsCourseTeacher[course: course, user: user_sf_a].teacher
         AddUserAsCourseTeacher[course: course, user: user_sf_b]
-        expect(subject).to eq "a"
+        expect(subject).to eq teacher_a
       end
     end
   end
@@ -68,8 +68,10 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
       b = FactoryBot.create(:course_profile_course, starts_at: Chronic.parse("1/1/2017"),
                                                      ends_at: Chronic.parse("7/2/2017"),
                                                      term: "spring")
-      FactoryBot.create :course_membership_teacher, course: a
-      FactoryBot.create :course_membership_teacher, course: b
+      ta = FactoryBot.create :course_membership_teacher, course: a
+      ta.role.profile.account.update_attribute :salesforce_contact_id, 'a'
+      tb = FactoryBot.create :course_membership_teacher, course: b
+      tb.role.profile.account.update_attribute :salesforce_contact_id, 'b'
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
         expect(instance.applicable_courses).to contain_exactly(b)
@@ -86,8 +88,10 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
                                                     is_excluded_from_salesforce: true)
       b = FactoryBot.create(:course_profile_course, consistent_times: true,
                                                     term: :fall, year: 2018)
-      FactoryBot.create :course_membership_teacher, course: a
-      FactoryBot.create :course_membership_teacher, course: b
+      ta = FactoryBot.create :course_membership_teacher, course: a
+      ta.role.profile.account.update_attribute :salesforce_contact_id, 'a'
+      tb = FactoryBot.create :course_membership_teacher, course: b
+      tb.role.profile.account.update_attribute :salesforce_contact_id, 'b'
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
         expect(instance.applicable_courses).to contain_exactly(b)
@@ -100,8 +104,10 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
                                                     is_test: true)
       b = FactoryBot.create(:course_profile_course, consistent_times: true,
                                                     term: :fall, year: 2018)
-      FactoryBot.create :course_membership_teacher, course: a
-      FactoryBot.create :course_membership_teacher, course: b
+      ta = FactoryBot.create :course_membership_teacher, course: a
+      ta.role.profile.account.update_attribute :salesforce_contact_id, 'a'
+      tb = FactoryBot.create :course_membership_teacher, course: b
+      tb.role.profile.account.update_attribute :salesforce_contact_id, 'b'
 
       Timecop.freeze(Chronic.parse("7/1/2017")) do
         expect(instance.applicable_courses).to contain_exactly(b)
@@ -146,7 +152,7 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
     end
     let!(:teacher) do
       FactoryBot.create(:course_membership_teacher, course: course).tap do |teacher|
-        teacher.role.profile.account.update_attribute :salesforce_contact_id, ''
+        teacher.role.profile.account.update_attribute :salesforce_contact_id, 'a'
       end
     end
     let!(:period)  { FactoryBot.create :course_membership_period, course: course }
@@ -180,7 +186,7 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
       described_class.call
 
-      expect(tcp.created_at).to eq course.created_at.iso8601
+      expect(tcp.created_at).to eq period.created_at.iso8601
     end
 
     it 'sets dropped status for courses with no teachers' do
@@ -192,7 +198,7 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
       described_class.call
 
-      expect(tcp.created_at).to eq course.created_at.iso8601
+      expect(tcp.created_at).to eq period.created_at.iso8601
     end
 
     it 'sets approved status for active courses' do
@@ -202,7 +208,7 @@ RSpec.describe PushSalesforceCourseStats, type: :routine do
 
       described_class.call
 
-      expect(tcp.created_at).to eq course.created_at.iso8601
+      expect(tcp.created_at).to eq period.created_at.iso8601
     end
   end
 end

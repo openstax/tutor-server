@@ -42,7 +42,9 @@ class PushSalesforceCourseStats
 
   def applicable_courses
     # Don't update courses that have ended
-    terms = CourseProfile::Models::Course.terms.values_at(:spring, :summer, :fall, :winter)
+    terms = CourseProfile::Models::Course.terms.values_at(
+      :spring, :summer, :fall, :winter, :preview
+    )
 
     courses = CourseProfile::Models::Course
       .not_ended
@@ -52,41 +54,59 @@ class PushSalesforceCourseStats
           EXISTS (
             SELECT *
             FROM "course_membership_teachers"
-            WHERE "course_membership_teachers"."course_profile_course_id" =
-              "course_profile_courses"."id"
+            INNER JOIN "entity_roles"
+              ON "entity_roles"."id" = "course_membership_teachers"."entity_role_id"
+            INNER JOIN "user_profiles"
+              ON "user_profiles"."id" = "entity_roles"."user_profile_id"
+            INNER JOIN "openstax_accounts_accounts"
+              ON "openstax_accounts_accounts"."id" = "user_profiles"."account_id"
+            WHERE "openstax_accounts_accounts"."salesforce_contact_id" IS NOT NULL
+              AND "course_membership_teachers"."course_profile_course_id" =
+                "course_profile_courses"."id"
           )
         WHERE_SQL
       )
 
     courses = courses.where(is_preview: false).or(courses.where.not(preview_claimed_at: nil))
 
-    courses.preload(
-      :offering, periods: { students: { role: { taskings: :task } } },
-                 teachers: { role: { profile: :account } }
-    )
+    courses.preload :offering, :periods, teachers: { role: { profile: :account } }
   end
 
   def process_courses(courses)
-    period_uuids = courses.flat_map(&:periods).sort_by(&:created_at).map(&:uuid)
-    sf_tutor_course_periods_by_period_uuid = TCP.where(period_uuid: period_uuids)
+    periods = courses.flat_map(&:periods).sort_by(&:created_at)
+    students_by_period_id = CourseMembership::Models::Student.select(
+      :course_membership_period_id, :is_comped, :is_paid, :first_paid_at, :dropped_at, <<~SQL
+        (
+          SELECT COALESCE(SUM("tasks_tasks"."completed_steps_count"), 0)
+          FROM "entity_roles"
+            INNER JOIN "tasks_taskings" ON "tasks_taskings"."entity_role_id" = "entity_roles"."id"
+            INNER JOIN "tasks_tasks" ON "tasks_tasks"."id" = "tasks_taskings"."tasks_task_id"
+          WHERE "entity_roles"."id" = "course_membership_students"."entity_role_id"
+        ) AS "num_steps_completed"
+      SQL
+    ).where(course_membership_period_id: periods.map(&:id)).group_by(&:course_membership_period_id)
+    sf_tutor_course_periods_by_period_uuid = TCP.where(period_uuid: periods.map(&:uuid))
                                                 .to_a.index_by(&:period_uuid)
 
     courses.each do |course|
-      catch(:go_to_next_record) { process_course(course, sf_tutor_course_periods_by_period_uuid) }
+      catch(:go_to_next_record) do
+        process_course(course, students_by_period_id, sf_tutor_course_periods_by_period_uuid)
+      end
     end
 
     outputs.num_courses += courses.length
   end
 
-  def process_course(course, sf_tutor_course_periods_by_period_uuid)
+  def process_course(course, students_by_period_id, sf_tutor_course_periods_by_period_uuid)
     begin
       num_teachers = course.teachers.reject(&:deleted?).length
-
       num_periods = course.periods.reject(&:archived?).length
+      sf_teacher = best_sf_teacher(course)
+
       course_wide_stats = {
         base_year: base_year_for_course(course),
         book_name: course.offering&.salesforce_book_name,
-        contact_id: best_sf_contact_id_for_course(course),
+        contact_id: sf_teacher.role.profile.account.salesforce_contact_id,
         course_id: course.id,
         course_name: course.name,
         course_start_date: course.starts_at.to_date.iso8601,
@@ -103,7 +123,13 @@ class PushSalesforceCourseStats
 
       course.periods.each do |period|
         catch(:go_to_next_record) do
-          process_period(course, period, sf_tutor_course_periods_by_period_uuid, course_wide_stats)
+          students = students_by_period_id[period.id] || []
+          sf_tutor_course_period = sf_tutor_course_periods_by_period_uuid[period.uuid] ||
+                                   TCP.new(period_uuid: period.uuid)
+
+          process_period(
+            course, sf_teacher, period, students, sf_tutor_course_period, course_wide_stats
+          )
         end
       end
 
@@ -113,10 +139,10 @@ class PushSalesforceCourseStats
     end
   end
 
-  def process_period(course, period, sf_tutor_course_periods_by_period_uuid, course_wide_stats)
+  def process_period(
+    course, sf_teacher, period, students, sf_tutor_course_period, course_wide_stats
+  )
     begin
-      sf_tutor_course_period = sf_tutor_course_periods_by_period_uuid[period.uuid] ||
-                               TCP.new(period_uuid: period.uuid)
       sf_tutor_course_period.error = nil
 
       begin
@@ -125,7 +151,7 @@ class PushSalesforceCourseStats
           OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_PREVIEW
         elsif period.archived?
           OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_ARCHIVED
-        elsif course_wide_stats[:contact_id].nil?
+        elsif sf_teacher.deleted?
           OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_DROPPED
         else
           OpenStax::Salesforce::Remote::TutorCoursePeriod::STATUS_APPROVED
@@ -137,12 +163,10 @@ class PushSalesforceCourseStats
         sf_tutor_course_period.created_at = created_at
 
         course_wide_stats.each do |field, value|
-          next if field == :contact_id && value.nil?
-
           sf_tutor_course_period.public_send("#{field}=", value)
         end
 
-        period.students.each do |student|
+        students.each do |student|
           sf_tutor_course_period.num_students += 1
           sf_tutor_course_period.num_students_comped += 1 if student.is_comped
           sf_tutor_course_period.num_students_dropped += 1 if student.dropped?
@@ -150,10 +174,7 @@ class PushSalesforceCourseStats
           sf_tutor_course_period.num_students_refunded += 1 \
             if student.first_paid_at.present? && !student.is_paid
 
-          num_steps_completed = student.role.taskings.to_a.sum do |tasking|
-            tasking.task.completed_steps_count
-          end
-          sf_tutor_course_period.num_students_with_work += 1 if num_steps_completed >= 10
+          sf_tutor_course_period.num_students_with_work += 1 if student.num_steps_completed >= 10
         end
 
         skip!(message: 'No changes', course: course, period: period) \
@@ -188,9 +209,14 @@ class PushSalesforceCourseStats
     end
   end
 
-  def best_sf_contact_id_for_course(course)
-    course.teachers.reject(&:deleted?).sort_by(&:created_at)
-          .map { |tt| tt.role.profile.account.salesforce_contact_id }.compact.first
+  def best_sf_teacher(course)
+    sf_teachers = course.teachers.reject do |teacher|
+      teacher.role.profile.account.salesforce_contact_id.nil?
+    end
+
+    # First non-deleted teacher to join or last teacher to be deleted
+    sf_teachers.reject(&:deleted?).sort_by(&:created_at).first ||
+    sf_teachers.sort_by(&:deleted_at).last
   end
 
   def log(level = :info, *args, &block)
