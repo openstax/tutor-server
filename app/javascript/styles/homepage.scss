@@ -14,10 +14,6 @@
   @include desktop {
     color: #fff;
     background: #424242;
-    background-position: center;
-    background-size: cover;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
 
     a, .copyright, .disclaimer {
       color: rgba(255, 255, 255, 0.9);
@@ -86,10 +82,10 @@
   }
 
   @include mobile {
-    background-image: none !important;
+    #background  { background-image: none !important; }
   }
   @include tablet {
-    background-image: none !important;
+    #background  { background-image: none !important; }
   }
   @include desktop {
     .content-footer[data-carousel=true] {
@@ -480,6 +476,32 @@ a {
       border: 0;
     }
   }
+}
+
+#bg-source {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+#background {
+  content: '';
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  &.loading {
+    filter: blur(5px);
+  }
+}
+
+#foreground {
+  position: relative;
+  z-index: 1;
 }
 
 #home {

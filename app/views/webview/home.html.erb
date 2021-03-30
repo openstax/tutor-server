@@ -18,83 +18,88 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="preload" media="screen" as="style" onload="this.onload=null;this.rel='stylesheet'">
 </head>
 
-<body id="home" class="appearance-<%= @homepage[:appearance] %>" role="main" aria-label="main content" style='<%= homepage_background_style(@homepage[:content][:image]) %>' data-highdpi-path="<%= homepage_background_pack_path(@homepage[:content][:image_highdpi]) %>">
+<body id="home" class="appearance-<%= @homepage[:appearance] %>" role="main" aria-label="main content">
+  <div id="background" class="loading" style='background-image: url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEACgoKCgrKC0yMi0/RDxEP11VTk5VXYxkbGRsZIzVhZuFhZuF1bzkua255Lz//+vr//////////////////////8BKCgoKCsoLTIyLT9EPEQ/XVVOTlVdjGRsZGxkjNWFm4WFm4XVvOS5rbnkvP//6+v////////////////////////CABEIAhwDwAMBIgACEQEDEQH/xAAaAAEAAgMBAAAAAAAAAAAAAAAAAQIDBQYE/9oACAEBAAAAANKAAAAAAOzAAFQTIMVbZAAADBICAgQQDlwAAAAAB2YAAiAmSChkQAABggCCBFa1rWj05DmAAAAAAB2YAAiAEAWAQAgiuHHEVrFIpWta1iBBfdy5gAAAAAAdmAAIqBAITMVrWKq1itYrWtaoQiEIQggQN5eOZAAAAAAHZgAIilIitYrFaxWKxVAWAghCEIFrWtde95vedBjnenMgAAAAADswBGtwViIAAIAmZtNrWm82tN5tawAB4PLueVjJujmQAAAAAB2YA8WuCAtNrTe1pvabza4AAAYmSSmL0DV12nLPRtjmQAAAAAB2YA1Xm9fqXyyAAAAAAAAAw809u5ORAAAAAAHZgDS49vhexFMsJAAAAAAAAPJz7Z7Q5AAAAAAAdmARo432JlAAAAAAAAAGv0kbn3nIAAAAAADswDFpp3oAAAAAAAAAGo1Te+s5AAAAAAAdmAeXV5tvBNCbgAAAAAAADReB0WeHIAAAAAADswDweD2bIAAAAAAAAADnPM6eTkAAAAAAB19kyGr8uz9F0UvNMdlrgAAAAAAAcvjydJJx4AAAAAA66y0hpsW4xVla9oiUZwAAAAAAAOTenfjkAAAAAAB1t1wjRxvgAAAAAAAAAK8q9u8HHgAAAAADrbzYMWmnehS4AAAAAAAAHn5tstuOPAAAAAAHW3mweXV59siZw5okAAAAAAAANfo232Q48AAAAAAdZkmweDwe3YgAAAAAAB5cBAKvT69Xp43vtHHgAAAAADrMlpDV+bZ57TjuTCUQkkAGGYllMNovSchr8M3JQo9np0usdF6Bx4AAAAAA6zJcGmx7fMAAAAAAAECQBz3jdPcceAAAAAAOsyXCNG3dgAAAAAAAAAOZwX6aUOQAAAAAAHW5LBh1E7xSRCyFohaIK2it4WUmYLQpa9LUtS6E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)'></div>
+  <img id="bg-source" src="<%= homepage_background_pack_path(@homepage[:content][:image_lowdpi]) %>"
+  srcset="<%= homepage_background_pack_path(@homepage[:content][:image_lowdpi]) %> 1x, <%= homepage_background_pack_path(@homepage[:content][:image_highdpi]) %> 2x">
 
-  <div class="wrapper">
-    <header class="content-header">
-      <nav role="navigation">
-        <a class="logo" href="/" aria-label="home"></a>
-      </nav>
-      <div class="rice-logo" aria-label="Rice University"></div>
-    </header>
+  <div id="foreground">
+    <div class="wrapper">
+      <header class="content-header">
+        <nav role="navigation">
+          <a class="logo" href="/" aria-label="home"></a>
+        </nav>
+        <div class="rice-logo" aria-label="Rice University"></div>
+      </header>
 
-    <div class="content">
-      <h1 class="header">
-        <%= @homepage[:content][:header] %>
-      </h1>
+      <div class="content">
+        <h1 class="header">
+          <%= @homepage[:content][:header] %>
+        </h1>
 
-      <p class="body">
-        <%= sanitize @homepage[:content][:body], tags: %w(b i) %>
-      </p>
-
-      <div class="login-buttons">
-        <%= link_to 'Log in', openstax_accounts_login_path, class: 'button primary' %>
-        <a class="button" href="https://accounts.openstax.org/i/signup">Sign up</a>
-      </div>
-      <p class="hint">Log in with your OpenStax credentials or sign up for an account.</p>
-    </div>
-
-    <footer class="content-footer" data-carousel="<%= @homepage[:content][:books].present? %>">
-      <% if @homepage[:content][:books] %>
-        <div class="carousel" role="region" aria-label="Available books">
-          <button class="previous" data-carousel-prev aria-label="Previous slide">
-            <svg width="20" height="32" viewBox="0 0 20 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0.514971 14.7561L14.7568 0.514971C15.4434 -0.171657 16.5573 -0.171657 17.2439 0.514971L18.9052 2.17621C19.5911 2.86211 19.5918 3.97302 18.9081 4.66038L7.62087 15.9996L18.9074 27.3396C19.5918 28.027 19.5903 29.1379 18.9044 29.8238L17.2432 31.485C16.5566 32.1717 15.4427 32.1717 14.7561 31.485L0.514971 17.2432C-0.171657 16.5566 -0.171657 15.4427 0.514971 14.7561Z" fill="white" fill-opacity="0.8"/>
-            </svg>
-          </button>
-          <div class="books" data-carousel-wrapper>
-            <% @homepage[:content][:books].each do |book| %>
-              <%= image_pack_tag("media/images/homepage/books/#{book[:image]}", alt: book[:title], title: book[:title], width: 140, height: 140) %>
-            <% end %>
-          </div>
-          <button class="next" data-carousel-next aria-label="Next slide">
-            <svg width="20" height="32" viewBox="0 0 20 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18.9047 17.2436L4.6633 31.4849C3.97646 32.1717 2.86291 32.1717 2.17613 31.4849L0.515117 29.8238C-0.170556 29.1382 -0.171875 28.0269 0.512186 27.3396L11.7987 16L0.512186 4.66039C-0.171875 3.9731 -0.170556 2.86182 0.515117 2.17615L2.17613 0.515134C2.86298 -0.171711 3.97653 -0.171711 4.6633 0.515134L18.9046 14.7564C19.5914 15.4432 19.5914 16.5567 18.9047 17.2436Z" fill="white" fill-opacity="0.8"/>
-            </svg>
-          </button>
-        </div>
-      <% end %>
-      <div class="rice-logo" aria-label="Rice University"></div>
-      <div class="links-and-disclaimer">
-        <div class="links">
-          <%= render 'layouts/copyright_terms' %>
-          <span class="sep" aria-hidden="true">&middot;</span>
-          <a href="http://gdpr.rice.edu/" target="_blank" rel="noopener">GDPR</a>
-        </div>
-        <p class="disclaimer">
-          Advanced Placement® and AP® are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.
+        <p class="body">
+          <%= sanitize @homepage[:content][:body], tags: %w(b i) %>
         </p>
+
+        <div class="login-buttons">
+          <%= link_to 'Log in', openstax_accounts_login_path, class: 'button primary' %>
+          <a class="button" href="https://accounts.openstax.org/i/signup">Sign up</a>
+        </div>
+        <p class="hint">Log in with your OpenStax credentials or sign up for an account.</p>
       </div>
-    </footer>
-  </div>
-  <% if @homepage[:content][:video_url] %>
-    <button id="playbutton" aria-label="Play video" data-micromodal-trigger="video-modal">
-      <svg  width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M75 0C33.5686 0 0 33.5686 0 75C0 116.431 33.5686 150 75 150C116.431 150 150 116.431 150 75C150 33.5686 116.431 0 75 0ZM109.99 82.2581L56.7641 112.802C51.9859 115.464 45.9677 112.046 45.9677 106.452V43.5484C45.9677 37.9839 51.9556 34.5363 56.7641 37.1976L109.99 69.5565C114.95 72.3387 114.95 79.5061 109.99 82.2581Z" fill="black" fill-opacity="0.3"/>
-      </svg>
-    </button>
-    <div id="video-modal" class="modal" aria-hidden="true">
-      <div tabindex="-1" data-micromodal-close>
-        <div role="dialog" aria-modal="true" aria-label="Video Player" class="modal-wrapper">
-          <header>
-            <button class="modal-close" aria-label="Close video" data-micromodal-close></button>
-          </header>
-          <div class="modal-content">
-            <iframe id="modal-video" data-src="<%= @homepage[:content][:video_url] %>?enablejsapi=1&html5=1&autoplay=1" title="YouTube video player" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+
+      <footer class="content-footer" data-carousel="<%= @homepage[:content][:books].present? %>">
+        <% if @homepage[:content][:books] %>
+          <div class="carousel" role="region" aria-label="Available books">
+            <button class="previous" data-carousel-prev aria-label="Previous slide">
+              <svg width="20" height="32" viewBox="0 0 20 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.514971 14.7561L14.7568 0.514971C15.4434 -0.171657 16.5573 -0.171657 17.2439 0.514971L18.9052 2.17621C19.5911 2.86211 19.5918 3.97302 18.9081 4.66038L7.62087 15.9996L18.9074 27.3396C19.5918 28.027 19.5903 29.1379 18.9044 29.8238L17.2432 31.485C16.5566 32.1717 15.4427 32.1717 14.7561 31.485L0.514971 17.2432C-0.171657 16.5566 -0.171657 15.4427 0.514971 14.7561Z" fill="white" fill-opacity="0.8"/>
+              </svg>
+            </button>
+            <div class="books" data-carousel-wrapper>
+              <% @homepage[:content][:books].each do |book| %>
+                <%= image_pack_tag("media/images/homepage/books/#{book[:image]}", alt: book[:title], title: book[:title], width: 140, height: 140) %>
+              <% end %>
+            </div>
+            <button class="next" data-carousel-next aria-label="Next slide">
+              <svg width="20" height="32" viewBox="0 0 20 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.9047 17.2436L4.6633 31.4849C3.97646 32.1717 2.86291 32.1717 2.17613 31.4849L0.515117 29.8238C-0.170556 29.1382 -0.171875 28.0269 0.512186 27.3396L11.7987 16L0.512186 4.66039C-0.171875 3.9731 -0.170556 2.86182 0.515117 2.17615L2.17613 0.515134C2.86298 -0.171711 3.97653 -0.171711 4.6633 0.515134L18.9046 14.7564C19.5914 15.4432 19.5914 16.5567 18.9047 17.2436Z" fill="white" fill-opacity="0.8"/>
+              </svg>
+            </button>
+          </div>
+        <% end %>
+        <div class="rice-logo" aria-label="Rice University"></div>
+        <div class="links-and-disclaimer">
+          <div class="links">
+            <%= render 'layouts/copyright_terms' %>
+            <span class="sep" aria-hidden="true">&middot;</span>
+            <a href="http://gdpr.rice.edu/" target="_blank" rel="noopener">GDPR</a>
+          </div>
+          <p class="disclaimer">
+            Advanced Placement® and AP® are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.
+          </p>
+        </div>
+      </footer>
+    </div>
+    <% if @homepage[:content][:video_url] %>
+      <button id="playbutton" aria-label="Play video" data-micromodal-trigger="video-modal">
+        <svg  width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M75 0C33.5686 0 0 33.5686 0 75C0 116.431 33.5686 150 75 150C116.431 150 150 116.431 150 75C150 33.5686 116.431 0 75 0ZM109.99 82.2581L56.7641 112.802C51.9859 115.464 45.9677 112.046 45.9677 106.452V43.5484C45.9677 37.9839 51.9556 34.5363 56.7641 37.1976L109.99 69.5565C114.95 72.3387 114.95 79.5061 109.99 82.2581Z" fill="black" fill-opacity="0.3"/>
+        </svg>
+      </button>
+      <div id="video-modal" class="modal" aria-hidden="true">
+        <div tabindex="-1" data-micromodal-close>
+          <div role="dialog" aria-modal="true" aria-label="Video Player" class="modal-wrapper">
+            <header>
+              <button class="modal-close" aria-label="Close video" data-micromodal-close></button>
+            </header>
+            <div class="modal-content">
+              <iframe id="modal-video" data-src="<%= @homepage[:content][:video_url] %>?enablejsapi=1&html5=1&autoplay=1" title="YouTube video player" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 </body>
 </html>
