@@ -48,6 +48,10 @@ RSpec.describe CourseProfile::BuildPreviewCourses, type: :routine do
     expect { described_class[desired_count: 2] }.not_to(
       change { @offerings.map { |offering| offering.courses.count }.sum }
     )
+
+    @offerings.each do |offering|
+      offering.courses.each { |course| expect(course.does_cost).to eq false }
+    end
   end
 
   it 'counts preview courses that initially had the most recent ecosystem' do

@@ -47,6 +47,7 @@ class CourseProfile::BuildPreviewCourses
           is_preview: true,
           is_test: false,
           is_college: true,
+          does_cost: false,
           num_sections: 2,
           timezone: 'US/Central',
           catalog_offering: offering
