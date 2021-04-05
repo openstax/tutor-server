@@ -39,7 +39,7 @@
 
       <div class="login-buttons">
         <%= link_to 'Log in', openstax_accounts_login_path, class: 'button primary' %>
-        <a class="button" href="https://accounts.openstax.org/i/signup">Sign up</a>
+        <a class="button" href="<%= Rails.application.secrets.openstax[:accounts][:url] %>/i/signup">Sign up</a>
       </div>
       <p class="hint">Log in with your OpenStax credentials or sign up for an account.</p>
     </div>
