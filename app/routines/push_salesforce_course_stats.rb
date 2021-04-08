@@ -100,6 +100,7 @@ class PushSalesforceCourseStats
   def process_course(course, students_by_period_id, sf_tutor_course_periods_by_period_uuid)
     begin
       sf_teacher = best_sf_teacher(course)
+      num_periods = course.periods.reject(&:archived?).length
 
       course_wide_stats = {
         base_year: base_year_for_course(course),
@@ -113,7 +114,7 @@ class PushSalesforceCourseStats
         # The estimated enrollment is per course, but these records are per period
         # So we assign an equal part of the estimated enrollment to each period
         latest_adoption_decision: course.latest_adoption_decision,
-        num_periods: course.periods.reject(&:archived?).length,
+        num_periods: num_periods,
         num_teachers: course.teachers.reject(&:deleted?).length,
         term: course.term.capitalize
       }
