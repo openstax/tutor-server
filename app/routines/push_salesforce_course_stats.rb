@@ -99,8 +99,6 @@ class PushSalesforceCourseStats
 
   def process_course(course, students_by_period_id, sf_tutor_course_periods_by_period_uuid)
     begin
-      num_teachers = course.teachers.reject(&:deleted?).length
-      num_periods = course.periods.reject(&:archived?).length
       sf_teacher = best_sf_teacher(course)
 
       course_wide_stats = {
@@ -114,10 +112,9 @@ class PushSalesforceCourseStats
         does_cost: course.does_cost,
         # The estimated enrollment is per course, but these records are per period
         # So we assign an equal part of the estimated enrollment to each period
-        estimated_enrollment: course.estimated_student_count.try!(:/, num_periods),
         latest_adoption_decision: course.latest_adoption_decision,
-        num_periods: num_periods,
-        num_teachers: num_teachers,
+        num_periods: course.periods.reject(&:archived?).length,
+        num_teachers: course.teachers.reject(&:deleted?).length,
         term: course.term.capitalize
       }
 
@@ -164,6 +161,18 @@ class PushSalesforceCourseStats
 
         course_wide_stats.each do |field, value|
           sf_tutor_course_period.public_send("#{field}=", value)
+        end
+
+        # Estimate student enrollment in the course section:
+        # 0 if the section is archived
+        # null if the course doesn't have an estimate
+        # Otherwise, the course-wide estimate divided by the number of non-archived sections
+        sf_tutor_course_period.estimated_enrollment = if period.archived?
+          0
+        elsif course.estimated_student_count.nil?
+          nil
+        else
+          course.estimated_student_count/sf_tutor_course_period.num_periods
         end
 
         students.each do |student|
