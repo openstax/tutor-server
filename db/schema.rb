@@ -131,8 +131,8 @@ ActiveRecord::Schema.define(version: 2021_03_31_164251) do
     t.boolean "is_tutor", default: false, null: false
     t.boolean "is_concept_coach", default: false, null: false
     t.string "description", null: false
-    t.string "webview_url", null: false
-    t.string "pdf_url", null: false
+    t.string "webview_url"
+    t.string "pdf_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "default_course_name"

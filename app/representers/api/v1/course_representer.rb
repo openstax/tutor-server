@@ -118,24 +118,6 @@ module Api::V1
                description: 'Whether or not this preview course should be reused.'
              }
 
-    property :book_pdf_url,
-             type: String,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { offering&.pdf_url },
-             schema_info: {
-               description: "The book's PDF url, if available."
-             }
-
-    property :webview_url,
-             type: String,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { offering&.webview_url },
-             schema_info: {
-               description: "The book's webview url, if available."
-             }
-
     property :is_preview,
              readable: true,
              writeable: true,

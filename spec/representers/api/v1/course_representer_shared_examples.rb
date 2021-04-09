@@ -7,8 +7,6 @@ module Api::V1
     let(:catalog_offering) do
       FactoryBot.create :catalog_offering, salesforce_book_name: 'book',
                                             appearance_code: 'appearance',
-                                            webview_url: 'web_url',
-                                            pdf_url: 'pdf_url',
                                             description: 'desc',
                                             ecosystem: ecosystem
     end
@@ -50,14 +48,6 @@ module Api::V1
     it 'shows the offering appearance_code if the course appearance_code is blank' do
       course.update_attribute(:appearance_code, nil)
       expect(represented['appearance_code']).to eq 'appearance'
-    end
-
-    it 'shows the book_pdf_url if available' do
-      expect(represented['book_pdf_url']).to eq 'pdf_url'
-    end
-
-    it 'shows the webview_url if avail' do
-      expect(represented['webview_url']).to eq 'web_url'
     end
 
     it 'shows whether or not the course is a preview course' do

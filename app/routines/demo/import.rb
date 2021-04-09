@@ -49,9 +49,7 @@ class Demo::Import < Demo::Base
       :description,
       :appearance_code,
       :salesforce_book_name,
-      :default_course_name,
-      :webview_url_base,
-      :pdf_url_base
+      :default_course_name
     ).merge(
       is_tutor: true,
       is_concept_coach: false,
@@ -72,10 +70,6 @@ class Demo::Import < Demo::Base
           attrs[:salesforce_book_name] ||= attrs[:title]
           attrs[:default_course_name] ||= attrs[:title]
           attrs[:description] ||= attrs[:default_course_name]
-          attrs[:webview_url_base] ||= book[:archive_url_base].sub('archive.', '')
-          attrs[:webview_url] = "#{attrs.delete(:webview_url_base)}#{book_cnx_id}"
-          attrs[:pdf_url_base] ||= book[:archive_url_base].sub('/contents/', '/exports/')
-          attrs[:pdf_url] = "#{attrs.delete(:pdf_url_base)}#{book_cnx_id}"
           if @retries > 0
             attrs[:number] = (Catalog::Models::Offering.maximum(:number) || 0) + @retries + 1
           end
@@ -83,11 +77,6 @@ class Demo::Import < Demo::Base
           # Create the catalog offering
           Catalog::CreateOffering[attrs]
         else
-          attrs[:webview_url] = "#{attrs.delete(:webview_url_base)}#{book_cnx_id}" \
-            unless attrs[:webview_url_base].blank?
-          attrs[:pdf_url] = "#{attrs.delete(:pdf_url_base)}#{book_cnx_id}" \
-            unless attrs[:pdf_url_base].blank?
-
           # Update the catalog offering and existing courses
           offering.update_attributes attrs
           offering.courses.each do |course|
