@@ -13,7 +13,6 @@ class WebviewController < ApplicationController
       redirect_to dashboard_path
     end
 
-    expires_in 1.minute, public: true
     @homepage = HOMEPAGE_CONFIG[:default]
   end
 
