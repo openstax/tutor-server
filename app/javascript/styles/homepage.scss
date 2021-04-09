@@ -10,6 +10,10 @@
   @media screen and (min-width: 1000px) { @content }
 }
 
+@mixin desktop-large {
+  @media screen and (min-width: 1440px) { @content }
+}
+
 @mixin dark {
   @include desktop {
     color: #fff;
@@ -145,8 +149,8 @@
 
   nav .logo {
     background-size: cover;
-    width: 227px;
-    height: 40px;
+    width: var(--logo-width);
+    height: var(--logo-height);
     display: block;
   }
 
@@ -264,9 +268,17 @@
   @include desktop {
     text-align: unset;
 
+    .wrapper {
+      min-height: 100vh;
+      width: var(--wrapper-width);
+      padding-right: var(--wrapper-padding);
+      max-width: 640px;
+    }
+
     .content-header, .content, .content-footer:not([data-carousel=true]) {
-      max-width: 500px;
-      margin-left: 8rem;
+      width: auto;
+
+      margin-left: var(--wrapper-padding);
 
       .links {
         justify-content: start;
@@ -277,16 +289,14 @@
       }
     }
     .content-header {
-      margin: 4rem 0 0 8rem;
+      margin: 4rem 0 0 var(--wrapper-padding);
+
       .rice-logo {
         display: block;
         position: absolute;
         top: 4rem;
         right: 3.2rem;
       }
-    }
-    .wrapper {
-      min-height: 100vh;
     }
     .login-buttons {
       display: flex;
@@ -394,26 +404,37 @@
     --content-top-margin: 4.2rem;
     --header-font-size: 3.2rem;
     --header-line-height: 4rem;
+    --logo-width: 136px;
+    --logo-height: 24px;
   }
   @include tablet {
     --body-padding: 3.2rem;
     --content-top-margin: 10.4rem;
     --header-font-size: 6rem;
     --header-line-height: 7.5rem;
+    --logo-width: 181px;
+    --logo-height: 32px;
   }
   @include desktop {
     --body-padding: 0;
-    --content-top-margin: 14.5rem;
+    --content-top-margin: calc(10vh);
+    --header-font-size: 4rem;
+    --header-line-height: 5.5rem;
+    --header-letter-spacing: -0.1rem;
+    --wrapper-padding: calc(3.5vw);
+    --logo-width: 181px;
+    --logo-height: 32px;
+  }
+
+  @include desktop-large {
     --header-font-size: 6rem;
     --header-line-height: 7.5rem;
-    --header-letter-spacing: -0.1rem;
+    --logo-width: 227px;
+    --logo-height: 40px;
   }
 
   --carousel-side-padding: 8rem;
-
-  // Helps the play button find its center when
-  // using appearance-dark.with-light-bg
-  --wrapper-width: 640px;
+  --wrapper-width: calc(40vw); // Also used to place the play button
 }
 
 html {
@@ -492,7 +513,6 @@ a {
       @include desktop {
         .wrapper {
           background: #000;
-          max-width: 640px;
         }
       }
     }
