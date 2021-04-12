@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::OfferingsController, type: :request, api: true, version: :v1 do
   let!(:available_offering_1) { FactoryBot.create :catalog_offering, number: 2 }
   let!(:available_offering_2) { FactoryBot.create :catalog_offering, number: 1 }
-  let!(:unavailable_preview)  { FactoryBot.create :catalog_offering, is_preview_available: false }
+  let!(:unavailable_preview)  { FactoryBot.create :catalog_offering, is_available: false, is_preview_available: false }
   let!(:unavailable_offering) { FactoryBot.create :catalog_offering, is_available: false }
 
   let(:anon)                  { User::Models::Profile.anonymous }

@@ -87,8 +87,18 @@ $(document).ready(function() {
     window.location.search = $.param(paramsObject);
   });
 
+  $('#offering_is_available').change(function(e) {
+    if ($(this).is(':checked')) {
+      $('#offering_is_preview_available').prop('checked', true);
+      onIsPreviewChange();
+    }
+  });
+
   //========== Hides and shows the preview message box when is_preview selected ==========//
   function onIsPreviewChange() {
+    if ($('#offering_is_available').is(':checked')) {
+      $(this).prop('checked', true)
+    }
     const previewFG = $('#offering_preview_message').closest('.form-group');
     if ($('#offering_is_preview_available').is(":checked")) {
       previewFG.show();
@@ -99,7 +109,6 @@ $(document).ready(function() {
   $('#offering_is_preview_available').change(onIsPreviewChange);
   onIsPreviewChange();
 
-  
   //========== Changes the course form when a course offering is selected ==========//
   function updateCourseForm() {
     var offering = $('#course_catalog_offering_id option:selected').first();
