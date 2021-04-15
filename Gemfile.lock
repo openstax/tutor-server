@@ -722,7 +722,7 @@ GEM
     tzinfo (1.2.9)
       thread_safe (~> 0.1)
     uber (0.1.0)
-    uglifier (4.1.20)
+    uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.4.1)
     uniform_notifier (1.12.1)
@@ -893,4 +893,4 @@ DEPENDENCIES
   will_paginate (~> 3.1.7)
 
 BUNDLED WITH
-   2.2.9
+   2.2.15
