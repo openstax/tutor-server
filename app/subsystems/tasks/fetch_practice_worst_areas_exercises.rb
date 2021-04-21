@@ -16,25 +16,23 @@ class Tasks::FetchPracticeWorstAreasExercises
       role_book_part.clue['is_real'] ? role_book_part.clue['most_likely'] : 1.5
     end.first(max_num_exercises).map(&:book_part_uuid)
 
-    page_id_by_uuid = Content::Models::Page.where(uuid: page_uuids).pluck(:uuid, :id).to_h
-    page_ids = page_id_by_uuid.values_at(*page_uuids)
-
-    exercise_ids_by_page_id = ecosystem
+    exercise_ids_by_page_uuid = ecosystem
       .pages
-      .where(id: page_ids)
-      .pluck(:id, :practice_widget_exercise_ids)
+      .where(uuid: page_uuids)
+      .pluck(:uuid, :practice_widget_exercise_ids)
       .to_h
 
     # Add teacher-created exercises
     Content::Models::Exercise
-      .where(content_page_id: page_ids, user_profile_id: course.related_teacher_profile_ids)
-      .pluck(:content_page_id, :id)
-      .group_by(&:first).each do |page_id, exercises|
-      exercise_ids_by_page_id[page_id] ||= []
-      exercise_ids_by_page_id.concat exercises
+      .joins(:page)
+      .where(user_profile_id: course.related_teacher_profile_ids, page: { uuid: page_uuids })
+      .pluck(:id, Arel.sql('"content_pages"."uuid"'))
+      .group_by(&:first).each do |exercise_id, page_uuid|
+      exercise_ids_by_page_uuid[page_uuid] ||= []
+      exercise_ids_by_page_uuid[page_uuid] << exercise_id
     end
 
-    pools = exercise_ids_by_page_id.values_at(*page_ids).reject(&:blank?)
+    pools = exercise_ids_by_page_uuid.values_at(*page_uuids).reject(&:blank?)
     num_pools = pools.size
 
     return if num_pools == 0

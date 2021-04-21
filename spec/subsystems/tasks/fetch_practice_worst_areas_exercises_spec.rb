@@ -19,6 +19,10 @@ RSpec.describe Tasks::FetchPracticeWorstAreasExercises, type: :routine do
       @page_2 = @chapter_2.pages.first
       @exercise_2 = Content::Models::Exercise.joins(:page).find_by(page: { id: @page_2.id })
 
+      @page_uuids = [ @page_1, @page_2 ].map(&:uuid).uniq
+      @pages = @ecosystem_1.pages.where(uuid: @page_1.uuid) +
+               @ecosystem_2.pages.where(uuid: @page_2.uuid)
+
       @task = task_plan_1.tasks.first
       @tasked_exercise = @task.tasked_exercises.first
 
@@ -26,13 +30,30 @@ RSpec.describe Tasks::FetchPracticeWorstAreasExercises, type: :routine do
       @period = @student.period
       @course = @period.course
 
+      @teacher = FactoryBot.create :course_membership_teacher, course: @course
+
       @preparation_uuid = SecureRandom.uuid
 
       @max_num_exercises = 5
 
-      @excluded_exercises = 3.times.map { FactoryBot.create :content_exercise }
+      @teacher_exercises = 10.times.map do
+        FactoryBot.create :content_exercise, page: @pages.sample, profile: @teacher.role.profile
+      end
+      @excluded_exercises = 10.times.map do
+        FactoryBot.create :content_exercise, page: @pages.sample
+      end
       @previous_globally_excluded_exercises = Settings::Exercises.excluded_ids
       Settings::Exercises.excluded_ids = @excluded_exercises.map(&:uid).join(', ')
+
+      @all_exercises = @pages.flat_map(&:exercises)
+      @excluded_exercises.each { |exercise| expect(@all_exercises).to include exercise }
+      @valid_exercises = @pages.flat_map(&:exercises) - @excluded_exercises
+
+      @page_uuids.each do |page_uuid|
+        FactoryBot.create :ratings_role_book_part, role: @student.role,
+                                                   is_page: true,
+                                                   book_part_uuid: page_uuid
+      end
     end
 
     after(:all) do
@@ -42,7 +63,9 @@ RSpec.describe Tasks::FetchPracticeWorstAreasExercises, type: :routine do
     end
 
     it 'returns the expected response' do
-      expect(described_class[student: @student, max_num_exercises: @max_num_exercises]).to eq []
+      exercises = described_class[student: @student, max_num_exercises: @max_num_exercises]
+      expect(exercises.size).to eq 5
+      exercises.each { |exercise| expect(@valid_exercises).to include exercise }
     end
   end
 end
