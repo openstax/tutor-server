@@ -118,7 +118,6 @@ RSpec.configure do |config|
   config.include CaptureStdoutHelper
   config.include WithoutException
   config.include SigninHelper
-  config.include PopulateMiniEcosystem
   config.include PopulateExerciseContent
   config.include UserAgentHelper
   config.extend VcrConfigurationHelper

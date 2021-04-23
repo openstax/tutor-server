@@ -4,7 +4,7 @@ require 'vcr_helper'
 RSpec.describe Api::V1::PagesController, type: :request, api: true, version: :v1, vcr: VCR_OPTS do
   context 'with book' do
     before(:all) do
-      @ecosystem = generate_mini_ecosystem
+      @ecosystem = FactoryBot.create :mini_ecosystem
       @page_uuid = 'b0ffd0a2-9c83-4d73-b899-7f2ade2acda6'
     end
 

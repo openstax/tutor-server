@@ -4,7 +4,7 @@ require 'database_cleaner'
 RSpec.describe 'exercises:remove', type: :rake do
   include_context 'rake'
 
-  let(:ecosystem) { generate_mini_ecosystem }
+  let(:ecosystem) { FactoryBot.create :mini_ecosystem }
 
   before do
     # Each tasked TP has its own ecosystem and course and some number of students

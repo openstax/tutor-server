@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow do
-  let(:ecosystem) { generate_mini_ecosystem }
+  let(:ecosystem) { FactoryBot.create :mini_ecosystem }
   let(:book) { ecosystem.books.first }
 
   it 'creates a new Book structure and Pages and sets their attributes' do

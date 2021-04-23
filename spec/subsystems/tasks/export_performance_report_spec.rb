@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe Tasks::ExportPerformanceReport, type: :routine do
   before(:all) do
-    @ecosystem = generate_mini_ecosystem
+    @ecosystem = FactoryBot.create :mini_ecosystem
 
     @course = FactoryBot.create :course_profile_course, :with_assistants
     CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)

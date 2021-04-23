@@ -12,7 +12,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::OptionalExercise,
     OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
   let(:cnx_book) {
-    OpenStax::Cnx::V1::Book.new(id: PopulateMiniEcosystem.cnx_book_hash[:id])
+    OpenStax::Cnx::V1::Book.new(id: MINI_ECOSYSTEM_CNX_BOOK_HASH[:id])
   }
   let(:cnx_page_id)        { 'b0ffd0a2-9c83-4d73-b899-7f2ade2acda6@3' }
   let(:cnx_page)           do

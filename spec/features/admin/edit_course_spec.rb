@@ -191,7 +191,7 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
   end
 
   scenario 'bulk updating course ecosystem' do
-    ecosystem = generate_mini_ecosystem
+    ecosystem = FactoryBot.create :mini_ecosystem
 
     visit admin_courses_path(query: '')
     find(:id, :ecosystem_id).find("option[value='#{ecosystem.id}']").select_option

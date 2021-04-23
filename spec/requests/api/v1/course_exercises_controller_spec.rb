@@ -19,7 +19,7 @@ RSpec.describe Api::V1::CourseExercisesController, type: :request, api: true,
 
   context 'with a real book' do
     before(:all) do
-      @ecosystem = generate_mini_ecosystem
+      @ecosystem = FactoryBot.create :mini_ecosystem
     end
 
     before(:each) do

@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Tasks::FreezeEndedCourseTeacherPerformanceReports, type: :routine do
-  let(:ecosystem) { generate_mini_ecosystem }
+  let(:ecosystem) { FactoryBot.create :mini_ecosystem }
   let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
   let(:course) {
     FactoryBot.create :course_profile_course, :with_grading_templates,

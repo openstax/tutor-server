@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe PopulatePreviewCourseContent, type: :routine, speed: :medium do
   before(:all) do
-    ecosystem = generate_mini_ecosystem
+    ecosystem = FactoryBot.create :mini_ecosystem
     offering = FactoryBot.create :catalog_offering, ecosystem: ecosystem
     @course = FactoryBot.create :course_profile_course, :with_grading_templates,
                                 offering: offering, is_preview: true

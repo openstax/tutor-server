@@ -13,30 +13,30 @@ RSpec.describe OpenStax::Cnx::V1::FragmentSplitter, type: :lib, vcr: VCR_OPTS do
 
   context 'with page' do
     before(:all) do
-      @ecosystem = generate_mini_ecosystem
+      @ecosystem = FactoryBot.create :mini_ecosystem
       @cnx_page_fragment_infos = [
         {
-          id: PopulateMiniEcosystem.cnx_page_hashes[0][:id],
+          id: MINI_ECOSYSTEM_CNX_PAGE_HASHES[0][:id],
           fragments: %w{Reading Video Exercise Reading},
           worked_examples: %w{Reading}
         },
         {
-          id: PopulateMiniEcosystem.cnx_page_hashes[1][:id],
+          id: MINI_ECOSYSTEM_CNX_PAGE_HASHES[1][:id],
           fragments: %w{Reading Reading Reading Video Exercise Reading Reading Reading},
           worked_examples: %w{Reading}
         },
         {
-          id: PopulateMiniEcosystem.cnx_page_hashes[2][:id],
+          id: MINI_ECOSYSTEM_CNX_PAGE_HASHES[2][:id],
           fragments: %w{Reading Video Exercise Reading Reading Interactive Exercise Reading},
           worked_examples: %w{Reading}
         },
         {
-          id: PopulateMiniEcosystem.cnx_page_hashes[3][:id],
+          id: MINI_ECOSYSTEM_CNX_PAGE_HASHES[3][:id],
           fragments: %w{Reading Reading Reading Reading Reading Reading Interactive Exercise Reading},
           worked_examples: %w{Reading}
         },
         {
-          id: PopulateMiniEcosystem.cnx_page_hashes[4][:id],
+          id: MINI_ECOSYSTEM_CNX_PAGE_HASHES[4][:id],
           fragments: %w{Reading},
           worked_examples: %w{Reading}
         },

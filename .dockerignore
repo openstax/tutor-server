@@ -1,4 +1,10 @@
+.byebug_history
+.env
 .git
-.gitignore
+.rspec
+.rspec_last_failures
+.webdrivers_update
+coverage
+node_modules
 tmp
 log

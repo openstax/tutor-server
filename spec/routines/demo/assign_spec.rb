@@ -36,7 +36,7 @@ RSpec.describe Demo::Assign, type: :routine do
 
   let!(:course)           do
     Demo::Users.call user_config
-    ecosystem = generate_mini_ecosystem
+    ecosystem = FactoryBot.create :mini_ecosystem
     FactoryBot.create :catalog_offering, ecosystem: ecosystem, title: 'AP US History'
     Demo::Course.call(course_config).outputs.course
   end

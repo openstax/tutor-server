@@ -1,0 +1,7 @@
+book:
+  run: FactoryBot.create :mini_ecosystem
+
+catalog_offering:
+  title: Mini Physics with Courseware
+  salesforce_book_name: Physics w Courseware
+  appearance_code: college_physics
