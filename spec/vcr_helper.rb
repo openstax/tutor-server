@@ -1,3 +1,5 @@
+require_relative 'webdrivers_helper'
+
 require 'vcr'
 
 VCR::Configuration.class_exec do

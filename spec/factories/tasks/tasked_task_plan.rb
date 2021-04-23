@@ -1,9 +1,3 @@
-# To allow use in the development environment
-if Rails.env.development?
-  require_relative '../../vcr_helper'
-  require_relative '../../support/fake_exercise_uuids'
-end
-
 FactoryBot.define do
   factory :tasked_task_plan, parent: :tasks_task_plan do
     type { :reading }
