@@ -1,4 +1,4 @@
-# To allow use in the development environment
+# require_relative allows use in the development environment
 require_relative '../../vcr_helper'
 
 unless defined?(MINI_ECOSYSTEM_CNX_BOOK_HASH)
