@@ -97,7 +97,7 @@ $(document).ready(function() {
   //========== Hides and shows the preview message box when is_preview selected ==========//
   function onIsPreviewChange() {
     if ($('#offering_is_available').is(':checked')) {
-      $(this).prop('checked', true)
+      $('#offering_is_preview_available').prop('checked', true)
     }
     const previewFG = $('#offering_preview_message').closest('.form-group');
     if ($('#offering_is_preview_available').is(":checked")) {
