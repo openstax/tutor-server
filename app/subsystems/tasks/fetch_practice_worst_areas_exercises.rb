@@ -16,24 +16,25 @@ class Tasks::FetchPracticeWorstAreasExercises
       role_book_part.clue['is_real'] ? role_book_part.clue['most_likely'] : 1.5
     end.first(max_num_exercises).map(&:book_part_uuid)
 
-    page_id_by_uuid = Content::Models::Page.where(uuid: page_uuids).pluck(:uuid, :id).to_h
+    pages = ecosystem.pages.where(uuid: page_uuids)
+
+    # Get page_ids while preserving the order from page_uuids
+    page_id_by_uuid = pages.pluck(:uuid, :id).to_h
     page_ids = page_id_by_uuid.values_at(*page_uuids)
 
-    exercise_ids_by_page_id = ecosystem
-      .pages
-      .where(id: page_ids)
-      .pluck(:id, :practice_widget_exercise_ids)
-      .to_h
+    # Get valid practice widget exercises for each page
+    exercise_ids_by_page_id = pages.pluck(:id, :practice_widget_exercise_ids).to_h
 
     # Add teacher-created exercises
     Content::Models::Exercise
       .where(content_page_id: page_ids, user_profile_id: course.related_teacher_profile_ids)
       .pluck(:content_page_id, :id)
-      .group_by(&:first).each do |page_id, exercises|
+      .each do |page_id, exercise_id|
       exercise_ids_by_page_id[page_id] ||= []
-      exercise_ids_by_page_id.concat exercises
+      exercise_ids_by_page_id[page_id] << exercise_id
     end
 
+    # Create ordered pools of practice widget exercises
     pools = exercise_ids_by_page_id.values_at(*page_ids).reject(&:blank?)
     num_pools = pools.size
 
