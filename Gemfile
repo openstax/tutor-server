@@ -211,7 +211,7 @@ gem 'best_in_place'
 gem 'boxr'
 
 # OAuth gem for generating and validating lti requests
-gem 'oauth', '~> 0.5.1'
+gem 'oauth', '~> 0.5.5'
 
 gem 'scout_apm'
 
