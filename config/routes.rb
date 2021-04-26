@@ -199,8 +199,6 @@ Rails.application.routes.draw do
       end
     end
 
-    get :stats, controller: :stats
-
     match :'*all', controller: :api, action: :options, via: :options
   end # end of API scope
 
@@ -360,12 +358,6 @@ Rails.application.routes.draw do
     resources :targeted_contracts, only: :index
 
     resources :jobs, only: [ :index, :show ]
-
-    namespace :stats do
-      get :courses
-      get :excluded_exercises
-      get :concept_coach
-    end
 
     resources :tags, only: [ :index, :show ]
   end

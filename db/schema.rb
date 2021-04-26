@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_31_164251) do
+ActiveRecord::Schema.define(version: 2021_04_19_211921) do
 
   create_sequence "active_storage_attachments_id_seq"
   create_sequence "active_storage_blobs_id_seq"
@@ -69,7 +69,6 @@ ActiveRecord::Schema.define(version: 2021_03_31_164251) do
   create_sequence "school_district_schools_id_seq"
   create_sequence "settings_id_seq"
   create_sequence "short_code_short_codes_id_seq"
-  create_sequence "stats_intervals_id_seq"
   create_sequence "tasks_assistants_id_seq"
   create_sequence "tasks_concept_coach_tasks_id_seq"
   create_sequence "tasks_course_assistants_id_seq"
@@ -885,12 +884,6 @@ ActiveRecord::Schema.define(version: 2021_03_31_164251) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_short_code_short_codes_on_code", unique: true
-  end
-
-  create_table "stats_intervals", force: :cascade do |t|
-    t.jsonb "stats", default: {}, null: false
-    t.datetime "starts_at", null: false
-    t.datetime "ends_at", null: false
   end
 
   create_table "tasks_assistants", id: :serial, force: :cascade do |t|
