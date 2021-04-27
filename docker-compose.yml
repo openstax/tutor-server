@@ -1,4 +1,28 @@
-version: '3.5'
+version: '3.8'
 services:
-  app:
-    image: "openstax/tutor-server"
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ox_tutor
+      POSTGRES_PASSWORD: ox_tutor_secret_password
+    expose:
+      - 5432
+  redis:
+    image: redis:latest
+    expose:
+      - 6379
+  rails:
+    build:
+      args:
+        RUBY_VERSION: 2.7.2    # The default should ideally match the version in .ruby-version
+        NODE_JS_MAJOR_VERSION: 14 # Our assets currently fail to build on Node.js 16
+      context: .
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      OXT_DB_HOST: postgres
+      REDIS_HOST: redis
+    ports:
+      - 3001:3000

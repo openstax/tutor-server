@@ -1,41 +1,27 @@
 # Docker Quickstart
 
-## Install
+## Installation
 
-Follow the installation instructions for
-[docker](https://docs.docker.com/install/) and
-[docker-compose](https://docs.docker.com/compose/install/)
+Follow the installation instructions for [docker](https://docs.docker.com/install/) and
+[docker-compose](https://docs.docker.com/compose/install/). Tutor requires docker-compose v1.26+.
 
-(docker-compose may or may not come with docker on your platform)
+## Running the development server
 
-## Run
+To start the app at `http://localhost:3001`, run:
 
 ``` bash
-docker-compose up -V
+docker-compose up --build
 ```
 
-the app will become available at `http://localhost:3001`
+The --build flag ensures the image is kept up to date with your code checked out locally.
 
-the `-V` option is
+## Resetting the Postgres container database
 
-```
--V, --renew-anon-volumes   Recreate anonymous volumes instead of retrieving
-                           data from the previous containers.
-```
-which forces docker-compose to recreate the tmp and log directories
+To reset the database to a state containing only the course created by `bin/rake demo[mini]`, run:
 
-## Notes
-
-The first time you start the environment you'll want to
-get keys for the exercises service from Dante and put them in
-a .env file. then run:
-
-```bash
-docker-compose run tutor rake db:setup demo[soc]
+``` bash
+docker-compose up --build --renew-anon-volumes
 ```
 
-If the Gemfile changes you'll have to:
-
-```bash
-docker-compose build --no-cache tutor
-```
+The --renew-anon-volumes flag (or -V) resets the database to an empty state,
+which is then repopulated by the entrypoint script.

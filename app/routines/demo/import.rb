@@ -12,15 +12,15 @@ class Demo::Import < Demo::Base
   def exec(import:)
     configuration = OpenStax::Exercises::V1.configuration
 
-    raise(
-      'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET' +
-      ' env vars and then restart any background job workers to use Demo::Books'
-    ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
-
     book = import[:book]
     catalog_offering = import[:catalog_offering]
 
     if book[:run].blank?
+      raise(
+        'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET' +
+        ' env vars and then restart any background job workers to use Demo::Books'
+      ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
+
       book[:archive_url_base] ||= Rails.application.secrets.openstax[:cnx][:archive_url]
 
       book[:uuid], book[:version] = book[:uuid].split('@', 2) if book[:version].blank?
