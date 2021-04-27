@@ -37,7 +37,8 @@ COPY --chown=tutor Gemfile* ./
 RUN gem install bundler --force --no-document && \
     bundle config deployment true && \
     bundle config path /tutor/bundle && \
-    BUNDLE_JOBS=2 bundle install
+    bundle config jobs $(nproc) && \
+    bundle install
 
 # Copy the rest of the application
 COPY --chown=tutor . .
