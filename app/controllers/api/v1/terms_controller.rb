@@ -44,7 +44,7 @@ class Api::V1::TermsController < Api::V1::ApiController
     403 if forbidden
     400 with message if no IDs provided
     422 with message if can't find terms or other signature error
-    200 if all good (repeat signatures are ok)
+    204 if all good (repeat signatures are ok)
   EOS
   def sign
     return head :forbidden if current_human_user.nil? || current_human_user.is_anonymous?
@@ -64,7 +64,7 @@ class Api::V1::TermsController < Api::V1::ApiController
       return render_api_errors(signature.errors) if signature.errors.any?
     end
 
-    head :ok
+    head :no_content
   end
 
 end
