@@ -28,8 +28,15 @@ which is then repopulated by the entrypoint script.
 
 ## GitHub actions
 
-To use tutor-server in a GitHub action, add the following to your action:
+To use tutor-server in development mode in a GitHub action, add the following to your action:
 
 ```yaml
-- uses: openstax/tutor-server
+- uses: actions/checkout@v2
+  with:
+    repository: openstax/tutor-server
+    path: tutor-server
+- uses: ./tutor-server/
 ```
+
+Unfortunately, `uses: openstax/tutor-server` does not work,
+likely due to different container network settings when the remote repository syntax is used.
