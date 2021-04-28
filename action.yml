@@ -9,7 +9,10 @@ description: |
 runs:
   using: composite
   steps:
-    - run: docker-compose --file ${{ github.action_path }}/docker-compose.yml up --detach
+    - run: >-
+        docker-compose --file ${{ github.action_path }}/docker-compose.yml \
+                       --project-name tutor-server \
+                       up --detach
       shell: bash
     - run: |
         echo
