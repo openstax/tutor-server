@@ -9,12 +9,12 @@ description: |
 runs:
   using: composite
   steps:
-    - run: docker-compose up --detach
+    - run: docker-compose --file ${{ github.action_path }}/docker-compose.yml up --detach
       shell: bash
     - run: |
-        docker-compose up --detach
+        echo
+        echo 'Waiting for tutor-server to become available (timeout: 1 minute)...'
 
-        echo '\nWaiting for tutor-server to become available (timeout: 1 minute)...'
         for retries in {0..60}; do
           if curl --location --fail --silent localhost:3001/ping; then
             echo 'tutor-server is up'
@@ -23,6 +23,7 @@ runs:
             sleep 1
           fi
         done
+
         echo 'Timeout waiting for tutor-server to become available'
         exit 1
       shell: bash
