@@ -14,7 +14,7 @@ services:
   rails:
     build:
       args:
-        RUBY_VERSION: 2.7.2    # The default should ideally match the version in .ruby-version
+        RUBY_VERSION: 2.7.2       # The default should ideally match the version in .ruby-version
         NODE_JS_MAJOR_VERSION: 14 # Our assets currently fail to build on Node.js 16
       context: .
       dockerfile: docker/Dockerfile

@@ -1,0 +1,33 @@
+# action.yml
+name: tutor-server
+author: Tutor Team
+description: Runs tutor-server on the specified port (default 3000) with the mini book loaded
+inputs:
+  OXT_DB_HOST:
+    description: Postgres service host
+    required: false
+    default: localhost
+  OXT_DB_PORT:
+    description: Postgres service port
+    required: false
+    default: 5432
+  OXT_DB_USER:
+    description: Postgres service user
+    required: false
+    default: ox_tutor
+  OXT_DB_PASSWORD:
+    description: Postgres service user password
+    required: false
+    default: ox_tutor_secret_password
+  REDIS_HOST:
+    description: Redis service host
+    required: false
+    default: localhost
+  REDIS_PORT:
+    description: Redis service port
+    required: false
+    default: 6379
+runs:
+  using: docker
+  image: docker/Dockerfile
+  args: ${{ inputs }}
