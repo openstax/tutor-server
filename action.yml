@@ -1,37 +1,28 @@
 # action.yml
 name: tutor-server
 author: Tutor Team
-description: Runs tutor-server on the specified port (default 3000) with the mini book loaded
-inputs:
-  OXT_DB_HOST:
-    description: Postgres service host
-    required: false
-    default: localhost
-  OXT_DB_PORT:
-    description: Postgres service port
-    required: false
-    default: 5432
-  OXT_DB_USER:
-    description: Postgres service user
-    required: false
-    default: ox_tutor
-  OXT_DB_PASSWORD:
-    description: Postgres service user password
-    required: false
-    default: ox_tutor_secret_password
-  PORT:
-    description: Port that Puma should bind to
-    required: false
-    default: 3000
-  REDIS_HOST:
-    description: Redis service host
-    required: false
-    default: localhost
-  REDIS_PORT:
-    description: Redis service port
-    required: false
-    default: 6379
+description: |
+  Starts Postgres, Redis and tutor-server
+  tutor-server loads the mini book and starts on port 3001
+  All containers are detached
+  The action waits for tutor-server to respond to GET /ping
 runs:
-  using: docker
-  image: docker/Dockerfile
-  env: ${{ inputs }}
+  using: composite
+  steps:
+    - run: docker-compose up --detach
+      shell: bash
+    - run: |
+        docker-compose up --detach
+
+        echo '\nWaiting for tutor-server to become available (timeout: 1 minute)...'
+        for retries in {0..60}; do
+          if curl --location --fail --silent localhost:3001/ping; then
+            echo 'tutor-server is up'
+            exit 0
+          else
+            sleep 1
+          fi
+        done
+        echo 'Timeout waiting for tutor-server to become available'
+        exit 1
+      shell: bash

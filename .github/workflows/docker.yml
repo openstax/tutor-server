@@ -12,35 +12,10 @@ jobs:
   docker:
     timeout-minutes: 30
     runs-on: ubuntu-20.04
-    services:
-      postgres:
-        image: postgres:11
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        env:
-          POSTGRES_USER: ox_tutor
-          POSTGRES_PASSWORD: ox_tutor_secret_password
-      redis:
-        image: redis
-        ports:
-        - 6379:6379
-        # Set health checks to wait until redis has started
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      tutor-server:
-        image: openstax/tutor-server@${{ github.sha }}
-        env:
-          OXT_DB_HOST: postgres
-          REDIS_HOST: redis
-
     steps:
-      - name: Ping the server
-        run: curl --location --fail tutor-server:3000/status
+      - name: Checkout tutor-server
+        uses: actions/checkout@v2
+      - name: Start tutor-server
+        uses: ./
+      - name: Ping tutor-server
+        run: curl --location --fail localhost:3001/ping
