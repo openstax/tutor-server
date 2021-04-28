@@ -20,11 +20,12 @@ rescue ActiveRecord::NoDatabaseError
   Rake::Task['db:setup'].invoke
 
   # Check if any migrations need to run, in case the schema is not up to date
+  Rake::Task['db:migrate'].reenable
   Rake::Task['db:migrate'].invoke
 
   # Create the mini book using the demo script, with inline background jobs
-  ENV['USE_REAL_BACKGROUND_JOBS'] ||= false
-  Rake::Task['demo[mini]'].invoke
+  ENV['USE_REAL_BACKGROUND_JOBS'] ||= 'false'
+  Rake::Task['demo'].invoke 'mini'
 end
 
 # If this script was called with arguments, exec that as a command (this line never returns)
