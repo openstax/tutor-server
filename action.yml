@@ -19,6 +19,10 @@ inputs:
     description: Postgres service user password
     required: false
     default: ox_tutor_secret_password
+  PORT:
+    description: Port that Puma should bind to
+    required: false
+    default: 3000
   REDIS_HOST:
     description: Redis service host
     required: false
@@ -30,4 +34,4 @@ inputs:
 runs:
   using: docker
   image: docker/Dockerfile
-  args: ${{ inputs }}
+  env: ${{ inputs }}
