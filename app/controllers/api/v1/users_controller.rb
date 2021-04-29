@@ -78,6 +78,6 @@ class Api::V1::UsersController < Api::V1::ApiController
     OSU::AccessPolicy.require_action_allowed!(:create, current_human_user, User::Models::Suggestion)
 
     User::Models::Suggestion.create(profile: current_human_user, content: params[:data])
-    head :ok
+    head :no_content
   end
 end
