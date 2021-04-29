@@ -19,16 +19,6 @@ class Api::V1::TaskPlan::Scores::TaskingPlanRepresenter < Api::V1::TaskPlan::Tas
            readable: true,
            writeable: false
 
-  property :num_questions_dropped,
-           type: Integer,
-           readable: true,
-           writeable: false
-
-  property :points_dropped,
-           type: Float,
-           readable: true,
-           writeable: false
-
   collection :students,
              readable: true,
              writeable: false,

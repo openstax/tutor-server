@@ -92,8 +92,6 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
               )
             end,
             late_work_fraction_penalty: late_work_penalty,
-            num_questions_dropped: 0,
-            points_dropped: 0.0,
             students: a_collection_including(
               a_hash_including(
                 role_id: students.first.entity_role_id,
@@ -236,8 +234,6 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
               )
             end,
             late_work_fraction_penalty: late_work_penalty,
-            num_questions_dropped: 0,
-            points_dropped: 0.0,
             students: a_collection_including(
               a_hash_including(
                 role_id: students.first.entity_role_id,

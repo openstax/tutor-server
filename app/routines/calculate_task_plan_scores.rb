@@ -80,16 +80,6 @@ class CalculateTaskPlanScores
           end
         end
       end
-      if task_plan.type == 'homework'
-        expected_num_questions = task_plan.settings.fetch('exercises').map do |exercise|
-          exercise['points'].size
-        end.sum + task_plan.settings.fetch('exercises_count_dynamic', 3)
-        actual_num_questions = longest_task.actual_and_placeholder_exercise_count
-        num_questions_dropped = expected_num_questions - actual_num_questions
-      else
-        num_questions_dropped = 0
-      end
-      points_dropped = num_questions_dropped.to_f
 
       students_array = tasks.each_with_index.map do |task, student_index|
         role = task.taskings.first.role
@@ -187,8 +177,6 @@ class CalculateTaskPlanScores
         period_name: tasking_plan.target.name,
         question_headings: question_headings_array,
         late_work_fraction_penalty: task_plan.late_work_penalty,
-        num_questions_dropped: num_questions_dropped,
-        points_dropped: points_dropped,
         students: students_array,
         total_fraction: total_fraction,
         gradable_step_count: tasking_plan.gradable_step_count,
