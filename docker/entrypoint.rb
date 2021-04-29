@@ -28,5 +28,7 @@ rescue ActiveRecord::NoDatabaseError
   Rake::Task['demo'].invoke 'mini'
 end
 
+CourseProfile::BuildPreviewCourses.call(desired_count: 2)
+
 # If this script was called with arguments, exec that as a command (this line never returns)
 exec(*ARGV) unless ARGV.empty?

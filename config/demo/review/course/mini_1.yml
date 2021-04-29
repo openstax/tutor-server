@@ -1,0 +1,18 @@
+catalog_offering:
+  title: First Mini Physics with Courseware
+
+course:
+  name: First Mini Physics with Courseware
+
+  teachers:
+    - username: reviewteacher
+    - username: teacher01
+
+  periods:
+    - name: 1st
+      students:
+        - username: reviewstudent1
+        - username: reviewstudent3
+    - name: 2nd
+      students:
+        - username: reviewstudent5

@@ -1,0 +1,18 @@
+catalog_offering:
+  title: Second Mini Physics with Courseware
+
+course:
+  name: Second Mini Physics with Courseware
+
+  teachers:
+    - username: reviewteacher
+    - username: teacher02
+
+  periods:
+    - name: 1st
+      students:
+        - username: reviewstudent2
+    - name: 2nd
+      students:
+        - username: reviewstudent4
+        - username: reviewstudent6
