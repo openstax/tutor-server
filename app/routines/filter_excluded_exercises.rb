@@ -32,9 +32,10 @@ class FilterExcludedExercises
       profile_ids.none?(exercise.user_profile_id)
     end.map(&:number)
 
-    # no_ownership_excluded_numbers = []
-
     deleted_excluded_numbers = exercises.select(&:deleted?).map(&:number)
+
+    # Get questions dropped from the current task_plan
+    dropped_question_ids = task&.task_plan&.dropped_questions&.map(&:question_id) || []
 
     # Get exercises excluded due to anti-cheating rules
     anti_cheating_excluded_numbers = if role.nil?
@@ -66,6 +67,7 @@ class FilterExcludedExercises
     additional_excluded_numbers_set = Set.new additional_excluded_numbers.to_a
     no_ownership_excluded_numbers_set = Set.new no_ownership_excluded_numbers
     deleted_excluded_numbers_set = Set.new deleted_excluded_numbers
+    dropped_question_ids_set = Set.new dropped_question_ids
 
     outputs.admin_excluded_uids = []
     outputs.course_excluded_uids = []
@@ -73,6 +75,7 @@ class FilterExcludedExercises
     outputs.additional_excluded_uids = []
     outputs.no_ownership_excluded_numbers = []
     outputs.deleted_excluded_numbers = []
+    outputs.dropped_exercise_uids = []
 
     outputs.exercises = exercises.select do |ex|
       if admin_excluded_uids_set.include?(ex.uid) || admin_excluded_numbers_set.include?(ex.number)
@@ -102,6 +105,12 @@ class FilterExcludedExercises
 
       if deleted_excluded_numbers_set.include?(ex.number)
         outputs.deleted_excluded_numbers << ex.uid
+        next false
+      end
+
+      if !dropped_question_ids_set.empty? &&
+         ex.question_ids.any? { |question_id| dropped_question_ids_set.include? question_id }
+        outputs.dropped_exercise_uids << ex.uid
         next false
       end
 

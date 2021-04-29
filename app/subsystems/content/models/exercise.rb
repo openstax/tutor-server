@@ -114,6 +114,10 @@ class Content::Models::Exercise < IndestructibleRecord
     content_hash['questions']
   end
 
+  def question_ids
+    questions_hash.map { |question| question['id'] }
+  end
+
   def questions
     @questions ||= questions_hash.map do |question|
       Content::Question.new(
