@@ -69,10 +69,10 @@ class OpenStax::Payments::Api::RealClient
     Addressable::URI.join @server_url, url.to_s
   end
 
-  def api_request(method:, url:, body: {})
+  def api_request(method:, url:, body: nil)
     absolute_uri = absolutize_url(url)
 
-    request_options = HEADER_OPTIONS.merge({ body: body.to_json })
+    request_options = HEADER_OPTIONS.merge(body.nil? ? {} : { body: body.to_json })
 
     begin
       num_retries ||= 0
