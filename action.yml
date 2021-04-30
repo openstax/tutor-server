@@ -16,9 +16,9 @@ runs:
       shell: bash
     - run: |
         echo
-        echo 'Waiting for tutor-server to become available (timeout: 1 minute)...'
+        echo 'Waiting for tutor-server to become available (timeout: 5 minutes)...'
 
-        for retries in {0..60}; do
+        for retries in {0..300}; do
           if curl --location --fail --silent localhost:3001/ping; then
             echo 'tutor-server is up'
             exit 0
