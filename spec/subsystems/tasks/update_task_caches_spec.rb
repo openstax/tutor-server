@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Tasks::UpdateTaskCaches, type: :routine, speed: :medium do
-  let(:ecosystem) { generate_mini_ecosystem }
+  let(:ecosystem) { FactoryBot.create :mini_ecosystem }
   let(:book) { ecosystem.books.first }
   let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
   let(:queue) { :dashboard }

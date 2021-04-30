@@ -12,36 +12,40 @@ class Demo::Import < Demo::Base
   def exec(import:)
     configuration = OpenStax::Exercises::V1.configuration
 
-    raise(
-      'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET' +
-      ' env vars and then restart any background job workers to use Demo::Books'
-    ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
-
     book = import[:book]
     catalog_offering = import[:catalog_offering]
 
-    book[:archive_url_base] ||= Rails.application.secrets.openstax[:cnx][:archive_url]
+    if book[:run].blank?
+      raise(
+        'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET' +
+        ' env vars and then restart any background job workers to use Demo::Books'
+      ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
 
-    book[:uuid], book[:version] = book[:uuid].split('@', 2) if book[:version].blank?
+      book[:archive_url_base] ||= Rails.application.secrets.openstax[:cnx][:archive_url]
 
-    if book[:version] == 'latest'
-      book[:uuid] = book[:uuid].split('@', 2).first
-      book.delete :version
-    end
+      book[:uuid], book[:version] = book[:uuid].split('@', 2) if book[:version].blank?
 
-    book_cnx_id = book[:version].blank? ? book[:uuid] : "#{book[:uuid]}@#{book[:version]}"
+      if book[:version] == 'latest'
+        book[:uuid] = book[:uuid].split('@', 2).first
+        book.delete :version
+      end
 
-    log do
-      "Importing #{catalog_offering[:title]} from #{book[:archive_url_base]}#{book_cnx_id}"
-    end
+      book_cnx_id = book[:version].blank? ? book[:uuid] : "#{book[:uuid]}@#{book[:version]}"
 
-    ecosystem_model = OpenStax::Exercises::V1.use_real_client do
-      run(
-        :import_ecosystem,
-        book_cnx_id: book_cnx_id,
-        archive_url: book[:archive_url_base],
-        reading_processing_instructions: book[:reading_processing_instructions]
-      ).outputs.ecosystem
+      log do
+        "Importing #{catalog_offering[:title]} from #{book[:archive_url_base]}#{book_cnx_id}"
+      end
+
+      ecosystem_model = OpenStax::Exercises::V1.use_real_client do
+        run(
+          :import_ecosystem,
+          book_cnx_id: book_cnx_id,
+          archive_url: book[:archive_url_base],
+          reading_processing_instructions: book[:reading_processing_instructions]
+        ).outputs.ecosystem
+      end
+    else
+      ecosystem_model = eval book[:run]
     end
 
     attrs = catalog_offering.slice(

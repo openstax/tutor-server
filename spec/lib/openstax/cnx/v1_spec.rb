@@ -2,8 +2,8 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1, type: :external, vcr: VCR_OPTS do
-  let(:cnx_collection_id) { PopulateMiniEcosystem.cnx_book_hash[:id] }
-  let(:cnx_module_id)     { PopulateMiniEcosystem.cnx_page_hashes.first[:id] }
+  let(:cnx_collection_id) { MINI_ECOSYSTEM_CNX_BOOK_HASH[:id] }
+  let(:cnx_module_id)     { MINI_ECOSYSTEM_CNX_PAGE_HASHES.first[:id] }
 
   it "can generate url's for resources in the cnx archive" do
     expect(OpenStax::Cnx::V1.archive_url_for('module_id@version')).to(

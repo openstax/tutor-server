@@ -1,47 +1,42 @@
 # Docker Quickstart
 
-## Install
+## Installation
 
-Follow the installation instructions for
-[docker](https://docs.docker.com/install/) and
-[docker-compose](https://docs.docker.com/compose/install/)
+Follow the installation instructions for [docker](https://docs.docker.com/install/) and
+[docker-compose](https://docs.docker.com/compose/install/). Tutor requires docker-compose v1.26+.
 
-(docker-compose may or may not come with docker on your platform)
+## Running the development server
 
-## Dependencies
-
-the following projects must be separtely cloned and run for this project to work:
-
-[openstax/hypothesis-server](https://github.com/openstax/hypothesis-server)
-
-## Run
-
-``` bash
-docker-compose up -V
-```
-
-the app will become available at `http://localhost:3001`
-
-the `-V` option is
-
-```
--V, --renew-anon-volumes   Recreate anonymous volumes instead of retrieving
-                           data from the previous containers.
-```
-which forces docker-compose to recreate the tmp and log directories
-
-## Notes
-
-The first time you start the environment you'll want to
-get keys for the exercises service from Dante and put them in
-a .env file. then run:
+To start the app at `http://localhost:3001`, run:
 
 ```bash
-docker-compose run tutor rake db:setup demo[soc]
+docker-compose up --build
 ```
 
-If the Gemfile changes you'll have to:
+The --build flag ensures the image is kept up to date with your code checked out locally.
+
+## Resetting the Postgres container database
+
+To reset the database to a state containing only the course created by `bin/rake demo[mini]`, run:
 
 ```bash
-docker-compose build --no-cache tutor
+docker-compose up --build --renew-anon-volumes
 ```
+
+The --renew-anon-volumes flag (or -V) resets the database to an empty state,
+which is then repopulated by the entrypoint script.
+
+## GitHub actions
+
+To use tutor-server in development mode in a GitHub action, add the following to your action:
+
+```yaml
+- uses: actions/checkout@v2
+  with:
+    repository: openstax/tutor-server
+    path: tutor-server
+- uses: ./tutor-server/
+```
+
+Unfortunately, `uses: openstax/tutor-server` does not work,
+likely due to different container network settings when the remote repository syntax is used.

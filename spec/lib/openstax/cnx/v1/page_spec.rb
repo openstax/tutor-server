@@ -7,7 +7,7 @@ RSpec.describe OpenStax::Cnx::V1::Page, type: :external, vcr: VCR_OPTS do
     before(:all) do
       @hashes_with_pages = VCR.use_cassette('OpenStax_Cnx_V1_Page/with_mini_ecosystem_pages',
                                             VCR_OPTS) do
-        PopulateMiniEcosystem.cnx_page_hashes.map do |hash|
+        MINI_ECOSYSTEM_CNX_PAGE_HASHES.map do |hash|
           [hash, page_for(hash).tap{ |page| page.full_hash }]
         end
       end

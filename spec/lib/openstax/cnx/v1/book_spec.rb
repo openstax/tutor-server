@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe OpenStax::Cnx::V1::Book, type: :external, vcr: VCR_OPTS do
-  let(:cnx_book_id) { PopulateMiniEcosystem.cnx_book_hash[:id] }
+  let(:cnx_book_id) { MINI_ECOSYSTEM_CNX_BOOK_HASH[:id] }
 
   let(:expected_book_url) {
     "https://archive.cnx.org/contents/#{cnx_book_id}"

@@ -1,12 +1,3 @@
-def abort_if_exercises_unconfigured(task_name)
-  configuration = OpenStax::Exercises::V1.configuration
-
-  raise(
-    'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET env vars' +
-    " and then restart any background job workers to use bin/rake #{task_name}"
-  ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
-end
-
 def demo_routine_perform_later(routine_class, type_string, args)
   type_string = type_string.to_s
   options = args.to_h.deep_symbolize_keys
@@ -44,11 +35,22 @@ def demo_routine_perform_later(routine_class, type_string, args)
       end
     end
   end
+
+  configuration = OpenStax::Exercises::V1.configuration
+  routine_args.each do |args|
+    next if !args.has_key?(:import) || args[:import][:book][:run].present?
+
+    raise(
+      'Please set the OPENSTAX_EXERCISES_CLIENT_ID and OPENSTAX_EXERCISES_SECRET env vars' +
+      ' and then restart any background job workers to use the demo tasks'
+    )
+  end if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
+
   num_routines = routine_args.size
 
-  Delayed::Worker.with_delay_jobs(true) do
-    routine_args.each { |routine_arg| routine_class.perform_later routine_arg }
-  end
+  Delayed::Worker.with_delay_jobs(
+    ActiveModel::Type::Boolean.new.cast(ENV.fetch('USE_REAL_BACKGROUND_JOBS', true))
+  ) { routine_args.each { |routine_arg| routine_class.perform_later routine_arg } }
 
   Rails.logger.info do
     <<~INFO
@@ -66,8 +68,6 @@ end
 
 desc 'Initializes all demo data. Config can be either be "all" or a specific config dirname.'
 task :demo, [ :config, :version, :random_seed ] => :log_to_stdout do |task, args|
-  abort_if_exercises_unconfigured 'demo'
-
   demo_routine_perform_later Demo::All, 'all', args
 
   log_worker_mem_info
@@ -81,8 +81,6 @@ namespace :demo do
 
   desc 'Imports demo book content'
   task :import, [ :config, :version ] => :log_to_stdout do |task, args|
-    abort_if_exercises_unconfigured 'demo:import'
-
     demo_routine_perform_later Demo::Import, 'import', args
 
     log_worker_mem_info

@@ -293,9 +293,6 @@ group :development do
   # Class diagrams
   gem 'rails-erd'
   gem 'railroady'
-
-  # Access an IRB console on exceptions page and /console in development
-  gem 'web-console'
 end
 
 group :test do
@@ -338,4 +335,9 @@ group :production do
 
   # Lograge for consistent logging
   gem 'lograge'
+end
+
+group :'web-console', optional: true do
+  # Access an IRB console on exceptions page and /console in development
+  gem 'web-console'
 end

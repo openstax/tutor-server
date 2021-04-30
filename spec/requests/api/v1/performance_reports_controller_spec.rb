@@ -17,7 +17,7 @@ RSpec.describe Api::V1::PerformanceReportsController, type: :request, api: true,
   context 'with book' do
     before(:all) do
       DatabaseCleaner.start
-      @ecosystem = generate_mini_ecosystem
+      @ecosystem = FactoryBot.create :mini_ecosystem
       CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
     end
 

@@ -1,3 +1,5 @@
+require 'webdrivers_helper'
+
 require 'rspec/retry'
 require 'net/http'
 

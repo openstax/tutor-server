@@ -1,0 +1,13 @@
+      tasks:
+        - student:
+            username: reviewstudent2
+          progress: 1
+          score: .8
+        - student:
+            username: reviewstudent4
+          progress: 1
+          score: 1
+        - student:
+            username: reviewstudent6
+          progress: .66
+          score: .5

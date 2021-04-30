@@ -1,12 +1,6 @@
 module PopulateExerciseContent
-  def self.included klass
-    klass.class_eval do
-      include PopulateMiniEcosystem
-    end
-  end
-
   def generate_homework_test_exercise_content
-    @ecosystem = generate_mini_ecosystem
+    @ecosystem = FactoryBot.create :mini_ecosystem
 
     @pages = @ecosystem.books.first.pages
 

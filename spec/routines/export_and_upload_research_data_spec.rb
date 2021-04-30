@@ -33,7 +33,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
   context 'with book and performance report data' do
     before(:all) do
       DatabaseCleaner.start
-      @ecosystem = generate_mini_ecosystem
+      @ecosystem = FactoryBot.create :mini_ecosystem
 
       CourseContent::AddEcosystemToCourse.call(course: @course, ecosystem: @ecosystem)
 

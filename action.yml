@@ -1,0 +1,32 @@
+# action.yml
+name: tutor-server
+author: Tutor Team
+description: |
+  Starts Postgres, Redis and tutor-server
+  tutor-server loads the mini book and starts on port 3001
+  All containers are detached
+  The action waits for tutor-server to respond to GET /ping
+runs:
+  using: composite
+  steps:
+    - run: >-
+        docker-compose --file ${{ github.action_path }}/docker-compose.yml \
+                       --project-name tutor-server \
+                       up --detach
+      shell: bash
+    - run: |
+        echo
+        echo 'Waiting for tutor-server to become available (timeout: 5 minutes)...'
+
+        for retries in {0..300}; do
+          if curl --location --fail --silent localhost:3001/ping; then
+            echo 'tutor-server is up'
+            exit 0
+          else
+            sleep 1
+          fi
+        done
+
+        echo 'Timeout waiting for tutor-server to become available'
+        exit 1
+      shell: bash

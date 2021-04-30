@@ -1,0 +1,21 @@
+name: Docker
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * 0' # weekly
+
+jobs:
+  docker:
+    timeout-minutes: 30
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout tutor-server
+        uses: actions/checkout@v2
+      - name: Start tutor-server
+        uses: ./
+      - name: Ping tutor-server
+        run: curl --location --fail localhost:3001/ping

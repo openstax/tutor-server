@@ -9,7 +9,7 @@ RSpec.describe OpenStax::Cnx::V1::Fragment::Exercise, type: :external, vcr: VCR_
   let(:fragment_splitter)  do
     OpenStax::Cnx::V1::FragmentSplitter.new reading_processing_instructions, reference_view_url
   end
-  let(:cnx_page_id)        { PopulateMiniEcosystem.cnx_page_hashes.first[:id] }
+  let(:cnx_page_id)        { MINI_ECOSYSTEM_CNX_PAGE_HASHES.first[:id] }
   let(:cnx_page)           do
     OpenStax::Cnx::V1::Page.new(id: cnx_page_id).tap { |page| page.convert_content! }
   end

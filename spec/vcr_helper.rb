@@ -1,3 +1,7 @@
+# Ensure webdrivers_helper is always loaded first so VCR does not interfere with webdriver updates
+# require_relative allows use in the development environment
+require_relative 'webdrivers_helper'
+
 require 'vcr'
 
 VCR::Configuration.class_exec do

@@ -1,11 +1,4 @@
-# To allow use in the development environment
-if Rails.env.development?
-  require_relative '../../vcr_helper'
-  require_relative '../../support/fake_exercise_uuids'
-end
-
 FactoryBot.define do
-
   factory :tasked_task_plan, parent: :tasks_task_plan do
     type { :reading }
 
@@ -26,9 +19,7 @@ FactoryBot.define do
       number_of_exercises_per_page { 5 }
     end
 
-    ecosystem do
-      PopulateMiniEcosystem.generate_mini_ecosystem
-    end
+    association :ecosystem, factory: :mini_ecosystem
 
     course { FactoryBot.build :course_profile_course, offering: nil }
 

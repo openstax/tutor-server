@@ -158,7 +158,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
   end
 
   context 'with a real book' do
-    let(:ecosystem) { generate_mini_ecosystem }
+    let(:ecosystem) { FactoryBot.create :mini_ecosystem }
     let(:book) { ecosystem.books.first }
     let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
     let(:course) {

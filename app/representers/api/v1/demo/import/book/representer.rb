@@ -1,4 +1,9 @@
 class Api::V1::Demo::Import::Book::Representer < Api::V1::Demo::BaseRepresenter
+  property :run,
+           type: String,
+           readable: false,
+           writeable: true
+
   property :archive_url_base,
            type: String,
            getter: ->(*) { "#{archive_url}/contents/" },
