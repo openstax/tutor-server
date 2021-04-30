@@ -69,14 +69,13 @@ class OpenStax::Payments::Api::RealClient
     Addressable::URI.join @server_url, url.to_s
   end
 
-  def api_request(method:, url:, body: {})
+  def api_request(method:, url:, body: nil)
     absolute_uri = absolutize_url(url)
 
-    request_options = HEADER_OPTIONS.merge({ body: body.to_json })
+    request_options = HEADER_OPTIONS.merge(body.nil? ? {} : { body: body.to_json })
 
     begin
-      num_tries ||= 0
-      num_tries += 1
+      num_retries ||= 0
       response = oauth_worker.request(method, absolute_uri, request_options)
     rescue OAuth2::Error => err
       if err.try(:response).try(:status) == 403
@@ -87,7 +86,8 @@ class OpenStax::Payments::Api::RealClient
         # date can be changed on Payments without us knowing, we always try to get
         # a new token even if not expired.
 
-        if num_tries >= 1
+        if num_retries < 1
+          num_retries += 1
           Rails.logger.info('OX Payments: client token expired') if token_expired?
           Rails.logger.info('OX Payments: getting a new token to try to resolve a 403')
           initialize_oauth_variables! force: true # resets token
