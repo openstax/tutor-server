@@ -66,6 +66,22 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
       task_step.tasked.save!
       MarkTaskStepCompleted.call(task_step: task_step)
 
+      step_exercise_ids = []
+      step_question_ids = []
+      student_tasks.each do |task|
+        task.exercise_and_placeholder_steps.each_with_index do |task_step, index|
+          step_exercise_ids[index] ||= []
+          step_question_ids[index] ||= []
+
+          # Placeholder steps don't add anything to the arrays but still take up space
+          # by incrementing the step_index so the score columns will line up properly
+          next if task_step.placeholder?
+
+          step_exercise_ids[index] << task_step.tasked.content_exercise_id
+          step_question_ids[index] << task_step.tasked.question_id
+        end
+      end
+
       expect(representation).to include(
         id: task_plan.id.to_s,
         title: task_plan.title,
@@ -87,8 +103,15 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                points: 1.0,
                type: ts.is_core? ? 'MCQ' : 'Tutor',
               }.merge(
-                ts.is_core? ? { question_id:  ts.tasked.question_id.to_i,
-                                exercise_id: ts.tasked.content_exercise_id.to_i } : {}
+                ts.is_core? ? {
+                  exercise_ids: step_exercise_ids[index].uniq.sort,
+                  question_ids: step_question_ids[index].uniq.sort,
+                  exercise_id: ts.tasked.content_exercise_id.to_i,
+                  question_id:  ts.tasked.question_id.to_i
+                } : {
+                  exercise_ids: step_exercise_ids[index].uniq.sort,
+                  question_ids: step_question_ids[index].uniq.sort
+                }
               )
             end,
             late_work_fraction_penalty: late_work_penalty,
@@ -209,6 +232,22 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
       task_step.tasked.save!
       MarkTaskStepCompleted.call(task_step: task_step)
 
+      step_exercise_ids = []
+      step_question_ids = []
+      student_tasks.each do |task|
+        task.exercise_and_placeholder_steps.each_with_index do |task_step, index|
+          step_exercise_ids[index] ||= []
+          step_question_ids[index] ||= []
+
+          # Placeholder steps don't add anything to the arrays but still take up space
+          # by incrementing the step_index so the score columns will line up properly
+          next if task_step.placeholder?
+
+          step_exercise_ids[index] << task_step.tasked.content_exercise_id
+          step_question_ids[index] << task_step.tasked.question_id
+        end
+      end
+
       expect(representation).to include(
         id: task_plan.id.to_s,
         title: task_plan.title,
@@ -229,8 +268,15 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                points: 1.0,
                type: ts.is_core? ? 'MCQ' : 'Tutor',
               }.merge(
-                ts.is_core? ? { question_id: ts.tasked.question_id.to_i,
-                                exercise_id: ts.tasked.content_exercise_id.to_i } : {}
+                ts.is_core? ? {
+                  exercise_ids: step_exercise_ids[index].uniq.sort,
+                  question_ids: step_question_ids[index].uniq.sort,
+                  exercise_id: ts.tasked.content_exercise_id.to_i,
+                  question_id:  ts.tasked.question_id.to_i
+                } : {
+                  exercise_ids: step_exercise_ids[index].uniq.sort,
+                  question_ids: step_question_ids[index].uniq.sort
+                }
               )
             end,
             late_work_fraction_penalty: late_work_penalty,
