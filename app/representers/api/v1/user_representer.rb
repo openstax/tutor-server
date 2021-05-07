@@ -8,6 +8,7 @@ module Api::V1
     property :name
     property :first_name
     property :last_name
+    property :username
 
     property :is_admin?,
              as: :is_admin
