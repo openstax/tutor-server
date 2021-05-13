@@ -306,7 +306,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     end
   end
 
-  def dropped_method
+  def drop_method
     dropped_question = task_step.task&.task_plan&.dropped_questions&.find do |dq|
       dq.question_id == question_id
     end

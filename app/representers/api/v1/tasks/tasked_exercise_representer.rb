@@ -185,9 +185,16 @@ module Api::V1::Tasks
              writeable: false,
              if: FEEDBACK_AVAILABLE
 
-    property :dropped_method,
+    property :drop_method,
             type: String,
             readable: true,
             writeable: false
+
+    # TODO: Remove after 1 release
+    property :dropped_method,
+            type: String,
+            readable: true,
+            writeable: false,
+            getter: ->(*) { drop_method }
   end
 end
