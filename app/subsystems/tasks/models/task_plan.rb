@@ -307,7 +307,8 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   def settings_valid_for_publishing
     return unless is_publish_requested
-    errors.add(:settings, 'must have at least one exercise') if homework? && settings['exercises'].blank?
+    errors.add(:settings, 'must have at least one exercise') \
+      if homework? && settings['exercises'].blank?
     errors.add(:settings, 'must have at least one page') if reading? && core_page_ids.blank?
   end
 

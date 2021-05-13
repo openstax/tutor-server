@@ -45,65 +45,48 @@ class CalculateTaskPlanScores
       tasks = tasks_by_period_id[tasking_plan.target_id]
       next if tasks.blank?
 
-      longest_task = tasks.max_by(&:actual_and_placeholder_exercise_count)
-
-      available_points_without_dropping_per_question_index =
-        longest_task.available_points_without_dropping_per_question_index
-      available_points_per_question_index = longest_task.available_points_per_question_index
-      task_steps = task_plan.type == 'external' ? longest_task.external_steps :
-                                                  longest_task.exercise_and_placeholder_steps
-      question_headings_array = task_steps.each_with_index.map do |step, index|
-        if step.external?
-          { title: 'Clicked' }
-        else
-          title = "Q#{index + 1}"
-          # These won't work if task_steps contains both exercises and external for the same task
-          points_without_dropping = available_points_without_dropping_per_question_index[index]
-          points = available_points_per_question_index[index]
-
-          if step.fixed_group? && step.exercise?
-            {
-              title: title,
-              type: step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ',
-              points_without_dropping: points_without_dropping,
-              points: points,
-              exercise_id: step.tasked.content_exercise_id,
-              question_id: step.tasked.question_id
-            }
-          else
-            {
-              title: title,
-              type: 'Tutor',
-              points_without_dropping: points_without_dropping,
-              points: points
-            }
-          end
-        end
-      end
-      if task_plan.type == 'homework'
-        expected_num_questions = task_plan.settings.fetch('exercises').map do |exercise|
-          exercise['points'].size
-        end.sum + task_plan.settings.fetch('exercises_count_dynamic', 3)
-        actual_num_questions = longest_task.actual_and_placeholder_exercise_count
-        num_questions_dropped = expected_num_questions - actual_num_questions
-      else
-        num_questions_dropped = 0
-      end
-      points_dropped = num_questions_dropped.to_f
-
+      # Make arrays of arrays of exercise ids and question ids for exercise steps
+      step_exercise_ids = []
+      step_question_ids = []
       students_array = tasks.each_with_index.map do |task, student_index|
-        role = task.taskings.first.role
-        student = role.student
-        next if student.nil?
-
-        role = task.taskings.first.role
-
         task_steps = task_plan.type == 'external' ? task.external_steps :
                                                     task.exercise_and_placeholder_steps
         next if task_steps.empty?
 
-        is_dropped = student.dropped? || student.period.archived?
+        # Add exercise ids and question_ids to the step arrays above
+        exercise_and_placeholder_steps = task_steps.filter { |ts| ts.exercise? || ts.placeholder? }
+        exercise_and_placeholder_steps.each_with_index do |task_step, step_index|
+          step_exercise_ids[step_index] ||= []
+          step_question_ids[step_index] ||= []
 
+          # Placeholder steps don't add anything to the arrays but still take up space
+          # by incrementing the step_index so the score columns will line up properly
+          next if task_step.placeholder?
+
+          step_exercise_ids[step_index] << task_step.tasked.content_exercise_id
+          step_question_ids[step_index] << task_step.tasked.question_id
+        end
+
+        role = task.taskings.first.role
+        student = role.student
+        next if student.nil?
+
+        exercise_steps = exercise_and_placeholder_steps.filter(&:exercise?)
+        graded_steps, ungraded_steps = exercise_steps.partition do |task_step|
+          task_step.tasked.was_manually_graded?
+        end
+        grades_need_publishing = (
+          !!task.grading_template&.manual_grading_feedback_on_publish? &&
+          graded_steps.any? { |task_step| !task_step.tasked.grade_manually_published? }
+        ) || (
+          !!task.grading_template&.auto_grading_feedback_on_publish? &&
+          !task.grades_manually_published? &&
+          ungraded_steps.any? do |task_step|
+            task_step.completed? && task_step.tasked.can_be_auto_graded?
+          end
+        )
+
+        is_dropped = student.dropped? || student.period.archived?
         points_per_question_index = task.points_per_question_index_without_lateness
         student_questions = task_steps.each_with_index.map do |task_step, index|
           # This won't work if task_steps contains both exercises and external for the same task
@@ -143,21 +126,6 @@ class CalculateTaskPlanScores
           end
         end
 
-        exercise_steps = task_steps.filter(&:exercise?)
-        graded_steps, ungraded_steps = exercise_steps.partition do |task_step|
-          task_step.tasked.was_manually_graded?
-        end
-        grades_need_publishing = (
-          !!task.grading_template&.manual_grading_feedback_on_publish? &&
-          graded_steps.any? { |task_step| !task_step.tasked.grade_manually_published? }
-        ) || (
-          !!task.grading_template&.auto_grading_feedback_on_publish? &&
-          !task.grades_manually_published? &&
-          ungraded_steps.any? do |task_step|
-            task_step.completed? && task_step.tasked.can_be_auto_graded?
-          end
-        )
-
         {
           role_id: role.id,
           task_id: task.id,
@@ -181,14 +149,56 @@ class CalculateTaskPlanScores
       num_fractions = fractions_array.size
       total_fraction = fractions_array.sum(0.0)/num_fractions unless num_fractions == 0
 
+      longest_task = tasks.max_by(&:actual_and_placeholder_exercise_count)
+
+      available_points_without_dropping_per_question_index =
+        longest_task.available_points_without_dropping_per_question_index
+      available_points_per_question_index = longest_task.available_points_per_question_index
+      task_steps = task_plan.type == 'external' ? longest_task.external_steps :
+                                                  longest_task.exercise_and_placeholder_steps
+      question_headings_array = task_steps.each_with_index.map do |step, index|
+        if step.external?
+          { title: 'Clicked' }
+        else
+          title = "Q#{index + 1}"
+          # These won't work if task_steps contains both exercises and external for the same task
+          points_without_dropping = available_points_without_dropping_per_question_index[index]
+          points = available_points_per_question_index[index]
+
+          type = step.fixed_group? && step.exercise? ? (
+            step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ'
+          ) : 'Tutor'
+          # TODO: Combine logic when exercise_id, question_id are removed
+          if type != 'Tutor'
+            {
+              title: title,
+              type: type,
+              points_without_dropping: points_without_dropping,
+              points: points,
+              exercise_ids: step_exercise_ids[index].uniq.sort,
+              question_ids: step_question_ids[index].uniq.sort,
+              exercise_id: step.tasked.content_exercise_id,
+              question_id: step.tasked.question_id
+            }
+          else
+            {
+              title: title,
+              type: type,
+              points_without_dropping: points_without_dropping,
+              points: points,
+              exercise_ids: step_exercise_ids[index].uniq.sort,
+              question_ids: step_question_ids[index].uniq.sort
+            }
+          end
+        end
+      end
+
       {
         id: tasking_plan.id,
         period_id: tasking_plan.target_id,
         period_name: tasking_plan.target.name,
         question_headings: question_headings_array,
         late_work_fraction_penalty: task_plan.late_work_penalty,
-        num_questions_dropped: num_questions_dropped,
-        points_dropped: points_dropped,
         students: students_array,
         total_fraction: total_fraction,
         gradable_step_count: tasking_plan.gradable_step_count,

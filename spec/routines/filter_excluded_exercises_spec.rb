@@ -172,5 +172,41 @@ RSpec.describe FilterExcludedExercises, type: :routine do
         end
       end
     end
+
+    context 'with a task from a task_plan' do
+      let(:task_plan) { FactoryBot.create :tasked_task_plan }
+
+      let(:args) { { task: task_plan.tasks.first, exercises: exercises } }
+
+      context 'without dropped_questions' do
+        it 'returns all exercises' do
+          outputs = described_class.call(**args).outputs
+          expect(outputs.exercises).to eq exercises
+          expect(outputs.admin_excluded_uids).to eq []
+          expect(outputs.course_excluded_uids).to eq []
+          expect(outputs.role_excluded_uids).to eq []
+          expect(outputs.dropped_exercise_uids).to eq []
+        end
+      end
+
+      context 'with dropped_questions' do
+        let!(:dropped_questions) do
+          exercises.first(4).map do |exercise|
+            FactoryBot.create :tasks_dropped_question, task_plan: task_plan,
+                                                       question_id: exercise.question_ids.first
+          end
+        end
+        before { task_plan.dropped_questions.reload }
+
+        it 'does not return exercises that contain questions have been dropped from the plan' do
+          outputs = described_class.call(**args).outputs
+          expect(outputs.exercises).to eq [exercises.last]
+          expect(outputs.admin_excluded_uids).to eq []
+          expect(outputs.course_excluded_uids).to eq []
+          expect(outputs.role_excluded_uids).to eq []
+          expect(outputs.dropped_exercise_uids).to eq exercises.first(4).map(&:uid)
+        end
+      end
+    end
   end
 end
