@@ -5,6 +5,56 @@ class Admin::EcosystemsController < Admin::BaseController
 
   def new
     OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Models::Ecosystem)
+
+    @code_versions = content_ls.reverse
+    params[:code_version] ||= @code_versions.first
+
+    available_book_versions_by_uuid = Hash.new { |hash, key| hash[key] = [] }
+    content_ls(params[:code_version]).each do |book|
+      uuid, version = book.split('@')
+      available_book_versions_by_uuid[uuid] << version
+    end
+
+    abl = JSON.parse(
+      Faraday.get(Rails.application.secrets.openstax[:content][:abl_url]).body
+    ).deep_symbolize_keys
+
+    approved_collection_ids = Set.new(
+      abl[:approved_versions].filter do |version|
+        version[:min_code_version] <= params[:code_version]
+      end.map { |version| version[:collection_id] }
+    )
+
+    reading_processing_instructions_by_collection_style = YAML.load(
+      File.read 'config/reading_processing_instructions.yml'
+    )
+
+    collections_by_id = {}
+    abl[:approved_books].each do |collection|
+      collection_id = collection[:collection_id]
+      next unless approved_collection_ids.include? collection_id
+      next unless reading_processing_instructions_by_collection_style.has_key? collection[:style]
+      next unless collection[:books].all? do |book|
+        available_book_versions_by_uuid.has_key? book[:uuid]
+      end
+
+      collections_by_id[collection_id] = collection
+    end
+
+    @collections = collections_by_id.map do |id, collection|
+      name = collection[:books].map { |book| book[:slug].underscore.humanize }.join('; ')
+
+      [ "#{id} - #{name}", id ]
+    end
+    params[:collection_id] ||= @collections.first&.second
+    collection = collections_by_id[params[:collection_id]]
+
+    @reading_processing_instructions = reading_processing_instructions_by_collection_style[
+      collection[:style]
+    ]
+
+    # The following line assumes only 1 book per collection
+    @book_versions = available_book_versions_by_uuid[collection[:books].first[:uuid]].reverse
   end
 
   def create
@@ -70,5 +120,24 @@ class Admin::EcosystemsController < Admin::BaseController
     import_url = Addressable::URI.join(archive_url, '/contents/', book.cnx_id).to_s
     job.save(ecosystem_import_url: import_url)
     job
+  end
+
+  def content_ls(code_version = nil)
+    content_secrets = Rails.application.secrets.openstax[:content]
+    archive_path = content_secrets[:archive_path].chomp('/')
+
+    if code_version.nil?
+      prefix = "#{archive_path}/"
+      delimiter = '/'
+    else
+      prefix = "#{archive_path}/#{code_version.chomp('/')}/contents/"
+      delimiter = ':'
+    end
+
+    Aws::S3::Client.new.list_objects_v2(
+      bucket: content_secrets[:bucket_name], prefix: prefix, delimiter: delimiter
+    ).flat_map(&:common_prefixes).map do |common_prefix|
+      common_prefix.prefix.sub(prefix, '').chomp(delimiter)
+    end
   end
 end
