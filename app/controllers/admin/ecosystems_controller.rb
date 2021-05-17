@@ -6,13 +6,17 @@ class Admin::EcosystemsController < Admin::BaseController
   def new
     OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Models::Ecosystem)
 
-    @code_versions = content_ls.reverse
-    params[:code_version] ||= @code_versions.first
+    if bucket_configured?
+      @code_versions = content_ls.reverse
+      @code_version = params[:code_version] || @code_versions.first || ''
 
-    available_book_versions_by_uuid = Hash.new { |hash, key| hash[key] = [] }
-    content_ls(params[:code_version]).each do |book|
-      uuid, version = book.split('@')
-      available_book_versions_by_uuid[uuid] << version
+      available_book_versions_by_uuid = Hash.new { |hash, key| hash[key] = [] }
+      content_ls(@code_version)&.each do |book|
+        uuid, version = book.split('@')
+        available_book_versions_by_uuid[uuid] << version
+      end
+    else
+      @code_version = params[:code_version] || ''
     end
 
     abl = JSON.parse(
@@ -21,11 +25,11 @@ class Admin::EcosystemsController < Admin::BaseController
 
     approved_collection_ids = Set.new(
       abl[:approved_versions].filter do |version|
-        version[:min_code_version] <= params[:code_version]
+        version[:min_code_version] <= @code_version
       end.map { |version| version[:collection_id] }
     )
 
-    reading_processing_instructions_by_collection_style = YAML.load(
+    reading_processing_instructions_by_style = YAML.load(
       File.read 'config/reading_processing_instructions.yml'
     )
 
@@ -33,8 +37,9 @@ class Admin::EcosystemsController < Admin::BaseController
     abl[:approved_books].each do |collection|
       collection_id = collection[:collection_id]
       next unless approved_collection_ids.include? collection_id
-      next unless reading_processing_instructions_by_collection_style.has_key? collection[:style]
-      next unless collection[:books].all? do |book|
+      next unless reading_processing_instructions_by_style.has_key? collection[:style]
+
+      next if bucket_configured? && !collection[:books].all? do |book|
         available_book_versions_by_uuid.has_key? book[:uuid]
       end
 
@@ -46,15 +51,19 @@ class Admin::EcosystemsController < Admin::BaseController
 
       [ "#{id} - #{name}", id ]
     end
-    params[:collection_id] ||= @collections.first&.second
-    collection = collections_by_id[params[:collection_id]]
+    @collection_id = params[:collection_id] || @collections.first&.second || ''
+    collection = collections_by_id[@collection_id]
 
-    @reading_processing_instructions = reading_processing_instructions_by_collection_style[
-      collection[:style]
-    ]
+    style = collection[:style] unless collection.nil?
+    @reading_processing_instructions = params[:reading_processing_instructions] ||
+                                       reading_processing_instructions_by_style[style]&.to_yaml ||
+                                       ''
 
     # The following line assumes only 1 book per collection
-    @book_versions = available_book_versions_by_uuid[collection[:books].first[:uuid]].reverse
+    @book_versions = available_book_versions_by_uuid[collection[:books].first[:uuid]].reverse \
+      unless collection.nil?
+
+    @book_version = params[:book_version] || @book_versions&.first || ''
   end
 
   def create
@@ -108,6 +117,18 @@ class Admin::EcosystemsController < Admin::BaseController
 
   protected
 
+  def content_secrets
+    Rails.application.secrets.openstax[:content]
+  end
+
+  def bucket_name
+    content_secrets[:bucket_name]
+  end
+
+  def bucket_configured?
+    !bucket_name.blank?
+  end
+
   def ecosystems_path
     admin_ecosystems_path
   end
@@ -123,7 +144,8 @@ class Admin::EcosystemsController < Admin::BaseController
   end
 
   def content_ls(code_version = nil)
-    content_secrets = Rails.application.secrets.openstax[:content]
+    return unless bucket_configured?
+
     archive_path = content_secrets[:archive_path].chomp('/')
 
     if code_version.nil?
@@ -135,7 +157,7 @@ class Admin::EcosystemsController < Admin::BaseController
     end
 
     Aws::S3::Client.new.list_objects_v2(
-      bucket: content_secrets[:bucket_name], prefix: prefix, delimiter: delimiter
+      bucket: bucket_name, prefix: prefix, delimiter: delimiter
     ).flat_map(&:common_prefixes).map do |common_prefix|
       common_prefix.prefix.sub(prefix, '').chomp(delimiter)
     end
