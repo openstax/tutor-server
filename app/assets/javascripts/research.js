@@ -1,14 +1,10 @@
-//= require jquery
-//= require jquery_ujs
+//= require manager
 //= require jquery.datetimepicker
-//= require jquery-ui
-//= require bootstrap-sprockets
 //= require codemirror
 //= require codemirror/modes/ruby
-//= require manager
 
 //=============== Date Time Picker ============//
-$(document).ready(function() {
+$(document).on('turbolinks:load', () => {
   var datepicker_format = 'Y-m-d H:i:s';
 
   $('.datepicker').datetimepicker({

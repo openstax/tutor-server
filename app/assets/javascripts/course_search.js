@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).on('turbolinks:load', () => {
   //========== Course select all / deselect all ==========//
   $('#courses_select_all_on_page').change(function(e) {
     if ($(this).is(':checked')) {

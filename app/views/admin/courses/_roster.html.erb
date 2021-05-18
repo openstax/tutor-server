@@ -84,7 +84,7 @@
 
 <% content_for :javascript do %>
   <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).on('turbolinks:load', () => {
       $('table#students').stickyTableHeaders();
       jQuery(".best_in_place").best_in_place();
     });

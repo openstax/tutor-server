@@ -37,7 +37,7 @@
 
 
 <script type='text/javascript'>
-$(document).ready(function() {
+$(document).on('turbolinks:load', () => {
   $('.edit').click(function(event){
     alert('There is no edit yet, only delete and create again (quickly).');
     event.preventDefault(); // Prevent link from following its href

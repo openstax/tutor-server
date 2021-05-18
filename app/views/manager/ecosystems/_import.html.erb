@@ -2,12 +2,15 @@
   <div class="form-group">
     <%= form.label :code_version, 'Content Pipeline code version' %>
     <% if @code_versions.nil? %>
-      <%= text_field_tag :code_version, @code_version, class: 'form-control' %>
+      <%= text_field_tag(
+        :code_version, @code_version, class: 'form-control', 'data-turbolinks-reload': true
+      ) %>
     <% else %>
       <%= select_tag(
         :code_version,
         options_for_select(@code_versions, @code_version),
-        class: 'form-control'
+        class: 'form-control',
+        'data-turbolinks-reload': true
       ) %>
     <% end %>
   </div>
@@ -17,17 +20,22 @@
     <%= select_tag(
       :collection_id,
       options_for_select(@collections, @collection_id),
-      class: 'form-control'
+      class: 'form-control',
+      'data-turbolinks-reload': true
     ) %>
   </div>
 
   <div class="form-group">
     <%= form.label :book_version, 'Book version' %>
     <% if @book_versions.nil? %>
-      <%= text_field_tag :book_version, @book_version, class: 'form-control' %>
+      <%= text_field_tag(
+        :book_version, @book_version, class: 'form-control', 'data-turbolinks-reload': true
+      ) %>
     <% else %>
       <%= select_tag(
-        :book_version, options_for_select(@book_versions, @book_version), class: 'form-control'
+        :book_version, options_for_select(@book_versions, @book_version),
+        class: 'form-control',
+        'data-turbolinks-reload': true
       ) %>
     <% end %>
   </div>
