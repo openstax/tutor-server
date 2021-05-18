@@ -14,7 +14,7 @@ class Content::Routines::ImportPage
     cnx_page.convert_content!
 
     outputs.page = Content::Models::Page.new(
-      url: cnx_page.canonical_url,
+      url: cnx_page.url,
       title: cnx_page.title,
       content: cnx_page.content,
       book: book,

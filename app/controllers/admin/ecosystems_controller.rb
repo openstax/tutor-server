@@ -19,18 +19,10 @@ class Admin::EcosystemsController < Admin::BaseController
       @code_version = params[:code_version] || ''
     end
 
-    abl = JSON.parse(
-      Faraday.get(Rails.application.secrets.openstax[:content][:abl_url]).body
-    ).deep_symbolize_keys
-
     approved_collection_ids = Set.new(
       abl[:approved_versions].filter do |version|
         version[:min_code_version] <= @code_version
       end.map { |version| version[:collection_id] }
-    )
-
-    reading_processing_instructions_by_style = YAML.load(
-      File.read 'config/reading_processing_instructions.yml'
     )
 
     collections_by_id = {}
@@ -68,32 +60,21 @@ class Admin::EcosystemsController < Admin::BaseController
 
   def create
     OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Models::Ecosystem)
-    ecosystem_params = params[:ecosystem] || {}
-    manifest_content = ecosystem_params[:manifest].respond_to?(:read) ? \
-                         ecosystem_params[:manifest].read : ecosystem_params[:manifest].to_s
 
-    manifest = Content::Manifest.from_yaml(manifest_content)
-
-    manifest.update_books! if ecosystem_params[:books] == 'update'
-
-    case ecosystem_params[:exercises]
-    when 'update'
-      manifest.update_exercises!
-    when 'discard'
-      manifest.discard_exercises!
+    collection = abl[:approved_books].detect do |collection|
+      collection[:collection_id] == params[:collection_id]
     end
+    return head(:not_found) if collection.nil?
 
-    if !manifest.valid?
-      flash[:error] = manifest.errors.join('; ')
-      redirect_to ecosystems_path
-      return
-    elsif manifest.books.size != 1
-      flash[:error] = 'Only 1 book per ecosystem is currently supported'
-      redirect_to ecosystems_path
-      return
-    end
+    archive_url = "https://#{content_secrets[:archive_domain]}/#{
+      content_secrets[:archive_path]}/#{params[:code_version]}/"
 
-    create_book_import_job(manifest, ecosystem_params[:comments])
+    FetchAndImportBookAndCreateEcosystem.perform_later(
+      archive_url: archive_url,
+      book_cnx_id: "#{collection[:books].first[:uuid]}@#{params[:book_version]}",
+      reading_processing_instructions: YAML.safe_load(params[:reading_processing_instructions]),
+      comments: params[:comments]
+    )
 
     redirect_to ecosystems_path, notice: 'Ecosystem import job queued.'
   end
@@ -117,35 +98,21 @@ class Admin::EcosystemsController < Admin::BaseController
 
   protected
 
-  def content_secrets
-    Rails.application.secrets.openstax[:content]
-  end
-
-  def bucket_name
-    content_secrets[:bucket_name]
+  def abl
+    @abl ||= JSON.parse(
+      Faraday.get(Rails.application.secrets.openstax[:content][:abl_url]).body
+    ).deep_symbolize_keys
   end
 
   def bucket_configured?
     !bucket_name.blank?
   end
 
-  def ecosystems_path
-    admin_ecosystems_path
-  end
-
-  def create_book_import_job(manifest, comments)
-    job_id = ImportEcosystemManifest.perform_later(manifest: manifest, comments: comments)
-    job = Jobba.find(job_id)
-    book = manifest.books.first
-    archive_url = book.archive_url || OpenStax::Cnx::V1.archive_url_base
-    import_url = Addressable::URI.join(archive_url, '/contents/', book.cnx_id).to_s
-    job.save(ecosystem_import_url: import_url)
-    job
+  def bucket_name
+    content_secrets[:bucket_name]
   end
 
   def content_ls(code_version = nil)
-    return unless bucket_configured?
-
     archive_path = content_secrets[:archive_path].chomp('/')
 
     if code_version.nil?
@@ -161,5 +128,19 @@ class Admin::EcosystemsController < Admin::BaseController
     ).flat_map(&:common_prefixes).map do |common_prefix|
       common_prefix.prefix.sub(prefix, '').chomp(delimiter)
     end
+  end
+
+  def content_secrets
+    Rails.application.secrets.openstax[:content]
+  end
+
+  def ecosystems_path
+    admin_ecosystems_path
+  end
+
+  def reading_processing_instructions_by_style
+    @reading_processing_instructions_by_style ||= YAML.load_file(
+      'config/reading_processing_instructions.yml'
+    )
   end
 end

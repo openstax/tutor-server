@@ -48,6 +48,11 @@
     ) %>
   </div>
 
+  <div class="form-group">
+    <%= form.label :comments, 'Comments' %>
+    <%= text_field_tag :comments, '', class: 'form-control' %>
+  </div>
+
   <%= form.submit(
     'Import', class: 'btn btn-default',
               data: { disable_with: 'Import will likely take a while...' }

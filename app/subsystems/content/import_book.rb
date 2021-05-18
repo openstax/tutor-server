@@ -75,7 +75,7 @@ class Content::ImportBook
   def exec(cnx_book:, ecosystem:, reading_processing_instructions: nil, exercise_uids: nil)
     root_book_part = cnx_book.root_book_part
     book = Content::Models::Book.new(
-      url: cnx_book.canonical_url,
+      url: cnx_book.url,
       uuid: cnx_book.uuid,
       short_id: cnx_book.short_id,
       version: cnx_book.version,

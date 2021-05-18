@@ -1,18 +1,21 @@
 module OpenStax::Cnx::V1
   class Book
-    def initialize(id: nil, hash: nil, title: nil, tree: nil, root_book_part: nil, canonical_url: nil)
+    def initialize(id: nil, hash: nil, title: nil, tree: nil, root_book_part: nil)
       @id             = id
       @hash           = hash
       @title          = title
       @tree           = tree
       @root_book_part = root_book_part
-      @canonical_url  = canonical_url
     end
 
     attr_reader :id
 
+    def url_fragment
+      @url_fragment ||= OpenStax::Cnx::V1.archive_url_for(id)
+    end
+
     def url
-      @url ||= OpenStax::Cnx::V1.archive_url_for(id)
+      @url ||= "#{url_fragment}.json"
     end
 
     def baked
@@ -37,10 +40,6 @@ module OpenStax::Cnx::V1
 
     def version
       @version ||= hash.fetch('version')
-    end
-
-    def canonical_url
-      @canonical_url ||= OpenStax::Cnx::V1.archive_url_for("#{uuid}@#{version}")
     end
 
     def title

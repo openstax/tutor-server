@@ -46,7 +46,8 @@ module OpenStax::Cnx::V1
     end
 
     def url
-      @url ||= url_for(id)
+      @url ||= book.nil? ? OpenStax::Cnx::V1.archive_url_for("#{id}.json") :
+                           "#{book.url_fragment}:#{id.split('@').first}.json"
     end
 
     def parsed_title
@@ -74,11 +75,7 @@ module OpenStax::Cnx::V1
     end
 
     def version
-      @version ||= full_hash.fetch('version')
-    end
-
-    def canonical_url
-      @canonical_url ||= url_for("#{uuid}@#{version}")
+      @version ||= id.split('@').last
     end
 
     def content
@@ -180,10 +177,6 @@ module OpenStax::Cnx::V1
     end
 
     protected
-
-    def url_for(path)
-      book.nil? ? OpenStax::Cnx::V1.archive_url_for(path) : "#{book.canonical_url}:#{path}"
-    end
 
     # Adds a container div around note content for styling
     def map_note_format!(node)
