@@ -53,7 +53,7 @@ class ExportExerciseExclusions
     @page_urls_by_pages ||= {}.tap do |hash|
       exercises_by_ecosystems_and_pages.each do |ecosystem, exercises_by_pages|
         exercises_by_pages.each do |page, exercises|
-          hash[page] = OpenStax::Cnx::V1.webview_url_for(page.uuid)
+          hash[page] = page.reference_view_url
         end
       end
     end
@@ -122,8 +122,8 @@ class ExportExerciseExclusions
     excluded_exercises.group_by(&:course).map do |course, excluded_exercises|
       numbers = excluded_exercises.map(&:exercise_number)
       ecosystem = course.ecosystem
-      book = ecosystem.try!(:books).try!(:first)
-      book_hash = { book_title: book.try!(:title), book_uuid: book.try!(:uuid) }
+      book = ecosystem&.books&.first
+      book_hash = { book_title: book&.title, book_uuid: book&.uuid }
       exercises_hash = get_exercise_hashes_for_exercise_numbers(numbers: numbers)
       page_hashes = get_page_hashes_for_ecosystems_and_exercise_numbers(
         ecosystems: [ecosystem], numbers: numbers

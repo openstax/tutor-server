@@ -30,16 +30,16 @@ class Demo::Import < Demo::Base
         book.delete :version
       end
 
-      book_cnx_id = book[:version].blank? ? book[:uuid] : "#{book[:uuid]}@#{book[:version]}"
+      book_ox_id = book[:version].blank? ? book[:uuid] : "#{book[:uuid]}@#{book[:version]}"
 
       log do
-        "Importing #{catalog_offering[:title]} from #{book[:archive_url_base]}#{book_cnx_id}"
+        "Importing #{catalog_offering[:title]} from #{book[:archive_url_base]}#{book_ox_id}"
       end
 
       ecosystem_model = OpenStax::Exercises::V1.use_real_client do
         run(
           :import_ecosystem,
-          book_cnx_id: book_cnx_id,
+          book_ox_id: book_ox_id,
           archive_url: book[:archive_url_base],
           reading_processing_instructions: book[:reading_processing_instructions]
         ).outputs.ecosystem

@@ -3,7 +3,7 @@ require 'vcr_helper'
 
 RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow do
   let(:ecosystem) { FactoryBot.create :mini_ecosystem }
-  let(:book) { ecosystem.books.first }
+  let(:book)      { ecosystem.books.first }
 
   it 'creates a new Book structure and Pages and sets their attributes' do
     expect(ecosystem.id).not_to be_nil
@@ -32,5 +32,4 @@ RSpec.describe Content::ImportBook, type: :routine, vcr: VCR_OPTS, speed: :slow 
       end
     end
   end
-
 end

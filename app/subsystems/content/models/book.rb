@@ -24,6 +24,10 @@ class Content::Models::Book < IndestructibleRecord
 
   delegate :children, :units, :chapters, *Content::Models::Page::EXERCISE_ID_FIELDS, to: :as_toc
 
+  def archive
+    @archive ||= OpenStax::Content::Archive.new archive_version
+  end
+
   def type
     'Book'
   end
@@ -36,22 +40,15 @@ class Content::Models::Book < IndestructibleRecord
     @as_toc ||= Content::Book.new(tree)
   end
 
-  def archive_url
-    Addressable::URI.parse(url).site
-  end
-
-  def webview_url
-    archive_url.sub(/archive[\.-]?/, '')
-  end
-
-  def cnx_id
+  def ox_id
     "#{uuid}@#{version}"
   end
 
   def manifest_hash
     {
-      archive_url: archive_url,
-      cnx_id: cnx_id,
+      archive_version: archive_version,
+      uuid: uuid,
+      version: version,
       reading_processing_instructions: reading_processing_instructions,
       exercise_ids: exercises.sort_by(&:number).map(&:uid)
     }

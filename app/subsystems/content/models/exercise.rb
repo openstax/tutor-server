@@ -102,6 +102,10 @@ class Content::Models::Exercise < IndestructibleRecord
     tags.filter(&:cnxfeature?)
   end
 
+  def has_context?
+    tags.to_a.any?(&:cnxfeature?)
+  end
+
   def requires_context?
     tags.to_a.any?(&:requires_context?)
   end

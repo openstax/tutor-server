@@ -41,8 +41,7 @@ class Content::Routines::PopulateExercisePools
           if tags.include?('assignment-type:homework')
 
         # Practice Widget
-        page.practice_widget_exercise_ids << exercise.id \
-          unless exercise.requires_context?
+        page.practice_widget_exercise_ids << exercise.id unless exercise.has_context?
       end
     end
 

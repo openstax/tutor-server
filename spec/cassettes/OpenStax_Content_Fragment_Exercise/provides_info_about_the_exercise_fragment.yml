@@ -1,0 +1,178 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://openstax.org/apps/archive/20210514.171726/contents/405335a3-7cff-4df2-a9ad-29062a4af261@8.46:b0ffd0a2-9c83-4d73-b899-7f2ade2acda6.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Mon, 24 May 2021 23:30:54 GMT
+      X-Amz-Replication-Status:
+      - COMPLETED
+      Last-Modified:
+      - Tue, 18 May 2021 21:13:26 GMT
+      Etag:
+      - W/"ef785872ab0af76344855d18fef6b693"
+      X-Amz-Version-Id:
+      - XESQoiYEqkP_4vxRJLtq7pvFGoahLuJ.
+      Server:
+      - AmazonS3
+      Vary:
+      - Accept-Encoding
+      X-Cache:
+      - Hit from cloudfront
+      Via:
+      - 1.1 736b024e1a1a6198e908e9dc59a41c9a.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DFW50-C1
+      X-Amz-Cf-Id:
+      - b85EPRMifAXICJJ3KmsIUin7NFJb-VPDsuTtj8KKXZlJ6XfrPcE3Tw==
+      Age:
+      - '81'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"slug": "4-2-newtons-first-law-of-motion-inertia", "title": "Newton\u2019s
+        First Law of Motion: Inertia", "abstract": "<ul xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:m=\"http://www.w3.org/1998/Math/MathML\" xmlns:epub=\"http://www.idpf.org/2007/ops\">\n<li>Define
+        mass and inertia.</li>\n<li>Understand Newton''s first law of motion.</li>\n</ul>",
+        "id": "b0ffd0a2-9c83-4d73-b899-7f2ade2acda6", "revised": "2016-07-08T16:34:03Z",
+        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n  <head><style>\n            /*
+        STYLING_FOR_DEVS */\n            /* Linking to a specific element should highlight
+        the element */\n            :target {\n                background-color: #ffffcc;\n                border:
+        1px dotted #000000;\n\n                animation-name: cssAnimation;\n                animation-duration:
+        10s;\n                animation-timing-function: ease-out;\n                animation-delay:
+        0s;\n                animation-fill-mode: forwards;\n            }\n            @keyframes
+        cssAnimation {\n                to {\n                    background-color:
+        initial;\n                    border: initial;\n                }\n            }\n\n            /*
+        Style footnotes so that they stand out */\n            [role=\"doc-footnote\"]
+        {\n                background-color: #ffcccc;\n                border: 1px
+        dashed #ff0000;\n            }\n            [role=\"doc-footnote\"]:before
+        { content: \"FOOTNOTE \" ; }\n\n            /* Show a permalink when hovering
+        over a heading or paragraph */\n            *:not(:hover) &gt; a.-dev-permalinker
+        { display: none; }\n            * &gt; a.-dev-permalinker {\n                margin-left:
+        .1rem;\n                text-decoration: none;\n            }\n        </style><script>//&lt;![CDATA[\n            //
+        SCRIPTS_FOR_DEVS\n            window.addEventListener(''load'', () =&gt; {\n                const
+        pilcrow = ''\u00b6''\n\n                function addPermalink(parent, id)
+        {\n                    const link = window.document.createElement(''a'')\n                    link.classList.add(''-dev-permalinker'')\n                    link.setAttribute(''href'',
+        ''#'' + id)\n                    link.textContent = pilcrow\n                    parent.appendChild(link)\n                }\n\n                const
+        paragraphs = Array.from(\n                    document.querySelectorAll(''p[id]'')\n                )\n                paragraphs.forEach(p
+        =&gt; addPermalink(p, p.getAttribute(''id'')) )\n\n                const headings
+        = Array.from(\n                    document.querySelectorAll(\n                        ''*[id]
+        &gt; h1, *[id] &gt; h2, *[id] &gt; h3, '' +\n                        ''*[id]
+        &gt; h4, *[id] &gt; h5, *[id] &gt; h6''\n                    )\n                )\n                headings.forEach(h
+        =&gt; addPermalink(\n                    h, h.parentElement.getAttribute(''id''))\n                )\n            })\n        //
+        ]]&gt;</script></head><body><div data-type=\"page\" id=\"b0ffd0a2-9c83-4d73-b899-7f2ade2acda6\"
+        data-cnxml-to-html-ver=\"2.1.1\" class=\" chapter-content-module\"><h2 data-type=\"document-title\"
+        id=\"0\"><span class=\"os-number\">4.2</span><span class=\"os-divider\"> </span><span
+        data-type=\"\" itemprop=\"\" class=\"os-text\">Newton\u2019s First Law of
+        Motion: Inertia</span></h2>\n        \n        <p id=\"import-auto-id2654505\"
+        class=\" \">Experience suggests that an object at rest will remain at rest
+        if left alone, and that an object in motion tends to slow down and stop unless
+        some effort is made to keep it moving. What <span data-type=\"term\" id=\"term88\"
+        group-by=\"N\">Newton\u2019s first law of motion</span><strong data-effect=\"bold\"><!--
+        no-selfclose --></strong> states, however, is the following:</p>\n      \n        \n      \n        <div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-id2690663\" data-label=\"\"><h3
+        class=\"os-title\" data-type=\"title\"><span data-type=\"\" id=\"2\" class=\"os-title-label\">Newton\u2019s
+        First Law of Motion</span></h3><div class=\"os-note-body\">\n        <p id=\"fs-id1694182\"
+        class=\" \">A body at rest remains at rest, or, if in motion, remains in motion
+        at a constant velocity unless acted on by a net external force. </p></div></div>\n        \n        <p
+        id=\"import-auto-id1741367\" class=\" \">Note the repeated use of the verb
+        \u201cremains.\u201d We can think of this law as preserving the status quo
+        of motion. </p>\n        \n        <p id=\"import-auto-id1904217\" class=\"
+        \">Rather than contradicting our experience, <span data-type=\"term\" id=\"term89\"
+        group-by=\"N\">Newton\u2019s first law of motion</span> states that there
+        must be a <em data-effect=\"italics\">cause</em> (which is a net external
+        force) <em data-effect=\"italics\">for there to be any change in velocity
+        (either a change in magnitude or direction)</em>. We will define <em data-effect=\"italics\">net
+        external force</em> in the next section. An object sliding across a table
+        or floor slows down due to the net force of friction acting on the object.
+        If friction disappeared, would the object still slow down?</p><p id=\"import-auto-id1416969\"
+        class=\" \">The idea of cause and effect is crucial in accurately describing
+        what happens in various situations. For example, consider what happens to
+        an object sliding along a rough horizontal surface. The object quickly grinds
+        to a halt. If we spray the surface with talcum powder to make the surface
+        smoother, the object slides farther. If we make the surface even smoother
+        by rubbing lubricating oil on it, the object slides farther yet. Extrapolating
+        to a frictionless surface, we can imagine the object sliding in a straight
+        line indefinitely. Friction is thus the <em data-effect=\"italics\">cause</em>
+        <em data-effect=\"italics\"><!-- no-selfclose --></em>of the slowing (consistent
+        with Newton\u2019s first law). The object would not slow down at all if friction
+        were completely eliminated. Consider an air hockey table. When the air is
+        turned off, the puck slides only a short distance before friction slows it
+        to a stop. However, when the air is turned on, it creates a nearly frictionless
+        surface, and the puck glides long distances without slowing down. Additionally,
+        if we know enough about the friction, we can accurately predict how quickly
+        the object will slow down. Friction is an external force. </p><p id=\"import-auto-id1486790\"
+        class=\" \">Newton\u2019s first law is completely general and can be applied
+        to anything from an object sliding on a table to a satellite in orbit to blood
+        pumped from the heart. Experiments have thoroughly verified that any change
+        in velocity (speed or direction) must be caused by an external force. The
+        idea of <em data-effect=\"italics\">generally applicable or universal laws</em>
+        is important not only here\u2014it is a basic feature of all laws of physics.
+        Identifying these laws is like recognizing patterns in nature from which further
+        patterns can be discovered. The genius of Galileo, who first developed the
+        idea for the first law, and Newton, who clarified it, was to ask the fundamental
+        question, \u201cWhat is the cause?\u201d Thinking in terms of cause and effect
+        is a worldview fundamentally different from the typical ancient Greek approach
+        when questions such as \u201cWhy does a tiger have stripes?\u201d would have
+        been answered in Aristotelian fashion, \u201cThat is the nature of the beast.\u201d
+        True perhaps, but not a useful insight.</p>\n      \n        \n      \n        <section
+        data-depth=\"1\" id=\"fs-id1737594\"><h3 data-type=\"title\">Mass</h3>\n        <p
+        id=\"import-auto-id2712510\" class=\" \">The property of a body to remain
+        at rest or to remain in motion with constant velocity is called <span data-type=\"term\"
+        id=\"term90\" group-by=\"i\">inertia</span>. Newton\u2019s first law is often
+        called the <span data-type=\"term\" id=\"term91\" group-by=\"l\">law of inertia</span>.
+        As we know from experience, some objects have more inertia than others. It
+        is obviously more difficult to change the motion of a large boulder than that
+        of a basketball, for example. The inertia of an object is measured by its
+        <span data-type=\"term\" id=\"term92\" group-by=\"m\">mass</span>. Roughly
+        speaking, mass is a measure of the amount of \u201cstuff\u201d (or matter)
+        in something. The quantity or amount of matter in an object is determined
+        by the numbers of atoms and molecules of various types it contains. Unlike
+        weight, mass does not vary with location. The mass of an object is the same
+        on Earth, in orbit, or on the surface of the Moon. In practice, it is very
+        difficult to count and identify all of the atoms and molecules in an object,
+        so masses are not often determined in this manner. Operationally, the masses
+        of objects are determined by comparison with the standard kilogram.</p></section>\n        \n        <div
+        data-type=\"exercise\" id=\"fs-id2448968\" data-element-type=\"check-understanding\"
+        data-label=\"\" class=\" unnumbered\"><h3 class=\"os-title\"><span class=\"os-title-label\">Check
+        Your Understanding</span></h3>\n<div data-type=\"problem\" id=\"fs-id3175448\"><div
+        class=\"os-problem-container \">\n        <p id=\"import-auto-id1678252\"
+        class=\" \">Which has more mass: a kilogram of cotton balls or a kilogram
+        of gold?</p>\n        </div></div>\n        <div data-type=\"solution\" id=\"fs-id3255910\"
+        data-label=\"\"><h4 data-type=\"title\" class=\"solution-title\"><span class=\"os-text\">Solution</span></h4><div
+        class=\"os-solution-container\"><div data-type=\"title\" id=\"4\">Answer</div>\n        <p
+        id=\"import-auto-id2438567\" class=\" \">They are equal. A kilogram of one
+        substance is equal in mass to a kilogram of another substance. The quantities
+        that might differ between them are volume and density.</p></div></div></div>\n\n<div
+        data-type=\"note\" data-has-label=\"true\" id=\"fs-id1169085651531\" class=\"watch-physics\"
+        data-label=\"\"><div data-type=\"title\" id=\"5\">Watch Physics: Newton\u2019s
+        First Law of Motion</div>\n\n<p id=\"fs-id1169085756824\" class=\" \">This
+        video introduces and explains Newton\u2019s first law of motion.</p>\n<div
+        data-type=\"media\" id=\"fs-id1169086146737\" data-alt=\"This tutorial explains
+        Newton\u2019s first law of motion.\">\n<div data-type=\"alternatives\" class=\"os-has-iframe
+        os-has-link\"><a class=\"os-is-link\" target=\"_window\" href=\"https://www.openstaxcollege.org/l/02newlawone\">Click
+        to view content</a><iframe width=\"660\" height=\"371.4\" src=\"https://www.openstaxcollege.org/l/02newlawone\"
+        class=\"os-is-iframe\"><!-- no-selfclose --></iframe></div>\n</div>\n</div>\n    \n    \n  </div></body>\n</html>"}'
+    http_version: 
+  recorded_at: Mon, 24 May 2021 23:32:14 GMT
+recorded_with: VCR 4.0.0

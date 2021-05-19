@@ -111,8 +111,8 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
       end
     end
 
-    context 'CNX export' do
-      let(:export) { :cnx }
+    context 'OpenStax export' do
+      let(:export) { :ox }
 
       it 'exports data to Box as a csv file' do
         # We replace the uploading of the research data with the test case itself
@@ -217,13 +217,13 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
         student.update_attribute :course, @course
       end
 
-      cc_tasks = 2.times.map do
-        FactoryBot.create(:tasks_task, task_type: :concept_coach,
+      2.times.map do
+        FactoryBot.create(:tasks_task, task_type: :page_practice,
                                        step_types: [:tasks_tasked_exercise],
-                                       num_random_taskings: 1).tap do |cc_task|
-          page = cc_task.task_steps.first.page
+                                       num_random_taskings: 1).tap do |practice_task|
+          page = practice_task.task_steps.first.page
           Content::Routines::TransformAndCachePageContent.call book: page.book
-          FactoryBot.create :tasks_task_step, task: cc_task,
+          FactoryBot.create :tasks_task_step, task: practice_task,
                                               page: page,
                                               tasked_type: :tasks_tasked_exercise
         end
@@ -237,10 +237,7 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
       FactoryBot.create :tasks_task_step, task: reading_task,
                                           page: reading_task.task_steps.first.page
 
-      (cc_tasks + [reading_task]).each do |task|
-        student = task.taskings.first.role.student
-        student.update_attribute :course, @course
-      end
+      reading_task.taskings.first.role.student.update_attribute :course, @course
 
       expect(Tasks::Models::TaskStep.count).to eq 8
     end
@@ -263,30 +260,17 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             :mixed_practice, :external, :event, :extra
           )
         end
-        let(:cc_task_types) { Tasks::Models::Task.task_types.values_at(:concept_coach) }
-
-        specify 'only Concept Coach' do
-          with_export_rows(export, cc_task_types) do |rows|
-            expect(rows.count - 1).to eq(4)
-          end
-        end
 
         specify 'only Tutor' do
           with_export_rows(export, tutor_task_types) do |rows|
-            expect(rows.count - 1).to eq(4)
-          end
-        end
-
-        specify 'Tutor and Concept Coach' do
-          with_export_rows(export, all_task_types) do |rows|
             expect(rows.count - 1).to eq(8)
           end
         end
       end
     end
 
-    context 'CNX export' do
-      let(:export) { :cnx }
+    context 'OpenStax export' do
+      let(:export) { :ox }
 
       specify 'by date range' do
         with_export_rows(export, all_task_types, Date.today - 10, Date.tomorrow) do |rows|
@@ -301,22 +285,9 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             :mixed_practice, :external, :event, :extra
           )
         end
-        let(:cc_task_types) { Tasks::Models::Task.task_types.values_at(:concept_coach) }
-
-        specify 'only Concept Coach' do
-          with_export_rows(export, cc_task_types) do |rows|
-            expect(rows.count - 1).to eq(2)
-          end
-        end
 
         specify 'only Tutor' do
           with_export_rows(export, tutor_task_types) do |rows|
-            expect(rows.count - 1).to eq(2)
-          end
-        end
-
-        specify 'Tutor and Concept Coach' do
-          with_export_rows(export, all_task_types) do |rows|
             expect(rows.count - 1).to eq(4)
           end
         end
@@ -339,22 +310,9 @@ RSpec.describe ExportAndUploadResearchData, type: :routine, speed: :medium do
             :mixed_practice, :external, :event, :extra
           )
         end
-        let(:cc_task_types) { Tasks::Models::Task.task_types.values_at(:concept_coach) }
-
-        specify 'only Concept Coach' do
-          with_export_rows(export, cc_task_types) do |rows|
-            expect(rows.count - 1).to eq(4)
-          end
-        end
 
         specify 'only Tutor' do
           with_export_rows(export, tutor_task_types) do |rows|
-            expect(rows.count - 1).to eq(0)
-          end
-        end
-
-        specify 'Tutor and Concept Coach' do
-          with_export_rows(export, all_task_types) do |rows|
             expect(rows.count - 1).to eq(4)
           end
         end

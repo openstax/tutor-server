@@ -65,11 +65,11 @@ RSpec.describe 'admin/ecosystems/index', type: :view do
     context 'with data hashes' do
       before(:each) do
         incomplete_statuses.each do |status|
-          status.save ecosystem_import_url: 'https://archive.cnx.org/contents/some-uuid'
+          status.save ecosystem_import_url: 'https://openstax.org/apps/archive/20210514.171726/contents/some-uuid'
         end
 
         failed_statuses.each do |status|
-          status.save ecosystem_import_url: 'https://archive.cnx.org/contents/some-uuid'
+          status.save ecosystem_import_url: 'https://openstax.org/apps/archive/20210514.171726/contents/some-uuid'
         end
       end
 

@@ -12,7 +12,7 @@ module Content
       return @errors unless @errors.nil?
 
       @errors = []
-      @errors << 'Manifest Book has no cnx_id' if cnx_id.blank?
+      @errors << 'Manifest Book has no ox_id' if ox_id.blank?
 
       @errors
     end
@@ -22,11 +22,11 @@ module Content
     end
 
     def update_version!
-      old_cnx_id = cnx_id
-      return if old_cnx_id.nil?
+      old_ox_id = ox_id
+      return if old_ox_id.nil?
 
-      self.cnx_id = old_cnx_id.split('@').first
-      old_cnx_id
+      self.ox_id = old_ox_id.split('@').first
+      old_ox_id
     end
 
     def update_exercises!

@@ -14,7 +14,7 @@ class Content::BookPart
     define_method(key) { tree[key] }
   end
 
-  def cnx_id
+  def ox_id
     if uuid.nil?
       nil
     elsif version.nil?

@@ -68,15 +68,12 @@ Delayed::Worker.class_exec do
     'ActiveJob::DeserializationError' => ->(exception) do
       exception.message.include? ActiveRecord::RecordNotFound.to_s
     end,
-    'OAuth2::Error'       => ->(exception) do
+    'Faraday::ClientError' => ALWAYS_FAIL,
+    'OAuth2::Error'        => ->(exception) do
       status = exception.response.status
       400 <= status && status < 500
     end,
-    'OpenStax::HTTPError' => ->(exception) do
-      status = exception.message.to_i
-      400 <= status && status < 500
-    end,
-    'OpenURI::HTTPError'  => ->(exception) do
+    'OpenURI::HTTPError'   => ->(exception) do
       status = exception.message.to_i
       400 <= status && status < 500
     end

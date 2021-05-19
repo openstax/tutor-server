@@ -9,8 +9,8 @@ RSpec.describe Api::V1::PagesController, type: :request, api: true, version: :v1
     end
 
     context '#show' do
-      def page_api_ecosystem_path(ecosystem_id, cnx_id)
-        "/api/ecosystems/#{ecosystem_id}/pages/#{cnx_id}"
+      def page_api_ecosystem_path(ecosystem_id, ox_id)
+        "/api/ecosystems/#{ecosystem_id}/pages/#{ox_id}"
       end
 
       it 'returns not found if the version is not found' do
@@ -31,19 +31,20 @@ RSpec.describe Api::V1::PagesController, type: :request, api: true, version: :v1
 
       context 'with an old version of force' do
         before(:all) do
-          page_hash = { id: "#{@page_uuid}@2", title: 'Force' }
-
           book = FactoryBot.create :content_book
           @old_ecosystem = book.ecosystem
-          cnx_page = OpenStax::Cnx::V1::Page.new(page_hash)
+          ox_page = OpenStax::Content::Page.new(
+            book: MINI_ECOSYSTEM_OPENSTAX_BOOK, uuid: @page_uuid, title: 'Force'
+          )
           VCR.use_cassette("Api_V1_PagesController/with_an_old_version_of_force", VCR_OPTS) do
             @old_page = Content::Routines::ImportPage.call(
-              cnx_page: cnx_page,
+              ox_page: ox_page,
               book: book,
               book_indices: [1, 1],
               parent_book_part_uuid: SecureRandom.uuid
             ).outputs.page
           end
+          @old_page.update_attribute :version, '2'
         end
 
         it 'returns the page with the correct uuid' do

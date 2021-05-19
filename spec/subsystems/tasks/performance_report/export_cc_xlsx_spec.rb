@@ -135,7 +135,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
         } ,
         data_headings: [
           {
-            cnx_page_id: 'UUID_1',
+            page_uuid: 'UUID_1',
             title: "1.1 Intro to Math",
             type: 'concept_coach',
             total_average: 0.6,
@@ -143,7 +143,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
             average_actual_and_placeholder_exercise_count: 11
           },
           {
-            cnx_page_id: "UUID_2",
+            page_uuid: "UUID_2",
             title: "1.2 Basket weaving is really really really really really (wrap test) hard",
             type: 'concept_coach',
             total_average: 0.56789,
@@ -265,7 +265,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
         } ,
         data_headings: [
           {
-            cnx_page_id: 'UUID_1',
+            page_uuid: 'UUID_1',
             title: "1.1 Intro to Math",
             type: 'concept_coach',
             total_average: 0.6,
@@ -273,7 +273,7 @@ RSpec.describe Tasks::PerformanceReport::ExportCcXlsx do
             average_actual_and_placeholder_exercise_count: 11
           },
           {
-            cnx_page_id: "UUID_2",
+            page_uuid: "UUID_2",
             title: "1.2 Basket weaving is really really really really really (wrap test) hard",
             type: 'concept_coach',
             total_average: 0.56789,

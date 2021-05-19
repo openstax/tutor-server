@@ -11,7 +11,7 @@ RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
 
   let(:fixture_path)                   { 'spec/fixtures/content/sample_manifest.yml' }
   let(:expected_ecosystem_title_start) { 'Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4)' }
-  let(:expected_book_cnx_id)           { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
+  let(:expected_book_ox_id)           { '93e2b09d-261c-4007-a987-0b3062fe154b@4.4' }
 
   let(:expected_exercise_numbers)      {
     [
@@ -59,8 +59,7 @@ RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
         eq expected_manifest_hash.except(:title, :books)
       )
       expect(expected_manifest_hash[:title]).to include manifest_hash[:title]
-      expect(book_hash.except(:archive_url)).to eq expected_book_hash.except(:archive_url)
-      expect(book_hash[:archive_url] + '/').to eq expected_book_hash[:archive_url]
+      expect(book_hash).to eq expected_book_hash
     end
   end
 
@@ -72,7 +71,7 @@ RSpec.describe ImportEcosystemManifest, type: :routine, vcr: VCR_OPTS do
     )
 
     expect(@new_ecosystem.title).to start_with expected_ecosystem_title_start
-    expect(@new_ecosystem.books.first.cnx_id).to eq expected_book_cnx_id
+    expect(@new_ecosystem.books.first.ox_id).to eq expected_book_ox_id
     expect(Set.new @new_ecosystem.exercises.map(&:uid)).to eq expected_exercise_uids_set
   end
 end

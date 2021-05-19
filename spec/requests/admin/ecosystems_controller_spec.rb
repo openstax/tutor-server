@@ -36,7 +36,7 @@ RSpec.describe Admin::EcosystemsController, type: :request, vcr: VCR_OPTS, speed
 
       it 'can update the manifest book version' do
         expect(ImportEcosystemManifest).to receive(:perform_later) do |params|
-          expect(params[:manifest].books.first.cnx_id).not_to include('@')
+          expect(params[:manifest].books.first.ox_id).not_to include('@')
         end
         expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
 

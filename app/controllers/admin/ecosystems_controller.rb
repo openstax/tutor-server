@@ -6,32 +6,32 @@ class Admin::EcosystemsController < Admin::BaseController
   def new
     OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Models::Ecosystem)
 
-    if bucket_configured?
-      @code_versions = content_ls.reverse
-      @code_version = params[:code_version] || @code_versions.first || ''
+    if s3.bucket_configured?
+      @archive_versions = s3.ls.reverse
+      @archive_version = params[:archive_version] || @archive_versions.first || ''
 
       available_book_versions_by_uuid = Hash.new { |hash, key| hash[key] = [] }
-      content_ls(@code_version)&.each do |book|
+      s3.ls(@archive_version).each do |book|
         uuid, version = book.split('@')
         available_book_versions_by_uuid[uuid] << version
       end
     else
-      @code_version = params[:code_version] || ''
+      @archive_version = params[:archive_version] || ''
     end
 
     approved_collection_ids = Set.new(
-      abl[:approved_versions].filter do |version|
-        version[:min_code_version] <= @code_version
+      abl.approved_versions.filter do |version|
+        version[:min_code_version] <= @archive_version
       end.map { |version| version[:collection_id] }
     )
 
     collections_by_id = {}
-    abl[:approved_books].each do |collection|
+    abl.approved_books.each do |collection|
       collection_id = collection[:collection_id]
       next unless approved_collection_ids.include? collection_id
       next unless reading_processing_instructions_by_style.has_key? collection[:style]
 
-      next if bucket_configured? && !collection[:books].all? do |book|
+      next if s3.bucket_configured? && !collection[:books].all? do |book|
         available_book_versions_by_uuid.has_key? book[:uuid]
       end
 
@@ -61,17 +61,15 @@ class Admin::EcosystemsController < Admin::BaseController
   def create
     OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Models::Ecosystem)
 
-    collection = abl[:approved_books].detect do |collection|
+    collection = abl.approved_books.detect do |collection|
       collection[:collection_id] == params[:collection_id]
     end
     return head(:not_found) if collection.nil?
 
-    archive_url = "https://#{content_secrets[:archive_domain]}/#{
-      content_secrets[:archive_path]}/#{params[:code_version]}/"
-
     FetchAndImportBookAndCreateEcosystem.perform_later(
-      archive_url: archive_url,
-      book_cnx_id: "#{collection[:books].first[:uuid]}@#{params[:book_version]}",
+      archive_version: params[:archive_version],
+      book_uuid: collection[:books].first[:uuid],
+      book_version: params[:book_version],
       reading_processing_instructions: YAML.safe_load(params[:reading_processing_instructions]),
       comments: params[:comments]
     )
@@ -99,39 +97,11 @@ class Admin::EcosystemsController < Admin::BaseController
   protected
 
   def abl
-    @abl ||= JSON.parse(
-      Faraday.get(Rails.application.secrets.openstax[:content][:abl_url]).body
-    ).deep_symbolize_keys
+    @abl ||= OpenStax::Content::Abl.new
   end
 
-  def bucket_configured?
-    !bucket_name.blank?
-  end
-
-  def bucket_name
-    content_secrets[:bucket_name]
-  end
-
-  def content_ls(code_version = nil)
-    archive_path = content_secrets[:archive_path].chomp('/')
-
-    if code_version.nil?
-      prefix = "#{archive_path}/"
-      delimiter = '/'
-    else
-      prefix = "#{archive_path}/#{code_version.chomp('/')}/contents/"
-      delimiter = ':'
-    end
-
-    Aws::S3::Client.new.list_objects_v2(
-      bucket: bucket_name, prefix: prefix, delimiter: delimiter
-    ).flat_map(&:common_prefixes).map do |common_prefix|
-      common_prefix.prefix.sub(prefix, '').chomp(delimiter)
-    end
-  end
-
-  def content_secrets
-    Rails.application.secrets.openstax[:content]
+  def s3
+    @s3 ||= OpenStax::Content::S3.new
   end
 
   def ecosystems_path

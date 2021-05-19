@@ -40,7 +40,7 @@ RSpec.describe Content::Models::Ecosystem, type: :model do
     let!(:book)          { FactoryBot.create :content_book, ecosystem: ecosystem }
     before(:each)        { ecosystem.reload }
 
-    let(:expected_title) { "#{book.title} (#{book.cnx_id})" }
+    let(:expected_title) { "#{book.title} (#{book.ox_id})" }
 
     include_examples 'ecosystem specs'
   end

@@ -11,12 +11,12 @@ class Content::ImportBook
 
   def import_pages!(book, book_part, book_indices = [], all_tags = nil)
     pages = book_part.parts.each_with_index.flat_map do |part, index|
-      if part.is_a?(OpenStax::Cnx::V1::Page)
+      if part.is_a?(OpenStax::Content::Page)
         outs = run(
           :import_page,
           book: book,
           book_indices: book_indices + [ index ],
-          cnx_page: part,
+          ox_page: part,
           parent_book_part_uuid: book_part.uuid,
           save: false,
           all_tags: all_tags
@@ -40,7 +40,7 @@ class Content::ImportBook
     book_part.parts.each do |part|
       hash = { uuid: part.uuid, title: part.title, book_location: part.book_location }
 
-      if part.is_a? OpenStax::Cnx::V1::Page
+      if part.is_a? OpenStax::Content::Page
         hash[:type] = 'Page'
         page = ordered_pages[page_index]
         hash.merge!(
@@ -72,23 +72,24 @@ class Content::ImportBook
 
   # Imports and saves a Cnx::Book as a Content::Models::Book
   # Returns the Book object, Resource object and collection JSON as a hash
-  def exec(cnx_book:, ecosystem:, reading_processing_instructions: nil, exercise_uids: nil)
-    root_book_part = cnx_book.root_book_part
+  def exec(openstax_book:, ecosystem:, reading_processing_instructions: nil, exercise_uids: nil)
+    root_book_part = openstax_book.root_book_part
     book = Content::Models::Book.new(
-      url: cnx_book.url,
-      uuid: cnx_book.uuid,
-      short_id: cnx_book.short_id,
-      version: cnx_book.version,
-      title: cnx_book.title,
-      baked_at: cnx_book.baked,
-      is_collated: cnx_book.collated,
+      archive_version: openstax_book.archive_version,
+      url: openstax_book.url,
+      uuid: openstax_book.uuid,
+      short_id: openstax_book.short_id,
+      version: openstax_book.version,
+      title: openstax_book.title,
+      baked_at: openstax_book.baked,
+      is_collated: openstax_book.collated,
       content: root_book_part.contents,
       content_ecosystem_id: ecosystem.id,
       reading_processing_instructions: reading_processing_instructions.to_a.map(&:to_h),
       tree: {}
     )
 
-    # Populate book.pages based on the cnx_book
+    # Populate book.pages based on the openstax_book
     ordered_pages, all_tags = import_pages! book, root_book_part
 
     changed_tags = all_tags.filter(&:changed?)
@@ -151,8 +152,8 @@ class Content::ImportBook
       tutor_uuid: book.tutor_uuid
     }
     subtype = root_book_part.parts.any? do |part|
-      part.is_a?(OpenStax::Cnx::V1::BookPart) && part.parts.any? do |subpart|
-        subpart.is_a?(OpenStax::Cnx::V1::BookPart)
+      part.is_a?(OpenStax::Content::BookPart) && part.parts.any? do |subpart|
+        subpart.is_a?(OpenStax::Content::BookPart)
       end
     end ? 'Unit' : 'Chapter'
     book.tree[:children], _ = build_tree(

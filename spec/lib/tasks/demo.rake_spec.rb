@@ -21,18 +21,11 @@ RSpec.describe 'demo', type: :rake do
     if catalog_offering[:title].match(/Mini Physics/)
       expect(book[:run]).to eq 'FactoryBot.create :mini_ecosystem'
     else
-      expect(book[:archive_url_base]).to eq 'https://archive.cnx.org/contents/'
       expect(book[:uuid]).to be_in [
         '8d50a0af-948b-4204-a71d-4826cba765b8',
         '405335a3-7cff-4df2-a9ad-29062a4af261',
         '02040312-72c8-441e-a685-20e9333f3e1d'
       ]
-      reading_processing_instructions = book[:reading_processing_instructions]
-      expect(reading_processing_instructions.size).to be_in [1, 3, 5]
-      reading_processing_instructions.each do |reading_processing_instruction|
-        expect(reading_processing_instruction[:css]).not_to be_blank
-        expect(reading_processing_instruction[:fragments]).to be_a Array
-      end
     end
   end
 

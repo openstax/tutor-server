@@ -2,326 +2,327 @@
 http_interactions:
 - request:
     method: get
-    uri: https://archive.cnx.org/contents/21d0e217-d50f-4901-af75-905e738eb4c4
+    uri: https://openstax.org/apps/archive/20210514.171726/contents/405335a3-7cff-4df2-a9ad-29062a4af261@8.46:2242a8c5-e8b1-4287-b801-af74ef6f1e5b.json
     body:
       encoding: US-ASCII
       string: ''
     headers:
-      Accept:
-      - text/json
+      User-Agent:
+      - Faraday v0.17.4
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 302
-      message: Found
-    headers:
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Cache-Control:
-      - max-age=60, public
-      Content-Length:
-      - '129'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Sun, 14 Feb 2021 21:45:28 GMT
-      Etag:
-      - '"1B2M2Y8AsgTpgAmY7PhCfg"'
-      Location:
-      - https://archive.cnx.org/contents/21d0e217-d50f-4901-af75-905e738eb4c4@13
-      Server:
-      - waitress
-      X-Varnish-Status:
-      - cacheable - Cache-Control in backend response
-      X-Varnish-Backend:
-      - prod07_archive3
-      X-Varnish-Ttl:
-      - '60.000'
-      X-Varnish:
-      - 8048330 5428669
-      Age:
-      - '2'
-      Via:
-      - 1.1 varnish-v4
-      X-Varnish-Cache:
-      - HIT
-      Strict-Transport-Security:
-      - max-age=16000000
-    body:
-      encoding: UTF-8
-      string: |+
-        302 Found
-
-        The resource was found at /contents/21d0e217-d50f-4901-af75-905e738eb4c4@13; you should be redirected automatically.
-
-    http_version:
-  recorded_at: Sun, 14 Feb 2021 21:45:30 GMT
-- request:
-    method: get
-    uri: https://archive.cnx.org/contents/21d0e217-d50f-4901-af75-905e738eb4c4@13
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
       Accept:
-      - text/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      User-Agent:
-      - Ruby
+      - "*/*"
   response:
     status:
       code: 200
       message: OK
     headers:
-      Access-Control-Allow-Headers:
-      - origin,dnt,accept-encoding,accept-language,keep-alive,user-agent,x-requested-with,if-modified-since,cache-control,content-type
-      Access-Control-Allow-Methods:
-      - GET, OPTIONS
-      Access-Control-Allow-Origin:
-      - "*"
-      Cache-Control:
-      - max-age=31536000, public
       Content-Type:
       - application/json
-      Date:
-      - Thu, 11 Feb 2021 20:36:14 GMT
-      Etag:
-      - '"KQA3yHYuwirCPv+dvWncyw"'
-      Expires:
-      - Fri, 11 Feb 2022 20:36:14 GMT
-      Link:
-      - <https://cnx.org/contents/031da8d3-b525-429c-80cf-6c8ed997733a:21d0e217-d50f-4901-af75-905e738eb4c4/Kinematics-in-Two-Dimensions:-An-Introduction>
-        ;rel="Canonical"
-      Server:
-      - waitress
-      X-Varnish-Status:
-      - cacheable - Cache-Control in backend response
-      X-Varnish-Backend:
-      - prod07_archive5
-      X-Varnish-Ttl:
-      - '31536000.000'
-      X-Varnish:
-      - 5466627 1749627
-      Age:
-      - '263356'
-      Via:
-      - 1.1 varnish-v4
-      X-Varnish-Cache:
-      - HIT
-      Accept-Ranges:
-      - bytes
       Transfer-Encoding:
       - chunked
-      Strict-Transport-Security:
-      - max-age=16000000
+      Connection:
+      - keep-alive
+      Date:
+      - Mon, 24 May 2021 23:35:49 GMT
+      X-Amz-Replication-Status:
+      - COMPLETED
+      Last-Modified:
+      - Tue, 18 May 2021 21:12:14 GMT
+      Etag:
+      - W/"c728c7a83f54eadc77864e29321d6c4e"
+      X-Amz-Version-Id:
+      - XKL65zLA9btLx5y.EHY6IOJmos41jKCM
+      Server:
+      - AmazonS3
+      Vary:
+      - Accept-Encoding
+      X-Cache:
+      - Hit from cloudfront
+      Via:
+      - 1.1 c4b0ff6aa9368016c7d27f7d12c7e5e2.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DFW55-C3
+      X-Amz-Cf-Id:
+      - OgySzEO6UrGm1oOcqMaCgZ1yw_yJG9KslSYqfjhkL4nZjJsTo9nMgQ==
+      Age:
+      - '61084'
     body:
       encoding: ASCII-8BIT
-      string: '{"googleAnalytics": ["UA-30227798-1"], "version": "13", "submitlog":
-        "footnote republish", "abstract": "<div xmlns=\"http://www.w3.org/1999/xhtml\"
-        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
-        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
-        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://www.w3.org/TR/html5/dom.html#custom-data-attribute\"><ul>\n<li>Observe
+      string: '{"slug": "3-1-kinematics-in-two-dimensions-an-introduction", "title":
+        "Kinematics in Two Dimensions: An Introduction", "abstract": "<ul xmlns=\"http://www.w3.org/1999/xhtml\"
+        xmlns:m=\"http://www.w3.org/1998/Math/MathML\" xmlns:epub=\"http://www.idpf.org/2007/ops\">\n<li>Observe
         that motion in two dimensions consists of horizontal and vertical components.</li>\n<li>Understand
-        the independence of horizontal and vertical vectors in two-dimensional motion.</li>\n</ul></div>",
-        "revised": "2020-08-31T15:57:49Z", "printStyle": null, "roles": null, "keywords":
-        ["Kinematics", "Motion", "Vector", "Pythagorean theorem"], "id": "21d0e217-d50f-4901-af75-905e738eb4c4",
-        "canonical": "031da8d3-b525-429c-80cf-6c8ed997733a", "title": "Kinematics
-        in Two Dimensions: An Introduction", "mediaType": "application/vnd.org.cnx.module",
-        "canon_url": "https://cnx.org/contents/031da8d3-b525-429c-80cf-6c8ed997733a:21d0e217-d50f-4901-af75-905e738eb4c4/Kinematics-in-Two-Dimensions:-An-Introduction",
-        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head xmlns:c=\"http://cnx.rice.edu/cnxml\"
-        xmlns:md=\"http://cnx.rice.edu/mdml\"><title>Kinematics in Two Dimensions:
-        An Introduction</title><meta name=\"created-time\" content=\"2011/12/21 11:22:16
-        -0600\"/><meta name=\"revised-time\" content=\"2020/03/17 16:14:38.847 GMT-5\"/><meta
-        name=\"author\" content=\"OpenStaxCollege\"/><meta name=\"licensor\" content=\"OSCRiceUniversity\"/><meta
-        name=\"license\" content=\"http://creativecommons.org/licenses/by/4.0/\"/><meta
-        name=\"keywords\" content=\"Kinematics, Motion, Pythagorean theorem, Vector\"/><meta
-        name=\"subject\" content=\"Science and Technology\"/></head>\n\n<body xmlns=\"http://www.w3.org/1999/xhtml\"
-        xmlns:c=\"http://cnx.rice.edu/cnxml\" xmlns:md=\"http://cnx.rice.edu/mdml\"
-        xmlns:qml=\"http://cnx.rice.edu/qml/1.0\" xmlns:mod=\"http://cnx.rice.edu/#moduleIds\"
-        xmlns:bib=\"http://bibtexml.sf.net/\" xmlns:data=\"http://www.w3.org/TR/html5/dom.html#custom-data-attribute\"
-        xmlns:epub=\"http://www.idpf.org/2007/ops\" data-cnxml-to-html-ver=\"2.1.0\"><div
-        data-type=\"document-title\">Kinematics in Two Dimensions: An Introduction</div><div
-        data-type=\"abstract\"><ul>\n<li>Observe that motion in two dimensions consists
-        of horizontal and vertical components.</li>\n<li>Understand the independence
-        of horizontal and vertical vectors in two-dimensional motion.</li>\n</ul></div>\n\n    <figure
-        id=\"import-auto-id1165298608692\"><figcaption>Walkers and drivers in a city
-        like New York are rarely able to travel in straight lines to reach their destinations.
-        Instead, they must follow roads and sidewalks, making two-dimensional, zigzagged
-        paths. (credit: Margaret W. Carruthers)</figcaption><span data-type=\"media\"
-        id=\"import-auto-id1165296572209\" data-alt=\"A busy traffic intersection
-        in New York showing vehicles moving on the road.\">\n        <img src=\"/resources/fb7c5f8fe285e235727fae06c2ecb0dd11106b79/Figure_03_01_00.jpg\"
+        the independence of horizontal and vertical vectors in two-dimensional motion.</li>\n</ul>",
+        "id": "2242a8c5-e8b1-4287-b801-af74ef6f1e5b", "revised": "2020-05-05T19:13:42Z",
+        "content": "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n  <head><style>\n            /*
+        STYLING_FOR_DEVS */\n            /* Linking to a specific element should highlight
+        the element */\n            :target {\n                background-color: #ffffcc;\n                border:
+        1px dotted #000000;\n\n                animation-name: cssAnimation;\n                animation-duration:
+        10s;\n                animation-timing-function: ease-out;\n                animation-delay:
+        0s;\n                animation-fill-mode: forwards;\n            }\n            @keyframes
+        cssAnimation {\n                to {\n                    background-color:
+        initial;\n                    border: initial;\n                }\n            }\n\n            /*
+        Style footnotes so that they stand out */\n            [role=\"doc-footnote\"]
+        {\n                background-color: #ffcccc;\n                border: 1px
+        dashed #ff0000;\n            }\n            [role=\"doc-footnote\"]:before
+        { content: \"FOOTNOTE \" ; }\n\n            /* Show a permalink when hovering
+        over a heading or paragraph */\n            *:not(:hover) &gt; a.-dev-permalinker
+        { display: none; }\n            * &gt; a.-dev-permalinker {\n                margin-left:
+        .1rem;\n                text-decoration: none;\n            }\n        </style><script>//&lt;![CDATA[\n            //
+        SCRIPTS_FOR_DEVS\n            window.addEventListener(''load'', () =&gt; {\n                const
+        pilcrow = ''\u00b6''\n\n                function addPermalink(parent, id)
+        {\n                    const link = window.document.createElement(''a'')\n                    link.classList.add(''-dev-permalinker'')\n                    link.setAttribute(''href'',
+        ''#'' + id)\n                    link.textContent = pilcrow\n                    parent.appendChild(link)\n                }\n\n                const
+        paragraphs = Array.from(\n                    document.querySelectorAll(''p[id]'')\n                )\n                paragraphs.forEach(p
+        =&gt; addPermalink(p, p.getAttribute(''id'')) )\n\n                const headings
+        = Array.from(\n                    document.querySelectorAll(\n                        ''*[id]
+        &gt; h1, *[id] &gt; h2, *[id] &gt; h3, '' +\n                        ''*[id]
+        &gt; h4, *[id] &gt; h5, *[id] &gt; h6''\n                    )\n                )\n                headings.forEach(h
+        =&gt; addPermalink(\n                    h, h.parentElement.getAttribute(''id''))\n                )\n            })\n        //
+        ]]&gt;</script></head><body><div data-type=\"page\" id=\"2242a8c5-e8b1-4287-b801-af74ef6f1e5b\"
+        data-cnxml-to-html-ver=\"2.1.1\" class=\" chapter-content-module\"><h2 data-type=\"document-title\"
+        id=\"0\"><span class=\"os-number\">3.1</span><span class=\"os-divider\"> </span><span
+        data-type=\"\" itemprop=\"\" class=\"os-text\">Kinematics in Two Dimensions:
+        An Introduction</span></h2>\n\n    \n\n    <div class=\"os-figure\"><figure
+        id=\"import-auto-id1165298608692\"><span data-type=\"media\" id=\"import-auto-id1165296572209\"
+        data-alt=\"A busy traffic intersection in New York showing vehicles moving
+        on the road.\">\n        <img src=\"../resources/fb7c5f8fe285e235727fae06c2ecb0dd11106b79\"
         data-media-type=\"image/jpg\" alt=\"A busy traffic intersection in New York
-        showing vehicles moving on the road.\" width=\"300\"/>\n      </span>\n\n    </figure><section
+        showing vehicles moving on the road.\" width=\"300\" id=\"2\"/>\n      </span>\n\n    </figure><div
+        class=\"os-caption-container\"><span class=\"os-title-label\">Figure </span><span
+        class=\"os-number\">3.2</span><span class=\"os-divider\"> </span><span class=\"os-caption\">Walkers
+        and drivers in a city like New York are rarely able to travel in straight
+        lines to reach their destinations. Instead, they must follow roads and sidewalks,
+        making two-dimensional, zigzagged paths. (credit: Margaret W. Carruthers)</span></div></div><section
         data-depth=\"1\" id=\"fs-id1165298595412\"><h3 data-type=\"title\">Two-Dimensional
-        Motion: Walking in a City</h3>\n    <p id=\"import-auto-id1165298535384\">Suppose
-        you want to walk from one point to another in a city with uniform square blocks,
-        as pictured in <a href=\"#import-auto-id1165296250183\" class=\"autogenerated-content\">[link]</a>.</p>\n\n    <figure
-        id=\"import-auto-id1165296250183\"><figcaption>A pedestrian walks a two-dimensional
-        path between two points in a city. In this scene, all blocks are square and
-        are the same size.</figcaption><span data-type=\"media\" id=\"import-auto-id1165298550797\"
+        Motion: Walking in a City</h3>\n    <p id=\"import-auto-id1165298535384\"
+        class=\" \">Suppose you want to walk from one point to another in a city with
+        uniform square blocks, as pictured in <a href=\"#import-auto-id1165296250183\"
+        class=\"autogenerated-content\">Figure 3.3</a>.</p>\n\n    <div class=\"os-figure\"><figure
+        id=\"import-auto-id1165296250183\"><span data-type=\"media\" id=\"import-auto-id1165298550797\"
         data-alt=\"An X Y graph with origin at zero zero with x axis labeled nine
         blocks east and y axis labeled five blocks north. Starting point at the origin
         and destination at point nine on the x axis and point five on the y axis.\">\n        <img
-        src=\"/resources/2dca7613815b1ddc825c471fa6107b64cfff9690/Figure_03_01_01.jpg\"
-        data-media-type=\"image/jpg\" alt=\"An X Y graph with origin at zero zero
-        with x axis labeled nine blocks east and y axis labeled five blocks north.
-        Starting point at the origin and destination at point nine on the x axis and
-        point five on the y axis.\" width=\"400\"/>\n      </span>\n\n    </figure><p
-        id=\"import-auto-id1165296716128\">The straight-line path that a helicopter
-        might fly is blocked to you as a pedestrian, and so you are forced to take
-        a two-dimensional path, such as the one shown. You walk 14 blocks in all,
-        9 east followed by 5 north. What is the straight-line distance?</p>\n    <p
-        id=\"import-auto-id1165296310636\">An old adage states that the shortest distance
-        between two points is a straight line. The two legs of the trip and the straight-line
-        path form a right triangle, and so the Pythagorean theorem, <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
-        display=\"inline\"><semantics><mrow><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>&#160;+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>&#160;=&#160;</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow></mrow><annotation-xml
-        encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>&#160;+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>&#160;=&#160;</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow><annotation
-        encoding=\"StarMath 5.0\"> size 12{a rSup { size 8{2} } \"&#160;+&#160;\"b
-        rSup { size 8{2} } \"&#160;=&#160;\"c rSup { size 8{2} } } {}</annotation></semantics></annotation-xml></semantics></math>,
-        can be used to find the straight-line distance.</p><figure id=\"import-auto-id1165298608693\"><figcaption>The
-        Pythagorean theorem relates the length of the legs of a right triangle, labeled
-        <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mrow><mi>a</mi></mrow><mrow/></mrow></mrow><annotation-xml
-        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>a</mi></mrow><mrow/></mrow><annotation
-        encoding=\"StarMath 5.0\"> size 12{a} {}</annotation></semantics></annotation-xml></semantics></math>
-        and <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mrow><mi>b</mi></mrow><mrow/></mrow></mrow><annotation-xml
-        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>b</mi></mrow><mrow/></mrow><annotation
-        encoding=\"StarMath 5.0\"> size 12{b} {}</annotation></semantics></annotation-xml></semantics></math>,
-        with the hypotenuse, labeled <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
-        display=\"inline\"><semantics><mrow><mrow><mrow><mi>c</mi></mrow><mrow/></mrow></mrow><annotation-xml
-        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>c</mi></mrow><mrow/></mrow><annotation
-        encoding=\"StarMath 5.0\"> size 12{c} {}</annotation></semantics></annotation-xml></semantics></math>.
-        The relationship is given by: <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
-        display=\"inline\"><semantics><mrow><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>=&#160;</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow></mrow><annotation-xml
-        encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>=&#160;</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow><annotation
-        encoding=\"StarMath 5.0\"> size 12{a rSup { size 8{2} } &#160;\"+&#160;\"b
-        rSup { size 8{2} } &#160;\"=&#160;\"c rSup { size 8{2} } } {}</annotation></semantics></annotation-xml></semantics></math>.
-        This can be rewritten, solving for <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
-        display=\"inline\"><semantics><mrow><mrow><mrow><mi>c</mi></mrow><mrow/></mrow></mrow><annotation-xml
-        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>c</mi></mrow><mrow/></mrow><annotation
-        encoding=\"StarMath 5.0\"> size 12{A} {}</annotation></semantics></annotation-xml></semantics></math>
-        : <math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><semantics><mrow><mrow><mrow><mrow><mi>c</mi><mtext>&#160;=&#160;</mtext><msqrt><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup></mrow></msqrt></mrow></mrow><mrow/></mrow></mrow><annotation-xml
-        encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><mi>c</mi><mtext>&#160;=&#160;</mtext><msqrt><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup></mrow></msqrt></mrow></mrow><mrow/></mrow><annotation
-        encoding=\"StarMath 5.0\"> size 12{c\"&#160;=&#160;\" sqrt {a rSup { size
-        8{2} } &#160;\"+&#160;\"b rSup { size 8{2} } } } {}</annotation></semantics></annotation-xml></semantics></math>.</figcaption><span
-        data-type=\"media\" id=\"import-auto-id1165296572210\" data-alt=\"A right-angled
-        triangle with base labeled a height labeled b and hypotenuse labeled c is
-        shown. Using Pythagorean theorem c is calculated as square root of a squared
-        plus b squared.\">\n        <img src=\"/resources/e13e08e675ccad684e14ded83e58876d6b0a0068/Figure_03_01_02.jpg\"
+        src=\"../resources/2dca7613815b1ddc825c471fa6107b64cfff9690\" data-media-type=\"image/jpg\"
+        alt=\"An X Y graph with origin at zero zero with x axis labeled nine blocks
+        east and y axis labeled five blocks north. Starting point at the origin and
+        destination at point nine on the x axis and point five on the y axis.\" width=\"400\"
+        id=\"3\"/>\n      </span>\n\n    </figure><div class=\"os-caption-container\"><span
+        class=\"os-title-label\">Figure </span><span class=\"os-number\">3.3</span><span
+        class=\"os-divider\"> </span><span class=\"os-caption\">A pedestrian walks
+        a two-dimensional path between two points in a city. In this scene, all blocks
+        are square and are the same size.</span></div></div><p id=\"import-auto-id1165296716128\"
+        class=\" \">The straight-line path that a helicopter might fly is blocked
+        to you as a pedestrian, and so you are forced to take a two-dimensional path,
+        such as the one shown. You walk 14 blocks in all, 9 east followed by 5 north.
+        What is the straight-line distance?</p>\n    <p id=\"import-auto-id1165296310636\"
+        class=\" \">An old adage states that the shortest distance between two points
+        is a straight line. The two legs of the trip and the straight-line path form
+        a right triangle, and so the Pythagorean theorem, <span class=\"os-math-in-para\"><math
+        display=\"inline\"><semantics><mrow><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>\u00a0+\u00a0</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>\u00a0=\u00a0</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>\u00a0+\u00a0</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>\u00a0=\u00a0</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{a rSup { size 8{2} } \"\u00a0+\u00a0\"b
+        rSup { size 8{2} } \"\u00a0=\u00a0\"c rSup { size 8{2} } } {}</annotation></semantics></annotation-xml></semantics></math></span>,
+        can be used to find the straight-line distance.</p><div class=\"os-figure\"><figure
+        id=\"import-auto-id1165298608693\"><span data-type=\"media\" id=\"import-auto-id1165296572210\"
+        data-alt=\"A right-angled triangle with base labeled a height labeled b and
+        hypotenuse labeled c is shown. Using Pythagorean theorem c is calculated as
+        square root of a squared plus b squared.\">\n        <img src=\"../resources/e13e08e675ccad684e14ded83e58876d6b0a0068\"
         data-media-type=\"image/jpg\" alt=\"A right-angled triangle with base labeled
         a height labeled b and hypotenuse labeled c is shown. Using Pythagorean theorem
-        c is calculated as square root of a squared plus b squared.\" width=\"200\"/>\n      </span>\n\n    </figure>\n    <p
-        id=\"import-auto-id1165298883906\">The hypotenuse of the triangle is the straight-line
-        path, and so in this case its length in units of city blocks is <math xmlns=\"http://www.w3.org/1998/Math/MathML\"
-        display=\"inline\"><semantics><mrow><mrow><mrow><mrow><msqrt><mrow><mo stretchy=\"false\">(</mo><mtext>9
-        blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><mo
-        stretchy=\"false\">(</mo><mtext>5 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup></mrow></msqrt><mtext>=&#160;10</mtext><mtext>.</mtext><mtext>3
+        c is calculated as square root of a squared plus b squared.\" width=\"200\"
+        id=\"4\"/>\n      </span>\n\n    </figure><div class=\"os-caption-container\"><span
+        class=\"os-title-label\">Figure </span><span class=\"os-number\">3.4</span><span
+        class=\"os-divider\"> </span><span class=\"os-caption\">The Pythagorean theorem
+        relates the length of the legs of a right triangle, labeled <math display=\"inline\"><semantics><mrow><mrow><mrow><mi>a</mi></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>a</mi></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{a} {}</annotation></semantics></annotation-xml></semantics></math>
+        and <math display=\"inline\"><semantics><mrow><mrow><mrow><mi>b</mi></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>b</mi></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{b} {}</annotation></semantics></annotation-xml></semantics></math>,
+        with the hypotenuse, labeled <math display=\"inline\"><semantics><mrow><mrow><mrow><mi>c</mi></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>c</mi></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{c} {}</annotation></semantics></annotation-xml></semantics></math>.
+        The relationship is given by: <math display=\"inline\"><semantics><mrow><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+\u00a0</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>=\u00a0</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+\u00a0</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup><mtext>=\u00a0</mtext><msup><mi>c</mi><mrow><mn>2</mn></mrow></msup></mrow></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{a rSup { size 8{2} } \u00a0\"+\u00a0\"b
+        rSup { size 8{2} } \u00a0\"=\u00a0\"c rSup { size 8{2} } } {}</annotation></semantics></annotation-xml></semantics></math>.
+        This can be rewritten, solving for <math display=\"inline\"><semantics><mrow><mrow><mrow><mi>c</mi></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mi>c</mi></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{A} {}</annotation></semantics></annotation-xml></semantics></math>
+        : <math display=\"inline\"><semantics><mrow><mrow><mrow><mrow><mi>c</mi><mtext>\u00a0=\u00a0</mtext><msqrt><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+\u00a0</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup></mrow></msqrt></mrow></mrow><mrow/></mrow></mrow><annotation-xml
+        encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><mi>c</mi><mtext>\u00a0=\u00a0</mtext><msqrt><mrow><msup><mi>a</mi><mrow><mn>2</mn></mrow></msup><mtext>+\u00a0</mtext><msup><mi>b</mi><mrow><mn>2</mn></mrow></msup></mrow></msqrt></mrow></mrow><mrow/></mrow><annotation
+        encoding=\"StarMath 5.0\"> size 12{c\"\u00a0=\u00a0\" sqrt {a rSup { size
+        8{2} } \u00a0\"+\u00a0\"b rSup { size 8{2} } } } {}</annotation></semantics></annotation-xml></semantics></math>.</span></div></div>\n    <p
+        id=\"import-auto-id1165298883906\" class=\" \">The hypotenuse of the triangle
+        is the straight-line path, and so in this case its length in units of city
+        blocks is <span class=\"os-math-in-para\"><math display=\"inline\"><semantics><mrow><mrow><mrow><mrow><msqrt><mrow><mo
+        stretchy=\"false\">(</mo><mtext>9 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup><mtext>+\u00a0</mtext><mo
+        stretchy=\"false\">(</mo><mtext>5 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup></mrow></msqrt><mtext>=\u00a010</mtext><mtext>.</mtext><mtext>3
         blocks</mtext></mrow></mrow><mrow/></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><semantics><mrow><mrow><mrow><msqrt><mrow><mo
-        stretchy=\"false\">(</mo><mtext>9 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup><mtext>+&#160;</mtext><mo
-        stretchy=\"false\">(</mo><mtext>5 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup></mrow></msqrt><mtext>=&#160;10</mtext><mtext>.</mtext><mtext>3
+        stretchy=\"false\">(</mo><mtext>9 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup><mtext>+\u00a0</mtext><mo
+        stretchy=\"false\">(</mo><mtext>5 blocks</mtext><msup><mo stretchy=\"false\">)</mo><mrow><mn>2</mn></mrow></msup></mrow></msqrt><mtext>=\u00a010</mtext><mtext>.</mtext><mtext>3
         blocks</mtext></mrow></mrow><mrow/></mrow><annotation encoding=\"StarMath
-        5.0\"> size 12{ sqrt { \\( \"9 blocks\" \\)  rSup { size 8{2} } &#160;\"+&#160;\"
-        \\( \"5 blocks\" \\)  rSup { size 8{2} } } &#160;\"=&#160;10\" \".\" \"3 blocks\"}
-        {}</annotation></semantics></annotation-xml></semantics></math>, considerably
+        5.0\"> size 12{ sqrt { \\( \"9 blocks\" \\)  rSup { size 8{2} } \u00a0\"+\u00a0\"
+        \\( \"5 blocks\" \\)  rSup { size 8{2} } } \u00a0\"=\u00a010\" \".\" \"3 blocks\"}
+        {}</annotation></semantics></annotation-xml></semantics></math></span>, considerably
         shorter than the 14 blocks you walked. (Note that we are using three significant
-        figures in the answer. Although it appears that &#8220;9&#8221; and &#8220;5&#8221;
-        have only one significant digit, they are discrete numbers. In this case &#8220;9
-        blocks&#8221; is the same as &#8220;9.0 or 9.00 blocks.&#8221; We have decided
+        figures in the answer. Although it appears that \u201c9\u201d and \u201c5\u201d
+        have only one significant digit, they are discrete numbers. In this case \u201c9
+        blocks\u201d is the same as \u201c9.0 or 9.00 blocks.\u201d We have decided
         to use three significant figures in the answer in order to show the result
-        more precisely.)</p><figure id=\"import-auto-id1165298535408\"><figcaption>The
+        more precisely.)</p><div class=\"os-figure\"><figure id=\"import-auto-id1165298535408\"><span
+        data-type=\"media\" id=\"import-auto-id1165298666630\" data-alt=\"An X Y graph
+        with origin at zero zero with x-axis labeled nine blocks east and y axis labeled
+        five blocks north. A diagonal vector arrow joining starting point at point
+        zero on x axis and destination at point five on y axis with its direction
+        northeast is shown. A helicopter is flying along the diagonal vector arrow
+        with helicopter path of ten point three blocks. The angle formed by diagonal
+        vector arrow and the x-axis is equal to twenty-nine point one degrees.\">\n        <img
+        src=\"../resources/8d90bace3c41073bc136d8ca2351a42509498171\" data-media-type=\"image/jpg\"
+        alt=\"An X Y graph with origin at zero zero with x-axis labeled nine blocks
+        east and y axis labeled five blocks north. A diagonal vector arrow joining
+        starting point at point zero on x axis and destination at point five on y
+        axis with its direction northeast is shown. A helicopter is flying along the
+        diagonal vector arrow with helicopter path of ten point three blocks. The
+        angle formed by diagonal vector arrow and the x-axis is equal to twenty-nine
+        point one degrees.\" width=\"350\" id=\"5\"/>\n      </span>\n\n    </figure><div
+        class=\"os-caption-container\"><span class=\"os-title-label\">Figure </span><span
+        class=\"os-number\">3.5</span><span class=\"os-divider\"> </span><span class=\"os-caption\">The
         straight-line path followed by a helicopter between the two points is shorter
         than the 14 blocks walked by the pedestrian. All blocks are square and the
-        same size.</figcaption><span data-type=\"media\" id=\"import-auto-id1165298666630\"
-        data-alt=\"An X Y graph with origin at zero zero with x-axis labeled nine
-        blocks east and y axis labeled five blocks north. A diagonal vector arrow
-        joining starting point at point zero on x axis and destination at point five
-        on y axis with its direction northeast is shown. A helicopter is flying along
-        the diagonal vector arrow with helicopter path of ten point three blocks.
-        The angle formed by diagonal vector arrow and the x-axis is equal to twenty-nine
-        point one degrees.\">\n        <img src=\"/resources/8d90bace3c41073bc136d8ca2351a42509498171/Figure_03_01_03.jpg\"
-        data-media-type=\"image/jpg\" alt=\"An X Y graph with origin at zero zero
-        with x-axis labeled nine blocks east and y axis labeled five blocks north.
-        A diagonal vector arrow joining starting point at point zero on x axis and
-        destination at point five on y axis with its direction northeast is shown.
-        A helicopter is flying along the diagonal vector arrow with helicopter path
-        of ten point three blocks. The angle formed by diagonal vector arrow and the
-        x-axis is equal to twenty-nine point one degrees.\" width=\"350\"/>\n      </span>\n\n    </figure><p
-        id=\"import-auto-id1165298981862\">The fact that the straight-line distance
-        (10.3 blocks) in <a href=\"#import-auto-id1165298535408\" class=\"autogenerated-content\">[link]</a>
-        is less than the total distance walked (14 blocks) is one example of a general
-        characteristic of vectors. (Recall that <span data-type=\"term\" id=\"import-auto-id1165298541000\">vectors</span>
-        are quantities that have both magnitude and direction.)</p>\n    <p id=\"import-auto-id1165298648314\">As
-        for one-dimensional kinematics, we use arrows to represent vectors. The length
-        of the arrow is proportional to the vector&#8217;s magnitude. The arrow&#8217;s
-        length is indicated by hash marks in <a href=\"#import-auto-id1165296250183\"
-        class=\"autogenerated-content\">[link]</a> and <a href=\"#import-auto-id1165298535408\"
-        class=\"autogenerated-content\">[link]</a>. The arrow points in the same direction
-        as the vector. For two-dimensional motion, the path of an object can be represented
-        with three vectors: one vector shows the straight-line path between the initial
-        and final points of the motion, one vector shows the horizontal component
-        of the motion, and one vector shows the vertical component of the motion.
-        The horizontal and vertical components of the motion add together to give
-        the straight-line path. For example, observe the three vectors in <a href=\"#import-auto-id1165298535408\"
-        class=\"autogenerated-content\">[link]</a>. The first represents a 9-block
-        displacement east. The second represents a 5-block displacement north. These
-        vectors are added to give the third vector, with a 10.3-block total displacement.
-        The third vector is the straight-line path between the two points. Note that
-        in this example, the vectors that we are adding are perpendicular to each
-        other and thus form a right triangle. This means that we can use the Pythagorean
-        theorem to calculate the magnitude of the total displacement. (Note that we
-        cannot use the Pythagorean theorem to add vectors that are not perpendicular.
-        We will develop techniques for adding vectors having any direction, not just
-        those perpendicular to one another, in <a href=\"/contents/4bd8bbec-bda2-412b-96f8-cc0b7ff5e794\">Vector
-        Addition and Subtraction: Graphical Methods</a> and <a href=\"/contents/b9739bfd-dc9d-4f0a-b037-dc22884d30f3\">Vector
-        Addition and Subtraction: Analytical Methods</a>.)</p></section>\n    <section
+        same size.</span></div></div><p id=\"import-auto-id1165298981862\" class=\"
+        \">The fact that the straight-line distance (10.3 blocks) in <a href=\"#import-auto-id1165298535408\"
+        class=\"autogenerated-content\">Figure 3.5</a> is less than the total distance
+        walked (14 blocks) is one example of a general characteristic of vectors.
+        (Recall that <span data-type=\"term\" id=\"term53\" group-by=\"v\">vectors</span>
+        are quantities that have both magnitude and direction.)</p>\n    <p id=\"import-auto-id1165298648314\"
+        class=\" \">As for one-dimensional kinematics, we use arrows to represent
+        vectors. The length of the arrow is proportional to the vector\u2019s magnitude.
+        The arrow\u2019s length is indicated by hash marks in <a href=\"#import-auto-id1165296250183\"
+        class=\"autogenerated-content\">Figure 3.3</a> and <a href=\"#import-auto-id1165298535408\"
+        class=\"autogenerated-content\">Figure 3.5</a>. The arrow points in the same
+        direction as the vector. For two-dimensional motion, the path of an object
+        can be represented with three vectors: one vector shows the straight-line
+        path between the initial and final points of the motion, one vector shows
+        the horizontal component of the motion, and one vector shows the vertical
+        component of the motion. The horizontal and vertical components of the motion
+        add together to give the straight-line path. For example, observe the three
+        vectors in <a href=\"#import-auto-id1165298535408\" class=\"autogenerated-content\">Figure
+        3.5</a>. The first represents a 9-block displacement east. The second represents
+        a 5-block displacement north. These vectors are added to give the third vector,
+        with a 10.3-block total displacement. The third vector is the straight-line
+        path between the two points. Note that in this example, the vectors that we
+        are adding are perpendicular to each other and thus form a right triangle.
+        This means that we can use the Pythagorean theorem to calculate the magnitude
+        of the total displacement. (Note that we cannot use the Pythagorean theorem
+        to add vectors that are not perpendicular. We will develop techniques for
+        adding vectors having any direction, not just those perpendicular to one another,
+        in <a href=\"./405335a3-7cff-4df2-a9ad-29062a4af261@8.46:ffc5c46e-3da2-42be-b747-88b8641a844b.xhtml\"
+        data-page-slug=\"3-2-vector-addition-and-subtraction-graphical-methods\" data-page-uuid=\"ffc5c46e-3da2-42be-b747-88b8641a844b\"
+        data-page-fragment=\"\">Vector Addition and Subtraction: Graphical Methods</a>
+        and <a href=\"./405335a3-7cff-4df2-a9ad-29062a4af261@8.46:26a3d0a5-c3b8-45b9-a763-f0047e12fd7d.xhtml\"
+        data-page-slug=\"3-3-vector-addition-and-subtraction-analytical-methods\"
+        data-page-uuid=\"26a3d0a5-c3b8-45b9-a763-f0047e12fd7d\" data-page-fragment=\"\">Vector
+        Addition and Subtraction: Analytical Methods</a>.)</p></section>\n\n\n\n<div
+        data-type=\"example\" id=\"fs-id1169083561662\" class=\"example-video\"><h3
+        class=\"os-title\"><span class=\"os-title-label\">Example </span><span class=\"os-number\">3.1</span><span
+        class=\"os-divider\"> </span></h3><div class=\"body\"><h4 data-type=\"title\"
+        id=\"6\">Finding the Components of Vectors</h4>\n<p id=\"fs-id1169083894428\"
+        class=\" \">Calculate the <strong data-effect=\"bold\"><em data-effect=\"italics\">x</em></strong>-
+        and <strong data-effect=\"bold\"><em data-effect=\"italics\">y</em></strong>-
+        components of the following two vectors:</p>\n<p id=\"fs-id1169084759513\"
+        class=\" \">a) Vector <strong data-effect=\"bold\">A</strong>: <strong data-effect=\"bold\">45
+        N</strong> at <strong data-effect=\"bold\">123\u00b0</strong></p>\n<p id=\"fs-id1169084553919\"
+        class=\" \">b) Vector <strong data-effect=\"bold\">B</strong>: <strong data-effect=\"bold\">33.3
+        m/s</strong> at <strong data-effect=\"bold\">220\u00b0</strong></p>\n<p id=\"fs-id1169084532952\"
+        class=\" \">Note: <strong data-effect=\"bold\">0\u00b0</strong> on the coordinate
+        plane is the positive x-axis.</p>\n<p id=\"fs-id1169084750854\" class=\" \">Study
+        the problem and its solution in this video:</p>\n<div data-type=\"media\"
+        id=\"fs-id1169084672162\" data-alt=\"\">\n<div data-type=\"alternatives\"
+        class=\"os-has-iframe os-has-link\"><a class=\"os-is-link\" target=\"_window\"
+        href=\"https://www.openstaxcollege.org/l/02compvect\">Click to view content</a><iframe
+        width=\"660\" height=\"371.4\" src=\"https://www.openstaxcollege.org/l/02compvect\"
+        class=\"os-is-iframe\"><!-- no-selfclose --></iframe></div>\n</div>\n</div></div>\n\n\n\n<div
+        data-type=\"example\" id=\"fs-id1169084524110\" class=\"example-video\"><h3
+        class=\"os-title\"><span class=\"os-title-label\">Example </span><span class=\"os-number\">3.2</span><span
+        class=\"os-divider\"> </span></h3><div class=\"body\"><h4 data-type=\"title\"
+        id=\"7\">Finding the Magnitudes and Directions of Vectors</h4>\n<p id=\"fs-id1169084769030\"
+        class=\" \">Given the <strong data-effect=\"bold\"><em data-effect=\"italics\">x</em></strong>
+        &amp; <strong data-effect=\"bold\"><em data-effect=\"italics\">y</em></strong>
+        components of two vectors <strong data-effect=\"bold\">A</strong> and <strong
+        data-effect=\"bold\">B</strong>, determine the magnitude and direction for
+        each.</p>\n<p id=\"fs-id1169084681347\" class=\" \">a) vector <strong data-effect=\"bold\">A</strong></p>\n<p
+        id=\"fs-id1169084635170\" class=\" \"><strong data-effect=\"bold\"><em data-effect=\"italics\">x</em></strong>-component
+        = <span class=\"os-math-in-para\"><math display=\"inline\"><semantics><mrow><mrow><mo>+</mo><mn>7.20</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><mrow><mo>+</mo><mn>7.20</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></annotation-xml></semantics></math></span></p>\n<p
+        id=\"fs-id1169084704953\" class=\" \"><strong data-effect=\"bold\"><em data-effect=\"italics\">y</em></strong>-component
+        = <span class=\"os-math-in-para\"><math display=\"inline\"><semantics><mrow><mrow><mo>\u2212</mo><mn>3.60</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><mrow><mo>\u2212</mo><mn>3.60</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></annotation-xml></semantics></math></span></p>\n<p
+        id=\"fs-id1169084522273\" class=\" \">b) vector <strong data-effect=\"bold\">B</strong></p>\n<p
+        id=\"fs-id1169083802312\" class=\" \"><strong data-effect=\"bold\"><em data-effect=\"italics\">x</em></strong>-component
+        =  <span class=\"os-math-in-para\"><math display=\"inline\"><semantics><mrow><mrow><mo>\u2212</mo><mn>91.0</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><mrow><mo>\u2212</mo><mn>91.0</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></annotation-xml></semantics></math></span></p>\n<p
+        id=\"fs-id1169084579321\" class=\" \"><strong data-effect=\"bold\"><em data-effect=\"italics\">y</em></strong>-component
+        =  <span class=\"os-math-in-para\"><math display=\"inline\"><semantics><mrow><mrow><mo>+</mo><mn>67.0</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></mrow><annotation-xml encoding=\"MathML-Content\"><mrow><mo>+</mo><mn>67.0</mn><mspace
+        width=\"0.2em\"/><mtext>N/C</mtext></mrow></annotation-xml></semantics></math></span></p>\n<p
+        id=\"fs-id1169084660848\" class=\" \">Study the problem and its solution in
+        this video:</p>\n<div data-type=\"media\" id=\"fs-id1169084663740\" data-alt=\"\">\n<div
+        data-type=\"alternatives\" class=\"os-has-iframe os-has-link\"><a class=\"os-is-link\"
+        target=\"_window\" href=\"https://www.openstaxcollege.org/l/02magnvecto\">Click
+        to view content</a><iframe width=\"660\" height=\"371.4\" src=\"https://www.openstaxcollege.org/l/02magnvecto\"
+        class=\"os-is-iframe\"><!-- no-selfclose --></iframe></div>\n</div>\n</div></div>\n\n    \n\n    <section
         data-depth=\"1\" id=\"fs-id1165298695671\"><h3 data-type=\"title\">The Independence
-        of Perpendicular Motions</h3>\n    <p id=\"import-auto-id1165298748280\">The
-        person taking the path shown in <a href=\"#import-auto-id1165298535408\" class=\"autogenerated-content\">[link]</a>
-        walks east and then north (two perpendicular directions). How far he or she
-        walks east is only affected by his or her motion eastward. Similarly, how
-        far he or she walks north is only affected by his or her motion northward.</p><div
-        data-type=\"note\" data-has-label=\"true\" id=\"fs-id1165298714031\" data-label=\"\"><div
-        data-type=\"title\">Independence of Motion</div>\n    <p id=\"import-auto-id1165298709689\">The
-        horizontal and vertical components of two-dimensional motion are independent
+        of Perpendicular Motions</h3>\n    <p id=\"import-auto-id1165298748280\" class=\"
+        \">The person taking the path shown in <a href=\"#import-auto-id1165298535408\"
+        class=\"autogenerated-content\">Figure 3.5</a> walks east and then north (two
+        perpendicular directions). How far he or she walks east is only affected by
+        his or her motion eastward. Similarly, how far he or she walks north is only
+        affected by his or her motion northward.</p><div data-type=\"note\" data-has-label=\"true\"
+        id=\"fs-id1165298714031\" data-label=\"\"><h3 class=\"os-title\" data-type=\"title\"><span
+        data-type=\"\" id=\"8\" class=\"os-title-label\">Independence of Motion</span></h3><div
+        class=\"os-note-body\">\n    <p id=\"import-auto-id1165298709689\" class=\"
+        \">The horizontal and vertical components of two-dimensional motion are independent
         of each other. Any motion in the horizontal direction does not affect motion
-        in the vertical direction, and vice versa.</p>\n    </div>\n    <p id=\"import-auto-id1165298786219\">This
-        is true in a simple scenario like that of walking in one direction first,
-        followed by another. It is also true of more complicated motion involving
-        movement in two directions at once. For example, let&#8217;s compare the motions
-        of two baseballs. One baseball is dropped from rest. At the same instant,
-        another is thrown horizontally from the same height and follows a curved path.
-        A stroboscope has captured the positions of the balls at fixed time intervals
-        as they fall.</p>\n\n    <figure id=\"import-auto-id1165296248287\"><figcaption>This
-        shows the motions of two identical balls&#8212;one falls from rest, the other
+        in the vertical direction, and vice versa.</p>\n    </div></div>\n    <p id=\"import-auto-id1165298786219\"
+        class=\" \">This is true in a simple scenario like that of walking in one
+        direction first, followed by another. It is also true of more complicated
+        motion involving movement in two directions at once. For example, let\u2019s
+        compare the motions of two baseballs. One baseball is dropped from rest. At
+        the same instant, another is thrown horizontally from the same height and
+        follows a curved path. A stroboscope has captured the positions of the balls
+        at fixed time intervals as they fall.</p>\n\n    <div class=\"os-figure\"><figure
+        id=\"import-auto-id1165296248287\"><span data-type=\"media\" id=\"import-auto-id1165296709055\"
+        data-alt=\"Two identical balls one red and another blue are falling. Five
+        positions of the balls during fall are shown. The horizontal velocity vectors
+        for blue ball towards right are of same magnitude for all the positions. The
+        vertical velocity vectors shown downwards for red ball are increasing with
+        each position.\">\n        <img src=\"../resources/0a765a44d8902d273bec6f0a64fa852eeb03132a\"
+        data-media-type=\"image/jpg\" alt=\"Two identical balls one red and another
+        blue are falling. Five positions of the balls during fall are shown. The horizontal
+        velocity vectors for blue ball towards right are of same magnitude for all
+        the positions. The vertical velocity vectors shown downwards for red ball
+        are increasing with each position.\" width=\"175\" id=\"9\"/>\n      </span>\n\n    </figure><div
+        class=\"os-caption-container\"><span class=\"os-title-label\">Figure </span><span
+        class=\"os-number\">3.6</span><span class=\"os-divider\"> </span><span class=\"os-caption\">This
+        shows the motions of two identical balls\u2014one falls from rest, the other
         has an initial horizontal velocity. Each subsequent position is an equal time
         interval. Arrows represent horizontal and vertical velocities at each position.
         The ball on the right has an initial horizontal velocity, while the ball on
         the left has no horizontal velocity. Despite the difference in horizontal
         velocities, the vertical velocities and positions are identical for both balls.
-        This shows that the vertical and horizontal motions are independent.</figcaption><span
-        data-type=\"media\" id=\"import-auto-id1165296709055\" data-alt=\"Two identical
-        balls one red and another blue are falling. Five positions of the balls during
-        fall are shown. The horizontal velocity vectors for blue ball towards right
-        are of same magnitude for all the positions. The vertical velocity vectors
-        shown downwards for red ball are increasing with each position.\">\n        <img
-        src=\"/resources/0a765a44d8902d273bec6f0a64fa852eeb03132a/Figure_03_01_04a.jpg\"
-        data-media-type=\"image/jpg\" alt=\"Two identical balls one red and another
-        blue are falling. Five positions of the balls during fall are shown. The horizontal
-        velocity vectors for blue ball towards right are of same magnitude for all
-        the positions. The vertical velocity vectors shown downwards for red ball
-        are increasing with each position.\" width=\"175\"/>\n      </span>\n\n    </figure><p
-        id=\"import-auto-id1165298681613\">It is remarkable that for each flash of
-        the strobe, the vertical positions of the two balls are the same. This similarity
-        implies that the vertical motion is independent of whether or not the ball
-        is moving horizontally. (Assuming no air resistance, the vertical motion of
-        a falling object is influenced by gravity only, and not by any horizontal
+        This shows that the vertical and horizontal motions are independent.</span></div></div><p
+        id=\"import-auto-id1165298681613\" class=\" \">It is remarkable that for each
+        flash of the strobe, the vertical positions of the two balls are the same.
+        This similarity implies that the vertical motion is independent of whether
+        or not the ball is moving horizontally. (Assuming no air resistance, the vertical
+        motion of a falling object is influenced by gravity only, and not by any horizontal
         forces.) Careful examination of the ball thrown horizontally shows that it
         travels the same horizontal distance between flashes. This is due to the fact
         that there are no additional forces on the ball in the horizontal direction
@@ -329,121 +330,50 @@ http_interactions:
         and affected neither by vertical motion nor by gravity (which is vertical).
         Note that this case is true only for ideal conditions. In the real world,
         air resistance will affect the speed of the balls in both directions.</p>\n    <p
-        id=\"import-auto-id1165296226966\">The two-dimensional curved path of the
-        horizontally thrown ball is composed of two independent one-dimensional motions
-        (horizontal and vertical). The key to analyzing such motion, called <em data-effect=\"italics\"><em
-        data-effect=\"italics\">projectile motion</em></em>, is to <em data-effect=\"italics\"><em
-        data-effect=\"italics\">resolve</em></em> (break) it into motions along perpendicular
-        directions. Resolving two-dimensional motion into perpendicular components
-        is possible because the components are independent. We shall see how to resolve
-        vectors in <a href=\"/contents/4bd8bbec-bda2-412b-96f8-cc0b7ff5e794\">Vector
-        Addition and Subtraction: Graphical Methods</a> and <a href=\"/contents/b9739bfd-dc9d-4f0a-b037-dc22884d30f3\">Vector
+        id=\"import-auto-id1165296226966\" class=\" \">The two-dimensional curved
+        path of the horizontally thrown ball is composed of two independent one-dimensional
+        motions (horizontal and vertical). The key to analyzing such motion, called
+        <em data-effect=\"italics\"><em data-effect=\"italics\">projectile motion</em></em>,
+        is to <em data-effect=\"italics\"><em data-effect=\"italics\">resolve</em></em>
+        (break) it into motions along perpendicular directions. Resolving two-dimensional
+        motion into perpendicular components is possible because the components are
+        independent. We shall see how to resolve vectors in <a href=\"./405335a3-7cff-4df2-a9ad-29062a4af261@8.46:ffc5c46e-3da2-42be-b747-88b8641a844b.xhtml\"
+        data-page-slug=\"3-2-vector-addition-and-subtraction-graphical-methods\" data-page-uuid=\"ffc5c46e-3da2-42be-b747-88b8641a844b\"
+        data-page-fragment=\"\">Vector Addition and Subtraction: Graphical Methods</a>
+        and <a href=\"./405335a3-7cff-4df2-a9ad-29062a4af261@8.46:26a3d0a5-c3b8-45b9-a763-f0047e12fd7d.xhtml\"
+        data-page-slug=\"3-3-vector-addition-and-subtraction-analytical-methods\"
+        data-page-uuid=\"26a3d0a5-c3b8-45b9-a763-f0047e12fd7d\" data-page-fragment=\"\">Vector
         Addition and Subtraction: Analytical Methods</a>. We will find such techniques
-        to be useful in many areas of physics.</p></section>\n    <div data-type=\"note\"
-        id=\"eip-652\" class=\"interactive\"><div data-type=\"title\">Ladybug Motion
-        2D </div><p id=\"eip-id1169736812332\">Learn about position, velocity and
-        acceleration vectors. Move the ladybug by setting the position, velocity or
-        acceleration, and see how the vectors change. Choose linear, circular or elliptical
-        motion, and record and playback the motion to analyze the behavior.\n</p>\n<figure
-        id=\"eip-idm388746832\"><div data-type=\"media\" id=\"fs-id1167062339457\"
-        data-alt=\"This simulation allows you to adjust position, velocity, and acceleration
-        of a ladybug.\">\n<iframe width=\"660\" height=\"371.4\" src=\"https://openstax.org/l/28ladybug\"><!--
-        no-selfclose --></iframe></div></figure>\n</div><section data-depth=\"1\"
-        id=\"fs-id1165298944131\" class=\"section-summary\"><h3 data-type=\"title\">Summary</h3>\n    <ul
-        id=\"fs-id1165298708756\"><li xmlns:fo=\"urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0\"
-        id=\"import-auto-id1165296313373\" fo:font-weight=\"normal\">The shortest
-        path between any two points is a straight line. In two dimensions, this path
-        can be represented by a vector with horizontal and vertical components.</li>\n    <li
-        xmlns:fo=\"urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0\" id=\"import-auto-id1165296414067\"
-        fo:font-weight=\"normal\">The horizontal and vertical components of a vector
-        are independent of one another. Motion in the horizontal direction does not
-        affect motion in the vertical direction, and vice versa.</li>\n    </ul></section>\n
-        <div data-type=\"glossary\"><h3 data-type=\"glossary-title\">Glossary</h3>\n    <dl
-        id=\"import-auto-id1165298860990\"><dt>vector</dt> <dd id=\"fs-id1165298731999\">a
-        quantity that has both magnitude and direction; an arrow used to represent
-        quantities with both magnitude and direction</dd></dl>\n    </div></body>\n\n</html>",
-        "subjects": ["Science and Technology"], "legacy_id": "m42104", "parentId":
-        null, "resources": [{"media_type": "text/html", "id": "03fa38bfedf5dd394b76e42ce96ececb1a15c831",
-        "filename": "index.cnxml.html"}, {"media_type": "image/png", "id": "075500ad9f71890a85fe3f7a4137ac08e2b7907c",
-        "filename": "copy_of_PhET_Icon.png"}, {"media_type": "image/png", "id": "075500ad9f71890a85fe3f7a4137ac08e2b7907c",
-        "filename": "PhET_Icon.png"}, {"media_type": "image/jpeg", "id": "0a765a44d8902d273bec6f0a64fa852eeb03132a",
-        "filename": "Figure_03_01_04a.jpg"}, {"media_type": "image/jpeg", "id": "16f3266f152dca1a4c19fe779574110ac51caf8e",
-        "filename": "Picture 3.jpg"}, {"media_type": "application/java-archive", "id":
-        "215d08d5a1c5b522d8139353a8976529f896768b", "filename": "ladybug-motion-2d_en.jar"},
-        {"media_type": "image/jpeg", "id": "2dca7613815b1ddc825c471fa6107b64cfff9690",
-        "filename": "Figure_03_01_01.jpg"}, {"media_type": "image/jpeg", "id": "5af4f3fe9db3fc97932b1080ee19bf980fa978db",
-        "filename": "Picture 12.jpg"}, {"media_type": "image/jpeg", "id": "8d90bace3c41073bc136d8ca2351a42509498171",
-        "filename": "Figure_03_01_03.jpg"}, {"media_type": "image/jpeg", "id": "e13e08e675ccad684e14ded83e58876d6b0a0068",
-        "filename": "Figure_03_01_02.jpg"}, {"media_type": "text/xml", "id": "e4da88579639de00d48c648fa997b067d3ba8293",
-        "filename": "index.cnxml"}, {"media_type": "image/jpeg", "id": "e4dd448d1a636c12d5e91debd527e2177fde7690",
-        "filename": "ch03mod01.jpg"}, {"media_type": "image/jpeg", "id": "fb7c5f8fe285e235727fae06c2ecb0dd11106b79",
-        "filename": "Figure_03_01_00.jpg"}], "publishers": [{"surname": "OpenStax
-        College", "suffix": "", "firstname": "", "title": "", "fullname": "OpenStax",
-        "id": "OpenStaxCollege"}, {"surname": "Physics", "suffix": "", "firstname":
-        "College", "title": "", "fullname": "OSC Physics Maintainer", "id": "cnxcap"}],
-        "parent": {"authors": [], "shortId": null, "version": "", "id": null, "title":
-        null}, "stateid": 1, "parentTitle": null, "shortId": "IdDiF9UP", "authors":
-        [{"surname": "OpenStax College", "suffix": "", "firstname": "", "title": "",
-        "fullname": "OpenStax", "id": "OpenStaxCollege"}], "parentVersion": "", "legacy_version":
-        "1.13", "licensors": [{"surname": "University", "suffix": "", "firstname":
-        "Rice", "title": "", "fullname": "Rice University", "id": "OSCRiceUniversity"}],
-        "language": "en", "license": {"url": "http://creativecommons.org/licenses/by/4.0/",
-        "code": "by", "version": "4.0", "name": "Creative Commons Attribution License"},
-        "created": "2011-12-21T17:22:16Z", "doctype": "", "buyLink": null, "submitter":
-        {"surname": "OpenStax College", "suffix": "", "firstname": "", "title": "",
-        "fullname": "OpenStax", "id": "OpenStaxCollege"}, "baked": null, "parentAuthors":
-        [], "history": [{"changes": "footnote republish", "version": "13", "revised":
-        "2020-08-31T15:57:49Z", "publisher": {"surname": "OpenStax College", "suffix":
-        "", "firstname": "", "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}},
-        {"changes": "revised and embedded phet simulations", "version": "12", "revised":
-        "2020-05-05T18:08:32Z", "publisher": {"surname": "OpenStax College", "suffix":
-        "", "firstname": "", "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}},
-        {"changes": "revised phet embed (update here and m42084 when html5 available)",
-        "version": "11", "revised": "2020-03-17T21:14:38Z", "publisher": {"surname":
-        "OpenStax College", "suffix": "", "firstname": "", "title": "", "fullname":
-        "OpenStax", "id": "OpenStaxCollege"}}, {"changes": "removed phet explorations
-        redundant titles", "version": "10", "revised": "2020-02-17T16:39:15Z", "publisher":
-        {"surname": "OpenStax College", "suffix": "", "firstname": "", "title": "",
-        "fullname": "OpenStax", "id": "OpenStaxCollege"}}, {"changes": "applying new
-        structure, replacing emphasis tags with title tags where appropriate - CP",
-        "version": "9", "revised": "2019-05-07T20:53:41Z", "publisher": {"surname":
-        "OpenStax College", "suffix": "", "firstname": "", "title": "", "fullname":
-        "OpenStax", "id": "OpenStaxCollege"}}, {"changes": "added figure tag back
-        to phet", "version": "8", "revised": "2018-09-18T18:06:00Z", "publisher":
-        {"surname": "Physics", "suffix": "", "firstname": "College", "title": "",
-        "fullname": "OSC Physics Maintainer", "id": "cnxcap"}}, {"changes": "Removed
-        all font size styling. -MJ", "version": "7", "revised": "2018-08-06T20:14:13Z",
-        "publisher": {"surname": "OpenStax College", "suffix": "", "firstname": "",
-        "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}}, {"changes":
-        "Removed mathsize variations throughout text. -MJ", "version": "6", "revised":
-        "2018-08-03T20:49:52Z", "publisher": {"surname": "OpenStax College", "suffix":
-        "", "firstname": "", "title": "", "fullname": "OpenStax", "id": "OpenStaxCollege"}},
-        {"changes": "Ladybug motion - replace link with embed", "version": "5", "revised":
-        "2018-06-19T16:56:29Z", "publisher": {"surname": "Physics", "suffix": "",
-        "firstname": "College", "title": "", "fullname": "OSC Physics Maintainer",
-        "id": "cnxcap"}}, {"changes": "Review changes", "version": "4", "revised":
-        "2012-06-13T18:10:50Z", "publisher": {"surname": "Physics", "suffix": "",
-        "firstname": "College", "title": "", "fullname": "OSC Physics Maintainer",
-        "id": "cnxcap"}}, {"changes": "PhET", "version": "3", "revised": "2012-06-07T20:00:29Z",
-        "publisher": {"surname": "Physics", "suffix": "", "firstname": "College",
-        "title": "", "fullname": "OSC Physics Maintainer", "id": "cnxcap"}}, {"changes":
-        "initial content publication", "version": "2", "revised": "2012-04-26T17:46:48Z",
-        "publisher": {"surname": "Physics", "suffix": "", "firstname": "College",
-        "title": "", "fullname": "OSC Physics Maintainer", "id": "cnxcap"}}, {"changes":
-        "Created module", "version": "1", "revised": "2011-12-22T16:20:52Z", "publisher":
-        {"surname": "Williamson", "suffix": "", "firstname": "Collins", "title": "",
-        "fullname": "Collins Williamson", "id": "dcwillman"}}]}'
-    http_version:
-  recorded_at: Sun, 14 Feb 2021 21:45:30 GMT
+        to be useful in many areas of physics.</p></section>\n   \n   <div data-type=\"note\"
+        data-has-label=\"true\" id=\"eip-652\" class=\"interactive\" data-label=\"\"><h3
+        class=\"os-title\" data-type=\"title\"><span class=\"os-title-label\">PhET
+        Explorations</span></h3><div class=\"os-note-body\"><h4 data-type=\"title\"
+        id=\"10\" class=\"os-subtitle\"><span class=\"os-subtitle-label\">PhET Explorations:
+        Ladybug Motion</span></h4><p id=\"eip-id1169736812332\" class=\" \">Learn
+        about position, velocity and acceleration vectors. Move the ladybug by setting
+        the position, velocity or acceleration, and see how the vectors change. Choose
+        linear, circular or elliptical motion, and record and playback the motion
+        to analyze the behavior.</p>\n\n<div class=\"os-figure\"><figure id=\"fs-id1169416946830\"><div
+        data-type=\"media\" id=\"LadybugMotion\" data-alt=\"In this simulation you
+        can explore how circular motion relates to the bug''s x,y position, velocity,
+        and acceleration using vectors or graphs.\">\n<div data-type=\"alternatives\"
+        class=\"os-has-iframe os-has-link\"><a class=\"os-is-link\" target=\"_window\"
+        href=\"https://openstax.org/l/21ladybug\">Click to view content</a><iframe
+        width=\"660\" height=\"371.4\" src=\"https://openstax.org/l/21ladybug\" class=\"os-is-iframe\"><!--
+        no-selfclose --></iframe></div>\n</div>\n</figure><div class=\"os-caption-container\"><span
+        class=\"os-title-label\">Figure </span><span class=\"os-number\">3.7</span><span
+        class=\"os-divider\"> </span></div></div>\n</div></div>\n\n\n  </div></body>\n</html>"}'
+    http_version: 
+  recorded_at: Tue, 25 May 2021 16:33:52 GMT
 - request:
     method: post
     uri: "<openstax_exercises_url>/api/exercises/search"
     body:
       encoding: UTF-8
-      string: page=1&q=tag%3A%22context-cnxmod%3A21d0e217-d50f-4901-af75-905e738eb4c4%22
+      string: page=1&q=tag%3A%22context-cnxmod%3A2242a8c5-e8b1-4287-b801-af74ef6f1e5b%22
     headers:
       User-Agent:
-      - Faraday v0.17.3
+      - Faraday v0.17.4
       Accept:
       - application/vnd.openstax.v1
       Authorization:
@@ -464,7 +394,7 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Sun, 14 Feb 2021 21:45:30 GMT
+      - Tue, 25 May 2021 16:33:52 GMT
       Server:
       - nginx
       Vary:
@@ -482,29 +412,29 @@ http_interactions:
       Referrer-Policy:
       - strict-origin-when-cross-origin
       Etag:
-      - W/"7f9bca22d53c02d746881771080a8074"
+      - W/"0eede450a3d4dd44c5990f3f960fcc23"
       Cache-Control:
       - max-age=0, private, must-revalidate
       Set-Cookie:
       - "<Set-Cookie 1>"
       X-Request-Id:
-      - e67ee01a-e878-44c5-a6d6-446c0160e625
+      - 4fab5fb0-d614-46b0-83a2-6c7b746fcaae
       X-Runtime:
-      - '0.098207'
+      - '0.160832'
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       X-Cache:
       - Miss from cloudfront
       Via:
-      - 1.1 f2ad4c9e4965b7bc2c9a79d4afc8fc1e.cloudfront.net (CloudFront)
+      - 1.1 379f8e048fa07faf2a8a0f41ec382bda.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
-      - IAH50-C3
+      - DFW55-C2
       X-Amz-Cf-Id:
-      - L2Dr6sp1oCStUz3s82mUESJdN59TscVccPtysBmnw98ZofnCjkE4rQ==
+      - 8eP9K_bdwL7FGlMZmPM7ZbeQ7zEjI7N2YDQGT7e9wwos7O-Whg32Hg==
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJ0b3RhbF9jb3VudCI6MiwiaXRlbXMiOlt7ImltYWdlcyI6W10sInRhZ3MiOlsib3N0LXR5cGU6Y29uY2VwdC1jb2FjaCIsImRvazoxIiwiYmxvb21zOjEiLCJ0aW1lOnNob3J0IiwiYm9vazpzdGF4LXBoeXMiLCJsbzpzdGF4LXBoeXM6My0xLTIiLCJleGlkOnN0YXgtcGh5czoyMSIsImNvbnRleHQtY254bW9kOjIxZDBlMjE3LWQ1MGYtNDkwMS1hZjc1LTkwNWU3MzhlYjRjNCIsImNvbnRleHQtY254bW9kOjIyNDJhOGM1LWU4YjEtNDI4Ny1iODAxLWFmNzRlZjZmMWU1YiIsImNvbnRleHQtY254bW9kOjEzN2E1YmJmLTBlZjMtNDAyNi1hYTc4LWY2MWViM2VjODdjMiIsImFwbG86c3RheC1hcHBoeXM6My5BLjEuMSIsImFwbG86c3RheC1hcHBoeXM6My5FLjEuMyIsImFwbG86c3RheC1hcHBoeXM6My5BLjIuMSIsImFzc2lnbm1lbnQtdHlwZTpyZWFkaW5nIl0sInV1aWQiOiIxYjgxMjYxMS01MjU4LTQwMGItYmNmYi01NmNmZTc0MDI4OTEiLCJncm91cF91dWlkIjoiY2JiOGUyMGYtNWFlNC00ZTg1LWExNzctMWUwZWJkMWFkZDMzIiwibnVtYmVyIjo1NjI4LCJ2ZXJzaW9uIjo4LCJ1aWQiOiI1NjI4QDgiLCJwdWJsaXNoZWRfYXQiOiIyMDIxLTAyLTA1VDIwOjAwOjE1LjAxMloiLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXgifV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJpc192b2NhYiI6ZmFsc2UsInN0aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjoxMjY2NDAsImlzX2Fuc3dlcl9vcmRlcl9pbXBvcnRhbnQiOnRydWUsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJBIGdpcmwgdGhyb3dzIGEgYmFsbCBob3Jpem9udGFsbHkgZnJvbSBhIHJvb2YgMTAgbWV0ZXJzIGhpZ2guIElmIGFpciByZXNpc3RhbmNlIGlzIG5lZ2xpZ2libGUsIGhvdyBpcyB0aGUgdmVydGljYWwgdmVsb2NpdHkgb2YgdGhlIGJhbGwgcmVsYXRlZCB0byBpdHMgaG9yaXpvbnRhbCB2ZWxvY2l0eT8iLCJhbnN3ZXJzIjpbeyJpZCI6NTA0NTQwLCJjb250ZW50X2h0bWwiOiJUaGUgdmVydGljYWwgdmVsb2NpdHkgZGVwZW5kcyBvbiB0aGUgaG9yaXpvbnRhbCB2ZWxvY2l0eS4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJUaGUgdmVydGljYWwgdmVsb2NpdHkgZG9lcyBub3QgZGVwZW5kIG9uIHRoZSBob3Jpem9udGFsIHZlbG9jaXR5LiJ9LHsiaWQiOjUwNDU0MSwiY29udGVudF9odG1sIjoiVGhlIHZlcnRpY2FsIHZlbG9jaXR5IGRvZXMgbm90IGRlcGVuZCBvbiB0aGUgaG9yaXpvbnRhbCB2ZWxvY2l0eS4iLCJjb3JyZWN0bmVzcyI6IjEuMCJ9LHsiaWQiOjUwNDUzOSwiY29udGVudF9odG1sIjoiVGhlIHZlcnRpY2FsIGFuZCBob3Jpem9udGFsIHZlbG9jaXRpZXMgYXJlIHRoZSBzYW1lLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoZSB2ZXJ0aWNhbCBhbmQgaG9yaXpvbnRhbCB2ZWxvY2l0aWVzIGFyZSBub3QgbmVjZXNzYXJpbHkgdGhlIHNhbWUifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJmcmVlLXJlc3BvbnNlIiwibXVsdGlwbGUtY2hvaWNlIl0sImNvbWJvX2Nob2ljZXMiOltdLCJjb2xsYWJvcmF0b3Jfc29sdXRpb25zIjpbeyJpbWFnZXMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJBc3N1bWluZyB0aGF0IGFpciByZXNpc3RhbmNlIGlzIG5lZ2xpZ2libGUsIHRoZSB2ZXJ0aWNhbCBtb3Rpb24gb2YgdGhlIGJhbGwgaXMgaW5kZXBlbmRlbnQgb2YgaXRzIGhvcml6b250YWwgbW90aW9uLiAoVGhlIGhvcml6b250YWwgYWNjZWxlcmF0aW9uIGlzIGFzc3VtZWQgdG8gYmUgemVybywgJmFtcDsgdGhlIHZlcnRpY2FsIGFjY2VsZXJhdGlvbiBpcyB0aGUgY29uc3RhbnQgYWNjZWxlcmF0aW9uIG9mIGdyYXZpdHkuKSJ9XSwiY29tbXVuaXR5X3NvbHV0aW9ucyI6W119XSwiZGVsZWdhdGlvbnMiOlt7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjY0LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjg2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE3LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE4LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE5LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjIyLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjkxLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NjQsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6ODYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTcsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTgsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTksImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MjIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6OTEsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX1dLCJ2ZXJzaW9ucyI6WzgsNyw2LDUsNCwzLDIsMV19LHsiaW1hZ2VzIjpbXSwidGFncyI6WyJvc3QtdHlwZTpjb25jZXB0LWNvYWNoIiwidGltZTpzaG9ydCIsImRvazoyIiwiYmxvb21zOjMiLCJib29rOnN0YXgtcGh5cyIsImxvOnN0YXgtcGh5czozLTEtMiIsImNvbnRleHQtY254bW9kOjIxZDBlMjE3LWQ1MGYtNDkwMS1hZjc1LTkwNWU3MzhlYjRjNCIsImV4aWQ6c3RheC1waHlzOjIyIiwiY29udGV4dC1jbnhtb2Q6MjI0MmE4YzUtZThiMS00Mjg3LWI4MDEtYWY3NGVmNmYxZTViIiwiY29udGV4dC1jbnhtb2Q6MTM3YTViYmYtMGVmMy00MDI2LWFhNzgtZjYxZWIzZWM4N2MyIiwiYXBsbzpzdGF4LWFwcGh5czozLkUuMS4zIiwiYXBsbzpzdGF4LWFwcGh5czozLkEuMi4xIiwiYXNzaWdubWVudC10eXBlOnJlYWRpbmciXSwidXVpZCI6IjljNTY4MmZlLWRkYzctNDhiNS1iM2Q5LTFkOWNlMDc4NThmMSIsImdyb3VwX3V1aWQiOiJlNzY0MDU5My1jMGMxLTRhM2MtODcwNi02OGY1YWUyMmI2OTgiLCJudW1iZXIiOjU2NzIsInZlcnNpb24iOjcsInVpZCI6IjU2NzJANyIsInB1Ymxpc2hlZF9hdCI6IjIwMjEtMDItMDVUMTk6NTM6NDUuOTg4WiIsImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImlzX3ZvY2FiIjpmYWxzZSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjEyNDk3MSwiaXNfYW5zd2VyX29yZGVyX2ltcG9ydGFudCI6dHJ1ZSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IkNlbGlhIGFuZCBKYW5lIGFyZSBvbiB0aGUgcm9vZiBvZiB0aGVpciBzY2hvb2wuIEVhY2ggd29tYW4gaGFzIGFuIGlkZW50aWNhbCBiYWxsIHRoYXQgdGhleSByZWxlYXNlIGZyb20gdGhlIHJvb2YgYXQgdGhlIHNhbWUgdGltZS4gSG93ZXZlciwgd2hpbGUgQ2VsaWEgZHJvcHMgaGVyIGJhbGwgZnJvbSByZXN0LCBKYW5lIHJlbGVhc2VzIGhlciBiYWxsIHdpdGggYSBzbWFsbCBob3Jpem9udGFsIHZlbG9jaXR5LlxuIEFzc3VtaW5nIHRoYXQgYWlyIHJlc2lzdGFuY2UgaXMgbmVnbGlnaWJsZSwgd2hpY2ggYmFsbCB3aWxsIGhpdCB0aGUgZ3JvdW5kIGZpcnN0PyIsImFuc3dlcnMiOlt7ImlkIjo0OTgyNTQsImNvbnRlbnRfaHRtbCI6IkNlbGlh4oCZcyBiYWxsIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiVmVydGljYWwgdmVsb2NpdGllcyBhcmUgdGhlIHNhbWUsIGFuZCBpbmRlcGVuZGVudCBvZiBob3Jpem9udGFsIHZlbG9jaXR5LiJ9LHsiaWQiOjQ5ODI1NSwiY29udGVudF9odG1sIjoiSmFuZeKAmXMgYmFsbCIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlZlcnRpY2FsIHZlbG9jaXRpZXMgYXJlIHRoZSBzYW1lLCBhbmQgaW5kZXBlbmRlbnQgb2YgaG9yaXpvbnRhbCB2ZWxvY2l0eS4ifSx7ImlkIjo0OTgyNTYsImNvbnRlbnRfaHRtbCI6Im5vdCBlbm91Z2ggaW5mb3JtYXRpb24iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJWZXJ0aWNhbCB2ZWxvY2l0aWVzIGFyZSB0aGUgc2FtZSwgYW5kIGluZGVwZW5kZW50IG9mIGhvcml6b250YWwgdmVsb2NpdHkuIn0seyJpZCI6NDk4MjU3LCJjb250ZW50X2h0bWwiOiJUaGUgdHdvIGJhbGxzIGhpdCB0aGUgZ3JvdW5kIGF0IHRoZSBzYW1lIHRpbWUuIiwiY29ycmVjdG5lc3MiOiIxLjAifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJmcmVlLXJlc3BvbnNlIiwibXVsdGlwbGUtY2hvaWNlIl0sImNvbWJvX2Nob2ljZXMiOltdLCJjb2xsYWJvcmF0b3Jfc29sdXRpb25zIjpbeyJpbWFnZXMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJCZWNhdXNlIHdlIGhhdmUgcHJlc3VtZWQgdGhhdCBhaXIgcmVzaXN0YW5jZSBpcyBuZWdsaWdpYmxlLCB0aGUgaG9yaXpvbnRhbCB2ZWxvY2l0eSBvZiBKYW5l4oCZcyBiYWxsIGRvZXMgbm90IGFmZmVjdCBpdHMgdmVydGljYWwgdmVsb2NpdHkuIFRoaXMgbWVhbnMgdGhhdCwgZGVzcGl0ZSB0aGUgZGlmZmVyZW5jZXMgaW4gaG9yaXpvbnRhbCB2ZWxvY2l0aWVzLCB0aGUgYmFsbHMgc2hvdWxkIGhpdCB0aGUgZ3JvdW5kIGF0IHRoZSBzYW1lIHRpbWUuIn1dLCJjb21tdW5pdHlfc29sdXRpb25zIjpbXX1dLCJkZWxlZ2F0aW9ucyI6W3siZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6NjQsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6ODYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjp0cnVlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6MTYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjp0cnVlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6MTcsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjp0cnVlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6MTgsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjp0cnVlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6MTksImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjp0cnVlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6MjIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6OTEsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo2NCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo4NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxNywiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxOCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxOSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoyMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo5MSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfV0sInZlcnNpb25zIjpbNyw2LDUsNCwzLDIsMV19XX0=
-    http_version:
-  recorded_at: Sun, 14 Feb 2021 21:45:31 GMT
+        eyJ0b3RhbF9jb3VudCI6NiwiaXRlbXMiOlt7ImltYWdlcyI6W10sInRhZ3MiOlsiaW5ib29rLXllcyIsImsxMnBoeXMiLCJvcy1wcmFjdGljZS1jb25jZXB0cyIsImsxMnBoeXMtY2gwNSIsImsxMnBoeXMtY2gwNS1zMDIiLCJrMTJwaHlzLWNoMDUtczAyLWxvMDEiLCJrMTJwaHlzLWNoMDUtZXgwMjgiLCJibG9vbXM6MSIsInRpbWU6c2hvcnQiLCJkb2s6MiIsImJvb2s6c3RheC1waHlzIiwiZXhpZDprMTJwaHlzLWNoMDUtZXgwMjgiLCJjb250ZXh0LWNueG1vZDowOTM5YjcwNC0zNjQ2LTRiMDItYTg5ZC00YjMxZmJkZjAzYTgiLCJmaWx0ZXItdHlwZTppbXBvcnQ6aHMiLCJib29rOnN0YXgtazEycGh5cyIsInR5cGU6Y29uY2VwdHVhbC1vci1yZWNhbGwiLCJjb250ZXh0LWNueG1vZDoyMjQyYThjNS1lOGIxLTQyODctYjgwMS1hZjc0ZWY2ZjFlNWIiLCJsbzpzdGF4LXBoeXM6My0xLTEiLCJjb250ZXh0LWNueG1vZDoxMzdhNWJiZi0wZWYzLTQwMjYtYWE3OC1mNjFlYjNlYzg3YzIiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4xLjEiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4xLjMiLCJhcGxvOnN0YXgtYXBwaHlzOjMuRS4xLjMiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4yLjEiLCJib29rOnN0YXgtYXBwaHlzIiwic2NpZW5jZS1wcmFjdGljZTptb2RlbGluZyIsImFzc2lnbm1lbnQtdHlwZTpyZWFkaW5nIl0sInV1aWQiOiI2MTkzMDMzOC1mNWZjLTRkZGItODc4OC03MmU0YjgwOTgwNjMiLCJncm91cF91dWlkIjoiYTczNTk2YmUtODU1YS00ZTAzLTlmNGQtNjBlNjA4Y2U0ZDI4IiwibnVtYmVyIjoyMjI0LCJ2ZXJzaW9uIjo3LCJ1aWQiOiIyMjI0QDciLCJwdWJsaXNoZWRfYXQiOiIyMDIxLTA1LTI0VDExOjM5OjA4LjU0N1oiLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXggRXhlcmNpc2VzIn1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiaXNfdm9jYWIiOmZhbHNlLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6MTY2OTI3LCJpc19hbnN3ZXJfb3JkZXJfaW1wb3J0YW50Ijp0cnVlLCJzdGltdWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiV2hhdCBpcyBhIGNvbXBvbmVudCBvZiBhIHR3byBkaW1lbnNpb25hbCB2ZWN0b3I/IiwiYW5zd2VycyI6W3siaWQiOjYzNTUyNiwiY29udGVudF9odG1sIjoiQSBjb21wb25lbnQgaXMgYSBwaWVjZSBvZiBhIHZlY3RvciB0aGF0IHBvaW50cyBpbiBlaXRoZXIgdGhlIHggb3IgeSBkaXJlY3Rpb24uIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiVGhpcyBpcyB0aGUgY29ycmVjdCBkZWZpbml0aW9uIG9mIGEgY29tcG9uZW50IG9mIHRoZSB2ZWN0b3IuIn0seyJpZCI6NjM1NTI3LCJjb250ZW50X2h0bWwiOiJBIGNvbXBvbmVudCBpcyBhIHBpZWNlIG9mIGEgdmVjdG9yIHRoYXQgaGFzIGhhbGYgb2YgdGhlIG1hZ25pdHVkZSBvZiB0aGUgb3JpZ2luYWwgdmVjdG9yLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkEgY29tcG9uZW50IGlzIHJlbGF0ZWQgdG8gZGlyZWN0aW9uLCBub3QgbWFnbml0dWRlLiJ9LHsiaWQiOjYzNTUyOCwiY29udGVudF9odG1sIjoiQSBjb21wb25lbnQgaXMgYSBwaWVjZSBvZiBhIHZlY3RvciB0aGF0IHBvaW50cyBpbiB0aGUgZGlyZWN0aW9uIG9wcG9zaXRlIHRvIHRoZSBvcmlnaW5hbCB2ZWN0b3IuIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiQSBjb21wb25lbnQgaGFzIHRvIGRvIHdpdGggdGhlIHJlbGF0aW9uc2hpcCB0byB0aGUgY29vcmRpbmF0ZSBzeXN0ZW0uIn0seyJpZCI6NjM1NTI5LCJjb250ZW50X2h0bWwiOiJBIGNvbXBvbmVudCBpcyBhIHBpZWNlIG9mIGEgdmVjdG9yIHRoYXQgcG9pbnRzIGluIHRoZSBzYW1lIGRpcmVjdGlvbiBhcyB0aGUgb3JpZ2luYWwgdmVjdG9yIGJ1dCB3aXRoIGRvdWJsZSBpdHMgbWFnbml0dWRlLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkEgY29tcG9uZW50IGhhcyB0byBkbyB3aXRoIGRpcmVjdGlvbiByZWxhdGVkIHRvIHRoZSBjb29yZGluYXRlIHN5c3RlbS4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJmcmVlLXJlc3BvbnNlIiwibXVsdGlwbGUtY2hvaWNlIl0sImNvbWJvX2Nob2ljZXMiOltdLCJjb2xsYWJvcmF0b3Jfc29sdXRpb25zIjpbeyJpbWFnZXMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJBIGNvbXBvbmVudCBpcyBhIHBpZWNlIG9mIGEgdmVjdG9yIHRoYXQgcG9pbnRzIGluIGVpdGhlciB0aGUgeCBvciB5IGRpcmVjdGlvbi4ifV0sImNvbW11bml0eV9zb2x1dGlvbnMiOltdfV0sImRlbGVnYXRpb25zIjpbeyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo2NCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo4NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxNywiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxOCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxOSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoyMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo5MSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEyMCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxMjYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjp0cnVlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjp0cnVlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEzMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxMzYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NjQsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6ODYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTcsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTgsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTksImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MjIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6OTEsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMjAsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTI2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0Ijp0cnVlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6dHJ1ZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMzIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTM2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfV0sInZlcnNpb25zIjpbNyw2LDUsNCwzLDIsMV19LHsiaW1hZ2VzIjpbXSwidGFncyI6WyJpbmJvb2steWVzIiwib3N0LWNoYXB0ZXItcmV2aWV3IiwiazEycGh5cyIsImNvbmNlcHQiLCJrMTJwaHlzLWNoMDUiLCJrMTJwaHlzLWNoMDUtczAyIiwiazEycGh5cy1jaDA1LXMwMi1sbzAxIiwiazEycGh5cy1jaDA1LWV4MDMxIiwidGltZTpzaG9ydCIsImRvazoyIiwiYmxvb21zOjIiLCJib29rOnN0YXgtcGh5cyIsImxvOnN0YXgtcGh5czozLTEtMiIsImV4aWQ6azEycGh5cy1jaDA1LWV4MDMxIiwiY29udGV4dC1jbnhtb2Q6MDkzOWI3MDQtMzY0Ni00YjAyLWE4OWQtNGIzMWZiZGYwM2E4IiwiZmlsdGVyLXR5cGU6aW1wb3J0OmhzIiwiYm9vazpzdGF4LWsxMnBoeXMiLCJ0eXBlOmNvbmNlcHR1YWwiLCJjb250ZXh0LWNueG1vZDoyMjQyYThjNS1lOGIxLTQyODctYjgwMS1hZjc0ZWY2ZjFlNWIiLCJjb250ZXh0LWNueG1vZDoxMzdhNWJiZi0wZWYzLTQwMjYtYWE3OC1mNjFlYjNlYzg3YzIiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4xLjEiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4xLjMiLCJhcGxvOnN0YXgtYXBwaHlzOjMuRS4xLjMiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4yLjEiLCJib29rOnN0YXgtYXBwaHlzIiwic2NpZW5jZS1wcmFjdGljZTptb2RlbGluZyIsImFzc2lnbm1lbnQtdHlwZTpyZWFkaW5nIl0sInV1aWQiOiI3YTk4MTA1NS0yZWNlLTRlZGItYmU0Ny05YWE5OGQyM2RlOTciLCJncm91cF91dWlkIjoiYTNiYzQzMzgtODZmZC00MDk0LThmMjAtMDg1YmQ3YzJmYmYwIiwibnVtYmVyIjoyMjI3LCJ2ZXJzaW9uIjo3LCJ1aWQiOiIyMjI3QDciLCJwdWJsaXNoZWRfYXQiOiIyMDIxLTA1LTI0VDExOjM3OjU5LjA4NVoiLCJhdXRob3JzIjpbeyJ1c2VyX2lkIjoxLCJuYW1lIjoiT3BlblN0YXggRXhlcmNpc2VzIn1dLCJjb3B5cmlnaHRfaG9sZGVycyI6W3sidXNlcl9pZCI6MiwibmFtZSI6IlJpY2UgVW5pdmVyc2l0eSJ9XSwiZGVyaXZlZF9mcm9tIjpbXSwiaXNfdm9jYWIiOmZhbHNlLCJzdGltdWx1c19odG1sIjoiIiwicXVlc3Rpb25zIjpbeyJpZCI6MTY2OTI1LCJpc19hbnN3ZXJfb3JkZXJfaW1wb3J0YW50Ijp0cnVlLCJzdGltdWx1c19odG1sIjoiIiwic3RlbV9odG1sIjoiV2hhdCBpcyB0aGUgYW5nbGUgYmV0d2VlbiB0aGUgeCBhbmQgeSBjb21wb25lbnRzIG9mIGEgdmVjdG9yPyIsImFuc3dlcnMiOlt7ImlkIjo2MzU1MTgsImNvbnRlbnRfaHRtbCI6IjxzcGFuIGRhdGEtbWF0aD1cIjBeXFxjaXJjXCI+MF5cXGNpcmM8L3NwYW4+IiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiVGhlIHggY29tcG9uZW50IGFuZCB5IGNvbXBvbmVudCBvZiBhIHZlY3RvciBjYW5ub3QgYmUgaW4gdGhlIHNhbWUgZGlyZWN0aW9uLiJ9LHsiaWQiOjYzNTUxOSwiY29udGVudF9odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwiNDVeXFxjaXJjXCI+NDVeXFxjaXJjPC9zcGFuPiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlJlY2FsbCBob3cgd2UgY2FuIGRyYXcgdGhlIHggYW5kIHkgYXhlcyBvbiBhIGdyYXBoLiBUaGUgeCBhbmQgeSBjb21wb25lbnRzIG9mIGEgdmVjdG9yIGFyZSBhbHdheXMgcGVycGVuZGljdWxhciB0byBlYWNoIG90aGVyLiJ9LHsiaWQiOjYzNTUyMCwiY29udGVudF9odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwiOTBeXFxjaXJjXCI+OTBeXFxjaXJjPC9zcGFuPiIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoZSB4IGFuZCB5IGNvbXBvbmVudHMgb2YgYSB2ZWN0b3IgYXJlIHBlcnBlbmRpY3VsYXIgdG8gZWFjaCBvdGhlci4ifSx7ImlkIjo2MzU1MjEsImNvbnRlbnRfaHRtbCI6IjxzcGFuIGRhdGEtbWF0aD1cIjE4MF5cXGNpcmNcIj4xODBeXFxjaXJjPC9zcGFuPiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoZSB4IGFuZCB5IGNvbXBvbmVudHMgb2YgYSB2ZWN0b3IgYXJlIGFsd2F5cyBwZXJwZW5kaWN1bGFyIHRvIGVhY2ggb3RoZXIuIn1dLCJoaW50cyI6W10sImZvcm1hdHMiOlsiZnJlZS1yZXNwb25zZSIsIm11bHRpcGxlLWNob2ljZSJdLCJjb21ib19jaG9pY2VzIjpbXSwiY29sbGFib3JhdG9yX3NvbHV0aW9ucyI6W3siaW1hZ2VzIjpbXSwic29sdXRpb25fdHlwZSI6ImRldGFpbGVkIiwiY29udGVudF9odG1sIjoiPHNwYW4gZGF0YS1tYXRoPVwiOTBeXFxjaXJjXCI+OTBeXFxjaXJjPC9zcGFuPiJ9XSwiY29tbXVuaXR5X3NvbHV0aW9ucyI6W119XSwiZGVsZWdhdGlvbnMiOlt7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjY0LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjg2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE3LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE4LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE5LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjIyLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjkxLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6MTIwLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEyNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOnRydWV9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6MTMyLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEzNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo2NCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo4NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxNywiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxOCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxOSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoyMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo5MSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MiwiZGVsZWdhdGVfaWQiOjEyMCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMjYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjp0cnVlfSx7ImRlbGVnYXRvcl9pZCI6MiwiZGVsZWdhdGVfaWQiOjEzMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMzYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9XSwidmVyc2lvbnMiOls3LDYsNSw0LDMsMiwxXX0seyJpbWFnZXMiOltdLCJ0YWdzIjpbImluYm9vay15ZXMiLCJrMTJwaHlzIiwib3N0LXRlc3QtcHJlcCIsInNob3J0LWFuc3dlciIsImsxMnBoeXMtY2gwNSIsImsxMnBoeXMtY2gwNS1zMDIiLCJrMTJwaHlzLWNoMDUtczAyLWxvMDEiLCJrMTJwaHlzLWNoMDUtZXgwNDEiLCJ0aW1lOnNob3J0IiwiZG9rOjIiLCJibG9vbXM6MiIsImJvb2s6c3RheC1waHlzIiwiZXhpZDprMTJwaHlzLWNoMDUtZXgwNDEiLCJjb250ZXh0LWNueG1vZDowOTM5YjcwNC0zNjQ2LTRiMDItYTg5ZC00YjMxZmJkZjAzYTgiLCJmaWx0ZXItdHlwZTppbXBvcnQ6aHMiLCJib29rOnN0YXgtazEycGh5cyIsImNvbnRleHQtY254bW9kOjIyNDJhOGM1LWU4YjEtNDI4Ny1iODAxLWFmNzRlZjZmMWU1YiIsImxvOnN0YXgtcGh5czozLTEtMSIsImNvbnRleHQtY254bW9kOjEzN2E1YmJmLTBlZjMtNDAyNi1hYTc4LWY2MWViM2VjODdjMiIsImFwbG86c3RheC1hcHBoeXM6My5FLjEuMyIsImFwbG86c3RheC1hcHBoeXM6My5BLjIuMSIsImFzc2lnbm1lbnQtdHlwZTpob21ld29yayJdLCJ1dWlkIjoiZGZjMjIyNmItY2Y1Zi00OGYwLTg1NGMtMWEwZmI0Zjc4Y2UxIiwiZ3JvdXBfdXVpZCI6ImI5MWMyNTJmLTljY2UtNDhkYS1hN2UwLTJiMzRhYjc2NDY2NCIsIm51bWJlciI6MjIzNywidmVyc2lvbiI6NywidWlkIjoiMjIzN0A3IiwicHVibGlzaGVkX2F0IjoiMjAyMS0wMi0yNVQxNjo0ODoxMi4xMThaIiwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4IEV4ZXJjaXNlcyJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImlzX3ZvY2FiIjpmYWxzZSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjEzNzk0MSwiaXNfYW5zd2VyX29yZGVyX2ltcG9ydGFudCI6dHJ1ZSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IlRydWUgb3IgRmFsc2U6IEFsbCB2ZWN0b3JzIGhhdmUgcG9zaXRpdmUgeCBhbmQgeSBjb21wb25lbnRzLiIsImFuc3dlcnMiOlt7ImlkIjo1MzU3NjQsImNvbnRlbnRfaHRtbCI6IlRydWUiLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJWZWN0b3IgcXVhbnRpdGllcyBoYXZlIGJvdGggbWFnbml0dWRlIGFzIHdlbGwgYXMgZGlyZWN0aW9ucyBhc3NvY2lhdGVkIHdpdGggaXQuIFRodXMsIHRoZSBwcm9qZWN0aW9uIGFsb25nIGFueSBheGlzIG1heSBiZSBwb3NpdGl2ZSwgbmVnYXRpdmUsIG9yIHplcm8uIn0seyJpZCI6NTM1NzY1LCJjb250ZW50X2h0bWwiOiJGYWxzZSIsImNvcnJlY3RuZXNzIjoiMS4wIiwiZmVlZGJhY2tfaHRtbCI6IlZlY3RvcnMgY2FuIGhhdmUgYSB2YWx1ZSBvZiB6ZXJvIGFzIHdlbGwgYXMgbmVnYXRpdmUgdmFsdWVzLiJ9XSwiaGludHMiOltdLCJmb3JtYXRzIjpbIm11bHRpcGxlLWNob2ljZSJdLCJjb21ib19jaG9pY2VzIjpbXSwiY29sbGFib3JhdG9yX3NvbHV0aW9ucyI6W3siaW1hZ2VzIjpbXSwic29sdXRpb25fdHlwZSI6ImRldGFpbGVkIiwiY29udGVudF9odG1sIjoiRmFsc2UifV0sImNvbW11bml0eV9zb2x1dGlvbnMiOltdfV0sImRlbGVnYXRpb25zIjpbeyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo2NCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo4NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxNywiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxOCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxOSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoyMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo5MSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEyMCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxMjYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjp0cnVlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjp0cnVlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEzMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxMzYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NjQsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6ODYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTcsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTgsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTksImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MjIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6OTEsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMjAsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTI2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0Ijp0cnVlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6dHJ1ZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMzIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTM2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfV0sInZlcnNpb25zIjpbNyw2LDUsNCwzLDIsMV19LHsiaW1hZ2VzIjpbXSwidGFncyI6WyJpbmJvb2steWVzIiwiazEycGh5cyIsImdyYXNwLWNoZWNrIiwiazEycGh5cy1jaDA2IiwiazEycGh5cy1jaDA2LXMwMiIsImsxMnBoeXMtY2gwNi1zMDItbG8wMSIsImsxMnBoeXMtY2gwNi1leDAzMSIsImRvazoxIiwidGltZTpzaG9ydCIsImJsb29tczoyIiwiYm9vazpzdGF4LXBoeXMiLCJsbzpzdGF4LXBoeXM6Ni0yLTEiLCJleGlkOmsxMnBoeXMtY2gwNi1leDAzMSIsImNvbnRleHQtY254bW9kOjljNmY1ZmM5LTVjOWYtNDk5YS1hYjhkLTFmYzAzODRiMzAxNyIsImZpbHRlci10eXBlOmltcG9ydDpocyIsImJvb2s6c3RheC1rMTJwaHlzIiwiZmlsdGVyLXR5cGU6aW1wb3J0Omhhcy1jb250ZXh0IiwiY29udGV4dC1jbnhtb2Q6MjI0MmE4YzUtZThiMS00Mjg3LWI4MDEtYWY3NGVmNmYxZTViIiwiY29udGV4dC1jbnhtb2Q6ODNjYTZlODEtOWE3Ni00MDhhLTk1ZjEtMjQzYmNiZTBhMmZjIiwiY29udGV4dC1jbnhmZWF0dXJlOmVpcC02NTIiLCJjb250ZXh0LWNueG1vZDoxMzdhNWJiZi0wZWYzLTQwMjYtYWE3OC1mNjFlYjNlYzg3YzIiLCJjb250ZXh0LWNueG1vZDpiZDY5NTRjMC1iY2E5LTRkNWItOWU4OC1lZmM0NjE2NGFhYzUiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4xLjEiLCJhc3NpZ25tZW50LXR5cGU6aG9tZXdvcmsiXSwidXVpZCI6IjU1YzUxZGI5LWNlNGYtNDY0OC1iZGE5LThmZGIwYjIzODUxNyIsImdyb3VwX3V1aWQiOiJmYzk2MjBlMC0zZGM5LTQ2MzYtYWQzZS01N2E3MDcxNDAxYjUiLCJudW1iZXIiOjI0NDAsInZlcnNpb24iOjEzLCJ1aWQiOiIyNDQwQDEzIiwicHVibGlzaGVkX2F0IjoiMjAyMS0wMi0yNVQxODowMTo1Mi40OThaIiwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4IEV4ZXJjaXNlcyJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImlzX3ZvY2FiIjpmYWxzZSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjE0NzcwNSwiaXNfYW5zd2VyX29yZGVyX2ltcG9ydGFudCI6dHJ1ZSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IkluIHVuaWZvcm0gY2lyY3VsYXIgbW90aW9uLCB3aGF0IGlzIHRoZSBhbmdsZSBiZXR3ZWVuIHRoZSBhY2NlbGVyYXRpb24gYW5kIHRoZSB2ZWxvY2l0eT8gV2hhdCB0eXBlIG9mIGFjY2VsZXJhdGlvbiBkb2VzIGEgYm9keSBleHBlcmllbmNlIGluIHRoZSB1bmlmb3JtIGNpcmN1bGFyIG1vdGlvbj8iLCJhbnN3ZXJzIjpbeyJpZCI6NTYyODIzLCJjb250ZW50X2h0bWwiOiJUaGUgYW5nbGUgYmV0d2VlbiBhY2NlbGVyYXRpb24gYW5kIHZlbG9jaXR5IGlzIDxzcGFuIGRhdGEtbWF0aD1cIjBeXFxjaXJjXFwhXCI+MF5cXGNpcmNcXCE8L3NwYW4+IGFuZCB0aGUgYm9keSBleHBlcmllbmNlcyBsaW5lYXIgYWNjZWxlcmF0aW9uLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IkluIHVuaWZvcm0gY2lyY3VsYXIgbW90aW9uLCBhY2NlbGVyYXRpb24gaXMgZGlyZWN0ZWQgdG93YXJkIHRoZSBjZW50ZXIgb2Ygcm90YXRpb24gYW5kIHRoZSB2ZWxvY2l0eSBpcyB0YW5nZW50aWFsIHRvIHRoZSBwYXRoIG9mIHJvdGF0aW9uLiBBbHNvLCB0aGUgYWNjZWxlcmF0aW9uIGluIHVuaWZvcm0gY2lyY3VsYXIgbW90aW9uIGlzIGNlbnRlcnNlZWtpbmcuVGhpcyB0eXBlIG9mIGFjY2VsZXJhdGlvbiBpcyBrbm93biBhcyBjZW50cmlwZXRhbCBhY2NlbGVyYXRpb24uIn0seyJpZCI6NTYyODIyLCJjb250ZW50X2h0bWwiOiJUaGUgYW5nbGUgYmV0d2VlbiBhY2NlbGVyYXRpb24gYW5kIHZlbG9jaXR5IGlzIDxzcGFuIGRhdGEtbWF0aD1cIjBeXFxjaXJjXFwhXCI+MF5cXGNpcmNcXCE8L3NwYW4+IGFuZCB0aGUgYm9keSBleHBlcmllbmNlcyBjZW50cmlwZXRhbCBhY2NlbGVyYXRpb24uIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiVGhlIGFjY2VsZXJhdGlvbiBpbiB1bmlmb3JtIGNpcmN1bGFyIG1vdGlvbiBpcyBkaXJlY3RlZCB0b3dhcmQgdGhlIGNlbnRlciBvZiByb3RhdGlvbiwgd2hlcmVhcyB0aGUgdmVsb2NpdHkgaXMgdGFuZ2VudGlhbCB0byB0aGUgY2lyY3VsYXIgb3JiaXQuIn0seyJpZCI6NTYyODIxLCJjb250ZW50X2h0bWwiOiJUaGUgYW5nbGUgYmV0d2VlbiBhY2NlbGVyYXRpb24gYW5kIHZlbG9jaXR5IGlzIDxzcGFuIGRhdGEtbWF0aD1cIjkwXlxcY2lyY1xcIVwiPjkwXlxcY2lyY1xcITwvc3Bhbj4sIGFuZCB0aGUgYm9keSBleHBlcmllbmNlcyBsaW5lYXIgYWNjZWxlcmF0aW9uLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoZSBhY2NlbGVyYXRpb24gaW4gdW5pZm9ybSBjaXJjdWxhciBtb3Rpb24gaXMgY2VudGVyIHNlZWtpbmcuIFRoaXMgdHlwZSBvZiBhY2NlbGVyYXRpb24gaXMga25vd24gYXMgY2VudHJpcGV0YWwgYWNjZWxlcmF0aW9uLiJ9LHsiaWQiOjU2MjgyNCwiY29udGVudF9odG1sIjoiVGhlIGFuZ2xlIGJldHdlZW4gYWNjZWxlcmF0aW9uIGFuZCB2ZWxvY2l0eSBpcyA8c3BhbiBkYXRhLW1hdGg9XCI5MF5cXGNpcmNcXCFcIj45MF5cXGNpcmNcXCE8L3NwYW4+IGFuZCB0aGUgYm9keSBleHBlcmllbmNlcyBjZW50cmlwZXRhbCBhY2NlbGVyYXRpb24uIiwiY29ycmVjdG5lc3MiOiIxLjAiLCJmZWVkYmFja19odG1sIjoiVGhlIGFjY2VsZXJhdGlvbiBhbmQgdGhlIHZlbG9jaXR5IGluIHVuaWZvcm0gY2lyY3VsYXIgbW90aW9uIGFyZSBwZXJwZW5kaWN1bGFyIHRvIGVhY2ggb3RoZXIsIHRoYXQgaXMsIHRoZXkgbWFrZSBhbiBhbmdsZSBvZiA8c3BhbiBkYXRhLW1hdGg9XCI5MF5cXGNpcmNcXCFcIj45MF5cXGNpcmNcXCE8L3NwYW4+IHdpdGggZWFjaCBvdGhlci4gSW4gdW5pZm9ybSBjaXJjdWxhciBtb3Rpb24sIHRoZSBib2R5IGV4cGVyaWVuY2VzIGNlbnRyaXBldGFsIGFjY2VsZXJhdGlvbi4ifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJmcmVlLXJlc3BvbnNlIiwibXVsdGlwbGUtY2hvaWNlIl0sImNvbWJvX2Nob2ljZXMiOltdLCJjb2xsYWJvcmF0b3Jfc29sdXRpb25zIjpbeyJpbWFnZXMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJUaGUgYW5nbGUgYmV0d2VlbiBhY2NlbGVyYXRpb24gYW5kIHZlbG9jaXR5IGlzIDxzcGFuIGRhdGEtbWF0aD1cIjkwXlxcY2lyY1xcIVwiPjkwXlxcY2lyY1xcITwvc3Bhbj4gYW5kIHRoZSBib2R5IGV4cGVyaWVuY2VzIGNlbnRyaXBldGFsIGFjY2VsZXJhdGlvbi4ifV0sImNvbW11bml0eV9zb2x1dGlvbnMiOltdfV0sImRlbGVnYXRpb25zIjpbeyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo2NCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo4NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxNywiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxOCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxOSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoyMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo5MSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEyMCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxMjYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjp0cnVlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjp0cnVlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEzMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxMzYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NjQsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6ODYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTcsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTgsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTksImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MjIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6OTEsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMjAsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTI2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0Ijp0cnVlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6dHJ1ZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMzIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTM2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfV0sInZlcnNpb25zIjpbMTMsMTIsMTEsMTAsOSw4LDcsNiw1LDQsMywyLDFdfSx7ImltYWdlcyI6W10sInRhZ3MiOlsib3N0LXR5cGU6Y29uY2VwdC1jb2FjaCIsImRvazoxIiwidGltZTpzaG9ydCIsImJsb29tczoyIiwiYm9vazpzdGF4LXBoeXMiLCJsbzpzdGF4LXBoeXM6My0xLTIiLCJleGlkOnN0YXgtcGh5czoyMSIsImNvbnRleHQtY254bW9kOjIxZDBlMjE3LWQ1MGYtNDkwMS1hZjc1LTkwNWU3MzhlYjRjNCIsInR5cGU6Y29uY2VwdHVhbC1vci1yZWNhbGwiLCJjb250ZXh0LWNueG1vZDoyMjQyYThjNS1lOGIxLTQyODctYjgwMS1hZjc0ZWY2ZjFlNWIiLCJjb250ZXh0LWNueG1vZDoxMzdhNWJiZi0wZWYzLTQwMjYtYWE3OC1mNjFlYjNlYzg3YzIiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4xLjEiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4xLjMiLCJhcGxvOnN0YXgtYXBwaHlzOjMuRS4xLjMiLCJhcGxvOnN0YXgtYXBwaHlzOjMuQS4yLjEiLCJib29rOnN0YXgtYXBwaHlzIiwic2NpZW5jZS1wcmFjdGljZTphcmd1bWVudGF0aW9uIiwiYXNzaWdubWVudC10eXBlOnJlYWRpbmciXSwidXVpZCI6Ijk4YTk5ZmE3LTYwMDctNDcxMi05ZDQzLTk3OGQ3NDdmNzRhNSIsImdyb3VwX3V1aWQiOiJjYmI4ZTIwZi01YWU0LTRlODUtYTE3Ny0xZTBlYmQxYWRkMzMiLCJudW1iZXIiOjU2MjgsInZlcnNpb24iOjksInVpZCI6IjU2MjhAOSIsInB1Ymxpc2hlZF9hdCI6IjIwMjEtMDUtMjRUMTE6MzA6MzEuOTY4WiIsImF1dGhvcnMiOlt7InVzZXJfaWQiOjEsIm5hbWUiOiJPcGVuU3RheCBFeGVyY2lzZXMifV0sImNvcHlyaWdodF9ob2xkZXJzIjpbeyJ1c2VyX2lkIjoyLCJuYW1lIjoiUmljZSBVbml2ZXJzaXR5In1dLCJkZXJpdmVkX2Zyb20iOltdLCJpc192b2NhYiI6ZmFsc2UsInN0aW11bHVzX2h0bWwiOiIiLCJxdWVzdGlvbnMiOlt7ImlkIjoxNjY5MjMsImlzX2Fuc3dlcl9vcmRlcl9pbXBvcnRhbnQiOnRydWUsInN0aW11bHVzX2h0bWwiOiIiLCJzdGVtX2h0bWwiOiJBIGdpcmwgdGhyb3dzIGEgYmFsbCBob3Jpem9udGFsbHkgZnJvbSBhIHJvb2YgMTAgbWV0ZXJzIGhpZ2guIElmIGFpciByZXNpc3RhbmNlIGlzIG5lZ2xpZ2libGUsIGhvdyBpcyB0aGUgdmVydGljYWwgdmVsb2NpdHkgb2YgdGhlIGJhbGwgcmVsYXRlZCB0byBpdHMgaG9yaXpvbnRhbCB2ZWxvY2l0eT8iLCJhbnN3ZXJzIjpbeyJpZCI6NjM1NTExLCJjb250ZW50X2h0bWwiOiJUaGUgdmVydGljYWwgdmVsb2NpdHkgZGVwZW5kcyBvbiB0aGUgaG9yaXpvbnRhbCB2ZWxvY2l0eS4iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJUaGUgdmVydGljYWwgdmVsb2NpdHkgZG9lcyBub3QgZGVwZW5kIG9uIHRoZSBob3Jpem9udGFsIHZlbG9jaXR5LiJ9LHsiaWQiOjYzNTUxMiwiY29udGVudF9odG1sIjoiVGhlIHZlcnRpY2FsIHZlbG9jaXR5IGRvZXMgbm90IGRlcGVuZCBvbiB0aGUgaG9yaXpvbnRhbCB2ZWxvY2l0eS4iLCJjb3JyZWN0bmVzcyI6IjEuMCJ9LHsiaWQiOjYzNTUxMywiY29udGVudF9odG1sIjoiVGhlIHZlcnRpY2FsIGFuZCBob3Jpem9udGFsIHZlbG9jaXRpZXMgYXJlIHRoZSBzYW1lLiIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoZSB2ZXJ0aWNhbCBhbmQgaG9yaXpvbnRhbCB2ZWxvY2l0aWVzIGFyZSBub3QgbmVjZXNzYXJpbHkgdGhlIHNhbWUifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJmcmVlLXJlc3BvbnNlIiwibXVsdGlwbGUtY2hvaWNlIl0sImNvbWJvX2Nob2ljZXMiOltdLCJjb2xsYWJvcmF0b3Jfc29sdXRpb25zIjpbeyJpbWFnZXMiOltdLCJzb2x1dGlvbl90eXBlIjoiZGV0YWlsZWQiLCJjb250ZW50X2h0bWwiOiJBc3N1bWluZyB0aGF0IGFpciByZXNpc3RhbmNlIGlzIG5lZ2xpZ2libGUsIHRoZSB2ZXJ0aWNhbCBtb3Rpb24gb2YgdGhlIGJhbGwgaXMgaW5kZXBlbmRlbnQgb2YgaXRzIGhvcml6b250YWwgbW90aW9uLiAoVGhlIGhvcml6b250YWwgYWNjZWxlcmF0aW9uIGlzIGFzc3VtZWQgdG8gYmUgemVybyBhbmQgdGhlIHZlcnRpY2FsIGFjY2VsZXJhdGlvbiBpcyB0aGUgY29uc3RhbnQgYWNjZWxlcmF0aW9uIG9mIGdyYXZpdHkuKSJ9XSwiY29tbXVuaXR5X3NvbHV0aW9ucyI6W119XSwiZGVsZWdhdGlvbnMiOlt7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjY0LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjg2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE3LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE4LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjE5LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjIyLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjkxLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6MTIwLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEyNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOnRydWV9LHsiZGVsZWdhdG9yX2lkIjoxLCJkZWxlZ2F0ZV9pZCI6MTMyLCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6dHJ1ZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6ZmFsc2UsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEzNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo2NCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo4NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxNywiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxOCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxOSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoyMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo5MSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjo2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MiwiZGVsZWdhdGVfaWQiOjEyMCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMjYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjp0cnVlfSx7ImRlbGVnYXRvcl9pZCI6MiwiZGVsZWdhdGVfaWQiOjEzMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6dHJ1ZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMzYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9XSwidmVyc2lvbnMiOls5LDgsNyw2LDUsNCwzLDIsMV19LHsiaW1hZ2VzIjpbXSwidGFncyI6WyJvc3QtdHlwZTpjb25jZXB0LWNvYWNoIiwidGltZTpzaG9ydCIsImRvazoyIiwiYmxvb21zOjMiLCJib29rOnN0YXgtcGh5cyIsImxvOnN0YXgtcGh5czozLTEtMiIsImNvbnRleHQtY254bW9kOjIxZDBlMjE3LWQ1MGYtNDkwMS1hZjc1LTkwNWU3MzhlYjRjNCIsImV4aWQ6c3RheC1waHlzOjIyIiwidHlwZTpjb25jZXB0dWFsLW9yLXJlY2FsbCIsImNvbnRleHQtY254bW9kOjIyNDJhOGM1LWU4YjEtNDI4Ny1iODAxLWFmNzRlZjZmMWU1YiIsImNvbnRleHQtY254bW9kOjEzN2E1YmJmLTBlZjMtNDAyNi1hYTc4LWY2MWViM2VjODdjMiIsImFwbG86c3RheC1hcHBoeXM6My5BLjEuMSIsImFwbG86c3RheC1hcHBoeXM6My5BLjEuMyIsImFwbG86c3RheC1hcHBoeXM6My5FLjEuMyIsImFwbG86c3RheC1hcHBoeXM6My5BLjIuMSIsImJvb2s6c3RheC1hcHBoeXMiLCJzY2llbmNlLXByYWN0aWNlOmFyZ3VtZW50YXRpb24iLCJhc3NpZ25tZW50LXR5cGU6cmVhZGluZyJdLCJ1dWlkIjoiM2NkOThlM2YtYWE2My00YzI5LWIwNTItNjc0YzM5MWRiMzU2IiwiZ3JvdXBfdXVpZCI6ImU3NjQwNTkzLWMwYzEtNGEzYy04NzA2LTY4ZjVhZTIyYjY5OCIsIm51bWJlciI6NTY3MiwidmVyc2lvbiI6OSwidWlkIjoiNTY3MkA5IiwicHVibGlzaGVkX2F0IjoiMjAyMS0wNS0yNFQxMToyOToxNy43MDRaIiwiYXV0aG9ycyI6W3sidXNlcl9pZCI6MSwibmFtZSI6Ik9wZW5TdGF4IEV4ZXJjaXNlcyJ9XSwiY29weXJpZ2h0X2hvbGRlcnMiOlt7InVzZXJfaWQiOjIsIm5hbWUiOiJSaWNlIFVuaXZlcnNpdHkifV0sImRlcml2ZWRfZnJvbSI6W10sImlzX3ZvY2FiIjpmYWxzZSwic3RpbXVsdXNfaHRtbCI6IiIsInF1ZXN0aW9ucyI6W3siaWQiOjE2NjkyMSwiaXNfYW5zd2VyX29yZGVyX2ltcG9ydGFudCI6dHJ1ZSwic3RpbXVsdXNfaHRtbCI6IiIsInN0ZW1faHRtbCI6IkNlbGlhIGFuZCBKYW5lIGFyZSBvbiB0aGUgcm9vZiBvZiB0aGVpciBzY2hvb2wuIEVhY2ggd29tYW4gaGFzIGFuIGlkZW50aWNhbCBiYWxsIHRoYXQgdGhleSByZWxlYXNlIGZyb20gdGhlIHJvb2YgYXQgdGhlIHNhbWUgdGltZS4gSG93ZXZlciwgd2hpbGUgQ2VsaWEgZHJvcHMgaGVyIGJhbGwgZnJvbSByZXN0LCBKYW5lIHJlbGVhc2VzIGhlciBiYWxsIHdpdGggYSBzbWFsbCBob3Jpem9udGFsIHZlbG9jaXR5LlxuIEFzc3VtaW5nIHRoYXQgYWlyIHJlc2lzdGFuY2UgaXMgbmVnbGlnaWJsZSwgd2hpY2ggYmFsbCB3aWxsIGhpdCB0aGUgZ3JvdW5kIGZpcnN0PyIsImFuc3dlcnMiOlt7ImlkIjo2MzU1MDQsImNvbnRlbnRfaHRtbCI6IkNlbGlh4oCZcyBiYWxsIiwiY29ycmVjdG5lc3MiOiIwLjAiLCJmZWVkYmFja19odG1sIjoiVGhlIHZlcnRpY2FsIHZlbG9jaXRpZXMgYXJlIHRoZSBzYW1lIGFuZCBpbmRlcGVuZGVudCBvZiBob3Jpem9udGFsIHZlbG9jaXR5LiJ9LHsiaWQiOjYzNTUwNSwiY29udGVudF9odG1sIjoiSmFuZeKAmXMgYmFsbCIsImNvcnJlY3RuZXNzIjoiMC4wIiwiZmVlZGJhY2tfaHRtbCI6IlRoZSB2ZXJ0aWNhbCB2ZWxvY2l0aWVzIGFyZSB0aGUgc2FtZSBhbmQgaW5kZXBlbmRlbnQgb2YgaG9yaXpvbnRhbCB2ZWxvY2l0eS4ifSx7ImlkIjo2MzU1MDYsImNvbnRlbnRfaHRtbCI6Im5vdCBlbm91Z2ggaW5mb3JtYXRpb24iLCJjb3JyZWN0bmVzcyI6IjAuMCIsImZlZWRiYWNrX2h0bWwiOiJUaGUgdmVydGljYWwgdmVsb2NpdGllcyBhcmUgdGhlIHNhbWUgYW5kIGluZGVwZW5kZW50IG9mIGhvcml6b250YWwgdmVsb2NpdHkuIn0seyJpZCI6NjM1NTA3LCJjb250ZW50X2h0bWwiOiJUaGUgdHdvIGJhbGxzIGhpdCB0aGUgZ3JvdW5kIGF0IHRoZSBzYW1lIHRpbWUuIiwiY29ycmVjdG5lc3MiOiIxLjAifV0sImhpbnRzIjpbXSwiZm9ybWF0cyI6WyJtdWx0aXBsZS1jaG9pY2UiXSwiY29tYm9fY2hvaWNlcyI6W10sImNvbGxhYm9yYXRvcl9zb2x1dGlvbnMiOlt7ImltYWdlcyI6W10sInNvbHV0aW9uX3R5cGUiOiJkZXRhaWxlZCIsImNvbnRlbnRfaHRtbCI6IkJlY2F1c2Ugd2UgaGF2ZSBwcmVzdW1lZCB0aGF0IGFpciByZXNpc3RhbmNlIGlzIG5lZ2xpZ2libGUsIHRoZSBob3Jpem9udGFsIHZlbG9jaXR5IG9mIEphbmXigJlzIGJhbGwgZG9lcyBub3QgYWZmZWN0IGl0cyB2ZXJ0aWNhbCB2ZWxvY2l0eS4gVGhpcyBtZWFucyB0aGF0LCBkZXNwaXRlIHRoZSBkaWZmZXJlbmNlcyBpbiBob3Jpem9udGFsIHZlbG9jaXRpZXMsIHRoZSBiYWxscyBzaG91bGQgaGl0IHRoZSBncm91bmQgYXQgdGhlIHNhbWUgdGltZS4ifV0sImNvbW11bml0eV9zb2x1dGlvbnMiOltdfV0sImRlbGVnYXRpb25zIjpbeyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo2NCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo4NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxNiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxNywiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxOCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxOSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoyMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo5MSwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjo2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEyMCwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxMjYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjp0cnVlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjp0cnVlfSx7ImRlbGVnYXRvcl9pZCI6MSwiZGVsZWdhdGVfaWQiOjEzMiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOnRydWUsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOmZhbHNlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjEsImRlbGVnYXRlX2lkIjoxMzYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NjQsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6ODYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTYsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTcsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTgsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTksImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MjIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6OTEsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6NiwiZGVsZWdhdGVfdHlwZSI6IlVzZXIiLCJjYW5fYXNzaWduX2F1dGhvcnNoaXAiOmZhbHNlLCJjYW5fYXNzaWduX2NvcHlyaWdodCI6ZmFsc2UsImNhbl9yZWFkIjp0cnVlLCJjYW5fdXBkYXRlIjpmYWxzZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMjAsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOmZhbHNlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTI2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0Ijp0cnVlLCJjYW5fcmVhZCI6dHJ1ZSwiY2FuX3VwZGF0ZSI6dHJ1ZX0seyJkZWxlZ2F0b3JfaWQiOjIsImRlbGVnYXRlX2lkIjoxMzIsImRlbGVnYXRlX3R5cGUiOiJVc2VyIiwiY2FuX2Fzc2lnbl9hdXRob3JzaGlwIjpmYWxzZSwiY2FuX2Fzc2lnbl9jb3B5cmlnaHQiOnRydWUsImNhbl9yZWFkIjpmYWxzZSwiY2FuX3VwZGF0ZSI6ZmFsc2V9LHsiZGVsZWdhdG9yX2lkIjoyLCJkZWxlZ2F0ZV9pZCI6MTM2LCJkZWxlZ2F0ZV90eXBlIjoiVXNlciIsImNhbl9hc3NpZ25fYXV0aG9yc2hpcCI6ZmFsc2UsImNhbl9hc3NpZ25fY29weXJpZ2h0IjpmYWxzZSwiY2FuX3JlYWQiOnRydWUsImNhbl91cGRhdGUiOmZhbHNlfV0sInZlcnNpb25zIjpbOSw4LDcsNiw1LDQsMywyLDFdfV19
+    http_version: 
+  recorded_at: Tue, 25 May 2021 16:33:52 GMT
 recorded_with: VCR 4.0.0

@@ -2,13 +2,14 @@ FactoryBot.define do
   factory :content_book, class: '::Content::Models::Book' do
     association :ecosystem, factory: :content_ecosystem
 
-    title      { Faker::Lorem.words(3).join(' ') }
-    uuid       { SecureRandom.uuid }
-    version    { Random.rand(1..10) }
-    short_id   { SecureRandom.urlsafe_base64(8).first(8) }
-    tutor_uuid { SecureRandom.uuid }
-    url        { "https://archive.cnx.org/contents/#{uuid}@#{version}" }
-    reading_processing_instructions {
+    title           { Faker::Lorem.words(3).join(' ') }
+    archive_version { '0.0' }
+    uuid            { SecureRandom.uuid }
+    version         { "#{Random.rand(1..20)}.#{Random.rand(1..100)}" }
+    short_id        { SecureRandom.urlsafe_base64(8).first(8) }
+    tutor_uuid      { SecureRandom.uuid }
+    url             { OpenStax::Content::Archive.new(archive_version).url_for "#{uuid}@#{version}" }
+    reading_processing_instructions do
       [
         {:css=>
          ".conceptual-questions, .problems-exercises, [data-element-type=\"conceptual-questions\"], [data-element-type=\"problems-exercises\"], [data-element-type=\"check-understanding\"], [data-type=\"glossary\"]",
@@ -54,7 +55,7 @@ FactoryBot.define do
         { css: '.worked-example', fragments: ['reading'], labels: ['worked-example'] },
         { css: '.ost-feature, .ost-assessed-feature', fragments: ['reading'] }
       ]
-    }
+    end
     tree do
       {
         type: 'Book',

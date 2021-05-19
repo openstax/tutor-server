@@ -13,7 +13,7 @@ RSpec.describe 'import_notes', type: :rake do
     [
       role.research_identifier,
       'fs-id1724224',
-      page.cnx_id,
+      page.ox_id,
       '{ "one": 1 }',
       'hi this is note',
       '2018-02-06 17:10:48.099202',

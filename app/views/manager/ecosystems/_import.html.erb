@@ -1,14 +1,14 @@
 <%= form_with url: ecosystems_path do |form| %>
   <div class="form-group">
-    <%= form.label :code_version, 'Content Pipeline code version' %>
-    <% if @code_versions.nil? %>
+    <%= form.label :archive_version, 'Content archive code version' %>
+    <% if @archive_versions.nil? %>
       <%= text_field_tag(
-        :code_version, @code_version, class: 'form-control', 'data-turbolinks-reload': true
+        :archive_version, @archive_version, class: 'form-control', 'data-turbolinks-reload': true
       ) %>
     <% else %>
       <%= select_tag(
-        :code_version,
-        options_for_select(@code_versions, @code_version),
+        :archive_version,
+        options_for_select(@archive_versions, @archive_version),
         class: 'form-control',
         'data-turbolinks-reload': true
       ) %>

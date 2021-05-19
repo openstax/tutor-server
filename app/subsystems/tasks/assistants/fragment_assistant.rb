@@ -20,18 +20,18 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       title ||= fragment.title
 
       # For Exercise and OptionalExercise (subclass of Exercise)
-      previous_step = task.task_steps.last if fragment.is_a? OpenStax::Cnx::V1::Fragment::Exercise
+      previous_step = task.task_steps.last if fragment.is_a? OpenStax::Content::Fragment::Exercise
 
       case fragment
       # This is a subclass of Fragment::Exercise so it needs to come first
-      when OpenStax::Cnx::V1::Fragment::OptionalExercise
+      when OpenStax::Content::Fragment::OptionalExercise
         store_related_exercises(
           exercise_fragment: fragment,
           page: page,
           title: title,
           previous_step: previous_step
         ) unless previous_step.nil?
-      when OpenStax::Cnx::V1::Fragment::Exercise
+      when OpenStax::Content::Fragment::Exercise
         task_exercise(
           exercise_fragment: fragment,
           page: page,
@@ -40,13 +40,13 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
           previous_step: previous_step,
           fragment_index: index
         )
-      when OpenStax::Cnx::V1::Fragment::Video
+      when OpenStax::Content::Fragment::Video
         task_video(
           video_fragment: fragment,
           step: build_task_step(task, page, fragment, index),
           title: title
         )
-      when OpenStax::Cnx::V1::Fragment::Interactive
+      when OpenStax::Content::Fragment::Interactive
         task_interactive(
           interactive_fragment: fragment,
           step: build_task_step(task, page, fragment, index),
@@ -92,7 +92,7 @@ class Tasks::Assistants::FragmentAssistant < Tasks::Assistants::GenericAssistant
       node = Nokogiri::HTML.fragment(previous_step.tasked.content)
 
       # Remove any feature_ids used as exercise context from the previous step
-      feature_node = OpenStax::Cnx::V1::Page.feature_node(node, exercise.feature_ids)
+      feature_node = OpenStax::Content::Page.feature_node(node, exercise.feature_ids)
 
       unless feature_node.nil?
         # Remove context from previous step

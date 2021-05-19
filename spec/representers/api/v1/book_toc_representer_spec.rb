@@ -4,7 +4,7 @@ RSpec.describe Api::V1::BookTocRepresenter, type: :representer do
   it 'represents a book as a table of contents' do
     book_toc = {
       id: 1,
-      cnx_id: '123abc',
+      ox_id: '123abc',
       title: 'Physics 401',
       type: 'Book',
       book_location: [],
@@ -16,7 +16,7 @@ RSpec.describe Api::V1::BookTocRepresenter, type: :representer do
           children: [
             {
               id: 1,
-              cnx_id: '321cba',
+              ox_id: '321cba',
               title: 'Neat page',
               type: 'Page',
               book_location: [4, 3]
@@ -30,7 +30,7 @@ RSpec.describe Api::V1::BookTocRepresenter, type: :representer do
 
     expect(representation.deep_symbolize_keys).to eq(
       id: '1',
-      cnx_id: '123abc',
+      ox_id: '123abc',
       title: 'Physics 401',
       type: 'book',
       chapter_section: [],
@@ -42,7 +42,7 @@ RSpec.describe Api::V1::BookTocRepresenter, type: :representer do
           children: [
             {
               id: '1',
-              cnx_id: '321cba',
+              ox_id: '321cba',
               title: 'Neat page',
               type: 'page',
               chapter_section: [4, 3]
@@ -56,7 +56,7 @@ RSpec.describe Api::V1::BookTocRepresenter, type: :representer do
   it 'can represent a book with units' do
     book_toc = {
       id: 1,
-      cnx_id: '123abc',
+      ox_id: '123abc',
       title: 'Physics 401',
       type: 'Book',
       book_location: [],
@@ -73,7 +73,7 @@ RSpec.describe Api::V1::BookTocRepresenter, type: :representer do
               children: [
                 {
                   id: 1,
-                  cnx_id: '321cba',
+                  ox_id: '321cba',
                   title: 'Neat page',
                   type: 'Page',
                   book_location: [4, 2, 3]
@@ -89,7 +89,7 @@ RSpec.describe Api::V1::BookTocRepresenter, type: :representer do
 
     expect(representation.deep_symbolize_keys).to eq(
       id: '1',
-      cnx_id: '123abc',
+      ox_id: '123abc',
       title: 'Physics 401',
       type: 'book',
       chapter_section: [],
@@ -106,7 +106,7 @@ RSpec.describe Api::V1::BookTocRepresenter, type: :representer do
               children: [
                 {
                   id: '1',
-                  cnx_id: '321cba',
+                  ox_id: '321cba',
                   title: 'Neat page',
                   type: 'page',
                   chapter_section: [4, 2, 3]

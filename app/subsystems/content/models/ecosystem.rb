@@ -52,7 +52,7 @@ module Content
 
       def set_title
         self.title = books.empty? ?
-          'Empty Ecosystem' : "#{books.map(&:title).join('; ')} (#{books.map(&:cnx_id).join('; ')})"
+          'Empty Ecosystem' : "#{books.map(&:title).join('; ')} (#{books.map(&:ox_id).join('; ')})"
       end
 
       def unique_title

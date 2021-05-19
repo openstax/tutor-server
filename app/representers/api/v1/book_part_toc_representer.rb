@@ -20,7 +20,7 @@ module Api::V1
              readable: true,
              schema_info: { required: true }
 
-    property :cnx_id,
+    property :ox_id,
              type: String,
              writeable: false,
              readable: true,
