@@ -59,70 +59,157 @@ RSpec.describe TaskPlanAccessPolicy, type: :access_policy do
       end
     end
 
-    context 'students in the original course' do
-      let(:requestor) { @student }
+    context 'course not ended' do
+      context 'students in the original course' do
+        let(:requestor) { @student }
 
-      context 'index' do
-        let(:action) { :index }
-
-        it { should eq true }
-      end
-
-      [:read, :create, :update, :destroy, :restore].each do |test_action|
-        context test_action.to_s do
-          let(:action) { test_action }
-
-          it { should eq false }
-        end
-      end
-    end
-
-    context 'students in the cloned course' do
-      let(:requestor) { @clone_student }
-
-      context 'index' do
-        let(:action) { :index }
-
-        it { should eq true }
-      end
-
-      [:read, :create, :update, :destroy, :restore].each do |test_action|
-        context test_action.to_s do
-          let(:action) { test_action }
-
-          it { should eq false }
-        end
-      end
-    end
-
-    context 'teachers in the original course' do
-      let(:requestor) { @teacher }
-
-      [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
-        context test_action.to_s do
-          let(:action) { test_action }
+        context 'index' do
+          let(:action) { :index }
 
           it { should eq true }
         end
-      end
-    end
 
-    context 'teachers in the cloned course' do
-      let(:requestor) { @clone_teacher }
+        [:read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
 
-      [:index, :read].each do |test_action|
-        context test_action.to_s do
-          let(:action) { test_action }
-
-          it { should eq true }
+            it { should eq false }
+          end
         end
       end
 
-      [:create, :update, :destroy, :restore].each do |test_action|
-        context test_action.to_s do
-          let(:action) { test_action }
+      context 'students in the cloned course' do
+        let(:requestor) { @clone_student }
 
-          it { should eq false }
+        context 'index' do
+          let(:action) { :index }
+
+          it { should eq true }
+        end
+
+        [:read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'teachers in the original course' do
+        let(:requestor) { @teacher }
+
+        [:index, :read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq true }
+          end
+        end
+      end
+
+      context 'teachers in the cloned course' do
+        let(:requestor) { @clone_teacher }
+
+        [:index, :read].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq true }
+          end
+        end
+
+        [:create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+    end
+
+    context 'course ended' do
+      before(:all) do
+        DatabaseCleaner.start
+
+        @course.update_attribute :ends_at, Time.current - 1.hour
+      end
+      after(:all)  { DatabaseCleaner.clean }
+
+      context 'students in the original course' do
+        let(:requestor) { @student }
+
+        context 'index' do
+          let(:action) { :index }
+
+          it { should eq true }
+        end
+
+        [:read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'students in the cloned course' do
+        let(:requestor) { @clone_student }
+
+        context 'index' do
+          let(:action) { :index }
+
+          it { should eq true }
+        end
+
+        [:read, :create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'teachers in the original course' do
+        let(:requestor) { @teacher }
+
+        [:index, :read].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq true }
+          end
+        end
+
+        [:create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
+        end
+      end
+
+      context 'teachers in the cloned course' do
+        let(:requestor) { @clone_teacher }
+
+        [:index, :read].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq true }
+          end
+        end
+
+        [:create, :update, :destroy, :restore].each do |test_action|
+          context test_action.to_s do
+            let(:action) { test_action }
+
+            it { should eq false }
+          end
         end
       end
     end

@@ -1,5 +1,6 @@
 class TaskPlanAccessPolicy
-  TEACHER_ACTIONS = [ :index, :read, :create, :update, :destroy, :restore ]
+  READ_ONLY_ACTIONS = [ :index, :read ]
+  TEACHER_ACTIONS = READ_ONLY_ACTIONS + [ :create, :update, :destroy, :restore ]
 
   def self.action_allowed?(action, requestor, task_plan)
     return false if requestor.is_anonymous? || !requestor.is_human?
@@ -11,9 +12,14 @@ class TaskPlanAccessPolicy
     return false unless TEACHER_ACTIONS.include?(action)
 
     course = task_plan.course
-    UserIsCourseTeacher[user: requestor, course: course] || (
-      action == :read &&
-      course.cloned_courses.any? { |clone| UserIsCourseTeacher[user: requestor, course: clone] }
-    )
+    is_teacher = UserIsCourseTeacher[user: requestor, course: course]
+
+    if READ_ONLY_ACTIONS.include?(action)
+      is_teacher || course.cloned_courses.any? do |clone|
+        UserIsCourseTeacher[user: requestor, course: clone]
+      end
+    else
+      is_teacher && !course.ended?
+    end
   end
 end
