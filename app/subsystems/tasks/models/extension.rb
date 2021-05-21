@@ -1,5 +1,5 @@
 class Tasks::Models::Extension < ApplicationRecord
-  belongs_to :task_plan, inverse_of: :extensions
+  belongs_to :task_plan, inverse_of: :extensions, touch: true
   belongs_to :role, subsystem: :entity, inverse_of: :extensions
 
   delegate :timezone, :time_zone, to: :task_plan

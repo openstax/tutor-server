@@ -1,5 +1,5 @@
 class Tasks::Models::DroppedQuestion < ApplicationRecord
-  belongs_to :task_plan, inverse_of: :dropped_questions
+  belongs_to :task_plan, inverse_of: :dropped_questions, touch: true
 
   enum drop_method: [ :zeroed, :full_credit ]
 

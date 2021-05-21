@@ -231,6 +231,10 @@ class Tasks::Models::Task < ApplicationRecord
     grading_template&.late_work_penalty || 0.0
   end
 
+  def cached?
+    task_plan.nil? || updated_at >= task_plan.updated_at
+  end
+
   def completion
     steps_count == 0 ? nil : completed_steps_count / steps_count.to_f
   end
@@ -265,7 +269,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def available_points(use_cache: true)
-    if use_cache
+    if use_cache && cached?
       cache = super()
       return cache unless cache.nil?
     end
@@ -329,7 +333,7 @@ class Tasks::Models::Task < ApplicationRecord
   def published_points(past_due: nil, use_cache: true)
     past_due = past_due? if past_due.nil?
 
-    if use_cache
+    if use_cache && cached?
       if past_due
         return if published_points_after_due&.nan?
         return published_points_after_due \
@@ -540,7 +544,7 @@ class Tasks::Models::Task < ApplicationRecord
   def provisional_score?(past_due: nil, use_cache: true)
     past_due = past_due? if past_due.nil?
 
-    if use_cache
+    if use_cache && cached?
       if past_due
         return is_provisional_score_after_due \
           unless is_provisional_score_after_due.nil?
@@ -580,7 +584,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def started?(use_cache: false)
-    if use_cache
+    if use_cache && cached?
       completed_steps_count > 0
     else
       task_steps.loaded? ? task_steps.any?(&:completed?) : task_steps.complete.exists?
@@ -588,7 +592,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def completed?(use_cache: false)
-    if use_cache
+    if use_cache && cached?
       completed_steps_count == steps_count
     else
       task_steps.loaded? ? task_steps.all?(&:completed?) : !task_steps.incomplete.exists?
