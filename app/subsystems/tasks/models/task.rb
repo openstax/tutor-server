@@ -232,7 +232,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def cached?
-    task_plan.nil? || updated_at >= task_plan.updated_at
+    updated_at.nil? || task_plan.nil? || updated_at >= task_plan.updated_at
   end
 
   def completion
