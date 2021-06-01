@@ -3,14 +3,13 @@ require 'vcr_helper'
 
 RSpec.describe Tasks::GetPerformanceReport, type: :routine do
   let(:ecosystem) { FactoryBot.create :mini_ecosystem }
-  let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
-  let(:course) {
+  let(:offering)  { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+  let(:course)    do
     FactoryBot.create :course_profile_course, :with_grading_templates,
                       offering: offering
-  }
+  end
 
   before(:each) do
-
     @teacher = FactoryBot.create(:user_profile)
     @student_1 = FactoryBot.create(:user_profile)
     @student_2 = FactoryBot.create(:user_profile)
@@ -155,8 +154,6 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
     let(:second_period_report) { reports.find { |report| report.period == second_period } }
 
     it 'has the proper structure' do
-
-
       expect(reports.size).to eq expected_periods
       reports.each_with_index do |report, rindex|
         expect(report.data_headings.size).to eq expected_tasks
@@ -191,10 +188,14 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    context "auto_grading_feedback_on == 'answer'" do
+    context 'immediate feedback' do
       before do
         Tasks::Models::GradingTemplate.find_each do |grading_template|
-          grading_template.update_columns auto_grading_feedback_on: :answer, late_work_penalty: 0.0
+          grading_template.update_columns(
+            auto_grading_feedback_on: :answer,
+            manual_grading_feedback_on: :grade,
+            late_work_penalty: 0.0
+          )
         end
         Tasks::Models::Task.preload(task_steps: :tasked).find_each do |task|
           task.update_cached_attributes.save validate: false
@@ -311,7 +312,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           be_within(1e-6).of(0.9), 0.0
         ]
         expect(first_period_students.map(&:reading_progress)).to match_array [
-          0.05263157894736842, 1.0,
+          0.058823529411764705, 1.0
         ]
 
         expect(first_period_students.map(&:course_average)).to eq(
@@ -429,10 +430,14 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    context "auto_grading_feedback_on == 'due'" do
+    context 'feedback on due date' do
       before do
         Tasks::Models::GradingTemplate.find_each do |grading_template|
-          grading_template.update_columns auto_grading_feedback_on: :due, late_work_penalty: 0.0
+          grading_template.update_columns(
+            auto_grading_feedback_on: :due,
+            manual_grading_feedback_on: :grade,
+            late_work_penalty: 0.0
+          )
         end
         Tasks::Models::Task.preload(task_steps: :tasked).find_each do |task|
           task.update_cached_attributes.save validate: false
@@ -548,7 +553,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           be_within(1e-6).of(0.9), 0.0
         ]
         expect(first_period_students.map(&:reading_progress)).to match_array [
-          0.05263157894736842, 1.0
+          0.058823529411764705, 1.0
         ]
         expect(first_period_students.map(&:course_average)).to eq(
           first_period_report.students.map{ |s|
@@ -608,10 +613,14 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    context "auto_grading_feedback_on == 'publish'" do
+    context 'feedback on publish' do
       before do
         Tasks::Models::GradingTemplate.find_each do |grading_template|
-          grading_template.update_columns auto_grading_feedback_on: :publish, late_work_penalty: 0.0
+          grading_template.update_columns(
+            auto_grading_feedback_on: :publish,
+            manual_grading_feedback_on: :publish,
+            late_work_penalty: 0.0
+          )
         end
         Tasks::Models::Task.preload(task_steps: :tasked).find_each do |task|
           task.update_cached_attributes.save validate: false
@@ -724,7 +733,7 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           0.0, nil
         ]
         expect(first_period_students.map(&:reading_progress)).to match_array [
-          0.05263157894736842, 1.0,
+          0.058823529411764705, 1.0
         ]
 
         expect(first_period_students.map(&:course_average)).to  match_array [
@@ -831,10 +840,14 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       expect(data_types).to eq expected_task_types
     end
 
-    context "auto_grading_feedback_on == 'answer'" do
+    context 'immediate feedback' do
       before do
         Tasks::Models::GradingTemplate.find_each do |grading_template|
-          grading_template.update_columns auto_grading_feedback_on: :answer, late_work_penalty: 0.0
+          grading_template.update_columns(
+            auto_grading_feedback_on: :answer,
+            manual_grading_feedback_on: :grade,
+            late_work_penalty: 0.0
+          )
         end
         Tasks::Models::Task.preload(task_steps: :tasked).find_each do |task|
           task.update_cached_attributes.save validate: false
@@ -916,10 +929,14 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
       end
     end
 
-    context "auto_grading_feedback_on == 'publish'" do
+    context 'feedback on due date' do
       before do
         Tasks::Models::GradingTemplate.find_each do |grading_template|
-          grading_template.update_columns auto_grading_feedback_on: :publish, late_work_penalty: 0.0
+          grading_template.update_columns(
+            auto_grading_feedback_on: :publish,
+            manual_grading_feedback_on: :publish,
+            late_work_penalty: 0.0
+          )
         end
         Tasks::Models::Task.preload(task_steps: :tasked).find_each do |task|
           task.update_cached_attributes.save validate: false

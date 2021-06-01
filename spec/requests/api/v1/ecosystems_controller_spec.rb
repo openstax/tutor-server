@@ -199,7 +199,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
-        expect(hash[:total_count]).to eq(165)
+        expect(hash[:total_count]).to eq(168)
         hash[:items].each do |item|
           expect(item[:pool_types]).not_to be_empty
         end
@@ -213,7 +213,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
 
         expect(response).to have_http_status(:success)
         hash = response.body_as_hash
-        expect(hash[:total_count]).to eq(165)
+        expect(hash[:total_count]).to eq(168)
         hash[:items].each do |item|
           expect(item[:is_excluded]).to eq false
         end

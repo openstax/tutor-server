@@ -30,26 +30,5 @@ module Content
     def valid?
       errors.empty?
     end
-
-    def update_books!
-      current_books = books
-      result = current_books.map(&:update_version!)
-      self.books = current_books.map(&:to_h)
-      result
-    end
-
-    def update_exercises!
-      current_books = books
-      result = current_books.map(&:update_exercises!)
-      self.books = current_books.map(&:to_h)
-      result
-    end
-
-    def discard_exercises!
-      current_books = books
-      result = current_books.map(&:discard_exercises!)
-      self.books = current_books.map(&:to_h)
-      result
-    end
   end
 end

@@ -231,12 +231,16 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
     click_link 'Edit'
     click_link 'Roster'
 
-    expect(page).to have_content(/.*Yes.*No.*No.*Yes/)
+    expect(student_1.reload).not_to be_is_comped
+    expect(student_2.reload).to be_is_comped
+    expect(page).to have_content(/Paid\?.*Comped\?.*Yes.*No.*No.*Yes/)
 
-    click_link('No')
+    find('#best_in_place_course_membership_models_student_1_is_comped').click
     wait_for_ajax
 
-    expect(page).to have_content(/.*Yes.*Yes.*No.*Yes/)
+    expect(student_1.reload).to be_is_comped
+    expect(student_2.reload).to be_is_comped
+    expect(page).to have_content(/Paid\?.*Comped\?.*Yes.*Yes.*No.*Yes/)
 
     first('#students tbody tr').click_link("11:59:59")
     wait_for_ajax

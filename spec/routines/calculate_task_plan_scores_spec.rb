@@ -277,7 +277,10 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           )
           expect(tasking_plan_output.gradable_step_count).to eq 0
           expect(tasking_plan_output.ungraded_step_count).to eq 0
-          grades_need_publishing = task_plan.grading_template.auto_grading_feedback_on_publish?
+          grades_need_publishing = task_plan.grading_template.auto_grading_feedback_on_publish? || (
+            task_plan.grading_template.manual_grading_feedback_on_publish? &&
+            task_plan.tasks.any? { |task| task.tasked_exercises.any?(&:was_manually_graded?) }
+          )
           expect(tasking_plan_output.grades_need_publishing).to eq grades_need_publishing
 
           available_points = tasking_plan_output.question_headings.sum(&:points_without_dropping)
@@ -448,7 +451,10 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
           )
           expect(tasking_plan_output.gradable_step_count).to eq 0
           expect(tasking_plan_output.ungraded_step_count).to eq 0
-          grades_need_publishing = task_plan.grading_template.auto_grading_feedback_on_publish?
+          grades_need_publishing = task_plan.grading_template.auto_grading_feedback_on_publish? || (
+            task_plan.grading_template.manual_grading_feedback_on_publish? &&
+            task_plan.tasks.any? { |task| task.tasked_exercises.any?(&:was_manually_graded?) }
+          )
           expect(tasking_plan_output.grades_need_publishing).to eq grades_need_publishing
 
           available_points = tasking_plan_output.question_headings.sum(&:points_without_dropping)

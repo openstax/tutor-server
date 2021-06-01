@@ -34,7 +34,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
       type: 'homework',
       ecosystem: @ecosystem,
       settings: {
-        exercises: exercises[0..5].map do |exercise|
+        exercises: exercises.order(:number).first(6).map do |exercise|
           { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
         end,
         exercises_count_dynamic: 3

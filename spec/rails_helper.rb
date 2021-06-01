@@ -71,7 +71,8 @@ Capybara.register_driver :selenium_chrome_headless do |app|
   Capybara::Selenium::Driver.new app, browser: :chrome, options: options
 end
 
-Capybara.javascript_driver = :selenium_chrome_headless
+Capybara.javascript_driver = ActiveModel::Type::Boolean.new.cast(ENV.fetch('HEADLESS', true)) ?
+                               :selenium_chrome_headless : :selenium_chrome
 
 Capybara.asset_host = 'http://localhost:3001'
 
