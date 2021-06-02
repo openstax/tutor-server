@@ -7,16 +7,20 @@ class OpenStax::Content::S3
     Rails.application.secrets.openstax[:content]
   end
 
-  def region
-    content_secrets[:s3_region]
-  end
-
   def bucket_name
     content_secrets[:bucket_name]
   end
 
   def bucket_configured?
     !bucket_name.blank?
+  end
+
+  def client
+    @client ||= Aws::S3::Client.new(
+      region: content_secrets[:s3_region],
+      access_key_id: content_secrets[:s3_access_key_id],
+      secret_access_key: content_secrets[:s3_secret_access_key]
+    )
   end
 
   def ls(archive_version = nil)
@@ -33,7 +37,7 @@ class OpenStax::Content::S3
       delimiter = ':'
     end
 
-    @ls[archive_version] = Aws::S3::Client.new(region: region).list_objects_v2(
+    @ls[archive_version] = client.list_objects_v2(
       bucket: bucket_name, prefix: prefix, delimiter: delimiter
     ).flat_map(&:common_prefixes).map do |common_prefix|
       common_prefix.prefix.sub(prefix, '').chomp(delimiter)
