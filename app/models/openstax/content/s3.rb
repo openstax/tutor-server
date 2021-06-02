@@ -7,6 +7,10 @@ class OpenStax::Content::S3
     Rails.application.secrets.openstax[:content]
   end
 
+  def region
+    content_secrets[:s3_region]
+  end
+
   def bucket_name
     content_secrets[:bucket_name]
   end
@@ -29,7 +33,7 @@ class OpenStax::Content::S3
       delimiter = ':'
     end
 
-    @ls[archive_version] = Aws::S3::Client.new.list_objects_v2(
+    @ls[archive_version] = Aws::S3::Client.new(region: region).list_objects_v2(
       bucket: bucket_name, prefix: prefix, delimiter: delimiter
     ).flat_map(&:common_prefixes).map do |common_prefix|
       common_prefix.prefix.sub(prefix, '').chomp(delimiter)
