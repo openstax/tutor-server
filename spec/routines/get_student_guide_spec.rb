@@ -2,23 +2,23 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe GetStudentGuide, type: :routine, speed: :slow do
-  let(:ecosystem) { FactoryBot.create :mini_ecosystem }
-  let(:book) { ecosystem.books.first }
-  let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
-  let(:course) {
+  let(:ecosystem)       { FactoryBot.create :mini_ecosystem }
+  let(:book)            { ecosystem.books.first }
+  let(:offering)        { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+  let(:course)          do
     FactoryBot.create :course_profile_course, :with_grading_templates,
                       offering: offering, is_preview: true
-  }
-  let(:period) { FactoryBot.create :course_membership_period, course: course }
-  let(:second_period) { FactoryBot.create :course_membership_period, course: course }
+  end
+  let(:period)          { FactoryBot.create :course_membership_period, course: course }
+  let(:second_period)   { FactoryBot.create :course_membership_period, course: course }
 
-  let(:teacher) { FactoryBot.create(:user_profile) }
-  let(:student) { FactoryBot.create(:user_profile) }
-  let(:second_student) { FactoryBot.create(:user_profile) }
+  let(:teacher)         { FactoryBot.create(:user_profile) }
+  let(:student)         { FactoryBot.create(:user_profile) }
+  let(:second_student)  { FactoryBot.create(:user_profile) }
 
-  let(:role) { AddUserAsPeriodStudent[period: period, user: student] }
-  let(:second_role) { AddUserAsPeriodStudent[period: second_period, user: second_student] }
-  let(:teacher_role) { AddUserAsCourseTeacher[course: course, user: teacher] }
+  let(:role)            { AddUserAsPeriodStudent[period: period, user: student] }
+  let(:second_role)     { AddUserAsPeriodStudent[period: second_period, user: second_student] }
+  let(:teacher_role)    { AddUserAsCourseTeacher[course: course, user: teacher] }
 
   subject(:guide)       { described_class[role: role].deep_symbolize_keys }
 

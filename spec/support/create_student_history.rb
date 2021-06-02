@@ -80,7 +80,7 @@ class CreateStudentHistory
   end
 
   def create_ireading_task_plan(ecosystem, course, periods)
-    page_ids = ecosystem.pages.map { |pg| pg.id.to_s }
+    page_ids = ecosystem.pages.sort_by(&:book_indices).map { |pg| pg.id.to_s }
     task_plan = FactoryBot.build(
       :tasks_task_plan,
       course: course,
@@ -118,9 +118,8 @@ class CreateStudentHistory
   end
 
   def create_homework_task_plan(ecosystem, course, periods, page)
-    exercise_id = ecosystem.chapters.first.pages[page].homework_core_exercise_ids.first
-    exercise = Content::Models::Exercise.find(exercise_id)
-    exercises = [ { id: exercise_id.to_s, points: [ 1 ] * exercise.number_of_questions } ]
+    page = ecosystem.pages.sort_by(&:book_indices)[page]
+    exercise = page.exercises.sort_by(&:number).first
 
     task_plan = FactoryBot.build(
       :tasks_task_plan,
@@ -130,7 +129,8 @@ class CreateStudentHistory
       title: 'Homework',
       type: 'homework',
       settings: {
-        exercises: exercises,
+        page_ids: [ page.id.to_s ],
+        exercises: [ { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions } ],
         exercises_count_dynamic: 2
       },
       num_tasking_plans: 0

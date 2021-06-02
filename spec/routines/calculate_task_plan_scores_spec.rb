@@ -2,35 +2,40 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :slow do
-  before(:all) { DatabaseCleaner.clean }
+  before(:all)    { DatabaseCleaner.clean }
 
-  let(:ecosystem) { FactoryBot.create :mini_ecosystem }
-  let(:book) { ecosystem.books.first }
-  let(:offering) { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
-  let(:course) {
+  let(:ecosystem)      { FactoryBot.create :mini_ecosystem }
+  let(:book)           { ecosystem.books.first }
+  let(:homework_pages) { book.pages.sort_by(&:book_indices).first(3) }
+  let(:offering)       { FactoryBot.create :catalog_offering, ecosystem: ecosystem }
+  let(:course)         do
     FactoryBot.create :course_profile_course, :with_grading_templates,
       offering: offering, is_preview: true
-  }
-  let(:reading_pages) { book.pages[0..2] }
-  let(:homework_pages) { book.pages[0..2] }
+  end
   let(:number_of_students) { 8 }
-  let(:reading_task_plan) {
+  let(:reading_task_plan)  do
     FactoryBot.create :tasked_task_plan,
       type: :reading,
       number_of_students: number_of_students,
       course: course,
       ecosystem: ecosystem
-  }
-  let(:homework_task_plan) {
+  end
+  let(:homework_task_plan) do
     FactoryBot.create :tasked_task_plan,
       type: :homework,
       ecosystem: ecosystem,
       course: course,
       number_of_students: number_of_students,
-      target: course.periods.first
-  }
-
-  let(:external_task_plan) {
+      target: course.periods.first,
+      settings: {
+        page_ids: homework_pages.map(&:id).map(&:to_s),
+        exercises: homework_pages.first.exercises.sort_by(&:number).first(5).map do |exercise|
+          { id: exercise.id.to_s, points: [ 1.0 ] * exercise.number_of_questions }
+        end,
+        exercises_count_dynamic: 3
+      }
+  end
+  let(:external_task_plan) do
     FactoryBot.create(
       :tasked_task_plan,
       type: :external,
@@ -42,11 +47,9 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
       target: course.periods.first,
       settings: { external_url: 'https://www.example.com' }
     )
-  }
+  end
 
-  before(:each) {
-    task_plan.tasks.each(&:touch).each(&:reload)
-  }
+  before(:each) { task_plan.tasks.each(&:touch).each(&:reload) }
 
   let(:tasking_plans) { task_plan.tasking_plans.sort_by { |tp| tp.target.name } }
   let(:tasks) do
@@ -64,12 +67,13 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
 
   context 'homework' do
     let(:task_plan) { homework_task_plan }
-    before(:each) {
+    before(:each)   do
       spaced_page = FactoryBot.create :content_page, book: book
-      homework_pages[0].exercises.each do |exercise|
+      homework_pages.first.exercises.each do |exercise|
         FactoryBot.create :content_exercise, page: spaced_page, group_uuid: exercise.group_uuid
       end
-    }
+    end
+
     context 'with an unworked plan' do
       it 'shows available points but no total points/scores' do
         scores.each_with_index do |tasking_plan_output, index|
