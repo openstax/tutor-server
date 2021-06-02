@@ -16,22 +16,23 @@ class OpenStax::Content::S3
   end
 
   def ls(archive_version = nil)
-    @ls[archive_version] ||= begin
-      archive_path = content_secrets[:archive_path].chomp('/')
+    return @ls[archive_version] unless @ls[archive_version].nil?
+    return unless bucket_configured?
 
-      if archive_version.nil?
-        prefix = "#{archive_path}/"
-        delimiter = '/'
-      else
-        prefix = "#{archive_path}/#{archive_version}/contents/"
-        delimiter = ':'
-      end
+    archive_path = content_secrets[:archive_path].chomp('/')
 
-      Aws::S3::Client.new.list_objects_v2(
-        bucket: bucket_name, prefix: prefix, delimiter: delimiter
-      ).flat_map(&:common_prefixes).map do |common_prefix|
-        common_prefix.prefix.sub(prefix, '').chomp(delimiter)
-      end
+    if archive_version.nil?
+      prefix = "#{archive_path}/"
+      delimiter = '/'
+    else
+      prefix = "#{archive_path}/#{archive_version}/contents/"
+      delimiter = ':'
+    end
+
+    @ls[archive_version] = Aws::S3::Client.new.list_objects_v2(
+      bucket: bucket_name, prefix: prefix, delimiter: delimiter
+    ).flat_map(&:common_prefixes).map do |common_prefix|
+      common_prefix.prefix.sub(prefix, '').chomp(delimiter)
     end
   end
 end

@@ -79,7 +79,7 @@ class OpenStax::Content::Archive
   def add_latest_book_version_if_missing(object)
     book_id, page_id = object.split(':', 2)
     book_uuid, book_version = book_id.split('@', 2)
-    return object unless book_version.nil?
+    return object unless book_version.nil? && s3.bucket_configured?
 
     s3.ls(@version).each do |book|
       uuid, version = book.split('@')
