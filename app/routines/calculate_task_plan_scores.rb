@@ -153,17 +153,23 @@ class CalculateTaskPlanScores
 
       available_points_without_dropping_per_question_index =
         longest_task.available_points_without_dropping_per_question_index
-      available_points_per_question_index = longest_task.available_points_per_question_index
       task_steps = task_plan.type == 'external' ? longest_task.external_steps :
                                                   longest_task.exercise_and_placeholder_steps
+      zeroed_question_ids_set = Set.new(
+        task_plan&.dropped_questions&.filter(&:zeroed?)&.map(&:question_id) || []
+      )
       question_headings_array = task_steps.each_with_index.map do |step, index|
         if step.external?
           { title: 'Clicked' }
         else
           title = "Q#{index + 1}"
-          # These won't work if task_steps contains both exercises and external for the same task
+          question_ids = step_question_ids[index].uniq.sort
+
+          # The index won't work if the same task contains both exercises and external steps
           points_without_dropping = available_points_without_dropping_per_question_index[index]
-          points = available_points_per_question_index[index]
+          points = !zeroed_question_ids_set.empty? && question_ids.all? do |question_id|
+            zeroed_question_ids_set.include?(question_id)
+          end ? 0.0 : points_without_dropping
 
           type = step.fixed_group? && step.exercise? ? (
             step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ'
@@ -176,7 +182,7 @@ class CalculateTaskPlanScores
               points_without_dropping: points_without_dropping,
               points: points,
               exercise_ids: step_exercise_ids[index].uniq.sort,
-              question_ids: step_question_ids[index].uniq.sort,
+              question_ids: question_ids,
               exercise_id: step.tasked.content_exercise_id,
               question_id: step.tasked.question_id
             }
