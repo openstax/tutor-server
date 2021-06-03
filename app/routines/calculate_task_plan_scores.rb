@@ -165,10 +165,11 @@ class CalculateTaskPlanScores
           title = "Q#{index + 1}"
           question_ids = step_question_ids[index].uniq.sort
 
-          # These won't work if task_steps contains both exercises and external for the same task
+          # The index won't work if the same task contains both exercises and external steps
           points_without_dropping = available_points_without_dropping_per_question_index[index]
-          points = question_ids.all? { |qid| zeroed_question_ids_set.include?(qid) } ?
-            0.0 : points_without_dropping
+          points = !zeroed_question_ids_set.empty? && question_ids.all? do |question_id|
+            zeroed_question_ids_set.include?(question_id)
+          end ? 0.0 : points_without_dropping
 
           type = step.fixed_group? && step.exercise? ? (
             step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ'
