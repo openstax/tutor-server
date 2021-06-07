@@ -45,9 +45,11 @@ class GetPageExerciseIdsByPoolTypes
     # Add teacher-created exercises if course is provided
     return if course.nil?
 
-    teacher_exercise_ids = Content::Models::Exercise.where(
+    teacher_exercises = Content::Models::Exercise.where(
       content_page_id: pages.map(&:id), user_profile_id: course.related_teacher_profile_ids
-    ).pluck(:id)
+    )
+    teacher_exercises = teacher_exercises.where(id: exercise_ids) unless exercise_ids.nil?
+    teacher_exercise_ids = teacher_exercises.pluck(:id)
 
     (pool_types - [ :reading_context, :reading_dynamic ]).each do |pool_type|
       outputs.exercise_ids_by_pool_type[pool_type].concat teacher_exercise_ids
