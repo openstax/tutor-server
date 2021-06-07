@@ -28,7 +28,7 @@ class GetPageExerciseIdsByPoolTypes
       page_ids = page_ids.map(&:to_i)
       ecosystem.pages.select { |page| page_ids.include? page.id }
     else
-      ecosystem.pages.select(*pool_method_name_by_pool_type.values).where(id: page_ids)
+      ecosystem.pages.select(:id, *pool_method_name_by_pool_type.values).where(id: page_ids)
     end
 
     # Build map of pool types to pools
