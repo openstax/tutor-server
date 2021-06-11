@@ -108,7 +108,9 @@ VCR.configure do |c|
     c.filter_secret(['aws', 's3', field_name])
   end
 
-  c.filter_secret ['openstax', 'content', 'bucket_name']
+  [ 'bucket_name', 's3_region', 's3_access_key_id', 's3_secret_access_key' ].each do |field_name|
+    c.filter_secret ['openstax', 'content', field_name]
+  end
 
   [ 'Authorization', 'Cookie', 'X-Amz-Security-Token' ].each do |request_header|
     c.filter_request_header request_header

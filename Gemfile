@@ -78,6 +78,9 @@ gem 'chronic'
 # API versioning and documentation
 gem 'openstax_api'
 
+# Used to fetch and parse OpenStax book content
+gem 'openstax_content'
+
 gem 'apipie-rails'
 gem 'maruku'
 
