@@ -322,6 +322,8 @@ Rails.application.routes.draw do
     resources :payments, only: :index do
       collection do
         put :extend_payment_due_at
+        post :generate_payment_codes
+        get :download_payment_code_report
       end
     end
 

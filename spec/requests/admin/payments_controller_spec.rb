@@ -34,4 +34,14 @@ RSpec.describe Admin::PaymentsController, type: :request do
       end
     end
   end
+
+  context 'generating payment codes' do
+    it 'downloads a CSV file' do
+      expect {
+         post generate_payment_codes_admin_payments_path, params: { prefix: 'abc', amount: 20 }
+      }.to change { PaymentCode.count }.by 20
+
+      expect(response.body).to match('Code')
+    end
+  end
 end

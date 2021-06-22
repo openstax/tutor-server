@@ -16,4 +16,19 @@ class Admin::PaymentsController < Admin::BaseController
     redirect_to admin_payments_path, notice: "Extended payment due dates"
   end
 
+  def generate_payment_codes
+    params.require(:prefix)
+
+    path = GeneratePaymentCodes.call(
+      prefix: params[:prefix],
+      amount: params[:amount].to_i,
+      export_to_csv: true
+    ).outputs.export_path
+
+    send_file path
+  end
+
+  def download_payment_code_report
+    send_file  GeneratePaymentCodeReport.call.outputs.export_path
+  end
 end

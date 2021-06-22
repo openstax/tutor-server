@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_22_152149) do
+ActiveRecord::Schema.define(version: 2021_06_23_225308) do
 
   create_sequence "active_storage_attachments_id_seq"
   create_sequence "active_storage_blobs_id_seq"
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 2021_06_22_152149) do
   create_sequence "oauth_applications_id_seq"
   create_sequence "openstax_accounts_accounts_id_seq"
   create_sequence "openstax_salesforce_users_id_seq"
+  create_sequence "payment_codes_id_seq"
   create_sequence "ratings_exercise_group_book_parts_id_seq"
   create_sequence "ratings_period_book_parts_id_seq"
   create_sequence "ratings_role_book_parts_id_seq"
@@ -711,6 +712,14 @@ ActiveRecord::Schema.define(version: 2021_06_22_152149) do
     t.string "instance_url", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "payment_codes", force: :cascade do |t|
+    t.string "code"
+    t.datetime "redeemed_at"
+    t.bigint "course_membership_student_id"
+    t.index ["code"], name: "index_payment_codes_on_code", unique: true
+    t.index ["course_membership_student_id"], name: "index_payment_codes_on_course_membership_student_id"
   end
 
   create_table "ratings_exercise_group_book_parts", force: :cascade do |t|

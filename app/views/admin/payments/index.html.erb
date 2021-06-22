@@ -12,3 +12,30 @@ time zone).</p>
                  class: 'btn btn-primary',
                  data: { confirm: "Are you sure you want to extend a whole bunch of due dates?"} %>
 <% end %>
+
+<h3>Bookstore Payment Codes</h3>
+
+<%= form_tag(generate_payment_codes_admin_payments_path, method: :post) do %>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="form-group">
+        <label for="prefix">Prefix</label>
+        <%= text_field_tag 'prefix', nil, class: 'form-control'  %>
+      </div>
+    </div>
+    <div class="col-xs-12">
+      <div class="form-group">
+        <label for="amount">Amount</label>
+        <%= number_field_tag 'amount', nil, min: 1, max: 999, class: 'form-control'  %>
+      </div>
+    </div>
+  </div>
+  <%= submit_tag 'Generate Codes', class: 'btn btn-primary' %>
+<% end %>
+
+<hr>
+
+<%= button_to 'Download Usage Report',
+    download_payment_code_report_admin_payments_path,
+    method: 'get',
+    class: 'btn btn-primary' %>
