@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_19_211921) do
+ActiveRecord::Schema.define(version: 2021_06_22_152149) do
 
   create_sequence "active_storage_attachments_id_seq"
   create_sequence "active_storage_blobs_id_seq"
@@ -1001,6 +1001,7 @@ ActiveRecord::Schema.define(version: 2021_04_19_211921) do
     t.integer "ungraded_step_count", default: 0, null: false
     t.integer "wrq_count", default: 0, null: false
     t.integer "gradable_step_count", default: 0, null: false
+    t.datetime "updated_by_instructor_at"
     t.index ["cloned_from_id"], name: "index_tasks_task_plans_on_cloned_from_id"
     t.index ["content_ecosystem_id"], name: "index_tasks_task_plans_on_content_ecosystem_id"
     t.index ["course_profile_course_id"], name: "index_tasks_task_plans_on_course_profile_course_id"

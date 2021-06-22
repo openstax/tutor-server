@@ -75,6 +75,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
         homework_plan.tasks.each do | task |
           expect(task.task_steps.map(&:group_type)).to eq(expected_step_types)
+          expect(task).to be_cache_valid
         end
       end
     end
@@ -113,6 +114,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
 
         homework_plan.tasks.each do | task |
           expect(task.task_steps.map(&:group_type)).to eq(expected_step_types)
+          expect(task).to be_cache_valid
         end
       end
 
@@ -181,6 +183,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(task.points).to eq 9.0
           expect(task.score_without_lateness).to eq 1.0
           expect(task.score).to eq 1.0
+          expect(task).to be_cache_valid
         end
       end
     end
@@ -220,6 +223,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
             task = reading_plan.tasks.first
             expect(task.taskings.first.role).to eq teacher_student_role
             expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
+            expect(task).to be_cache_valid
           end
 
           it 'does not save plan if it is new' do
@@ -241,6 +245,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(reading_plan).not_to be_out_to_students
           reading_plan.tasks.each do |task|
             expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
+            expect(task).to be_cache_valid
           end
         end
 
@@ -289,6 +294,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(reading_plan).to be_out_to_students
           reading_plan.tasks.each do |task|
             expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
+            expect(task).to be_cache_valid
           end
 
           reading_tasking_plan.update_attribute :due_at, reading_tasking_plan.time_zone.now + 1.hour
@@ -299,6 +305,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(reading_plan).to be_out_to_students
           reading_plan.tasks.each do |task|
             expect(task.due_at).to be_within(1e-6).of(reading_tasking_plan.due_at)
+            expect(task).to be_cache_valid
           end
         end
 
@@ -331,6 +338,8 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         described_class.call(task_plan: reading_plan)
         new_user.roles.each { |role| role.taskings.each { |tasking| tasking.task.really_destroy! } }
         expect(reading_plan.reload).to be_out_to_students
+        reading_plan.update_attribute :updated_by_instructor_at, Time.current
+        reading_plan.tasks.each { |task| expect(task).not_to be_cache_valid }
       end
 
       context 'before the open date' do
@@ -351,6 +360,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
           expect(reading_plan).not_to be_out_to_students
           reading_plan.tasks.each do |task|
             expect(task.opens_at).to be_within(1e-6).of(reading_tasking_plan.opens_at)
+            expect(task).to be_cache_valid
           end
         end
 
@@ -411,6 +421,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
               expect(task.closes_at).to                be_within(1e-6).of(new_closes_at)
               expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
               expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
+              expect(task).to be_cache_valid
             end
           end
         end
@@ -446,6 +457,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
               expect(task.closes_at).to   be_within(1e-6).of(new_closes_at)
               expect(task.auto_grading_feedback_on).to eq gt.auto_grading_feedback_on
               expect(task.manual_grading_feedback_on).to eq gt.manual_grading_feedback_on
+              expect(task).to be_cache_valid
             end
           end
         end

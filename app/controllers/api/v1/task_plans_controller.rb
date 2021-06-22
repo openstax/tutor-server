@@ -294,7 +294,9 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def distribute_tasks(task_plan)
     preview_only = !task_plan.is_publish_requested && !task_plan.is_published?
 
-    task_plan.publish_last_requested_at = Time.current \
+    current_time = Time.current
+    task_plan.updated_by_instructor_at = current_time
+    task_plan.publish_last_requested_at = current_time \
       unless preview_only || task_plan.out_to_students?
     task_plan.save
     return if task_plan.errors.any?

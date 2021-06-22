@@ -219,7 +219,8 @@ module Tasks
       task_types = Tasks::Models::Task.task_types.values_at(:reading, :homework, :external)
       tt = Tasks::Models::Task.arel_table
       er = Entity::Role.arel_table
-      Tasks::Models::Task
+
+      tasks = Tasks::Models::Task
         .select([ tt[Arel.star], er[:id].as('"role_id"') ])
         .joins(:course, task_plan: :tasking_plans, taskings: { role: [ profile: :account ] })
         .where(task_type: task_types, task_plan: { withdrawn_at: nil }, taskings: { role: roles })
@@ -233,7 +234,12 @@ module Tasks
         .preload(:taskings, :course, task_plan: [ :tasking_plans, :course, :extensions ])
         .reorder(nil)
         .distinct
-        .group_by(&:role_id)
+
+      # Preload uncached tasks to avoid N + 1 queries
+      uncached_tasks = tasks.reject(&:cache_valid?)
+      ActiveRecord::Associations::Preloader.new.preload uncached_tasks, task_steps: :tasked
+
+      tasks.group_by(&:role_id)
     end
 
     def filter_and_sort_tasking_plans(tasks, course, period)
