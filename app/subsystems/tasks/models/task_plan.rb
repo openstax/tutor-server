@@ -1,6 +1,9 @@
 require 'json-schema'
 
 class Tasks::Models::TaskPlan < ApplicationRecord
+  # Allow use of 'type' column without STI
+  self.inheritance_column = nil
+
   acts_as_paranoid column: :withdrawn_at, without_default_scope: true
 
   UPDATEABLE_ATTRIBUTES_AFTER_OPEN = [
@@ -9,7 +12,8 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     'last_published_at',
     'tasks_grading_template_id',
     'gradable_step_count',
-    'ungraded_step_count'
+    'ungraded_step_count',
+    'updated_by_instructor_at'
   ]
 
   CACHE_COLUMNS = [
@@ -18,9 +22,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   ]
 
   attr_accessor :is_publish_requested
-
-  # Allow use of 'type' column without STI
-  self.inheritance_column = nil
 
   belongs_to :cloned_from, foreign_key: 'cloned_from_id',
                            class_name: 'Tasks::Models::TaskPlan',
@@ -76,6 +77,13 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     @unarchived_period_tasking_plans = nil
 
     super
+  end
+
+  def updated_by_instructor_at
+    val = super
+    return val unless val.nil?
+
+    publish_last_requested_at
   end
 
   def withdrawn?

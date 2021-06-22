@@ -232,13 +232,10 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def cache_valid?
-    return true if updated_at.nil? || task_plan.nil?
-
-    last_published_at = [
-      task_plan.publish_last_requested_at, task_plan.last_published_at
-    ].compact.max
-
-    last_published_at.nil? || updated_at >= last_published_at
+    updated_at.nil? ||
+    task_plan.nil? ||
+    task_plan.updated_by_instructor_at.nil? ||
+    updated_at >= task_plan.updated_by_instructor_at
   end
 
   def completion

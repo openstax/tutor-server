@@ -338,7 +338,7 @@ RSpec.describe DistributeTasks, type: :routine, truncation: true, speed: :medium
         described_class.call(task_plan: reading_plan)
         new_user.roles.each { |role| role.taskings.each { |tasking| tasking.task.really_destroy! } }
         expect(reading_plan.reload).to be_out_to_students
-        reading_plan.update_attribute :publish_last_requested_at, Time.current
+        reading_plan.update_attribute :updated_by_instructor_at, Time.current
         reading_plan.tasks.each { |task| expect(task).not_to be_cache_valid }
       end
 
