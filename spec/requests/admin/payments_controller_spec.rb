@@ -43,5 +43,10 @@ RSpec.describe Admin::PaymentsController, type: :request do
 
       expect(response.body).to match('Code')
     end
+
+    it 'downloads a report' do
+      get download_payment_code_report_admin_payments_path
+      expect(response.body).to match('Code')
+    end
   end
 end
