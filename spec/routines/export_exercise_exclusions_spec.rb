@@ -110,14 +110,10 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
           specify 'with urls' do
             page_urls = output[:page_hashes].map(&:page_url)
-            expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@page_1.uuid))
-            expect(page_urls).to include(OpenStax::Cnx::V1.webview_url_for(@page_2.uuid))
-            expect(page_urls).not_to include(
-              OpenStax::Cnx::V1.webview_url_for(@page_removed.uuid)
-            )
-            expect(page_urls).not_to include(
-              OpenStax::Cnx::V1.webview_url_for(@exercise_another_eco.page.uuid)
-            )
+            expect(page_urls).to include(@page_1.reference_view_url)
+            expect(page_urls).to include(@page_2.reference_view_url)
+            expect(page_urls).not_to include(@page_removed.reference_view_url)
+            expect(page_urls).not_to include(@exercise_another_eco.page.reference_view_url)
           end
         end
       end
@@ -134,7 +130,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           end
           pages = [@page_1, @page_2, @page_2]
           page_uuids = pages.map(&:uuid) + ['null']
-          page_urls = pages.map { |page| OpenStax::Cnx::V1.webview_url_for(page.uuid) } + ['null']
+          page_urls = pages.map(&:reference_view_url) + ['null']
           book_locations = pages.map { |page| page.book_location.join('.') } + ['null']
 
           with_rows_from_csv('by_course') do |rows|
@@ -219,9 +215,9 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           end
 
           specify 'with urls' do
-            page_urls = [@page_1, @page_2, @page_removed, @exercise_another_eco.page].map do |page|
-              OpenStax::Cnx::V1.webview_url_for(page.uuid)
-            end
+            page_urls = [
+              @page_1, @page_2, @page_removed, @exercise_another_eco.page
+            ].map(&:reference_view_url)
 
             outputs_by_exercise.each do |output|
               output[:page_hashes].map(&:page_url).each do |page_url|
@@ -238,8 +234,9 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           exercise_urls = exercise_numbers.map do |exercise_number|
             OpenStax::Exercises::V1.uri_for("/exercises/#{exercise_number}").to_s
           end
-          page_uuids = [@page_1, @page_2, @page_removed, @exercise_another_eco.page].map(&:uuid)
-          page_urls = page_uuids.map { |page_uuid| OpenStax::Cnx::V1.webview_url_for(page_uuid) }
+          pages = [@page_1, @page_2, @page_removed, @exercise_another_eco.page]
+          page_uuids = pages.map(&:uuid)
+          page_urls = pages.map(&:reference_view_url)
 
           with_rows_from_csv('by_exercise') do |rows|
             headers = rows.first

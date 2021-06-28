@@ -78,6 +78,9 @@ gem 'chronic'
 # API versioning and documentation
 gem 'openstax_api'
 
+# Used to fetch and parse OpenStax book content
+gem 'openstax_content'
+
 gem 'apipie-rails'
 gem 'maruku'
 
@@ -224,7 +227,7 @@ gem 'bootsnap', '~> 1.4.0', require: false
 # Get env variables from .env file
 gem 'dotenv-rails'
 
-gem 'aws-sdk-s3', require: false
+gem 'aws-sdk-s3'
 
 gem 'webpacker', '~> 5.2.x'
 

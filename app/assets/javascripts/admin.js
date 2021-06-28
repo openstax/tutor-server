@@ -1,15 +1,11 @@
-//= require jquery
-//= require best_in_place
-//= require jquery_ujs
-//= require jquery.datetimepicker
-//= require jquery-ui
-//= require best_in_place.jquery-ui
-//= require bootstrap-sprockets
-//= require moment.min
 //= require manager
+//= require best_in_place
+//= require jquery.datetimepicker
+//= require best_in_place.jquery-ui
+//= require moment.min
 
 //=============== Date Time Picker ============//
-$(document).ready(function() {
+$(document).on('turbolinks:load', () => {
   var midnight_today = moment().startOf('day');
   var midnight_tomorrow = midnight_today.clone().add(1, 'day');
 
@@ -22,10 +18,8 @@ $(document).ready(function() {
   $('.datepicker').datetimepicker({
     format: datepicker_format
   });
-});
 
-//============= Courses =================//
-$(document).ready(function() {
+  //============= Courses =================//
   //=========== Course teacher auto complete ==============//
   $('#course_teacher').autocomplete({
     autoFocus: true,

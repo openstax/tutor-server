@@ -6,24 +6,6 @@ module Api::V1
              readable: true,
              schema_info: { required: true }
 
-    property :archive_url,
-             type: String,
-             writeable: false,
-             readable: true,
-             schema_info: {
-               required: false,
-               description: "The base of the archive URL, e.g. 'https://archive.cnx.org'"
-             }
-
-    property :webview_url,
-             type: String,
-             writeable: false,
-             readable: true,
-             schema_info: {
-               required: false,
-               description: "The base of the webview URL, e.g. 'https://cnx.org'"
-             }
-
     property :baked_at,
              type: String,
              writeable: false,

@@ -1,7 +1,21 @@
 //= require jquery
+//= require jquery_ujs
+//= require jquery-ui
 //= require jquery.stickytableheaders.min
+//= require bootstrap-sprockets
+//= require turbolinks
 
-$(document).ready(function() {
+$(document).on('turbolinks:load', () => {
+  $("[data-turbolinks-reload]").change(function() {
+    const location = new URL(window.location)
+    const urlSearchParams = new URLSearchParams(location.search)
+    const element = $(this)
+    urlSearchParams.set(element.attr("name"), element.val())
+    location.search = urlSearchParams.toString()
+    $("input, select, textarea").attr("disabled", true)
+    Turbolinks.visit(location.toString())
+  })
+
   $('[data-toggle="popover"]').popover();
 
   //========== Search bar show only on List of Courses tab =============//

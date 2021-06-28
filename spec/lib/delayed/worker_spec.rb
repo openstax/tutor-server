@@ -101,31 +101,15 @@ module Delayed
         end
       end
 
-      context 'OpenStax::HTTPError' do
-        let(:exception) { OpenStax::HTTPError }
+      context 'Faraday::ClientError' do
+        let(:exception) { Faraday::ClientError }
 
-        it 'fails the job instantly if it is a 400 status' do
+        it 'fails the job instantly' do
           expect(job).to receive(:perform) { raise exception, '404 Not Found' }
 
           expect(delayed_job.failed?).to eq false
           delayed_worker.run(delayed_job)
           expect(delayed_job.reload.failed?).to eq true
-        end
-
-        it 'does not fail the job instantly if it is a 500 status' do
-          expect(job).to receive(:perform) { raise exception, '504 Gateway Timeout' }
-
-          expect(delayed_job.failed?).to eq false
-          delayed_worker.run(delayed_job)
-          expect(delayed_job.reload.failed?).to eq false
-        end
-
-        it 'does not fail the job instantly if it is an unknown status' do
-          expect(job).to receive(:perform) { raise exception, '' }
-
-          expect(delayed_job.failed?).to eq false
-          delayed_worker.run(delayed_job)
-          expect(delayed_job.reload.failed?).to eq false
         end
       end
 

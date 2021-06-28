@@ -4,17 +4,15 @@ class Api::V1::Demo::Import::Book::Representer < Api::V1::Demo::BaseRepresenter
            readable: false,
            writeable: true
 
-  property :archive_url_base,
+  property :archive_version,
            type: String,
-           getter: ->(*) { "#{archive_url}/contents/" },
            readable: true,
            writeable: true
 
   property :uuid,
            type: String,
            readable: true,
-           writeable: true,
-           schema_info: { required: true }
+           writeable: true
 
   property :version,
            type: String,
@@ -26,6 +24,5 @@ class Api::V1::Demo::Import::Book::Representer < Api::V1::Demo::BaseRepresenter
              class: Demo::Mash,
              getter: ->(*) { reading_processing_instructions.map { |inst| Demo::Mash.new inst } },
              readable: true,
-             writeable: true,
-             schema_info: { required: true }
+             writeable: true
 end

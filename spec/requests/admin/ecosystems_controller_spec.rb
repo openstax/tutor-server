@@ -23,50 +23,28 @@ RSpec.describe Admin::EcosystemsController, type: :request, vcr: VCR_OPTS, speed
   end
 
   context 'POST #create' do
-    context 'tutor manifest' do
-      let(:manifest_path)  { 'content/sample_manifest.yml' }
-      let(:manifest_file) { fixture_file_upload(manifest_path) }
+    context 'tutor book' do
+      let(:archive_version)                 { '0.1' }
+      let(:collection_id)                   { 'col00000' }
+      let(:book_uuid)                       { '93e2b09d-261c-4007-a987-0b3062fe154b' }
+      let(:book_version)                    { '4.4' }
+      let(:reading_processing_instructions) do
+        YAML.load_file('config/reading_processing_instructions.yml')['college-physics'].to_yaml
+      end
 
-      it 'imports the manifest into an ecosystem' do
+      it 'imports the book into an ecosystem' do
+        expect_any_instance_of(OpenStax::Content::Abl).to receive(:approved_books).and_return(
+          [ collection_id: collection_id, books: [ uuid: book_uuid ] ]
+        )
+
         expect do
-          post admin_ecosystems_url, params: { ecosystem: { manifest: manifest_file } }
-        end.to change{ Content::Models::Ecosystem.count }.by(1)
-        expect(flash[:notice]).to eq('Ecosystem import job queued.')
-      end
-
-      it 'can update the manifest book version' do
-        expect(ImportEcosystemManifest).to receive(:perform_later) do |params|
-          expect(params[:manifest].books.first.cnx_id).not_to include('@')
-        end
-        expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
-
-        post admin_ecosystems_url,
-             params: { ecosystem: { manifest: manifest_file, books: 'update' } }
-        expect(flash[:notice]).to eq('Ecosystem import job queued.')
-      end
-
-      it 'can update the manifest exercise versions' do
-        expect(ImportEcosystemManifest).to receive(:perform_later) do |params|
-          expect(params[:manifest].books.first.exercise_ids).not_to be_empty
-          params[:manifest].books.first.exercise_ids.each do |exercise_id|
-            expect(exercise_id).not_to include('@')
-          end
-        end
-        expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
-
-        post admin_ecosystems_url,
-             params: { ecosystem: { manifest: manifest_file, exercises: 'update' } }
-        expect(flash[:notice]).to eq('Ecosystem import job queued.')
-      end
-
-      it 'can update the manifest exercise numbers and versions' do
-        expect(ImportEcosystemManifest).to receive(:perform_later) do |params|
-          expect(params[:manifest].books.first.exercise_ids).to be_blank
-        end
-        expect(Jobba).to receive(:find).and_return(instance_spy(Jobba::Status))
-
-        post admin_ecosystems_url,
-             params: { ecosystem: { manifest: manifest_file, exercises: 'discard' } }
+          post admin_ecosystems_url, params: {
+            archive_version: archive_version,
+            collection_id: collection_id,
+            book_version: book_version,
+            reading_processing_instructions: reading_processing_instructions
+          }
+        end.to change { Content::Models::Ecosystem.count }.by(1)
         expect(flash[:notice]).to eq('Ecosystem import job queued.')
       end
     end

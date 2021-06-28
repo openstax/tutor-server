@@ -1,8 +1,6 @@
 //============ Navmenu ============//
 $(document).ready(function() {
-
-$('.top-nav li').localScroll();
-
+    $('.top-nav li').localScroll();
 });
 
 

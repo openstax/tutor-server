@@ -7,12 +7,8 @@
   <h4>Book</h4>
 
   <div class="form-group">
-    <%= fields.label :archive_url_base %>
-    <%=
-      fields.text_field :archive_url_base,
-                        class: 'form-control',
-                        placeholder: Rails.application.secrets.openstax[:cnx][:archive_url]
-    %>
+    <%= fields.label :archive_version %>
+    <%= fields.text_field :archive_version, class: 'form-control', placeholder: 'Latest from S3' %>
   </div>
 
   <div class="form-group">
@@ -24,9 +20,7 @@
 
   <div class="form-group">
     <%= fields.label :version %>
-    <%=
-      fields.text_field :version, class: 'form-control', placeholder: 'Derived from Uuid or latest'
-    %>
+    <%= fields.text_field :version, class: 'form-control', placeholder: 'Latest from S3' %>
   </div>
 
   <%=

@@ -42,7 +42,7 @@ class Content::Routines::PopulateExercisePools
 
         # Practice Widget
         page.practice_widget_exercise_ids << exercise.id \
-          unless exercise.requires_context?
+          unless exercise.has_context? || exercise.requires_context?
       end
     end
 

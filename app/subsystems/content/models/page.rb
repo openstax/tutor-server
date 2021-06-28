@@ -12,7 +12,7 @@ class Content::Models::Page < IndestructibleRecord
 
   auto_uuid :tutor_uuid
 
-  json_serialize :fragments, OpenStax::Cnx::V1::Fragment, array: true
+  json_serialize :fragments, OpenStax::Content::Fragment, array: true
   json_serialize :snap_labs, Hash, array: true
   json_serialize :book_location, Integer, array: true
 
@@ -31,7 +31,6 @@ class Content::Models::Page < IndestructibleRecord
 
   validates :title, presence: true
   validates :uuid, presence: true
-  validates :version, presence: true
   validates :url, presence: true
 
   scope :with_exercises, -> { where('CARDINALITY("content_pages"."all_exercise_ids") > 0') }
@@ -60,7 +59,7 @@ class Content::Models::Page < IndestructibleRecord
     }
   end
 
-  def cnx_id
+  def ox_id
     "#{uuid}@#{version}"
   end
 
@@ -130,20 +129,105 @@ class Content::Models::Page < IndestructibleRecord
     "#{book.reference_view_url}/page/#{id}"
   end
 
+  def resolve_links!
+    node = Nokogiri::HTML content
+
+    # Absolutize embed urls
+    node.css('[src]').each do |link|
+      src = link.attributes['src']
+      src.value = resolve_link src.value
+    end
+
+    # Absolutize link urls
+    node.css('[href]').each do |link|
+      href = link.attributes['href']
+      href.value = resolve_link href.value
+    end
+
+    self.content = node.to_html
+  end
+
+  def resolve_link(link)
+    begin
+      uri = Addressable::URI.parse link
+    rescue InvalidURIError
+      Rails.logger.warn { "Invalid url: \"#{link}\" in page: #{url}" }
+      return link
+    end
+
+    if uri.absolute?
+      # Force absolute URLs to be https
+      uri.scheme = 'https'
+      return uri.to_s
+    end
+
+    # Keep anchor-only URLs (links to the same page) relative
+    return link if uri.path.blank?
+
+    if uri.path.starts_with?('./')
+      # Content link
+      if uri.path.starts_with?("./#{book.uuid}@#{book.version}:")
+        # Same book link
+        if uri.path.starts_with?("./#{book.uuid}@#{book.version}:#{uuid}")
+          # Link to the same page
+          # This should just be a relative link
+          uri.path = ''
+          uri.to_s
+        else
+          # Link to another page in the same book
+          # Send to reference view
+          page_uuid = uri.path.split(':', 2).last.split('@', 2).first.split('.', 2).first
+          page = if book.pages.loaded?
+            book.pages.detect { |page| page.uuid == page_uuid }
+          else
+            book.pages.find_by uuid: page_uuid
+          end
+
+          if page.nil?
+            Rails.logger.warn do
+              "Page #{url} contains a link to #{link}, a page in the same book which was not found"
+            end
+
+            return link
+          end
+
+          uri.path = page.reference_view_url
+          uri.to_s
+        end
+      else
+        # Link to a different book
+        # The user might not have access to the book in Tutor, so it's safer to send them to REX
+        object = uri.path.sub('./', '')
+        book_id, page_id = object.split(':', 2)
+        page_uuid = page_id.split('@', 2).first
+        book_slug = book.archive.slug book_id
+        page_slug = book.archive.slug object
+        uri.path = "books/#{book_slug}/pages/#{page_slug}"
+        Addressable::URI.join(
+          "https://#{Rails.application.secrets.openstax[:content][:domain]}", uri
+        ).to_s
+      end
+    else
+      # Resource link or other unknown relative link
+      # Delegate to OpenStax::Content::Archive
+      book.archive.url_for link
+    end
+  end
+
   protected
 
   def parser_class
-    OpenStax::Cnx::V1::Page
+    OpenStax::Content::Page
   end
 
   def parser
-    @parser ||= parser_class.new(url: url, title: title, content: content)
+    @parser ||= parser_class.new(uuid: uuid, url: url, title: title, content: content)
   end
 
   def fragment_splitter
     return if book.nil?
 
-    @fragment_splitter ||= OpenStax::Cnx::V1::FragmentSplitter.new(
+    @fragment_splitter ||= OpenStax::Content::FragmentSplitter.new(
       book.reading_processing_instructions, reference_view_url
     )
   end

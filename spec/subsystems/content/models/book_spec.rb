@@ -16,8 +16,9 @@ RSpec.describe Content::Models::Book, type: :model do
   it 'can create a manifest hash' do
     expect(book.manifest_hash).to eq(
       {
-        archive_url: book.archive_url,
-        cnx_id: book.cnx_id,
+        archive_version: book.archive_version,
+        uuid: book.uuid,
+        version: book.version,
         reading_processing_instructions: book.reading_processing_instructions,
         exercise_ids: book.exercises.map(&:uid).sort
       }

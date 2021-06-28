@@ -9,7 +9,6 @@ require 'active_record/indestructible_record'
 require 'acts_as_resource'
 require 'acts_as_tasked'
 require 'has_timezone'
-require 'html_tree_operations'
 require 'verify_and_get_id_array'
 require 'representable/coercion'
 require 'env_utilities'
@@ -30,7 +29,7 @@ require 'term_year'
 require 'values_table'
 require 'shared_course_search_helper'
 
-%w(cnx exercises payments validator).each do |oxlib|
+%w(exercises payments validator).each do |oxlib|
   Dir[Rails.root.join("lib/openstax/#{oxlib}/#{oxlib}.rb")].each { |f| require f }
 end
 

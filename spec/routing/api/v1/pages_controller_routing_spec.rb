@@ -8,7 +8,7 @@ RSpec.describe Api::V1::PagesController, type: :routing, api: true, version: :v1
         controller: "api/v1/pages",
         action: "show",
         ecosystem_id: "84",
-        cnx_id: "1bb611e9-0ded-48d6-a107-fbb9bd900851"
+        ox_id: "1bb611e9-0ded-48d6-a107-fbb9bd900851"
       )
     end
 
@@ -18,7 +18,7 @@ RSpec.describe Api::V1::PagesController, type: :routing, api: true, version: :v1
         controller: "api/v1/pages",
         action: "show",
         ecosystem_id: "42",
-        cnx_id: "1bb611e9-0ded-48d6-a107-fbb9bd900851@2"
+        ox_id: "1bb611e9-0ded-48d6-a107-fbb9bd900851@2"
       )
     end
 
@@ -28,7 +28,7 @@ RSpec.describe Api::V1::PagesController, type: :routing, api: true, version: :v1
         controller: "api/v1/pages",
         action: "show",
         ecosystem_id: "42",
-        cnx_id: "1bb611e9-0ded-48d6-a107-fbb9bd900851@2.1"
+        ox_id: "1bb611e9-0ded-48d6-a107-fbb9bd900851@2.1"
       )
     end
   end

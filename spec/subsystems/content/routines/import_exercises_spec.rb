@@ -112,13 +112,15 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
 
       @ecosystem = book.ecosystem
 
-      cnx_page = OpenStax::Cnx::V1::Page.new(
-        id: '21d0e217-d50f-4901-af75-905e738eb4c4', title: 'Kinematics in Two Dimensions: An Introduction'
+      ox_page = OpenStax::Content::Page.new(
+        book: MINI_ECOSYSTEM_OPENSTAX_BOOK,
+        uuid: '2242a8c5-e8b1-4287-b801-af74ef6f1e5b',
+        title: 'Kinematics in Two Dimensions: An Introduction'
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
         Content::Routines::ImportPage[
-          cnx_page: cnx_page,
+          ox_page: ox_page,
           book: book,
           book_indices: [3, 1],
           parent_book_part_uuid: SecureRandom.uuid
@@ -142,7 +144,7 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       imported_exercises.each { |exercise| expect(exercise.context).to be_nil }
     end
 
-    it 'skips import of exercises that don\'t map to the available pages' do
+    it "skips import of exercises that don't map to the available pages" do
       page_block = ->(wrapper) { nil }
       tags = ['k12phys-ch03-s01-lo01', 'k12phys-ch03-s01-lo02']
       expect do
@@ -156,13 +158,15 @@ RSpec.describe Content::Routines::ImportExercises, type: :routine, vcr: VCR_OPTS
       book = FactoryBot.create :content_book
       @ecosystem = book.ecosystem
 
-      cnx_page = OpenStax::Cnx::V1::Page.new(
-        id: '21d0e217-d50f-4901-af75-905e738eb4c4', title: 'Kinematics in Two Dimensions: An Introduction'
+      ox_page = OpenStax::Content::Page.new(
+        book: MINI_ECOSYSTEM_OPENSTAX_BOOK,
+        uuid: '2242a8c5-e8b1-4287-b801-af74ef6f1e5b',
+        title: 'Kinematics in Two Dimensions: An Introduction'
       )
 
       @page = VCR.use_cassette('Content_Routines_ImportExercises/with_custom_tags', VCR_OPTS) do
         Content::Routines::ImportPage[
-          cnx_page: cnx_page,
+          ox_page: ox_page,
           book: book,
           book_indices: [3, 1],
           parent_book_part_uuid: SecureRandom.uuid

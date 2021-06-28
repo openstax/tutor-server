@@ -29,7 +29,7 @@ class ExportAndUploadResearchData
 
       [
         tutor_export_file,
-        create_cnx_export_file("cnx_#{filename}", page_ids),
+        create_ox_export_file("ox_#{filename}", page_ids),
         create_exercises_export_file("exercises_#{filename}", exercise_ids)
       ]
     end
@@ -202,7 +202,7 @@ class ExportAndUploadResearchData
                   # escape so Excel doesn't see as formula
                   step.free_response.try!(:sub, /\A=/, "'="),
                   step.answer_id,
-                  step.completed? ? bool_to_int(step.answer_id == step.correct_answer_id) : nil
+                  step.completed? ? bool_to_int(step.is_correct?) : nil
                 ] : [ nil ] * 7
               )
 
@@ -222,7 +222,7 @@ class ExportAndUploadResearchData
     [ export_file, page_ids.uniq, exercise_ids.uniq ]
   end
 
-  def create_cnx_export_file(filename, page_ids)
+  def create_ox_export_file(filename, page_ids)
     File.join('tmp', 'exports', filename).tap do |filepath|
       CSV.open(filepath, 'w') do |file|
         file << [
@@ -254,7 +254,7 @@ class ExportAndUploadResearchData
           pgs.each do |page|
             page.fragments.each_with_index do |fragment, fragment_index|
               content = case fragment
-              when OpenStax::Cnx::V1::Fragment::Exercise
+              when OpenStax::Content::Fragment::Exercise
                 grouped_queries = Hash.new { |hash, key| hash[key] = [] }
                 fragment.embed_queries.each do |field, value|
                   grouped_queries[field] << value

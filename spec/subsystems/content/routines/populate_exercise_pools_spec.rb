@@ -6,44 +6,44 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
   let(:ecosystem)            { book.ecosystem }
 
   let(:k12phys_tag)          { FactoryBot.create :content_tag, value: 'k12phys',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
   let(:apbio_tag)            { FactoryBot.create :content_tag, value: 'apbio',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
 
   let(:os_prac_conc_tag)     { FactoryBot.create :content_tag, value: 'os-practice-concepts',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
   let(:os_prac_prob_tag)     { FactoryBot.create :content_tag, value: 'os-practice-problems',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
 
   let(:chapter_review_tag)   { FactoryBot.create :content_tag, value: 'ost-chapter-review',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
 
   let(:type_reading_tag)     { FactoryBot.create :content_tag, value: 'assignment-type:reading',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
   let(:type_homework_tag)    { FactoryBot.create :content_tag, value: 'assignment-type:homework',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
 
   let(:review_tag)           { FactoryBot.create :content_tag, value: 'review',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
   let(:concept_tag)          { FactoryBot.create :content_tag, value: 'concept',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
   let(:problem_tag)          { FactoryBot.create :content_tag, value: 'problem',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
   let(:crit_think_tag)       { FactoryBot.create :content_tag, value: 'critical-thinking',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
   let(:ap_test_prep_tag)     { FactoryBot.create :content_tag, value: 'ap-test-prep',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
 
   let(:time_short_tag)       { FactoryBot.create :content_tag, value: 'time:short',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
   let(:time_medium_tag)      { FactoryBot.create :content_tag, value: 'time:medium',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
   let(:time_long_tag)        { FactoryBot.create :content_tag, value: 'time:long',
-                                                                ecosystem: ecosystem }
+                                                               ecosystem: ecosystem }
 
   let(:requires_context_tag) { FactoryBot.create :content_tag, value: 'requires-context:true',
-                                                                tag_type: :requires_context,
-                                                                ecosystem: ecosystem }
+                                                               tag_type: :requires_context,
+                                                               ecosystem: ecosystem }
 
   let(:untagged_exercise)         { FactoryBot.create :content_exercise, page: page }
 
@@ -66,23 +66,21 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
   let(:homework_exercise)         { FactoryBot.create :content_exercise, page: page }
   let(:practice_exercise)         { FactoryBot.create :content_exercise, page: page }
   let(:requires_context_exercise) { FactoryBot.create :content_exercise, page: page }
-  let(:fr_only_exercise)          { FactoryBot.create :content_exercise, :free_response_only, page: page }
+  let(:fr_only_exercise)          do
+    FactoryBot.create :content_exercise, :free_response_only, page: page
+  end
 
   let(:untagged_multi_exercise)   do
     FactoryBot.create :content_exercise, page: page, num_questions: 2
   end
 
-  let(:reading_multi_exercise)       do
+  let(:reading_multi_exercise)    do
     FactoryBot.create :content_exercise, page: page, num_questions: 2
   end
-  let(:homework_multi_exercise)     do
+  let(:homework_multi_exercise)   do
     FactoryBot.create :content_exercise, page: page, num_questions: 2
   end
   let(:practice_multi_exercise)   do
-    FactoryBot.create :content_exercise, page: page, num_questions: 2
-  end
-
-  let(:cc_multi_exercise)         do
     FactoryBot.create :content_exercise, page: page, num_questions: 2
   end
 
@@ -103,7 +101,6 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       chapter_review_exercise   => [chapter_review_tag],
       reading_exercise          => [type_reading_tag],
       homework_exercise         => [type_homework_tag],
-
       requires_context_exercise => [requires_context_tag],
       untagged_multi_exercise   => [],
       reading_multi_exercise    => [type_reading_tag],
@@ -115,10 +112,9 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
 
   let(:all_exercises)           { exercise_tags.keys }
   let(:all_exercise_ids_set)    { Set.new all_exercises.map(&:id) }
-  let(:simple_exercise_ids_set) {
-    Set.new all_exercises
-      .reject{|ex| ex.is_multipart? || ex.is_free_response_only? }.map(&:id)
-  }
+  let(:simple_exercise_ids_set) do
+    Set.new all_exercises.reject { |ex| ex.is_multipart? || ex.is_free_response_only? }.map(&:id)
+  end
 
   before do
     exercise_tags.each { |exercise, tags| exercise.tags = tags }

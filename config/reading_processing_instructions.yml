@@ -1,0 +1,207 @@
+anatomy:
+  - css: .summary, .interactive-exercise, .multiple-choice, .free-response, .references
+    fragments: []
+  - css: .note
+    fragments:
+      - reading
+    labels:
+      - note
+  - css: .anatomy.interactive
+    fragments:
+      - interactive
+    labels:
+      - interactive link
+
+ap-biology:
+  - css: >-
+      .review-questions, .free-response, .ap-practice,
+      .contextualization-questions, .historical-reasoning, .teacher-note
+    fragments: []
+  - css: .primary-sources
+    fragments:
+      - reading
+    labels:
+      - primary-sources
+  - css: .note
+    fragments:
+      - reading
+      - exercise
+    labels:
+      - note
+
+ap-history:
+  - css: >-
+      .review-questions, .free-response, .ap-practice,
+      .contextualization-questions, .historical-reasoning, .os-teacher
+    fragments: []
+  - css: '[data-type="footnote-refs"]'
+    fragments:
+      - media
+  - css: .primary-sources
+    fragments:
+      - reading
+    labels:
+      - primary-sources
+  - css: .note
+    fragments:
+      - reading
+      - exercise
+    labels:
+      - note
+
+ap-physics:
+  - css: >-
+      .review-questions, .free-response, .ap-practice,
+      .contextualization-questions, .historical-reasoning, .teacher-note
+    fragments: []
+  - css: .primary-sources
+    fragments:
+      - reading
+    labels:
+      - primary-sources
+  - css: .note
+    fragments:
+      - reading
+      - exercise
+    labels:
+      - note
+
+biology:
+  - css: >-
+      .multiple-choice, .free-response, .art-exercise,
+      .interactive-long, .scientific, [data-type="glossary"]
+    fragments: []
+  - css: '[data-type="footnote-refs"]'
+    fragments:
+      - media
+  - css: .interactive
+    fragments:
+      - node
+      - exercise
+    labels:
+      - interactive
+
+college-physics:
+  - css: >-
+      .conceptual-questions, .problems-exercises, [data-element-type="conceptual-questions"],
+      [data-element-type="problems-exercises"], [data-element-type="check-understanding"],
+      [data-type="glossary"]
+    fragments: []
+  - css: '[data-type="footnote-refs"]'
+    fragments:
+      - media
+  - css: .phet-explorations-embedded
+    fragments:
+      - interactive
+      - exercise
+    labels:
+      - phet-explorations
+  - css: .watch-physics
+    fragments:
+      - video
+      - exercise
+    labels:
+      - watch-physics
+  - css: .example-video, [data-type="example"]
+    fragments:
+      - reading
+    labels:
+      - example
+
+entrepreneurship:
+  - css: >-
+      .section-summary, .key-terms, .review-questions, .discussion-questions,
+      .case-questions, .suggested-resources, .references, .figure-credits
+    fragments: []
+
+hs-physics:
+  - css: .ost-reading-discard, .os-teacher, [data-type="glossary"]
+    except: snap-lab
+    fragments: []
+  - css: '[data-type="footnote-refs"]'
+    fragments:
+      - media
+  - css: >-
+      .ost-feature:has-descendants(".os-exercise",2),
+      .ost-feature:has-descendants(".ost-exercise-choice"),
+      .ost-assessed-feature:has-descendants(".os-exercise",2),
+      .ost-assessed-feature:has-descendants(".ost-exercise-choice")
+    fragments:
+      - node
+      - optional_exercise
+  - css: >-
+      .ost-feature:has-descendants(".os-exercise, .ost-exercise-choice"),
+      .ost-assessed-feature:has-descendants(".os-exercise, .ost-exercise-choice")
+    fragments:
+      - node
+      - exercise
+  - css: >-
+      .ost-feature .ost-exercise-choice, .ost-assessed-feature .ost-exercise-choice,
+      .ost-feature .os-exercise, .ost-assessed-feature .os-exercise
+    fragments: []
+  - css: .ost-exercise-choice
+    fragments:
+      - exercise
+      - optional_exercise
+  - css: .os-exercise
+    fragments:
+      - exercise
+  - css: .ost-video
+    fragments:
+      - video
+  - css: .os-interactive, .ost-interactive
+    fragments:
+      - interactive
+  - css: .worked-example
+    fragments:
+      - reading
+    labels:
+      - worked-example
+  - css: .ost-feature, .ost-assessed-feature
+    fragments:
+      - reading
+    labels:
+      - feature
+
+psychology:
+  - css: .summary, .review-questions, .critical-thinking, .personal-application, .references
+    fragments: []
+  - css: .note
+    fragments:
+      - reading
+    labels:
+      - note
+
+sociology:
+  - css: >-
+      .section-quiz, .short-answer, .further-research, [data-element-type="section-quiz"],
+      [data-element-type="short-answer"], [data-element-type="further-research"],
+      [data-type="glossary"]
+    fragments: []
+
+u-physics:
+  - css: >-
+      .conceptual-questions, .problems-exercises, [data-element-type="conceptual-questions"],
+      [data-element-type="problems-exercises"], [data-element-type="check-understanding"],
+      [data-type="glossary"]
+    fragments: []
+  - css: '[data-type="footnote-refs"]'
+    fragments:
+      - media
+  - css: .phet-explorations-embedded
+    fragments:
+      - interactive
+      - exercise
+    labels:
+      - phet-explorations
+  - css: .watch-physics
+    fragments:
+      - video
+      - exercise
+    labels:
+      - watch-physics
+  - css: .example-video, [data-type="example"]
+    fragments:
+      - reading
+    labels:
+      - example

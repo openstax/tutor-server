@@ -187,7 +187,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
   end
 
   context "for Newton's First Law of Motion: Inertia" do
-    let(:cnx_page_hash) do
+    let(:ox_page_hash) do
       {
         'id' => '640e3e84-09a5-4033-b2a7-b7fe5ec29dc6',
         'title' => "Newton's First Law of Motion: Inertia"
@@ -285,7 +285,7 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
   end
 
   context "for Newton's Second Law of Motion" do
-    let(:cnx_page_hash) do
+    let(:ox_page_hash) do
       {
         'id' => '548a8717-71e1-4d65-80f0-7b8c6ed4b4c0',
         'title' => "Newton's Second Law of Motion"
@@ -547,27 +547,27 @@ RSpec.describe Tasks::Assistants::IReadingAssistant, type: :assistant, vcr: VCR_
            <a href=#ost/api/ex/#{video_exercise_id_tag.value}>[Link]</a>
          </div>"
       )
-      OpenStax::Cnx::V1::Fragment::Exercise.absolutize_exercise_urls! node
+      OpenStax::Content::Fragment::Exercise.absolutize_exercise_urls! node
 
       allow_any_instance_of(Content::Models::Page).to receive(:fragments) do
         [
-          OpenStax::Cnx::V1::Fragment::Reading.new(
+          OpenStax::Content::Fragment::Reading.new(
             node: Nokogiri::HTML.fragment(reading_content).children.first,
             title: "Doesn't matter, the first fragment's title comes from the page"
           ),
-          OpenStax::Cnx::V1::Fragment::Video.new(
+          OpenStax::Content::Fragment::Video.new(
             node: Nokogiri::HTML.fragment(video_content).children.first,
             title: "Watch Isaac Newton use the Force against Robert Hooke"
           ),
-          OpenStax::Cnx::V1::Fragment::Exercise.new(
+          OpenStax::Content::Fragment::Exercise.new(
             node: node.children.first,
             title: nil
           ),
-          OpenStax::Cnx::V1::Fragment::Interactive.new(
+          OpenStax::Content::Fragment::Interactive.new(
             node: Nokogiri::HTML.fragment(interactive_content).children.first,
             title: "Now try it yourself"
           ),
-          OpenStax::Cnx::V1::Fragment::Exercise.new(
+          OpenStax::Content::Fragment::Exercise.new(
             node: Nokogiri::HTML.fragment(interactive_content).children.first,
             title: nil
           )

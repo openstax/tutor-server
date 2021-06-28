@@ -33,19 +33,16 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
 
     ecosystem = catalog_offering.ecosystem
     expect(ecosystem.title).to include 'APUSH'
-    expect(ecosystem.title).to include 'dc10e469-5816-411d-8ea3-39a9b0706a48'
+    expect(ecosystem.title).to include '36004586-651c-4ded-af87-203aca22d946'
 
     book = ecosystem.books.first
+    expect(book.archive_version).to eq '20210514.171726'
     expect(book.title).to eq 'APUSH'
-    expect(book.uuid).to eq 'dc10e469-5816-411d-8ea3-39a9b0706a48'
+    expect(book.uuid).to eq '36004586-651c-4ded-af87-203aca22d946'
+    expect(book.version).to eq '14.3'
     expect(book.url).to include(
-      'https://archive-staging-tutor.cnx.org/contents/dc10e469-5816-411d-8ea3-39a9b0706a48'
+      'https://openstax.org/apps/archive/20210514.171726/contents/36004586-651c-4ded-af87-203aca22d946@14.3.json'
     )
-    expect(book.reading_processing_instructions.size).to eq 4
-    book.reading_processing_instructions.each do |reading_processing_instruction|
-      expect(reading_processing_instruction['css']).not_to be_blank
-      expect(reading_processing_instruction['fragments']).not_to be_nil
-    end
 
     chapter = book.chapters.first
     expect(chapter.title).to match 'Chapter 1'

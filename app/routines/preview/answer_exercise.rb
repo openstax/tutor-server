@@ -34,7 +34,7 @@ class Preview::AnswerExercise
 
     tasked.free_response = free_response
     tasked.answer_id = answer_id
-    tasked.save! if save
+    tasked.save! if save && is_completed
 
     run(
       :mark_completed,
@@ -43,5 +43,12 @@ class Preview::AnswerExercise
       lock_task: lock_task,
       save: save
     ) if is_completed
+
+    unless tasked.can_be_auto_graded?
+      tasked.grader_points = is_correct ? tasked.available_points : 0.0
+      tasked.last_graded_at = completed_at
+    end
+
+    tasked.save! if save
   end
 end

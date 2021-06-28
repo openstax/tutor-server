@@ -1,8 +1,8 @@
 # require_relative allows use in the development environment
 require_relative '../../vcr_helper'
 
-unless defined?(MINI_ECOSYSTEM_CNX_BOOK_HASH)
-  MINI_ECOSYSTEM_CNX_PAGE_HASHES = [
+unless defined?(MINI_ECOSYSTEM_OPENSTAX_BOOK)
+  MINI_ECOSYSTEM_OPENSTAX_PAGE_HASHES = [
     {
       id: 'b0ffd0a2-9c83-4d73-b899-7f2ade2acda6',
       title: 'Newtons First Law of Motion: Inertia'
@@ -24,22 +24,27 @@ unless defined?(MINI_ECOSYSTEM_CNX_BOOK_HASH)
       title: 'Problem-Solving Strategies'
     }
   ]
-  MINI_ECOSYSTEM_CNX_CHAPTER_HASHES = [
+  MINI_ECOSYSTEM_OPENSTAX_CHAPTER_HASHES = [
     {
       title: "Dynamics: Force and Newton's Laws of Motion",
-      contents: MINI_ECOSYSTEM_CNX_PAGE_HASHES
+      contents: MINI_ECOSYSTEM_OPENSTAX_PAGE_HASHES
     }
   ]
-  MINI_ECOSYSTEM_CNX_BOOK_HASH = {
+  MINI_ECOSYSTEM_OPENSTAX_BOOK_HASH = {
     id: '405335a3-7cff-4df2-a9ad-29062a4af261',
-    version: '8.32',
+    version: '8.46',
     title: 'College Physics with Courseware',
     tree: {
-      id: '405335a3-7cff-4df2-a9ad-29062a4af261@8.32',
+      id: '405335a3-7cff-4df2-a9ad-29062a4af261@8.46',
       title: 'College Physics with Courseware',
-      contents: MINI_ECOSYSTEM_CNX_CHAPTER_HASHES
+      contents: MINI_ECOSYSTEM_OPENSTAX_CHAPTER_HASHES
     }
   }
+  MINI_ECOSYSTEM_OPENSTAX_ARCHIVE_VERSION = '20210514.171726'
+  MINI_ECOSYSTEM_OPENSTAX_BOOK = OpenStax::Content::Book.new(
+    archive_version: MINI_ECOSYSTEM_OPENSTAX_ARCHIVE_VERSION,
+    hash: MINI_ECOSYSTEM_OPENSTAX_BOOK_HASH.deep_stringify_keys
+  )
 end
 
 FactoryBot.define do
@@ -59,9 +64,7 @@ FactoryBot.define do
         VCR_OPTS.merge(allow_unused_http_interactions: true)
       ) do
         Content::ImportBook.call(
-          cnx_book: OpenStax::Cnx::V1::Book.new(
-            hash: MINI_ECOSYSTEM_CNX_BOOK_HASH.deep_stringify_keys
-          ),
+          openstax_book: MINI_ECOSYSTEM_OPENSTAX_BOOK,
           ecosystem: ecosystem,
           reading_processing_instructions: evaluator.reading_processing_instructions
         )

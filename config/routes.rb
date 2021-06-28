@@ -152,7 +152,7 @@ Rails.application.routes.draw do
         get :'practice_exercises', action: :practice_exercises
       end
 
-      get :'pages/*cnx_id', controller: :pages, action: :show, format: false
+      get :'pages/*ox_id', controller: :pages, action: :show, format: false
     end
 
     resources :enrollment, only: :create do

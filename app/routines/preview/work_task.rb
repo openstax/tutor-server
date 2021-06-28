@@ -67,7 +67,8 @@ class Preview::WorkTask
     tasked_exercises = exercise_steps.map(&:tasked)
     Tasks::Models::TaskedExercise.import tasked_exercises, validate: false,
                                                            on_duplicate_key_update: {
-      conflict_target: [ :id ], columns: [ :free_response, :answer_id ]
+      conflict_target: [ :id ],
+      columns: [ :free_response, :answer_id, :grader_points, :last_graded_at ]
     }
 
     Tasks::Models::TaskStep.import task_steps, validate: false, on_duplicate_key_update: {

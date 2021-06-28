@@ -1,34 +1,60 @@
-<%= lev_form_for :ecosystem, url: ecosystems_path do |f| %>
+<%= form_with url: ecosystems_path do |form| %>
   <div class="form-group">
-    <%= f.label :manifest, 'Ecosystem Manifest (.yml)' %>
-    <%= f.file_field :manifest, class: 'form-control' %>
+    <%= form.label :archive_version, 'Content archive code version' %>
+    <% if @archive_versions.nil? %>
+      <%= text_field_tag(
+        :archive_version, @archive_version, class: 'form-control', 'data-turbolinks-reload': true
+      ) %>
+    <% else %>
+      <%= select_tag(
+        :archive_version,
+        options_for_select(@archive_versions, @archive_version),
+        class: 'form-control',
+        'data-turbolinks-reload': true
+      ) %>
+    <% end %>
   </div>
 
   <div class="form-group">
-    <%= f.label :comments %>
-    <%= f.text_field :comments, class: 'form-control' %>
+    <%= form.label :collection_id, 'Collection' %>
+    <%= select_tag(
+      :collection_id,
+      options_for_select(@collections, @collection_id),
+      class: 'form-control',
+      'data-turbolinks-reload': true
+    ) %>
   </div>
 
   <div class="form-group">
-    <%= f.check_box :books, { checked: true }, 'update', 'keep' %>
-    <%= f.label :books, 'Update book version' %>
+    <%= form.label :book_version, 'Book version' %>
+    <% if @book_versions.nil? %>
+      <%= text_field_tag(
+        :book_version, @book_version, class: 'form-control', 'data-turbolinks-reload': true
+      ) %>
+    <% else %>
+      <%= select_tag(
+        :book_version, options_for_select(@book_versions, @book_version),
+        class: 'form-control',
+        'data-turbolinks-reload': true
+      ) %>
+    <% end %>
   </div>
 
   <div class="form-group">
-    <%= f.radio_button :exercises, :discard, checked: true %>
-    <%= f.label :exercises_discard, 'Discard exercise information (update numbers and versions)' %>
+    <%= form.label :reading_processing_instructions, 'Reading Processing Instructions' %>
+    <%= text_area_tag(
+      :reading_processing_instructions, @reading_processing_instructions,
+      cols: 100, rows: @reading_processing_instructions.chomp.lines.count + 1, class: 'form-control'
+    ) %>
   </div>
 
   <div class="form-group">
-    <%= f.radio_button :exercises, :update %>
-    <%= f.label :exercises_update, 'Update exercise versions (keep numbers)' %>
+    <%= form.label :comments, 'Comments' %>
+    <%= text_field_tag :comments, '', class: 'form-control' %>
   </div>
 
-  <div class="form-group">
-    <%= f.radio_button :exercises, :keep %>
-    <%= f.label :exercises_keep, 'Keep exercise numbers and versions' %>
-  </div>
-
-  <%= f.submit 'Import', class: 'btn btn-default',
-                         data: { disable_with: 'Import will likely take a while...' } %>
+  <%= form.submit(
+    'Import', class: 'btn btn-default',
+              data: { disable_with: 'Import will likely take a while...' }
+  ) %>
 <% end %>

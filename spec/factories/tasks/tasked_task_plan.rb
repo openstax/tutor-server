@@ -24,14 +24,14 @@ FactoryBot.define do
     course { FactoryBot.build :course_profile_course, offering: nil }
 
     settings {
-      s = { page_ids: ecosystem.pages.sort_by(&:book_indices)[0...3].map { |pg| pg.id.to_s } }
+      s = { page_ids: ecosystem.pages.sort_by(&:book_indices).first(4).map { |pg| pg.id.to_s } }
       if type == :homework
-        s.merge!({
-          exercises: s[:page_ids].map{ |pg_id|
+        s.merge!(
+          exercises: s[:page_ids].flat_map do |pg_id|
             ecosystem.pages.find(pg_id).exercises.sample(number_of_exercises_per_page)
-          }.flatten.map{ |ex| { id: ex.id.to_s, points: [1.0]*ex.number_of_questions } },
+          end.map { |ex| { id: ex.id.to_s, points: [1.0]*ex.number_of_questions } },
           exercises_count_dynamic: 3
-        })
+        )
       end
       s
     }

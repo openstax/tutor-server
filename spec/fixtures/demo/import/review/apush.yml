@@ -1,24 +1,7 @@
 book:
-  archive_url_base: https://archive.cnx.org/contents/
-
+  archive_version: 20210514.171726
   uuid: 36004586-651c-4ded-af87-203aca22d946
-
-  reading_processing_instructions:
-  - css: .conceptual-questions, .problems-exercises, [data-element-type="conceptual-questions"],
-      [data-element-type="problems-exercises"], [data-element-type="check-understanding"],
-      [data-type="glossary"]
-    fragments: []
-  - css: .phet-explorations-embedded
-    fragments:
-    - interactive
-    - exercise
-  - css: .watch-physics
-    fragments:
-    - video
-    - exercise
-  - css: .example-video, [data-type="example"]
-    fragments:
-    - reading
+  version: 14.3
 
 catalog_offering:
   title: AP US History

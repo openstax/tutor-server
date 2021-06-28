@@ -64,8 +64,9 @@ RSpec.describe Content::Manifest do
       start_with 'Physics (93e2b09d-261c-4007-a987-0b3062fe154b@4.4)'
     )
     book = manifest.books.first
-    expect(book.archive_url).to eq 'https://archive-staging-tutor.cnx.org/'
-    expect(book.cnx_id).to eq '93e2b09d-261c-4007-a987-0b3062fe154b@4.4'
+    expect(book.archive_version).to eq '0.1'
+    expect(book.uuid).to eq '93e2b09d-261c-4007-a987-0b3062fe154b'
+    expect(book.version).to eq '4.4'
     book.reading_processing_instructions.each_with_index do |processing_instruction, index|
       expected_processing_instruction = expected_reading_processing_instructions[index]
       expect(processing_instruction['css']).to eq expected_processing_instruction[:css]

@@ -164,6 +164,7 @@ ActiveRecord::Schema.define(version: 2021_06_22_152149) do
     t.datetime "baked_at"
     t.boolean "is_collated", default: false
     t.jsonb "tree", null: false
+    t.string "archive_version"
     t.index ["content_ecosystem_id"], name: "index_content_books_on_content_ecosystem_id"
     t.index ["title"], name: "index_content_books_on_title"
     t.index ["tutor_uuid"], name: "index_content_books_on_tutor_uuid", unique: true
@@ -273,7 +274,7 @@ ActiveRecord::Schema.define(version: 2021_06_22_152149) do
     t.text "content"
     t.string "title", null: false
     t.string "uuid", null: false
-    t.string "version", null: false
+    t.string "version"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "short_id"

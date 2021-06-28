@@ -48,6 +48,7 @@ RSpec.feature 'Cohorts', js: true do
       click_link "Edit"
       fill_in 'Name', with: 'BBB'
       click_button 'Save'
+      wait_for_ajax
       expect(page).to have_content(/Name: BBB/)
     end
 
