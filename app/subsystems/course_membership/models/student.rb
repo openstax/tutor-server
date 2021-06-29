@@ -19,7 +19,7 @@ class CourseMembership::Models::Student < ApplicationRecord
   has_many :research_cohorts, through: :research_cohort_members, source: :cohort,
            subsystem: :research, class_name: 'Research::Models::Cohort'
 
-  has_many :payment_codes, inverse_of: :student
+  has_many :payment_codes, inverse_of: :student, class_name: 'PaymentCode'
 
   before_validation :init_first_paid_at
 
