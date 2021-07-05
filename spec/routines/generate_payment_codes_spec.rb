@@ -25,7 +25,7 @@ RSpec.describe GeneratePaymentCodes, type: :routine do
   context 'with invalid params' do
     it 'surfaces validation errors' do
       gc = described_class.call(prefix: '', amount: 1).outputs
-      expect(gc.errors).to eq([{ "prefix" => ["can't be blank"] }])
+      expect(gc.errors).to eq([["Prefix can't be blank"]])
     end
   end
 
