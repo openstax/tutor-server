@@ -18,14 +18,20 @@ class Admin::PaymentsController < Admin::BaseController
 
   def generate_payment_codes
     params.require(:prefix)
+    params.require(:amount)
 
-    path = GeneratePaymentCodes.call(
+    generator = GeneratePaymentCodes.call(
       prefix: params[:prefix],
       amount: params[:amount].to_i,
       export_to_csv: true
-    ).outputs.export_path
+    ).outputs
 
-    send_file path
+    if generator.errors.any?
+      flash[:error] = generator.errors
+      redirect_to admin_payments_path
+    else
+      send_file generator.export_path
+    end
   end
 
   def download_payment_code_report

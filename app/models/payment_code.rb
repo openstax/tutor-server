@@ -4,8 +4,8 @@ class PaymentCode < IndestructibleRecord
   validates_presence_of :code
   validates_uniqueness_of :code
 
-  before_validation :generate_code, on: :create
-  after_rollback :regenerate_code
+  before_validation :set_code, on: :create
+  after_rollback :handle_collision
 
   before_update :preserve_persisted_code
 
@@ -27,16 +27,23 @@ class PaymentCode < IndestructibleRecord
   def generate_code
     unless prefix.present?
       errors.add :prefix, :blank
-      throw :abort
+      raise ActiveRecord::RecordInvalid
     end
 
     base = [*'0'..'9', *'A'..'Z'] - CONFUSED_CHARS
     post = Array.new(10) { base.sample }.join
-    self.code = "#{prefix.parameterize.upcase}-#{post}"
+    "#{prefix.parameterize.upcase}-#{post}"
   end
 
-  def regenerate_code
+  def set_code
     return if persisted?
-    save if errors.types[:code]&.include?(:taken)
+    self.code = generate_code
+  end
+
+  def handle_collision
+    if errors.types[:code]&.include?(:taken)
+      set_code
+      save
+    end
   end
 end

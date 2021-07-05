@@ -5,14 +5,37 @@ class GeneratePaymentCodes
 
   def exec(prefix:, amount: 1, export_to_csv: false)
     codes = []
+    errors = []
+    total_retries = 0
 
-    amount.times do
-      codes << PaymentCode.create!(prefix: prefix).code
+    unless amount.is_a?(Integer) && amount > 0 && amount < 1000
+      outputs.errors = ['Amount must be a whole number between 1 and 999']
+      return
     end
 
-    outputs.codes = codes
+    amount.times do
+      retries = 0
+      pc = PaymentCode.new(prefix: prefix)
 
-    export(codes) if export_to_csv
+      begin
+        pc.save!
+        codes << pc.code
+      rescue ActiveRecord::RecordInvalid
+        if retries < 3
+          retries += 1
+          total_retries += 1
+          retry
+        end
+
+        errors << pc.errors
+      end
+    end
+
+    outputs.retries = total_retries
+    outputs.codes = codes
+    outputs.errors = errors.map(&:full_messages).uniq
+
+    export(codes) if export_to_csv && errors.empty?
   end
 
   def export(codes)

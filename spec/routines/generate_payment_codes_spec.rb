@@ -21,4 +21,20 @@ RSpec.describe GeneratePaymentCodes, type: :routine do
       expect(rows[1][0]).to match(CODE_REGEX)
     end
   end
+
+  context 'with invalid params' do
+    it 'surfaces validation errors' do
+      gc = described_class.call(prefix: '', amount: 1).outputs
+      expect(gc.errors).to eq([{ "prefix" => ["can't be blank"] }])
+    end
+  end
+
+  context 'when something goes wrong' do
+    it 'retries' do
+      allow_any_instance_of(PaymentCode).to receive(:generate_code).and_return('1', '1', '2')
+      gc = described_class.call(prefix: '', amount: 2).outputs
+      expect(gc.retries).to eq(2)
+      expect(gc.errors).to be_empty
+    end
+  end
 end

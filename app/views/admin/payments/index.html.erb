@@ -20,13 +20,13 @@ time zone).</p>
     <div class="col-xs-12">
       <div class="form-group">
         <label for="prefix">Prefix</label>
-        <%= text_field_tag 'prefix', nil, class: 'form-control'  %>
+        <%= text_field_tag 'prefix', nil, class: 'form-control', required: 'required' %>
       </div>
     </div>
     <div class="col-xs-12">
       <div class="form-group">
         <label for="amount">Amount</label>
-        <%= number_field_tag 'amount', nil, min: 1, max: 999, class: 'form-control'  %>
+        <%= number_field_tag 'amount', nil, min: 1, max: 999, class: 'form-control' %>
       </div>
     </div>
   </div>
