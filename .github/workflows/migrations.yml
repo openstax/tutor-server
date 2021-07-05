@@ -58,8 +58,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gems-parent-
 
-      # Install gems, create data to be migrated and revert to PR merge commit
-      - name: Create data to be migrated
+      - name: Install gems from base commit and create data to be migrated
         env:
           OXT_DB_USER: postgres
           OXT_TEST_DB: ci_test
@@ -81,8 +80,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gems-pr-
 
-      # Migrate the data
-      - name: Migrate
+      - name: Install gems from PR, migrate and ensure no files changed
         env:
           OXT_DB_USER: postgres
           OXT_TEST_DB: ci_test
@@ -90,3 +88,4 @@ jobs:
         run: |
           bundle install --jobs 4 --retry 3
           bundle exec rake db:migrate
+          git diff --exit-code
