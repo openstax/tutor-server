@@ -197,15 +197,7 @@ class Content::Models::Page < IndestructibleRecord
       else
         # Link to a different book
         # The user might not have access to the book in Tutor, so it's safer to send them to REX
-        object = uri.path.sub('./', '')
-        book_id, page_id = object.split(':', 2)
-        page_uuid = page_id.split('@', 2).first
-        book_slug = book.archive.slug book_id
-        page_slug = book.archive.slug object
-        uri.path = "books/#{book_slug}/pages/#{page_slug}"
-        Addressable::URI.join(
-          "https://#{Rails.application.secrets.openstax[:content][:domain]}", uri
-        ).to_s
+        book.archive.webview_uri_for(uri).to_s
       end
     else
       # Resource link or other unknown relative link

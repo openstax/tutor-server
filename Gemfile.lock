@@ -97,19 +97,19 @@ GEM
       execjs
     awesome_print (1.8.0)
     aws-eventstream (1.1.1)
-    aws-partitions (1.466.0)
+    aws-partitions (1.473.0)
     aws-sdk-autoscaling (1.53.0)
       aws-sdk-core (~> 3, >= 3.109.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-cloudwatch (1.46.0)
       aws-sdk-core (~> 3, >= 3.109.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-core (3.114.2)
+    aws-sdk-core (3.115.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.43.0)
+    aws-sdk-kms (1.44.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-s3 (1.96.1)
@@ -481,7 +481,7 @@ GEM
       roar
       roar-rails
       uber
-    openstax_content (0.0.2)
+    openstax_content (0.2.0)
       aws-sdk-s3
       faraday
       nokogiri
