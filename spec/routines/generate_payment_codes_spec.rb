@@ -26,6 +26,9 @@ RSpec.describe GeneratePaymentCodes, type: :routine do
     it 'surfaces validation errors' do
       gc = described_class.call(prefix: '', amount: 1).outputs
       expect(gc.errors).to eq([["Prefix can't be blank"]])
+
+      gc = described_class.call(prefix: 'Valid', amount: 'A').outputs
+      expect(gc.errors).to eq(['Amount must be a whole number between 1 and 999'])
     end
   end
 
