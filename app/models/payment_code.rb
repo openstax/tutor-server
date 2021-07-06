@@ -16,11 +16,11 @@ class PaymentCode < IndestructibleRecord
   private
 
   def preserve_persisted_code
-    throw :cannot_change_persisted_code if code_changed?
+    throw_persisted_error if code_changed?
   end
 
   def code=(value)
-    throw :cannot_change_persisted_code if persisted?
+    throw_persisted_error if persisted?
     super
   end
 
@@ -36,7 +36,7 @@ class PaymentCode < IndestructibleRecord
   end
 
   def set_code
-    return if persisted?
+    throw_persisted_error if persisted?
     self.code = generate_code
   end
 
@@ -45,5 +45,9 @@ class PaymentCode < IndestructibleRecord
       set_code
       save
     end
+  end
+
+  def throw_persisted_error
+    throw :cannot_change_persisted_code
   end
 end

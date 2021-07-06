@@ -48,5 +48,10 @@ RSpec.describe Admin::PaymentsController, type: :request do
       get download_payment_code_report_admin_payments_path
       expect(response.body).to match('Code')
     end
+
+    it 'returns errors' do
+      post generate_payment_codes_admin_payments_path, params: { prefix: 'ABC', amount: 'A' }
+      expect(flash[:error]).to eq(["Amount must be a whole number between 1 and 999"])
+    end
   end
 end
