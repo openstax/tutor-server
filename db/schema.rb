@@ -718,6 +718,8 @@ ActiveRecord::Schema.define(version: 2021_06_23_225308) do
     t.string "code"
     t.datetime "redeemed_at"
     t.bigint "course_membership_student_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["code"], name: "index_payment_codes_on_code", unique: true
     t.index ["course_membership_student_id"], name: "index_payment_codes_on_course_membership_student_id"
   end

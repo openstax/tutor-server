@@ -5,6 +5,7 @@ class CreatePaymentCodes < ActiveRecord::Migration[5.2]
       t.datetime :redeemed_at
       t.references :course_membership_student
 
+      t.timestamps
       t.index :code, unique: true
     end
   end

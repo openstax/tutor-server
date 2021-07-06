@@ -1,19 +1,20 @@
 class GeneratePaymentCodeReport
-  lev_routine express_output: :export_path
+  lev_routine express_output: :csv
 
-  def exec
-    path = File.join('tmp', 'exports', "payment-code-report.csv")
-
-    CSV.open(path, 'w') do |file|
-      file << [
+  def exec(since: 1.year.ago)
+    outputs.csv = CSV.generate(headers: true) do |csv|
+      csv << [
         'Code',
         'Redeemed At',
         'Course UUID',
         'Student Tutor ID',
         'Student Identifier'
       ]
-      PaymentCode.in_batches.each_record do |pc|
-        file << [
+
+      range = since.midnight..DateTime::Infinity.new
+
+      PaymentCode.where(created_at: range).in_batches.each_record do |pc|
+        csv << [
           pc.code,
           pc.redeemed_at,
           pc&.student&.course&.id,
@@ -22,7 +23,5 @@ class GeneratePaymentCodeReport
         ]
       end
     end
-
-    outputs.export_path = path
   end
 end

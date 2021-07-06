@@ -12,13 +12,10 @@ RSpec.describe GeneratePaymentCodes, type: :routine do
       end
     end
 
-    it 'exports a csv with codes' do
-      path = described_class.call(prefix: 'abc', export_to_csv: true).outputs.export_path
-      expect(File.exist?(path)).to be(true)
-      expect(path.ends_with? '.csv').to be(true)
-      rows = CSV.read(path)
-      expect(rows[0][0]).to eq('Code')
-      expect(rows[1][0]).to match(CODE_REGEX)
+    it 'generates a csv with codes' do
+      csv = CSV.parse(described_class.call(prefix: 'abc', generate_csv: true).outputs.csv)
+      expect(csv[0][0]).to eq('Code')
+      expect(csv[1][0]).to match(CODE_REGEX)
     end
   end
 

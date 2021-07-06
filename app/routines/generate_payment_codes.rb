@@ -3,7 +3,7 @@ class GeneratePaymentCodes
 
   protected
 
-  def exec(prefix:, amount: 1, export_to_csv: false)
+  def exec(prefix:, amount: 1, generate_csv: false)
     codes = []
     errors = []
     total_retries = 0
@@ -34,18 +34,13 @@ class GeneratePaymentCodes
     outputs.retries = total_retries
     outputs.codes = codes
     outputs.errors = errors.map(&:full_messages).uniq
-
-    export(codes) if export_to_csv && errors.empty?
+    outputs.csv = generate_csv(codes) if generate_csv && errors.empty?
   end
 
-  def export(codes)
-    path = File.join('tmp', 'exports', "payment-codes-#{SecureRandom.uuid}.csv")
-
-    CSV.open(path, 'w') do |file|
-      file << ['Code']
-      codes.map {|c| file << [c] }
+  def generate_csv(codes)
+    CSV.generate(headers: true) do |csv|
+      csv << ['Code']
+      codes.map {|c| csv << [c] }
     end
-
-    outputs.export_path = path
   end
 end

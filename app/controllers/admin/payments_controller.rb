@@ -23,18 +23,20 @@ class Admin::PaymentsController < Admin::BaseController
     generator = GeneratePaymentCodes.call(
       prefix: params[:prefix],
       amount: params[:amount].to_i,
-      export_to_csv: true
+      generate_csv: true
     ).outputs
 
     if generator.errors.any?
       flash[:error] = generator.errors
       redirect_to admin_payments_path
     else
-      send_file generator.export_path
+      send_data generator.csv,
+                filename: "payment-codes-#{SecureRandom.uuid}.csv"
     end
   end
 
   def download_payment_code_report
-    send_file  GeneratePaymentCodeReport.call.outputs.export_path
+    send_data GeneratePaymentCodeReport.call.outputs.csv,
+              filename: "payment-code-report-#{SecureRandom.uuid}.csv"
   end
 end
