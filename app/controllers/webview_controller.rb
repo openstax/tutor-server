@@ -20,6 +20,8 @@ class WebviewController < ApplicationController
   end
 
   def enroll
+    period = CourseMembership::GetPeriod[ enrollment_code: params[:enroll_token] ]
+    @does_cost = period ? period.course.does_cost : false
   end
 
   protected

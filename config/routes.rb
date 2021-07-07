@@ -66,6 +66,8 @@ Rails.application.routes.draw do
       post(:fake, action: :create_fake, on: :collection) unless IAm.real_production?
     end
 
+    put '/payment_codes/:code/redeem', to: 'payment_codes#redeem', as: :payment_code_redeem
+
     resources :tasks, only: [ :show, :destroy ] do
       resources :steps, controller: :task_steps, shallow: true, only: [ :show, :update ] do
         put :grade, on: :member

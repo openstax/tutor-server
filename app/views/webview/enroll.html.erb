@@ -27,6 +27,12 @@
         2. Enter your school ID number to join your course
       </div>
 
+      <% if @does_cost %>
+        <div class="enter-payment-info">
+          3. Enter your payment info
+        </div>
+      <% end %>
+
     </div>
 
     <%= link_to 'Get started', start_enrollment_url(enroll_token: params[:enroll_token]), class: 'btn' %>
