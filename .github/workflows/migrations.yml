@@ -11,10 +11,10 @@ on:
 jobs:
   migrations:
     timeout-minutes: 30
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     services:
       postgres:
-        image: postgres:11
+        image: postgres:13
         ports:
           - 5432:5432
         options: >-
@@ -23,13 +23,11 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: postgres
       redis:
         image: redis
         ports:
-        - 6379:6379
+          - 6379:6379
         # Set health checks to wait until redis has started
         options: >-
           --health-cmd "redis-cli ping"
@@ -58,11 +56,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gems-parent-
 
-      # Install gems, create data to be migrated and revert to PR merge commit
-      - name: Create data to be migrated
+      - name: Install gems from base commit and create data to be migrated
         env:
           OXT_DB_USER: postgres
-          OXT_TEST_DB: ci_test
           OXT_DB_PASS: postgres
         run: |
           gem install bundler
@@ -81,12 +77,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gems-pr-
 
-      # Migrate the data
-      - name: Migrate
+      - name: Install gems from PR, migrate and ensure no files changed
         env:
           OXT_DB_USER: postgres
-          OXT_TEST_DB: ci_test
           OXT_DB_PASS: postgres
         run: |
           bundle install --jobs 4 --retry 3
           bundle exec rake db:migrate
+          git diff --exit-code

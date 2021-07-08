@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-20.04
     services:
       postgres:
-        image: postgres:11
+        image: postgres:13
         ports:
           - 5432:5432
         options: >-
@@ -23,8 +23,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: postgres
     strategy:
       matrix:
@@ -48,7 +46,6 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           OXT_DB_USER: postgres
-          OXT_TEST_DB: ci_test
           OXT_DB_PASS: postgres
           RAILS_ENV: test
         run: |
