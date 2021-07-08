@@ -224,3 +224,8 @@ class Content::Models::Page < IndestructibleRecord
     )
   end
 end
+
+# Compatibility: Many existing pages have serialized fragments saved as OpenStax::Cnx::V1::Fragment
+module OpenStax::Cnx
+  V1 = ::OpenStax::Content
+end
