@@ -6,6 +6,7 @@ course:
 
   teachers:
     - username: reviewteacher
+      is_dropped: true
     - username: teacher01
 
   periods:

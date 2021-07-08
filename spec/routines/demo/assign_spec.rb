@@ -2,7 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Demo::Assign, type: :routine do
-
   let(:config_base_dir) { File.join Rails.root, 'spec', 'fixtures', 'demo' }
   let(:user_config)     do
     {

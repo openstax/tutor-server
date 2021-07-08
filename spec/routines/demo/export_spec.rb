@@ -37,10 +37,15 @@ RSpec.describe Demo::Export, type: :routine do
       course.update_attribute :offering, offering
     end
   end
-  let(:book)      { ecosystem.books.first }
-  let!(:teacher)  { FactoryBot.create :course_membership_teacher, course: course }
+  let(:book)             { ecosystem.books.first }
+  let!(:teacher)         { FactoryBot.create :course_membership_teacher, course: course }
+  let!(:dropped_teacher) do
+    FactoryBot.create :course_membership_teacher, course: course, deleted_at: Time.current
+  end
 
-  let(:result)    { described_class.call name: :spec, courses: course }
+  let(:result) { described_class.call name: :spec, courses: course }
+
+  before { course.periods.first.students.sort_by(&:created_at).last.destroy }
 
   it 'creates anonymized demo configs with relativized dates from the given courses' do
     allow(OpenStax::Accounts.configuration).to receive(:enable_stubbing?).and_return(false)
@@ -78,6 +83,12 @@ RSpec.describe Demo::Export, type: :routine do
               full_name: 'Spec Teacher 1 Full name',
               first_name: 'Spec Teacher 1 First name',
               last_name: 'Spec Teacher 1 Last name'
+            },
+            {
+              username: 'spec_teacher_2',
+              full_name: 'Spec Teacher 2 Full name',
+              first_name: 'Spec Teacher 2 First name',
+              last_name: 'Spec Teacher 2 Last name'
             }
           ],
           students: 10.times.map do |index|
@@ -104,14 +115,23 @@ RSpec.describe Demo::Export, type: :routine do
               {
                 enrollment_code: "Spec Period 1 Enrollment Code",
                 name: "Spec Period 1",
-                students: 10.times.map do |index|
+                students: 9.times.map do |index|
                   {
                     first_name: "Spec Student #{index + 1} First name",
                     full_name: "Spec Student #{index + 1} Full name",
                     last_name: "Spec Student #{index + 1} Last name",
-                    username: "spec_student_#{index + 1}"
+                    username: "spec_student_#{index + 1}",
+                    is_dropped: false
                   }
-                end
+                end + [
+                  {
+                    first_name: "Spec Student 10 First name",
+                    full_name: "Spec Student 10 Full name",
+                    last_name: "Spec Student 10 Last name",
+                    username: "spec_student_10",
+                    is_dropped: true
+                  }
+                ]
               }
             ],
             teachers: [
@@ -119,7 +139,15 @@ RSpec.describe Demo::Export, type: :routine do
                 first_name: 'Spec Teacher 1 First name',
                 full_name: 'Spec Teacher 1 Full name',
                 last_name: 'Spec Teacher 1 Last name',
-                username: 'spec_teacher_1'
+                username: 'spec_teacher_1',
+                is_dropped: false
+              },
+              {
+                first_name: 'Spec Teacher 2 First name',
+                full_name: 'Spec Teacher 2 Full name',
+                last_name: 'Spec Teacher 2 Last name',
+                username: 'spec_teacher_2',
+                is_dropped: true
               }
             ],
             term: course.term,

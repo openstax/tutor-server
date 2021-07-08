@@ -103,7 +103,7 @@ class Demo::Course < Demo::Base
         teacher_model = run(:add_teacher, course: course_model, user: user).outputs.teacher
       end
 
-      teacher_model.destroy if teacher[:is_dropped]
+      teacher_model.destroy if teacher[:deleted?]
 
       log { "Teacher: #{user.username} (#{user.name})" }
     end
@@ -138,7 +138,7 @@ class Demo::Course < Demo::Base
           ).outputs.student
         end
 
-        student_model.destroy if student[:is_dropped]
+        student_model.destroy if student[:deleted?]
       end
     end
 

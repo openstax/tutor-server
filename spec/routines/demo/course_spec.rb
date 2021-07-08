@@ -32,7 +32,7 @@ RSpec.describe Demo::Course, type: :routine do
       end.to  change { CourseProfile::Models::Course.count }.by(1)
          .and change { CourseMembership::Models::Period.count }.by(2)
          .and change { CourseMembership::Models::Teacher.count }.by(2)
-         .and change { CourseMembership::Models::Student.count }.by(6)
+         .and change { CourseMembership::Models::Student.count }.by(8)
 
       expect(course.name).to eq 'AP US History Review'
       expect(course.offering).to eq catalog_offering
@@ -51,8 +51,8 @@ RSpec.describe Demo::Course, type: :routine do
         expect(period.name).to be_in ['1st', '2nd']
 
         students = period.students.sort_by(&:username)
-        expect(students.size).to eq 3
-        students.each { |student| expect(student.username).to match /reviewstudent\d/ }
+        expect(students.size).to eq 4
+        students.each { |student| expect(student.username).to match /(dropped|review)student\d/ }
         expect(students.first).to be_dropped
         students[1..-1].each { |student| expect(student).not_to be_dropped }
       end
@@ -72,7 +72,7 @@ RSpec.describe Demo::Course, type: :routine do
       end.to  not_change { CourseProfile::Models::Course.count }
          .and change     { CourseMembership::Models::Period.count }.by(2)
          .and change     { CourseMembership::Models::Teacher.count }.by(2)
-         .and change     { CourseMembership::Models::Student.count }.by(6)
+         .and change     { CourseMembership::Models::Student.count }.by(8)
          .and not_change { course.reload.is_college }
 
       expect(course.name).to eq 'AP US History Review'
@@ -90,8 +90,8 @@ RSpec.describe Demo::Course, type: :routine do
         expect(period.name).to be_in ['1st', '2nd']
 
         students = period.students.sort_by(&:username)
-        expect(students.size).to eq 3
-        students.each { |student| expect(student.username).to match /reviewstudent\d/ }
+        expect(students.size).to eq 4
+        students.each { |student| expect(student.username).to match /(dropped|review)student\d/ }
         expect(students.first).to be_dropped
         students[1..-1].each { |student| expect(student).not_to be_dropped }
       end
