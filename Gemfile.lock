@@ -295,7 +295,7 @@ GEM
       faraday (>= 0.8)
     faraday_middleware (0.14.0)
       faraday (>= 0.7.4, < 1.0)
-    ffi (1.15.0)
+    ffi (1.15.3)
     fine_print (5.0.0)
       action_interceptor
       jquery-rails
