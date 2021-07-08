@@ -31,7 +31,7 @@ RSpec.describe Demo::Course, type: :routine do
         course = result.outputs.course
       end.to  change { CourseProfile::Models::Course.count }.by(1)
          .and change { CourseMembership::Models::Period.count }.by(2)
-         .and change { CourseMembership::Models::Teacher.count }.by(1)
+         .and change { CourseMembership::Models::Teacher.count }.by(2)
          .and change { CourseMembership::Models::Student.count }.by(6)
 
       expect(course.name).to eq 'AP US History Review'
@@ -40,17 +40,21 @@ RSpec.describe Demo::Course, type: :routine do
       expect(course.grading_templates.size).to eq 2
       expect(course.is_college).to eq true
 
-      teachers = course.teachers
-      expect(teachers.map(&:username)).to eq [ 'reviewteacher' ]
+      teachers = course.teachers.sort_by(&:username)
+      expect(teachers.map(&:username)).to eq [ 'reviewteacher', 'teacher01' ]
+      expect(teachers.first.deleted?).to eq true
+      expect(teachers.last.deleted?).to eq false
 
       periods = course.periods
       expect(periods.size).to eq 2
       periods.each do |period|
         expect(period.name).to be_in ['1st', '2nd']
 
-        students = period.students
+        students = period.students.sort_by(&:username)
         expect(students.size).to eq 3
         students.each { |student| expect(student.username).to match /reviewstudent\d/ }
+        expect(students.first).to be_dropped
+        students[1..-1].each { |student| expect(student).not_to be_dropped }
       end
     end
   end
@@ -67,7 +71,7 @@ RSpec.describe Demo::Course, type: :routine do
         expect(result.outputs.course).to eq course
       end.to  not_change { CourseProfile::Models::Course.count }
          .and change     { CourseMembership::Models::Period.count }.by(2)
-         .and change     { CourseMembership::Models::Teacher.count }.by(1)
+         .and change     { CourseMembership::Models::Teacher.count }.by(2)
          .and change     { CourseMembership::Models::Student.count }.by(6)
          .and not_change { course.reload.is_college }
 
@@ -75,17 +79,21 @@ RSpec.describe Demo::Course, type: :routine do
       expect(course.offering).to eq catalog_offering
       expect(course.ecosystems.first).to eq catalog_offering.ecosystem
 
-      teachers = course.teachers
-      expect(teachers.map(&:username)).to eq [ 'reviewteacher' ]
+      teachers = course.teachers.sort_by(&:username)
+      expect(teachers.map(&:username)).to eq [ 'reviewteacher', 'teacher01' ]
+      expect(teachers.first.deleted?).to eq true
+      expect(teachers.last.deleted?).to eq false
 
       periods = course.periods
       expect(periods.size).to eq 2
       periods.each do |period|
         expect(period.name).to be_in ['1st', '2nd']
 
-        students = period.students
+        students = period.students.sort_by(&:username)
         expect(students.size).to eq 3
         students.each { |student| expect(student.username).to match /reviewstudent\d/ }
+        expect(students.first).to be_dropped
+        students[1..-1].each { |student| expect(student).not_to be_dropped }
       end
     end
   end

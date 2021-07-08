@@ -1,6 +1,8 @@
 teachers:
   - username: reviewteacher
     full_name: Review Teacher
+  - username: teacher01
+    full_name: Teacher One
 
 students:
   - username: reviewstudent1

@@ -96,8 +96,14 @@ class Demo::Course < Demo::Base
     course_hash[:teachers].each do |teacher|
       user = users_by_username[teacher[:username]]
 
-      run(:add_teacher, course: course_model, user: user) \
-        unless run(:is_teacher, user: user, course: course_model).outputs.is_course_teacher
+      outs = run(:is_teacher, user: user, course: course_model).outputs
+      if outs.is_course_teacher
+        teacher_model = outs.teacher
+      else
+        teacher_model = run(:add_teacher, course: course_model, user: user).outputs.teacher
+      end
+
+      teacher_model.destroy if teacher[:is_dropped]
 
       log { "Teacher: #{user.username} (#{user.name})" }
     end
@@ -121,17 +127,18 @@ class Demo::Course < Demo::Base
           :is_student, user: user, course: course_model, include_dropped_students: true
         ).outputs
         if out.is_course_student
-          next if out.student.period == period_model
-
-          run(:move_student, period: period, student: out.student)
+          student_model = out.student
+          run(:move_student, period: period, student: student) if student.period != period_model
         else
-          run(
+          student_model = run(
             :add_student,
             period: period_model,
             user: user,
             student_identifier: SecureRandom.urlsafe_base64(10)
-          )
+          ).outputs.student
         end
+
+        student_model.destroy if student[:is_dropped]
       end
     end
 
