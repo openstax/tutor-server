@@ -46,4 +46,10 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
            readable: true,
            writeable: true,
            getter: ->(*) { respond_to?(:is_published) ? is_published : is_published? }
+
+  collection :dropped_questions,
+             extend: Api::V1::Demo::Assign::Course::TaskPlan::DroppedQuestionRepresenter,
+             class: Demo::Mash,
+             readable: true,
+             writeable: true
 end

@@ -21,6 +21,16 @@ RSpec.describe Demo::Export, type: :routine do
       }
     ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }
   end
+  let!(:dropped_questions) do
+    homework.tasks.first.tasked_exercises.first(2).each_with_index.map do |tasked_exercise, index|
+      FactoryBot.create(
+        :tasks_dropped_question,
+        task_plan: homework,
+        question_id: tasked_exercise.question_id,
+        drop_method: index == 0 ? :zeroed : :full_credit
+      )
+    end
+  end
   let!(:external) do
     FactoryBot.create(
       :tasks_task_plan,
@@ -166,7 +176,8 @@ RSpec.describe Demo::Export, type: :routine do
               period: { name: 'Spec Period 1' }
             }
           ],
-          is_published: true
+          is_published: true,
+          dropped_questions: []
         }
 
         expected_data = {
@@ -183,7 +194,11 @@ RSpec.describe Demo::Export, type: :routine do
                 type: homework.type,
                 book_indices: be_kind_of(Array),
                 exercises_count_core: homework.settings['exercises'].size,
-                exercises_count_dynamic: homework.settings['exercises_count_dynamic']
+                exercises_count_dynamic: homework.settings['exercises_count_dynamic'],
+                dropped_questions: [
+                  { question_index: 0, drop_method: 'zeroed' },
+                  { question_index: 1, drop_method: 'full_credit' }
+                ]
               ),
               task_plan_common_data.merge(
                 title: 'Spec External 1',
