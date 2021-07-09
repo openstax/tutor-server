@@ -15,6 +15,12 @@ class Api::V1::Demo::Assign::Course::TaskPlan::Representer < Api::V1::Demo::Task
              readable: true,
              writeable: true
 
+  collection :exercises,
+             extend: Api::V1::Demo::Assign::Course::TaskPlan::ExerciseRepresenter,
+             class: Demo::Mash,
+             readable: false,
+             writeable: true
+
   property :exercises_count_core,
            type: Integer,
            readable: true,
