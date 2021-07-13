@@ -56,9 +56,9 @@ class Content::Models::Exercise < IndestructibleRecord
         ).arel.exists
     )
   end
-  scope :requires_context, -> do
+  scope :with_context, -> do
     where(
-      Content::Models::Tag.requires_context.joins(:exercise_tags).where(
+      Content::Models::Tag.cnxfeature.joins(:exercise_tags).where(
         '"content_exercise_tags"."content_exercise_id" = "content_exercises"."id"'
       ).arel.exists
     )
@@ -102,12 +102,12 @@ class Content::Models::Exercise < IndestructibleRecord
     tags.filter(&:cnxfeature?)
   end
 
-  def has_context?
-    tags.to_a.any?(&:cnxfeature?)
-  end
-
   def requires_context?
     tags.to_a.any?(&:requires_context?)
+  end
+
+  def has_context?
+    tags.to_a.any?(&:cnxfeature?)
   end
 
   def content_hash

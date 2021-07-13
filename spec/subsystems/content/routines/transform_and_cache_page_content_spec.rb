@@ -93,12 +93,14 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
           parent_book_part_uuid: MINI_ECOSYSTEM_OPENSTAX_BOOK_HASH[:id],
         ]
       end
-      @exercise_with_context = @book.exercises.reload.detect { |ex| ex.cnxfeatures.any? }
+      @exercises_with_context = @book.exercises.with_context
     end
 
     after(:all) { DatabaseCleaner.clean }
 
     before do
+      expect(@exercises_with_context.size).to eq 1
+
       expect(OpenStax::Exercises::V1).to receive(:exercises).once do |_, &block|
         block.call(wrappers)
       end
@@ -110,18 +112,24 @@ RSpec.describe Content::Routines::TransformAndCachePageContent, type: :routine, 
       )
 
       Content::Routines::PopulateExercisePools.call book: @book
+
+      expect(@exercises_with_context.size).to eq 4
     end
 
     it 'assigns context for exercises that have cnxfeature tags' do
       imported_exercises = @ecosystem.exercises.order(:number).to_a
       imported_exercises.each { |ex| expect(ex.context).to be_nil }
 
-      expect(@exercise_with_context.context).to be_nil
-      expect { described_class.call book: @book }.not_to change { Content::Models::Exercise.count }
-      @exercise_with_context.reload
-      expect(@exercise_with_context.context).not_to be_nil
-      context_node = Nokogiri::HTML.fragment(@exercise_with_context.context).children.first
-      expect(@exercise_with_context.feature_ids).to include context_node.attr('id')
+      @exercises_with_context.each do |exercise|
+        expect(exercise.context).to be_nil
+        expect { described_class.call book: @book }.not_to(
+          change { Content::Models::Exercise.count }
+        )
+        exercise.reload
+        expect(exercise.context).not_to be_nil
+        context_node = Nokogiri::HTML.fragment(exercise.context).children.first
+        expect(exercise.feature_ids).to include context_node.attr('id')
+      end
     end
   end
 end

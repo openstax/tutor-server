@@ -194,7 +194,13 @@ class OpenStax::Exercises::V1::Exercise
   def requires_context?
     return @requires_context unless @requires_context.nil?
 
-    @requires_context = tags.any?{ |tag| Tagger::TAG_TYPE_REGEXES[:requires_context].match(tag) }
+    @requires_context = tags.any? { |tag| Tagger::TAG_TYPE_REGEXES[:requires_context].match(tag) }
+  end
+
+  def has_context?
+    return @has_context unless @has_context.nil?
+
+    @has_context = tags.any? { |tag| Tagger::TAG_TYPE_REGEXES[:cnxfeature].match(tag) }
   end
 
   protected

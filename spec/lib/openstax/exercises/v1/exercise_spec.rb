@@ -32,6 +32,7 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
       expect(exercise.has_interactive?).to eq false
       expect(exercise.has_video?).to eq false
       expect(exercise.requires_context?).to eq true
+      expect(exercise.has_context?).to eq false
     end
   end
 
@@ -49,6 +50,7 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
       expect(exercise.has_interactive?).to eq true
       expect(exercise.has_video?).to eq false
       expect(exercise.requires_context?).to eq false
+      expect(exercise.has_context?).to eq false
     end
   end
 
@@ -65,6 +67,7 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
       expect(exercise.has_interactive?).to eq false
       expect(exercise.has_video?).to eq true
       expect(exercise.requires_context?).to eq false
+      expect(exercise.has_context?).to eq false
     end
   end
 end
