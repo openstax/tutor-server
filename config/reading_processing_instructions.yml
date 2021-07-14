@@ -115,24 +115,8 @@ entrepreneurship:
     fragments: []
 
 history:
-  - css: >-
-      .review-questions, .free-response, .ap-practice,
-      .contextualization-questions, .historical-reasoning, .os-teacher
+  - css: .summary, .key-terms, .review-questions, .critical-thinking, .references
     fragments: []
-  - css: '[data-type="footnote-refs"]'
-    fragments:
-      - media
-  - css: .primary-sources
-    fragments:
-      - reading
-    labels:
-      - primary-sources
-  - css: .note
-    fragments:
-      - reading
-      - exercise
-    labels:
-      - note
 
 hs-physics:
   - css: .ost-reading-discard, .os-teacher, [data-type="glossary"]
