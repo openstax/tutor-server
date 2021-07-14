@@ -114,6 +114,10 @@ entrepreneurship:
       .case-questions, .suggested-resources, .references, .figure-credits
     fragments: []
 
+history:
+  - css: .summary, .key-terms, .review-questions, .critical-thinking, .references
+    fragments: []
+
 hs-physics:
   - css: .ost-reading-discard, .os-teacher, [data-type="glossary"]
     except: snap-lab
