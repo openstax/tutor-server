@@ -35,14 +35,19 @@ class CopyTeacherExercises
               :tag,
               ecosystem: dest_page.book.ecosystem,
               resource: new_exercise,
-              tags: exercise.tags,
+              tags: source_exercise.tags,
               tagging_class: Content::Models::ExerciseTag,
               save_tags: false
             )
+
+            new_exercise.set_teacher_exercise_identities
+            # Set derived_from after calling set_teacher_exercise_identities
+            # so the new exercise is not a new version
+            new_exercise.derived_from = source_exercise
           end
         end
 
-        Content::Models::Exercise.import(exercises, validate: false) if save
+        Content::Models::Exercise.import(exercises, recursive: true, validate: false) if save
       end
     end
 
