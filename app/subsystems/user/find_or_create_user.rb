@@ -9,7 +9,7 @@ module User
     def exec(account_id: nil, email: nil, username: nil, password: nil, first_name: nil,
              last_name: nil, full_name: nil, title: nil, faculty_status: nil,
              salesforce_contact_id: nil, role: nil, school_type: nil, school_location: nil,
-             is_kip: nil, is_test: nil)
+             is_kip: nil, is_test: nil, grant_tutor_access: nil)
       raise ArgumentError, 'Requires either an email, a username or an account_id' \
         if email.nil? && username.nil? && account_id.nil?
 
@@ -34,7 +34,8 @@ module User
               school_type: school_type,
               school_location: school_location,
               is_kip: is_kip,
-              is_test: is_test
+              is_test: is_test,
+              grant_tutor_access: grant_tutor_access
             ).outputs.account
 
             ::User::Models::Profile.find_or_create_by account: account
