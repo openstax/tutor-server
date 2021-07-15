@@ -135,6 +135,10 @@ class OpenStax::Exercises::V1::Exercise
     @solutions ||= questions.map { |qq| qq['solutions'] }
   end
 
+  def solutions_are_public?
+    @solutions_are_public ||= !!content_hash['solutions_are_public']
+  end
+
   def feedback_map
     return @feedback_map unless @feedback_map.nil?
 

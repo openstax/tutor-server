@@ -43,7 +43,8 @@ class Content::Routines::ImportExercises
           number_of_questions: wrapper.questions.size,
           question_answer_ids: wrapper.question_answer_ids,
           has_interactive: wrapper.has_interactive?,
-          has_video: wrapper.has_video?
+          has_video: wrapper.has_video?,
+          solutions_are_public: wrapper.solutions_are_public?
         )
 
         all_tags = run(
