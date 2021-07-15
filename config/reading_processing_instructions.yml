@@ -179,6 +179,13 @@ sociology:
       [data-element-type="short-answer"], [data-element-type="further-research"],
       [data-type="glossary"]
     fragments: []
+  - css: >-
+      .sociological-research, .sociology-real-world,
+      .sociology-big-picture, .sociology-policy-debate
+    fragments:
+      - reading
+    labels:
+      - note
 
 u-physics:
   - css: >-
