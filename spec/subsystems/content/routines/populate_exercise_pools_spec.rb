@@ -1,8 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
-  let(:page)                 { FactoryBot.create :content_page }
-  let(:book)                 { page.book }
+  let(:page)                 { FactoryBot.create :content_page, book: book }
   let(:ecosystem)            { book.ecosystem }
 
   let(:k12phys_tag)          { FactoryBot.create :content_tag, value: 'k12phys',
@@ -81,7 +80,7 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
     FactoryBot.create :content_exercise, page: page, num_questions: 2
   end
   let(:practice_multi_exercise)   do
-    FactoryBot.create :content_exercise, page: page, num_questions: 2
+    FactoryBot.create :content_exercise, page: page, num_questions: 2, solutions_are_public: true
   end
 
   let(:exercise_tags) do
@@ -112,9 +111,9 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
 
   let(:all_exercises)           { exercise_tags.keys }
   let(:all_exercise_ids_set)    { Set.new all_exercises.map(&:id) }
-  let(:simple_exercise_ids_set) do
-    Set.new all_exercises.reject { |ex| ex.is_multipart? || ex.is_free_response_only? }.map(&:id)
-  end
+  let(:mcq_exercises)           { all_exercises.reject(&:is_free_response_only?) }
+  let(:mcq_exercise_ids_set)    { Set.new mcq_exercises.map(&:id) }
+  let(:simple_exercise_ids_set) { Set.new mcq_exercises.reject(&:is_multipart?).map(&:id) }
 
   before do
     exercise_tags.each { |exercise, tags| exercise.tags = tags }
@@ -122,10 +121,42 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
     page.exercises = all_exercises.to_a
   end
 
-  context 'all books' do
+  context 'dynamic MPQ books' do
+    let(:book) { FactoryBot.create :content_book, uuid: described_class::DYNAMIC_MPQ_UUIDS.sample }
+
     before do
       described_class.call book: book
+      page.reload
+    end
 
+    it "imports MCQ exercises that don't require context into the practice widget pool" do
+      expect(Set.new page.practice_widget_exercise_ids).to eq(
+        mcq_exercise_ids_set - [requires_context_exercise.id]
+      )
+    end
+
+    it 'imports MCQ reading type into the reading dynamic pool' do
+      expect(Set.new page.reading_dynamic_exercise_ids).to eq Set[
+        reading_exercise.id, reading_multi_exercise.id
+      ]
+    end
+
+    it 'imports MCQ homework type without public solutions into the homework dynamic pool' do
+      expect(Set.new page.homework_dynamic_exercise_ids).to eq Set[
+        homework_exercise.id, homework_multi_exercise.id
+      ]
+    end
+
+    it 'imports all MCQ exercises into the reading context pool' do
+      expect(Set.new page.reading_context_exercise_ids).to eq mcq_exercise_ids_set
+    end
+  end
+
+  context 'other books' do
+    let(:book) { FactoryBot.create :content_book }
+
+    before do
+      described_class.call book: book
       page.reload
     end
 
@@ -135,10 +166,12 @@ RSpec.describe Content::Routines::PopulateExercisePools, type: :routine do
       )
     end
 
-    it 'imports reading into the reading dynamic pool' do
-      expect(Set.new page.reading_dynamic_exercise_ids).to eq Set[
-        reading_exercise.id,
-      ]
+    it 'imports simple reading type into the reading dynamic pool' do
+      expect(Set.new page.reading_dynamic_exercise_ids).to eq Set[reading_exercise.id]
+    end
+
+    it 'imports simple homework type without public solutions into the homework dynamic pool' do
+      expect(Set.new page.homework_dynamic_exercise_ids).to eq Set[homework_exercise.id]
     end
 
     it 'imports all simple exercises into the reading context pool' do

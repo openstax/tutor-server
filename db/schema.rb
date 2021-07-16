@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_23_225308) do
+ActiveRecord::Schema.define(version: 2021_07_15_135030) do
 
   create_sequence "teacher_exercise_number", start: 1000000
 
@@ -132,6 +132,7 @@ ActiveRecord::Schema.define(version: 2021_06_23_225308) do
     t.bigint "derived_from_id"
     t.integer "coauthor_profile_ids", default: [], array: true
     t.datetime "deleted_at"
+    t.boolean "solutions_are_public", default: false
     t.index ["content_page_id"], name: "index_content_exercises_on_content_page_id"
     t.index ["derived_from_id"], name: "index_content_exercises_on_derived_from_id"
     t.index ["group_uuid", "version"], name: "index_content_exercises_on_group_uuid_and_version"
