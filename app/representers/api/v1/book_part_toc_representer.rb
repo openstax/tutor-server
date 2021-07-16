@@ -1,3 +1,4 @@
+# If you modify this representer, you must run `Content::Models::Ecosystem.find_each(&:touch)`
 module Api::V1
   class BookPartTocRepresenter < Roar::Decorator
     include Roar::JSON
