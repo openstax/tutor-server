@@ -1,5 +1,3 @@
-require_relative './fake_purchase_actions'
-
 class Api::V1::PaymentCodesController < Api::V1::ApiController
 
   before_action :verify_existance
