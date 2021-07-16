@@ -171,7 +171,7 @@ class OpenStax::Exercises::V1::Exercise
   def content_hash_for_students
     @content_hash_for_students ||= (
       content_hash
-        .except(%w{attachments vocab_term_uid})
+        .except(%w{attachments vocab_term_uid solutions_are_public})
         .merge('questions' => questions_for_students)
     )
   end
