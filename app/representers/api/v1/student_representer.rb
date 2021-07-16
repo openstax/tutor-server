@@ -133,5 +133,15 @@ module Api::V1
                 type: 'boolean',
                 description: "True if the student can currently request a refund"
              }
+
+    property :payment_code,
+             writeable: false,
+             readable: true,
+             getter: ->(*) {
+               payment_code && { code: payment_code.code, redeemed_at: payment_code.redeemed_at.to_s }
+             },
+             schema_info: {
+               description: "Redemption details if payment was via a bookstore code"
+             }
   end
 end

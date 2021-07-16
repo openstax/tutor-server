@@ -9,9 +9,13 @@ class PaymentCode < IndestructibleRecord
 
   before_update :preserve_persisted_code
 
-  belongs_to :student, subsystem: :course_membership, inverse_of: :payment_codes, optional: true
+  belongs_to :student, subsystem: :course_membership, inverse_of: :payment_code, optional: true
 
   attr_accessor :prefix
+
+  def redeemed?
+    persisted? && redeemed_at.present?
+  end
 
   private
 

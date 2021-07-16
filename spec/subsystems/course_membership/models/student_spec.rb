@@ -29,6 +29,11 @@ RSpec.describe CourseMembership::Models::Student, type: :model do
       expect(student.is_refund_allowed).to eq false
     end
 
+    it 'does not allow refunds if paid with a bookstore payment code' do
+      FactoryBot.create(:payment_code, { student: student, redeemed_at: Time.current })
+      expect(student.is_refund_allowed).to eq false
+    end
+
     context 'have paid' do
       before(:each) { student.update_attributes!(is_paid: true) }
 

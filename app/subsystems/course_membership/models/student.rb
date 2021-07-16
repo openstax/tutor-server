@@ -19,7 +19,7 @@ class CourseMembership::Models::Student < ApplicationRecord
   has_many :research_cohorts, through: :research_cohort_members, source: :cohort,
            subsystem: :research, class_name: 'Research::Models::Cohort'
 
-  has_many :payment_codes, inverse_of: :student, class_name: 'PaymentCode'
+  has_one :payment_code, inverse_of: :student, class_name: 'PaymentCode'
 
   before_validation :init_first_paid_at
 
@@ -35,6 +35,7 @@ class CourseMembership::Models::Student < ApplicationRecord
   end
 
   def is_refund_allowed
+    return false if payment_code.present?
     is_paid ? first_paid_at + REFUND_PERIOD > Time.current : false
   end
 
