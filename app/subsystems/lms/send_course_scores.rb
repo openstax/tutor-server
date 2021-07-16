@@ -23,7 +23,11 @@ class Lms::SendCourseScores
     @course = course
 
     if @course.environment.current?
-      callbacks = Lms::Models::CourseScoreCallback.where(course: course)
+      callbacks = Lms::Models::CourseScoreCallback.where(course: course).where(
+        CourseMembership::Models::Student.joins(:role).where(course: course, dropped_at: nil).where(
+          '"entity_roles"."user_profile_id" = "lms_course_score_callbacks"."user_profile_id"'
+        ).arel.exists
+      ).order(:created_at)
 
       @course.update_attributes(last_lms_scores_push_job_id: status.id)
 

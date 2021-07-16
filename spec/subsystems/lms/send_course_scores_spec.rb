@@ -6,13 +6,13 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
     @course = period.course
     @course.lms_contexts << FactoryBot.create(:lms_context, course: @course)
     callback = FactoryBot.create :lms_course_score_callback, course: @course
-    student = callback.profile
-    AddUserAsPeriodStudent[period: period, user: student]
+    student_user = callback.profile
+    @student_role = AddUserAsPeriodStudent[period: period, user: student_user]
 
     FactoryBot.create :tasked_task_plan, course: @course
 
-    teacher = FactoryBot.create :user_profile
-    @teacher_role = AddUserAsCourseTeacher[course: @course, user: teacher]
+    teacher_user = FactoryBot.create :user_profile
+    @teacher_role = AddUserAsCourseTeacher[course: @course, user: teacher_user]
   end
 
   subject(:instance) { described_class.new }
@@ -62,6 +62,20 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
       )
 
       @course.lms_contexts.first.update_attributes! app_type: 'Lms::WilloLabs'
+      described_class.call course: @course
+    end
+  end
+
+  context 'dropped student' do
+    before do
+      @student_role.student.destroy
+      expect_any_instance_of(described_class).not_to receive(:course_score_data)
+    end
+
+    it 'does not send a score' do
+      expect_any_instance_of(described_class).not_to receive :send_one_score
+      expect_any_instance_of(described_class).to receive(:save_status_data)
+
       described_class.call course: @course
     end
   end
