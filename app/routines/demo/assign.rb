@@ -87,22 +87,32 @@ class Demo::Assign < Demo::Base
         task_plan[:exercises_count_core] ||= 3
         task_plan[:exercises_count_dynamic] ||= 3
 
-        exercise_ids = pages.flat_map(&:homework_core_exercise_ids).uniq
-        raise(
-          ActiveRecord::RecordNotFound,
-          "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"
-        ) if exercise_ids.size < task_plan[:exercises_count_core]
+        exercises = task_plan[:exercises]
+        exercises_setting = if exercises.nil?
+          exercise_ids = pages.flat_map(&:homework_core_exercise_ids).uniq
+          raise(
+            ActiveRecord::RecordNotFound,
+            "Not enough Exercises to assign (using #{OpenStax::Exercises::V1.server_url})"
+          ) if exercise_ids.size < task_plan[:exercises_count_core]
 
-        ex = Content::Models::Exercise.select(
-          :id, :user_profile_id, :number, :version, :number_of_questions, :deleted_at
-        ).where(id: exercise_ids).to_a
-        exercises = run(:filter_exercises, exercises: ex, course: course_model).outputs.exercises
+          ex_models = Content::Models::Exercise.select(
+            :id, :user_profile_id, :number, :version, :number_of_questions, :deleted_at
+          ).where(id: exercise_ids).to_a
+          ex = run(:filter_exercises, exercises: ex_models, course: course_model).outputs.exercises
+          ex.shuffle.take(task_plan[:exercises_count_core]).map do |exercise|
+            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
+          end
+        else
+          numbers = exercises.map { |ex| ex[:number] }
+          ex_ids_by_numbers = ecosystem.exercises.where(number: numbers).pluck(:number, :id).to_h
+          exercises.map do |exercise|
+            { id: ex_ids_by_numbers[exercise[:number]].to_s, points: exercise[:points] }
+          end
+        end
 
         attrs[:settings].merge!(
           page_ids: page_ids,
-          exercises: exercises.shuffle.take(task_plan[:exercises_count_core]).map do |exercise|
-            { id: exercise.id.to_s, points: [ 1 ] * exercise.number_of_questions }
-          end,
+          exercises: exercises_setting,
           exercises_count_dynamic: task_plan[:exercises_count_dynamic]
         )
       when 'external'
