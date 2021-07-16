@@ -35,7 +35,7 @@ class CourseMembership::Models::Student < ApplicationRecord
   end
 
   def is_refund_allowed
-    return false if payment_code.present? # TODO: Add specs for this
+    return false if payment_code.present?
     is_paid ? first_paid_at + REFUND_PERIOD > Time.current : false
   end
 
