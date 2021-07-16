@@ -33,7 +33,7 @@ RSpec.describe Demo::Assign, type: :routine do
   end
   let(:result)          { described_class.call assign_config }
 
-  let!(:course)           do
+  let!(:course)         do
     Demo::Users.call user_config
     ecosystem = FactoryBot.create :mini_ecosystem
     FactoryBot.create :catalog_offering, ecosystem: ecosystem, title: 'AP US History'
@@ -110,6 +110,17 @@ RSpec.describe Demo::Assign, type: :routine do
 
         expect(task.task_type).to eq task_plan.type
         expect(task.task_steps.size).to be_in expected_num_steps
+      end
+
+      if task_plan.title.include? 'Intro and '
+        expect(task_plan.dropped_questions.size).to eq 2
+        longest_task = tasks.max_by(&:actual_and_placeholder_exercise_count)
+        expect(task_plan.dropped_questions.first.question_id).to eq(
+          longest_task.tasked_exercises.first.question_id
+        )
+        expect(task_plan.dropped_questions.second.question_id).to eq(
+          longest_task.tasked_exercises.second.question_id
+        )
       end
     end
   end

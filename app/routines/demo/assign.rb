@@ -112,6 +112,7 @@ class Demo::Assign < Demo::Base
       end
 
       task_plan[:is_published] = true if task_plan[:is_published].nil?
+      task_plan[:dropped_questions] ||= []
 
       task_plan_model = task_plans_by_hash[task_plan]
 
@@ -147,6 +148,7 @@ class Demo::Assign < Demo::Base
         log { "  Distributing tasks" }
 
         tasks = run(:distribute_tasks, task_plan: task_plan_model).outputs.tasks
+        task_plan_model.tasks.reset
         log { "Assigned #{task_plan_model.type} #{tasks.count} times" }
 
         log do
@@ -162,11 +164,28 @@ class Demo::Assign < Demo::Base
 
           "One task looks like: Task #{task.id}: #{task.task_type}\n#{steps.join("\n")}"
         end if tasks.any?
+
+        longest_task = nil
+        task_plan_model.dropped_questions = task_plan[:dropped_questions].map do |dropped_question|
+          question_index = dropped_question[:question_index]
+          longest_task ||= tasks.max_by(&:actual_and_placeholder_exercise_count)
+          tasked_exercise = longest_task.tasked_exercises[question_index] unless question_index.nil?
+          tasked_exercise ||= longest_task.tasked_exercises.sample
+          Tasks::Models::DroppedQuestion.new(
+            question_id: tasked_exercise.question_id, drop_method: dropped_question[:drop_method]
+          )
+        end
+
+        num_dropped_questions = task_plan_model.dropped_questions.size
+        if num_dropped_questions > 0
+          task_plan_model.save!
+          run :distribute_tasks, task_plan: task_plan_model
+          task_plan_model.dropped_questions.reset
+          log { "Dropped #{num_dropped_questions} questions" }
+        end
       else
         log { "  Is a draft, skipping distributing" }
       end
-
-      task_plan_model.tasks.reset
 
       task_plan_model
     end

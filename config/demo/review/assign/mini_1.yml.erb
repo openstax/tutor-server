@@ -24,6 +24,11 @@ course:
           opens_at: <%= open_last_monday - 2.weeks %>
           due_at: <%= due_last_monday - 5.days %>
           closes_at: <%= closes_last_monday + 2.days %>
+      dropped_questions:
+        - question_index: 0
+          drop_method: zeroed
+        - question_index: 1
+          drop_method: full_credit
 
     - title: Read 1.3 and 1.4
       type: reading
@@ -58,6 +63,11 @@ course:
           opens_at: <%= open_last_monday - 2.weeks %>
           due_at: <%= due_last_monday - 3.days %>
           closes_at: <%= closes_last_monday + 4.days %>
+      dropped_questions:
+        - question_index: 0
+          drop_method: full_credit
+        - question_index: 1
+          drop_method: zeroed
 
     - title: HW 1.3 and 1.4
       type: homework

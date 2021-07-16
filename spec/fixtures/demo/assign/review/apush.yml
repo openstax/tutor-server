@@ -19,6 +19,11 @@ course:
           opens_at: 2019-07-15 00:01:00 -0500
           due_at: 2019-07-24 07:00:00 -0500
           closes_at: 2019-07-31 07:00:00 -0500
+      dropped_questions:
+        - question_index: 0
+          drop_method: zeroed
+        - question_index: 1
+          drop_method: full_credit
 
     - title: Read Chapter 1 Sections 3 and 4
       type: reading
@@ -56,6 +61,11 @@ course:
           opens_at: 2019-07-15 00:01:00 -0500
           due_at: 2019-07-26 07:00:00 -0500
           closes_at: 2019-08-02 07:00:00 -0500
+      dropped_questions:
+        - question_index: 0
+          drop_method: zeroed
+        - question_index: 1
+          drop_method: full_credit
 
     - title: HW Chapter 1 Sections 3 and 4
       type: homework
