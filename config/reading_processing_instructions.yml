@@ -183,10 +183,18 @@ psychology:
 
 sociology:
   - css: >-
-      .section-quiz, .short-answer, .further-research, [data-element-type="section-quiz"],
+      .section-quiz, .short-answer, .further-research, .references,
+      [data-element-type="section-summary"], [data-element-type="section-quiz"],
       [data-element-type="short-answer"], [data-element-type="further-research"],
       [data-type="glossary"]
     fragments: []
+  - css: >-
+      .sociological-research, .sociology-real-world,
+      .sociology-big-picture, .sociology-policy-debate
+    fragments:
+      - reading
+    labels:
+      - note
 
 u-physics:
   - css: >-
