@@ -38,6 +38,7 @@ RSpec.describe Demo::Users, type: :routine do
     expect(admin.school_location).to eq 'unknown_school_location'
     expect(admin.is_kip).to be_nil
     expect(admin.is_test).to eq true
+    expect(admin.grant_tutor_access).to be_nil
 
     ca = User::Models::Profile.joins(:account).find_by(account: { username: 'content' })
     expect(ca.is_admin?).to eq false
@@ -50,6 +51,7 @@ RSpec.describe Demo::Users, type: :routine do
     expect(ca.school_location).to eq 'unknown_school_location'
     expect(ca.is_kip).to be_nil
     expect(ca.is_test).to eq true
+    expect(ca.grant_tutor_access).to be_nil
 
     cs = User::Models::Profile.joins(:account).find_by(account: { username: 'support' })
     expect(cs.is_admin?).to eq false
@@ -62,6 +64,7 @@ RSpec.describe Demo::Users, type: :routine do
     expect(cs.school_location).to eq 'unknown_school_location'
     expect(cs.is_kip).to be_nil
     expect(cs.is_test).to eq true
+    expect(cs.grant_tutor_access).to be_nil
 
     rs = User::Models::Profile.joins(:account).find_by(account: { username: 'researcher' })
     expect(rs.is_admin?).to eq false
@@ -74,6 +77,7 @@ RSpec.describe Demo::Users, type: :routine do
     expect(rs.school_location).to eq 'unknown_school_location'
     expect(rs.is_kip).to be_nil
     expect(rs.is_test).to eq true
+    expect(rs.grant_tutor_access).to be_nil
 
     tc = User::Models::Profile.joins(:account).find_by(account: { username: 'reviewteacher' })
     expect(tc.is_admin?).to eq false
@@ -86,6 +90,7 @@ RSpec.describe Demo::Users, type: :routine do
     expect(tc.school_location).to eq 'domestic_school'
     expect(tc.is_kip).to eq true
     expect(tc.is_test).to eq true
+    expect(tc.grant_tutor_access).to eq true
 
     acc = OpenStax::Accounts::Account.arel_table
     students = User::Models::Profile.joins(:account).where(acc[:username].matches('reviewstudent%'))
@@ -101,6 +106,7 @@ RSpec.describe Demo::Users, type: :routine do
       expect(student.school_location).to eq 'domestic_school'
       expect(student.is_kip).to eq true
       expect(student.is_test).to eq true
+      expect(student.grant_tutor_access).to be_nil
     end
   end
 end

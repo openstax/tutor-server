@@ -129,7 +129,8 @@ class Demo::Users < Demo::Base
       role: :instructor,
       school_type: :college,
       school_location: :domestic_school,
-      is_kip: true
+      is_kip: true,
+      grant_tutor_access: true
     ).each { |user| log { "Teacher: #{user.username}" } }
 
     log_status
