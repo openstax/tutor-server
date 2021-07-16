@@ -34,7 +34,7 @@ class Api::V1::Demo::Course::CourseRepresenter < Api::V1::Demo::CourseRepresente
            writeable: true
 
   collection :teachers,
-             extend: Api::V1::Demo::UserRepresenter,
+             extend: Api::V1::Demo::Course::UserRepresenter,
              class: Demo::Mash,
              readable: true,
              writeable: true,

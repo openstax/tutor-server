@@ -5,7 +5,7 @@ class Api::V1::Demo::Course::PeriodRepresenter < Api::V1::Demo::PeriodRepresente
            writeable: true
 
   collection :students,
-             extend: Api::V1::Demo::UserRepresenter,
+             extend: Api::V1::Demo::Course::UserRepresenter,
              class: Demo::Mash,
              readable: true,
              writeable: true,

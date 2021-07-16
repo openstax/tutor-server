@@ -24,8 +24,8 @@ RSpec.describe Demo::Users, type: :routine do
   it 'creates the demo users specified in the config' do
     expect do
       user_configs.each { |config| expect(described_class.call(config).errors).to be_empty }
-    end.to  change { OpenStax::Accounts::Account.count }.by(11)
-       .and change { User::Models::Profile.count }.by(11)
+    end.to  change { OpenStax::Accounts::Account.count }.by(14)
+       .and change { User::Models::Profile.count }.by(14)
 
     admin = User::Models::Profile.joins(:account).find_by(account: { username: 'admin' })
     expect(admin.is_admin?).to eq true

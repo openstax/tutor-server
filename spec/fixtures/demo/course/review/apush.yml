@@ -8,15 +8,21 @@ course:
 
   teachers:
     - username: reviewteacher
+      is_dropped: true
+    - username: teacher01
 
   periods:
     - name: 1st
       students:
+        - username: droppedstudent1
+          is_dropped: true
         - username: reviewstudent1
         - username: reviewstudent2
         - username: reviewstudent3
     - name: 2nd
       students:
+        - username: droppedstudent2
+          is_dropped: true
         - username: reviewstudent4
         - username: reviewstudent5
         - username: reviewstudent6

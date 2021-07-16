@@ -92,8 +92,8 @@ class Demo::Export < Demo::Base
         period.save validate: false
       end
 
-      students = periods.flat_map(&:students)
-      teachers = courses.flat_map(&:teachers)
+      students = periods.flat_map(&:students).sort_by(&:created_at)
+      teachers = courses.flat_map(&:teachers).sort_by(&:created_at)
 
       # Anonymize user data
 
