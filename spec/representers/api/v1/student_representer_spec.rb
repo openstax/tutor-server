@@ -70,6 +70,17 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       course.update_attributes(is_preview: false, does_cost: true)
       expect(representation).to include('prompt_student_to_pay' => false)
     end
+
+    it 'returns payment_code' do
+      payment_code = FactoryBot.create(:payment_code, {
+                                         student: student,
+                                         redeemed_at: Time.current
+                                       })
+      expect(representation).to include('payment_code' => {
+                                          "code" => payment_code.code,
+                                          "redeemed_at" => payment_code.redeemed_at.to_s
+                                        })
+    end
   end
 
 end
