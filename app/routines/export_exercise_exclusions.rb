@@ -62,7 +62,7 @@ class ExportExerciseExclusions
   def exercise_urls_by_exercise_numbers
     @exercise_urls_by_exercise_numbers ||= {}.tap do |hash|
       all_excluded_exercise_numbers.each do |number|
-        hash[number] = OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
+        hash[number] = OpenStax::Exercises::V1.uri_for("/exercise/#{number}").to_s
       end
     end
   end
