@@ -83,7 +83,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
           specify 'with urls' do
             ee_numbers_urls = ee_numbers.map do |number|
-              OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
+              OpenStax::Exercises::V1.uri_for("/exercise/#{number}").to_s
             end
             expect(output[:excluded_exercises_hash].map(&:exercise_url)).to(
               match_array ee_numbers_urls
@@ -123,7 +123,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
           excluded_exercises = @course.excluded_exercises.sort_by(&:exercise_number)
           ee_numbers = excluded_exercises.map(&:exercise_number)
           ee_numbers_urls = ee_numbers.map do |number|
-            OpenStax::Exercises::V1.uri_for("/exercises/#{number}").to_s
+            OpenStax::Exercises::V1.uri_for("/exercise/#{number}").to_s
           end
           exclusion_dates = excluded_exercises.map do |ee|
             DateTimeUtilities.to_api_s(ee.created_at)
@@ -192,7 +192,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
 
         specify 'exercise url' do
           exercise_urls = [@ee_1, @ee_2, @ee_3, @ee_removed].map do |ee|
-            OpenStax::Exercises::V1.uri_for("/exercises/#{ee.exercise_number}").to_s
+            OpenStax::Exercises::V1.uri_for("/exercise/#{ee.exercise_number}").to_s
           end
           outputs_by_exercise.each{ |output| expect(output[:exercise_url]).to be_in exercise_urls }
         end
@@ -232,7 +232,7 @@ RSpec.describe ExportExerciseExclusions, type: :routine do
         it 'includes all the correct data' do
           exercise_numbers = [@ee_1, @ee_2, @ee_3, @ee_removed].map(&:exercise_number)
           exercise_urls = exercise_numbers.map do |exercise_number|
-            OpenStax::Exercises::V1.uri_for("/exercises/#{exercise_number}").to_s
+            OpenStax::Exercises::V1.uri_for("/exercise/#{exercise_number}").to_s
           end
           pages = [@page_1, @page_2, @page_removed, @exercise_another_eco.page]
           page_uuids = pages.map(&:uuid)

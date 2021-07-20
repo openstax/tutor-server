@@ -19,7 +19,7 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
       expect(exercise.preview).to be_nil
       expect(exercise.context).to eq context
       expect(exercise.content).to eq content
-      expect(exercise.url).to eq "#{OpenStax::Exercises::V1.server_url}/exercises/#{hash[:uid]}"
+      expect(exercise.url).to eq "#{OpenStax::Exercises::V1.server_url}/exercise/#{hash[:uid]}"
       expect(exercise.nickname).to eq nickname
       expect(exercise.title).to eq title
       expect(exercise.question_answers[0].length).to eq 2

@@ -40,7 +40,7 @@ class OpenStax::Exercises::V1::Exercise
   end
 
   def url
-    @url ||= "#{@server_url}/exercises/#{uid}"
+    @url ||= "#{@server_url}/exercise/#{uid}"
   end
 
   def nickname
