@@ -16,13 +16,10 @@ new_subjects:
     image: new_subjects.jpg
     image_highdpi: new_subjects.jpg
     header: Three new OpenStax Tutor subjects
-    body: <i>American Government</i>, <i>U.S. History</i> and the third edition of <i>Introduction to Sociology</i> are now available. Create
-          interactive readings with embedded questions to keep your students engaged, and build your own homework assignments.
+    body: <i>U.S. History</i> and the third edition of <i>Introduction to Sociology</i> are now available. Create interactive readings with embedded questions to keep your students engaged, and build your own homework assignments.
     books:
-      - title: American Government 2e
-        image: american-government-2e.png
-      - title: Sociology 2e
-        image: introduction-to-sociology-2e.png
+      - title: Sociology 3e
+        image: introduction-to-sociology-3e.png
       - title: U.S. History
         image: us-history.png
       - title: Anatomy and Physiology
@@ -41,6 +38,8 @@ new_subjects:
         image: biology-for-ap-courses.png
       - title: College Physics for AP® Courses
         image: college-physics-for-ap-courses.png
+      - title: American Government 2e
+        image: american-government-2e.png
 
 white:
   appearance: white
