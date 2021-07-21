@@ -38,8 +38,6 @@ new_subjects:
         image: biology-for-ap-courses.png
       - title: College Physics for AP® Courses
         image: college-physics-for-ap-courses.png
-      - title: American Government 2e
-        image: american-government-2e.png
 
 white:
   appearance: white
