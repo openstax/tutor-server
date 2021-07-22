@@ -126,7 +126,8 @@
     justify-content: center;
     border-radius: 2px;
     font-weight: bold;
-    font-size: 1.8rem;
+    font-size: var(--button-font-size);
+    line-height: var(--button-line-height);
   }
 
   .header {
@@ -423,15 +424,19 @@
     --logo-width: 136px;
     --logo-height: 24px;
     --button-height: 60px;
+    --button-font-size: 1.9rem;
+    --button-line-height: 2.4rem;
   }
   @include tablet {
     --body-padding: 3.2rem;
     --content-top-margin: 10.4rem;
-    --header-font-size: 6rem;
-    --header-line-height: 7.5rem;
+    --header-font-size: 4.8rem;
+    --header-line-height: 6rem;
     --logo-width: 181px;
     --logo-height: 32px;
     --button-height: 60px;
+    --button-font-size: 1.6rem;
+    --button-line-height: 2.4rem;
   }
   @include desktop {
     --body-padding: 0;
@@ -443,6 +448,8 @@
     --logo-width: 181px;
     --logo-height: 32px;
     --button-height: 40px;
+    --button-font-size: 1.6rem;
+    --button-line-height: 2.4rem;
     --button-max-width: 144px;
   }
 
@@ -452,6 +459,8 @@
     --logo-width: 227px;
     --logo-height: 40px;
     --button-height: 60px;
+    --button-font-size: 1.6rem;
+    --button-line-height: 2.4rem;
     --button-max-width: initial;
   }
 
