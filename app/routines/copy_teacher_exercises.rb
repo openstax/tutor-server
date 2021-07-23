@@ -29,15 +29,16 @@ class CopyTeacherExercises
             anonymize_author: source_exercise.anonymize_author,
             is_copyable: source_exercise.is_copyable
           ).tap do |new_exercise|
-            new_exercise.images.attach(source_exercise.images) if source_exercise.images.present?
+            source_exercise.images.each do |image|
+              new_exercise.images.attach image.blob
+            end
 
             run(
               :tag,
               ecosystem: dest_page.book.ecosystem,
               resource: new_exercise,
               tags: source_exercise.tags,
-              tagging_class: Content::Models::ExerciseTag,
-              save_tags: false
+              tagging_class: Content::Models::ExerciseTag
             )
 
             new_exercise.set_teacher_exercise_identities

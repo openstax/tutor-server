@@ -10,11 +10,11 @@ class Content::Routines::TagResource
     attributes = [tags].flatten.compact.map do |tag|
       case tag
       when Hash
-        tag.merge tag_type: tag[:type]
+        tag.with_indifferent_access.merge tag_type: tag[:type]
       when Content::Models::Tag
-        tag.attributes
+        tag.attributes.with_indifferent_access
       else
-        { value: tag }
+        { value: tag }.with_indifferent_access
       end
     end
     attributes_by_value = attributes.index_by { |attr| attr[:value] }
