@@ -36,8 +36,7 @@ class CopyTeacherExercises
               ecosystem: dest_page.book.ecosystem,
               resource: new_exercise,
               tags: source_exercise.tags,
-              tagging_class: Content::Models::ExerciseTag,
-              save_tags: false
+              tagging_class: Content::Models::ExerciseTag
             )
 
             new_exercise.set_teacher_exercise_identities
