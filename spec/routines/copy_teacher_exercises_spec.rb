@@ -16,8 +16,17 @@ RSpec.describe CopyTeacherExercises, type: :routine do
       end
     end
   end
-  let(:new_page)          { FactoryBot.create :content_page }
-  let(:mapping)           { [ [ existing_page.uuid, new_page.uuid ] ] }
+  let!(:existing_images) do
+    existing_exercises.map do |exercise|
+      exercise.images.attach(
+        io: File.open(
+          Rails.root.join('spec', 'fixtures', 'images', 'staxly.png')
+        ), filename: 'staxly.png', content_type: 'image/png'
+      )
+    end
+  end
+  let(:new_page) { FactoryBot.create :content_page }
+  let(:mapping)  { [ [ existing_page.uuid, new_page.uuid ] ] }
 
   it 'copies teacher exercises based on a given mapping' do
     expect { described_class.call mapping: mapping }.to(
@@ -35,6 +44,7 @@ RSpec.describe CopyTeacherExercises, type: :routine do
         tag.attributes.except('id', 'content_ecosystem_id', 'created_at', 'updated_at')
       end
     end
+    existing_blobs = existing_exercises.map { |exercise| exercise.images.map(&:blob).sort }
     Content::Models::Exercise.order(:created_at).last(2).each do |exercise|
       expect(exercise.page).to eq new_page
       expect(exercise.profile).to eq teacher_user
@@ -51,6 +61,7 @@ RSpec.describe CopyTeacherExercises, type: :routine do
           tag.attributes.except('id', 'content_ecosystem_id', 'created_at', 'updated_at')
         end
       )
+      expect(existing_blobs).to include exercise.images.map(&:blob).sort
     end
   end
 end
