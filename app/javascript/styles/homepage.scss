@@ -11,7 +11,7 @@
 }
 
 @mixin desktop-large {
-  @media screen and (min-width: 1440px) { @content }
+  @media screen and (min-width: 1600px) { @content }
 }
 
 @mixin dark {
@@ -75,6 +75,7 @@
   .button {
     border: 1px solid #fff;
     color: #fff;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1));
 
     &.primary {
       background: #F36B32;
@@ -84,7 +85,6 @@
     &:not(.primary) {
       border-color: #D5D5D5;
       background: #fff;
-      filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1));
       color: #5E6062;
     }
   }
@@ -96,8 +96,12 @@
     background-image: none !important;
   }
   @include desktop {
-    .content-footer[data-carousel=true] {
+    [data-carousel=true] .content-footer {
       background: #000;
+
+      .links-and-disclaimer {
+        background: #000;
+      }
 
       &, a, .copyright, .disclaimer {
         color: rgba(255, 255, 255, 0.9);
@@ -115,13 +119,15 @@
   .button {
     display: block;
     width: 200px;
-    height: 60px;
+    height: var(--button-height);
+    max-width: var(--button-max-width);
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 2px;
     font-weight: bold;
-    font-size: 1.8rem;
+    font-size: var(--button-font-size);
+    line-height: var(--button-line-height);
   }
 
   .header {
@@ -154,7 +160,7 @@
     display: block;
   }
 
-  .content-header, .content, .content-footer {
+  .content-header, .content-footer {
     width: 100%;
   }
   .content-header {
@@ -176,7 +182,9 @@
     flex-direction: column;
     max-width: 480px;
     margin: 0 auto;
-    .button { width: 100%; }
+    .button {
+      width: 100%;
+    }
     .button + .button { margin: 2.4rem 0; }
   }
 
@@ -193,6 +201,9 @@
       a {
         padding: 0.8rem;
         line-height: 2rem;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
     .sep {
@@ -226,7 +237,7 @@
     cursor: pointer;
   }
 
-  //=========== LAYOUT BREAKPOINTS
+  //=========== LAYOUT BREAKPOINTS =============================================
   @media screen and (max-width: 320px) {
     .content-footer .copyright {
       flex-basis: 100%;
@@ -270,24 +281,26 @@
 
     .wrapper {
       min-height: 100vh;
-      width: var(--wrapper-width);
       padding-right: var(--wrapper-padding);
-      max-width: 640px;
+
+      &:not([data-carousel=true]) {
+        max-width: 640px;
+        width: var(--wrapper-width);
+      }
     }
 
-    .content-header, .content, .content-footer:not([data-carousel=true]) {
-      width: auto;
-
+    .content-header, .content, :not([data-carousel=true] .content-footer) {
       margin-left: var(--wrapper-padding);
 
-      .links {
+      &.content-footer .links {
         justify-content: start;
-        margin: 1.4rem 0 2.4rem;
+        margin: 1.4rem 0 2.4rem var(--wrapper-padding);
       }
       .disclaimer {
         display: none;
       }
     }
+
     .content-header {
       margin: 4rem 0 0 var(--wrapper-padding);
 
@@ -298,100 +311,104 @@
         right: 3.2rem;
       }
     }
+
+    .content-footer .rice-logo {
+      display: none;
+    }
+
     .login-buttons {
       display: flex;
       flex-direction: row;
       margin: 0 0 20px;
 
-      .button {
-        max-width: 200px;
-      }
       .button + .button {
         margin: 0 0 0 3.2rem;
       }
     }
-    .content-footer {
-      &[data-carousel=true] {
-        max-width: none;
-        margin: 2.4rem 0 0;
 
-        .carousel {
-          display: block;
-          padding: 4rem var(--carousel-side-padding) 1.6rem;
-          position: relative;
+    [data-carousel=true] .content {
+      max-width: 640px;
+      width: var(--wrapper-width);
+    }
 
-          button {
-            display: none;
-            position: absolute;
-            border: 0;
-            background: none;
-            height: 32px;
-            width: 20px;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+    [data-carousel=true] .content-footer {
+      max-width: none;
+      width: initial;
+      margin: 2.4rem calc(-1 * var(--wrapper-padding)) 0 calc(-1 * var(--wrapper-padding));
 
-            &.previous {
-              left: 29px;
-              top: 94px;
-            }
-            &.next {
-              right: 29px;
-              top: 94px;
-            }
-            &[data-carousel-prev=true] {
-              display: flex;
-            }
-            &[data-carousel-next=true] {
-              display: flex;
-            }
+      .carousel {
+        display: block;
+        padding: 4rem var(--carousel-side-padding) 1.6rem;
+        position: relative;
+
+        button {
+          display: none;
+          position: absolute;
+          border: 0;
+          background: none;
+          height: 32px;
+          width: 20px;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+
+          &.previous {
+            left: 29px;
+            top: 94px;
           }
-
-          .books {
+          &.next {
+            right: 29px;
+            top: 94px;
+          }
+          &[data-carousel-prev=true] {
             display: flex;
-            overflow-x: scroll;
-            scroll-snap-type: x mandatory;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-
-            &::-webkit-scrollbar {
-              display: none;
-            }
-
-            & > * {
-              scroll-snap-align: center;
-            }
           }
-
-          img {
-            width: 140px;
-            height: 140px;
-            margin-right: 4.8rem;
+          &[data-carousel-next=true] {
+            display: flex;
           }
         }
 
-        .links-and-disclaimer {
-          background: #000;
-          padding: 0 var(--carousel-side-padding) 3.2rem;
+        .books {
           display: flex;
-          justify-content: space-between;
-          align-items: baseline;
-          flex-wrap: wrap;
+          overflow-x: scroll;
+          scroll-snap-type: x mandatory;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
 
-          .links, .disclaimer {
-            margin: 0;
-            display: block;
+          &::-webkit-scrollbar {
+            display: none;
           }
-          .links {
-            flex-shrink: 0;
-            margin-right: 2.4rem;
+
+          & > * {
+            scroll-snap-align: center;
           }
+        }
+
+        img {
+          width: 140px;
+          height: 140px;
+          margin-right: 4.8rem;
         }
       }
-      .rice-logo {
-        display: none;
+
+      .links-and-disclaimer {
+        padding: 0 var(--carousel-side-padding) 3.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+
+        .links, .disclaimer {
+          margin: 0;
+          display: block;
+        }
+        .links {
+          flex-shrink: 0;
+          margin-right: 2.4rem;
+        }
       }
     }
+
     #playbutton {
       display: block;
     }
@@ -406,14 +423,20 @@
     --header-line-height: 4rem;
     --logo-width: 136px;
     --logo-height: 24px;
+    --button-height: 60px;
+    --button-font-size: 1.8rem;
+    --button-line-height: 2.4rem;
   }
   @include tablet {
     --body-padding: 3.2rem;
     --content-top-margin: 10.4rem;
-    --header-font-size: 6rem;
-    --header-line-height: 7.5rem;
+    --header-font-size: 4.8rem;
+    --header-line-height: 6rem;
     --logo-width: 181px;
     --logo-height: 32px;
+    --button-height: 60px;
+    --button-font-size: 1.8rem;
+    --button-line-height: 2.4rem;
   }
   @include desktop {
     --body-padding: 0;
@@ -424,6 +447,10 @@
     --wrapper-padding: calc(3.5vw);
     --logo-width: 181px;
     --logo-height: 32px;
+    --button-height: 40px;
+    --button-font-size: 1.6rem;
+    --button-line-height: 2.4rem;
+    --button-max-width: 144px;
   }
 
   @include desktop-large {
@@ -431,9 +458,13 @@
     --header-line-height: 7.5rem;
     --logo-width: 227px;
     --logo-height: 40px;
+    --button-height: 60px;
+    --button-font-size: 1.6rem;
+    --button-line-height: 2.4rem;
+    --button-max-width: initial;
   }
 
-  --carousel-side-padding: 8rem;
+  --carousel-side-padding: calc(var(--wrapper-padding) * 2);
   --wrapper-width: calc(40vw); // Also used to place the play button
 }
 
@@ -524,4 +555,3 @@ a {
     @include light;
   }
 }
-

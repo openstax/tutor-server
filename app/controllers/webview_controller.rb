@@ -13,7 +13,7 @@ class WebviewController < ApplicationController
       redirect_to dashboard_path
     end
 
-    @homepage = HOMEPAGE_CONFIG[:default]
+    @homepage = HOMEPAGE_CONFIG[:new_subjects]
   end
 
   def index

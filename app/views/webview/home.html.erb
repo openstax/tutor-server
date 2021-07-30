@@ -20,7 +20,7 @@
 
 <body id="home" class="appearance-<%= @homepage[:appearance] %>" role="main" aria-label="main content" style='<%= homepage_background_style(@homepage[:content][:image]) %>' data-highdpi-path="<%= homepage_background_pack_path(@homepage[:content][:image_highdpi]) %>">
 
-  <div class="wrapper">
+  <div class="wrapper" data-carousel="<%= @homepage[:content][:books].present? %>">
     <header class="content-header">
       <nav role="navigation">
         <a class="logo" href="/" aria-label="home"></a>
@@ -44,7 +44,7 @@
       <p class="hint">Log in with your OpenStax credentials or sign up for an account.</p>
     </div>
 
-    <footer class="content-footer" data-carousel="<%= @homepage[:content][:books].present? %>">
+    <footer class="content-footer">
       <% if @homepage[:content][:books] %>
         <div class="carousel" role="region" aria-label="Available books">
           <button class="previous" data-carousel-prev aria-label="Previous slide">
