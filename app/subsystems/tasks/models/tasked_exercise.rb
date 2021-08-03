@@ -7,6 +7,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   belongs_to :exercise, subsystem: :content, inverse_of: :tasked_exercises
 
+  has_many :previous_attempts, inverse_of: :tasked_exercise
+
   before_validation :set_correct_answer_id, on: :create, if: :has_answers?
 
   validates :question_id, :question_index, :content, presence: true
@@ -33,6 +35,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
            :question_answer_ids, :question_formats_for_students,
            :correct_question_answers, :correct_question_answer_ids,
            :feedback_map, :solutions, :content_hash_for_students, to: :parser
+
+  def attempt_number
+    super || (task_step.completed? ? 1 : 0)
+  end
 
   def context
     super || exercise.context

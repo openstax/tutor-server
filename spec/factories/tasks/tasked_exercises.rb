@@ -22,6 +22,7 @@ FactoryBot.define do
     answer_ids     { exercise.question_answer_ids[question_index] }
     url            { exercise.url }
     title          { exercise.title }
+    attempt_number { rand 10 }
 
     after(:build) do |tasked_exercise, evaluator|
       options = {
