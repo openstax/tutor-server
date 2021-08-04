@@ -34,13 +34,6 @@ module Api::V1::Tasks
                description: "The content preview as exercise tasked"
              }
 
-    property :answer_id,
-             writeable: true,
-             readable: true,
-             schema_info: {
-               description: "The answer id that was recorded for the Exercise"
-             }
-
     property :uid,
              type: String,
              writeable: false,
@@ -66,6 +59,20 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                description: "A list of the formats that the question should be rendered using"
+             }
+
+    property :attempt_number,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               description: "The current attempt number"
+             }
+
+    property :answer_id,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               description: "The answer id that was recorded for the Exercise"
              }
 
     property :free_response,

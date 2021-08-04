@@ -46,6 +46,18 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
     )
 
     if @tasked.exercise?
+      # The frontend can optionally set the attempt_number
+      # so we validate that they are seeing the correct number of attempts left (no change)
+      if @tasked.attempt_number_changed?
+        # We didn't get the expected attempt number
+        # Render an error message
+        render_api_errors(
+          code: 'invalid_attempt_number',
+          message: 'This question is already in progress in another tab or window;' +
+                   ' reload this page to continue.'
+        )
+        raise ActiveRecord::Rollback
+      end
       last_completed_at = @task_step.last_completed_at
 
       if !last_completed_at.nil? && (@tasked.free_response_changed? || @tasked.answer_id_changed?)

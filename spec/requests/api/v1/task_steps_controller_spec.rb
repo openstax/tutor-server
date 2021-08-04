@@ -160,11 +160,38 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
+    it 'errors if an unexpected attempt_number is provided' do
+      answer_id = tasked.answer_ids.first
+
+      api_put api_step_url(tasked.task_step.id), @user_1_token, params: {
+        free_response: 'Ipsum lorem',
+        answer_id: answer_id.to_s,
+        attempt_number: tasked.attempt_number - 1
+      }.to_json
+      expect(response).to have_http_status(:unprocessable_entity)
+
+      expect(response.body_as_hash).to eq(
+        errors: [
+          {
+            code: 'invalid_attempt_number',
+            message: 'This question is already in progress in another tab or window;' +
+                     ' reload this page to continue.'
+          }
+        ], status: 422
+      )
+
+      expect(tasked.reload.free_response).not_to eq 'Ipsum lorem'
+      expect(tasked.answer_id).not_to eq tasked.answer_ids.first
+    end
+
     it 'updates the free response of an exercise' do
       answer_id = tasked.answer_ids.first
 
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { free_response: 'Ipsum lorem', answer_id: answer_id.to_s }.to_json
+      api_put api_step_url(tasked.task_step.id), @user_1_token, params: {
+        free_response: 'Ipsum lorem',
+        answer_id: answer_id.to_s,
+        attempt_number: tasked.attempt_number
+      }.to_json
       expect(response).to have_http_status(:success)
 
       expect(response.body_as_hash).to(
