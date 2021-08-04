@@ -136,41 +136,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       end
     end
 
-    it 'updates the free response of an exercise' do
-      answer_id = tasked.answer_ids.first
-
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { free_response: 'Ipsum lorem', answer_id: answer_id.to_s }.to_json
-      expect(response).to have_http_status(:success)
-
-      expect(response.body_as_hash).to(
-        include(answer_id: answer_id.to_s, free_response: 'Ipsum lorem')
-      )
-
-      expect(tasked.reload.free_response).to eq 'Ipsum lorem'
-    end
-
     it "422's if needs to pay" do
       make_payment_required_and_expect_422(course: @course, user: @user_1) {
         api_put api_step_url(tasked.task_step.id), @user_1_token,
                 params: { free_response: 'Ipsum lorem' }.to_json
       }
-    end
-
-    it 'updates the selected answer of an exercise' do
-      tasked.free_response = 'Ipsum lorem'
-      tasked.save!
-      answer_id = tasked.answer_ids.first
-
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { answer_id: answer_id.to_s }.to_json
-
-      expect(response).to have_http_status(:success)
-
-      expect(tasked.reload.answer_id).to eq answer_id
-      task_step = tasked.task_step
-      expect(task_step.first_completed_at).not_to be_nil
-      expect(task_step.last_completed_at).not_to be_nil
     end
 
     it 'does not update the answer if the free response is not set' do
@@ -190,7 +160,37 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
-    it 'updates last_completed_at if the step is already completed' do
+    it 'updates the free response of an exercise' do
+      answer_id = tasked.answer_ids.first
+
+      api_put api_step_url(tasked.task_step.id), @user_1_token,
+              params: { free_response: 'Ipsum lorem', answer_id: answer_id.to_s }.to_json
+      expect(response).to have_http_status(:success)
+
+      expect(response.body_as_hash).to(
+        include(answer_id: answer_id.to_s, free_response: 'Ipsum lorem')
+      )
+
+      expect(tasked.reload.free_response).to eq 'Ipsum lorem'
+    end
+
+    it 'updates the selected answer of an exercise' do
+      tasked.free_response = 'Ipsum lorem'
+      tasked.save!
+      answer_id = tasked.answer_ids.first
+
+      api_put api_step_url(tasked.task_step.id), @user_1_token,
+              params: { answer_id: answer_id.to_s }.to_json
+
+      expect(response).to have_http_status(:success)
+
+      expect(tasked.reload.answer_id).to eq answer_id
+      task_step = tasked.task_step
+      expect(task_step.first_completed_at).not_to be_nil
+      expect(task_step.last_completed_at).not_to be_nil
+    end
+
+    it 'updates last_completed_at and creates a PreviousAttempt if the step is already completed' do
       tasked.free_response = 'Ipsum Lorem'
       tasked.answer_id = tasked.answer_ids.first
       tasked.save!
@@ -204,7 +204,8 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect do
         api_put api_step_url(tasked.task_step.id), @user_1_token,
                 params: { answer_id: tasked.answer_ids.last }.to_json
-      end.to change { tasked.reload.answer_id }
+      end.to  change { tasked.reload.answer_id }
+         .and change { tasked.previous_attempts.count }.by(1)
 
       expect(response).to have_http_status(:success)
       task_step.reload
@@ -212,6 +213,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(task_step.last_completed_at).not_to eq completed_at
       expect(tasked.answer_id).to eq tasked.answer_ids.last
       expect(tasked.free_response).to eq 'Ipsum Lorem'
+
+      previous_attempt = tasked.previous_attempts.order(:number).last
+      expect(previous_attempt.number).to eq tasked.attempt_number - 1
+      expect(previous_attempt.free_response).to eq 'Ipsum Lorem'
+      expect(previous_attempt.answer_id).to eq tasked.answer_ids.first
+      expect(previous_attempt.attempted_at).to be_within(1e-6).of(completed_at)
     end
 
     it 'calls MarkTaskStepCompleted when setting only the free_response' do

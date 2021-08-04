@@ -1,6 +1,7 @@
 class Api::V1::TaskStepsController < Api::V1::ApiController
   include Ratings::Concerns::RatingJobs
 
+  # This around_action puts all actions except show inside a database transaction
   around_action :with_task_step_and_tasked, except: :show
   before_action :fetch_step, only: :show
   before_action :error_if_student_and_needs_to_pay
@@ -33,12 +34,34 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   api :PUT, '/steps/:step_id', 'Updates the specified TaskStep'
   def update
-    OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, @tasked)
+    OSU::AccessPolicy.require_action_allowed! :update, current_api_user, @tasked
 
-    consume!(@tasked,
-             represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked),
-             user_options: {include_content: true} # needed so representer will consume free_response
-            )
+    previous_free_response = @tasked.free_response
+    previous_answer_id = @tasked.answer_id
+
+    consume!(
+      @tasked,
+      represent_with: Api::V1::TaskedRepresenterMapper.representer_for(@tasked),
+      user_options: { include_content: true } # needed so representer will consume free_response
+    )
+
+    if @tasked.exercise?
+      last_completed_at = @task_step.last_completed_at
+
+      if !last_completed_at.nil? && (@tasked.free_response_changed? || @tasked.answer_id_changed?)
+        previous_attempt = Tasks::Models::PreviousAttempt.new(
+          tasked_exercise: @tasked,
+          number: @tasked.attempt_number,
+          attempted_at: last_completed_at,
+          free_response: previous_free_response,
+          answer_id: previous_answer_id
+        )
+        @tasked.attempt_number += 1
+        @tasked.previous_attempts << previous_attempt
+        raise(ActiveRecord::Rollback) if render_api_errors(previous_attempt.errors)
+      end
+    end
+
     @tasked.save
     raise(ActiveRecord::Rollback) if render_api_errors(@tasked.errors)
 
