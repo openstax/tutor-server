@@ -16,7 +16,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   validates :free_response, length: { maximum: 10000 }
   validates :grader_points, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
 
-  validate :free_response_required_before_answer_id, on: :update
+  validate :free_response_required_before_answer_id, :free_response_not_locked, on: :update
   validate :valid_answer, :changes_allowed
 
   scope :correct, -> do
@@ -361,6 +361,13 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     throw :abort
   end
 
+  def free_response_not_locked
+    return unless free_response_changed? && !answer_id_was.blank?
+
+    errors.add(:free_response, 'cannot be changed after a multiple choice answer is selected')
+    throw :abort
+  end
+
   def valid_answer
     # Multiple choice answer must be listed in the exercise
     return if answer_id.blank? || answer_ids.include?(answer_id.to_s)
@@ -373,7 +380,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     # Check if the answer can be changed
     return if task_step&.can_be_updated?(current_time: current_time)
 
-    [ :answer_id, :free_response ].each do |attr|
+    [ :attempt_number, :answer_id, :free_response ].each do |attr|
       errors.add(
         attr, 'cannot be updated (max attempts exceeded or already graded)'
       ) if changes[attr].present?

@@ -113,7 +113,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
       current_time: current_time
     ) || (
       task.allow_auto_graded_multiple_attempts &&
-      tasked.attempt_number < tasked.answer_ids.size - 2
+      tasked.attempt_number <= tasked.answer_ids.size - 2
     )
   end
 

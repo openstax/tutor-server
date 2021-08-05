@@ -74,7 +74,6 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise.complete!
 
     expect(tasked_exercise.reload).to be_valid
-
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     expect(tasked_exercise).not_to be_valid
 
@@ -86,11 +85,48 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
     expect(tasked_exercise.reload).to be_valid
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
-    expect(tasked_exercise).to be_valid
+    tasked_exercise.save!
+
+    # Cannot change the free response after selecting a multiple choice answer
+    tasked_exercise.free_response = 'some new thing'
+    expect(tasked_exercise).not_to be_valid
+  end
+
+  it 'can be updated after feedback available if multiple attempts is enabled' do
+    grading_template = tasked_exercise.task_step.task.task_plan.grading_template
+    grading_template.update_columns(
+      auto_grading_feedback_on: :answer,
+      allow_auto_graded_multiple_attempts: true
+    )
+
+    # Make the exercise have 4 answers so we get 2 attempts
+    tasked_exercise.answer_ids += tasked_exercise.answer_ids
+
+    tasked_exercise.attempt_number = 1
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    tasked_exercise.save!
 
     expect(tasked_exercise.reload).to be_valid
+
+    tasked_exercise.complete!
+
+    # Cannot change the free response after selecting a multiple choice answer
+    tasked_exercise.attempt_number = 2
     tasked_exercise.free_response = 'some new thing'
-    expect(tasked_exercise).to be_valid
+    expect(tasked_exercise).not_to be_valid
+
+    # Second attempt
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 2
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
+    tasked_exercise.save!
+
+    # Maximum number of attempts exceeded
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 3
+    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    expect(tasked_exercise).not_to be_valid
   end
 
   it 'cannot be answered after graded' do

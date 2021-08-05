@@ -535,13 +535,13 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
     it 'does not allow the answer to be changed after completed and feedback is available' do
       # Initial submission of multiple choice and free response
-      answer_id = @tasked_exercise.answer_ids.first
+      first_answer_id = @tasked_exercise.answer_ids.first
       api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,
-              params: { free_response: 'My first answer', answer_id: answer_id }.to_json)
+              params: { free_response: 'My first answer', answer_id: first_answer_id }.to_json)
       expect(response).to have_http_status(:success)
 
       @tasked_exercise.reload
-      expect(@tasked_exercise.answer_id).to eq answer_id
+      expect(@tasked_exercise.answer_id).to eq first_answer_id
       expect(@tasked_exercise.free_response).to eq 'My first answer'
 
       # No feedback yet because feedback date has not been reached
@@ -552,9 +552,17 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       @tasked_exercise.reload
       expect(@tasked_exercise.completed?).to eq true
 
-      # Feedback date has not passed, so the answer can still be updated
+      # Free response cannot be changed after a multiple choice answer is selected
       api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,
               params: { free_response: 'Something else!' }.to_json)
+      expect(response).to have_http_status(:unprocessable_entity)
+
+      second_answer_id = @tasked_exercise.answer_ids.last
+      expect(second_answer_id).not_to eq first_answer_id
+
+      # Feedback date has not passed, so the answer can still be updated
+      api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,
+              params: { answer_id: second_answer_id }.to_json)
       expect(response).to have_http_status(:success)
 
       # The feedback date arrives
@@ -566,18 +574,15 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(response).to have_http_status(:unprocessable_entity)
 
       @tasked_exercise.reload
-      expect(@tasked_exercise.free_response).to eq 'Something else!'
+      expect(@tasked_exercise.free_response).to eq 'My first answer'
 
       # Multiple choice cannot be changed
-      new_answer_id = @tasked_exercise.answer_ids.last
-      expect(new_answer_id).not_to eq @tasked_exercise.answer_id
-
       api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,
-              params: { answer_id: new_answer_id }.to_json)
+              params: { answer_id: first_answer_id }.to_json)
       expect(response).to have_http_status(:unprocessable_entity)
 
       @tasked_exercise.reload
-      expect(@tasked_exercise.answer_id).to eq answer_id
+      expect(@tasked_exercise.answer_id).to eq second_answer_id
     end
   end
 end
