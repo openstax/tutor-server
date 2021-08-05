@@ -50,7 +50,8 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
       default_open_time: '00:01',
       default_due_time: '21:00',
       default_due_date_offset_days: 7,
-      default_close_date_offset_days: 7
+      default_close_date_offset_days: 7,
+      allow_auto_graded_multiple_attempts: false
     },
     {
       task_plan_type: :reading,
@@ -64,7 +65,8 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
       default_open_time: '00:01',
       default_due_time: '07:00',
       default_due_date_offset_days: 7,
-      default_close_date_offset_days: 7
+      default_close_date_offset_days: 7,
+      allow_auto_graded_multiple_attempts: false
     }
   ]
 

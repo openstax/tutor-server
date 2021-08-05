@@ -882,6 +882,7 @@ ActiveRecord::Schema.define(version: 2021_08_03_214129) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "cloned_from_id"
+    t.boolean "allow_auto_graded_multiple_attempts", default: false, null: false
     t.index ["cloned_from_id"], name: "index_tasks_grading_templates_on_cloned_from_id"
     t.index ["course_profile_course_id", "name"], name: "index_tasks_grading_templates_on_course_and_name", unique: true
     t.index ["course_profile_course_id", "task_plan_type", "deleted_at"], name: "index_tasks_grading_templates_on_course_type_and_deleted"

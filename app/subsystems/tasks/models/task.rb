@@ -223,6 +223,10 @@ class Tasks::Models::Task < ApplicationRecord
     grading_template&.manual_grading_feedback_on || 'grade'
   end
 
+  def allow_auto_graded_multiple_attempts
+    grading_template&.allow_auto_graded_multiple_attempts
+  end
+
   def late_work_penalty_applied
     grading_template&.late_work_penalty_applied || 'not_accepted'
   end
