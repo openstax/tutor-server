@@ -111,6 +111,9 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
     !tasked.can_be_auto_graded? || !task.auto_grading_feedback_available?(
       current_time: current_time
+    ) || (
+      task.allow_auto_graded_multiple_attempts &&
+      tasked.attempt_number < tasked.answer_ids.size - 2
     )
   end
 

@@ -224,7 +224,7 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def allow_auto_graded_multiple_attempts
-    grading_template&.allow_auto_graded_multiple_attempts
+    !!grading_template&.allow_auto_graded_multiple_attempts
   end
 
   def late_work_penalty_applied

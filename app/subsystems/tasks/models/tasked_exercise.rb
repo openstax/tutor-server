@@ -370,14 +370,12 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def changes_allowed(current_time: Time.current)
-    # Cannot change the answer after feedback is available or manually graded
-    # Feedback is available immediately for iReadings, or at the due date for HW,
-    # but waits until the step is marked as completed
+    # Check if the answer can be changed
     return if task_step&.can_be_updated?(current_time: current_time)
 
     [ :answer_id, :free_response ].each do |attr|
       errors.add(
-        attr, 'cannot be updated after feedback becomes available or is graded'
+        attr, 'cannot be updated (max attempts exceeded or already graded)'
       ) if changes[attr].present?
     end
 
