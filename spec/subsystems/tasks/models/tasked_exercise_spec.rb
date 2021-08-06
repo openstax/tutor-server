@@ -90,12 +90,12 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     grading_template.update_column :auto_grading_feedback_on, :due
 
     expect(tasked_exercise.reload).to be_valid
-    tasked_exercise.attempt_number = 2
+    tasked_exercise.attempt_number = 1
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     tasked_exercise.save!
 
     # Cannot change the free response after selecting a multiple choice answer
-    tasked_exercise.attempt_number = 3
+    tasked_exercise.attempt_number = 1
     tasked_exercise.free_response = 'some new thing'
     expect(tasked_exercise).not_to be_valid
   end
@@ -137,7 +137,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect(tasked_exercise).not_to be_valid
   end
 
-  it 'cannot be answered after graded' do
+  it 'cannot be re-answered after graded' do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     tasked_exercise.free_response = 'abc'
     expect(tasked_exercise.was_manually_graded?).to eq false

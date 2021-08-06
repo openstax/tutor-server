@@ -60,7 +60,21 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       end
       last_completed_at = @task_step.last_completed_at
 
-      if !last_completed_at.nil? && (@tasked.free_response_changed? || @tasked.answer_id_changed?)
+      if last_completed_at.nil?
+        unless @tasked.last_graded_at.nil?
+          # First attempt, but was already graded
+          # Clear the grade to allow the student to actually answer it
+          @tasked.last_graded_at = nil
+          @tasked.grader_points = nil
+          @tasked.grader_comments = nil
+        end
+
+        @tasked.attempt_number = 1
+      elsif @tasked.multiple_attempts? && (
+        @tasked.free_response_changed? || @tasked.answer_id_changed?
+      )
+        # Second attempt, with multiple attempts enabled
+        # Record the previous attempt
         previous_attempt = Tasks::Models::PreviousAttempt.new(
           tasked_exercise: @tasked,
           number: @tasked.attempt_number,

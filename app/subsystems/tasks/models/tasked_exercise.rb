@@ -394,15 +394,16 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def changes_allowed(current_time: Time.current)
-    # Check if the answer can be changed
-    return if task_step&.can_be_updated?(current_time: current_time)
-
-    [ :attempt_number, :answer_id, :free_response ].each do |attr|
-      errors.add(
-        attr, 'cannot be updated (max attempts exceeded or already graded)'
-      ) if changes[attr].present?
+    # Return if none of the answer attributes changed
+    return unless [ :attempt_number, :answer_id, :free_response ].any? do |attr|
+      changes[attr].present?
     end
 
-    throw(:abort) if errors.any?
+    # Check if the answers can be changed
+    update_error = task_step&.update_error(current_time: current_time)
+    return if update_error.nil?
+
+    errors.add :base, update_error
+    throw :abort
   end
 end

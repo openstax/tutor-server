@@ -206,8 +206,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       tasked.save!
       answer_id = tasked.answer_ids.first
 
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { answer_id: answer_id.to_s }.to_json
+      expect do
+        api_put api_step_url(tasked.task_step.id), @user_1_token,
+                params: { answer_id: answer_id.to_s }.to_json
+      end.to  change { tasked.reload.answer_id }
+         .and change { tasked.attempt_number }.from(0).to(1)
 
       expect(response).to have_http_status(:success)
 
@@ -217,7 +220,12 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(task_step.last_completed_at).not_to be_nil
     end
 
-    it 'updates last_completed_at and creates a PreviousAttempt if the step is already completed' do
+    it 'updates last_completed_at and creates a PreviousAttempt if multiple attempts is on' do
+      # Need at least 4 answers for multiple attempts
+      tasked.answer_ids += tasked.answer_ids
+      expect(tasked.answer_ids.size).to eq 4
+
+      tasked.attempt_number = 1
       tasked.free_response = 'Ipsum Lorem'
       tasked.answer_id = tasked.answer_ids.first
       tasked.save!
@@ -226,15 +234,19 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       task_step.complete! completed_at: completed_at
       expect(task_step.first_completed_at).to eq completed_at
       expect(task_step.last_completed_at).to eq completed_at
-      task_step.task.task_plan.grading_template.update_column :auto_grading_feedback_on, :due
+      task_step.task.task_plan.grading_template.update_columns(
+        auto_grading_feedback_on: :answer,
+        allow_auto_graded_multiple_attempts: true
+      )
 
       expect do
         api_put api_step_url(tasked.task_step.id), @user_1_token,
                 params: { answer_id: tasked.answer_ids.last }.to_json
       end.to  change { tasked.reload.answer_id }
+         .and change { tasked.attempt_number }.from(1).to(2)
          .and change { tasked.previous_attempts.count }.by(1)
-
       expect(response).to have_http_status(:success)
+
       task_step.reload
       expect(task_step.last_completed_at).not_to be_nil
       expect(task_step.last_completed_at).not_to eq completed_at
