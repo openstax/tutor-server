@@ -40,6 +40,8 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:last_completed_at).and_return(Time.current)
       allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
       allow(exercise).to receive(:feedback_available?).and_return(false)
+      allow(exercise).to receive(:solution_available?).and_return(false)
+      allow(exercise).to receive(:attempts_remaining).and_return(1)
       allow(exercise).to receive(:question_id).and_return('questionID')
       allow(exercise).to receive(:is_in_multipart).and_return(false)
       allow(exercise).to receive(:response_validation).and_return({ valid: false })
@@ -103,6 +105,10 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       expect(representation).to include('can_be_updated' => true)
     end
 
+    it "has the correct 'attempts_remaining'" do
+      expect(representation).to include('attempts_remaining' => 1)
+    end
+
     it "has 'labels'" do
       allow(task_step).to receive(:labels).and_return([])
       expect(complete_representation).to include('labels')
@@ -152,32 +158,85 @@ RSpec.shared_examples 'a tasked_exercise representer' do
 
       it_behaves_like 'a good exercise representation should'
 
-      it "has the correct 'is_feedback_available'" do
-        expect(representation).to include('is_feedback_available' => true)
+      context 'solution not available' do
+        it "has the correct 'is_feedback_available'" do
+          expect(representation).to include('is_feedback_available' => true)
+        end
+
+        it "has the correct 'is_solution_available'" do
+          expect(representation).to include('is_solution_available' => false)
+        end
+
+        it "has correct 'feedback_html'" do
+          expect(complete_representation).to include('feedback_html' => 'Some feedback')
+        end
+
+        it "has the correct 'published_points_without_lateness'" do
+          expect(representation).to include('published_points_without_lateness' => 0.75)
+        end
+
+        it "has the correct 'published_late_work_point_penalty'" do
+          expect(representation).to include('published_late_work_point_penalty' => 0.25)
+        end
+
+        it "has the correct 'published_points'" do
+          expect(representation).to include('published_points' => 0.5)
+        end
+
+        it "'published_comments' is not included" do
+          expect(representation).not_to include('published_comments')
+        end
+
+        it "'solution' is not included" do
+          expect(complete_representation).not_to include('solution')
+        end
+
+        it "'correct_answer_id' is not included" do
+          expect(complete_representation).not_to include('correct_answer_id')
+        end
       end
 
-      it "has correct 'solution'" do
-        expect(complete_representation).to include('solution' => 'Some solution')
-      end
+      context 'solution available' do
+        before do
+          allow(tasked_exercise).to receive(:attempts_remaining).and_return(0)
+          allow(tasked_exercise).to receive(:solution_available?).and_return(true)
+        end
 
-      it "has correct 'feedback_html'" do
-        expect(complete_representation).to include('feedback_html' => 'Some feedback')
-      end
+        it "has the correct 'is_feedback_available'" do
+          expect(representation).to include('is_feedback_available' => true)
+        end
 
-      it "has the correct 'correct_answer_id'" do
-        expect(representation).to include('correct_answer_id' => '456')
-      end
+        it "has the correct 'is_solution_available'" do
+          expect(representation).to include('is_solution_available' => true)
+        end
 
-      it "has the correct 'published_points_without_lateness'" do
-        expect(representation).to include('published_points_without_lateness' => 0.75)
-      end
+        it "has correct 'feedback_html'" do
+          expect(complete_representation).to include('feedback_html' => 'Some feedback')
+        end
 
-      it "has the correct 'published_late_work_point_penalty'" do
-        expect(representation).to include('published_late_work_point_penalty' => 0.25)
-      end
+        it "has the correct 'published_points_without_lateness'" do
+          expect(representation).to include('published_points_without_lateness' => 0.75)
+        end
 
-      it "has the correct 'published_points'" do
-        expect(representation).to include('published_points' => 0.5)
+        it "has the correct 'published_late_work_point_penalty'" do
+          expect(representation).to include('published_late_work_point_penalty' => 0.25)
+        end
+
+        it "has the correct 'published_points'" do
+          expect(representation).to include('published_points' => 0.5)
+        end
+
+        it "has the correct 'published_comments'" do
+          expect(representation).to include('published_comments' => 'Hi')
+        end
+
+        it "has correct 'solution'" do
+          expect(complete_representation).to include('solution' => 'Some solution')
+        end
+
+        it "has the correct 'correct_answer_id'" do
+          expect(complete_representation).to include('correct_answer_id' => '456')
+        end
       end
     end
 
@@ -188,16 +247,8 @@ RSpec.shared_examples 'a tasked_exercise representer' do
         expect(representation).to include('is_feedback_available' => false)
       end
 
-      it "'solution' is not included" do
-        expect(complete_representation).not_to include('solution')
-      end
-
       it "'feedback_html' is not included" do
         expect(representation).to_not include('feedback_html')
-      end
-
-      it "'correct_answer_id' is not included" do
-        expect(representation).not_to include('correct_answer_id')
       end
 
       it "'published_points_without_lateness' is not included" do
@@ -210,6 +261,18 @@ RSpec.shared_examples 'a tasked_exercise representer' do
 
       it "'published_points' is not included" do
         expect(representation).not_to include('published_points')
+      end
+
+      it "'published_comments' is not included" do
+        expect(representation).not_to include('published_comments')
+      end
+
+      it "'solution' is not included" do
+        expect(complete_representation).not_to include('solution')
+      end
+
+      it "'correct_answer_id' is not included" do
+        expect(representation).not_to include('correct_answer_id')
       end
     end
   end

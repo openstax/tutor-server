@@ -483,7 +483,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       @tasked_exercise.task_step.task.update_attribute :opens_at, Time.current.yesterday - 1.day
     end
 
-    it 'only shows feedback and correct answer id after completed and feedback available' do
+    it 'only shows feedback and correct answer id after completed and solution available' do
       api_get(api_step_url(@tasked_exercise.task_step.id), @user_1_token)
 
       expect(response.body_as_hash).not_to have_key(:solution)
@@ -501,6 +501,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
       correct_answer_id = @tasked_exercise.correct_answer_id
       @tasked_exercise.answer_id = correct_answer_id
+      @tasked_exercise.attempt_number = 1
       @tasked_exercise.save!
 
       api_get(api_step_url(@tasked_exercise.task_step.id), @user_1_token)
@@ -522,18 +523,20 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(response.body_as_hash).not_to have_key(:feedback_html)
       expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
-      # Get it again after feedback is available
-      @tasked_exercise.task_step.task.update_attribute :due_at, Time.current.yesterday
+      # Get it again after solution is available
+      yesterday = Time.current.yesterday
+      @tasked_exercise.task_step.task.update_attributes(
+        due_at: yesterday, closes_at: yesterday
+      )
 
       api_get(api_step_url(@tasked_exercise.task_step.id), @user_1_token)
 
       expect(response.body_as_hash).to include(solution: { content_html: 'The first one.' })
       expect(response.body_as_hash).to include(feedback_html: 'Right!')
-
       expect(response.body_as_hash).to include(correct_answer_id: correct_answer_id)
     end
 
-    it 'does not allow the answer to be changed after completed and feedback is available' do
+    it 'does not allow the answer to be changed after completed and solution available' do
       # Initial submission of multiple choice and free response
       first_answer_id = @tasked_exercise.answer_ids.first
       api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,

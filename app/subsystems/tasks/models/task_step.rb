@@ -109,12 +109,10 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
     return false if !exercise? || tasked.was_manually_graded?
 
+    # attempt_number is checked after it is set to its new value
     !tasked.can_be_auto_graded? || !task.auto_grading_feedback_available?(
       current_time: current_time
-    ) || (
-      task.allow_auto_graded_multiple_attempts &&
-      tasked.attempt_number <= tasked.answer_ids.size - 2
-    )
+    ) || tasked.max_attempts >= tasked.attempt_number
   end
 
   def group_name

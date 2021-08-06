@@ -1,8 +1,12 @@
 module Api::V1::Tasks
   class TaskedExerciseRepresenter < TaskStepRepresenter
     FEEDBACK_AVAILABLE = ->(*) { feedback_available? }
+    SOLUTION_AVAILABLE = ->(*) { solution_available? }
     INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE = ->(user_options:, **) do
       user_options&.[](:include_content) && feedback_available?
+    end
+    INCLUDE_CONTENT_AND_SOLUTION_AVAILABLE = ->(user_options:, **) do
+      user_options&.[](:include_content) && solution_available?
     end
 
     property :content_exercise_id,
@@ -106,14 +110,24 @@ module Api::V1::Tasks
                description: "Whether or not this exercise's feedback is available"
              }
 
-    property :solution,
-             type: String,
+    property :solution_available?,
+             as: :is_solution_available,
              writeable: false,
              readable: true,
              schema_info: {
-               description: "A detailed solution that explains the correct choice"
-             },
-             if: INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE
+               required: true,
+               type: 'boolean',
+               description: "Whether or not this exercise's solution is available"
+             }
+
+    property :attempts_remaining,
+             type: Integer,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               description: "The number of attempts remaining for this exercise"
+             }
 
     property :feedback,
              as: :feedback_html,
@@ -129,9 +143,18 @@ module Api::V1::Tasks
              writeable: false,
              readable: true,
              schema_info: {
-               description: "The Exercise's correct answer's id"
+               description: "The Exercise's correct answer id"
              },
-             if: FEEDBACK_AVAILABLE
+             if: INCLUDE_CONTENT_AND_SOLUTION_AVAILABLE
+
+    property :solution,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               description: "A detailed solution that explains the correct choice"
+             },
+             if: INCLUDE_CONTENT_AND_SOLUTION_AVAILABLE
 
     property :context,
              type: String,
@@ -190,18 +213,11 @@ module Api::V1::Tasks
              type: String,
              readable: true,
              writeable: false,
-             if: FEEDBACK_AVAILABLE
+             if: SOLUTION_AVAILABLE
 
     property :drop_method,
             type: String,
             readable: true,
             writeable: false
-
-    # TODO: Remove after 1 release
-    property :dropped_method,
-            type: String,
-            readable: true,
-            writeable: false,
-            getter: ->(*) { drop_method }
   end
 end

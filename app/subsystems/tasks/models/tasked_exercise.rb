@@ -345,6 +345,23 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     )
   end
 
+  def solution_available?(current_time: Time.current)
+    feedback_available?(current_time: current_time) &&
+    !task_step&.can_be_updated?(current_time: current_time)
+  end
+
+  def multiple_attempts?
+    !!task_step&.task&.allow_auto_graded_multiple_attempts
+  end
+
+  def max_attempts
+    multiple_attempts? ? answer_ids.size - 2 : 1
+  end
+
+  def attempts_remaining(current_time: Time.current)
+    task_step&.can_be_updated?(current_time: current_time) ? max_attempts - attempt_number : 0
+  end
+
   def parts
     return [self] unless is_in_multipart?
 
