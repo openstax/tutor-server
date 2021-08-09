@@ -108,11 +108,13 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     )
 
     # Make the exercise have 4 answers so we get 2 attempts
-    tasked_exercise.answer_ids += tasked_exercise.answer_ids
+    tasked_exercise.answer_ids += [ '-3', '-4' ]
+    expect(tasked_exercise.answer_ids.size).to eq 4
+    incorrect_answer_ids = tasked_exercise.answer_ids - [ tasked_exercise.correct_answer_id ]
 
     tasked_exercise.attempt_number = 1
     tasked_exercise.free_response = 'abc'
-    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    tasked_exercise.answer_id = incorrect_answer_ids.first
     tasked_exercise.save!
 
     expect(tasked_exercise.reload).to be_valid
@@ -127,13 +129,13 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     # Second attempt
     expect(tasked_exercise.reload).to be_valid
     tasked_exercise.attempt_number = 2
-    tasked_exercise.answer_id = tasked_exercise.answer_ids.last
+    tasked_exercise.answer_id = incorrect_answer_ids.last
     tasked_exercise.save!
 
     # Maximum number of attempts exceeded
     expect(tasked_exercise.reload).to be_valid
     tasked_exercise.attempt_number = 3
-    tasked_exercise.answer_id = tasked_exercise.answer_ids.first
+    tasked_exercise.answer_id = tasked_exercise.correct_answer_id
     expect(tasked_exercise).not_to be_valid
   end
 

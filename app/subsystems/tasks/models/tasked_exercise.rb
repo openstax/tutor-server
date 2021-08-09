@@ -36,6 +36,12 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
            :correct_question_answers, :correct_question_answer_ids,
            :feedback_map, :solutions, :content_hash_for_students, to: :parser
 
+  def attempt_number_was
+    # If read_attribute(:attempt_number) is nil, we did not update it, so use the same fallback
+    # Otherwise, we updated it, so assume we had attempt_number - 1 (minimum 0)
+    super || (read_attribute(:attempt_number).nil? ? attempt_number : [ attempt_number - 1, 0 ].max)
+  end
+
   def attempt_number
     super || (task_step.completed? ? 1 : 0)
   end

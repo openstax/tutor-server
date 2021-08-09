@@ -222,12 +222,13 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
     it 'updates last_completed_at and creates a PreviousAttempt if multiple attempts is on' do
       # Need at least 4 answers for multiple attempts
-      tasked.answer_ids += tasked.answer_ids
+      tasked.answer_ids += [ '-3', '-4' ]
       expect(tasked.answer_ids.size).to eq 4
+      incorrect_answer_ids = tasked.answer_ids - [ tasked.correct_answer_id ]
 
       tasked.attempt_number = 1
       tasked.free_response = 'Ipsum Lorem'
-      tasked.answer_id = tasked.answer_ids.first
+      tasked.answer_id = incorrect_answer_ids.first
       tasked.save!
       task_step = tasked.task_step
       completed_at = Time.current - 1.second
@@ -241,7 +242,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
       expect do
         api_put api_step_url(tasked.task_step.id), @user_1_token,
-                params: { answer_id: tasked.answer_ids.last }.to_json
+                params: { answer_id: tasked.correct_answer_id }.to_json
       end.to  change { tasked.reload.answer_id }
          .and change { tasked.attempt_number }.from(1).to(2)
          .and change { tasked.previous_attempts.count }.by(1)
@@ -250,13 +251,13 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       task_step.reload
       expect(task_step.last_completed_at).not_to be_nil
       expect(task_step.last_completed_at).not_to eq completed_at
-      expect(tasked.answer_id).to eq tasked.answer_ids.last
+      expect(tasked.answer_id).to eq tasked.correct_answer_id
       expect(tasked.free_response).to eq 'Ipsum Lorem'
 
       previous_attempt = tasked.previous_attempts.order(:number).last
       expect(previous_attempt.number).to eq tasked.attempt_number - 1
       expect(previous_attempt.free_response).to eq 'Ipsum Lorem'
-      expect(previous_attempt.answer_id).to eq tasked.answer_ids.first
+      expect(previous_attempt.answer_id).to eq incorrect_answer_ids.first
       expect(previous_attempt.attempted_at).to be_within(1e-6).of(completed_at)
     end
 
