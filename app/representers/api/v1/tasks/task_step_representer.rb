@@ -73,7 +73,7 @@ module Api::V1::Tasks
     property :can_be_updated,
              writeable: false,
              readable: true,
-             getter: ->(*) { task_step.can_be_updated? },
+             getter: ->(*) { task_step.can_be_updated?(next_attempt: multiple_attempts?) },
              schema_info: {
                required: true,
                type: 'boolean',

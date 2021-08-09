@@ -347,7 +347,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   def solution_available?(current_time: Time.current)
     feedback_available?(current_time: current_time) &&
-    !task_step&.can_be_updated?(current_time: current_time)
+    !task_step&.can_be_updated?(current_time: current_time, next_attempt: multiple_attempts?)
   end
 
   def multiple_attempts?

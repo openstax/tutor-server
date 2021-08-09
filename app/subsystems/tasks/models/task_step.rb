@@ -100,7 +100,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
     !first_completed_at.nil?
   end
 
-  def update_error(current_time: Time.current)
+  def update_error(current_time: Time.current, next_attempt: false)
     return 'task closed' if task.past_close?(current_time: current_time)
 
     return 'already graded' if exercise? && tasked.was_manually_graded?
@@ -112,11 +112,12 @@ class Tasks::Models::TaskStep < ApplicationRecord
     return 'solution already available' if !tasked.multiple_attempts? &&
                                            tasked.feedback_available?(current_time: current_time)
 
-    return 'max attempts exceeded' if tasked.attempt_number > tasked.max_attempts
+    return 'max attempts exceeded' if next_attempt ? tasked.attempt_number >= tasked.max_attempts :
+                                                     tasked.attempt_number > tasked.max_attempts
   end
 
-  def can_be_updated?(current_time: Time.current)
-    update_error(current_time: Time.current).nil?
+  def can_be_updated?(current_time: Time.current, next_attempt: false)
+    update_error(current_time: Time.current, next_attempt: next_attempt).nil?
   end
 
   def group_name
