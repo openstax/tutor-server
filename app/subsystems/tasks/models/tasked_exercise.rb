@@ -355,7 +355,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def max_attempts
-    multiple_attempts? ? answer_ids.size - 2 : 1
+    multiple_attempts? ? [ answer_ids.size - 2, 1 ].max : 1
   end
 
   def attempts_remaining(current_time: Time.current)
