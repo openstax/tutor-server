@@ -79,5 +79,27 @@ RSpec.describe GetPageExerciseIdsByPoolTypes, type: :routine do
         expect(Set.new pools_map.values.flatten).to eq Set.new pools
       end
     end
+
+    context 'after an ecosystem update' do
+      let(:course)            { FactoryBot.create :course_profile_course }
+      let!(:updated_page_1)   do
+        FactoryBot.create :content_page, ecosystem: course.ecosystem, uuid: page_1.uuid
+      end
+      let(:teacher)           { FactoryBot.create :course_membership_teacher, course: course }
+      let!(:teacher_exercise) do
+        FactoryBot.create :content_exercise, page: page_1, profile: teacher.role.profile
+      end
+
+      it 'still returns the instructor exercises even after the update' do
+        expect(described_class[course: teacher.course, page_ids: [ updated_page_1.id ]]).to eq(
+          'all' => [ teacher_exercise.id ],
+          'homework_core' => [ teacher_exercise.id ],
+          'homework_dynamic' => [ teacher_exercise.id ],
+          'practice_widget' => [ teacher_exercise.id ],
+          'reading_context' => [],
+          'reading_dynamic' => []
+        )
+      end
+    end
   end
 end

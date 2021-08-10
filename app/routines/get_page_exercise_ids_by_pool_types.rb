@@ -26,9 +26,9 @@ class GetPageExerciseIdsByPoolTypes
       ecosystem.pages
     elsif ecosystem.pages.loaded?
       page_ids = page_ids.map(&:to_i)
-      ecosystem.pages.select { |page| page_ids.include? page.id }
+      ecosystem.pages.filter { |page| page_ids.include? page.id }
     else
-      ecosystem.pages.select(:id, *pool_method_name_by_pool_type.values).where(id: page_ids)
+      ecosystem.pages.select(:id, :uuid, *pool_method_name_by_pool_type.values).where(id: page_ids)
     end
 
     # Build map of pool types to pools
@@ -45,8 +45,10 @@ class GetPageExerciseIdsByPoolTypes
     # Add teacher-created exercises if course is provided
     return if course.nil?
 
-    teacher_exercises = Content::Models::Exercise.where(
-      content_page_id: pages.map(&:id), user_profile_id: course.related_teacher_profile_ids
+    page_uuids = pages.map(&:uuid)
+
+    teacher_exercises = Content::Models::Exercise.joins(:page).where(
+      page: { uuid: page_uuids }, user_profile_id: course.related_teacher_profile_ids
     )
     teacher_exercises = teacher_exercises.where(id: exercise_ids) unless exercise_ids.nil?
     teacher_exercise_ids = teacher_exercises.pluck(:id)
