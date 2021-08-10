@@ -147,6 +147,15 @@ module Api::V1::Tasks
              },
              if: INCLUDE_CONTENT_AND_SOLUTION_AVAILABLE
 
+    property :correct_answer_feedback,
+             as: :correct_answer_feedback_html,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               description: "The Exercise's correct answer feedback"
+             },
+             if: INCLUDE_CONTENT_AND_SOLUTION_AVAILABLE
+
     property :solution,
              type: String,
              writeable: false,

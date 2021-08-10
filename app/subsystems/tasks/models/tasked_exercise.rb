@@ -149,6 +149,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     feedback_map[answer_id] || ''
   end
 
+  def correct_answer_feedback
+    feedback_map[correct_answer_id] || ''
+  end
+
   def set_correct_answer_id
     return correct_answer_id if correct_answer_id.present?
 

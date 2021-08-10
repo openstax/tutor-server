@@ -35,6 +35,7 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:solution).and_return('Some solution')
       allow(exercise).to receive(:feedback).and_return('Some feedback')
       allow(exercise).to receive(:correct_answer_id).and_return('456')
+      allow(exercise).to receive(:correct_answer_feedback).and_return('More feedback')
       allow(exercise).to receive(:free_response).and_return(nil)
       allow(exercise).to receive(:answer_id).and_return(nil)
       allow(exercise).to receive(:last_completed_at).and_return(Time.current)
@@ -137,6 +138,10 @@ RSpec.shared_examples 'a tasked_exercise representer' do
     it "'correct_answer_id' is not included" do
       expect(complete_representation).to_not include('correct_answer_id')
     end
+
+    it "'correct_answer_feedback_html' is not included" do
+      expect(complete_representation).to_not include('correct_answer_feedback_html')
+    end
   end
 
   context 'completed exercise' do
@@ -194,6 +199,10 @@ RSpec.shared_examples 'a tasked_exercise representer' do
         it "'correct_answer_id' is not included" do
           expect(complete_representation).not_to include('correct_answer_id')
         end
+
+        it "'correct_answer_feedback_html' is not included" do
+          expect(complete_representation).to_not include('correct_answer_feedback_html')
+        end
       end
 
       context 'solution available' do
@@ -237,6 +246,12 @@ RSpec.shared_examples 'a tasked_exercise representer' do
         it "has the correct 'correct_answer_id'" do
           expect(complete_representation).to include('correct_answer_id' => '456')
         end
+
+        it "has the correct 'correct_answer_feedback_html'" do
+          expect(complete_representation).to include(
+            'correct_answer_feedback_html' => 'More feedback'
+          )
+        end
       end
     end
 
@@ -273,6 +288,10 @@ RSpec.shared_examples 'a tasked_exercise representer' do
 
       it "'correct_answer_id' is not included" do
         expect(representation).not_to include('correct_answer_id')
+      end
+
+      it "'correct_answer_feedback_html' is not included" do
+        expect(complete_representation).to_not include('correct_answer_feedback_html')
       end
     end
   end
