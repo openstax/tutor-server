@@ -42,6 +42,7 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
       allow(exercise).to receive(:feedback_available?).and_return(false)
       allow(exercise).to receive(:solution_available?).and_return(false)
+      allow(exercise).to receive(:was_manually_graded?).and_return(false)
       allow(exercise).to receive(:attempts_remaining).and_return(1)
       allow(exercise).to receive(:question_id).and_return('questionID')
       allow(exercise).to receive(:is_in_multipart).and_return(false)
@@ -172,6 +173,10 @@ RSpec.shared_examples 'a tasked_exercise representer' do
           expect(representation).to include('is_solution_available' => false)
         end
 
+        it "has the correct 'was_manually_graded'" do
+          expect(representation).to include('was_manually_graded' => false)
+        end
+
         it "has correct 'feedback_html'" do
           expect(complete_representation).to include('feedback_html' => 'Some feedback')
         end
@@ -219,6 +224,10 @@ RSpec.shared_examples 'a tasked_exercise representer' do
           expect(representation).to include('is_solution_available' => true)
         end
 
+        it "has the correct 'was_manually_graded'" do
+          expect(representation).to include('was_manually_graded' => false)
+        end
+
         it "has correct 'feedback_html'" do
           expect(complete_representation).to include('feedback_html' => 'Some feedback')
         end
@@ -260,6 +269,14 @@ RSpec.shared_examples 'a tasked_exercise representer' do
 
       it "has the correct 'is_feedback_available'" do
         expect(representation).to include('is_feedback_available' => false)
+      end
+
+      it "has the correct 'is_solution_available'" do
+        expect(representation).to include('is_solution_available' => false)
+      end
+
+      it "has the correct 'was_manually_graded'" do
+        expect(representation).to include('was_manually_graded' => false)
       end
 
       it "'feedback_html' is not included" do

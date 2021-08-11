@@ -120,6 +120,16 @@ module Api::V1::Tasks
                description: "Whether or not this exercise's solution is available"
              }
 
+    property :was_manually_graded?,
+             as: :was_manually_graded,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               type: 'boolean',
+               description: "Whether or not this exercise was manually graded"
+             }
+
     property :attempts_remaining,
              type: Integer,
              writeable: false,
