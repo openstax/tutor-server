@@ -36,8 +36,10 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   def update
     OSU::AccessPolicy.require_action_allowed! :update, current_api_user, @tasked
 
-    previous_free_response = @tasked.free_response
-    previous_answer_id = @tasked.answer_id
+    if @tasked.exercise?
+      previous_free_response = @tasked.free_response
+      previous_answer_id = @tasked.answer_id
+    end
 
     consume!(
       @tasked,
