@@ -363,6 +363,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
     before do
       tasking_plan.update_attribute :target, @period
 
+      tasked.attempt_number = 1
       tasked.answer_ids = []
       tasked.free_response = 'A sentence explaining all the things!'
       tasked.save!
@@ -393,6 +394,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
            .and not_change { tasking_plan.ungraded_step_count }
            .and not_change { task_plan.reload.gradable_step_count }
            .and not_change { task_plan.reload.ungraded_step_count }
+           .and not_change { tasked.attempt_number }
       end
     end
 
@@ -408,8 +410,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
         it 'updates the grader fields, published fields, gradable step counts and scores' do
           expect do
-            api_put grade_api_step_url(task_step.id), @teacher_user_token,
-                    params: { grader_points: 42.0, grader_comments: 'Test' }.to_json
+            api_put(
+              grade_api_step_url(task_step.id), @teacher_user_token, params: {
+                attempt_number: 1, grader_points: 42.0, grader_comments: 'Test'
+              }.to_json
+            )
           end.to  change     { tasked.reload.grader_points }.from(nil).to(42.0)
              .and change     { tasked.grader_comments }.from(nil).to('Test')
              .and change     { tasked.last_graded_at }.from(nil)
@@ -424,6 +429,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
              .and change     { tasking_plan.ungraded_step_count }.by(-1)
              .and not_change { task_plan.reload.gradable_step_count }
              .and change     { task_plan.ungraded_step_count }.by(-1)
+             .and not_change { tasked.attempt_number }
           expect(response).to have_http_status(:success)
 
           expect(response.body_as_hash).to include(grader_points: 42.0, grader_comments: 'Test')
@@ -445,6 +451,40 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
           expect(task_step.reload.task.manual_grading_complete?).to eq true
         end
+
+        it 'errors if attempt_number does not match' do
+          expect do
+            api_put(
+              grade_api_step_url(task_step.id), @teacher_user_token, params: {
+                attempt_number: 0, grader_points: 42.0, grader_comments: 'Test'
+              }.to_json
+            )
+          end.to  not_change { tasked.reload.grader_points }
+             .and not_change { tasked.grader_comments }
+             .and not_change { tasked.last_graded_at }
+             .and not_change { tasked.published_grader_points }
+             .and not_change { tasked.published_points_without_lateness }
+             .and not_change { tasked.published_points }
+             .and not_change { tasked.published_comments }
+             .and not_change { task.reload.gradable_step_count }
+             .and not_change { task.ungraded_step_count }
+             .and not_change { task.published_points }
+             .and not_change { tasking_plan.reload.gradable_step_count }
+             .and not_change { tasking_plan.ungraded_step_count }
+             .and not_change { task_plan.reload.gradable_step_count }
+             .and not_change { task_plan.ungraded_step_count }
+             .and not_change { tasked.attempt_number }
+          expect(response).to have_http_status(:unprocessable_entity)
+
+          expect(response.body_as_hash).to include(
+            errors: [
+              {
+                code: 'invalid_attempt_number',
+                message: 'A new response has been submitted, please reload your browser.'
+              }
+            ]
+          )
+        end
       end
 
       context "manual_grading_feedback_on == 'publish'" do
@@ -452,8 +492,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
         it 'updates the grader fields and gradable step counts' do
           expect do
-            api_put grade_api_step_url(task_step.id), @teacher_user_token,
-                    params: { grader_points: 42.0, grader_comments: 'Test' }.to_json
+            api_put(
+              grade_api_step_url(task_step.id), @teacher_user_token, params: {
+                attempt_number: 1, grader_points: 42.0, grader_comments: 'Test'
+              }.to_json
+            )
           end.to  change     { tasked.reload.grader_points }.from(nil).to(42.0)
              .and change     { tasked.grader_comments }.from(nil).to('Test')
              .and change     { tasked.last_graded_at }.from(nil)
@@ -468,6 +511,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
              .and change     { tasking_plan.ungraded_step_count }.by(-1)
              .and not_change { task_plan.reload.gradable_step_count }
              .and change     { task_plan.ungraded_step_count }.by(-1)
+             .and not_change { tasked.attempt_number }
           expect(response).to have_http_status(:success)
 
           expect(response.body_as_hash).to include(grader_points: 42.0, grader_comments: 'Test')
@@ -482,6 +526,40 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
                   params: { grader_points: 42.0, grader_comments: 'Test' }.to_json
 
           expect(task_step.reload.task.manual_grading_complete?).to eq false
+        end
+
+        it 'errors if attempt_number does not match' do
+          expect do
+            api_put(
+              grade_api_step_url(task_step.id), @teacher_user_token, params: {
+                attempt_number: 0, grader_points: 42.0, grader_comments: 'Test'
+              }.to_json
+            )
+          end.to  not_change { tasked.reload.grader_points }
+             .and not_change { tasked.grader_comments }
+             .and not_change { tasked.last_graded_at }
+             .and not_change { tasked.published_grader_points }
+             .and not_change { tasked.published_points_without_lateness }
+             .and not_change { tasked.published_points }
+             .and not_change { tasked.published_comments }
+             .and not_change { task.reload.gradable_step_count }
+             .and not_change { task.ungraded_step_count }
+             .and not_change { task.published_points }
+             .and not_change { tasking_plan.reload.gradable_step_count }
+             .and not_change { tasking_plan.ungraded_step_count }
+             .and not_change { task_plan.reload.gradable_step_count }
+             .and not_change { task_plan.ungraded_step_count }
+             .and not_change { tasked.attempt_number }
+          expect(response).to have_http_status(:unprocessable_entity)
+
+          expect(response.body_as_hash).to include(
+            errors: [
+              {
+                code: 'invalid_attempt_number',
+                message: 'A new response has been submitted, please reload your browser.'
+              }
+            ]
+          )
         end
       end
     end
