@@ -107,6 +107,7 @@ class CalculateTaskPlanScores
               question_id: tasked.question_id,
               is_completed: task_step.completed?,
               is_correct: tasked.is_correct?,
+              attempt_number: tasked.attempt_number,
               selected_answer_id: tasked.answer_id,
               points: points,
               late_work_point_penalty: tasked.late_work_point_penalty,

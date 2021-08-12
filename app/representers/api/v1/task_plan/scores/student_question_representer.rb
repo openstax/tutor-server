@@ -37,6 +37,12 @@ class Api::V1::TaskPlan::Scores::StudentQuestionRepresenter < Roar::Decorator
            writeable: false,
            schema_info: { required: true, type: 'boolean' }
 
+  property :attempt_number,
+           type: Integer,
+           readable: true,
+           writeable: false,
+           schema_info: { required: true }
+
   property :selected_answer_id,
            type: String,
            readable: true,
