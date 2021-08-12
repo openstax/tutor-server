@@ -37,13 +37,21 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
            :feedback_map, :solutions, :content_hash_for_students, to: :parser
 
   def attempt_number_was
-    # If read_attribute(:attempt_number) is nil, we did not update it, so use the same fallback
-    # Otherwise, we updated it, so assume we had attempt_number - 1 (minimum 0)
-    super || (read_attribute(:attempt_number).nil? ? attempt_number : [ attempt_number - 1, 0 ].max)
+    val = super
+    return val unless val.nil?
+
+    # Use the presence of free_response and/or answer_id as a proxy for task_step.completed?
+    # That way we do not depend on the order those records are saved
+    was_completed = has_answers? ? !answer_id_was.nil? : !free_response_was.blank?
+    was_completed ? 1 : 0
   end
 
   def attempt_number
     super || (task_step.completed? ? 1 : 0)
+  end
+
+  def attempt_number_changed?
+    attempt_number != attempt_number_was
   end
 
   def context
