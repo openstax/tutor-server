@@ -8,7 +8,7 @@ def demo_routine_perform_later(routine_class, type_string, args)
     types.each do |type|
       Dir[File.join(Demo::CONFIG_BASE_DIR, '**', type, '**/[^_]*.yml{.erb,}')].select do |path|
         path.include? filter
-      end.each do |path|
+      end.sort.each do |path|
         pathname = Pathname.new path
         string = File.read path
 
