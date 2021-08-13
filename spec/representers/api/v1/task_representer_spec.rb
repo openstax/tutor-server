@@ -40,6 +40,14 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
     expect(described_class.new(task).to_hash['manual_grading_feedback_on']).to eq 'publish'
   end
 
+  it 'includes allow_auto_graded_multiple_attempts' do
+    task.task_plan.grading_template.allow_auto_graded_multiple_attempts = true
+    expect(described_class.new(task).to_hash['allow_auto_graded_multiple_attempts']).to be true
+
+    task.task_plan.grading_template.allow_auto_graded_multiple_attempts = false
+    expect(described_class.new(task).to_hash['allow_auto_graded_multiple_attempts']).to be false
+  end
+
   it 'includes completion_weight' do
     task.task_plan.grading_template.completion_weight = 0.0
     expect(described_class.new(task).to_hash['completion_weight']).to eq 0.0

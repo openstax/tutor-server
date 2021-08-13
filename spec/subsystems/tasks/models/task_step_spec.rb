@@ -100,4 +100,44 @@ RSpec.describe Tasks::Models::TaskStep, type: :model do
     end
   end
 
+  context 'exercise #can_be_updated?' do
+    context 'after the step is completed and feedback is available' do
+      before do
+        task_step.tasked = FactoryBot.create :tasks_tasked_exercise, task_step: task_step
+        # Make sure we have 2 attempts
+        task_step.tasked.answer_ids += task_step.tasked.answer_ids
+        expect(task_step.tasked.answer_ids.size).to eq 4
+
+        task_step.task.grading_template.update_attribute :auto_grading_feedback_on, :answer
+
+        Preview::AnswerExercise.call task_step: task_step, is_correct: false
+        expect(task_step.reload.tasked.attempt_number).to eq 1
+      end
+
+      context 'single attempt' do
+        it 'returns false' do
+          expect(task_step.can_be_updated?).to eq false
+        end
+      end
+
+      context 'multiple attempts' do
+        before do
+          task_step.task.grading_template.update_attribute(
+            :allow_auto_graded_multiple_attempts, true
+          )
+        end
+
+        it 'returns true until the maximum number of attempts is exceeded' do
+          expect(task_step.can_be_updated?).to eq true
+
+          Preview::AnswerExercise.call(
+            task_step: task_step, free_response: task_step.tasked.free_response, is_correct: true
+          )
+          expect(task_step.tasked.attempt_number).to eq 2
+
+          expect(task_step.can_be_updated?).to eq false
+        end
+      end
+    end
+  end
 end

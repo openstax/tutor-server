@@ -100,18 +100,35 @@ class Tasks::Models::TaskStep < ApplicationRecord
     !first_completed_at.nil?
   end
 
+  def update_error(current_time: Time.current)
+    # Closed assignments cannot be updated
+    return 'task closed' if task.past_close?(current_time: current_time)
+
+    # Graded exercises cannot be updated
+    return 'already graded' if exercise? && tasked.was_manually_graded?
+
+    # Incomplete steps that are not closed or graded can always be updated
+    return unless completed?
+
+    # Completed non-exercises cannot be updated
+    return 'already completed' unless exercise?
+
+    # Exercises can always be updated before feedback is available
+    return unless tasked.feedback_available?(current_time: current_time)
+
+    # Exercises cannot be updated after feedback is available unless multiple attempts are enabled
+    return 'solution already available' unless tasked.multiple_attempts?
+
+    # Exercises cannot be updated from correct to incorrect in multiple attempts
+    return 'already correct' if !tasked.correct_answer_id.nil? &&
+                                tasked.answer_id_was == tasked.correct_answer_id
+
+    # attempt_number before the update must be less than max_attempts to allow updates
+    return 'max attempts exceeded' if tasked.attempt_number_was >= tasked.max_attempts
+  end
+
   def can_be_updated?(current_time: Time.current)
-    return false if task.past_close?(current_time: current_time)
-
-    return false if exercise? && tasked.was_manually_graded?
-
-    return true unless completed?
-
-    return false if !exercise? || tasked.was_manually_graded?
-
-    !tasked.can_be_auto_graded? || !task.auto_grading_feedback_available?(
-      current_time: current_time
-    )
+    update_error(current_time: Time.current).nil?
   end
 
   def group_name

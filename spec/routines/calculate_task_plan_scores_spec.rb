@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :slow do
-  before(:all)    { DatabaseCleaner.clean }
+  before(:all)         { DatabaseCleaner.clean }
 
   let(:ecosystem)      { FactoryBot.create :mini_ecosystem }
   let(:book)           { ecosystem.books.first }
@@ -178,6 +178,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     question_id: tasked.question_id,
                     is_completed: ts.completed?,
                     is_correct: ts.is_correct?,
+                    attempt_number: tasked.attempt_number,
                     selected_answer_id: tasked.answer_id,
                     points: points,
                     late_work_point_penalty: 0.0,
@@ -322,6 +323,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     question_id: tasked.question_id,
                     is_completed: ts.completed?,
                     is_correct: ts.is_correct?,
+                    attempt_number: tasked.attempt_number,
                     selected_answer_id: tasked.answer_id,
                     points: points,
                     late_work_point_penalty: 0.0,
@@ -495,6 +497,7 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
                     question_id: tasked.question_id,
                     is_completed: ts.completed?,
                     is_correct: ts.is_correct?,
+                    attempt_number: tasked.attempt_number,
                     selected_answer_id: tasked.answer_id,
                     points: points,
                     late_work_point_penalty: 0.0,

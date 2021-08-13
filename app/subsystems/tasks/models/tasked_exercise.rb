@@ -7,6 +7,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   belongs_to :exercise, subsystem: :content, inverse_of: :tasked_exercises
 
+  has_many :previous_attempts, inverse_of: :tasked_exercise
+
   before_validation :set_correct_answer_id, on: :create, if: :has_answers?
 
   validates :question_id, :question_index, :content, presence: true
@@ -14,7 +16,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   validates :free_response, length: { maximum: 10000 }
   validates :grader_points, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
 
-  validate :free_response_required_before_answer_id, on: :update
+  validate :free_response_required_before_answer_id, :free_response_not_locked, on: :update
   validate :valid_answer, :changes_allowed
 
   scope :correct, -> do
@@ -33,6 +35,24 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
            :question_answer_ids, :question_formats_for_students,
            :correct_question_answers, :correct_question_answer_ids,
            :feedback_map, :solutions, :content_hash_for_students, to: :parser
+
+  def attempt_number_was
+    val = super
+    return val unless val.nil?
+
+    # Use the presence of free_response and/or answer_id as a proxy for task_step.completed?
+    # That way we do not depend on the order those records are saved
+    was_completed = has_answers? ? !answer_id_was.nil? : !free_response_was.blank?
+    was_completed ? 1 : 0
+  end
+
+  def attempt_number
+    super || (task_step.completed? ? 1 : 0)
+  end
+
+  def attempt_number_changed?
+    attempt_number != attempt_number_was
+  end
 
   def context
     super || exercise.context
@@ -135,6 +155,10 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   def feedback
     feedback_map[answer_id] || ''
+  end
+
+  def correct_answer_feedback
+    feedback_map[correct_answer_id] || ''
   end
 
   def set_correct_answer_id
@@ -339,6 +363,26 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     )
   end
 
+  def solution_available?(current_time: Time.current)
+    feedback_available?(current_time: current_time) &&
+    !task_step&.can_be_updated?(current_time: current_time)
+  end
+
+  def multiple_attempts?
+    # WRQs always have multiple attempts enabled
+    !has_answers? || !!task_step&.task&.allow_auto_graded_multiple_attempts
+  end
+
+  def max_attempts
+    # WRQs can have infinitely many attempts
+    multiple_attempts? ?
+      (has_answers? ? [ answer_ids.size - 2, 1 ].max : Float::INFINITY) : 1
+  end
+
+  def attempts_remaining(current_time: Time.current)
+    task_step&.can_be_updated?(current_time: current_time) ? max_attempts - attempt_number : 0
+  end
+
   def parts
     return [self] unless is_in_multipart?
 
@@ -355,6 +399,13 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
     throw :abort
   end
 
+  def free_response_not_locked
+    return unless free_response_changed? && !answer_id_was.blank?
+
+    errors.add(:free_response, 'cannot be changed after a multiple choice answer is selected')
+    throw :abort
+  end
+
   def valid_answer
     # Multiple choice answer must be listed in the exercise
     return if answer_id.blank? || answer_ids.include?(answer_id.to_s)
@@ -364,17 +415,16 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def changes_allowed(current_time: Time.current)
-    # Cannot change the answer after feedback is available or manually graded
-    # Feedback is available immediately for iReadings, or at the due date for HW,
-    # but waits until the step is marked as completed
-    return if task_step&.can_be_updated?(current_time: current_time)
-
-    [ :answer_id, :free_response ].each do |attr|
-      errors.add(
-        attr, 'cannot be updated after feedback becomes available or is graded'
-      ) if changes[attr].present?
+    # Return if none of the answer attributes changed
+    return unless [ :attempt_number, :answer_id, :free_response ].any? do |attr|
+      changes[attr].present?
     end
 
-    throw(:abort) if errors.any?
+    # Check if the answers can be changed
+    update_error = task_step&.update_error(current_time: current_time)
+    return if update_error.nil?
+
+    errors.add :base, update_error
+    throw :abort
   end
 end

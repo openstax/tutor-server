@@ -63,8 +63,12 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
   it 'cannot have answer or free response updated after feedback is available' do
     grading_template = tasked_exercise.task_step.task.task_plan.grading_template
-    grading_template.update_column :auto_grading_feedback_on, :answer
+    grading_template.update_columns(
+      auto_grading_feedback_on: :answer,
+      allow_auto_graded_multiple_attempts: false
+    )
 
+    tasked_exercise.attempt_number = 1
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     tasked_exercise.save!
@@ -74,26 +78,68 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise.complete!
 
     expect(tasked_exercise.reload).to be_valid
-
+    tasked_exercise.attempt_number = 2
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     expect(tasked_exercise).not_to be_valid
 
     expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 2
     tasked_exercise.free_response = 'some new thing'
     expect(tasked_exercise).not_to be_valid
 
     grading_template.update_column :auto_grading_feedback_on, :due
 
     expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 1
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
-    expect(tasked_exercise).to be_valid
+    tasked_exercise.save!
 
-    expect(tasked_exercise.reload).to be_valid
+    # Cannot change the free response after selecting a multiple choice answer
+    tasked_exercise.attempt_number = 1
     tasked_exercise.free_response = 'some new thing'
-    expect(tasked_exercise).to be_valid
+    expect(tasked_exercise).not_to be_valid
   end
 
-  it 'cannot be answered after graded' do
+  it 'can be updated after feedback available if multiple attempts is enabled' do
+    grading_template = tasked_exercise.task_step.task.task_plan.grading_template
+    grading_template.update_columns(
+      auto_grading_feedback_on: :answer,
+      allow_auto_graded_multiple_attempts: true
+    )
+
+    # Make the exercise have 4 answers so we get 2 attempts
+    tasked_exercise.answer_ids += [ '-3', '-4' ]
+    expect(tasked_exercise.answer_ids.size).to eq 4
+    incorrect_answer_ids = tasked_exercise.answer_ids - [ tasked_exercise.correct_answer_id ]
+
+    tasked_exercise.attempt_number = 1
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.answer_id = incorrect_answer_ids.first
+    tasked_exercise.save!
+
+    expect(tasked_exercise.reload).to be_valid
+
+    tasked_exercise.complete!
+
+    # Cannot change the free response after selecting a multiple choice answer
+    tasked_exercise.attempt_number = 2
+    tasked_exercise.free_response = 'some new thing'
+    expect(tasked_exercise).not_to be_valid
+
+    # Second attempt
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 2
+    tasked_exercise.answer_id = incorrect_answer_ids.last
+    tasked_exercise.save!
+
+    # Maximum number of attempts exceeded
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 3
+    tasked_exercise.answer_id = tasked_exercise.correct_answer_id
+    expect(tasked_exercise).not_to be_valid
+  end
+
+  it 'cannot be re-answered after graded' do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     tasked_exercise.free_response = 'abc'
     expect(tasked_exercise.was_manually_graded?).to eq false
@@ -170,5 +216,84 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     id = tasked_exercise.id
     tasked_exercise = described_class.find id
     expect(tasked_exercise.available_points).to eq 2.0
+  end
+
+  context 'when attempt_number was null' do
+    before { tasked_exercise.update_attribute :attempt_number, nil }
+
+    context 'incomplete step' do
+      context '#attempt_number_was' do
+        it 'returns 0 until it is changed and saved' do
+          expect(tasked_exercise.attempt_number_was).to eq 0
+          tasked_exercise.attempt_number = 1
+          expect(tasked_exercise.attempt_number_was).to eq 0
+          tasked_exercise.save!
+          expect(tasked_exercise.attempt_number_was).to eq 1
+        end
+      end
+
+      context '#attempt_number' do
+        it 'returns 0 until it is changed' do
+          expect(tasked_exercise.attempt_number).to eq 0
+          tasked_exercise.attempt_number = 1
+          expect(tasked_exercise.attempt_number).to eq 1
+          tasked_exercise.save!
+          expect(tasked_exercise.attempt_number).to eq 1
+        end
+      end
+
+      context '#attempt_number_changed?' do
+        it 'returns whether or not attempt_number changed since the last time it was saved' do
+          expect(tasked_exercise.attempt_number_changed?).to eq false
+          tasked_exercise.attempt_number = 1
+          expect(tasked_exercise.attempt_number_changed?).to eq true
+          tasked_exercise.save!
+          expect(tasked_exercise.attempt_number_changed?).to eq false
+        end
+      end
+    end
+
+    context 'completed step' do
+      before do
+        Preview::AnswerExercise.call task_step: tasked_exercise.task_step, is_correct: false
+
+        # Need to enable multiple attempts and have at least 4 answer choices to pass validation
+        tasked_exercise.task_step.task.grading_template.update_attribute(
+          :allow_auto_graded_multiple_attempts, true
+        )
+        tasked_exercise.answer_ids += [ '-3', '-4' ]
+        tasked_exercise.save!
+      end
+
+      context '#attempt_number_was' do
+        it 'returns 1 until it is changed and saved' do
+          expect(tasked_exercise.attempt_number_was).to eq 1
+          tasked_exercise.attempt_number = 2
+          expect(tasked_exercise.attempt_number_was).to eq 1
+          tasked_exercise.save!
+          expect(tasked_exercise.attempt_number_was).to eq 2
+        end
+      end
+
+      context '#attempt_number' do
+        it 'returns 1 until it is changed' do
+          expect(tasked_exercise.attempt_number).to eq 1
+          tasked_exercise.attempt_number = 2
+          expect(tasked_exercise.attempt_number).to eq 2
+          tasked_exercise.save!
+          expect(tasked_exercise.attempt_number).to eq 2
+        end
+      end
+
+      context '#attempt_number_changed?' do
+        it 'returns whether or not attempt_number changed since the last time it was saved' do
+          expect(tasked_exercise.attempt_number_changed?).to eq false
+          tasked_exercise.attempt_number = 2
+          expect(tasked_exercise.attempt_number_changed?).to eq true
+          tasked_exercise.save!
+          expect(tasked_exercise.attempt_number_changed?).to eq false
+        end
+      end
+    end
   end
 end

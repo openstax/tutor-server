@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_15_135030) do
+ActiveRecord::Schema.define(version: 2021_08_03_214129) do
 
   create_sequence "teacher_exercise_number", start: 1000000
 
@@ -882,6 +882,7 @@ ActiveRecord::Schema.define(version: 2021_07_15_135030) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "cloned_from_id"
+    t.boolean "allow_auto_graded_multiple_attempts", default: false, null: false
     t.index ["cloned_from_id"], name: "index_tasks_grading_templates_on_cloned_from_id"
     t.index ["course_profile_course_id", "name"], name: "index_tasks_grading_templates_on_course_and_name", unique: true
     t.index ["course_profile_course_id", "task_plan_type", "deleted_at"], name: "index_tasks_grading_templates_on_course_type_and_deleted"
@@ -906,6 +907,17 @@ ActiveRecord::Schema.define(version: 2021_07_15_135030) do
     t.index ["content_exercise_id"], name: "index_tasks_practice_questions_on_content_exercise_id"
     t.index ["entity_role_id", "content_exercise_id"], name: "index_question_on_role_and_exercise", unique: true
     t.index ["tasks_tasked_exercise_id"], name: "index_tasks_practice_questions_on_tasks_tasked_exercise_id"
+  end
+
+  create_table "tasks_previous_attempts", force: :cascade do |t|
+    t.bigint "tasks_tasked_exercise_id", null: false
+    t.integer "number", null: false
+    t.datetime "attempted_at", null: false
+    t.text "free_response"
+    t.string "answer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tasks_tasked_exercise_id", "number"], name: "index_tasks_previous_attempts_on_tasks_te_id_and_number", unique: true
   end
 
   create_table "tasks_task_plans", id: :serial, force: :cascade do |t|
@@ -983,6 +995,7 @@ ActiveRecord::Schema.define(version: 2021_07_15_135030) do
     t.datetime "last_graded_at"
     t.float "published_grader_points"
     t.text "published_comments"
+    t.integer "attempt_number", default: 0
     t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"
@@ -1246,6 +1259,7 @@ ActiveRecord::Schema.define(version: 2021_07_15_135030) do
   add_foreign_key "tasks_practice_questions", "content_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_practice_questions", "entity_roles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_practice_questions", "tasks_tasked_exercises", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "tasks_previous_attempts", "tasks_tasked_exercises", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "content_ecosystems", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_assistants", on_update: :cascade, on_delete: :cascade
   add_foreign_key "tasks_task_plans", "tasks_grading_templates", on_update: :cascade, on_delete: :restrict
