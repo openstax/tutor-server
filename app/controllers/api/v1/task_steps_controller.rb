@@ -124,7 +124,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       # We didn't get the expected attempt number
       # Render an error message
       render_api_errors(
-        code: 'invalid_attempt_number',
+        code: 'invalid_attempt_number_graded',
         message: 'A new response has been submitted, please reload your browser.'
       )
 

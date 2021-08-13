@@ -510,7 +510,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
           expect(response.body_as_hash).to include(
             errors: [
               {
-                code: 'invalid_attempt_number',
+                code: 'invalid_attempt_number_graded',
                 message: 'A new response has been submitted, please reload your browser.'
               }
             ]
@@ -586,7 +586,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
           expect(response.body_as_hash).to include(
             errors: [
               {
-                code: 'invalid_attempt_number',
+                code: 'invalid_attempt_number_graded',
                 message: 'A new response has been submitted, please reload your browser.'
               }
             ]
