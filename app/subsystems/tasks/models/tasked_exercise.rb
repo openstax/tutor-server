@@ -369,11 +369,14 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def multiple_attempts?
-    !!task_step&.task&.allow_auto_graded_multiple_attempts
+    # WRQs always have multiple attempts enabled
+    !has_answers? || !!task_step&.task&.allow_auto_graded_multiple_attempts
   end
 
   def max_attempts
-    multiple_attempts? ? [ answer_ids.size - 2, 1 ].max : 1
+    # WRQs can have infinitely many attempts
+    multiple_attempts? ?
+      (has_answers? ? [ answer_ids.size - 2, 1 ].max : Float::INFINITY) : 1
   end
 
   def attempts_remaining(current_time: Time.current)

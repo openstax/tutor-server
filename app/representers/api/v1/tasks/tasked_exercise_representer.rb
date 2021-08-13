@@ -135,9 +135,9 @@ module Api::V1::Tasks
              writeable: false,
              readable: true,
              schema_info: {
-               required: true,
                description: "The number of attempts remaining for this exercise"
-             }
+             },
+             if: ->(*) { !attempts_remaining.infinite? }
 
     property :feedback,
              as: :feedback_html,
