@@ -1,5 +1,6 @@
 book:
   uuid: 8d50a0af-948b-4204-a71d-4826cba765b8
+  style: biology
 
 catalog_offering:
   title: Biology 2e

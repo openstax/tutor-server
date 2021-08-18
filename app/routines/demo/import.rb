@@ -9,6 +9,10 @@ class Demo::Import < Demo::Base
 
   protected
 
+  def s3
+    @s3 ||= OpenStax::Content::S3.new
+  end
+
   def exec(import:)
     configuration = OpenStax::Exercises::V1.configuration
 
