@@ -47,8 +47,8 @@ class Demo::Import < Demo::Base
       ecosystem_model = OpenStax::Exercises::V1.use_real_client do
         run(
           :import_ecosystem,
-          book.slice(:archive_version, :reading_processing_instructions, :comments).merge(
-            book_uuid: book[:uuid], book_version: book[:version]
+          book.slice(:archive_version, :reading_processing_instructions).merge(
+            book_uuid: book[:uuid], book_version: book[:version], comments: import[:comments]
           )
         ).outputs.ecosystem
       end

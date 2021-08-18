@@ -76,6 +76,7 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
         archive_version: '20210713.205645',
         book_uuid: '02040312-72c8-441e-a685-20e9333f3e1d',
         book_version: 15.7,
+        comments: nil,
         reading_processing_instructions: [
           {
             'css' => '.section-quiz, .short-answer, .further-research, .references, [data-element-type="section-summary"], [data-element-type="section-quiz"], [data-element-type="short-answer"], [data-element-type="further-research"], [data-type="glossary"]',
