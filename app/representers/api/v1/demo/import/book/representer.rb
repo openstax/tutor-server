@@ -25,4 +25,14 @@ class Api::V1::Demo::Import::Book::Representer < Api::V1::Demo::BaseRepresenter
              getter: ->(*) { reading_processing_instructions.map { |inst| Demo::Mash.new inst } },
              readable: true,
              writeable: true
+
+  property :comments,
+           type: String,
+           readable: false,
+           writeable: true
+
+  property :style,
+           type: String,
+           readable: true,
+           writeable: true
 end

@@ -21,27 +21,31 @@ class Demo::Import < Demo::Base
         ' env vars and then restart any background job workers to use Demo::Books'
       ) if !Rails.env.test? && (configuration.client_id.blank? || configuration.secret.blank?)
 
-      book[:archive_url_base] ||= Rails.application.secrets.openstax[:cnx][:archive_url]
+      book[:archive_version] ||= s3.ls.last
 
-      book[:uuid], book[:version] = book[:uuid].split('@', 2) if book[:version].blank?
-
-      if book[:version] == 'latest'
-        book[:uuid] = book[:uuid].split('@', 2).first
-        book.delete :version
-      end
-
-      book_ox_id = book[:version].blank? ? book[:uuid] : "#{book[:uuid]}@#{book[:version]}"
+      book[:version] ||= s3.ls(book[:archive_version]).map do |book_id|
+        book_id.split('@')
+      end.select { |uuid, version| uuid == book[:uuid] }.map { |uuid, version| version.to_f }.max
 
       log do
-        "Importing #{catalog_offering[:title]} from #{book[:archive_url_base]}#{book_ox_id}"
+        "Importing #{catalog_offering[:title]} (#{book[:uuid]
+        }@#{book[:version]}) from code version #{book[:archive_version]}"
+      end
+
+      if book[:reading_processing_instructions].blank?
+        reading_processing_instructions_by_style = YAML.load_file(
+          'config/reading_processing_instructions.yml'
+        )
+        book[:reading_processing_instructions] = \
+          reading_processing_instructions_by_style[book[:style]]
       end
 
       ecosystem_model = OpenStax::Exercises::V1.use_real_client do
         run(
           :import_ecosystem,
-          book_ox_id: book_ox_id,
-          archive_url: book[:archive_url_base],
-          reading_processing_instructions: book[:reading_processing_instructions]
+          book.slice(:archive_version, :reading_processing_instructions, :comments).merge(
+            book_uuid: book[:uuid], book_version: book[:version]
+          )
         ).outputs.ecosystem
       end
     else

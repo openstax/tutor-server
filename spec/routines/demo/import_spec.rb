@@ -2,8 +2,6 @@ require 'rails_helper'
 require 'vcr_helper'
 
 RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
-  before { skip("disabled since it imports entire book, which we only want to run manually") }
-
   let(:config_base_dir) { File.join Rails.root, 'spec', 'fixtures', 'demo' }
   let(:import_config)   do
     {
@@ -33,15 +31,15 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
 
     ecosystem = catalog_offering.ecosystem
     expect(ecosystem.title).to include 'APUSH'
-    expect(ecosystem.title).to include '36004586-651c-4ded-af87-203aca22d946'
+    expect(ecosystem.title).to include 'dc10e469-5816-411d-8ea3-39a9b0706a48'
 
     book = ecosystem.books.first
-    expect(book.archive_version).to eq '20210514.171726'
+    expect(book.archive_version).to eq '0.1'
     expect(book.title).to eq 'APUSH'
-    expect(book.uuid).to eq '36004586-651c-4ded-af87-203aca22d946'
-    expect(book.version).to eq '14.3'
+    expect(book.uuid).to eq 'dc10e469-5816-411d-8ea3-39a9b0706a48'
+    expect(book.version).to eq '2.16'
     expect(book.url).to include(
-      'https://openstax.org/apps/archive/20210514.171726/contents/36004586-651c-4ded-af87-203aca22d946@14.3.json'
+      'https://openstax.org/apps/archive/0.1/contents/dc10e469-5816-411d-8ea3-39a9b0706a48@2.16.json'
     )
 
     chapter = book.chapters.first
