@@ -9,7 +9,7 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
     let(:import_config)   do
       {
         import: Api::V1::Demo::Import::Representer.new(Demo::Mash.new).from_hash(
-          YAML.load_file File.join(config_base_dir, 'import', 'review', 'apush.yml')
+          YAML.load_file File.join(config_base_dir, 'import', 'review', 'apush-prototype.yml')
         ).deep_symbolize_keys
       }
     end
@@ -57,6 +57,53 @@ RSpec.describe Demo::Import, type: :routine, vcr: VCR_OPTS do
         'Confrontation seeking righteousness'
       ].map{ |title| a_string_matching(title)})
       expect(pages.map(&:book_location)).to eq [[], [1, 1], [1, 2], [1, 3], [1, 4]]
+    end
+  end
+
+  context 'APUSH' do
+    let(:config_base_dir) { File.join Rails.root, 'spec', 'fixtures', 'demo' }
+    let(:import_config)   do
+      {
+        import: Api::V1::Demo::Import::Representer.new(Demo::Mash.new).from_hash(
+          YAML.load_file File.join(config_base_dir, 'import', 'review', 'apush.yml')
+        ).deep_symbolize_keys
+      }
+    end
+    let(:returned_ecosystem) { FactoryBot.create :content_ecosystem }
+
+    it 'calls FetchAndImportBookAndCreateEcosystem with the correct arguments' do
+      expect_any_instance_of(FetchAndImportBookAndCreateEcosystem).to receive(:call) do |
+        archive_version:, book_uuid:, book_version:, comments:, reading_processing_instructions:
+      |
+        expect(archive_version).to be >= '20210514.171726'
+        expect(book_uuid).to eq '36004586-651c-4ded-af87-203aca22d946'
+        expect(book_version).to be >= 14.3
+        expect(comments).to eq 'test'
+        expect(reading_processing_instructions).to eq [
+          {
+            css: '.test',
+            fragments: [ 'test' ],
+            labels: [ 'test' ],
+            only: [ 'test' ],
+            except: [ 'not-test' ]
+          }
+        ]
+
+        Lev::Routine::Result.new Lev::Outputs.new(ecosystem: returned_ecosystem), Lev::Errors.new
+      end
+
+      catalog_offering = nil
+      expect do
+        expect(result.errors).to be_empty
+        catalog_offering = result.outputs.catalog_offering
+      end.to change { Catalog::Models::Offering.count }.by(1)
+
+      expect(catalog_offering.title).to eq 'AP US History'
+      expect(catalog_offering.description).to eq 'AP US History'
+      expect(catalog_offering.default_course_name).to eq 'AP US History'
+      expect(catalog_offering.salesforce_book_name).to eq 'AP US History'
+      expect(catalog_offering.appearance_code).to eq 'ap_us_history'
+      expect(catalog_offering.ecosystem).to eq returned_ecosystem
     end
   end
 

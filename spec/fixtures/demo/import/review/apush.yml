@@ -1,8 +1,18 @@
 book:
-  archive_version: 0.1
-  uuid: dc10e469-5816-411d-8ea3-39a9b0706a48
-  version: 2.16
+  uuid: 36004586-651c-4ded-af87-203aca22d946
+  reading_processing_instructions:
+    - css: .test
+      fragments:
+        - test
+      labels:
+        - test
+      only:
+        - test
+      except:
+        - not-test
 
 catalog_offering:
   title: AP US History
   appearance_code: ap_us_history
+
+comments: test
