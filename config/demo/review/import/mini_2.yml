@@ -1,5 +1,6 @@
 book:
   run: FactoryBot.create :mini_ecosystem
+  style: college-physics
 
 catalog_offering:
   title: Second Mini Physics with Courseware

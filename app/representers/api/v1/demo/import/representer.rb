@@ -12,4 +12,9 @@ class Api::V1::Demo::Import::Representer < Api::V1::Demo::BaseRepresenter
            readable: true,
            writeable: true,
            schema_info: { required: true }
+
+  property :comments,
+           type: String,
+           readable: true,
+           writeable: true
 end
