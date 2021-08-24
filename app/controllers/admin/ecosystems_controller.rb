@@ -10,39 +10,49 @@ class Admin::EcosystemsController < Admin::BaseController
       @archive_versions = s3.ls.reverse
       @archive_version = params[:archive_version] || @archive_versions.first || ''
 
-      available_book_versions_by_uuid = Hash.new { |hash, key| hash[key] = [] }
+      available_versions_by_uuid = Hash.new { |hash, key| hash[key] = [] }
       s3.ls(@archive_version).each do |book|
         uuid, version = book.split('@')
-        available_book_versions_by_uuid[uuid] << version
+        available_versions_by_uuid[uuid] << version
       end
     else
       @archive_version = params[:archive_version] || ''
     end
 
-    approved_collection_ids = Set.new(
-      abl.approved_versions.filter do |version|
-        version[:min_code_version] <= @archive_version
-      end.map { |version| version[:collection_id] }
-    )
+    approved_versions_by_collection_id = Hash.new { |hash, key| hash[key] = [] }
+    abl.approved_versions.filter do |version|
+      version[:min_code_version] <= @archive_version
+    end.each do |version|
+      approved_versions_by_collection_id[version[:collection_id]] << \
+        version[:content_version].sub(/\A1./, '')
+    end
 
     collections_by_id = {}
+    versions_by_collection_id = {}
     abl.approved_books.each do |collection|
       collection_id = collection[:collection_id]
-      next unless approved_collection_ids.include? collection_id
+      next unless approved_versions_by_collection_id.has_key? collection_id
       next unless reading_processing_instructions_by_style.has_key? collection[:style]
 
-      next if s3.bucket_configured? && !collection[:books].all? do |book|
-        available_book_versions_by_uuid.has_key? book[:uuid]
+      books = collection[:books]
+      next if s3.bucket_configured? && !books.all? do |book|
+        available_versions_by_uuid.has_key? book[:uuid]
       end
 
+      # Books inside the same collection must use the same versions otherwise
+      # the structure of approved_versions would need to change
+      versions = available_versions_by_uuid[books.first[:uuid]] &
+                 approved_versions_by_collection_id[collection_id]
+
       collections_by_id[collection_id] = collection
+      versions_by_collection_id[collection_id] = versions.sort_by(&:to_f).reverse
     end
 
     @collections = collections_by_id.map do |id, collection|
       name = collection[:books].map { |book| book[:slug].underscore.humanize }.join('; ')
 
-      [ "#{id} - #{name}", id ]
-    end
+      [ "#{name} - #{id}", id ]
+    end.sort
     @collection_id = params[:collection_id] || @collections.first&.second || ''
     collection = collections_by_id[@collection_id]
 
@@ -51,9 +61,7 @@ class Admin::EcosystemsController < Admin::BaseController
                                        reading_processing_instructions_by_style[style]&.to_yaml ||
                                        ''
 
-    # The following line assumes only 1 book per collection
-    @book_versions = available_book_versions_by_uuid[collection[:books].first[:uuid]].reverse \
-      unless collection.nil?
+    @book_versions = versions_by_collection_id[@collection_id]
 
     @book_version = params[:book_version] || @book_versions&.first || ''
   end
