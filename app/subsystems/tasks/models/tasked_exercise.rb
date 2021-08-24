@@ -150,7 +150,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   # The following 2 methods assume only 1 Question; this is OK for TaskedExercise,
   # because each TE contains at most 1 part of a multipart exercise.
   def solution
-    solutions[0].try(:first) || collaborator_solutions[0].try(:first)
+    collaborator_solutions[0].try(:first) || solutions[0].try(:first)
   end
 
   def feedback
