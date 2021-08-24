@@ -9,5 +9,6 @@ class Api::V1::Demo::Course::PeriodRepresenter < Api::V1::Demo::PeriodRepresente
              class: Demo::Mash,
              readable: true,
              writeable: true,
-             schema_info: { required: true }
+             schema_info: { required: true },
+             getter: ->(*) { students.sort_by(&:created_at) }
 end

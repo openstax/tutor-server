@@ -1,5 +1,6 @@
 book:
   uuid: 405335a3-7cff-4df2-a9ad-29062a4af261
+  style: college-physics
 
 catalog_offering:
   title: Physics with Courseware
