@@ -22,6 +22,7 @@ RSpec.describe Tasks::Models::TaskedReading, type: :model do
           <div data-type="document-title" id="35337">
             #{content_preview_doc_title}
           </div>
+          Some other content so the fragment is not discarded as empty
         HTML
       end
 
