@@ -7,21 +7,21 @@ class Admin::EcosystemsController < Admin::BaseController
     OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Models::Ecosystem)
 
     if s3.bucket_configured?
-      @archive_versions = s3.ls.reverse
-      @archive_version = params[:archive_version] || @archive_versions.first || ''
+      @pipeline_versions = s3.ls.reverse
+      @pipeline_version = params[:pipeline_version] || @pipeline_versions.first || ''
 
       available_versions_by_uuid = Hash.new { |hash, key| hash[key] = [] }
-      s3.ls(@archive_version).each do |book|
+      s3.ls(@pipeline_version).each do |book|
         uuid, version = book.split('@')
         available_versions_by_uuid[uuid] << version
       end
     else
-      @archive_version = params[:archive_version] || ''
+      @pipeline_version = params[:pipeline_version] || ''
     end
 
     approved_versions_by_collection_id = Hash.new { |hash, key| hash[key] = [] }
     abl.approved_versions.filter do |version|
-      version[:min_code_version] <= @archive_version
+      version[:min_code_version] <= @pipeline_version
     end.each do |version|
       approved_versions_by_collection_id[version[:collection_id]] << \
         version[:content_version].sub(/\A1./, '')
@@ -45,7 +45,9 @@ class Admin::EcosystemsController < Admin::BaseController
                  approved_versions_by_collection_id[collection_id]
 
       collections_by_id[collection_id] = collection
-      versions_by_collection_id[collection_id] = versions.sort_by(&:to_f).reverse
+      versions_by_collection_id[collection_id] = versions.sort_by do |version|
+        version.split('.').map(&:to_i)
+      end.reverse
     end
 
     @collections = collections_by_id.map do |id, collection|
@@ -61,9 +63,9 @@ class Admin::EcosystemsController < Admin::BaseController
                                        reading_processing_instructions_by_style[style]&.to_yaml ||
                                        ''
 
-    @book_versions = versions_by_collection_id[@collection_id]
+    @content_versions = versions_by_collection_id[@collection_id]
 
-    @book_version = params[:book_version] || @book_versions&.first || ''
+    @content_version = params[:content_version] || @content_versions&.first || ''
   end
 
   def create
@@ -75,9 +77,9 @@ class Admin::EcosystemsController < Admin::BaseController
     return head(:not_found) if collection.nil?
 
     FetchAndImportBookAndCreateEcosystem.perform_later(
-      archive_version: params[:archive_version],
+      archive_version: params[:pipeline_version],
       book_uuid: collection[:books].first[:uuid],
-      book_version: params[:book_version],
+      book_version: params[:content_version],
       reading_processing_instructions: YAML.safe_load(params[:reading_processing_instructions]),
       comments: params[:comments]
     )
