@@ -22,6 +22,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   delegate :can_be_answered?, :has_correctness?, :has_content?, to: :tasked
 
+  # "complete" and "incomplete" scopes MUST match the behavior of the "completed?" method
   scope :complete,   -> do
     completed = left_outer_joins(
       task: { task_plan: :grading_template }
@@ -157,6 +158,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
     task.save!
   end
 
+  # This method MUST match the behavior of the "complete" and "incomplete" scopes above
   def completed?
     !first_completed_at.nil? && (
       !exercise? || # Non-exercise steps are considered completed after marked
@@ -167,6 +169,7 @@ class Tasks::Models::TaskStep < ApplicationRecord
     )
   end
 
+  # What the value of "completed?" was just before the attempt currently being updated
   def was_completed?
     !first_completed_at_was.nil? && (
       !exercise? || # Non-exercise steps are considered completed after marked
