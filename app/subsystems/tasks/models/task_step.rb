@@ -27,6 +27,9 @@ class Tasks::Models::TaskStep < ApplicationRecord
       task: { task_plan: :grading_template }
     ).where.not(first_completed_at: nil)
     completed_exercise = completed.where(tasked_type: Tasks::Models::TaskedExercise.name)
+    tasked_exercise = Tasks::Models::TaskedExercise.where(
+      '"tasks_tasked_exercises"."id" = "tasks_task_steps"."tasked_id"'
+    )
 
     completed.where.not(tasked_type: Tasks::Models::TaskedExercise.name).or(
       completed_exercise.where(
@@ -40,13 +43,13 @@ class Tasks::Models::TaskStep < ApplicationRecord
       completed_exercise.where(
         task: { task_plan: { grading_template: { allow_auto_graded_multiple_attempts: true } } }
       ).where(
-        Tasks::Models::TaskedExercise.where(
-          '"tasks_tasked_exercises"."id" = "tasks_task_steps"."tasked_id"'
-        ).where(
-          <<~WHERE_SQL
-            "tasks_tasked_exercises"."attempt_number" >=
-              GREATEST(CARDINALITY("tasks_tasked_exercises"."answer_ids") - 2, 1)
-          WHERE_SQL
+        tasked_exercise.where('CARDINALITY("tasks_tasked_exercises"."answer_ids") = 0').or(
+          tasked_exercise.where(
+            <<~WHERE_SQL
+              "tasks_tasked_exercises"."attempt_number" >=
+                GREATEST(CARDINALITY("tasks_tasked_exercises"."answer_ids") - 2, 1)
+            WHERE_SQL
+          )
         ).arel.exists
       )
     )
@@ -62,6 +65,8 @@ class Tasks::Models::TaskStep < ApplicationRecord
       ).where(
         Tasks::Models::TaskedExercise.where(
           '"tasks_tasked_exercises"."id" = "tasks_task_steps"."tasked_id"'
+        ).where(
+          'CARDINALITY("tasks_tasked_exercises"."answer_ids") > 0'
         ).where(
           <<~WHERE_SQL
             "tasks_tasked_exercises"."attempt_number" <
