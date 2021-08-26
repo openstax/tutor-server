@@ -30,6 +30,9 @@ class Tasks::Models::TaskStep < ApplicationRecord
     tasked_exercise = Tasks::Models::TaskedExercise.where(
       '"tasks_tasked_exercises"."id" = "tasks_task_steps"."tasked_id"'
     )
+    non_wrq_exercise = tasked_exercise.where(
+      'CARDINALITY("tasks_tasked_exercises"."answer_ids") > 0'
+    )
 
     completed.where.not(tasked_type: Tasks::Models::TaskedExercise.name).or(
       completed_exercise.where(
@@ -44,7 +47,11 @@ class Tasks::Models::TaskStep < ApplicationRecord
         task: { task_plan: { grading_template: { allow_auto_graded_multiple_attempts: true } } }
       ).where(
         tasked_exercise.where('CARDINALITY("tasks_tasked_exercises"."answer_ids") = 0').or(
-          tasked_exercise.where(
+          non_wrq_exercise.where(
+            '"tasks_tasked_exercises"."answer_id" = "tasks_tasked_exercises"."correct_answer_id"'
+          )
+        ).or(
+          non_wrq_exercise.where(
             <<~WHERE_SQL
               "tasks_tasked_exercises"."attempt_number" >=
                 GREATEST(CARDINALITY("tasks_tasked_exercises"."answer_ids") - 2, 1)
@@ -67,6 +74,8 @@ class Tasks::Models::TaskStep < ApplicationRecord
           '"tasks_tasked_exercises"."id" = "tasks_task_steps"."tasked_id"'
         ).where(
           'CARDINALITY("tasks_tasked_exercises"."answer_ids") > 0'
+        ).where(
+          '"tasks_tasked_exercises"."answer_id" != "tasks_tasked_exercises"."correct_answer_id"'
         ).where(
           <<~WHERE_SQL
             "tasks_tasked_exercises"."attempt_number" <
