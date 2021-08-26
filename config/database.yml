@@ -1,6 +1,6 @@
 default: &default
   adapter: postgresql
-  host: <%= ENV['OXT_DB_HOST'] || 'localhost' %>
+  host: <%= ENV['OXT_DB_HOST'] || ENV['DATABASE_URL'] || 'localhost' %>
   port: <%= ENV['OXT_DB_PORT'] || 5432 %>
   username: <%= ENV['OXT_DB_USER'] || 'ox_tutor' %>
   password: <%= ENV['OXT_DB_PASS'] || 'ox_tutor_secret_password' %>
