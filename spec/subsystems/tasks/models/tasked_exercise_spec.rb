@@ -72,9 +72,6 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     tasked_exercise.save!
-
-    expect(tasked_exercise.reload).to be_valid
-
     tasked_exercise.complete!
 
     expect(tasked_exercise.reload).to be_valid
@@ -116,12 +113,10 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = incorrect_answer_ids.first
     tasked_exercise.save!
-
-    expect(tasked_exercise.reload).to be_valid
-
     tasked_exercise.complete!
 
     # Cannot change the free response after selecting a multiple choice answer
+    expect(tasked_exercise.reload).to be_valid
     tasked_exercise.attempt_number = 2
     tasked_exercise.free_response = 'some new thing'
     expect(tasked_exercise).not_to be_valid

@@ -22,8 +22,55 @@ class Tasks::Models::TaskStep < ApplicationRecord
 
   delegate :can_be_answered?, :has_correctness?, :has_content?, to: :tasked
 
-  scope :complete,   -> { where.not first_completed_at: nil }
-  scope :incomplete, -> { where     first_completed_at: nil }
+  scope :complete,   -> do
+    completed = left_outer_joins(
+      task: { task_plan: :grading_template }
+    ).where.not(first_completed_at: nil)
+    completed_exercise = completed.where(tasked_type: Tasks::Models::TaskedExercise.name)
+
+    completed.where.not(tasked_type: Tasks::Models::TaskedExercise.name).or(
+      completed_exercise.where(
+        task: { task_plan: { grading_template: { allow_auto_graded_multiple_attempts: nil } } }
+      )
+    ).or(
+      completed_exercise.where(
+        task: { task_plan: { grading_template: { allow_auto_graded_multiple_attempts: false } } }
+      )
+    ).or(
+      completed_exercise.where(
+        task: { task_plan: { grading_template: { allow_auto_graded_multiple_attempts: true } } }
+      ).where(
+        Tasks::Models::TaskedExercise.where(
+          '"tasks_tasked_exercises"."id" = "tasks_task_steps"."tasked_id"'
+        ).where(
+          <<~WHERE_SQL
+            "tasks_tasked_exercises"."attempt_number" >=
+              GREATEST(CARDINALITY("tasks_tasked_exercises"."answer_ids") - 2, 1)
+          WHERE_SQL
+        ).arel.exists
+      )
+    )
+  end
+  scope :incomplete, -> do
+    rel = left_outer_joins(task: { task_plan: :grading_template })
+
+    rel.where(first_completed_at: nil).or(
+      rel.where.not(first_completed_at: nil).where(
+        tasked_type: Tasks::Models::TaskedExercise.name
+      ).where(
+        task: { task_plan: { grading_template: { allow_auto_graded_multiple_attempts: true } } }
+      ).where(
+        Tasks::Models::TaskedExercise.where(
+          '"tasks_tasked_exercises"."id" = "tasks_task_steps"."tasked_id"'
+        ).where(
+          <<~WHERE_SQL
+            "tasks_tasked_exercises"."attempt_number" <
+              GREATEST(CARDINALITY("tasks_tasked_exercises"."answer_ids") - 2, 1)
+          WHERE_SQL
+        ).arel.exists
+      )
+    )
+  end
 
   scope :core,       -> { where is_core: true  }
   scope :dynamic,    -> { where is_core: false }
@@ -97,7 +144,23 @@ class Tasks::Models::TaskStep < ApplicationRecord
   end
 
   def completed?
-    !first_completed_at.nil?
+    !first_completed_at.nil? && (
+      !exercise? || # Non-exercise steps are considered completed after marked
+      !tasked.has_answers? || # WRQs are considered completed after first attempt
+      !task.allow_auto_graded_multiple_attempts || # Single attempt if multiple attempts is disabled
+      tasked.answer_id == tasked.correct_answer_id || # Completed when correct
+      tasked.attempt_number >= tasked.max_attempts # Completed after max_attempts are exhausted
+    )
+  end
+
+  def was_completed?
+    !first_completed_at_was.nil? && (
+      !exercise? || # Non-exercise steps are considered completed after marked
+      !tasked.has_answers? || # WRQs are considered completed after first attempt
+      !task.allow_auto_graded_multiple_attempts || # Single attempt if multiple attempts is disabled
+      tasked.answer_id_was == tasked.correct_answer_id || # Completed when correct
+      tasked.attempt_number_was >= tasked.max_attempts # Completed after max_attempts are exhausted
+    )
   end
 
   def update_error(current_time: Time.current)
@@ -108,23 +171,13 @@ class Tasks::Models::TaskStep < ApplicationRecord
     return 'already graded' if exercise? && tasked.was_manually_graded?
 
     # Incomplete steps that are not closed or graded can always be updated
-    return unless completed?
+    return unless was_completed?
 
     # Completed non-exercises cannot be updated
     return 'already completed' unless exercise?
 
-    # Exercises can always be updated before feedback is available
-    return unless tasked.feedback_available?(current_time: current_time)
-
-    # Exercises cannot be updated after feedback is available unless multiple attempts are enabled
-    return 'solution already available' unless tasked.multiple_attempts?
-
-    # Exercises cannot be updated from correct to incorrect in multiple attempts
-    return 'already correct' if !tasked.correct_answer_id.nil? &&
-                                tasked.answer_id_was == tasked.correct_answer_id
-
-    # attempt_number before the update must be less than max_attempts to allow updates
-    return 'max attempts exceeded' if tasked.attempt_number_was >= tasked.max_attempts
+    # Completed exercises can be updated before feedback is available
+    tasked.feedback_available?(current_time: current_time) ? 'solution already available' : nil
   end
 
   def can_be_updated?(current_time: Time.current)
