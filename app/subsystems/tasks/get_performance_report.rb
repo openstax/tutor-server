@@ -171,11 +171,12 @@ module Tasks
               reading_progress_weight  * (reading_progress  || 0)
             end
           else
-            course_average = if (homework_weight > 0 && homework_score.nil?) ||
-                                (reading_weight  > 0 && reading_score.nil? )
-              nil
+            course_average = if homework_score.nil?
+              reading_score
+            elsif reading_score.nil?
+              homework_score
             else
-              homework_weight * (homework_score || 0) + reading_weight  * (reading_score  || 0)
+              homework_weight * homework_score + reading_weight * reading_score
             end
           end
 
