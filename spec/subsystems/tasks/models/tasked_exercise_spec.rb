@@ -170,6 +170,32 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     expect(tasked_exercise.grader_points).to eq 0.0
   end
 
+  context "#solutions" do
+    let(:text) { 'A solution' }
+    let(:content) do
+      {
+        questions: [
+          {
+            id: '1',
+            stem_html: '',
+            answers: [
+              { id: '1', correctness: 1.0 }
+            ],
+            solutions: [],
+            collaborator_solutions: [{
+              content_html: text
+            }]
+          }
+        ],
+      }.to_json
+    end
+
+    it 'returns collaborator_solutions if the solutions are empty' do
+      content_exercise.update_attribute :content, content
+      expect(tasked_exercise.solution["content_html"]).to eq text
+    end
+  end
+
   context '#content_preview' do
     let(:default_exercise_copy) { "Exercise step ##{tasked_exercise.id}" }
     let(:content_body) { 'exercise content' }

@@ -34,7 +34,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   delegate :questions, :question_formats, :question_answers,
            :question_answer_ids, :question_formats_for_students,
            :correct_question_answers, :correct_question_answer_ids,
-           :feedback_map, :solutions, :content_hash_for_students, to: :parser
+           :feedback_map, :solutions, :collaborator_solutions, :content_hash_for_students, to: :parser
 
   def attempt_number_was
     val = super
@@ -150,7 +150,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   # The following 2 methods assume only 1 Question; this is OK for TaskedExercise,
   # because each TE contains at most 1 part of a multipart exercise.
   def solution
-    solutions[0].try(:first)
+    collaborator_solutions[0].try(:first) || solutions[0].try(:first)
   end
 
   def feedback
