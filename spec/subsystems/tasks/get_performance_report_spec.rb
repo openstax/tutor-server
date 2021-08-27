@@ -428,6 +428,134 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
           student.name == @student_2.name && student.is_dropped
         end).to eq true
       end
+
+      it 'ignores the weights when calculating averages if one assignment type is missing' do
+        current_time = Time.current
+        Tasks::Models::Task.where(task_type: 'homework').update_all(
+          due_at_ntz: current_time + 1.day, closes_at_ntz: current_time + 2.days
+        )
+        expect(first_period_report.overall_homework_score).to be_nil
+        expect(first_period_report.overall_homework_progress).to be_nil
+        rd_score = 0.45
+        expect(first_period_report.overall_reading_score).to be_within(1e-6).of(rd_score)
+        expect(first_period_report.overall_reading_progress).to be_within(1e-6).of(
+          first_period_report['students'].sum(&:reading_progress) / first_period_report['students'].length
+        )
+
+        expect(first_period_report.overall_course_average).to be_within(1e-6).of(rd_score)
+
+        expect(second_period_report.overall_homework_score).to be_nil
+        expect(second_period_report.overall_homework_progress).to be_nil
+        expect(second_period_report.overall_reading_score).to eq 0.0
+        expect(second_period_report.overall_reading_progress).to eq 0.0
+        expect(second_period_report.overall_course_average).to eq 0.0
+
+        expect(first_period_report.data_headings[0].title).to eq 'Reading task plan'
+        expect(first_period_report.data_headings[0].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[0].type).to eq 'reading'
+        expect(first_period_report.data_headings[0].due_at).to be_a Time
+        expect(first_period_report.data_headings[0].average_score).to be_within(1e-6).of(0.45)
+        expect(first_period_report.data_headings[0].average_progress).to eq(
+          first_period_report['students'].sum(&:reading_progress) / first_period_report['students'].length
+        )
+
+        expect(second_period_report.data_headings[0].title).to eq 'Reading task plan'
+        expect(second_period_report.data_headings[0].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[0].type).to eq 'reading'
+        expect(second_period_report.data_headings[0].due_at).to be_a Time
+        expect(second_period_report.data_headings[0].average_score).to eq 0.0
+        expect(second_period_report.data_headings[0].average_progress).to eq 0.0
+
+        expect(first_period_report.data_headings[1].title).to eq 'External assignment'
+        expect(first_period_report.data_headings[1].plan_id).to be_a Integer
+        expect(first_period_report.data_headings[1].type).to eq 'external'
+        expect(first_period_report.data_headings[1].due_at).to be_a Time
+        expect(first_period_report.data_headings[1].average_score).to be_nil
+        expect(first_period_report.data_headings[1].average_progress).to eq 0.0
+
+        expect(second_period_report.data_headings[1].title).to eq 'External assignment'
+        expect(second_period_report.data_headings[1].plan_id).to be_a Integer
+        expect(second_period_report.data_headings[1].type).to eq 'external'
+        expect(second_period_report.data_headings[1].due_at).to be_a Time
+        expect(second_period_report.data_headings[1].average_score).to be_nil
+        expect(second_period_report.data_headings[1].average_progress).to eq 0.0
+
+        first_period_students = first_period_report.students
+        expect(first_period_students.map(&:name)).to match_array [
+          @student_1.name, @student_2.name
+        ]
+        expect(first_period_students.map(&:first_name)).to match_array [
+          @student_1.first_name, @student_2.first_name
+        ]
+        expect(first_period_students.map(&:last_name)).to match_array [
+          @student_1.last_name, @student_2.last_name
+        ]
+        expect(first_period_students.map(&:role)).to match_array [
+          @student_1.roles.first.id, @student_2.roles.first.id
+        ]
+        expect(first_period_students.map(&:student_identifier)).to match_array [
+          @student_1.roles.first.student.student_identifier,
+          @student_2.roles.first.student.student_identifier
+        ]
+        expect(first_period_students.map(&:homework_score)).to eq [ nil, nil ]
+        expect(first_period_students.map(&:homework_progress)).to eq [ nil, nil ]
+        expect(first_period_students.map(&:reading_score)).to match_array [
+          be_within(1e-6).of(0.9), 0.0
+        ]
+        expect(first_period_students.map(&:reading_progress)).to match_array [
+          0.058823529411764705, 1.0
+        ]
+
+        expect(first_period_students.map(&:course_average)).to eq(
+          first_period_students.map(&:reading_score)
+        )
+
+        second_period_students = second_period_report.students
+        expect(second_period_students.map(&:name)).to match_array [
+          @student_3.name, @student_4.name
+        ]
+        expect(second_period_students.map(&:first_name)).to match_array [
+          @student_3.first_name, @student_4.first_name
+        ]
+        expect(second_period_students.map(&:last_name)).to match_array [
+          @student_3.last_name, @student_4.last_name
+        ]
+        expect(second_period_students.map(&:role)).to match_array [
+          @student_3.roles.first.id, @student_4.roles.first.id
+        ]
+        expect(second_period_students.map(&:student_identifier)).to match_array [
+          @student_3.roles.first.student.student_identifier,
+          @student_4.roles.first.student.student_identifier
+        ]
+        expect(second_period_students.map(&:homework_score)).to eq [ nil, nil ]
+        expect(second_period_students.map(&:homework_progress)).to eq [ nil, nil ]
+        expect(second_period_students.map(&:reading_score)).to eq [ 0.0, 0.0 ]
+        expect(second_period_students.map(&:reading_progress)).to eq [ 0.0, 0.0 ]
+        expect(second_period_students.map(&:course_average)).to eq(
+          second_period_students.map(&:reading_score)
+        )
+
+        (first_period_students + second_period_students).each do |student|
+          expect(student.is_dropped).to eq false
+
+          data = student.data
+          expect(data.size).to eq 2
+          expect(data.map(&:type)).to eq [ 'reading', 'external' ]
+
+          data.each do |data|
+            expect(data.id).to be_a Integer
+            expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
+            expect(data.due_at).to be_a Time
+            expect(data.step_count).to be_a Integer
+            expect(data.completed_step_count).to be_a Integer
+            expect(data.progress).to be_a Float
+            # Some assignments might not have feedback available
+            # so they might get a nil here even though points/score have been assigned
+            expect(data.published_points.class).to be_in([NilClass, Float])
+            expect(data.published_score.class).to be_in([NilClass, Float])
+          end
+        end
+      end
     end
 
     context 'feedback on due date' do
@@ -913,6 +1041,65 @@ RSpec.describe Tasks::GetPerformanceReport, type: :routine do
         data = student.data
         expect(data.size).to eq expected_tasks
         expect(data.map(&:type)).to eq expected_task_types
+
+        data.each do |data|
+          expect(data.id).to be_a Integer
+          expect(data.status).to be_in ['completed', 'in_progress', 'not_started']
+          expect(data.due_at).to be_a Time
+          expect(data.step_count).to be_a Integer
+          expect(data.completed_step_count).to be_a Integer
+          expect(data.progress).to be_a Float
+          # Some assignments might not have feedback available
+          # so they might get a nil here even though points/score have been assigned
+          expect(data.published_points.class).to be_in([NilClass, Float])
+          expect(data.published_score.class).to be_in([NilClass, Float])
+        end
+      end
+
+      it 'ignores the weights when calculating averages if one assignment type is missing' do
+        current_time = Time.current
+        Tasks::Models::Task.where(task_type: 'homework').update_all(
+          due_at_ntz: current_time + 1.day, closes_at_ntz: current_time + 2.days
+        )
+        expect(report.overall_homework_score).to be_nil
+        expect(report.overall_homework_progress).to be_nil
+        rd_score = 0.9
+        expect(report.overall_reading_score).to be_within(1e-6).of(rd_score)
+        expect(report.overall_reading_progress).to eq 1.0
+        expect(report.overall_course_average).to eq rd_score
+
+        expect(report.data_headings[0].title).to eq 'Reading task plan'
+        expect(report.data_headings[0].plan_id).to be_a Integer
+        expect(report.data_headings[0].type).to eq 'reading'
+        expect(report.data_headings[0].due_at).to be_a Time
+        expect(report.data_headings[0].average_score).to be_within(1e-6).of(0.9)
+        expect(report.data_headings[0].average_progress).to eq 1.0
+
+        expect(report.data_headings[1].title).to eq 'External assignment'
+        expect(report.data_headings[1].plan_id).to be_a Integer
+        expect(report.data_headings[1].type).to eq 'external'
+        expect(report.data_headings[1].due_at).to be_a Time
+        expect(report.data_headings[1].average_score).to be_nil
+        expect(report.data_headings[1].average_progress).to eq 0.0
+
+        expect(student.name).to eq @student_1.name
+        expect(student.first_name).to eq @student_1.first_name
+        expect(student.last_name).to eq @student_1.last_name
+        expect(student.role).to eq @student_1.roles.first.id
+        expect(student.student_identifier).to(
+          eq @student_1.roles.first.student.student_identifier
+        )
+        expect(student.homework_score).to be_nil
+        expect(student.homework_progress).to be_nil
+        expect(student.reading_score).to be_within(1e-6).of(0.9)
+        expect(student.reading_progress).to eq 1.0
+        expect(student.course_average).to eq(student.reading_score)
+
+        expect(student.is_dropped).to eq false
+
+        data = student.data
+        expect(data.size).to eq 2
+        expect(data.map(&:type)).to eq [ 'reading', 'external' ]
 
         data.each do |data|
           expect(data.id).to be_a Integer
