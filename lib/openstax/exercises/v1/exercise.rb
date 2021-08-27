@@ -135,6 +135,10 @@ class OpenStax::Exercises::V1::Exercise
     @solutions ||= questions.map { |qq| qq['solutions'] }
   end
 
+  def collaborator_solutions
+    @collaborator_solutions ||= questions.map { |qq| qq['collaborator_solutions'] }
+  end
+
   def solutions_are_public?
     @solutions_are_public ||= !!content_hash['solutions_are_public']
   end
