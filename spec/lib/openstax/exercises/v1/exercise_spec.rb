@@ -67,4 +67,16 @@ RSpec.describe OpenStax::Exercises::V1::Exercise, type: :external do
       expect(exercise.requires_context?).to eq false
     end
   end
+
+  context 'with collaborator solutions' do
+    let(:content) { hash[:questions][0].merge(
+      questions: [{
+        collaborator_solutions: [{ content_html: 'A solution' }]
+      }]
+    ).to_json }
+
+    it 'parses' do
+      expect(exercise.collaborator_solutions[0].first).to eq({ 'content_html' => 'A solution' })
+    end
+  end
 end
