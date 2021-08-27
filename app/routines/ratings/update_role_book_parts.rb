@@ -44,6 +44,7 @@ class Ratings::UpdateRoleBookParts
         :id,
         :answer_ids,
         :question_id,
+        :attempt_number,
         :correct_answer_id,
         :answer_id,
         :grader_points,
