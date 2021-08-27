@@ -54,7 +54,7 @@ class Ratings::UpdateRoleBookParts
       .joins(:exercise)
       .where(id: completed_exercise_steps.map(&:tasked_id))
       .preload(task_step: { task: { task_plan: :grading_template } })
-      .filter(&:feedback_available?)
+      .filter(&:solution_available?)
       .index_by(&:id)
 
     # Preload all available points
