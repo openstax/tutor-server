@@ -25,7 +25,7 @@ class CourseContent::UpdateExerciseExclusions
       fatal_error(code: :id_blank, message: 'Missing id for exercise exclusion') \
         unless exercise_params.has_key?('id')
       fatal_error(
-        code: :is_excluded_blank, message: "Missing is_exclusion for exercise with 'id'=#{id}"
+        code: :is_excluded_blank, message: "Missing is_excluded for exercise with 'id'=#{id}"
       ) unless exercise_params.has_key?('is_excluded')
 
       id = exercise_params.fetch('id').to_s
