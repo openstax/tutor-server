@@ -8,16 +8,12 @@ class CourseContent::UpdateExerciseExclusions
   def exec(course:, updates_array:)
     updates_array = updates_array.map(&:stringify_keys)
     exercise_ids = updates_array.map { |update| update['id'] }
-    page_ids = Content::Models::Exercise.where(id: exercise_ids).pluck(:content_page_id)
+    exercises_by_id = Content::Models::Exercise.where(id: exercise_ids).index_by { |ex| ex.id.to_s }
 
     # The course is touched at the end, so we lock the course to make this update atomic
     course.lock!
 
     course_id = course.id
-
-    out = run(:get_exercises, course: course, page_ids: page_ids).outputs
-    exercises_by_id = out.exercises.index_by { |ex| ex.id.to_s }
-    exercise_representations_by_id = out.exercise_search['items'].index_by(&:id)
 
     excluded_exercises = []
     unexcluded_exercise_numbers = []
@@ -25,19 +21,17 @@ class CourseContent::UpdateExerciseExclusions
       fatal_error(code: :id_blank, message: 'Missing id for exercise exclusion') \
         unless exercise_params.has_key?('id')
       fatal_error(
-        code: :is_excluded_blank, message: "Missing is_exclusion for exercise with 'id'=#{id}"
+        code: :is_excluded_blank, message: "Missing is_excluded for exercise with 'id'=#{id}"
       ) unless exercise_params.has_key?('is_excluded')
 
       id = exercise_params.fetch('id').to_s
       exercise = exercises_by_id[id]
-      exercise_representation = exercise_representations_by_id[id]
       fatal_error(
         code: :exercise_not_found,
         message: "Couldn't find Content::Models::Exercise with 'id'=#{id}"
-      ) if exercise.nil? || exercise_representation.nil?
+      ) if exercise.nil?
 
       is_excluded = !!exercise_params.fetch('is_excluded')
-      exercise_representation['is_excluded'] = !!is_excluded
 
       if is_excluded
         excluded_exercises << CourseContent::Models::ExcludedExercise.new(
@@ -47,7 +41,9 @@ class CourseContent::UpdateExerciseExclusions
         unexcluded_exercise_numbers << exercise.number
       end
 
-      exercise_representation
+      Api::V1::ExerciseRepresenter.new(exercise).to_hash.tap do |exercise_representation|
+        exercise_representation['is_excluded'] = !!is_excluded
+      end
     end
 
     CourseContent::Models::ExcludedExercise.import(
