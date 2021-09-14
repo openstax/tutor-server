@@ -545,18 +545,17 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
   end
 
   create_table "lti_platforms", force: :cascade do |t|
-    t.bigint "user_profile_id"
+    t.uuid "guid", default: -> { "gen_random_uuid()" }, null: false
+    t.bigint "user_profile_id", null: false
     t.string "issuer", null: false
     t.string "client_id", null: false
-    t.string "deployment_id"
     t.string "host", null: false
     t.string "jwks_endpoint", null: false
     t.string "authorization_endpoint", null: false
     t.string "token_endpoint", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["issuer", "deployment_id"], name: "index_lti_platforms_on_issuer_and_deployment_id", unique: true
-    t.index ["issuer"], name: "index_lti_platforms_on_issuer", unique: true, where: "(deployment_id IS NULL)"
+    t.index ["guid"], name: "index_lti_platforms_on_guid", unique: true
     t.index ["user_profile_id"], name: "index_lti_platforms_on_user_profile_id"
   end
 
@@ -1244,7 +1243,7 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
   add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_course_score_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "lti_platforms", "user_profiles", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "lti_platforms", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "ratings_period_book_parts", "course_membership_periods", on_update: :cascade, on_delete: :cascade

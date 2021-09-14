@@ -15,8 +15,6 @@ class Lti::Options < OmniAuth::Strategy::Options
       name: :lti,
       discovery: false,
       client_auth_method: :jwks,
-      # TODO: Load client_jwk_signing_key from parameter store
-      client_jwk_signing_key: SecureRandom.hex,
       scope: [ :openid ],
       response_type: :id_token,
       state: ->() { SecureRandom.hex },
@@ -32,8 +30,8 @@ class Lti::Options < OmniAuth::Strategy::Options
   def client_options
     OmniAuth::Strategy::Options.new(
       identifier: client_id,
-      # TODO: Dynamically generate launch URL or load from parameter store
-      redirect_uri: "https://tutor.openstax.org/lti/launch",
+      # TODO: Dynamically generate callback URL
+      redirect_uri: "http://localhost:3001/auth/lti/callback?guid=760f4742-173b-498d-8abf-ef0778591cec",
       scheme: 'https',
       host: host,
       port: 443,
