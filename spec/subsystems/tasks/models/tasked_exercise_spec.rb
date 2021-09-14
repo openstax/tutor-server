@@ -284,6 +284,8 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
         )
         tasked_exercise.answer_ids += [ '-3', '-4' ]
         tasked_exercise.save!
+
+        tasked_exercise.update_attribute :attempt_number, nil
       end
 
       context '#attempt_number_was' do
@@ -314,6 +316,14 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
           tasked_exercise.save!
           expect(tasked_exercise.attempt_number_changed?).to eq false
         end
+      end
+
+      it 'can be graded without erroring' do
+        tasked_exercise.attempt_number = tasked_exercise.attempt_number
+        tasked_exercise.last_graded_at = Time.current
+        expect(tasked_exercise.changes[:attempt_number]).not_to be_blank
+        expect(tasked_exercise.attempt_number_changed?).to eq false
+        expect(tasked_exercise).to be_valid
       end
     end
   end
