@@ -87,6 +87,7 @@ gem 'maruku'
 # LTI helper
 gem 'simple_oauth', github: 'openstax/simple_oauth'
 gem 'ims-lti', '~> 2.2.1'
+gem 'omniauth_openid_connect'
 
 # API JSON rendering/parsing
 # Do not use Roar 1.0.4

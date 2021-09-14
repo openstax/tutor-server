@@ -23,6 +23,7 @@ Tutor::SubSystems.valid_namespaces = %w(
   catalog
   salesforce
   lms
+  lti
   ratings
   research
   stats

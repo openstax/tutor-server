@@ -93,6 +93,7 @@ GEM
       activerecord
     arel (9.0.0)
     ast (2.4.0)
+    attr_required (1.0.1)
     autoprefixer-rails (9.5.0)
       execjs
     awesome_print (1.8.0)
@@ -452,6 +453,20 @@ GEM
     omniauth-oauth2 (1.3.1)
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
+    omniauth_openid_connect (0.3.5)
+      addressable (~> 2.5)
+      omniauth (~> 1.9)
+      openid_connect (~> 1.1)
+    openid_connect (1.2.0)
+      activemodel
+      attr_required (>= 1.0.0)
+      json-jwt (>= 1.5.0)
+      rack-oauth2 (>= 1.6.1)
+      swd (>= 1.0.0)
+      tzinfo
+      validate_email
+      validate_url
+      webfinger (>= 1.0.1)
     openstax_accounts (9.5.1)
       action_interceptor
       keyword_search
@@ -531,6 +546,12 @@ GEM
     rack (2.2.3)
     rack-attack (5.4.2)
       rack (>= 1.0, < 3)
+    rack-oauth2 (1.18.0)
+      activesupport
+      attr_required
+      httpclient
+      json-jwt (>= 1.11.0)
+      rack (>= 2.1.0)
     rack-proxy (0.6.5)
       rack
     rack-test (1.1.0)
@@ -711,6 +732,10 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     ssrf_filter (1.0.7)
+    swd (1.2.0)
+      activesupport (>= 3)
+      attr_required (>= 0.0.5)
+      httpclient (>= 2.4)
     test_xml (0.1.8)
       diffy (~> 3.0)
       nokogiri (>= 1.3.2)
@@ -731,6 +756,12 @@ GEM
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.4.1)
     uniform_notifier (1.12.1)
+    validate_email (0.1.6)
+      activemodel (>= 3.0)
+      mail (>= 2.2.5)
+    validate_url (1.0.13)
+      activemodel (>= 3.0.0)
+      public_suffix
     validates_timeliness (4.0.2)
       timeliness (~> 0.3.7)
     vcr (4.0.0)
@@ -748,6 +779,9 @@ GEM
       nokogiri (~> 1.6)
       rubyzip (~> 1.0)
       selenium-webdriver (>= 3.0, < 4.0)
+    webfinger (1.1.0)
+      activesupport
+      httpclient (>= 2.4)
     webmock (3.5.1)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
@@ -839,6 +873,7 @@ DEPENDENCIES
   oj
   oj_mimic_json
   omniauth-oauth2 (~> 1.3.1)
+  omniauth_openid_connect
   openstax_accounts (~> 9.5.1)
   openstax_api
   openstax_content
