@@ -47,7 +47,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def attempt_number
-    super || (task_step.completed? ? 1 : 0)
+    super || (task_step.first_completed_at.nil? ? 0 : 1)
   end
 
   def attempt_number_changed?
@@ -416,9 +416,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   def changes_allowed(current_time: Time.current)
     # Return if none of the answer attributes changed
-    return unless [ :attempt_number, :answer_id, :free_response ].any? do |attr|
-      changes[attr].present?
-    end
+    return if [ :answer_id, :free_response ].all? { |attr| changes[attr].blank? } &&
+              !attempt_number_changed?
 
     # Check if the answers can be changed
     update_error = task_step&.update_error(current_time: current_time)
