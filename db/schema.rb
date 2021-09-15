@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_03_214129) do
+ActiveRecord::Schema.define(version: 2021_09_15_153151) do
 
   create_sequence "teacher_exercise_number", start: 1000000
 
