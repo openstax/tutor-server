@@ -995,7 +995,7 @@ ActiveRecord::Schema.define(version: 2021_09_15_153151) do
     t.datetime "last_graded_at"
     t.float "published_grader_points"
     t.text "published_comments"
-    t.integer "attempt_number", default: 0
+    t.integer "attempt_number", default: 0, null: false
     t.index "COALESCE(jsonb_array_length((response_validation -> 'attempts'::text)), 0)", name: "tasked_exercise_nudges_index"
     t.index ["content_exercise_id"], name: "index_tasks_tasked_exercises_on_content_exercise_id"
     t.index ["question_id"], name: "index_tasks_tasked_exercises_on_question_id"

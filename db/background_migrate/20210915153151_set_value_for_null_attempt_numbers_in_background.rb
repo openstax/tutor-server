@@ -1,6 +1,8 @@
 class SetValueForNullAttemptNumbersInBackground < ActiveRecord::Migration[5.2]
   BATCH_SIZE = 1000
 
+  disable_ddl_transaction!
+
   def up
     tes_to_update = Tasks::Models::TaskedExercise.joins(:task_step).where(
       attempt_number: nil
@@ -21,6 +23,8 @@ class SetValueForNullAttemptNumbersInBackground < ActiveRecord::Migration[5.2]
 
       break if num_updated < BATCH_SIZE
     end
+
+    change_column_null :tasks_tasked_exercises, :attempt_number, false
   end
 
   def down
