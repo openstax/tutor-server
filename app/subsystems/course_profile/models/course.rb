@@ -60,6 +60,8 @@ class CourseProfile::Models::Course < ApplicationRecord
 
   has_many :grading_templates, subsystem: :tasks, inverse_of: :course
 
+  has_many :lti_contexts, class_name: 'Lti::Context', subsystem: :lti, inverse_of: :course
+
   unique_token :teach_token
 
   enum term: [ :legacy, :demo, :spring, :summer, :fall, :winter, :preview ]

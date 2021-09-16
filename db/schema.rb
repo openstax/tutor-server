@@ -544,6 +544,17 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
     t.index ["openstax_accounts_accounts_id"], name: "index_lms_users_on_openstax_accounts_accounts_id"
   end
 
+  create_table "lti_contexts", force: :cascade do |t|
+    t.bigint "course_profile_course_id", null: false
+    t.bigint "lti_platform_id", null: false
+    t.string "context_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_profile_course_id"], name: "index_lti_contexts_on_course_profile_course_id"
+    t.index ["lti_platform_id", "context_id"], name: "index_lti_contexts_on_lti_platform_id_and_context_id", unique: true
+    t.index ["lti_platform_id"], name: "index_lti_contexts_on_lti_platform_id"
+  end
+
   create_table "lti_platforms", force: :cascade do |t|
     t.uuid "guid", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "user_profile_id", null: false
@@ -557,6 +568,17 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
     t.datetime "updated_at", null: false
     t.index ["guid"], name: "index_lti_platforms_on_guid", unique: true
     t.index ["user_profile_id"], name: "index_lti_platforms_on_user_profile_id"
+  end
+
+  create_table "lti_users", force: :cascade do |t|
+    t.bigint "user_profile_id", null: false
+    t.bigint "lti_platform_id", null: false
+    t.string "uid", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lti_platform_id", "uid"], name: "index_lti_users_on_lti_platform_id_and_uid", unique: true
+    t.index ["lti_platform_id"], name: "index_lti_users_on_lti_platform_id"
+    t.index ["user_profile_id"], name: "index_lti_users_on_user_profile_id"
   end
 
   create_table "oauth_access_grants", id: :serial, force: :cascade do |t|
@@ -1243,7 +1265,11 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
   add_foreign_key "lms_course_score_callbacks", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_course_score_callbacks", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lms_nonces", "lms_apps", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "lti_platforms", "user_profiles", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lti_contexts", "course_profile_courses", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lti_contexts", "lti_platforms", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lti_platforms", "user_profiles", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "lti_users", "lti_platforms", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "lti_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "ratings_period_book_parts", "course_membership_periods", on_update: :cascade, on_delete: :cascade

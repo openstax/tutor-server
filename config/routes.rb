@@ -29,10 +29,10 @@ Rails.application.routes.draw do
 
   mount OpenStax::Accounts::Engine => :accounts
 
-  scope module: 'lti' do
-    post 'auth/lti/callback', action: :callback, as: :callback # LTI authentication success
-    get 'lti/launch', action: :launch, as: :launch             # LTI launch after Accounts login
-    get 'lti/pair', action: :pair, as: :pair                   # Pair courses with LMS
+  post 'auth/lti/callback', to: 'lti#callback' # LTI authentication success
+  namespace :lti do
+    get  :launch # LTI launch after Accounts login (after authentication)
+    post :pair   # Pair courses with LMS
   end
 
   get :non_student_signup, to: redirect('/courses?block_sign_up=false&straight_to_sign_up=true')

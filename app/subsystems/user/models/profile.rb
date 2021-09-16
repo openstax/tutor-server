@@ -11,6 +11,9 @@ module User
       has_many :tour_views, inverse_of: :profile
       has_many :tours, through: :tour_views
 
+      has_many :lti_platforms, class_name: 'Lti::Platform', subsystem: :lti, inverse_of: :profile
+      has_many :lti_users, class_name: 'Lti::User', subsystem: :lti, inverse_of: :profile
+
       has_one :administrator, dependent: :destroy, inverse_of: :profile
       has_one :customer_support, class_name: 'User::Models::CustomerService',
                                  dependent: :destroy, inverse_of: :profile
