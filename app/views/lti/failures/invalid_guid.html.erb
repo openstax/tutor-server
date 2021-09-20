@@ -1,0 +1,13 @@
+<% content_for :title do %>
+  An error occurred when launching your course
+<% end %>
+
+<% content_for :body do %>
+  <% if lti_user&.is_definitely_student? %>
+    This course may not have been integrated correctly. Please notify your instructor.
+  <% else %>
+    The tutor_guid parameter provided in the login URL
+    did not match any existing LTI integrations in OpenStax Tutor.
+    For help, please visit our <%= link_to "knowledge base", TUTOR_INTEGRATE_LMS_URL %>.
+  <% end %>
+<% end %>

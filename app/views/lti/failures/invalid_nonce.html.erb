@@ -1,0 +1,11 @@
+<% content_for :title do %>
+  An error occurred when launching your course
+<% end %>
+
+<% content_for :body do %>
+  We received a duplicate request.
+  Try launching OpenStax Tutor again from your LMS.
+  If that does not resolve the issue, please <%=
+    link_to "contact support", TUTOR_CONTACT_SUPPORT_URL
+  %>.
+<% end %>

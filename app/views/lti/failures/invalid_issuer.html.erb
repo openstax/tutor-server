@@ -1,0 +1,17 @@
+<% content_for :title do %>
+  An error occurred when launching your course
+<% end %>
+
+<% content_for :body do %>
+  <% if lti_user&.is_definitely_student? %>
+    This course may not have been integrated correctly. Please notify your instructor.
+  <% else %>
+    The LTI "Issuer" value received from your LMS
+    did not match the one configured in OpenStax Tutor.
+    If you are doing the initial configuration,
+    it is generally safe to change this value by editing the LTI Platform in Tutor.
+    If other Tutor courses are already using this LTI Platform,
+    you'll need to create a new LTI Platform in OpenStax Tutor and use that one instead.
+    For help, please visit our <%= link_to "knowledge base", TUTOR_INTEGRATE_LMS_URL %>.
+  <% end %>
+<% end %>

@@ -571,9 +571,14 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
   end
 
   create_table "lti_users", force: :cascade do |t|
-    t.bigint "user_profile_id", null: false
+    t.bigint "user_profile_id"
     t.bigint "lti_platform_id", null: false
     t.string "uid", null: false
+    t.string "last_message_type", null: false
+    t.string "last_context_id", null: false
+    t.boolean "last_is_instructor", null: false
+    t.boolean "last_is_student", null: false
+    t.text "last_target_link_uri", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lti_platform_id", "uid"], name: "index_lti_users_on_lti_platform_id_and_uid", unique: true

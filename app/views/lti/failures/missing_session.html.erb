@@ -1,0 +1,12 @@
+<% content_for :title do %>
+  An error occurred when launching your course
+<% end %>
+
+<% content_for :body do %>
+  OpenStax Tutor uses cookies to manage the launch request from your LMS.
+  <br>
+  Make sure your browser is set to allow cookies from OpenStax Tutor.
+  If that does not resolve the issue, please <%=
+    link_to "contact support", TUTOR_CONTACT_SUPPORT_URL
+  %>.
+<% end %>

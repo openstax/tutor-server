@@ -1,0 +1,10 @@
+<% content_for :title do %>
+  An error occurred when launching your course
+<% end %>
+
+<% content_for :body do %>
+  It appears that you may have switched OpenStax accounts
+  after launching OpenStax Tutor from your LMS.
+  Please try launching from your LMS again.
+  If the problem persists, <%= link_to "contact support", TUTOR_CONTACT_SUPPORT_URL %>.
+<% end %>

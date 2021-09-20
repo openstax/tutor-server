@@ -25,6 +25,8 @@ module OmniAuth
         # Adapted from Tsugi. Because Canvas uses the same issuer for all deployments, breaking the
         # spec, we have to add our own guid parameter to the login and other URLs to distinguish
         # between different Canvas deployments.
+        return fail!(:missing_guid) if params['tutor_guid'].blank?
+
         session['lti_guid'] = params['tutor_guid']
 
         # LMS is misconfigured in Tutor
@@ -32,17 +34,21 @@ module OmniAuth
 
         super
       rescue ActiveRecord::RecordNotFound => exception
-        # LMS is not configured at all in Tutor
+        # tutor_guid was provided but Lti::Platform was not found in Tutor
         fail! :invalid_guid, exception
       end
 
       def callback_phase
+        # Either they are not allowing cookies from Tutor
+        # or they used the back button after finishing the login
+        return fail!(:missing_session) if guid.blank?
+
         # The ID token code itself already verifies the issuer here
         super
       rescue ActiveRecord::RecordNotFound => exception
-        # Either they are not allowing cookies from Tutor or they used the back button
-        # after finishing the login
-        fail! :missing_guid, exception
+        # This should actually only happen if they deleted
+        # the Lti::Platform after the cookie was set in the request_phase
+        fail! :invalid_guid, exception
       rescue ::OpenIDConnect::ResponseObject::IdToken::InvalidToken => exception
         fail!(
           case exception
