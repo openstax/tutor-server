@@ -27,3 +27,15 @@ FinePrint::Contract.create(
   title:   'Authorship Terms of Use',
   content: 'Placeholder for authorship terms of use, required for new installations to function.'
 )
+
+# TODO: Temp (remove)
+Lti::Platform.create!(
+  guid: "760f4742-173b-498d-8abf-ef0778591cec",
+  profile: FactoryBot.create(:user_profile),
+  issuer: "https://canvas.instructure.com",
+  client_id: "10000000000001",
+  host: "canvas.docker",
+  jwks_endpoint: "http://canvas.docker/api/lti/security/jwks",
+  authorization_endpoint: "http://canvas.docker/api/lti/authorize_redirect",
+  token_endpoint: "http://canvas.docker/login/oauth2/token"
+) if Lti::Platform.count == 0

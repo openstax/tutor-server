@@ -59,6 +59,8 @@ class LtiController < ApplicationController
     sign_in(lti_user.profile) if !lti_user.profile.nil? && current_user != lti_user.profile
 
     # Proceed with the launch (will redirect to Accounts instead if they are not signed in yet)
+    # TODO: Use Accounts signed params to automatically create the account
+    #       with pre-filled fields and force the user to login to it
     redirect_to lti_launch_url
   end
 
@@ -114,7 +116,8 @@ class LtiController < ApplicationController
       # Another instructor launches the same course after initial pairing
       # Add them as an instructor for the Tutor course
       AddUserAsCourseTeacher[user: current_user, course: course] \
-        unless UserIsCourseTeacher[user: current_user, course: course]
+        unless UserIsCourseTeacher[user: current_user, course: course] ||
+               UserIsCourseStudent[user: current_user, course: course]
     elsif lti_user.last_is_student?
       # This user is allowed to join the course as a student
       # We skip this part if the user is an instructor
@@ -124,16 +127,17 @@ class LtiController < ApplicationController
       # which course corresponds to the given context ID
       return render_failure(:unpaired) if course.nil?
 
-      unless UserIsCourseStudent[course: course, user: current_user, include_dropped_students: true]
+      unless UserIsCourseTeacher[user: current_user, course: course] ||
+             UserIsCourseStudent[user: current_user, course: course, include_dropped_students: true]
         # Enroll into the course
         # The enrollment process will block them if the course already ended
-        redirect_to token_enroll_url(course.uuid), return_to: target_link_uri
+        redirect_to token_enroll_url(course.uuid), return_to: target_link_uri(course)
         clear_lti_session
         return
       end
     end
 
-    redirect_to target_link_uri
+    redirect_to target_link_uri(course)
     clear_lti_session
   end
 
@@ -143,6 +147,8 @@ class LtiController < ApplicationController
 
     # Can't pair a course that has already ended
     return render_failure(:course_ended) if course.ended?
+
+    # TODO: Fail or at least display a warning if the course has non-LMS students
 
     lti_user = Lti::User.find session['lti_user_id']
     Lti::Context.create!(
@@ -159,7 +165,7 @@ class LtiController < ApplicationController
     @lti_user ||= Lti::User.find_by id: session['lti_user_id']
   end
 
-  def target_link_uri
+  def target_link_uri(course)
     uri = lti_user.last_target_link_uri
     path = Addressable::URI.parse(uri).path
     path.starts_with?('/lms/') || path.starts_with?('/lti/') ? course_dashboard_url(course) : uri

@@ -1,10 +1,10 @@
 class CreateLtiContexts < ActiveRecord::Migration[5.2]
   def change
     create_table :lti_contexts do |t|
-      t.references :course_profile_course, null: false, index: true, foreign_key: {
+      t.references :course_profile_course, null: false, foreign_key: {
         on_update: :cascade, on_delete: :cascade
       }
-      t.references :lti_platform, null: false, foreign_key: {
+      t.references :lti_platform, null: false, index: false, foreign_key: {
         on_update: :cascade, on_delete: :cascade
       }
       t.string :context_id, null: false

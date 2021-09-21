@@ -552,7 +552,6 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
     t.datetime "updated_at", null: false
     t.index ["course_profile_course_id"], name: "index_lti_contexts_on_course_profile_course_id"
     t.index ["lti_platform_id", "context_id"], name: "index_lti_contexts_on_lti_platform_id_and_context_id", unique: true
-    t.index ["lti_platform_id"], name: "index_lti_contexts_on_lti_platform_id"
   end
 
   create_table "lti_platforms", force: :cascade do |t|
@@ -582,7 +581,6 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lti_platform_id", "uid"], name: "index_lti_users_on_lti_platform_id_and_uid", unique: true
-    t.index ["lti_platform_id"], name: "index_lti_users_on_lti_platform_id"
     t.index ["user_profile_id"], name: "index_lti_users_on_user_profile_id"
   end
 

@@ -1,10 +1,10 @@
 class CreateLtiUsers < ActiveRecord::Migration[5.2]
   def change
     create_table :lti_users do |t|
-      t.references :user_profile, index: true, foreign_key: {
+      t.references :user_profile, foreign_key: {
         on_update: :cascade, on_delete: :cascade
       }
-      t.references :lti_platform, null:false, foreign_key: {
+      t.references :lti_platform, null:false, index: false, foreign_key: {
         on_update: :cascade, on_delete: :cascade
       }
       t.string :uid, null: false
