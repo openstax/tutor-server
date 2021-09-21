@@ -81,7 +81,10 @@ class LtiController < ApplicationController
     return render_failure(:unsupported_message_type) \
       unless lti_user.last_message_type == 'LtiResourceLinkRequest'
 
-    # TODO: Display a confirmation modal before linking the account to the LMS?
+    # TODO: Display a confirmation modal before linking the account to the LMS and/or
+    #       Prevent one profile from being linked to multiple Lti::User in a single platform
+    #       The second option may cause issues with student view in Canvas,
+    #       as it seems to show up as a separate user for Tutor
     lti_user.update_attribute(:profile, current_user) if lti_user.profile.nil?
 
     # Fail if we got this far and the user is still in the wrong account
@@ -101,11 +104,13 @@ class LtiController < ApplicationController
       ).exists?
         # This user is allowed to pair courses and has courses to pair
         # Render screen to let them pick a course
-        return render :pair
+        render :pair
+      else
+        # This user is not allowed to pair courses or has no courses to pair
+        render_failure :unpaired
       end
 
-      # This user is not allowed to pair courses or has no courses to pair
-      return render_failure(:unpaired)
+      return
     end
 
     if lti_user.last_is_instructor?
