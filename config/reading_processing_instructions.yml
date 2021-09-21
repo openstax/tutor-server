@@ -1,3 +1,7 @@
+american-government:
+  - css: .summary, .review-questions, .critical-thinking, .suggested-reading, .references
+    fragments: []
+
 anatomy:
   - css: .summary, .interactive-exercise, .multiple-choice, .free-response, .references
     fragments: []
