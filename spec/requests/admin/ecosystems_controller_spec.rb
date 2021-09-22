@@ -40,6 +40,9 @@ RSpec.describe Admin::EcosystemsController, type: :request, vcr: VCR_OPTS, speed
       ]
       expect(assigns[:pipeline_version]).to eq '20210713.205645'
       expect(assigns[:collections]).to eq [
+        [ 'American government - col11995', 'col11995' ],
+        [ 'American government 2e - col26739', 'col26739' ],
+        [ 'American government 3e - col33102', 'col33102' ],
         [ 'Anatomy and physiology - col11496', 'col11496' ],
         [ 'Biology - col11448', 'col11448' ],
         [ 'Biology 2e - col24361', 'col24361' ],
@@ -64,21 +67,11 @@ RSpec.describe Admin::EcosystemsController, type: :request, vcr: VCR_OPTS, speed
       ]
       expect(assigns[:reading_processing_instructions]).to eq <<~EOS
         ---
-        - css: ".summary, .interactive-exercise, .multiple-choice, .free-response, .references"
+        - css: ".summary, .review-questions, .critical-thinking, .suggested-reading, .references"
           fragments: []
-        - css: ".note"
-          fragments:
-          - reading
-          labels:
-          - note
-        - css: ".anatomy.interactive"
-          fragments:
-          - interactive
-          labels:
-          - interactive link
       EOS
-      expect(assigns[:content_versions]).to eq [ '22.38', '22.8' ]
-      expect(assigns[:content_version]).to eq '22.38'
+      expect(assigns[:content_versions]).to eq [ '19.1' ]
+      expect(assigns[:content_version]).to eq '19.1'
     end
   end
 
