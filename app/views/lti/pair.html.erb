@@ -10,6 +10,10 @@
   <body>
     <div id="ox-root-view">
       TODO: tutor-server app/views/lti/pair.html.erb (tutor-js tutor/src/screens/lms-pair/)
+
+      <%= button_to 'Pair any course I have', lti_pair_url(
+        course_id: current_user.roles.map(&:teacher).compact.reject(&:deleted?).first.course.id
+      ) %>
     </div>
   </body>
 </html>

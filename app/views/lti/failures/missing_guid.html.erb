@@ -3,12 +3,12 @@
 <% end %>
 
 <% content_for :body do %>
-  <% if lti_user&.is_definitely_student? %>
+  <% if is_definitely_student? %>
     This course may not have been integrated correctly. Please notify your instructor.
   <% else %>
     Please check that the login URL for OpenStax Tutor configured in your LMS matches the one given
     to you by OpenStax Tutor when integrating your course.
-
+    <br><br>
     Details:
     OpenStax Tutor uses a tutor_guid parameter in the login URL
     to distinguish between different LMS systems.

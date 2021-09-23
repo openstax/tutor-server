@@ -569,15 +569,23 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
     t.index ["user_profile_id"], name: "index_lti_platforms_on_user_profile_id"
   end
 
+  create_table "lti_resource_links", force: :cascade do |t|
+    t.bigint "lti_platform_id", null: false
+    t.string "context_id", null: false
+    t.string "resource_link_id", null: false
+    t.string "lineitems_endpoint"
+    t.string "lineitem_endpoint"
+    t.boolean "can_create_lineitems", null: false
+    t.boolean "can_update_scores", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lti_platform_id", "context_id", "resource_link_id"], name: "index_lti_resource_links_on_platform_context_and_id", unique: true
+  end
+
   create_table "lti_users", force: :cascade do |t|
-    t.bigint "user_profile_id"
+    t.bigint "user_profile_id", null: false
     t.bigint "lti_platform_id", null: false
     t.string "uid", null: false
-    t.string "last_message_type", null: false
-    t.string "last_context_id", null: false
-    t.boolean "last_is_instructor", null: false
-    t.boolean "last_is_student", null: false
-    t.text "last_target_link_uri", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lti_platform_id", "uid"], name: "index_lti_users_on_lti_platform_id_and_uid", unique: true
@@ -1271,6 +1279,7 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
   add_foreign_key "lti_contexts", "course_profile_courses", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lti_contexts", "lti_platforms", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lti_platforms", "user_profiles", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "lti_resource_links", "lti_platforms", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lti_users", "lti_platforms", on_update: :cascade, on_delete: :cascade
   add_foreign_key "lti_users", "user_profiles", on_update: :cascade, on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"

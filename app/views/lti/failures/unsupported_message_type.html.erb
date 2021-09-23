@@ -3,11 +3,11 @@
 <% end %>
 
 <% content_for :body do %>
-  <% if lti_user&.is_definitely_student? %>
+  <% if is_definitely_student? %>
     This course may not have been integrated correctly. Please notify your instructor.
   <% else %>
     Make sure you added OpenStax Tutor as a resource link in your LMS.
-
+    <br><br>
     Details:
     We received an unexpected LTI message_type claim from your LMS.
     OpenStax Tutor currently only supports LtiResourceLinkRequest messages.

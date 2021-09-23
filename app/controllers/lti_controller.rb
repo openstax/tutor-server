@@ -4,10 +4,13 @@ class LtiController < ApplicationController
 
   layout false
 
-  # Any of these LTI context roles are allowed to pair courses and become teachers
-  COURSE_ADMIN_ROLES = [ 'Instructor', 'Administrator', 'ContentDeveloper', 'Mentor' ]
+  # LTI context roles allowed to pair courses and become instructors
+  INSTRUCTOR_ROLES = [ 'Instructor', 'Administrator', 'ContentDeveloper', 'Mentor' ]
 
-  helper_method :lti_user
+  # LTI context roles allowed to enroll into courses as students
+  STUDENT_ROLES = [ 'Learner' ]
+
+  helper_method :is_definitely_student?
 
   # This endpoint is reached after the OpenID Connect login (handled by omniauth_openid_connect)
   # Send to accounts for login, then back to launch endpoint
@@ -17,40 +20,54 @@ class LtiController < ApplicationController
   # Users are redirected to the target_link_uri afterwards unless that would cause a loop
   # This is equivalent to launch_authenticate in the old LmsController
   def callback
-    # The platform comes from a tutor_guid parameter we add to the first Tutor URL
-    # the user is sent to from the LMS (in Omniauth's request_phase)
-    # That parameter is saved in the session so we can find the platform in the callback_phase
-    # We do this to get around the fact that all Canvas deployments shared the same LTI Issuer,
-    # so we couldn't distinguish them and determine which configuration/keys to use otherwise
-    # Omniauth handles missing platform and other errors in the callback_phase before this point
-    # We no longer need or use the saved lti_guid parameter after this point
-    # since it'll be loaded from the Lti::User
-    platform = Lti::Platform.find_by! guid: session.delete('lti_guid')
-
     # The result of the successful omniauth authentication is stored in request.env
     lti_auth = request.env['omniauth.auth']
-    uid = lti_auth.uid
 
-    # Find or create a new LTI user and store the current launch info in it
-    # We do this before asking them to login so we don't have to store their auth info elsewhere
-    # Storing the auth info in the session leads to CookieOverflow exceptions
-    @lti_user = Lti::User.find_or_initialize_by(platform: platform, uid: uid)
+    raw_info = lti_auth.extra.raw_info
+    roles = raw_info['https://purl.imsglobal.org/spec/lti/claim/roles']
+    return render_failure(:missing_roles) if roles.nil?
+
+    context_roles ||= roles.select do |role|
+      role.starts_with? 'http://purl.imsglobal.org/vocab/lis/v2/membership#'
+    end.map { |role| role.sub('http://purl.imsglobal.org/vocab/lis/v2/membership#', '') }
+
+    # These are used in error messages so we try to set them as early as possible
+    session['lti_is_instructor'] = !(INSTRUCTOR_ROLES & context_roles).empty?
+    session['lti_is_student'] = !(STUDENT_ROLES & context_roles).empty?
+
+    return render_failure(:unsupported_message_type) unless raw_info[
+      'https://purl.imsglobal.org/spec/lti/claim/message_type'
+    ] == 'LtiResourceLinkRequest'
+
+    session['lti_uid'] = lti_auth.uid
+
+    # Fail for anonymous launches since we need to pass back grades
+    # and anonymous launches do not give us a user ID
+    return render_failure(:anonymous_launch) if session['lti_uid'].blank?
+
+    session['lti_context_id'] = raw_info[
+      'https://purl.imsglobal.org/spec/lti/claim/context'
+    ]&.[]('id')
+    return render_failure(:missing_context) if session['lti_context_id'].blank?
+
+    return render_failure(:no_valid_roles) \
+      unless session['lti_is_instructor'] || session['lti_is_student']
+
+    session['lti_target_link_uri'] = raw_info[
+      'https://purl.imsglobal.org/spec/lti/claim/target_link_uri'
+    ]
+    return render_failure(:missing_target_link_uri) if session['lti_target_link_uri'].blank?
 
     # Possible errors:
-    # :anonymous_launch
-    # :unsupported_message_type
     # :missing_context
-    # :missing_roles
-    # :no_valid_roles
-    # :missing_target_link_uri
-    error = lti_user.set_launch_info_from_lti_auth lti_auth
-    return render_failure(error) unless error.nil?
+    # :missing_resource_link
+    # :missing_endpoint
+    # :missing_scope
+    error = Lti::ResourceLink.upsert_from_platform_and_raw_info lti_platform, raw_info
 
-    lti_user.save!
-
-    # Save the LTI user info so we can resume the process once they come back
-    # from Accounts or from pairing a course
-    session['lti_user_id'] = lti_user.id
+    # We allow users to proceed when the endpoint is missing so they can login to Tutor via the LMS,
+    # even if Tutor is then not allowed to update the LMS's gradebook
+    return render_failure(error) unless error.nil? || error == :missing_endpoint
 
     # Existing user, already linked to the LMS, not signed in or signed into the wrong account
     # Force the user to sign in to the account linked to the Lti::User
@@ -59,8 +76,8 @@ class LtiController < ApplicationController
     sign_in(lti_user.profile) if !lti_user.profile.nil? && current_user != lti_user.profile
 
     # Proceed with the launch (will redirect to Accounts instead if they are not signed in yet)
-    # TODO: Use Accounts signed params to automatically create the account
-    #       with pre-filled fields and force the user to login to it
+    # TODO: Use Accounts signed params or the FindOrCreateAccount routine to automatically
+    #       create the account with pre-filled fields and force the user to login to it
     redirect_to lti_launch_url
   end
 
@@ -71,20 +88,15 @@ class LtiController < ApplicationController
   # Users are redirected to the target_link_uri afterwards unless that would cause a loop
   # This is equivalent to complete_launch in the old LmsController
   def launch
-    # Fail if we couldn't find the lti_user object
+    # Fail if we couldn't find the LTI session
     # This can happen if cookies are being blocked
     # or if they try to load this URL directly without going through LTI (misconfigured LMS?)
-    return render_failure(:missing_session) if lti_user.nil?
-
-    # In the future we may support other messages such as LtiDeepLinkingRequest
-    # However, this controller action only handles LtiResourceLinkRequests
-    return render_failure(:unsupported_message_type) \
-      unless lti_user.last_message_type == 'LtiResourceLinkRequest'
+    return render_failure(:missing_session) if session['lti_guid'].blank?
 
     # TODO: Display a confirmation modal before linking the account to the LMS and/or
     #       Prevent one profile from being linked to multiple Lti::User in a single platform
     #       The second option may cause issues with student view in Canvas,
-    #       as it seems to show up as a separate user for Tutor
+    #       as the student view seems to show up as a separate user for Tutor
     lti_user.update_attribute(:profile, current_user) if lti_user.profile.nil?
 
     # Fail if we got this far and the user is still in the wrong account
@@ -92,14 +104,9 @@ class LtiController < ApplicationController
     # or trying to reload this URL after switching accounts
     return render_failure(:wrong_account) if lti_user.profile != current_user
 
-    # Find the course by the platform and the LTI context's id
-    course = CourseProfile::Models::Course.joins(:lti_contexts).find_by(
-      lti_contexts: { platform: lti_user.platform, context_id: lti_user.last_context_id }
-    )
-
-    if course.nil?
+    if lti_context.course.nil?
       # No course is currently paired with the LMS course
-      if lti_user.last_is_instructor? && CourseMembership::Models::Teacher.joins(:role).where(
+      if session['lti_is_instructor'] && CourseMembership::Models::Teacher.joins(:role).where(
         deleted_at: nil, role: { profile: current_user }
       ).exists?
         # This user is allowed to pair courses and has courses to pair
@@ -113,7 +120,8 @@ class LtiController < ApplicationController
       return
     end
 
-    if lti_user.last_is_instructor?
+    course = lti_context.course
+    if session['lti_is_instructor']
       # This user is allowed to join the course as an instructor
       # We don't really block them here if the course has ended,
       # maybe they need to look at the scores or something like that
@@ -123,7 +131,7 @@ class LtiController < ApplicationController
       AddUserAsCourseTeacher[user: current_user, course: course] \
         unless UserIsCourseTeacher[user: current_user, course: course] ||
                UserIsCourseStudent[user: current_user, course: course]
-    elsif lti_user.last_is_student?
+    elsif session['lti_is_student']
       # This user is allowed to join the course as a student
       # We skip this part if the user is an instructor
       # because we do not allow instructors to also join the same course as a student in Tutor
@@ -148,17 +156,16 @@ class LtiController < ApplicationController
 
   def pair
     course = CourseProfile::Models::Course.find_by! id: params[:course_id]
-    OSU::AccessPolicy.require_action_allowed! :lms_course_pair, current_user, course
+    OSU::AccessPolicy.require_action_allowed! :lti_course_pair, current_user, course
+
+    return render_failure(:already_paired) unless lti_context.course.nil?
 
     # Can't pair a course that has already ended
     return render_failure(:course_ended) if course.ended?
 
     # TODO: Fail or at least display a warning if the course has non-LMS students
 
-    lti_user = Lti::User.find session['lti_user_id']
-    Lti::Context.create!(
-      platform: lti_user.platform, context_id: lti_user.last_context_id, course: course
-    )
+    lti_context.update_attribute :course, course
 
     # Continue with the launch
     redirect_to lti_launch_url
@@ -166,19 +173,45 @@ class LtiController < ApplicationController
 
   protected
 
+  # If this returns true, we display simplified error messages,
+  # usually something like "contact your instructor".
+  def is_definitely_student?
+    session['lti_is_student'] && !session['lti_is_instructor']
+  end
+
+  def lti_platform
+    # The platform comes from a tutor_guid parameter we add to the first Tutor URL
+    # the user is sent to from the LMS (in Omniauth's request_phase)
+    # That parameter is saved in the session so we can find the platform in the callback_phase
+    # We do this to get around the fact that all Canvas deployments shared the same LTI Issuer,
+    # so we couldn't distinguish them and determine which configuration/keys to use otherwise
+    # Omniauth handles missing platform and other errors in the callback_phase before this point
+    @lti_platform ||= Lti::Platform.find_by! guid: session['lti_guid']
+  end
+
   def lti_user
-    @lti_user ||= Lti::User.find_by id: session['lti_user_id']
+    @lti_user ||= Lti::User.find_or_initialize_by platform: lti_platform, uid: session['lti_uid']
+  end
+
+  def lti_context
+    @lti_context ||= Lti::Context.find_or_initialize_by(
+      platform: lti_platform, context_id: session['lti_context_id']
+    )
   end
 
   def target_link_uri(course)
-    uri = lti_user.last_target_link_uri
+    uri = session['lti_target_link_uri']
     path = Addressable::URI.parse(uri).path
     path.starts_with?('/lms/') || path.starts_with?('/lti/') ? course_dashboard_url(course) : uri
   end
 
   def clear_lti_session
     session.delete 'lti_guid'
-    session.delete 'lti_user_id'
+    session.delete 'lti_uid'
+    session.delete 'lti_context_id'
+    session.delete 'lti_is_instructor'
+    session.delete 'lti_is_student'
+    session.delete 'lti_target_link_uri'
   end
 
   def render_failure(name)
