@@ -12,12 +12,6 @@ class Lti::Platform < ApplicationRecord
   validates :authorization_endpoint, presence: true
   validates :token_endpoint, presence: true
 
-  def private_key
-    # TODO: Generate and store (one per platform?) public/private keypair(s)
-    #       Make public key(s) available in a jwks endpoint that will be given to the LMS's
-    OpenSSL::PKey::RSA.new 2048
-  end
-
   # Platform-specific authorization token used by Lti::ResourceLink to request a scoped Bearer token
   def jwt_token
     current_time = Time.current
@@ -25,10 +19,12 @@ class Lti::Platform < ApplicationRecord
     JSON::JWT.new(
       iss: client_id,
       sub: client_id,
-      aud: issuer,
+      aud: token_endpoint,
       iat: current_time.to_i,
       exp: (current_time + 5.minutes).to_i,
       jti: SecureRandom.hex
-    ).sign(private_key, :RS256)
+    ).sign(
+      JSON::JWK.new(OpenSSL::PKey::RSA.new(Rails.application.secrets.lti[:private_key])), :RS256
+    )
   end
 end

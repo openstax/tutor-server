@@ -34,6 +34,7 @@ Rails.application.routes.draw do
     get  :launch # LTI launch after Accounts login (after authentication)
     post :pair   # Pair courses with LMS
   end
+  get '.well-known/jwks', to: 'lti#jwks' # JWKS containing Tutor's public key
 
   get :non_student_signup, to: redirect('/courses?block_sign_up=false&straight_to_sign_up=true')
 

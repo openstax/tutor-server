@@ -1,6 +1,8 @@
 class LtiController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: :callback # This is handled by Omniauth
-  skip_before_action :authenticate_user!, only: :callback # Login happens right after this step
+  skip_before_action :verify_authenticity_token, only: :callback # handled by Omniauth
+  # login happens immediately after callback
+  # jwks is a public key for the LTI platform
+  skip_before_action :authenticate_user!, only: [ :callback, :jwks ]
 
   layout false
 
@@ -169,6 +171,11 @@ class LtiController < ApplicationController
 
     # Continue with the launch
     redirect_to lti_launch_url
+  end
+
+  def jwks
+    jwk = OpenSSL::PKey::RSA.new(Rails.application.secrets.lti[:private_key]).public_key.to_jwk
+    render json: { keys: [ jwk ] }
   end
 
   protected
