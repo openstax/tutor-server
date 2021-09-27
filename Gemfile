@@ -115,9 +115,6 @@ gem 'keyword_search', github: 'openstax/keyword_search',
 gem 'remotipart'
 gem 'carrierwave'
 
-# Image editing
-gem 'mini_magick'
-
 # code editing
 gem 'codemirror-rails'
 
