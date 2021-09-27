@@ -602,7 +602,11 @@ class Tasks::Models::Task < ApplicationRecord
     if use_cache && cache_valid?
       completed_steps_count == steps_count
     else
-      task_steps.loaded? ? task_steps.all?(&:completed?) : !task_steps.incomplete.exists?
+      # Check if we can call task_steps.all?(&:completed?) without triggering N+1 queries
+      # or if we should use a single SQL query instead
+      task_steps.loaded? && task_steps.all? do |ts|
+        ts.first_completed_at.nil? || !ts.exercise? || ts.association(:tasked).loaded?
+      end ? task_steps.all?(&:completed?) : !task_steps.incomplete.exists?
     end
   end
 
@@ -621,7 +625,11 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def core_task_steps_completed?
-    task_steps.loaded? ? core_task_steps.all?(&:completed?) : !task_steps.core.incomplete.exists?
+    # Check if we can call core_task_steps.all?(&:completed?) without triggering N+1 queries
+    # or if we should use a single SQL query instead
+    task_steps.loaded? && core_task_steps.all? do |ts|
+      ts.first_completed_at.nil? || !ts.exercise? || ts.association(:tasked).loaded?
+    end ? core_task_steps.all?(&:completed?) : !task_steps.core.incomplete.exists?
   end
 
   def hide(current_time: Time.current)
