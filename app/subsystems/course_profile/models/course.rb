@@ -154,15 +154,19 @@ class CourseProfile::Models::Course < ApplicationRecord
   # Includes teachers the course was cloned from
   def related_teacher_profiles
     profiles = []
-    courses = [self]
+    course = self
+    # To prevent cloned course cycles causing infinite loops,
+    # even though they are impossible in theory...
+    courses = []
 
-    courses.each do |c|
-      next unless c.present?
-      profiles << c.teachers.map {|t| t.role.profile }
-      courses << c.cloned_from
+    until course.nil? || courses.include?(course)
+      courses << course
+      # We need this preload in case there's a chain of cloned courses
+      profiles.concat course.teachers.preload(role: :profile).map { |teacher| teacher.role.profile }
+      course = course.cloned_from
     end
 
-    profiles.flatten.uniq
+    profiles.uniq
   end
 
   def related_teacher_profile_ids
@@ -170,7 +174,7 @@ class CourseProfile::Models::Course < ApplicationRecord
   end
 
   def teacher_profiles
-    teachers.map {|t| t.role.profile }
+    teachers.map { |teacher| teacher.role.profile }
   end
 
   protected
