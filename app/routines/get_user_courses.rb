@@ -1,5 +1,4 @@
 class GetUserCourses
-
   lev_routine express_output: :courses
 
   uses_routine CourseMembership::GetRoleCourses,
