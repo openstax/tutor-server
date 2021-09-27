@@ -6,8 +6,8 @@ RSpec.describe CourseMembership::InactivateStudent, type: :routine do
   let(:user)    { FactoryBot.create(:user_profile) }
   let(:student) { AddUserAsPeriodStudent.call(user: user, period: period).outputs.student }
 
-  context "active student" do
-    it "inactivates but does not delete the given student" do
+  context 'active student' do
+    it 'inactivates but does not delete the given student' do
       allow(student).to receive(:is_refund_allowed) { true }
       expect(RefundPayment).to receive(:perform_later).with(uuid: student.uuid)
 
@@ -20,24 +20,24 @@ RSpec.describe CourseMembership::InactivateStudent, type: :routine do
       expect(student.reload.course).to eq course
     end
 
-    it "does not refund student after refund period elapses" do
+    it 'does not refund student after refund period elapses' do
       allow(student).to receive(:is_refund_allowed) { false }
       expect(RefundPayment).not_to receive(:perform_later).with(uuid: student.uuid)
       described_class.call(student: student)
     end
 
-    it 'removes LMS score callbacks' do
+    it 'does not remove the LMS score callback' do
       FactoryBot.create :lms_course_score_callback, profile: student.role.profile, course: course
-      expect{
+      expect do
         described_class.call(student: student)
-      }.to change { Lms::Models::CourseScoreCallback.count }.by(-1)
+      end.not_to change { Lms::Models::CourseScoreCallback.count }
     end
   end
 
-  context "inactive student" do
+  context 'inactive student' do
     before { student.destroy }
 
-    it "returns an error" do
+    it 'returns an error' do
       result = nil
       expect do
         result = described_class.call(student: student)
@@ -45,5 +45,4 @@ RSpec.describe CourseMembership::InactivateStudent, type: :routine do
       expect(result.errors.first.code).to eq :already_inactive
     end
   end
-
 end
