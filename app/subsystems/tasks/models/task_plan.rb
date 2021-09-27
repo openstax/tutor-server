@@ -70,8 +70,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   scope :preload_tasking_plans, -> { preload(:tasking_plans, :course) }
 
-  scope :preload_tasks, -> { preload(tasks: :course) }
-
   def reload(*args)
     @available_points_without_dropping_per_question_index = nil
     @unarchived_period_tasking_plans = nil
