@@ -158,7 +158,7 @@ class LtiController < ApplicationController
 
   def pair
     course = CourseProfile::Models::Course.find_by! id: params[:course_id]
-    OSU::AccessPolicy.require_action_allowed! :lti_course_pair, current_user, course
+    OSU::AccessPolicy.require_action_allowed! :lti_pair, current_user, course
 
     return render_failure(:already_paired) unless lti_context.course.nil?
 
@@ -166,8 +166,10 @@ class LtiController < ApplicationController
     return render_failure(:course_ended) if course.ended?
 
     # TODO: Fail or at least display a warning if the course has non-LMS students
+    # (is_lms_enabling_allowed == false)
 
     lti_context.update_attribute :course, course
+    course.update_attribute :is_lms_enabled, true
 
     # Continue with the launch
     redirect_to lti_launch_url

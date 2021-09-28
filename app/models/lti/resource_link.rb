@@ -19,7 +19,9 @@ class Lti::ResourceLink < ApplicationRecord
     scope = endpoint['scope']
     return :missing_scope if scope.nil?
 
-    can_create_lineitems = scope.include? 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem'
+    lineitems = endpoint['lineitems']
+    can_create_lineitems = !lineitems.blank? &&
+      scope.include?('https://purl.imsglobal.org/spec/lti-ags/scope/lineitem')
     can_update_scores = scope.include? 'https://purl.imsglobal.org/spec/lti-ags/scope/score'
 
     import [
@@ -29,7 +31,7 @@ class Lti::ResourceLink < ApplicationRecord
         resource_link_id: resource_link_id,
         can_create_lineitems: can_create_lineitems,
         can_update_scores: can_update_scores,
-        lineitems_endpoint: endpoint['lineitems'],
+        lineitems_endpoint: lineitems,
         lineitem_endpoint: endpoint['lineitem']
       )
     ], validate: false, on_duplicate_key_update: {
@@ -42,7 +44,7 @@ class Lti::ResourceLink < ApplicationRecord
   end
 
   def scope
-    return [] unless can_update_scores
+    return [] unless can_update_scores?
 
     [].tap do |scopes|
       scopes << 'https://purl.imsglobal.org/spec/lti-ags/scope/lineitem' if can_create_lineitems
@@ -51,9 +53,9 @@ class Lti::ResourceLink < ApplicationRecord
   end
 
   def access_token
-    return unless can_update_scores
+    return unless can_update_scores?
 
-    OAuth2::Client.new(
+    @access_token ||= OAuth2::Client.new(
       '',
       '',
       token_url: platform.token_endpoint,
@@ -64,5 +66,15 @@ class Lti::ResourceLink < ApplicationRecord
       client_assertion: platform.jwt_token.to_s,
       scope: scope.join(' ')
     )
+  end
+
+  def lineitems
+    @lineitems ||= JSON.parse(access_token.get(lineitems_endpoint).body).map do |lineitem_hash|
+      Lti::Lineitem.new lineitem_hash
+    end
+  end
+
+  def lineitem
+    @lineitem ||= Lti::Lineitem.new JSON.parse(access_token.get(lineitem_endpoint).body)
   end
 end

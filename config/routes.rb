@@ -43,7 +43,6 @@ Rails.application.routes.draw do
 
   # All API routes
   api :v1, default: true do
-
     resources :users, only: :index
     resource :user, only: :show do
       get :bootstrap
@@ -190,6 +189,8 @@ Rails.application.routes.draw do
         end
       end
     end
+
+    put :'lti/courses/:course_id/scores', to: 'lti_courses#scores'
 
     namespace :demo do
       post :all

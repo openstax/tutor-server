@@ -5,6 +5,6 @@ class Lti::Context < ApplicationRecord
   validates :context_id, presence: true, uniqueness: { scope: :lti_platform_id }
 
   def resource_links
-    platform.resource_links.where context_id: context_id
+    @resource_links ||= platform.resource_links.where context_id: context_id
   end
 end
