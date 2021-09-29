@@ -19,8 +19,8 @@ class Lti::ResourceLink < ApplicationRecord
     scope = endpoint['scope']
     return :missing_scope if scope.nil?
 
-    lineitems = endpoint['lineitems']
-    can_create_lineitems = !lineitems.blank? &&
+    lineitems_endpoint = endpoint['lineitems']
+    can_create_lineitems = !lineitems_endpoint.blank? &&
       scope.include?('https://purl.imsglobal.org/spec/lti-ags/scope/lineitem')
     can_update_scores = scope.include? 'https://purl.imsglobal.org/spec/lti-ags/scope/score'
 
@@ -31,7 +31,7 @@ class Lti::ResourceLink < ApplicationRecord
         resource_link_id: resource_link_id,
         can_create_lineitems: can_create_lineitems,
         can_update_scores: can_update_scores,
-        lineitems_endpoint: lineitems,
+        lineitems_endpoint: lineitems_endpoint,
         lineitem_endpoint: endpoint['lineitem']
       )
     ], validate: false, on_duplicate_key_update: {
@@ -68,13 +68,35 @@ class Lti::ResourceLink < ApplicationRecord
     )
   end
 
+  # Workaround for Canvas
+  # In Canvas, if Tutor is added as a module, the course's lti_context_id is used
+  # as the resource_link claim's id attribute, which is totally fine
+  # However, when you try to create a lineitem using that resource_link_id later,
+  # it fails since the resource_link record does not exist
+  def resource_is_course?
+    resource_link_id == context_id
+  end
+
   def lineitems
-    @lineitems ||= JSON.parse(access_token.get(lineitems_endpoint).body).map do |lineitem_hash|
-      Lti::Lineitem.new lineitem_hash
+    @lineitems ||= begin
+      uri = Addressable::URI.parse(lineitems_endpoint)
+      uri.query_values = { resource_link_id: resource_link_id } unless resource_is_course?
+
+      response = access_token.get(
+        uri, headers: { Accept: 'application/vnd.ims.lis.v2.lineitemcontainer+json' }
+      )
+      JSON.parse(response.body).map do |lineitem_hash|
+        Lti::Lineitem.new lineitem_hash.merge(resource_link: self)
+      end
     end
   end
 
   def lineitem
-    @lineitem ||= Lti::Lineitem.new JSON.parse(access_token.get(lineitem_endpoint).body)
+    @lineitem ||= Lti::Lineitem.new JSON.parse(
+      access_token.get(
+        lineitem_endpoint,
+        headers: { Accept: 'application/vnd.ims.lis.v2.lineitem+json' }
+      ).body
+    ).merge resource_link: self
   end
 end

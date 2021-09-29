@@ -589,7 +589,7 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lti_platform_id", "uid"], name: "index_lti_users_on_lti_platform_id_and_uid", unique: true
-    t.index ["user_profile_id"], name: "index_lti_users_on_user_profile_id"
+    t.index ["user_profile_id", "lti_platform_id"], name: "index_lti_users_on_user_profile_id_and_lti_platform_id", unique: true
   end
 
   create_table "oauth_access_grants", id: :serial, force: :cascade do |t|

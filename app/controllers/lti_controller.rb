@@ -99,7 +99,10 @@ class LtiController < ApplicationController
     #       Prevent one profile from being linked to multiple Lti::User in a single platform
     #       The second option may cause issues with student view in Canvas,
     #       as the student view seems to show up as a separate user for Tutor
-    lti_user.update_attribute(:profile, current_user) if lti_user.profile.nil?
+    if lti_user.profile.nil?
+      lti_user.profile = current_user
+      return render_failure(:account_already_paired) unless lti_user.save
+    end
 
     # Fail if we got this far and the user is still in the wrong account
     # This can happen due to multiple tabs, shared accounts
@@ -160,7 +163,12 @@ class LtiController < ApplicationController
     course = CourseProfile::Models::Course.find_by! id: params[:course_id]
     OSU::AccessPolicy.require_action_allowed! :lti_pair, current_user, course
 
-    return render_failure(:already_paired) unless lti_context.course.nil?
+    # The lti_context in the session is already paired to an OpenStax Tutor course
+    return render_failure(:context_already_paired) unless lti_context.course.nil?
+
+    # TODO: fail with course_already_paired if the selected course is paired
+    #       to a different lti_context in the same lti_platform?
+    #       Or let them unpair the Tutor course and pair again
 
     # Can't pair a course that has already ended
     return render_failure(:course_ended) if course.ended?
