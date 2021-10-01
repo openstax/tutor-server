@@ -80,12 +80,11 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
     #{json_schema(Api::V1::ExerciseSearchRepresenter, include: :readable)}
   EOS
   def practice_exercises
-    exercise_ids = @role.practice_questions
-                    .where(content_exercise_id: params[:exercise_ids])
-                    .pluck(:content_exercise_id)
-
-    exercises = GetExercises.call(course: @course,
-                                  exercise_ids: exercise_ids).outputs.exercises
+    exercises = GetPracticeQuestionExercises[
+      role: @role,
+      course: @course,
+      exercise_ids: params[:exercise_ids]
+    ]
 
     respond_with(exercises,
                  represent_with: Api::V1::ExerciseSearchRepresenter,

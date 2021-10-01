@@ -70,8 +70,6 @@ class Tasks::Models::TaskPlan < ApplicationRecord
 
   scope :preload_tasking_plans, -> { preload(:tasking_plans, :course) }
 
-  scope :preload_tasks, -> { preload(tasks: :course) }
-
   def reload(*args)
     @available_points_without_dropping_per_question_index = nil
     @unarchived_period_tasking_plans = nil
@@ -334,22 +332,35 @@ class Tasks::Models::TaskPlan < ApplicationRecord
   def correct_num_points_for_homework
     return if type != 'homework' || settings.blank? || settings['exercises'].blank?
 
-    num_questions_by_exercise_id = {}
-    Content::Models::Exercise.select(:id, :number_of_questions)
+    question_answer_ids_by_exercise_id = {}
+    Content::Models::Exercise.select(:id, :question_answer_ids)
                              .where(id: exercise_ids)
                              .each do |exercise|
-      num_questions_by_exercise_id[exercise.id.to_s] = exercise.number_of_questions
+      question_answer_ids_by_exercise_id[exercise.id.to_s] = exercise.question_answer_ids
     end
 
     settings['exercises'].each do |exercise|
-      expected = num_questions_by_exercise_id[exercise['id']]
-      got = exercise['points'].size
+      question_answer_ids = question_answer_ids_by_exercise_id[exercise['id'].to_s]
+      expected_size = question_answer_ids.size
+      got_size = exercise['points'].size
+      next if expected_size == got_size
 
-      errors.add(
-        :settings,
-        "- Expected the size of the points array for the Exercise with ID #{
-        exercise['id']} to be #{expected}, but was #{got}"
-      ) unless expected == got
+      if persisted? || cloned_from_id.nil?
+        # Had no point values in array or already saved or not cloning: just error out
+        errors.add(
+          :settings,
+          "- Expected the size of the points array for the Exercise with ID #{
+          exercise['id']} to be #{expected_size}, but was #{got_size}"
+        )
+      elsif expected_size > got_size
+        # Add default point values to the array so we have the correct length
+        q_a_ids_missing_points = question_answer_ids.last(expected_size - got_size)
+        missing_points = q_a_ids_missing_points.map { |answer_ids| answer_ids.empty? ? 2.0 : 1.0 }
+        exercise['points'] = exercise['points'] + missing_points
+      else # got_size > expected_size
+        # Remove point values from the end of the array so we have the correct length
+        exercise['points'] = exercise['points'].first(expected_size)
+      end
     end
 
     throw(:abort) unless errors.empty?
@@ -359,5 +370,4 @@ class Tasks::Models::TaskPlan < ApplicationRecord
     self.title&.strip!
     self.description&.strip!
   end
-
 end
