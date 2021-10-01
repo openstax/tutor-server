@@ -3,7 +3,7 @@ class Api::V1::CoursesController < Api::V1::ApiController
     :name, :is_preview, :num_sections, :catalog_offering_id
   ]
 
-  before_action :get_course, only: [ :show, :update, :dashboard, :cc_dashboard, :roster, :clone ]
+  before_action :get_course, only: [ :show, :update, :dashboard, :cc_dashboard, :roster, :clone, :teachers ]
   before_action :error_if_student_and_needs_to_pay, only: :dashboard
 
   resource_description do
@@ -125,6 +125,21 @@ class Api::V1::CoursesController < Api::V1::ApiController
       result.outputs, represent_with: Api::V1::Courses::DashboardRepresenter,
                       user_options: { exclude_job_info: true }
     )
+  end
+
+  api :GET, '/courses/:id/teachers', 'Returns the teachers for a given course'
+  description <<-EOS
+    Returns the teachers for a given course
+    #{json_schema(Api::V1::TeacherRepresenter, include: :readable)}
+  EOS
+  def teachers
+    OSU::AccessPolicy.require_action_allowed!(:read, current_api_user, @course)
+
+    teachers = GetCourseTeachers[@course]
+
+    puts teachers.inspect
+
+    respond_with(teachers, represent_with: Api::V1::TeachersRepresenter)
   end
 
   api :GET, '/courses/:id/roster', 'Returns the roster for a given course'
