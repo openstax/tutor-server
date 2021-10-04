@@ -64,7 +64,11 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
   let(:responses)                 { [ true, false, false ] }
 
   context 'feedback available' do
-    before { task_plan.grading_template.update_column :auto_grading_feedback_on, :answer }
+    before do
+      task_plan.grading_template.update_columns(
+        auto_grading_feedback_on: :answer, allow_auto_graded_multiple_attempts: true
+      )
+    end
 
     it 'updates the role_book_part with the expected values' do
       expect do

@@ -1,8 +1,8 @@
 require 'addressable/uri'
 
 CarrierWave.configure do |config|
-  # Image processing is non-deterministic so disable it in tests
-  config.enable_processing = !Rails.env.test?
+  # We only use CarrierWave for gradebook exports and those don't need image processing
+  config.enable_processing = false
 
   # Upload to AWS only in the test and production environments
   # We default to file storage in the test environment but let specs opt into fog storage

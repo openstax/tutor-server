@@ -34,7 +34,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   delegate :questions, :question_formats, :question_answers,
            :question_answer_ids, :question_formats_for_students,
            :correct_question_answers, :correct_question_answer_ids,
-           :feedback_map, :solutions, :content_hash_for_students, to: :parser
+           :feedback_map, :solutions, :collaborator_solutions, :content_hash_for_students, to: :parser
 
   def attempt_number_was
     val = super
@@ -47,7 +47,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def attempt_number
-    super || (task_step.completed? ? 1 : 0)
+    super || (task_step.first_completed_at.nil? ? 0 : 1)
   end
 
   def attempt_number_changed?
@@ -150,7 +150,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   # The following 2 methods assume only 1 Question; this is OK for TaskedExercise,
   # because each TE contains at most 1 part of a multipart exercise.
   def solution
-    solutions[0].try(:first)
+    collaborator_solutions[0].try(:first) || solutions[0].try(:first)
   end
 
   def feedback
@@ -416,9 +416,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   def changes_allowed(current_time: Time.current)
     # Return if none of the answer attributes changed
-    return unless [ :attempt_number, :answer_id, :free_response ].any? do |attr|
-      changes[attr].present?
-    end
+    return if [ :answer_id, :free_response ].all? { |attr| changes[attr].blank? } &&
+              !attempt_number_changed?
 
     # Check if the answers can be changed
     update_error = task_step&.update_error(current_time: current_time)

@@ -67,6 +67,12 @@ RSpec.describe Ratings::UpdatePeriodBookParts, type: :routine do
 
   let(:responses)                 { [ true, false, false ] }
 
+  before do
+    task_plans.last.grading_template.update_columns(
+      auto_grading_feedback_on: :answer, allow_auto_graded_multiple_attempts: true
+    )
+  end
+
   it 'updates the period_book_part with the expected values' do
     tasks.each_with_index do |task, index|
       exercise_group_book_parts[index].update_attributes(

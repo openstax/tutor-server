@@ -45,6 +45,7 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
       tps = Tasks::Models::TaskPlan.where(course: source_course)
                                    .without_deleted
                                    .preload_tasking_plans
+                                   .preload(:tasks, :extensions, :dropped_questions)
 
       task_plans = case params[:clone_status]
       when 'unused_source'
@@ -152,7 +153,9 @@ class Api::V1::TaskPlansController < Api::V1::ApiController
   def update
     Tasks::Models::TaskPlan.transaction do
       # Modified standard_update code
-      task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload_tasks.lock.find(params[:id])
+      task_plan = Tasks::Models::TaskPlan.preload_tasking_plans.preload(
+        tasks: :course
+      ).lock.find(params[:id])
       OSU::AccessPolicy.require_action_allowed!(:update, current_api_user, task_plan)
       course = task_plan.course
 

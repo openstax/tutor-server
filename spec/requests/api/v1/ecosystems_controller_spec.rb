@@ -153,6 +153,62 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
         )
       end
     end
+
+    context '#practice_exercises' do
+      def exercises_api_ecosystem_path(ecosystem_id, **params)
+        url = "/api/ecosystems/#{ecosystem_id}/practice_exercises"
+        params.blank? ? url : "#{url}?#{params.to_query}"
+      end
+
+      context 'with mixed ecosystems' do
+        let(:new_ecosystem) { FactoryBot.create :mini_ecosystem }
+        let(:new_book) { FactoryBot.create(:content_book, ecosystem: new_ecosystem) }
+        let(:old_book) { ecosystem.books.first }
+        let(:old_page) { old_book.pages.first }
+
+        let(:new_page) do
+          FactoryBot.create(:content_page, book: new_book, ecosystem: new_ecosystem).tap do |page|
+            page.uuid = old_page.uuid
+            page.save!
+          end
+        end
+
+        let(:old_exercise) do
+          FactoryBot.create(:content_exercise, page: old_page).tap do |exercise|
+            old_page.homework_dynamic_exercise_ids << exercise.id
+            old_page.save!
+          end
+        end
+        let(:new_exercise) do
+          FactoryBot.create(:content_exercise, page: new_page).tap do |exercise|
+            new_page.homework_dynamic_exercise_ids << exercise.id
+            new_page.save!
+          end
+        end
+
+
+       it 'includes exercises saved in both' do
+          AddEcosystemToCourse[course: course, ecosystem: new_ecosystem]
+
+          old_practice = FactoryBot.create(:tasks_practice_question,
+                                                    role: student_role,
+                                                    content_exercise_id: old_exercise.id)
+          new_practice = FactoryBot.create(:tasks_practice_question,
+                                                    role: student_role,
+                                                    content_exercise_id: new_exercise.id)
+          exercise_ids = [old_exercise.id, new_exercise.id]
+
+          api_get exercises_api_ecosystem_path(
+            ecosystem.id, course_id: course.id, exercise_ids: exercise_ids, role_id: student_role.id
+          ), student_user_token
+
+          hash = response.body_as_hash
+          hash_ids = hash[:items].map{|i| i[:id].to_i}
+          expect(hash[:total_count]).to eq(2)
+          expect(hash_ids).to eq(exercise_ids)
+        end
+      end
+    end
   end
 
   context 'with a real book' do
