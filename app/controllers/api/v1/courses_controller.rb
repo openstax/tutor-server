@@ -137,8 +137,6 @@ class Api::V1::CoursesController < Api::V1::ApiController
 
     teachers = GetCourseTeachers[@course]
 
-    puts teachers.inspect
-
     respond_with(teachers, represent_with: Api::V1::TeachersRepresenter)
   end
 
