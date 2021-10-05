@@ -932,8 +932,10 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
             teachers: a_collection_containing_exactly(
               id: @teacher_role.teacher.id.to_s,
               role_id: @teacher_role.id.to_s,
+              profile_id: @teacher_role.profile.id.to_s,
               first_name: @teacher_user.first_name,
               last_name: @teacher_user.last_name,
+              name: @teacher_user.name,
               is_active: true
             )
           )

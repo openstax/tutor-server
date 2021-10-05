@@ -189,6 +189,7 @@ RSpec.describe GetDashboard, type: :routine do
                   profile_id: @teacher_role.profile.id.to_s,
                   first_name: 'Bob',
                   last_name: 'Newhart',
+                  name: 'Bob Newhart',
                   deleted_at: nil
                 }
               ]
@@ -216,6 +217,7 @@ RSpec.describe GetDashboard, type: :routine do
                   profile_id: @teacher_role.profile.id.to_s,
                   first_name: 'Bob',
                   last_name: 'Newhart',
+                  name: 'Bob Newhart',
                   deleted_at: nil
                 }
               ]
@@ -298,6 +300,7 @@ RSpec.describe GetDashboard, type: :routine do
                   profile_id: @teacher_role.profile.id.to_s,
                   first_name: 'Bob',
                   last_name: 'Newhart',
+                  name: 'Bob Newhart',
                   deleted_at: nil
                 }
               ]
@@ -328,6 +331,7 @@ RSpec.describe GetDashboard, type: :routine do
                   profile_id: @teacher_role.profile.id.to_s,
                   first_name: 'Bob',
                   last_name: 'Newhart',
+                  name: 'Bob Newhart',
                   deleted_at: nil
                 }
               ]
