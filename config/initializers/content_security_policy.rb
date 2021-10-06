@@ -4,21 +4,21 @@
 # For further information see the following documentation
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 
-# We currently use at least the following sources:
+# We currently use at least the following sources in the home page and/or My Courses:
 # self - connect, script, style, img
 # https://accounts.openstax.org - connect
 # https://ajax.googleapis.com - script
-# https://random-looking-domain.salesforceliveagent.com- script
-# https://cdnjs.cloudflare.com- connect, script, font
-# https://js.pulseinsights.com- script
-# https://www.googletagmanager.com- script
-# https://survey.pulseinsights.com- script
-# https://snap.licdn.com- script
-# https://www.googleadservices.com- script
-# https://static.ads-twitter.com- script
-# https://cdn.abrankings.com- connect, script
+# https://random-looking-domain.salesforceliveagent.com - script
+# https://cdnjs.cloudflare.com - connect, script, font
+# https://js.pulseinsights.com - script
+# https://www.googletagmanager.com - script
+# https://survey.pulseinsights.com - script
+# https://snap.licdn.com - script
+# https://www.googleadservices.com - script
+# https://static.ads-twitter.com - script
+# https://cdn.abrankings.com - connect, script
 # https://googleads.g.doubleclick.net - connect, script
-# https://analytics.twitter.com- script
+# https://analytics.twitter.com - script
 # https://www.google-analytics.com - connect, script, img
 # https://fonts.googleapis.com - style
 # https://www.google.com - img
@@ -66,7 +66,15 @@ Rails.application.config.content_security_policy do |policy|
   policy.style_src *style_src
 
   # Specify URI for violation reports
-  # policy.report_uri "/csp-violation-report-endpoint"
+  secrets = Rails.application.secrets
+  sentry_secrets = secrets.sentry
+  unless sentry_secrets.blank?
+    uri = Addressable::URI.parse sentry_secrets[:csp_report_uri]
+    query_values = { 'sentry_environment' => secrets.environment_name }
+    query_values['sentry_release'] = secrets.release_version unless secrets.release_version.blank?
+    uri.query_values = query_values.merge uri.query_values
+    policy.report_uri uri.to_s
+  end
 end
 
 # If you are using UJS then enable automatic nonce generation
@@ -75,4 +83,6 @@ end
 # Report CSP violations to a specified URI
 # For further information see the following documentation:
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only
-# Rails.application.config.content_security_policy_report_only = true
+
+# TODO: Remove after 1 release
+Rails.application.config.content_security_policy_report_only = IAm.real_production?
