@@ -932,8 +932,10 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
             teachers: a_collection_containing_exactly(
               id: @teacher_role.teacher.id.to_s,
               role_id: @teacher_role.id.to_s,
+              profile_id: @teacher_role.profile.id.to_s,
               first_name: @teacher_user.first_name,
               last_name: @teacher_user.last_name,
+              name: @teacher_user.name,
               is_active: true
             )
           )
@@ -1005,6 +1007,87 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
       it 'raises SecurityTransgression' do
         expect do
           api_get roster_api_course_url(@course.id), nil
+        end.to raise_error(SecurityTransgression)
+      end
+    end
+  end
+
+  context '#teachers' do
+    before(:all) do
+      DatabaseCleaner.start
+
+      @course.update_attribute :does_cost, true
+
+
+      @teacher_user = FactoryBot.create :user_profile, first_name: 'Bob',
+                                               last_name: 'Newhart',
+                                               full_name: 'Bob Newhart'
+      @teacher_role = AddUserAsCourseTeacher[user: @teacher_user, course: @course]
+      @teacher = @teacher_role.teacher
+      @teacher_token = FactoryBot.create :doorkeeper_access_token,
+                                         resource_owner_id: @teacher_user.id
+    end
+    after(:all)  do
+      DatabaseCleaner.clean
+
+      @course.reload
+    end
+
+    context 'caller has an authorization token' do
+      context 'caller is a course teacher' do
+        it 'returns the course instructors' do
+          api_get teachers_api_course_url(@course.id), @teacher_token
+          expect(response).to have_http_status(:ok)
+          teachers = response.body_as_hash
+
+          expect(teachers).to match a_collection_containing_exactly(
+            id: @teacher_role.teacher.id.to_s,
+            role_id: @teacher_role.id.to_s,
+            profile_id: @teacher_role.profile.id.to_s,
+            first_name: @teacher_user.first_name,
+            last_name: @teacher_user.last_name,
+            name: @teacher_user.name,
+            is_active: true
+          )
+        end
+      end
+
+      context 'caller is not a course teacher' do
+        it 'returns the course instructors' do
+          @student_user = FactoryBot.create :user_profile
+          @student_role = AddUserAsPeriodStudent[user: @student_user, period: @period]
+          @student_token = FactoryBot.create :doorkeeper_access_token,
+                                         resource_owner_id: @student_user.id
+
+          api_get teachers_api_course_url(@course.id), @student_token
+          expect(response).to have_http_status(:ok)
+          teachers = response.body_as_hash
+
+          expect(teachers).to match a_collection_containing_exactly(
+            id: @teacher_role.teacher.id.to_s,
+            role_id: @teacher_role.id.to_s,
+            profile_id: @teacher_role.profile.id.to_s,
+            first_name: @teacher_user.first_name,
+            last_name: @teacher_user.last_name,
+            name: @teacher_user.name,
+            is_active: true
+          )
+        end
+      end
+    end
+
+    context 'caller has an application/client credentials authorization token' do
+      it 'raises SecurityTransgression' do
+        expect do
+          api_get teachers_api_course_url(@course.id), @userless_token
+        end.to raise_error(SecurityTransgression)
+      end
+    end
+
+    context 'caller does not have an authorization token' do
+      it 'raises SecurityTransgression' do
+        expect do
+          api_get teachers_api_course_url(@course.id), nil
         end.to raise_error(SecurityTransgression)
       end
     end
