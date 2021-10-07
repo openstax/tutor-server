@@ -44,14 +44,12 @@
 
 <h3>Courses</h3>
 
-<%
-  courses = CourseMembership::GetRoleCourses[roles: user.roles, include_dropped_students: true].sort_by do |cc|
-    [-cc.year, -CourseProfile::Models::Course.terms[cc.term], cc.name]
-  end
-%>
+<% courses = CourseMembership::GetRoleCourses[roles: user.roles, include_dropped_students: true] %>
 
 <ol>
-  <% courses.each do |course| %>
+  <% courses.sort_by do |cc|
+       [-cc.year, -CourseProfile::Models::Course.terms[cc.term], cc.name]
+     end.each do |course| %>
     <li>
       <%= link_to course.name, (is_admin ? edit_admin_course_path(course) : customer_service_course_path(course)) %> //
       <%= course.term %> <%= course.year %> //
@@ -59,17 +57,13 @@
       <%= course.is_college.nil? ? "" : (course.is_college ? "College" : "High School") %> //
 
       <% roles = GetUserCourseRoles[courses: course, user: user] %>
-
-      <% if roles.empty? %>
-        [ Dropped ]
-      <% end %>
+      <%= "[ Dropped ]" if roles.empty? %>
 
       <% roles.each do |role| %>
-
         [ <%= role.role_type %> |
         <%= role.created_at.in_time_zone('US/Central')
-            .strftime("%m/%d/%Y %H:%M:%S") %> Central ]
-        <% end %>
+                           .strftime("%m/%d/%Y %H:%M:%S") %> Central ]
+      <% end %>
     </li>
   <% end %>
 </ol>
