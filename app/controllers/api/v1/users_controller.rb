@@ -24,7 +24,7 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
 
-  api :GET, '/bootstrap', 'Returns initial of data application needs to start up'
+  api :GET, '/bootstrap', 'Returns initial data application needs to start up'
   description <<-EOS
     Includes user information, current courses, and terms of use.
     #{json_schema(Api::V1::BootstrapDataRepresenter, include: :readable)}
