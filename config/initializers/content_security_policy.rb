@@ -27,15 +27,16 @@
 # https://fonts.gstatic.com - font
 
 Rails.application.config.content_security_policy do |policy|
-  policy.default_src :self
-
   default_src = [ :self ]
+
   connect_src = [ :self, :https ]
+
   font_src = [ :self, :https, :data ] # The frontend loads font data blobs
   img_src = [ :self, :https ]
   # Once we are in Rails 6 we can try getting rid of unsafe_inline by using nonces
   script_src = [ :self, :https, :unsafe_inline ]
   style_src = [ :self, :https, :unsafe_inline ]
+  frame_src = [ :self, :https ]
 
   if Rails.env.development?
     # Local ports:
@@ -49,6 +50,7 @@ Rails.application.config.content_security_policy do |policy|
       'ws://localhost:3035',
       'ws://localhost:8000'
     ]
+
     font_src += [ 'http://localhost:3035', 'http://localhost:8000',  ]
     img_src += [ 'http://localhost:3035', 'http://localhost:8000' ]
     script_src += [ 'http://localhost:3035', 'http://localhost:8000' ]
@@ -57,13 +59,15 @@ Rails.application.config.content_security_policy do |policy|
     # style_src += [ 'http://localhost:3035', 'http://localhost:8000' ]
   end
 
+  policy.default_src *default_src
+
   policy.connect_src *connect_src
 
   policy.font_src *font_src
   policy.img_src *img_src
-
   policy.script_src *script_src
   policy.style_src *style_src
+  policy.frame_src *frame_src
 
   # Specify URI for violation reports
   secrets = Rails.application.secrets
