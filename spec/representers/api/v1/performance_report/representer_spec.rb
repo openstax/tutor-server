@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
   let(:period)             { FactoryBot.create(:course_membership_period) }
   let(:last_worked_at)     { Time.current                                 }
+  let(:type)               { 'homework'                                   }
   let(:due_at)             { Time.current + 1.week                        }
   let(:api_last_worked_at) { DateTimeUtilities.to_api_s(last_worked_at)   }
   let(:api_due_at)         { DateTimeUtilities.to_api_s(due_at)           }
@@ -12,7 +13,7 @@ RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
       period: period,
       data_headings: [
         {
-          title: "title",
+          title: 'title',
           plan_id: 2,
           due_at: Time.current + 1.week,
           average: 75.0
@@ -20,13 +21,13 @@ RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
       ],
       students: [
         {
-          name: "Student One",
+          name: 'Student One',
           role: 2,
           student_identifier: '1234',
           data: [
             {
-              status: "completed",
-              type: "homework",
+              status: 'completed',
+              type: type,
               id: 5,
               last_worked_at: last_worked_at,
               due_at: due_at,
@@ -42,29 +43,38 @@ RSpec.describe Api::V1::PerformanceReport::Representer, type: :representer do
     }
   end
 
-  let(:representation) { described_class.new([Hashie::Mash.new(report)]).to_hash }
+  let(:representation)   { described_class.new([Hashie::Mash.new(report)]).to_hash }
+  let(:representation_1) { representation.first }
 
-  it 'includes the due_at, is_provisional_score properties for student data' do
-    task_data = representation.first['students'].first['data'].first
-    expect(task_data).to include(
-      'due_at' => api_due_at,
-      'is_provisional_score' => false
-    )
+  it 'includes the period_id, data_headings and students fields' do
+    expect(representation_1['period_id']).to eq period.id.to_s
+    expect(representation_1['data_headings']).to be_a(Array)
+    expect(representation_1['students']).to be_a(Array)
   end
 
-  it "represents a student's information" do
-    expect(representation.first['students'][0]).to match(
-      'name' => 'Student One',
-      'role' => 2,
-      'student_identifier'=>'1234',
-      'data' => an_instance_of(Array)
-    )
-  end
+  context 'students' do
+    it "represents a student's information" do
+      expect(representation_1['students'][0]).to match(
+        'name' => 'Student One',
+        'role' => 2,
+        'student_identifier'=>'1234',
+        'data' => an_instance_of(Array)
+      )
+    end
 
-  it 'handles missing tasks well' do
-    report[:students][0][:data] = []
-    representation = described_class.new([Hashie::Mash.new(report)]).to_hash
-    data = representation.first['students'].first['data']
-    expect(data).to eq []
+    context 'data' do
+      it 'includes the type, due_at and is_provisional_score fields' do
+        expect(representation_1['students'].first['data'].first).to include(
+          'type' => type,
+          'due_at' => api_due_at,
+          'is_provisional_score' => false
+        )
+      end
+
+      it 'handles missing tasks well' do
+        report[:students][0][:data] = []
+        expect(representation_1['students'].first['data']).to eq []
+      end
+    end
   end
 end
