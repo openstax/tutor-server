@@ -14,6 +14,7 @@
   <%= javascript_pack_tag 'homepage' %>
   <%= csrf_meta_tags %>
   <%= render 'webview/google_analytics' %>
+  <%= render 'pardot' unless Rails.env.development? %>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="preload" media="screen" as="style" onload="this.onload=null;this.rel='stylesheet'">
 </head>
