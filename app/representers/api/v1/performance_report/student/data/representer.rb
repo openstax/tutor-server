@@ -7,6 +7,11 @@ module Api::V1::PerformanceReport::Student::Data
              readable: true,
              writeable: false
 
+    property :type,
+             type: String,
+             readable: true,
+             writeable: false
+
     property :step_count,
              type: Integer,
              readable: true,
