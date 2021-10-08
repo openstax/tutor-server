@@ -1,5 +1,6 @@
 class IndividualizeTaskingPlans
-  lev_routine express_output: :tasking_plans
+  # This routine should only be used when the task_plan is already locked
+  lev_routine transaction: :read_committed, express_output: :tasking_plans
 
   protected
 
