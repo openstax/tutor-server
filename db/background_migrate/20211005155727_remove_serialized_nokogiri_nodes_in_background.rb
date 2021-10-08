@@ -1,6 +1,8 @@
 class RemoveSerializedNokogiriNodesInBackground < ActiveRecord::Migration[5.2]
   BATCH_SIZE = 100
 
+  disable_ddl_transaction!
+
   def up
     loop do
       break if Content::Models::Page.where(
