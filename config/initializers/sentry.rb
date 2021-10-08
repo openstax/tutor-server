@@ -1,7 +1,7 @@
 Raven.configure do |config|
   secrets = Rails.application.secrets
 
-  config.dsn = secrets.sentry_dsn
+  config.dsn = secrets.sentry[:dsn]
   config.current_environment = secrets.environment_name
 
   # Send POST data and cookies to Sentry
