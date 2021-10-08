@@ -80,6 +80,7 @@ Rails.application.routes.draw do
       member do
         get :'dashboard(/role/:role_id)', action: :dashboard
         get :roster
+        get :teachers
         post :clone
       end
 
