@@ -30,6 +30,12 @@ module Api::V1
                required: true
              }
 
+    property :profile_id,
+             type: String,
+             writeable: false,
+             readable: true,
+             getter: ->(*) { respond_to?(:role) ? role.profile.id : profile_id }
+
     property :first_name,
              type: String,
              writeable: false,

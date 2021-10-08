@@ -14,6 +14,7 @@ RSpec.describe Api::V1::TeacherRepresenter, type: :representer do
       'role_id' => teacher.role.id.to_s,
       'first_name' => teacher.first_name,
       'last_name' => teacher.last_name,
+      'profile_id' => teacher.role.profile.id.to_s,
       'name' => teacher.name,
       'is_active' => true
     )
