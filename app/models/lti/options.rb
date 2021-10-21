@@ -30,8 +30,7 @@ class Lti::Options < OmniAuth::Strategy::Options
   def client_options
     OmniAuth::Strategy::Options.new(
       identifier: client_id,
-      # TODO: Dynamically generate callback URL
-      redirect_uri: "http://localhost:3001/auth/lti/callback?guid=760f4742-173b-498d-8abf-ef0778591cec",
+      redirect_uri: "http://#{strategy.request.host_with_port}/auth/lti/callback",
       scheme: 'https',
       host: host,
       port: 443,
