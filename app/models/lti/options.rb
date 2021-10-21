@@ -4,7 +4,7 @@ class Lti::Options < OmniAuth::Strategy::Options
 
   # The strategy finds the platform based on the issuer
   # OpenID Connect attempts to read options.issuer but in this case it should just match the params
-  delegate :issuer, :platform, to: :strategy
+  delegate :issuer, :platform, :request, to: :strategy
 
   # These options are configured per-platform
   delegate :client_id, :host, :jwks_endpoint, :authorization_endpoint, to: :platform
@@ -30,7 +30,7 @@ class Lti::Options < OmniAuth::Strategy::Options
   def client_options
     OmniAuth::Strategy::Options.new(
       identifier: client_id,
-      redirect_uri: "http://#{strategy.request.host_with_port}/auth/lti/callback",
+      redirect_uri: "http://#{request.host_with_port}/auth/lti/callback",
       scheme: 'https',
       host: host,
       port: 443,
