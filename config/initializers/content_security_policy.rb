@@ -71,9 +71,9 @@ Rails.application.config.content_security_policy do |policy|
 
   # Specify URI for violation reports
   secrets = Rails.application.secrets
-  sentry_secrets = secrets.sentry
-  unless sentry_secrets.blank?
-    uri = Addressable::URI.parse sentry_secrets[:csp_report_uri]
+  csp_report_uri = secrets.dig(:sentry, :csp_report_uri)
+  unless csp_report_uri.blank?
+    uri = Addressable::URI.parse csp_report_uri
     query_values = { 'sentry_environment' => secrets.environment_name }
     query_values['sentry_release'] = secrets.release_version unless secrets.release_version.blank?
     uri.query_values = query_values.merge uri.query_values

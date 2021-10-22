@@ -1,8 +1,8 @@
 HOMEPAGE_CONFIG = (YAML.load_file("config/homepage/home.yml") || {}).deep_symbolize_keys
 PARDOT_CONFIG = {
   sandbox: {
-    piAId: '309222',
-    piCId: '1943',
+    piAId: '326383',
+    piCId: '4299',
     piHostname: 'pi.demo.pardot.com'
   },
   production: {
