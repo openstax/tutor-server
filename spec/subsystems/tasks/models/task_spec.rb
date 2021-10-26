@@ -111,7 +111,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     let(:student)  { role.student }
     let(:study)    { FactoryBot.create :research_study }
     let!(:cohort)  { FactoryBot.create :research_cohort, study: study }
-    let!(:brain)   { FactoryBot.create :research_modified_tasked, study: study }
     before(:each)  {
       study.activate!
       Research::Models::CohortMember.create!(student: student, cohort: cohort)

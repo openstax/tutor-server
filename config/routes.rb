@@ -393,7 +393,6 @@ Rails.application.routes.draw do
       end
 
       resources :study_courses, shallow: true, only: [ :create, :destroy ]
-      resources :brains, shallow: true
       resources :cohorts, shallow: true do
         put :reassign_members
         get :members
