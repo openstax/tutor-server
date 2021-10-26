@@ -291,32 +291,6 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
         api_put api_step_url(tasked.task_step.id), @user_1_token,
                 params: { free_response: 'Ipsum Lorem', answer_id: tasked.answer_ids.last }.to_json
       end
-
-      context 'research' do
-        let!(:study)  { FactoryBot.create :research_study }
-        let!(:cohort) { FactoryBot.create :research_cohort, name: 'control', study: study }
-        before(:each) do
-          Research::AddCourseToStudy[course: @course, study: study]
-        end
-
-        it 'can override requiring free-response format' do
-          expect(tasked.parser.question_formats_for_students).to eq [
-            'multiple-choice', 'free-response'
-          ]
-          FactoryBot.create :research_modified_tasked, study: study, code: <<~EOC
-            tasked.parser.questions_for_students.each{|q|
-              q['formats'] -= ['free-response']
-            } if tasked.exercise? && cohort.name == 'control'
-            manipulation.record!
-          EOC
-          study.activate!
-
-          api_put api_step_url(tasked.task_step.id), @user_1_token,
-                  params: { free_response: '', answer_id: tasked.answer_ids.first }.to_json
-
-          expect(response).to have_http_status(:success)
-        end
-      end
     end
 
     context 'reading' do
