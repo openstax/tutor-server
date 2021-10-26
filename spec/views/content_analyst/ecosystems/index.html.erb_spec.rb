@@ -24,7 +24,7 @@ RSpec.describe 'customer_service/ecosystems/index', type: :view do
     let(:incomplete_statuses) do
       incomplete_jobs.map do |job|
         Jobba.create!.tap do |status|
-          status.set_job_name('ImportEcosystemManifest')
+          status.set_job_name('FetchAndImportBookAndCreateEcosystem')
           status.set_provider_job_id(job.id)
           status.queued!
         end
@@ -42,7 +42,7 @@ RSpec.describe 'customer_service/ecosystems/index', type: :view do
     let(:failed_statuses) do
       failed_jobs.map do |job|
         Jobba.create!.tap do |status|
-          status.set_job_name('ImportEcosystemManifest')
+          status.set_job_name('FetchAndImportBookAndCreateEcosystem')
           status.set_provider_job_id(job.id)
           status.failed!
         end

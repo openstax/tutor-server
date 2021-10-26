@@ -1,5 +1,5 @@
 class FetchAndImportBookAndCreateEcosystem
-  lev_routine express_output: :ecosystem
+  lev_routine express_output: :ecosystem, use_jobba: true
 
   uses_routine Content::ImportBook, as: :import_book, translations: { outputs: { type: :verbatim } }
 
