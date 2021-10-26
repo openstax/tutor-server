@@ -122,7 +122,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.roles).to eq [role]
       expect(task.students).to eq [student]
       expect(task.research_cohorts).to eq [cohort]
-      expect(task.research_study_brains).to eq [Research::Models::StudyBrain.find(brain.id)]
     end
   end
 

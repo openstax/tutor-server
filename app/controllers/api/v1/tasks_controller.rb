@@ -33,7 +33,7 @@ class Api::V1::TasksController < Api::V1::ApiController
       ActiveRecord::Associations::Preloader.new.preload task_steps, [ :tasked, :page ]
     end
 
-    standard_read ::Research::ModifiedTask[task: @task], Api::V1::TaskRepresenter
+    standard_read @task, Api::V1::TaskRepresenter
   end
 
   api :DELETE, '/tasks/:id', 'Hide the task from the student\'s dashboard'
