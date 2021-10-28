@@ -17,45 +17,64 @@ class Lms::SendCourseScores
 
   def exec(course:)
     raise 'Course cannot be nil' if course.nil?
+    raise 'This course was created in a different environment' unless course.environment.current?
+
+    students = course.students.joins(role: { profile: :account }).where(
+      dropped_at: nil
+    ).order(:created_at).preload(role: { profile: :account }).to_a
+    callbacks_by_user_id = Lms::Models::CourseScoreCallback.where(
+      course: course, user_profile_id: students.map { |student| student.role.user_profile_id }
+    ).index_by(&:user_profile_id)
+
+    course.update_attribute :last_lms_scores_push_job_id, status.id
 
     @errors = []
-
     @course = course
+    @num_students = students.size
+    @num_callbacks = callbacks_by_user_id.size
+    @num_missing_scores = 0
 
-    if @course.environment.current?
-      callbacks = Lms::Models::CourseScoreCallback.where(course: course).where(
-        CourseMembership::Models::Student.joins(:role).where(course: course, dropped_at: nil).where(
-          '"entity_roles"."user_profile_id" = "lms_course_score_callbacks"."user_profile_id"'
-        ).arel.exists
-      ).order(:created_at)
+    save_status_data
 
-      @course.update_attributes(last_lms_scores_push_job_id: status.id)
+    students.each_with_index do |student, ii|
+      user_profile_id = student.role.user_profile_id
+      score_data = course_score_data user_profile_id
+      callback = callbacks_by_user_id[user_profile_id]
 
-      @num_callbacks = callbacks.count
-      @num_missing_scores = 0
+      if score_data.blank? || score_data[:course_average].blank?
+        error!(
+          message: 'Student has no course average',
+          course: @course.id,
+          student_name: student.name,
+          student_identifier: student.student_identifier
+        )
 
-      save_status_data
-
-      callbacks.each_with_index do |callback, ii|
-        score_data = course_score_data(callback.user_profile_id)
-
-        if score_data.present? && score_data[:course_average].present?
-          send_one_score(callback, score_data)
-        else
-          @num_missing_scores += 1
-          save_status_data
-        end
-        status.set_progress(ii, @num_callbacks)
+        @num_missing_scores += 1
+        save_status_data
+      elsif callback.blank?
+        error!(
+          message: 'Student is not linked to LMS',
+          course: @course.id,
+          score: score_data[:course_average],
+          student_name: score_data[:name],
+          student_identifier: score_data[:student_identifier]
+        )
+      else
+        send_one_score(callback, score_data)
       end
-    else
-      error! message: 'This course was created in a different environment', course: @course.id
+
+      status.set_progress(ii, @num_students)
     end
 
     notify_errors
   end
 
   def save_status_data
-    status.save num_callbacks: @num_callbacks, num_missing_scores: @num_missing_scores
+    status.save(
+      num_students: @num_students,
+      num_callbacks: @num_callbacks,
+      num_missing_scores: @num_missing_scores
+    )
   end
 
   def course_score_data(user_profile_id)
@@ -84,15 +103,16 @@ class Lms::SendCourseScores
 
   def send_one_score(callback, score_data)
     begin
-      request_xml = basic_outcome_xml(score: score_data[:course_average],
-                                      sourcedid: callback.result_sourcedid)
+      request_xml = basic_outcome_xml(
+        score: score_data[:course_average], sourcedid: callback.result_sourcedid
+      )
 
       response = token.post(
-        callback.outcome_url, request_xml, {'Content-Type' => 'application/xml'}
+        callback.outcome_url, request_xml, { 'Content-Type' => 'application/xml' }
       )
 
       outcome_response = Lms::OutcomeResponse.new(response)
-      raise 'lms returned failure' if outcome_response.code_major == 'failure'
+      raise 'LMS returned failure code' if outcome_response.code_major == 'failure'
     rescue StandardError => e
       error!(
         exception: e,
@@ -109,7 +129,7 @@ class Lms::SendCourseScores
   def error!(error)
     @errors.push(error)
     status.add_error(error)
-    log_error("send_one_score failure: #{error.except(:exception).inspect}")
+    log_error("[#{self.class.name}] failure: #{error.except(:exception).inspect}")
   end
 
   def log_error(message)
