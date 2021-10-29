@@ -312,7 +312,9 @@ Rails.application.routes.draw do
 
     resources :research_data, only: [ :index, :create ]
 
-    resource :salesforce, only: [ :show, :update ]
+    resource :salesforce, controller: :salesforce, only: [] do
+      get :failures
+    end
 
     resource :cron, only: :update
 
