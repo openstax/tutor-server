@@ -5,7 +5,7 @@ module Manager::EcosystemsActions
 
   def index
     @ecosystems = Content::ListEcosystems[]
-    result = CollectJobsData.call job_name: 'ImportEcosystemManifest'
+    result = CollectJobsData.call job_name: 'FetchAndImportBookAndCreateEcosystem'
     @incomplete_jobs = result.outputs.incomplete_jobs
     @failed_jobs = result.outputs.failed_jobs
   end
