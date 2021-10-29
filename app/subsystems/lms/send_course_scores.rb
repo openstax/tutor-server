@@ -122,7 +122,8 @@ class Lms::SendCourseScores
       )
 
       outcome_response = Lms::OutcomeResponse.new(response)
-      raise 'LMS returned failure code' if outcome_response.code_major == 'failure'
+      raise "LMS returned failure code:\n#{outcome_response.description}" \
+        if outcome_response.code_major == 'failure'
 
       @num_successes += 1
     rescue StandardError => e
