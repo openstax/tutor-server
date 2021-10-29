@@ -22,8 +22,9 @@ class Lms::SendCourseScores
     students = course.students.joins(role: { profile: :account }).where(
       dropped_at: nil
     ).order(:created_at).preload(role: { profile: :account }).to_a
+    student_user_ids = students.map { |student| student.role.user_profile_id }
     callbacks_by_user_id = Lms::Models::CourseScoreCallback.where(
-      course: course, user_profile_id: students.map { |student| student.role.user_profile_id }
+      course: course, user_profile_id: student_user_ids
     ).index_by(&:user_profile_id)
 
     course.update_attribute :last_lms_scores_push_job_id, status.id
@@ -31,14 +32,21 @@ class Lms::SendCourseScores
     @errors = []
     @course = course
     @num_students = students.size
+    @num_scores = course_score_data.values_at(*student_user_ids).compact.map do |score_data|
+      score_data[:course_average]
+    end.compact.size
     @num_callbacks = callbacks_by_user_id.size
-    @num_missing_scores = 0
+    @num_missing_scores = @num_students - @num_scores
+    @num_missing_callbacks = @num_students - @num_callbacks
+    @num_sent = 0
+    @num_failures = 0
+    @num_successes = 0
 
     save_status_data
 
     students.each_with_index do |student, ii|
       user_profile_id = student.role.user_profile_id
-      score_data = course_score_data user_profile_id
+      score_data = course_score_data[user_profile_id]
       callback = callbacks_by_user_id[user_profile_id]
 
       if score_data.blank? || score_data[:course_average].blank?
@@ -48,9 +56,6 @@ class Lms::SendCourseScores
           student_name: student.name,
           student_identifier: student.student_identifier
         )
-
-        @num_missing_scores += 1
-        save_status_data
       elsif callback.blank?
         error!(
           message: 'Student not linked to LMS',
@@ -72,12 +77,17 @@ class Lms::SendCourseScores
   def save_status_data
     status.save(
       num_students: @num_students,
+      num_scores: @num_scores,
       num_callbacks: @num_callbacks,
-      num_missing_scores: @num_missing_scores
+      num_missing_scores: @num_missing_scores,
+      num_missing_callbacks: @num_missing_callbacks,
+      num_sent: @num_sent,
+      num_failures: @num_failures,
+      num_successes: @num_successes
     )
   end
 
-  def course_score_data(user_profile_id)
+  def course_score_data
     @scores_by_user_profile_id ||= begin
       perf_report = Tasks::GetPerformanceReport[course: @course, is_teacher: true]
 
@@ -89,8 +99,6 @@ class Lms::SendCourseScores
         hash[score[:user]] = score
       end
     end
-
-    @scores_by_user_profile_id[user_profile_id]
   end
 
   def token
@@ -103,6 +111,8 @@ class Lms::SendCourseScores
 
   def send_one_score(callback, score_data)
     begin
+      @num_sent += 1
+
       request_xml = basic_outcome_xml(
         score: score_data[:course_average], sourcedid: callback.result_sourcedid
       )
@@ -113,6 +123,8 @@ class Lms::SendCourseScores
 
       outcome_response = Lms::OutcomeResponse.new(response)
       raise 'LMS returned failure code' if outcome_response.code_major == 'failure'
+
+      @num_successes += 1
     rescue StandardError => e
       error!(
         exception: e,
@@ -123,7 +135,11 @@ class Lms::SendCourseScores
         student_identifier: score_data[:student_identifier],
         response: response&.body
       )
+
+      @num_failures += 1
     end
+
+    save_status_data
   end
 
   def error!(error)
