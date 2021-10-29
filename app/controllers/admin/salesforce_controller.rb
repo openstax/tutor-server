@@ -1,9 +1,7 @@
 module Admin
   class SalesforceController < BaseController
     def failures
-      terms = CourseProfile::Models::Course.terms.values_at(
-        :spring, :summer, :fall, :winter, :preview
-      )
+      terms = CourseProfile::Models::Course.terms.values_at :spring, :summer, :fall, :winter
 
       @courses = CourseProfile::Models::Course
         .not_ended
@@ -38,7 +36,7 @@ module Admin
                     "openstax_accounts_accounts"."salesforce_contact_id" IS NOT NULL
             )
           WHERE_SQL
-        ).preload(:students, teachers: { role: { profile: :account } })
+        ).order(:id).preload(:students, teachers: { role: { profile: :account } })
     end
   end
 end

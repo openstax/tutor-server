@@ -1,9 +1,9 @@
 <%
   teachers = course.teachers.reject { |teacher| teacher.role.nil? }
   students = course.students.to_a
-  num_students = students.size
+  total_students = students.size
   dropped_students = students.count(&:dropped?)
-  enrolled_students = num_students - dropped_students
+  enrolled_students = total_students - dropped_students
 %>
 
 <tr>
@@ -16,13 +16,7 @@
       %><%= ' (deleted)' if teacher.deleted? %><%= '; ' unless teacher == teachers.last %>
     <% end %>
   </td>
-  <td>
-    <%= link_to enrolled_students, admin_course_students_path(course.id) %>
-  </td>
-  <td>
-    <%= link_to dropped_students, admin_course_students_path(course.id) %>
-  </td>
-  <td>
-    <%= link_to num_students, admin_course_students_path(course.id) %>
-  </td>
+  <td><%= link_to enrolled_students, admin_course_students_path(course.id) %></td>
+  <td><%= link_to dropped_students, admin_course_students_path(course.id) %></td>
+  <td><%= link_to total_students, admin_course_students_path(course.id) %></td>
 </tr>
