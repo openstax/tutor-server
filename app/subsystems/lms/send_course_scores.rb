@@ -43,7 +43,7 @@ class Lms::SendCourseScores
 
       if score_data.blank? || score_data[:course_average].blank?
         error!(
-          message: 'Student has no course average',
+          message: 'No course average',
           course: @course.id,
           student_name: student.name,
           student_identifier: student.student_identifier
@@ -53,7 +53,7 @@ class Lms::SendCourseScores
         save_status_data
       elsif callback.blank?
         error!(
-          message: 'Student is not linked to LMS',
+          message: 'Student not linked to LMS',
           course: @course.id,
           score: score_data[:course_average],
           student_name: score_data[:name],
