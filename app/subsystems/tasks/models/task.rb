@@ -66,9 +66,6 @@ class Tasks::Models::Task < ApplicationRecord
   has_many :students, through: :roles, subsystem: :course_membership
   has_many :research_cohorts, through: :students,
            subsystem: :research, class_name: 'Research::Models::Cohort'
-  has_many :research_study_brains, -> { student_task },
-           through: :research_cohorts, source: :study_brains,
-           subsystem: :research, class_name: 'Research::Models::StudyBrain'
 
   has_one :concept_coach_task, inverse_of: :task
 

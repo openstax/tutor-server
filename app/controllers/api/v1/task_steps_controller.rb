@@ -21,7 +21,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
   api :GET, '/steps/:step_id', 'Gets the specified TaskStep'
   def show
     standard_read(
-      ::Research::ModifiedTasked[tasked: @tasked],
+      @tasked,
       Api::V1::TaskedRepresenterMapper.representer_for(@tasked),
       false,
       include_content: true
@@ -157,7 +157,7 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
 
   def fetch_step
     @task_step = ::Tasks::Models::TaskStep.find(params[:id])
-    @tasked = ::Research::ModifiedTasked[tasked: @task_step.tasked]
+    @tasked = @task_step.tasked
   end
 
   def with_task_step_and_tasked
@@ -167,13 +167,12 @@ class Api::V1::TaskStepsController < Api::V1::ApiController
       @task = Tasks::Models::Task
         .joins(:task_steps)
         .lock('FOR NO KEY UPDATE OF "tasks_tasks", "tasks_task_steps"')
-        .preload(:research_study_brains)
         .find_by(task_steps: { id: params[:id] })
 
       return render_api_errors(:no_exercises, :not_found) if @task.nil?
 
       @task_step = @task.task_steps.to_a.find { |task_step| task_step.id == params[:id].to_i }
-      @tasked = ::Research::ModifiedTasked[tasked: @task_step.tasked]
+      @tasked = @task_step.tasked
       yield
     end
   end
