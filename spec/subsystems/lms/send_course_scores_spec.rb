@@ -9,7 +9,7 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
     student_user = callback.profile
     @student_role = AddUserAsPeriodStudent[period: period, user: student_user]
 
-    FactoryBot.create :tasked_task_plan, course: @course
+    FactoryBot.create :tasked_task_plan, course: @course, number_of_students: 0
 
     teacher_user = FactoryBot.create :user_profile
     @teacher_role = AddUserAsCourseTeacher[course: @course, user: teacher_user]
@@ -29,12 +29,12 @@ RSpec.describe Lms::SendCourseScores, type: :routine do
 
   it 'errors if the course was created in a different environment' do
     expect(Tasks::GetPerformanceReport).not_to receive(:[])
-    expect(Rails.logger).to receive(:error)
-    expect(Raven).to receive(:capture_message)
 
     @course.update_attribute :environment, FactoryBot.create(:environment)
 
-    expect { described_class.call(course: @course) }.not_to raise_error
+    expect { described_class.call(course: @course) }.to(
+      raise_error 'This course was created in a different environment'
+    )
   end
 
   it 'does not have blank space before the XML declaration' do
