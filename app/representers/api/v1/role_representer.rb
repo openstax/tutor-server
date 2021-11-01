@@ -9,15 +9,15 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :period_id,
-             getter: ->(*) { teacher? ? nil : course_member.course_membership_period_id },
+    property :role_type,
+             as: :type,
              type: String,
              readable: true,
              writeable: false,
              schema_info: { required: true }
 
-    property :role_type,
-             as: :type,
+    property :period_id,
+             getter: ->(*) { teacher? ? nil : course_member.course_membership_period_id },
              type: String,
              readable: true,
              writeable: false,
