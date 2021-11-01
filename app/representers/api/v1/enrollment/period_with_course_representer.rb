@@ -1,5 +1,4 @@
 module Api::V1::Enrollment
-
   class Teacher < Roar::Decorator
     include Roar::JSON
 
@@ -20,7 +19,6 @@ module Api::V1::Enrollment
   end
 
   class PeriodWithCourseRepresenter < Roar::Decorator
-
     include Roar::JSON
     include Representable::Coercion
 
@@ -69,8 +67,6 @@ module Api::V1::Enrollment
                type: Integer,
                readable: true,
                writeable: false
-
     end
-
   end
 end

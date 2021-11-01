@@ -1,5 +1,5 @@
 module Api::V1
-  class RoleRepresenter < Roar::Decorator
+  class SharedRoleRepresenter < Roar::Decorator
     include Roar::JSON
     include Representable::Coercion
 
@@ -9,19 +9,23 @@ module Api::V1
              writeable: false,
              schema_info: { required: true }
 
-    property :period_id,
-             getter: ->(*) { teacher? ? nil : course_member.course_membership_period_id },
+    property :course_profile_course_id,
+             as: :course_id,
              type: String,
+             writeable: true,
              readable: true,
-             writeable: false,
-             schema_info: { required: true }
+             schema_info: {
+               required: true
+             }
 
-    property :role_type,
-             as: :type,
+    property :role_id,
              type: String,
-             readable: true,
              writeable: false,
-             schema_info: { required: true }
+             readable: true,
+             getter: ->(*) { respond_to?(:role_id) ? role_id : entity_role_id },
+             schema_info: {
+               required: true
+             }
 
     property :research_identifier,
              type: String,
@@ -33,13 +37,6 @@ module Api::V1
              readable: true,
              writeable: false,
              getter: ->(*) { DateTimeUtilities.to_api_s(created_at) },
-             schema_info: { required: true }
-
-    property :latest_enrollment_at,
-             type: String,
-             readable: true,
-             writeable: false,
-             getter: ->(*) { DateTimeUtilities.to_api_s(latest_enrollment_at) },
              schema_info: { required: true }
   end
 end
