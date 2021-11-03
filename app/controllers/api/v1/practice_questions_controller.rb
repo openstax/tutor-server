@@ -16,7 +16,7 @@ class Api::V1::PracticeQuestionsController < Api::V1::ApiController
     #{json_schema(Api::V1::PracticeQuestionsRepresenter, include: :readable)}
   EOS
   def index
-    questions = @role.practice_questions.preload(tasked_exercise: { task_step: { task: { task_plan: :grading_template } } })
+    questions = @role.practice_questions.preload(tasked_exercise: { task_step: { task: { task_plan: :grading_template } } }).preload(:exercise)
     respond_with questions, represent_with: Api::V1::PracticeQuestionsRepresenter
   end
 
@@ -39,7 +39,7 @@ class Api::V1::PracticeQuestionsController < Api::V1::ApiController
     standard_create ::Tasks::Models::PracticeQuestion.new, Api::V1::PracticeQuestionRepresenter do |question|
       question.role = @role
       question.tasked_exercise = step.tasked
-      question.exercise = step.tasked.exercise
+      question.content_exercise_id = step.tasked.exercise.id
     end
   end
 

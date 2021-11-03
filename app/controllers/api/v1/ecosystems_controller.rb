@@ -82,8 +82,7 @@ class Api::V1::EcosystemsController < Api::V1::ApiController
   def practice_exercises
     exercises = GetPracticeQuestionExercises[
       role: @role,
-      course: @course,
-      exercise_ids: params[:exercise_ids]
+      course: @course
     ]
 
     respond_with(exercises,
