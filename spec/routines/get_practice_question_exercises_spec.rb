@@ -32,34 +32,43 @@ RSpec.describe GetPracticeQuestionExercises, type: :routine do
       old_page.save!
     end
   end
+
   let!(:new_exercise) do
     FactoryBot.create(:content_exercise, page: new_page).tap do |exercise|
       new_page.homework_dynamic_exercise_ids << exercise.id
       new_page.save!
     end
   end
-  let!(:old_tasked)   { FactoryBot.create(:tasks_tasked_exercise, exercise: old_exercise) }
-  let!(:new_tasked)   { FactoryBot.create(:tasks_tasked_exercise, exercise: new_exercise) }
-  let!(:old_practice) { FactoryBot.create(:tasks_practice_question, role: student_role,
-                                        tasked_exercise: old_tasked,
-                                        content_exercise_id: old_exercise.id) }
-  let!(:new_practice) { FactoryBot.create(:tasks_practice_question,
-                                     role: student_role,
-                                     tasked_exercise: new_tasked,
-                                     content_exercise_id: new_exercise.id) }
 
+  let!(:old_exercise_in_new_eco) do
+    FactoryBot.create(:content_exercise, page: new_page, uuid: old_exercise.uuid).tap do |exercise|
+      new_page.homework_dynamic_exercise_ids << exercise.id
+      new_page.save!
+    end
+  end
+
+  let!(:old_tasked) { FactoryBot.create(:tasks_tasked_exercise, exercise: old_exercise) }
+  let!(:new_tasked) { FactoryBot.create(:tasks_tasked_exercise, exercise: new_exercise) }
+
+  let!(:old_practice) { FactoryBot.create(:tasks_practice_question,
+                                          role: student_role,
+                                          tasked_exercise: old_tasked,
+                                          content_exercise_id: old_exercise.id) }
+
+  let!(:new_practice) { FactoryBot.create(:tasks_practice_question,
+                                          role: student_role,
+                                          tasked_exercise: new_tasked,
+                                          content_exercise_id: new_exercise.id) }
 
   it 'returns exercises saved in new and old ecosystems' do
     AddEcosystemToCourse[course: course, ecosystem: new_ecosystem]
-
-    expect(old_tasked.exercise.id).to eq(old_practice.tasked_exercise.exercise.id)
-    exercise_uuids = [old_exercise.uuid, new_exercise.uuid]
 
     outputs = described_class.call(
       role: student_role,
       course: course
     ).outputs
 
-    expect(outputs.exercises.map(&:uuid)).to eq(exercise_uuids)
+    expect(outputs.exercises.map(&:uuid)).to contain_exactly(old_exercise.uuid, new_exercise.uuid)
+    expect(outputs.exercises.map(&:id)).to contain_exactly(old_exercise_in_new_eco.id, new_exercise.id)
   end
 end
