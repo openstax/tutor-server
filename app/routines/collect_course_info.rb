@@ -59,7 +59,7 @@ class CollectCourseInfo
         ecosystem: course.ecosystem,
         should_reuse_preview?: course.should_reuse_preview?,
         periods: periods,
-        roles: roles,       # TODO: Remove?
+        roles: roles,
         teachers: teachers, # TODO: Remove
         teacher_record: teachers.sort_by(&:created_at).last,
         students: students, # TODO: Remove

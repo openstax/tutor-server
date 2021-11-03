@@ -236,7 +236,6 @@ module Api::V1
                readable: true,
                writeable: false
 
-    # TODO: Remove if no longer used?
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,
