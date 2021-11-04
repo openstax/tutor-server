@@ -1,13 +1,13 @@
 class Tasks::Models::PracticeQuestion < ApplicationRecord
   belongs_to :tasked_exercise, subsystem: :tasks
-  has_one :exercise, through: :tasked_exercise, subsystem: :content
+  belongs_to :exercise, subsystem: :content
   belongs_to :role, subsystem: :entity, inverse_of: :practice_questions
 
   validates :tasks_tasked_exercise_id, presence: true,
                                        uniqueness: { scope: [:tasks_tasked_exercise_id, :entity_role_id] }
   validates :content_exercise_id, presence: true,
                                   uniqueness: { scope: [:content_exercise_id, :entity_role_id] }
-  delegate :uuid, to: :exercise
+  delegate :uuid, :id, to: :exercise, prefix: :exercise
 
   def available?
     tasked_exercise.parts.all?(&:feedback_available?)

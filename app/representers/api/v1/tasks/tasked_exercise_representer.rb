@@ -26,8 +26,7 @@ module Api::V1::Tasks
              schema_info: {
                required: false,
                description: "The UUID of the exercise tasked"
-             },
-             getter: ->(*) { exercise.uuid }
+             }
 
     property :title,
              type: String,

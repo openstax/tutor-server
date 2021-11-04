@@ -190,8 +190,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
         let(:old_tasked) { FactoryBot.create(:tasks_tasked_exercise, exercise: old_exercise) }
         let(:new_tasked) { FactoryBot.create(:tasks_tasked_exercise, exercise: new_exercise) }
 
-
-       it 'includes exercises saved in both' do
+        it 'includes exercises saved in both' do
           AddEcosystemToCourse[course: course, ecosystem: new_ecosystem]
 
 
@@ -307,10 +306,12 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
 
       it 'allows students to only see exercises that have been saved to practice' do
         exercise_ids = Content::Models::Exercise.all.map(&:id)
-        exercise_id  = ecosystem.exercises.first.id
+        exercise  = ecosystem.exercises.first
+        tasked = FactoryBot.create(:tasks_tasked_exercise, exercise: exercise)
         FactoryBot.create(:tasks_practice_question,
                           role: student_role,
-                          content_exercise_id: exercise_id)
+                          tasked_exercise: tasked,
+                          content_exercise_id: exercise.id)
 
         api_get exercises_api_ecosystem_path(
           ecosystem.id, course_id: course.id, exercise_ids: exercise_ids, role_id: student_role.id
@@ -318,7 +319,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
 
         hash = response.body_as_hash
         expect(hash[:total_count]).to eq(1)
-        expect(hash[:items].first[:id]).to eq(exercise_id.to_s)
+        expect(hash[:items].first[:id]).to eq(exercise.id.to_s)
 
         # Ensure content_hash_for_student was used
         keys = hash[:items][0][:content][:questions][0][:answers].map(&:keys).flatten.uniq
