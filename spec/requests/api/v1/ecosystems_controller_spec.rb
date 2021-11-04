@@ -179,6 +179,7 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
             old_page.save!
           end
         end
+
         let(:new_exercise) do
           FactoryBot.create(:content_exercise, page: new_page).tap do |exercise|
             new_page.homework_dynamic_exercise_ids << exercise.id
@@ -186,26 +187,32 @@ RSpec.describe Api::V1::EcosystemsController, type: :request, api: true,
           end
         end
 
+        let(:old_tasked) { FactoryBot.create(:tasks_tasked_exercise, exercise: old_exercise) }
+        let(:new_tasked) { FactoryBot.create(:tasks_tasked_exercise, exercise: new_exercise) }
+
 
        it 'includes exercises saved in both' do
           AddEcosystemToCourse[course: course, ecosystem: new_ecosystem]
 
+
+
           old_practice = FactoryBot.create(:tasks_practice_question,
-                                                    role: student_role,
-                                                    content_exercise_id: old_exercise.id)
+                                           role: student_role,
+                                           tasked_exercise: old_tasked,
+                                           content_exercise_id: old_exercise.id)
           new_practice = FactoryBot.create(:tasks_practice_question,
-                                                    role: student_role,
-                                                    content_exercise_id: new_exercise.id)
-          exercise_ids = [old_exercise.id, new_exercise.id]
+                                           role: student_role,
+                                           tasked_exercise: new_tasked,
+                                           content_exercise_id: new_exercise.id)
 
           api_get exercises_api_ecosystem_path(
-            ecosystem.id, course_id: course.id, exercise_ids: exercise_ids, role_id: student_role.id
+            ecosystem.id, course_id: course.id, role_id: student_role.id
           ), student_user_token
 
           hash = response.body_as_hash
           hash_ids = hash[:items].map{|i| i[:id].to_i}
           expect(hash[:total_count]).to eq(2)
-          expect(hash_ids).to eq(exercise_ids)
+          expect(hash_ids).to contain_exactly(old_exercise.id, new_exercise.id)
         end
       end
     end
