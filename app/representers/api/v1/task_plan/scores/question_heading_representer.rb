@@ -32,14 +32,8 @@ class Api::V1::TaskPlan::Scores::QuestionHeadingRepresenter < Roar::Decorator
            readable: true,
            writeable: false
 
-  # TODO: Remove 1 release after the above 2 fields get added
-  property :exercise_id,
-           type: Integer,
-           readable: true,
-           writeable: false
-
-  property :question_id,
-           type: Integer,
+  property :group_type,
+           type: String,
            readable: true,
            writeable: false
 end

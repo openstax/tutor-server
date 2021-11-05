@@ -1137,7 +1137,9 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
       let(:expected_year)      { @course.year + 1 }
       let(:expected_term_year) { TermYear.new(@course.term, expected_year) }
       let(:expected_response)  do
-        Api::V1::CourseRepresenter.new(@course).as_json.deep_symbolize_keys.merge(
+        Api::V1::CourseRepresenter.new(
+          CollectCourseInfo[courses: @course, user: @user_1].first
+        ).as_json.deep_symbolize_keys.merge(
           id: a_kind_of(String),
           uuid: a_kind_of(String),
           code: @course.code,
@@ -1148,9 +1150,9 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
           is_active: be_in([true, false]),
           is_access_switchable: be_in([true, false]),
           periods: [a_kind_of(Hash)] * @course.num_sections,
-          students: [],
-          teachers: [a_kind_of(Hash)],
           roles: [a_kind_of(Hash)],
+          teacher_record: a_kind_of(Hash),
+          teachers: [a_kind_of(Hash)],
           is_lms_enabling_allowed: true,
           ecosystem_id: @course.offering.content_ecosystem_id.to_s,
           cloned_from_id: @course.id.to_s,
@@ -1167,10 +1169,10 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
 
         expect(response).to have_http_status(:success)
         new_course = response.body_as_hash
-        # the new course will have a different id, uuid and teachers
+        # the new course will have a different id, uuid and teacher_record
         expect(new_course[:id]).not_to eq(expected_response[:id])
         expect(new_course[:uuid]).not_to eq(expected_response[:uuid])
-        expect(new_course[:teachers]).not_to eq(expected_response[:teachers])
+        expect(new_course[:teacher_record]).not_to eq(expected_response[:teacher_record])
         # but will otherwise be the same
         expect(new_course).to match expected_response
       end
