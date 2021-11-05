@@ -24,6 +24,12 @@ module Api::V1
              readable: true,
              schema_info: { required: true }
 
+    property :exercise_uuid,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: { required: true }
+
     property :available?,
              as: :available,
              writeable: false,

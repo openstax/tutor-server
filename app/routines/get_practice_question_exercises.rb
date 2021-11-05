@@ -1,10 +1,9 @@
 class GetPracticeQuestionExercises
   lev_routine transaction: :no_transaction, express_output: :exercises
 
-  def exec(role:, course:, exercise_ids:)
+  def exec(role:, course:)
     exercise_and_ecosystem_ids = role.practice_questions
                                    .joins(exercise: :ecosystem)
-                                   .where(content_exercise_id: exercise_ids)
                                    .pluck("content_ecosystems.id", :content_exercise_id)
 
     exercises = []
