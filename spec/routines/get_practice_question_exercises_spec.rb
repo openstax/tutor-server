@@ -40,13 +40,6 @@ RSpec.describe GetPracticeQuestionExercises, type: :routine do
     end
   end
 
-  let!(:old_exercise_in_new_eco) do
-    FactoryBot.create(:content_exercise, page: new_page, uuid: old_exercise.uuid).tap do |exercise|
-      new_page.homework_dynamic_exercise_ids << exercise.id
-      new_page.save!
-    end
-  end
-
   let!(:old_tasked) { FactoryBot.create(:tasks_tasked_exercise, exercise: old_exercise) }
   let!(:new_tasked) { FactoryBot.create(:tasks_tasked_exercise, exercise: new_exercise) }
 
