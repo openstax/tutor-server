@@ -1,0 +1,20 @@
+<h2>Salesforce Update Failures</h2>
+
+<p>
+  The following courses are currently active, non-preview and would be eligible to be sent to
+  Salesforce except they have no teachers with a valid Salesforce Contact:
+</p>
+
+<table class="table">
+  <tr>
+    <th scope="col">Course</th>
+    <th scope="col">Instructors</th>
+    <th scope="col">Enrolled Students</th>
+    <th scope="col">Dropped Students</th>
+    <th scope="col">Total Students</th>
+  </tr>
+
+<% @courses.each do |course| %>
+  <%= render partial: 'course', locals: { course: course } %>
+<% end %>
+</table>
