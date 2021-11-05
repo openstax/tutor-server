@@ -110,29 +110,16 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
             type = task_step.fixed_group? && task_step.exercise? ? (
               task_step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ'
             ) : 'Tutor'
-            question_id = task_step.tasked.question_id if task_step.exercise?
-            exercise_id = task_step.tasked.content_exercise_id if task_step.exercise?
-            if type != 'Tutor'
-              a_hash_including(
-                title: title,
-                points_without_dropping: points_without_dropping,
-                points: points,
-                type: type,
-                exercise_ids: step_exercise_ids[index].uniq.sort,
-                question_ids: step_question_ids[index].uniq.sort,
-                exercise_id: exercise_id,
-                question_id: question_id
-              )
-            else
-              a_hash_including(
-                title: title,
-                points_without_dropping: points_without_dropping,
-                points: points,
-                type: type,
-                exercise_ids: step_exercise_ids[index].uniq.sort,
-                question_ids: step_question_ids[index].uniq.sort
-              )
-            end
+
+            a_hash_including(
+              title: title,
+              points_without_dropping: points_without_dropping,
+              points: points,
+              type: type,
+              exercise_ids: step_exercise_ids[index].uniq.sort,
+              question_ids: step_question_ids[index].uniq.sort,
+              group_type: task_step.group_type
+            )
           end.compact
 
           expect(headings).to match expected_headings
@@ -248,29 +235,16 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
             type = task_step.fixed_group? && task_step.exercise? ? (
               task_step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ'
             ) : 'Tutor'
-            question_id = task_step.tasked.question_id if task_step.exercise?
-            exercise_id = task_step.tasked.content_exercise_id if task_step.exercise?
-            if type != 'Tutor'
-              a_hash_including(
-                title: title,
-                points_without_dropping: points_without_dropping,
-                points: points,
-                type: type,
-                exercise_ids: step_exercise_ids[index].uniq.sort,
-                question_ids: step_question_ids[index].uniq.sort,
-                exercise_id: exercise_id,
-                question_id: question_id
-              )
-            else
-              a_hash_including(
-                title: title,
-                points_without_dropping: points_without_dropping,
-                points: points,
-                type: type,
-                exercise_ids: step_exercise_ids[index].uniq.sort,
-                question_ids: step_question_ids[index].uniq.sort
-              )
-            end
+
+            a_hash_including(
+              title: title,
+              points_without_dropping: points_without_dropping,
+              points: points,
+              type: type,
+              exercise_ids: step_exercise_ids[index].uniq.sort,
+              question_ids: step_question_ids[index].uniq.sort,
+              group_type: task_step.group_type
+            )
           end.compact
 
           expect(headings).to match expected_headings
@@ -390,29 +364,16 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
             type = task_step.fixed_group? && task_step.exercise? ? (
               task_step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ'
             ) : 'Tutor'
-            question_id = task_step.tasked.question_id if task_step.exercise?
-            exercise_id = task_step.tasked.content_exercise_id if task_step.exercise?
-            if type != 'Tutor'
-              a_hash_including(
-                title: title,
-                points_without_dropping: points_without_dropping,
-                points: points,
-                type: type,
-                exercise_ids: step_exercise_ids[index].uniq.sort,
-                question_ids: step_question_ids[index].uniq.sort,
-                exercise_id: exercise_id,
-                question_id: question_id
-              )
-            else
-              a_hash_including(
-                title: title,
-                points_without_dropping: points_without_dropping,
-                points: points,
-                type: type,
-                exercise_ids: step_exercise_ids[index].uniq.sort,
-                question_ids: step_question_ids[index].uniq.sort
-              )
-            end
+
+            a_hash_including(
+              title: title,
+              points_without_dropping: points_without_dropping,
+              points: points,
+              type: type,
+              exercise_ids: step_exercise_ids[index].uniq.sort,
+              question_ids: step_question_ids[index].uniq.sort,
+              group_type: match(/fixed_group|personalized_group|spaced_practice_group/)
+            )
           end.compact
 
           expect(headings).to match expected_headings
@@ -427,27 +388,16 @@ RSpec.describe CalculateTaskPlanScores, type: :routine, vcr: VCR_OPTS, speed: :s
             ) : 'Tutor'
             question_id = task_step.tasked.question_id if task_step.exercise?
             exercise_id = task_step.tasked.content_exercise_id if task_step.exercise?
-            if type != 'Tutor'
-              a_hash_including(
-                title: title,
-                points_without_dropping: points_without_dropping,
-                points: points,
-                type: type,
-                question_ids: [question_id].compact,
-                exercise_ids: [exercise_id].compact,
-                question_id: question_id,
-                exercise_id: exercise_id
-              )
-            else
-              a_hash_including(
-                title: title,
-                points_without_dropping: points_without_dropping,
-                points: points,
-                type: type,
-                question_ids: [question_id].compact,
-                exercise_ids: [exercise_id].compact
-              )
-            end
+
+            a_hash_including(
+              title: title,
+              points_without_dropping: points_without_dropping,
+              points: points,
+              type: type,
+              question_ids: [question_id].compact,
+              exercise_ids: [exercise_id].compact,
+              group_type: match(/fixed_group|personalized_group|spaced_practice_group/)
+            )
           end
           expect(headings).to match expected_headings
           expect(tasking_plan_output.late_work_fraction_penalty).to eq late_work_penalty

@@ -102,17 +102,10 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                points_without_dropping: 1.0,
                points: 1.0,
                type: ts.is_core? ? 'MCQ' : 'Tutor',
-              }.merge(
-                ts.is_core? ? {
-                  exercise_ids: step_exercise_ids[index].uniq.sort,
-                  question_ids: step_question_ids[index].uniq.sort,
-                  exercise_id: ts.tasked.content_exercise_id.to_i,
-                  question_id:  ts.tasked.question_id.to_i
-                } : {
-                  exercise_ids: step_exercise_ids[index].uniq.sort,
-                  question_ids: step_question_ids[index].uniq.sort
-                }
-              )
+               exercise_ids: step_exercise_ids[index].uniq.sort,
+               question_ids: step_question_ids[index].uniq.sort,
+               group_type: ts.group_type
+              }
             end,
             late_work_fraction_penalty: late_work_penalty,
             students: a_collection_including(
@@ -271,17 +264,10 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                points_without_dropping: 1.0,
                points: 1.0,
                type: ts.is_core? ? 'MCQ' : 'Tutor',
-              }.merge(
-                ts.is_core? ? {
-                  exercise_ids: step_exercise_ids[index].uniq.sort,
-                  question_ids: step_question_ids[index].uniq.sort,
-                  exercise_id: ts.tasked.content_exercise_id.to_i,
-                  question_id:  ts.tasked.question_id.to_i
-                } : {
-                  exercise_ids: step_exercise_ids[index].uniq.sort,
-                  question_ids: step_question_ids[index].uniq.sort
-                }
-              )
+               exercise_ids: step_exercise_ids[index].uniq.sort,
+               question_ids: step_question_ids[index].uniq.sort,
+               group_type: ts.group_type
+              }
             end,
             late_work_fraction_penalty: late_work_penalty,
             students: a_collection_including(
