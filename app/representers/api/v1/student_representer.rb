@@ -1,17 +1,5 @@
 module Api::V1
-  class StudentRepresenter < Roar::Decorator
-
-    include Roar::JSON
-    include Representable::Coercion
-
-    property :id,
-             type: String,
-             writeable: false,
-             readable: true,
-             schema_info: {
-               required: true
-             }
-
+  class StudentRepresenter < SharedRoleRepresenter
     property :uuid,
              type: String,
              readable: true,
@@ -22,15 +10,6 @@ module Api::V1
              as: :period_id,
              type: String,
              writeable: true,
-             readable: true,
-             schema_info: {
-               required: true
-             }
-
-    property :entity_role_id,
-             as: :role_id,
-             type: String,
-             writeable: false,
              readable: true,
              schema_info: {
                required: true
@@ -56,20 +35,27 @@ module Api::V1
              writeable: false,
              readable: true
 
+    property :latest_enrollment_at,
+             type: String,
+             readable: true,
+             writeable: false,
+             getter: ->(*) { DateTimeUtilities.to_api_s(latest_enrollment_at) },
+             schema_info: { required: true }
+
     property :is_active,
              writeable: false,
              readable: true,
              getter: ->(*) { !dropped? },
              schema_info: {
                 required: true,
-                description: "Student is dropped if false"
+                description: 'Student is dropped if false'
              }
 
     property :prompt_student_to_pay,
              writeable: false,
              readable: true,
              getter: ->(*) {
-               # Shenanigans b/c sometimes this representer gets an AR, sometimes a hash
+               # Shenanigans because sometimes this representer gets an AR, sometimes a hash
                course = self.course || CourseProfile::Models::Course.find(course_profile_course_id)
 
                Settings::Payments.payments_enabled &&
@@ -137,9 +123,10 @@ module Api::V1
     property :payment_code,
              writeable: false,
              readable: true,
-             getter: ->(*) {
-               payment_code && { code: payment_code.code, redeemed_at: payment_code.redeemed_at.to_s }
-             },
+             if: ->(*) { !payment_code.blank? },
+             getter: ->(*) do
+              { code: payment_code.code, redeemed_at: payment_code.redeemed_at.to_s }
+             end,
              schema_info: {
                description: "Redemption details if payment was via a bookstore code"
              }

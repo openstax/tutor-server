@@ -1,5 +1,5 @@
 class Api::V1::CourseCloneRepresenter < Api::V1::CourseRepresenter
-
+  # Not writeable, unlike the original CourseRepresenter
   property :catalog_offering_id,
            inherit: true,
            writeable: false
@@ -11,5 +11,4 @@ class Api::V1::CourseCloneRepresenter < Api::V1::CourseRepresenter
              required: true,
              type: 'boolean'
            }
-
 end

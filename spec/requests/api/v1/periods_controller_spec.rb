@@ -171,8 +171,8 @@ RSpec.describe Api::V1::PeriodsController, type: :request, api: true, version: :
 
       expect(response).to have_http_status(:ok)
 
-      role = CourseMembership::Models::TeacherStudent.order(:created_at).last.role
-      expect(response.body).to eq Api::V1::RoleRepresenter.new(role).to_json
+      teacher_student = CourseMembership::Models::TeacherStudent.order(:created_at).last
+      expect(response.body).to eq Api::V1::TeacherStudentRepresenter.new(teacher_student).to_json
     end
 
     it 'ensures the person is a teacher of the course' do

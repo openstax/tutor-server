@@ -12,11 +12,13 @@ RSpec.describe Api::V1::TeacherRepresenter, type: :representer do
       'id' => teacher.id.to_s,
       'course_id' => course.id.to_s,
       'role_id' => teacher.role.id.to_s,
+      'research_identifier' => teacher.research_identifier,
       'first_name' => teacher.first_name,
       'last_name' => teacher.last_name,
       'profile_id' => teacher.role.profile.id.to_s,
       'name' => teacher.name,
-      'is_active' => true
+      'is_active' => true,
+      'joined_at' => DateTimeUtilities.to_api_s(teacher.created_at)
     )
   end
 end

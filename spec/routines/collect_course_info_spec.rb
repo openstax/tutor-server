@@ -15,10 +15,10 @@ RSpec.describe CollectCourseInfo, type: :routine do
 
   let(:result)    { described_class[args] }
 
-  context "when a course is given" do
+  context 'when a course is given' do
     let(:args)    { { user: user_1, courses: course_1.reload } }
 
-    it "returns information about the course" do
+    it 'returns information about the course' do
       expect(result.map(&:to_h)).to match [
         {
           id: course_1.id,
@@ -55,17 +55,20 @@ RSpec.describe CollectCourseInfo, type: :routine do
           ecosystem: course_1.ecosystem,
           should_reuse_preview?: course_1.should_reuse_preview?,
           periods: [],
-          spy_info: { research_studies: [] },
-          students: [],
+          roles: [],
           teachers: [],
+          teacher_record: nil,
+          students: [],
+          student_record: nil,
+          teacher_student_records: [],
           teacher_profiles: course_1.teacher_profiles,
-          roles: []
+          spy_info: { research_studies: [] }
         }
       ]
     end
   end
 
-  context "when multiple courses are given" do
+  context 'when multiple courses are given' do
     let(:ecosystem_1) { FactoryBot.create :content_ecosystem }
     let(:ecosystem_2) { FactoryBot.create :content_ecosystem }
 
@@ -76,7 +79,7 @@ RSpec.describe CollectCourseInfo, type: :routine do
       AddEcosystemToCourse[ecosystem: ecosystem_2, course: course_2]
     end
 
-    it "returns information about all given courses" do
+    it 'returns information about all given courses' do
       expect(result.map(&:to_h)).to match_array [
         {
           id: course_1.id,
@@ -113,11 +116,14 @@ RSpec.describe CollectCourseInfo, type: :routine do
           ecosystem: course_1.ecosystem,
           should_reuse_preview?: course_1.should_reuse_preview?,
           periods: [],
-          spy_info: { research_studies: [] },
-          students: [],
+          roles: [],
           teachers: [],
+          teacher_record: nil,
+          students: [],
+          student_record: nil,
+          teacher_student_records: [],
           teacher_profiles: course_1.teacher_profiles,
-          roles: []
+          spy_info: { research_studies: [] }
         },
         {
           id: course_2.id,
@@ -154,23 +160,27 @@ RSpec.describe CollectCourseInfo, type: :routine do
           ecosystem: course_2.ecosystem,
           should_reuse_preview?: course_1.should_reuse_preview?,
           periods: [],
-          spy_info: { research_studies: [] },
-          students: [],
+          roles: [],
           teachers: [],
+          teacher_record: nil,
+          students: [],
+          student_record: nil,
+          teacher_student_records: [],
           teacher_profiles: course_1.teacher_profiles,
-          roles: []
+          spy_info: { research_studies: [] }
         }
       ]
     end
   end
 
-  context "when no course is given" do
+  context 'when no course is given' do
     let(:args)    { { user: user_1 } }
 
-    context "when the user is a teacher" do
+    context 'when the user is a teacher' do
       let!(:teacher_role)         { AddUserAsCourseTeacher[user: user_1, course: course_1] }
       let!(:teacher_student_role) { CreateOrResetTeacherStudent[user: user_1, period: period_1] }
       let(:teacher)               { teacher_role.teacher }
+      let(:teacher_student)       { teacher_student_role.teacher_student }
 
       before { period_2.destroy! }
 
@@ -211,17 +221,20 @@ RSpec.describe CollectCourseInfo, type: :routine do
             ecosystem: course_1.ecosystem,
             should_reuse_preview?: course_1.should_reuse_preview?,
             periods: a_collection_containing_exactly(period_1, period_2),
-            spy_info: { research_studies: [] },
-            students: [],
+            roles: a_collection_containing_exactly(teacher_role, teacher_student_role),
             teachers: [ teacher ],
+            teacher_record: teacher,
+            students: [],
+            student_record: nil,
+            teacher_student_records: [ teacher_student ],
             teacher_profiles: course_1.teacher_profiles,
-            roles: a_collection_containing_exactly(teacher_role, teacher_student_role)
+            spy_info: { research_studies: [] }
           }
         ]
       end
     end
 
-    context "when the user is a student" do
+    context 'when the user is a student' do
       let(:student_role) { AddUserAsPeriodStudent[user: user_1, period: period_1] }
       let!(:student)     { student_role.student }
 
@@ -262,11 +275,14 @@ RSpec.describe CollectCourseInfo, type: :routine do
             ecosystem: course_1.ecosystem,
             should_reuse_preview?: course_1.should_reuse_preview?,
             periods: [ student.period ],
-            spy_info: { research_studies: [] },
-            students: [ student ],
+            roles: [ student_role ],
             teachers: [],
+            teacher_record: nil,
+            students: [ student ],
+            student_record: student,
+            teacher_student_records: [],
             teacher_profiles: course_1.teacher_profiles,
-            roles: [ student_role ]
+            spy_info: { research_studies: [] }
           }
         ]
       end
@@ -275,22 +291,23 @@ RSpec.describe CollectCourseInfo, type: :routine do
         expect(result.first.periods).to eq [ period_1 ]
       end
 
-      it "returns student info for the user" do
+      it 'returns student info for the user' do
         expect(result.length).to eq 1
-        expect(result.first.students.map(&:id)).to eq [student.id]
+        expect(result.first.student_record.id).to eq student.id
       end
     end
 
-    context "when the user is a teacher and students" do
+    context 'when the user is a teacher and teacher_student' do
       before do
         @teacher = AddUserAsCourseTeacher[user: user_1, course: course_1].teacher
-        @student1 = AddUserAsPeriodStudent[user: user_1, period: period_1].student
-        @student2 = AddUserAsPeriodStudent[user: user_1, period: period_2].student
+        @teacher_student = CreateOrResetTeacherStudent[
+          user: user_1, period: period_1
+        ].teacher_student
       end
 
-      it "returns student info for the user" do
-        expect(Set.new result.first.students.map(&:id)).to eq Set[ @student1.id, @student2.id ]
-        expect(Set.new result.first.teachers.map(&:id)).to eq Set[ @teacher.id ]
+      it 'returns teacher and student info for the user' do
+        expect(result.first.teacher_record.id).to eq @teacher.id
+        expect(result.first.teacher_student_records.map(&:id)).to eq [ @teacher_student.id ]
       end
     end
   end
