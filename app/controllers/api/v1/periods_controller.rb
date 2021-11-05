@@ -98,8 +98,8 @@ class Api::V1::PeriodsController < Api::V1::ApiController
     result = CreateOrResetTeacherStudent.call(user: current_human_user, period: @period)
 
     render_api_errors(result.errors) || respond_with(
-      result.outputs.role,
-      represent_with: Api::V1::RoleRepresenter,
+      result.outputs.role.teacher_student,
+      represent_with: Api::V1::TeacherStudentRepresenter,
       responder: ResponderWithPutPatchDeleteContent
     )
   end

@@ -13,11 +13,14 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
     expect(representation).to match(
       'id' => student.id.to_s,
       'uuid' => student.uuid,
+      'course_id' => course.id.to_s,
       'period_id' => period.id.to_s,
       'role_id' => student.role.id.to_s,
+      'research_identifier' => student.research_identifier,
       'first_name' => student.first_name,
       'last_name' => student.last_name,
       'name' => student.name,
+      'latest_enrollment_at' => DateTimeUtilities.to_api_s(student.latest_enrollment_at),
       'is_active' => !student.dropped?,
       'is_paid' => false,
       'is_comped' => false,
@@ -25,7 +28,8 @@ RSpec.describe Api::V1::StudentRepresenter, type: :representer do
       'first_paid_at' => be_kind_of(String),
       'is_refund_pending' => false,
       'is_refund_allowed' => false,
-      'prompt_student_to_pay' => false
+      'prompt_student_to_pay' => false,
+      'joined_at' => DateTimeUtilities.to_api_s(student.created_at)
     )
 
     [:first_paid_at, :payment_due_at].each do |date_method|
