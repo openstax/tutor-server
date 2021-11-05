@@ -13,7 +13,7 @@ class FindOrCreatePracticeSavedTask
   end
 
   def questions(question_ids)
-    @role.practice_questions.where(id: question_ids)
+    @role.practice_questions.preload(:exercise).where(id: question_ids)
   end
 
   def add_task_steps
