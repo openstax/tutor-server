@@ -3,8 +3,8 @@ class GetPracticeQuestionExercises
 
   def exec(role:, course:)
     exercise_and_ecosystem_ids = role.practice_questions
-                                    .joins(exercise: :ecosystem)
-                                    .pluck("content_ecosystems.id", :content_exercise_id)
+                                   .joins(exercise: :ecosystem)
+                                   .pluck("content_ecosystems.id", :content_exercise_id)
 
     exercises = []
     exercise_ids_grouped_by_ecosystem_id = Hash.new {|h,k| h[k] = [] }
