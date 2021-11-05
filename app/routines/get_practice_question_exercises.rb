@@ -30,6 +30,6 @@ class GetPracticeQuestionExercises
       ).outputs.exercises
     end
 
-    outputs.exercises = exercises.flatten.uniq(&:uuid)
+    outputs.exercises = exercises.flatten
   end
 end
