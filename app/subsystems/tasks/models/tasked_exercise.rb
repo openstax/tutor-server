@@ -36,6 +36,8 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
            :correct_question_answers, :correct_question_answer_ids,
            :feedback_map, :solutions, :collaborator_solutions, :content_hash_for_students, to: :parser
 
+  delegate :uuid, to: :exercise, prefix: :exercise
+
   def attempt_number_was
     val = super
     return val unless val.nil?

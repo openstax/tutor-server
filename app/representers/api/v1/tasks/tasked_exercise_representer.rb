@@ -19,6 +19,15 @@ module Api::V1::Tasks
                description: "The id of the exercise tasked"
              }
 
+    property :exercise_uuid,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The UUID of the exercise tasked"
+             }
+
     property :title,
              type: String,
              writeable: false,
@@ -44,7 +53,7 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                required: false,
-               description: "The UUID of the exercise, steps with identical uid will be grouped together into a MPQ"
+               description: "The number@version of the exercise, steps with identical uid will be grouped together into a MPQ"
              }
 
     property :labels,

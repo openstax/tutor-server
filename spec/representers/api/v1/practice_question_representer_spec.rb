@@ -9,6 +9,7 @@ RSpec.describe Api::V1::PracticeQuestionRepresenter, type: :representer do
       id: question.id,
       tasked_exercise_id: question.tasked_exercise.id,
       exercise_id: question.exercise.id,
+      exercise_uuid: question.exercise.uuid,
       available: question.available?,
     }.stringify_keys)
   end
