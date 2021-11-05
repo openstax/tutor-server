@@ -12,12 +12,12 @@ RSpec.describe Admin::SalesforceController, type: :request do
         FactoryBot.create :course_membership_teacher, course: course
       end,
       FactoryBot.create(:course_profile_course, term: terms.sample).tap do |course|
-        period = FactoryBot.create(:course_membership_period, course: course)
+        period = FactoryBot.create :course_membership_period, course: course
         FactoryBot.create :course_membership_student, period: period
       end,
       FactoryBot.create(:course_profile_course, term: terms.sample).tap do |course|
         FactoryBot.create :course_membership_teacher, course: course
-        period = FactoryBot.create(:course_membership_period, course: course)
+        period = FactoryBot.create :course_membership_period, course: course
         FactoryBot.create :course_membership_student, period: period
       end
     ]
@@ -27,7 +27,8 @@ RSpec.describe Admin::SalesforceController, type: :request do
       FactoryBot.create(
         :course_membership_teacher, course: course
       ).role.profile.account.update_attribute :salesforce_contact_id, SecureRandom.uuid
-      FactoryBot.create :course_membership_student, course: course
+      period = FactoryBot.create :course_membership_period, course: course
+      FactoryBot.create :course_membership_student, period: period
     end
   end
 
