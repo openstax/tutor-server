@@ -205,12 +205,11 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
     end
 
     context 'with some practice exercises' do
-      let(:num_practice_exercises) { 5 }
+      let(:question_1) { FactoryBot.create :tasks_practice_question, role: role, exercise: exercise_1 }
+      let(:question_2) { FactoryBot.create :tasks_practice_question, role: role, exercise: exercise_2 }
 
       before do
-        allow_any_instance_of(FindOrCreatePracticeSavedTask).to receive(:questions).and_return(
-          num_practice_exercises.times.map { FactoryBot.create(:tasks_practice_question) }
-        )
+        allow_any_instance_of(FindOrCreatePracticeSavedTask).to receive(:questions).and_return([question_1, question_2])
       end
 
       it 'returns the practice task data' do
@@ -223,7 +222,7 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
           id: task.id.to_s,
           title: 'Practice',
           type: 'practice_saved',
-          steps: have(num_practice_exercises).items
+          steps: have(2).items
         )
       end
 
@@ -240,7 +239,7 @@ RSpec.describe Api::V1::PracticesController, type: :request, api: true, version:
           id: task.id.to_s,
           title: 'Practice',
           type: 'practice_saved',
-          steps: have(num_practice_exercises).items
+          steps: have(2).items
         )
       end
 
