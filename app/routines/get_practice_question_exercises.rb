@@ -2,16 +2,9 @@ class GetPracticeQuestionExercises
   lev_routine transaction: :no_transaction, express_output: :exercises
 
   def exec(role:, course:)
-    uuids = role.practice_questions
-                .joins(tasked_exercise: :exercise)
-                .pluck("content_exercises.uuid").uniq
-
-    exercise_and_ecosystem_ids =
-      Content::Models::Exercise.select('DISTINCT ON ("content_exercises"."number") "content_exercises".*')
-        .joins(book: :ecosystem)
-        .where(book: { content_ecosystem_id: course.ecosystems.map(&:id) }, uuid: uuids)
-        .order(:number, version: :desc)
-        .pluck("content_ecosystems.id", "content_exercises.id")
+    exercise_and_ecosystem_ids = role.practice_questions
+                                    .joins(exercise: :ecosystem)
+                                    .pluck("content_ecosystems.id", :content_exercise_id)
 
     exercises = []
     exercise_ids_grouped_by_ecosystem_id = Hash.new {|h,k| h[k] = [] }

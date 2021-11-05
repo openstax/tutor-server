@@ -17,7 +17,8 @@ module Api::V1
              readable: true,
              schema_info: { required: true }
 
-    property :exercise_id,
+    property :content_exercise_id,
+             as: :exercise_id,
              type: String,
              writeable: false,
              readable: true,

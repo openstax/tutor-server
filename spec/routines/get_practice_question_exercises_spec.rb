@@ -68,7 +68,6 @@ RSpec.describe GetPracticeQuestionExercises, type: :routine do
       course: course
     ).outputs
 
-    expect(outputs.exercises.map(&:uuid)).to contain_exactly(old_exercise.uuid, new_exercise.uuid)
-    expect(outputs.exercises.map(&:id)).to contain_exactly(old_exercise_in_new_eco.id, new_exercise.id)
+    expect(outputs.exercises.map(&:id)).to eq([old_exercise.id, new_exercise.id])
   end
 end

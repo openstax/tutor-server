@@ -7,17 +7,21 @@ class FindOrCreatePracticeSavedTask
   protected
 
   def setup(**args)
-    @exercise_ids = questions(args[:question_ids]).pluck(:content_exercise_id)
+    @exercise_uuids = get_exercise_uuids(args[:question_ids])
     @task_type = :practice_saved
     @ecosystem = run(:get_course_ecosystem, course: @course).outputs.ecosystem
   end
 
-  def questions(question_ids)
-    @role.practice_questions.where(id: question_ids)
+  def get_exercise_uuids(question_ids)
+    @role.practice_questions.where(id: question_ids).map(&:exercise_uuid)
   end
 
   def add_task_steps
-    exercises = Content::Models::Exercise.where(id: @exercise_ids)
+    exercises =
+      Content::Models::Exercise.select('DISTINCT ON ("content_exercises"."number") "content_exercises".*')
+        .joins(book: :ecosystem)
+        .where(book: { content_ecosystem_id: @course.ecosystems.map(&:id) }, uuid: @exercise_uuids)
+        .order(:number, version: :desc)
 
     exercises = FilterExcludedExercises.call(
       exercises: exercises,
