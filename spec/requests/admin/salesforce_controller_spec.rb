@@ -7,19 +7,21 @@ RSpec.describe Admin::SalesforceController, type: :request do
   end
   let!(:failed_courses) do
     [
+      FactoryBot.create(:course_profile_course, term: terms.sample),
       FactoryBot.create(:course_profile_course, term: terms.sample).tap do |course|
         FactoryBot.create :course_membership_teacher, course: course
       end,
       FactoryBot.create(:course_profile_course, term: terms.sample).tap do |course|
-        FactoryBot.create :course_membership_student, course: course
+        period = FactoryBot.create(:course_membership_period, course: course)
+        FactoryBot.create :course_membership_student, period: period
       end,
       FactoryBot.create(:course_profile_course, term: terms.sample).tap do |course|
         FactoryBot.create :course_membership_teacher, course: course
-        FactoryBot.create :course_membership_student, course: course
+        period = FactoryBot.create(:course_membership_period, course: course)
+        FactoryBot.create :course_membership_student, period: period
       end
     ]
   end
-  let!(:empty_course)      { FactoryBot.create :course_profile_course, term: terms.sample }
   let!(:successful_course) do
     FactoryBot.create(:course_profile_course, term: terms.sample).tap do |course|
       FactoryBot.create(
