@@ -211,4 +211,32 @@ RSpec.describe Api::V1::GradingTemplateRepresenter, type: :representer do
       end.not_to change { represented.has_task_plans? }
     end
   end
+
+  context 'allow_auto_graded_multiple_attempts' do
+    it 'can be read' do
+      expect(representation['allow_auto_graded_multiple_attempts']).to(
+        eq represented.allow_auto_graded_multiple_attempts
+      )
+    end
+
+    it 'can be written' do
+      expect do
+        representer.from_hash('allow_auto_graded_multiple_attempts' => true)
+      end.to change { represented.allow_auto_graded_multiple_attempts }.to(true)
+    end
+  end
+
+  context 'shuffle_answer_choices' do
+    it 'can be read' do
+      expect(representation['shuffle_answer_choices']).to(
+        eq represented.shuffle_answer_choices
+      )
+    end
+
+    it 'can be written' do
+      expect do
+        representer.from_hash('shuffle_answer_choices' => false)
+      end.to change { represented.shuffle_answer_choices }.to(false)
+    end
+  end
 end

@@ -291,6 +291,22 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
         api_put api_step_url(tasked.task_step.id), @user_1_token,
                 params: { free_response: 'Ipsum Lorem', answer_id: tasked.answer_ids.last }.to_json
       end
+
+      it 'updates the answer order of the exercise' do
+        tasked.free_response = 'Ipsum lorem'
+        tasked.answer_ids = ['1', '2']
+        tasked.save!
+        answer_id = tasked.answer_ids.first
+        original_order = tasked.answer_ids
+        new_order = ['2', '1']
+
+        expect do
+          api_put api_step_url(tasked.task_step.id), @user_1_token,
+                  params: { answer_id: answer_id.to_s, answer_id_order: new_order }.to_json
+        end.to change { tasked.reload.answer_ids }.from(original_order).to(new_order)
+
+        expect(response).to have_http_status(:success)
+      end
     end
 
     context 'reading' do

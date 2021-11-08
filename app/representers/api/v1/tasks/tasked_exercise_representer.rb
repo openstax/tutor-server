@@ -88,6 +88,13 @@ module Api::V1::Tasks
                description: "The answer id that was recorded for the Exercise"
              }
 
+    property :answer_id_order,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               description: "The order of the answer ids for the first attempt"
+             }
+
     property :free_response,
              type: String,
              writeable: true,

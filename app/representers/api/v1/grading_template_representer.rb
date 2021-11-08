@@ -136,4 +136,12 @@ class Api::V1::GradingTemplateRepresenter < Roar::Decorator
              required: true,
              type: 'boolean'
            }
+
+  property :shuffle_answer_choices,
+           readable: true,
+           writeable: true,
+           schema_info: {
+             required: true,
+             type: 'boolean'
+           }
 end

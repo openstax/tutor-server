@@ -238,4 +238,30 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     tasked_exercise = described_class.find id
     expect(tasked_exercise.available_points).to eq 2.0
   end
+
+  context '#answer_id_order' do
+    it 'can order the answer_ids by the submitted order on the first attempt' do
+      original_order = ['3', '2', '1']
+      new_order      = ['1', '2', '3']
+
+      tasked_exercise.attempt_number = 0
+      tasked_exercise.answer_ids = original_order
+      expect(tasked_exercise.answer_ids).to eq (original_order)
+
+      tasked_exercise.answer_id_order = new_order
+      expect(tasked_exercise.answer_ids).to eq (new_order)
+
+      tasked_exercise.attempt_number = 2
+      tasked_exercise.answer_id_order = original_order
+      expect(tasked_exercise.answer_ids).to eq(new_order)
+    end
+
+    it 'cannot change answer ids' do
+      tasked_exercise.attempt_number = 0
+      tasked_exercise.answer_ids = ['3', '2', '1']
+      tasked_exercise.answer_id_order = ['1', '4', '2', '3']
+
+      expect(tasked_exercise.answer_ids).to eq(['1', '2', '3'])
+    end
+  end
 end

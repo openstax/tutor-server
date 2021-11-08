@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_05_155727) do
+ActiveRecord::Schema.define(version: 2021_11_03_150618) do
 
   create_sequence "teacher_exercise_number", start: 1000000
 
@@ -883,6 +883,7 @@ ActiveRecord::Schema.define(version: 2021_10_05_155727) do
     t.datetime "updated_at", null: false
     t.bigint "cloned_from_id"
     t.boolean "allow_auto_graded_multiple_attempts", default: false, null: false
+    t.boolean "shuffle_answer_choices", default: false, null: false
     t.index ["cloned_from_id"], name: "index_tasks_grading_templates_on_cloned_from_id"
     t.index ["course_profile_course_id", "name"], name: "index_tasks_grading_templates_on_course_and_name", unique: true
     t.index ["course_profile_course_id", "task_plan_type", "deleted_at"], name: "index_tasks_grading_templates_on_course_type_and_deleted"

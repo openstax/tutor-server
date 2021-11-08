@@ -38,6 +38,15 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
 
   delegate :uuid, to: :exercise, prefix: :exercise
 
+  def answer_id_order
+    answer_ids
+  end
+
+  def answer_id_order=(order)
+    return unless attempt_number == 0
+    answer_ids.sort_by! {|i| order.index(i) || 0 }
+  end
+
   def attempt_number_was
     val = super
     return val unless val.nil?

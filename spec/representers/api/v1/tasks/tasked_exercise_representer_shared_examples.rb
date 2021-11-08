@@ -39,6 +39,7 @@ RSpec.shared_examples 'a tasked_exercise representer' do
       allow(exercise).to receive(:correct_answer_feedback).and_return('More feedback')
       allow(exercise).to receive(:free_response).and_return(nil)
       allow(exercise).to receive(:answer_id).and_return(nil)
+      allow(exercise).to receive(:answer_id_order).and_return(['1', '2'])
       allow(exercise).to receive(:last_completed_at).and_return(Time.current)
       allow(exercise).to receive(:first_completed_at).and_return(Time.current - 1.week)
       allow(exercise).to receive(:feedback_available?).and_return(false)
