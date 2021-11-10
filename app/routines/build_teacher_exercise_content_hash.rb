@@ -19,7 +19,6 @@ class BuildTeacherExerciseContentHash
 
     question = {
       id: SecureRandom.uuid,
-      is_answer_order_important: true,
       stimulus_html: "",
       stem_html: sanitize(data[:questionText]),
       title: sanitize(data[:questionName]),
@@ -44,6 +43,16 @@ class BuildTeacherExerciseContentHash
         solution_type: 'detailed',
         content_html: sanitize(data[:detailedSolution])
       }
+    end
+
+    can_set_order_importance = question[:answers].length > 2 &&
+                               !data[:isAnswerOrderImportant].nil?
+
+
+    question[:is_answer_order_important] = if can_set_order_importance
+      data[:isAnswerOrderImportant].to_s == 'true'
+    else
+      true
     end
 
     question[:formats] = [].tap do |formats|
