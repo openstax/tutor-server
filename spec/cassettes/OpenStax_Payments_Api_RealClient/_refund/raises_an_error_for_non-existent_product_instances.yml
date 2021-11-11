@@ -38,7 +38,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"access_token": "<response_oauth_access_token>", "expires_in": 36000,
         "token_type": "Bearer", "scope": "read write"}'
-    http_version: 
+    http_version:
   recorded_at: Tue, 18 Jul 2017 02:17:50 GMT
 - request:
     method: post
@@ -850,7 +850,7 @@ http_interactions:
         \       </tr>\n      \n        <tr>\n          <td>AUTHENTICATION_BACKENDS</td>\n
         \         <td class=\"code\"><pre>(&#39;accounts.backend.OpenStax&#39;, &#39;django.contrib.auth.backends.ModelBackend&#39;)</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>AUTHORIZATION_URL</td>\n
-        \         <td class=\"code\"><pre>&#39;https://accounts-dev.openstax.org/oauth/authorize&#39;</pre></td>\n
+        \         <td class=\"code\"><pre>&#39;https://dev.accounts.openstax.org/oauth/authorize&#39;</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>AUTH_PASSWORD_VALIDATORS</td>\n
         \         <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>AUTH_USER_MODEL</td>\n
@@ -1037,7 +1037,7 @@ http_interactions:
         \         <td class=\"code\"><pre>&#39;F j&#39;</pre></td>\n        </tr>\n
         \     \n        <tr>\n          <td>NUMBER_GROUPING</td>\n          <td class=\"code\"><pre>0</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>OPENSTAX_ACCOUNTS_LOGOUT_URL</td>\n
-        \         <td class=\"code\"><pre>&#39;https://accounts-dev.openstax.org/signout&#39;</pre></td>\n
+        \         <td class=\"code\"><pre>&#39;https://dev.accounts.openstax.org/signout&#39;</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>PASSWORD_HASHERS</td>\n
         \         <td class=\"code\"><pre>&#39;********************&#39;</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>PASSWORD_RESET_TIMEOUT_DAYS</td>\n
@@ -1137,9 +1137,9 @@ http_interactions:
         \         <td class=\"code\"><pre>[&#39;%H:%M:%S&#39;, &#39;%H:%M:%S.%f&#39;,
         &#39;%H:%M&#39;]</pre></td>\n        </tr>\n      \n        <tr>\n          <td>TIME_ZONE</td>\n
         \         <td class=\"code\"><pre>&#39;America/Chicago&#39;</pre></td>\n        </tr>\n
-        \     \n        <tr>\n          <td>USERS_QUERY</td>\n          <td class=\"code\"><pre>&#39;https://accounts-dev.openstax.org/api/users?&#39;</pre></td>\n
+        \     \n        <tr>\n          <td>USERS_QUERY</td>\n          <td class=\"code\"><pre>&#39;https://dev.accounts.openstax.org/api/users?&#39;</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>USER_QUERY</td>\n          <td
-        class=\"code\"><pre>&#39;https://accounts-dev.openstax.org/api/user?&#39;</pre></td>\n
+        class=\"code\"><pre>&#39;https://dev.accounts.openstax.org/api/user?&#39;</pre></td>\n
         \       </tr>\n      \n        <tr>\n          <td>USE_ETAGS</td>\n          <td
         class=\"code\"><pre>False</pre></td>\n        </tr>\n      \n        <tr>\n
         \         <td>USE_I18N</td>\n          <td class=\"code\"><pre>False</pre></td>\n
@@ -1267,6 +1267,6 @@ http_interactions:
         class=\"djDebugPanelContent\">\n\t\t\t\t\t\n\t\t\t\t\t<img src=\"/static/debug_toolbar/img/ajax-loader.gif\"
         alt=\"loading\" class=\"djdt-loader\" />\n\t\t\t\t\t<div class=\"djdt-scroll\"></div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\n\t\n\t\t\n\t\n\t<div
         id=\"djDebugWindow\" class=\"djdt-panelContent\"></div>\n</div>\n</body>\n</html>\n"
-    http_version: 
+    http_version:
   recorded_at: Tue, 18 Jul 2017 02:17:51 GMT
 recorded_with: VCR 2.9.3
