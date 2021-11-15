@@ -76,7 +76,7 @@ module Api::V1
     property :profile_url,
              getter: ->(*) do
                Addressable::URI.join(
-                 OpenStax::Accounts.configuration.openstax_accounts_url, '/profile'
+                 OpenStax::Accounts.configuration.openstax_accounts_url, 'profile'
                ).to_s
              end
 
