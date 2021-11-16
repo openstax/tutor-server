@@ -224,6 +224,10 @@ class Tasks::Models::Task < ApplicationRecord
     !!grading_template&.allow_auto_graded_multiple_attempts
   end
 
+  def shuffle_answer_choices
+    !!grading_template&.shuffle_answer_choices
+  end
+
   def late_work_penalty_applied
     grading_template&.late_work_penalty_applied || 'not_accepted'
   end
