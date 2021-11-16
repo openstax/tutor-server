@@ -48,6 +48,14 @@ RSpec.describe Api::V1::TaskRepresenter, type: :representer do
     expect(described_class.new(task).to_hash['allow_auto_graded_multiple_attempts']).to be false
   end
 
+  it 'includes shuffle_answer_choices' do
+    task.task_plan.grading_template.shuffle_answer_choices = true
+    expect(described_class.new(task).to_hash['shuffle_answer_choices']).to be true
+
+    task.task_plan.grading_template.shuffle_answer_choices = false
+    expect(described_class.new(task).to_hash['shuffle_answer_choices']).to be false
+  end
+
   it 'includes completion_weight' do
     task.task_plan.grading_template.completion_weight = 0.0
     expect(described_class.new(task).to_hash['completion_weight']).to eq 0.0
