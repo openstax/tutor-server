@@ -292,7 +292,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
                 params: { free_response: 'Ipsum Lorem', answer_id: tasked.answer_ids.last }.to_json
       end
 
-      fit 'updates the answer order of the exercise' do
+      it 'updates the answer order of the exercise' do
         tasked.free_response = 'Ipsum lorem'
         tasked.answer_ids = ['1', '2', '3', '4']
         tasked.save!
