@@ -68,7 +68,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 9.5.1'
+gem 'openstax_accounts'
 
 gem 'action_interceptor'
 
@@ -76,7 +76,7 @@ gem 'action_interceptor'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api'
+gem 'openstax_api', '< 9.4.0'
 
 # Used to fetch and parse OpenStax book content
 gem 'openstax_content'

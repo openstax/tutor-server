@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_03_150618) do
+ActiveRecord::Schema.define(version: 2021_11_15_122108) do
 
   create_sequence "teacher_exercise_number", start: 1000000
 
@@ -606,6 +606,7 @@ ActiveRecord::Schema.define(version: 2021_11_03_150618) do
     t.boolean "is_kip"
     t.integer "school_location", default: 0, null: false
     t.boolean "grant_tutor_access"
+    t.boolean "is_administrator"
     t.index ["access_token"], name: "index_openstax_accounts_accounts_on_access_token", unique: true
     t.index ["faculty_status"], name: "index_openstax_accounts_accounts_on_faculty_status"
     t.index ["first_name"], name: "index_openstax_accounts_accounts_on_first_name"
