@@ -94,6 +94,13 @@ module Api::V1
               type: 'boolean'
             }
 
+    property :shuffle_answer_choices,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean'
+             }
+
     property :completion_weight,
              type: Float,
              readable: true,

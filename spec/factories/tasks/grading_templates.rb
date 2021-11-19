@@ -15,5 +15,6 @@ FactoryBot.define do
     default_due_date_offset_days        { 7 }
     default_close_date_offset_days      { 7 }
     allow_auto_graded_multiple_attempts { false }
+    shuffle_answer_choices              { true }
   end
 end
