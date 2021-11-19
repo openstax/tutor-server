@@ -107,6 +107,17 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     expect(task.reload.is_shared?).to eq true
   end
 
+  it 'defaults shuffle_answer_choices to true' do
+    task.grading_template.shuffle_answer_choices = true
+    expect(task.shuffle_answer_choices).to eq true
+
+    task.grading_template.shuffle_answer_choices = false
+    expect(task.shuffle_answer_choices).to eq false
+
+    task_plan.grading_template = nil
+    expect(task.shuffle_answer_choices).to eq true
+  end
+
   context 'with research cohort' do
     let(:student)  { role.student }
     let(:study)    { FactoryBot.create :research_study }

@@ -225,7 +225,8 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def shuffle_answer_choices
-    !!grading_template&.shuffle_answer_choices
+    value = grading_template&.shuffle_answer_choices
+    value.nil? ? true : value
   end
 
   def late_work_penalty_applied
