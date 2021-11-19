@@ -43,7 +43,7 @@ class Tasks::Models::TaskedExercise < IndestructibleRecord
   end
 
   def answer_id_order=(order)
-    return unless attempt_number == 0
+    return unless attempt_number_was == 0
     answer_ids.sort_by! {|i| order.index(i) || 0 }
   end
 

@@ -252,6 +252,7 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
       expect(tasked_exercise.answer_ids).to eq (new_order)
 
       tasked_exercise.attempt_number = 2
+      tasked_exercise.save
       tasked_exercise.answer_id_order = original_order
       expect(tasked_exercise.answer_ids).to eq(new_order)
     end
