@@ -226,7 +226,7 @@ gem 'dotenv-rails'
 
 gem 'aws-sdk-s3'
 
-gem 'webpacker', '~> 5.2.x'
+gem 'webpacker'
 
 group :development, :test do
   # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
