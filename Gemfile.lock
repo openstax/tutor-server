@@ -112,15 +112,12 @@ GEM
     aws-sdk-kms (1.44.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
+    aws-sdk-rds (1.130.0)
+      aws-sdk-core (~> 3, >= 3.122.0)
+      aws-sigv4 (~> 1.1)
     aws-sdk-s3 (1.96.1)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sdk-kms (~> 1)
-      aws-sigv4 (~> 1.1)
-    aws-sdk-secretsmanager (1.43.0)
-      aws-sdk-core (~> 3, >= 3.109.0)
-      aws-sigv4 (~> 1.1)
-    aws-sdk-ssm (1.95.0)
-      aws-sdk-core (~> 3, >= 3.109.0)
       aws-sigv4 (~> 1.1)
     aws-sigv4 (1.4.0)
       aws-eventstream (~> 1, >= 1.0.2)
@@ -782,10 +779,10 @@ DEPENDENCIES
   apipie-rails
   ar-sequence
   awesome_print
+  aws-sdk-autoscaling
   aws-sdk-cloudwatch
+  aws-sdk-rds
   aws-sdk-s3
-  aws-sdk-secretsmanager
-  aws-sdk-ssm
   axlsx!
   best_in_place
   bootsnap (~> 1.4.0)

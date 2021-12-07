@@ -20,6 +20,9 @@ module DateTimeUtilities
     RequestStore.store[:apply_tz_cache] ||= Hash.new { |hash, key| hash[key] = {} }
     RequestStore.store[:apply_tz_cache][date_time][timezone] ||= begin
       time_in_zone = date_time.in_time_zone(timezone)
+
+      # There's some ambiguity here if time_in_zone falls right on the DST transition
+      # and the utc_offset changes as a result of this subtraction
       time_in_zone - time_in_zone.utc_offset
     end
   end
