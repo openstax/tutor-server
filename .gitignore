@@ -52,12 +52,13 @@ bower.json
 .byebug_history
 
 # Ignore public precompiled assets, packs, uploaded files, exports and test files
-/public/assets
-/public/uploads
-/public/exports
-/public/packs
-/public/packs-test
-/public/test
+/public/assets/
+/public/uploads/
+/public/exports/
+/public/packs/
+/public/packs-test/
+/public/development/
+/public/test/
 
 # Ignore uploaded files in development
 /storage/*
@@ -101,10 +102,3 @@ brakeman.html
 
 # Ignore OS X's Desktop Service Store files
 *.DS_Store
-
-/public/packs
-/public/packs-test
-/node_modules
-/yarn-error.log
-yarn-debug.log*
-.yarn-integrity
