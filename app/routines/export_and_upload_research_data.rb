@@ -194,7 +194,7 @@ class ExportAndUploadResearchData
 
               row.concat(
                 step.exercise? ? [
-                  "#{step.exercise_url.gsub('org', 'org/api')}.json",
+                  "#{step.exercise_url&.gsub('org', 'org/api')}.json",
                   step.exercise_url,
                   array_decoder.decode(step.tags_array).join(','),
                   step.question_index.to_i + 1,
