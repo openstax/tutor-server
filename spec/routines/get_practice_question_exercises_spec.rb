@@ -61,6 +61,6 @@ RSpec.describe GetPracticeQuestionExercises, type: :routine do
       course: course
     ).outputs
 
-    expect(outputs.exercises.map(&:id)).to eq([old_exercise.id, new_exercise.id])
+    expect(Set.new outputs.exercises.map(&:id)).to eq(Set[old_exercise.id, new_exercise.id])
   end
 end
