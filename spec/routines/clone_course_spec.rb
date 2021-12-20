@@ -27,7 +27,7 @@ RSpec.describe CloneCourse, type: :routine do
   end
 
   it "copies the course's question library if requested" do
-    10.times{ FactoryBot.create :course_content_excluded_exercise, course: course }
+    10.times { FactoryBot.create :course_content_excluded_exercise, course: course }
 
     result = described_class.call(course: course, teacher_user: user, copy_question_library: true)
     expect(result.errors).to be_empty
@@ -55,7 +55,7 @@ RSpec.describe CloneCourse, type: :routine do
       expect(result.errors).to be_empty
 
       clone = result.outputs.course
-      expected_attributes = Tasks::Models::GradingTemplate::DEFAULT_ATTRIBUTES.dup
+      expected_attributes = Tasks::Models::GradingTemplate::DEFAULT_ATTRIBUTES.map(&:dup)
       expected_attributes.each do |grading_template_attributes|
         grading_template_attributes.each do |key, value|
           grading_template_attributes[key] = value.to_s if value.is_a?(Symbol)

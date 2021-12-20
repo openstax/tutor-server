@@ -1,34 +1,10 @@
 module Api::V1
-  class TeacherRepresenter < Roar::Decorator
-
-    include Roar::JSON
-    include Representable::Coercion
-
-    property :id,
+  class TeacherRepresenter < SharedRoleRepresenter
+    property :profile_id,
              type: String,
              writeable: false,
              readable: true,
-             schema_info: {
-               required: true
-             }
-
-    property :course_profile_course_id,
-             as: :course_id,
-             type: String,
-             writeable: true,
-             readable: true,
-             schema_info: {
-               required: true
-             }
-
-    property :role_id,
-             type: String,
-             writeable: false,
-             readable: true,
-             getter: ->(*) { respond_to?(:role_id) ? role_id : entity_role_id },
-             schema_info: {
-               required: true
-             }
+             getter: ->(*) { respond_to?(:role) ? role.profile.id : profile_id }
 
     property :first_name,
              type: String,
@@ -48,7 +24,10 @@ module Api::V1
     property :is_active,
              readable: true,
              writeable: false,
-             getter: ->(*) { !try!(:deleted_at) }
-
+             getter: ->(*) { !deleted_at? },
+             schema_info: {
+                required: true,
+                description: 'Teacher is deleted if false'
+             }
   end
 end

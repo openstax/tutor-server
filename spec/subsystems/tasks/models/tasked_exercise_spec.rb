@@ -63,37 +63,78 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
 
   it 'cannot have answer or free response updated after feedback is available' do
     grading_template = tasked_exercise.task_step.task.task_plan.grading_template
-    grading_template.update_column :auto_grading_feedback_on, :answer
+    grading_template.update_columns(
+      auto_grading_feedback_on: :answer,
+      allow_auto_graded_multiple_attempts: false
+    )
 
+    tasked_exercise.attempt_number = 1
     tasked_exercise.free_response = 'abc'
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     tasked_exercise.save!
-
-    expect(tasked_exercise.reload).to be_valid
-
     tasked_exercise.complete!
 
     expect(tasked_exercise.reload).to be_valid
-
+    tasked_exercise.attempt_number = 2
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
     expect(tasked_exercise).not_to be_valid
 
     expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 2
     tasked_exercise.free_response = 'some new thing'
     expect(tasked_exercise).not_to be_valid
 
     grading_template.update_column :auto_grading_feedback_on, :due
 
     expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 1
     tasked_exercise.answer_id = tasked_exercise.answer_ids.last
-    expect(tasked_exercise).to be_valid
+    tasked_exercise.save!
 
-    expect(tasked_exercise.reload).to be_valid
+    # Cannot change the free response after selecting a multiple choice answer
+    tasked_exercise.attempt_number = 1
     tasked_exercise.free_response = 'some new thing'
-    expect(tasked_exercise).to be_valid
+    expect(tasked_exercise).not_to be_valid
   end
 
-  it 'cannot be answered after graded' do
+  it 'can be updated after feedback available if multiple attempts is enabled' do
+    grading_template = tasked_exercise.task_step.task.task_plan.grading_template
+    grading_template.update_columns(
+      auto_grading_feedback_on: :answer,
+      allow_auto_graded_multiple_attempts: true
+    )
+
+    # Make the exercise have 4 answers so we get 2 attempts
+    tasked_exercise.answer_ids += [ '-3', '-4' ]
+    expect(tasked_exercise.answer_ids.size).to eq 4
+    incorrect_answer_ids = tasked_exercise.answer_ids - [ tasked_exercise.correct_answer_id ]
+
+    tasked_exercise.attempt_number = 1
+    tasked_exercise.free_response = 'abc'
+    tasked_exercise.answer_id = incorrect_answer_ids.first
+    tasked_exercise.save!
+    tasked_exercise.complete!
+
+    # Cannot change the free response after selecting a multiple choice answer
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 2
+    tasked_exercise.free_response = 'some new thing'
+    expect(tasked_exercise).not_to be_valid
+
+    # Second attempt
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 2
+    tasked_exercise.answer_id = incorrect_answer_ids.last
+    tasked_exercise.save!
+
+    # Maximum number of attempts exceeded
+    expect(tasked_exercise.reload).to be_valid
+    tasked_exercise.attempt_number = 3
+    tasked_exercise.answer_id = tasked_exercise.correct_answer_id
+    expect(tasked_exercise).not_to be_valid
+  end
+
+  it 'cannot be re-answered after graded' do
     tasked_exercise.answer_id = tasked_exercise.answer_ids.first
     tasked_exercise.free_response = 'abc'
     expect(tasked_exercise.was_manually_graded?).to eq false
@@ -127,6 +168,32 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     task.course.past_due_unattempted_ungraded_wrq_are_zero = true
 
     expect(tasked_exercise.grader_points).to eq 0.0
+  end
+
+  context "#solutions" do
+    let(:text) { 'A solution' }
+    let(:content) do
+      {
+        questions: [
+          {
+            id: '1',
+            stem_html: '',
+            answers: [
+              { id: '1', correctness: 1.0 }
+            ],
+            solutions: [],
+            collaborator_solutions: [{
+              content_html: text
+            }]
+          }
+        ],
+      }.to_json
+    end
+
+    it 'returns collaborator_solutions if the solutions are empty' do
+      content_exercise.update_attribute :content, content
+      expect(tasked_exercise.solution["content_html"]).to eq text
+    end
   end
 
   context '#content_preview' do
@@ -170,5 +237,32 @@ RSpec.describe Tasks::Models::TaskedExercise, type: :model do
     id = tasked_exercise.id
     tasked_exercise = described_class.find id
     expect(tasked_exercise.available_points).to eq 2.0
+  end
+
+  context '#answer_id_order' do
+    it 'can order the answer_ids by the submitted order on the first attempt' do
+      original_order = ['3', '2', '1']
+      new_order      = ['1', '2', '3']
+
+      tasked_exercise.attempt_number = 0
+      tasked_exercise.answer_ids = original_order
+      expect(tasked_exercise.answer_ids).to eq (original_order)
+
+      tasked_exercise.answer_id_order = new_order
+      expect(tasked_exercise.answer_ids).to eq (new_order)
+
+      tasked_exercise.attempt_number = 2
+      tasked_exercise.save
+      tasked_exercise.answer_id_order = original_order
+      expect(tasked_exercise.answer_ids).to eq(new_order)
+    end
+
+    it 'cannot change answer ids' do
+      tasked_exercise.attempt_number = 0
+      tasked_exercise.answer_ids = ['3', '2', '1']
+      tasked_exercise.answer_id_order = ['1', '4', '2', '3']
+
+      expect(tasked_exercise.answer_ids).to eq(['1', '2', '3'])
+    end
   end
 end

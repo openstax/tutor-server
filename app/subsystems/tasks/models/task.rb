@@ -66,9 +66,6 @@ class Tasks::Models::Task < ApplicationRecord
   has_many :students, through: :roles, subsystem: :course_membership
   has_many :research_cohorts, through: :students,
            subsystem: :research, class_name: 'Research::Models::Cohort'
-  has_many :research_study_brains, -> { student_task },
-           through: :research_cohorts, source: :study_brains,
-           subsystem: :research, class_name: 'Research::Models::StudyBrain'
 
   has_one :concept_coach_task, inverse_of: :task
 
@@ -221,6 +218,15 @@ class Tasks::Models::Task < ApplicationRecord
 
   def manual_grading_feedback_on
     grading_template&.manual_grading_feedback_on || 'grade'
+  end
+
+  def allow_auto_graded_multiple_attempts
+    !!grading_template&.allow_auto_graded_multiple_attempts
+  end
+
+  def shuffle_answer_choices
+    value = grading_template&.shuffle_answer_choices
+    value.nil? ? true : value
   end
 
   def late_work_penalty_applied
@@ -598,7 +604,11 @@ class Tasks::Models::Task < ApplicationRecord
     if use_cache && cache_valid?
       completed_steps_count == steps_count
     else
-      task_steps.loaded? ? task_steps.all?(&:completed?) : !task_steps.incomplete.exists?
+      # Check if we can call task_steps.all?(&:completed?) without triggering N+1 queries
+      # or if we should use a single SQL query instead
+      task_steps.loaded? && task_steps.all? do |ts|
+        ts.first_completed_at.nil? || !ts.exercise? || ts.association(:tasked).loaded?
+      end ? task_steps.all?(&:completed?) : !task_steps.incomplete.exists?
     end
   end
 
@@ -617,7 +627,11 @@ class Tasks::Models::Task < ApplicationRecord
   end
 
   def core_task_steps_completed?
-    task_steps.loaded? ? core_task_steps.all?(&:completed?) : !task_steps.core.incomplete.exists?
+    # Check if we can call core_task_steps.all?(&:completed?) without triggering N+1 queries
+    # or if we should use a single SQL query instead
+    task_steps.loaded? && core_task_steps.all? do |ts|
+      ts.first_completed_at.nil? || !ts.exercise? || ts.association(:tasked).loaded?
+    end ? core_task_steps.all?(&:completed?) : !task_steps.core.incomplete.exists?
   end
 
   def hide(current_time: Time.current)

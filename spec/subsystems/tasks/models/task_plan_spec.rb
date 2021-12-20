@@ -218,6 +218,35 @@ RSpec.describe Tasks::Models::TaskPlan, type: :model do
     expect(new_task_plan.ecosystem).to eq ecosystem
   end
 
+  it 'automatically corrects homework exercise settings with incorrect points array when cloning' do
+    original_task_plan = FactoryBot.create(
+      :tasks_task_plan,
+      type: 'homework',
+      ecosystem: ecosystem.reload,
+      settings: {
+        page_ids: [ page.id.to_s ],
+        exercises: [ { id: exercise.id.to_s, points: [ 1.0 ] } ]
+      }.deep_stringify_keys
+    )
+    exercise.number_of_questions = 3
+    exercise.question_answer_ids << []
+    exercise.question_answer_ids << [ '-3', '-4' ]
+    exercise.save!
+
+    new_task_plan_1 = original_task_plan.dup
+    new_task_plan_1.cloned_from = original_task_plan
+    new_task_plan_1.tasking_plans = original_task_plan.tasking_plans.map(&:dup)
+    expect(new_task_plan_1).to be_valid
+    expect(new_task_plan_1.settings['exercises'].first['points']).to eq [ 1.0, 2.0, 1.0 ]
+
+    new_task_plan_2 = original_task_plan.dup
+    new_task_plan_2.settings['exercises'].first['points'] = [ 0.9, 1.8, 0.9, 1.8 ]
+    new_task_plan_2.cloned_from = original_task_plan
+    new_task_plan_2.tasking_plans = original_task_plan.tasking_plans.map(&:dup)
+    expect(new_task_plan_2).to be_valid
+    expect(new_task_plan_2.settings['exercises'].first['points']).to eq [ 0.9, 1.8, 0.9 ]
+  end
+
   it 'automatically sets wrq_count when validating' do
     wrq_1 = FactoryBot.create :content_exercise, page: page, question_answer_ids: [ [] ]
     wrq_2 = FactoryBot.create :content_exercise, page: page, question_answer_ids: [ [] ]

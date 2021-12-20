@@ -7,6 +7,7 @@ class Tasks::Models::PracticeQuestion < ApplicationRecord
                                        uniqueness: { scope: [:tasks_tasked_exercise_id, :entity_role_id] }
   validates :content_exercise_id, presence: true,
                                   uniqueness: { scope: [:content_exercise_id, :entity_role_id] }
+  delegate :uuid, :id, to: :exercise, prefix: :exercise
 
   def available?
     tasked_exercise.parts.all?(&:feedback_available?)

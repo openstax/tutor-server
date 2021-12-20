@@ -68,7 +68,7 @@ class Preview::WorkTask
     Tasks::Models::TaskedExercise.import tasked_exercises, validate: false,
                                                            on_duplicate_key_update: {
       conflict_target: [ :id ],
-      columns: [ :free_response, :answer_id, :grader_points, :last_graded_at ]
+      columns: [ :attempt_number, :free_response, :answer_id, :grader_points, :last_graded_at ]
     }
 
     Tasks::Models::TaskStep.import task_steps, validate: false, on_duplicate_key_update: {

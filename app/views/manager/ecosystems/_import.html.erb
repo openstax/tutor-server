@@ -1,14 +1,14 @@
 <%= form_with url: ecosystems_path do |form| %>
   <div class="form-group">
-    <%= form.label :archive_version, 'Content archive code version' %>
-    <% if @archive_versions.nil? %>
+    <%= form.label :pipeline_version, 'Content pipeline code version' %>
+    <% if @pipeline_versions.nil? %>
       <%= text_field_tag(
-        :archive_version, @archive_version, class: 'form-control', 'data-turbolinks-reload': true
+        :pipeline_version, @pipeline_version, class: 'form-control', 'data-turbolinks-reload': true
       ) %>
     <% else %>
       <%= select_tag(
-        :archive_version,
-        options_for_select(@archive_versions, @archive_version),
+        :pipeline_version,
+        options_for_select(@pipeline_versions, @pipeline_version),
         class: 'form-control',
         'data-turbolinks-reload': true
       ) %>
@@ -26,14 +26,14 @@
   </div>
 
   <div class="form-group">
-    <%= form.label :book_version, 'Book version' %>
-    <% if @book_versions.nil? %>
+    <%= form.label :content_version, 'Content version' %>
+    <% if @content_versions.nil? %>
       <%= text_field_tag(
-        :book_version, @book_version, class: 'form-control', 'data-turbolinks-reload': true
+        :content_version, @content_version, class: 'form-control', 'data-turbolinks-reload': true
       ) %>
     <% else %>
       <%= select_tag(
-        :book_version, options_for_select(@book_versions, @book_version),
+        :content_version, options_for_select(@content_versions, @content_version),
         class: 'form-control',
         'data-turbolinks-reload': true
       ) %>

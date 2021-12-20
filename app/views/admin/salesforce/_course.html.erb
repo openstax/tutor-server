@@ -1,0 +1,22 @@
+<%
+  teachers = course.teachers.reject { |teacher| teacher.role.nil? }
+  students = course.students.to_a
+  total_students = students.size
+  dropped_students = students.count(&:dropped?)
+  enrolled_students = total_students - dropped_students
+%>
+
+<tr>
+  <td><%= link_to course.id, edit_admin_course_path(course.id) %></td>
+  <td>
+    <%= '---' if teachers.empty? %>
+    <% teachers.each do |teacher| %>
+      <%=
+        link_to teacher.name, edit_admin_user_path(teacher.role.profile.id)
+      %><%= ' (deleted)' if teacher.deleted? %><%= '; ' unless teacher == teachers.last %>
+    <% end %>
+  </td>
+  <td><%= link_to enrolled_students, admin_course_students_path(course.id) %></td>
+  <td><%= link_to dropped_students, admin_course_students_path(course.id) %></td>
+  <td><%= link_to total_students, admin_course_students_path(course.id) %></td>
+</tr>

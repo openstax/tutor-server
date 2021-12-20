@@ -478,8 +478,8 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
         FactoryBot.create :tasks_task, course: @course
 
         time_zone = @course.time_zone
-        opens_at = time_zone.now - 1.months
-        due_at = time_zone.now + 1.months
+        opens_at = time_zone.now - 1.month
+        due_at = time_zone.now + 1.month
         closes_at = time_zone.now + 2.months
 
         # Use time-zone-less strings to update the open/due dates
@@ -489,43 +489,44 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
 
         task_plan = FactoryBot.build :tasks_task_plan, course: @course, num_tasking_plans: 0
         tasking_plan = FactoryBot.create :tasks_tasking_plan, task_plan: task_plan,
-                                                               opens_at: opens_at_str,
-                                                               due_at: due_at_str,
-                                                               closes_at: closes_at_str
+                                                              opens_at: opens_at_str,
+                                                              due_at: due_at_str,
+                                                              closes_at: closes_at_str
 
         # The time zone is inferred from the course's TimeZone
-        expect(tasking_plan.opens_at).to be_within(1).of(opens_at)
-        expect(tasking_plan.due_at).to be_within(1).of(due_at)
-        expect(tasking_plan.closes_at).to be_within(1).of(closes_at)
+        # Give it a slack of 1 hour due to DST transitions
+        expect(tasking_plan.opens_at).to be_within(1.hour + 1.second).of(opens_at)
+        expect(tasking_plan.due_at).to be_within(1.hour + 1.second).of(due_at)
+        expect(tasking_plan.closes_at).to be_within(1.hour + 1.second).of(closes_at)
 
-        # Change course TimeZone to Arizona
+        # Change course TimeZone to Pacific
         course_name = @course.name
         expect_any_instance_of(Tasks::Models::Task).to receive(:update_caches_later)
         api_patch api_course_url(@course.id), @user_1_token, params: {
-          name: course_name, timezone: 'US/Arizona'
+          name: course_name, timezone: 'US/Pacific'
         }.to_json
 
         expect(response.body_as_hash[:name]).to eq course_name
-        expect(response.body_as_hash[:timezone]).to eq 'US/Arizona'
+        expect(response.body_as_hash[:timezone]).to eq 'US/Pacific'
         expect(@course.reload.name).to eq course_name
-        expect(@course.timezone).to eq 'US/Arizona'
+        expect(@course.timezone).to eq 'US/Pacific'
 
-        arizona_tz = @course.time_zone
+        pacific_tz = @course.time_zone
 
-        # Reinterpret the time-zone-less strings as being in the Arizona time zone
-        new_opens_at = arizona_tz.parse(opens_at_str)
-        new_due_at = arizona_tz.parse(due_at_str)
-        new_closes_at = arizona_tz.parse(closes_at_str)
+        # Reinterpret the time-zone-less strings as being in the Pacific time zone
+        new_opens_at = pacific_tz.parse(opens_at_str)
+        new_due_at = pacific_tz.parse(due_at_str)
+        new_closes_at = pacific_tz.parse(closes_at_str)
 
         # The open/due/close dates changed
-        expect(tasking_plan.reload.opens_at).not_to be_within(1).of(opens_at)
-        expect(tasking_plan.due_at).not_to be_within(1).of(due_at)
-        expect(tasking_plan.closes_at).not_to be_within(1).of(closes_at)
+        expect(tasking_plan.reload.opens_at).not_to be_within(1.second).of(opens_at)
+        expect(tasking_plan.due_at).not_to be_within(1.second).of(due_at)
+        expect(tasking_plan.closes_at).not_to be_within(1.second).of(closes_at)
 
-        # They now act as if they were specified in the Arizona time zone
-        expect(tasking_plan.opens_at).to be_within(1).of(new_opens_at)
-        expect(tasking_plan.due_at).to be_within(1).of(new_due_at)
-        expect(tasking_plan.closes_at).to be_within(1).of(new_closes_at)
+        # They now act as if they were specified in the Pacific time zone
+        expect(tasking_plan.opens_at).to be_within(1.hour + 1.second).of(new_opens_at)
+        expect(tasking_plan.due_at).to be_within(1.hour + 1.second).of(new_due_at)
+        expect(tasking_plan.closes_at).to be_within(1.hour + 1.second).of(new_closes_at)
       end
 
       it 'updates is_college' do
@@ -932,8 +933,10 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
             teachers: a_collection_containing_exactly(
               id: @teacher_role.teacher.id.to_s,
               role_id: @teacher_role.id.to_s,
+              profile_id: @teacher_role.profile.id.to_s,
               first_name: @teacher_user.first_name,
               last_name: @teacher_user.last_name,
+              name: @teacher_user.name,
               is_active: true
             )
           )
@@ -1010,6 +1013,87 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
     end
   end
 
+  context '#teachers' do
+    before(:all) do
+      DatabaseCleaner.start
+
+      @course.update_attribute :does_cost, true
+
+
+      @teacher_user = FactoryBot.create :user_profile, first_name: 'Bob',
+                                               last_name: 'Newhart',
+                                               full_name: 'Bob Newhart'
+      @teacher_role = AddUserAsCourseTeacher[user: @teacher_user, course: @course]
+      @teacher = @teacher_role.teacher
+      @teacher_token = FactoryBot.create :doorkeeper_access_token,
+                                         resource_owner_id: @teacher_user.id
+    end
+    after(:all)  do
+      DatabaseCleaner.clean
+
+      @course.reload
+    end
+
+    context 'caller has an authorization token' do
+      context 'caller is a course teacher' do
+        it 'returns the course instructors' do
+          api_get teachers_api_course_url(@course.id), @teacher_token
+          expect(response).to have_http_status(:ok)
+          teachers = response.body_as_hash
+
+          expect(teachers).to match a_collection_containing_exactly(
+            id: @teacher_role.teacher.id.to_s,
+            role_id: @teacher_role.id.to_s,
+            profile_id: @teacher_role.profile.id.to_s,
+            first_name: @teacher_user.first_name,
+            last_name: @teacher_user.last_name,
+            name: @teacher_user.name,
+            is_active: true
+          )
+        end
+      end
+
+      context 'caller is not a course teacher' do
+        it 'returns the course instructors' do
+          @student_user = FactoryBot.create :user_profile
+          @student_role = AddUserAsPeriodStudent[user: @student_user, period: @period]
+          @student_token = FactoryBot.create :doorkeeper_access_token,
+                                         resource_owner_id: @student_user.id
+
+          api_get teachers_api_course_url(@course.id), @student_token
+          expect(response).to have_http_status(:ok)
+          teachers = response.body_as_hash
+
+          expect(teachers).to match a_collection_containing_exactly(
+            id: @teacher_role.teacher.id.to_s,
+            role_id: @teacher_role.id.to_s,
+            profile_id: @teacher_role.profile.id.to_s,
+            first_name: @teacher_user.first_name,
+            last_name: @teacher_user.last_name,
+            name: @teacher_user.name,
+            is_active: true
+          )
+        end
+      end
+    end
+
+    context 'caller has an application/client credentials authorization token' do
+      it 'raises SecurityTransgression' do
+        expect do
+          api_get teachers_api_course_url(@course.id), @userless_token
+        end.to raise_error(SecurityTransgression)
+      end
+    end
+
+    context 'caller does not have an authorization token' do
+      it 'raises SecurityTransgression' do
+        expect do
+          api_get teachers_api_course_url(@course.id), nil
+        end.to raise_error(SecurityTransgression)
+      end
+    end
+  end
+
   context '#clone' do
     let(:valid_body)   { { copy_question_library: false } }
 
@@ -1054,7 +1138,9 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
       let(:expected_year)      { @course.year + 1 }
       let(:expected_term_year) { TermYear.new(@course.term, expected_year) }
       let(:expected_response)  do
-        Api::V1::CourseRepresenter.new(@course).as_json.deep_symbolize_keys.merge(
+        Api::V1::CourseRepresenter.new(
+          CollectCourseInfo[courses: @course, user: @user_1].first
+        ).as_json.deep_symbolize_keys.merge(
           id: a_kind_of(String),
           uuid: a_kind_of(String),
           code: @course.code,
@@ -1065,9 +1151,9 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
           is_active: be_in([true, false]),
           is_access_switchable: be_in([true, false]),
           periods: [a_kind_of(Hash)] * @course.num_sections,
-          students: [],
-          teachers: [a_kind_of(Hash)],
           roles: [a_kind_of(Hash)],
+          teacher_record: a_kind_of(Hash),
+          teachers: [a_kind_of(Hash)],
           is_lms_enabling_allowed: true,
           ecosystem_id: @course.offering.content_ecosystem_id.to_s,
           cloned_from_id: @course.id.to_s,
@@ -1084,10 +1170,10 @@ RSpec.describe Api::V1::CoursesController, type: :request, api: true,
 
         expect(response).to have_http_status(:success)
         new_course = response.body_as_hash
-        # the new course will have a different id, uuid and teachers
+        # the new course will have a different id, uuid and teacher_record
         expect(new_course[:id]).not_to eq(expected_response[:id])
         expect(new_course[:uuid]).not_to eq(expected_response[:uuid])
-        expect(new_course[:teachers]).not_to eq(expected_response[:teachers])
+        expect(new_course[:teacher_record]).not_to eq(expected_response[:teacher_record])
         # but will otherwise be the same
         expect(new_course).to match expected_response
       end

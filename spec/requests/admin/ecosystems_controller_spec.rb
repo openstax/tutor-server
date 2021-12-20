@@ -22,12 +22,65 @@ RSpec.describe Admin::EcosystemsController, type: :request, vcr: VCR_OPTS, speed
     end
   end
 
+  context 'GET #new' do
+    it 'provides information about ecosystems that can be imported' do
+      get new_admin_ecosystem_url
+
+      expect(assigns[:pipeline_versions]).to eq [
+        '20210713.205645',
+        '20210623.195337',
+        '20210514.171726',
+        '20210421.141058',
+        '20210325.214454',
+        '20210224.204120',
+        '20201222.172624',
+        '20201029.133542',
+        '20201014.233724',
+        '20200827.155539'
+      ]
+      expect(assigns[:pipeline_version]).to eq '20210713.205645'
+      expect(assigns[:collections]).to eq [
+        [ 'American government - col11995', 'col11995' ],
+        [ 'American government 2e - col26739', 'col26739' ],
+        [ 'American government 3e - col33102', 'col33102' ],
+        [ 'Anatomy and physiology - col11496', 'col11496' ],
+        [ 'Biology - col11448', 'col11448' ],
+        [ 'Biology 2e - col24361', 'col24361' ],
+        [ 'Biology ap courses - col12078', 'col12078' ],
+        [ 'College physics - col11406', 'col11406' ],
+        [ 'College physics ap courses - col11844', 'col11844' ],
+        [ 'College physics courseware - col12006', 'col12006' ],
+        [ 'Concepts biology - col11487', 'col11487' ],
+        [ 'Entrepreneurship - col29104', 'col29104' ],
+        [ 'Física universitaria volumen 1 - col33393', 'col33393' ],
+        [ 'Introduction sociology - col11407', 'col11407' ],
+        [ 'Introduction sociology 2e - col11762', 'col11762' ],
+        [ 'Introduction sociology 3e - col32649', 'col32649' ],
+        [ 'Life liberty and pursuit happiness - col31596', 'col31596' ],
+        [ 'Physics - col12081', 'col12081' ],
+        [ 'Psychology - col11629', 'col11629' ],
+        [ 'Psychology 2e - col31502', 'col31502' ],
+        [ 'University physics volume 1 - col12031', 'col12031' ],
+        [ 'University physics volume 2 - col12074', 'col12074' ],
+        [ 'University physics volume 3 - col12067', 'col12067' ],
+        [ 'Us history - col11740', 'col11740' ]
+      ]
+      expect(assigns[:reading_processing_instructions]).to eq <<~EOS
+        ---
+        - css: ".summary, .review-questions, .critical-thinking, .suggested-reading, .references"
+          fragments: []
+      EOS
+      expect(assigns[:content_versions]).to eq [ '19.1' ]
+      expect(assigns[:content_version]).to eq '19.1'
+    end
+  end
+
   context 'POST #create' do
     context 'tutor book' do
-      let(:archive_version)                 { '0.1' }
+      let(:pipeline_version)                { '0.1' }
       let(:collection_id)                   { 'col00000' }
       let(:book_uuid)                       { '93e2b09d-261c-4007-a987-0b3062fe154b' }
-      let(:book_version)                    { '4.4' }
+      let(:content_version)                 { '4.4' }
       let(:reading_processing_instructions) do
         YAML.load_file('config/reading_processing_instructions.yml')['college-physics'].to_yaml
       end
@@ -39,9 +92,9 @@ RSpec.describe Admin::EcosystemsController, type: :request, vcr: VCR_OPTS, speed
 
         expect do
           post admin_ecosystems_url, params: {
-            archive_version: archive_version,
+            pipeline_version: pipeline_version,
             collection_id: collection_id,
-            book_version: book_version,
+            content_version: content_version,
             reading_processing_instructions: reading_processing_instructions
           }
         end.to change { Content::Models::Ecosystem.count }.by(1)

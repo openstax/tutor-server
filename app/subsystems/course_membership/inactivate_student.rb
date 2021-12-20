@@ -12,11 +12,6 @@ module CourseMembership
 
       RefundPayment.perform_later(uuid: student.uuid) if student.is_refund_allowed
 
-      Lms::Models::CourseScoreCallback.where(
-        profile: student.role.profile,
-        course: student.course,
-      ).destroy_all
-
       period_id = student.period.id
       queue = student.course.is_preview ? :preview : :dashboard
       task_plan_ids = Tasks::Models::Task.joins(:taskings).where(

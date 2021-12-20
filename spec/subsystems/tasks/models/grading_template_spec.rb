@@ -139,4 +139,20 @@ RSpec.describe Tasks::Models::GradingTemplate, type: :model do
     expect(grading_template_2.destroy).to eq false
     expect(grading_template_2.reload.deleted?).to eq false
   end
+
+  context '#allow_auto_graded_multiple_attempts' do
+    it 'is allowed during validation if auto grading feedback is immediate' do
+      grading_template.auto_grading_feedback_on_answer!
+      grading_template.allow_auto_graded_multiple_attempts = true
+      expect(grading_template).to be_valid
+      expect(grading_template.allow_auto_graded_multiple_attempts).to eq true
+    end
+
+    it 'is forced to false during validation if auto grading feedback is not immediate' do
+      grading_template.auto_grading_feedback_on_due!
+      grading_template.allow_auto_graded_multiple_attempts = true
+      expect(grading_template).to be_valid
+      expect(grading_template.allow_auto_graded_multiple_attempts).to eq false
+    end
+  end
 end

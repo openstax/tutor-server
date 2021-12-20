@@ -68,7 +68,7 @@ gem 'whenever'
 gem 'omniauth-oauth2', '~> 1.3.1'
 
 # OpenStax Accounts integration
-gem 'openstax_accounts', '~> 9.5.1'
+gem 'openstax_accounts'
 
 gem 'action_interceptor'
 
@@ -76,7 +76,7 @@ gem 'action_interceptor'
 gem 'chronic'
 
 # API versioning and documentation
-gem 'openstax_api'
+gem 'openstax_api', '< 9.4.0'
 
 # Used to fetch and parse OpenStax book content
 gem 'openstax_content'
@@ -114,9 +114,6 @@ gem 'keyword_search', github: 'openstax/keyword_search',
 # File uploads
 gem 'remotipart'
 gem 'carrierwave'
-
-# Image editing
-gem 'mini_magick'
 
 # code editing
 gem 'codemirror-rails'
@@ -227,9 +224,11 @@ gem 'bootsnap', '~> 1.4.0', require: false
 # Get env variables from .env file
 gem 'dotenv-rails'
 
+# ActiveStorage S3 support
 gem 'aws-sdk-s3'
 
-gem 'webpacker', '~> 5.2.x'
+# Bundle JS assets using webpack
+gem 'webpacker'
 
 group :development, :test do
   # Allows 'ap' alternative to 'pp' and 'ai' alternative to 'inspect'
@@ -329,12 +328,14 @@ group :production, :test do
 end
 
 group :production do
+  # Used to backup the database before migrations
+  gem 'aws-sdk-rds', require: false
+
+  # Used to record a lifecycle action heartbeat after creating the RDS snapshot before migrating
+  gem 'aws-sdk-autoscaling', require: false
+
   # Used to send custom delayed_job metrics to Cloudwatch
   gem 'aws-sdk-cloudwatch', require: false
-
-  # Used to fetch secrets from the AWS parameter store and secrets manager
-  gem 'aws-sdk-ssm', require: false
-  gem 'aws-sdk-secretsmanager', require: false
 
   # Lograge for consistent logging
   gem 'lograge'

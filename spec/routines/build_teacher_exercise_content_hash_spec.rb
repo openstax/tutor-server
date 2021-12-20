@@ -139,4 +139,71 @@ RSpec.describe BuildTeacherExerciseContentHash, type: :routine do
       expect(errors.first.code).to eq(:multiple_choice_must_have_valid_correctness)
     end
   end
+
+  context 'answer order importance' do
+    it 'can be set' do
+      data = {
+        isAnswerOrderImportant: false,
+        questionText: 'Question?',
+        questionName: 'Title',
+        options: [
+          {
+            content: 'answer',
+            correctness: '1.0',
+            feedback: 'feedback'
+          },
+          {
+            content: 'answer',
+            correctness: '0.0',
+            feedback: 'feedback'
+          },
+          {
+            content: 'answer',
+            correctness: '0.0',
+            feedback: 'feedback'
+          }
+        ],
+        tags: { tagDifficulty: { value: 'easy' }, tagBloom: { value: '2' } }
+      }
+
+      result = described_class.call(data: data)
+      question = result.outputs.content_hash.deep_symbolize_keys[:questions][0]
+      expect(question[:is_answer_order_important]).to eq(false)
+      expect(result.errors).to be_empty
+
+      result = described_class.call data: data.merge({ isAnswerOrderImportant: 'true' })
+      question = result.outputs.content_hash.deep_symbolize_keys[:questions][0]
+      expect(question[:is_answer_order_important]).to eq(true)
+
+      result = described_class.call data: data.merge({ isAnswerOrderImportant: 'noboolean' })
+      question = result.outputs.content_hash.deep_symbolize_keys[:questions][0]
+      expect(question[:is_answer_order_important]).to eq(false)
+    end
+
+    it 'is always true if there are only 2 options' do
+      data = {
+        isAnswerOrderImportant: false,
+        questionText: 'Question?',
+        questionName: 'Title',
+        options: [
+          {
+            content: 'answer',
+            correctness: '1.0',
+            feedback: 'feedback'
+          },
+          {
+            content: 'answer',
+            correctness: '0.0',
+            feedback: 'feedback'
+          }
+        ],
+        tags: { tagDifficulty: { value: 'easy' }, tagBloom: { value: '2' } }
+      }
+
+      result = described_class.call(data: data)
+      question = result.outputs.content_hash.deep_symbolize_keys[:questions][0]
+      expect(question[:is_answer_order_important]).to eq(true)
+      expect(result.errors).to be_empty
+    end
+  end
 end

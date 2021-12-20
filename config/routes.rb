@@ -80,6 +80,7 @@ Rails.application.routes.draw do
       member do
         get :'dashboard(/role/:role_id)', action: :dashboard
         get :roster
+        get :teachers
         post :clone
       end
 
@@ -311,7 +312,9 @@ Rails.application.routes.draw do
 
     resources :research_data, only: [ :index, :create ]
 
-    resource :salesforce, only: [ :show, :update ]
+    resource :salesforce, controller: :salesforce, only: [] do
+      get :failures
+    end
 
     resource :cron, only: :update
 
@@ -392,7 +395,6 @@ Rails.application.routes.draw do
       end
 
       resources :study_courses, shallow: true, only: [ :create, :destroy ]
-      resources :brains, shallow: true
       resources :cohorts, shallow: true do
         put :reassign_members
         get :members

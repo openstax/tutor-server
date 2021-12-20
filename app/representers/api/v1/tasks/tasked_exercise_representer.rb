@@ -1,8 +1,12 @@
 module Api::V1::Tasks
   class TaskedExerciseRepresenter < TaskStepRepresenter
     FEEDBACK_AVAILABLE = ->(*) { feedback_available? }
+    SOLUTION_AVAILABLE = ->(*) { solution_available? }
     INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE = ->(user_options:, **) do
       user_options&.[](:include_content) && feedback_available?
+    end
+    INCLUDE_CONTENT_AND_SOLUTION_AVAILABLE = ->(user_options:, **) do
+      user_options&.[](:include_content) && solution_available?
     end
 
     property :content_exercise_id,
@@ -13,6 +17,15 @@ module Api::V1::Tasks
              schema_info: {
                required: true,
                description: "The id of the exercise tasked"
+             }
+
+    property :exercise_uuid,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: false,
+               description: "The UUID of the exercise tasked"
              }
 
     property :title,
@@ -34,20 +47,13 @@ module Api::V1::Tasks
                description: "The content preview as exercise tasked"
              }
 
-    property :answer_id,
-             writeable: true,
-             readable: true,
-             schema_info: {
-               description: "The answer id that was recorded for the Exercise"
-             }
-
     property :uid,
              type: String,
              writeable: false,
              readable: true,
              schema_info: {
                required: false,
-               description: "The UUID of the exercise, steps with identical uid will be grouped together into a MPQ"
+               description: "The number@version of the exercise, steps with identical uid will be grouped together into a MPQ"
              }
 
     property :labels,
@@ -66,6 +72,27 @@ module Api::V1::Tasks
              readable: true,
              schema_info: {
                description: "A list of the formats that the question should be rendered using"
+             }
+
+    property :attempt_number,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               description: "The current attempt number"
+             }
+
+    property :answer_id,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               description: "The answer id that was recorded for the Exercise"
+             }
+
+    property :answer_id_order,
+             writeable: true,
+             readable: true,
+             schema_info: {
+               description: "The order of the answer ids for the first attempt"
              }
 
     property :free_response,
@@ -99,14 +126,34 @@ module Api::V1::Tasks
                description: "Whether or not this exercise's feedback is available"
              }
 
-    property :solution,
-             type: String,
+    property :solution_available?,
+             as: :is_solution_available,
              writeable: false,
              readable: true,
              schema_info: {
-               description: "A detailed solution that explains the correct choice"
+               required: true,
+               type: 'boolean',
+               description: "Whether or not this exercise's solution is available"
+             }
+
+    property :was_manually_graded?,
+             as: :was_manually_graded,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               required: true,
+               type: 'boolean',
+               description: "Whether or not this exercise was manually graded"
+             }
+
+    property :attempts_remaining,
+             type: Integer,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               description: "The number of attempts remaining for this exercise"
              },
-             if: INCLUDE_CONTENT_AND_FEEDBACK_AVAILABLE
+             if: ->(*) { !attempts_remaining.infinite? }
 
     property :feedback,
              as: :feedback_html,
@@ -122,9 +169,27 @@ module Api::V1::Tasks
              writeable: false,
              readable: true,
              schema_info: {
-               description: "The Exercise's correct answer's id"
+               description: "The Exercise's correct answer id"
              },
-             if: FEEDBACK_AVAILABLE
+             if: INCLUDE_CONTENT_AND_SOLUTION_AVAILABLE
+
+    property :correct_answer_feedback,
+             as: :correct_answer_feedback_html,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               description: "The Exercise's correct answer feedback"
+             },
+             if: INCLUDE_CONTENT_AND_SOLUTION_AVAILABLE
+
+    property :solution,
+             type: String,
+             writeable: false,
+             readable: true,
+             schema_info: {
+               description: "A detailed solution that explains the correct choice"
+             },
+             if: INCLUDE_CONTENT_AND_SOLUTION_AVAILABLE
 
     property :context,
              type: String,
@@ -183,7 +248,7 @@ module Api::V1::Tasks
              type: String,
              readable: true,
              writeable: false,
-             if: FEEDBACK_AVAILABLE
+             if: SOLUTION_AVAILABLE
 
     property :drop_method,
             type: String,

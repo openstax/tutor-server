@@ -49,4 +49,20 @@ RSpec.describe FindOrCreatePracticeSavedTask, type: :routine do
     expect(result.outputs.task).to be_nil
     expect(result.errors).not_to be_empty
   end
+
+  it 'only includes one version if multiple of the same were picked' do
+    exercise = question.tasked_exercise.exercise.dup
+    exercise.save!
+    dup_tasked = FactoryBot.create(:tasks_tasked_exercise, :with_tasking, tasked_to: @role, exercise: exercise)
+    dup_question = FactoryBot.create(:tasks_practice_question, role: @role, exercise: exercise, tasked_exercise: dup_tasked)
+
+    Preview::AnswerExercise.call task_step: question.tasked_exercise.task_step, is_correct: true, save: true
+    Preview::AnswerExercise.call task_step: dup_tasked.task_step, is_correct: true, save: true
+    allow_any_instance_of(Tasks::Models::Task).to receive(:auto_grading_feedback_on).and_return('answer')
+
+    result = described_class.call(course: @course, role: @role, question_ids: [question.id, dup_question.id])
+    expect(result.outputs.task).not_to be_nil
+    expect(result.outputs.task.task_steps.count).to eq(1)
+    expect(result.errors).to be_empty
+  end
 end

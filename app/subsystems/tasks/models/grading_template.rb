@@ -32,6 +32,8 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
 
   validates :name, uniqueness: { scope: :course_profile_course_id }
 
+  before_validation :disable_multiple_attempts_unless_immediate_feedback
+
   validate :weights_add_up, :default_times_have_good_values
 
   before_update  :no_open_task_plans_on_update, :no_task_plans_when_changing_task_plan_type
@@ -50,7 +52,9 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
       default_open_time: '00:01',
       default_due_time: '21:00',
       default_due_date_offset_days: 7,
-      default_close_date_offset_days: 7
+      default_close_date_offset_days: 7,
+      allow_auto_graded_multiple_attempts: false,
+      shuffle_answer_choices: true
     },
     {
       task_plan_type: :reading,
@@ -64,7 +68,9 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
       default_open_time: '00:01',
       default_due_time: '07:00',
       default_due_date_offset_days: 7,
-      default_close_date_offset_days: 7
+      default_close_date_offset_days: 7,
+      allow_auto_graded_multiple_attempts: false,
+      shuffle_answer_choices: true
     }
   ]
 
@@ -81,6 +87,12 @@ class Tasks::Models::GradingTemplate < ApplicationRecord
   end
 
   protected
+
+  def disable_multiple_attempts_unless_immediate_feedback
+    return if auto_grading_feedback_on_answer?
+
+    self.allow_auto_graded_multiple_attempts = false
+  end
 
   def weights_add_up
     return if completion_weight.nil? || correctness_weight.nil? ||

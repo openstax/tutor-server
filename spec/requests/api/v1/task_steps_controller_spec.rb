@@ -130,143 +130,219 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
   end
 
   context '#update' do
-    let(:tasked) do
-      FactoryBot.create(:tasks_tasked_exercise).tap do |tasked|
-        FactoryBot.create :tasks_tasking, role: @user_1_role, task: tasked.task_step.task
-      end
-    end
-
-    it 'updates the free response of an exercise' do
-      answer_id = tasked.answer_ids.first
-
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { free_response: 'Ipsum lorem', answer_id: answer_id.to_s }.to_json
-      expect(response).to have_http_status(:success)
-
-      expect(response.body_as_hash).to(
-        include(answer_id: answer_id.to_s, free_response: 'Ipsum lorem')
-      )
-
-      expect(tasked.reload.free_response).to eq 'Ipsum lorem'
-    end
-
-    it "422's if needs to pay" do
-      make_payment_required_and_expect_422(course: @course, user: @user_1) {
-        api_put api_step_url(tasked.task_step.id), @user_1_token,
-                params: { free_response: 'Ipsum lorem' }.to_json
-      }
-    end
-
-    it 'updates the selected answer of an exercise' do
-      tasked.free_response = 'Ipsum lorem'
-      tasked.save!
-      answer_id = tasked.answer_ids.first
-
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { answer_id: answer_id.to_s }.to_json
-
-      expect(response).to have_http_status(:success)
-
-      expect(tasked.reload.answer_id).to eq answer_id
-      task_step = tasked.task_step
-      expect(task_step.first_completed_at).not_to be_nil
-      expect(task_step.last_completed_at).not_to be_nil
-    end
-
-    it 'does not update the answer if the free response is not set' do
-      answer_id = tasked.answer_ids.first
-
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { answer_id: answer_id.to_s }.to_json
-
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(tasked.reload.answer_id).to be_nil
-    end
-
-    it 'returns an error when the free response is blank' do
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { free_response: ' ' }.to_json
-
-      expect(response).to have_http_status(:unprocessable_entity)
-    end
-
-    it 'updates last_completed_at if the step is already completed' do
-      tasked.free_response = 'Ipsum Lorem'
-      tasked.answer_id = tasked.answer_ids.first
-      tasked.save!
-      task_step = tasked.task_step
-      completed_at = Time.current - 1.second
-      task_step.complete! completed_at: completed_at
-      expect(task_step.first_completed_at).to eq completed_at
-      expect(task_step.last_completed_at).to eq completed_at
-      task_step.task.task_plan.grading_template.update_column :auto_grading_feedback_on, :due
-
-      expect do
-        api_put api_step_url(tasked.task_step.id), @user_1_token,
-                params: { answer_id: tasked.answer_ids.last }.to_json
-      end.to change { tasked.reload.answer_id }
-
-      expect(response).to have_http_status(:success)
-      task_step.reload
-      expect(task_step.last_completed_at).not_to be_nil
-      expect(task_step.last_completed_at).not_to eq completed_at
-      expect(tasked.answer_id).to eq tasked.answer_ids.last
-      expect(tasked.free_response).to eq 'Ipsum Lorem'
-    end
-
-    it 'calls MarkTaskStepCompleted when setting only the free_response' do
-      completed_task_step = tasked.task_step
-      expect(MarkTaskStepCompleted).to(
-        receive(:call).and_wrap_original do |method, task_step:, lock_task:|
-          expect(task_step).to eq completed_task_step
-          expect(lock_task).to eq true
-
-          method.call task_step: task_step, lock_task: lock_task
+    context 'exercise' do
+      let(:tasked) do
+        FactoryBot.create(:tasks_tasked_exercise).tap do |tasked|
+          FactoryBot.create :tasks_tasking, role: @user_1_role, task: tasked.task_step.task
         end
-      )
-
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { free_response: 'Ipsum Lorem' }.to_json
-    end
-
-    it 'calls MarkTaskStepCompleted when setting the answer_id' do
-      completed_task_step = tasked.task_step
-      expect(MarkTaskStepCompleted).to(
-        receive(:call).and_wrap_original do |method, task_step:, lock_task:|
-          expect(task_step).to eq completed_task_step
-          expect(lock_task).to eq true
-
-          method.call task_step: task_step, lock_task: lock_task
-        end
-      )
-
-      api_put api_step_url(tasked.task_step.id), @user_1_token,
-              params: { free_response: 'Ipsum Lorem', answer_id: tasked.answer_ids.last }.to_json
-    end
-
-    context 'research' do
-      let!(:study)  { FactoryBot.create :research_study }
-      let!(:cohort) { FactoryBot.create :research_cohort, name: 'control', study: study }
-      before(:each) do
-        Research::AddCourseToStudy[course: @course, study: study]
       end
 
-      it 'can override requiring free-response format' do
-        expect(tasked.parser.question_formats_for_students).to eq [
-          'multiple-choice', 'free-response'
-        ]
-        FactoryBot.create :research_modified_tasked, study: study, code: <<~EOC
-          tasked.parser.questions_for_students.each{|q|
-            q['formats'] -= ['free-response']
-          } if tasked.exercise? && cohort.name == 'control'
-          manipulation.record!
-        EOC
-        study.activate!
+      it "422's if needs to pay" do
+        make_payment_required_and_expect_422(course: @course, user: @user_1) {
+          api_put api_step_url(tasked.task_step.id), @user_1_token,
+                  params: { free_response: 'Ipsum lorem' }.to_json
+        }
+      end
+
+      it 'does not update the answer if the free response is not set' do
+        answer_id = tasked.answer_ids.first
 
         api_put api_step_url(tasked.task_step.id), @user_1_token,
-                params: { free_response: '', answer_id: tasked.answer_ids.first }.to_json
+                params: { answer_id: answer_id.to_s }.to_json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(tasked.reload.answer_id).to be_nil
+      end
+
+      it 'returns an error when the free response is blank' do
+        api_put api_step_url(tasked.task_step.id), @user_1_token,
+                params: { free_response: ' ' }.to_json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'errors if an unexpected attempt_number is provided' do
+        answer_id = tasked.answer_ids.first
+
+        api_put api_step_url(tasked.task_step.id), @user_1_token, params: {
+          free_response: 'Ipsum lorem',
+          answer_id: answer_id.to_s,
+          attempt_number: tasked.attempt_number - 1
+        }.to_json
+        expect(response).to have_http_status(:unprocessable_entity)
+
+        expect(response.body_as_hash).to eq(
+          errors: [
+            {
+              code: 'invalid_attempt_number',
+              message: 'This question is already in progress in another tab or window;' +
+                       ' reload this page to continue.'
+            }
+          ], status: 422
+        )
+
+        expect(tasked.reload.free_response).not_to eq 'Ipsum lorem'
+        expect(tasked.answer_id).not_to eq tasked.answer_ids.first
+      end
+
+      it 'updates the free response of an exercise' do
+        answer_id = tasked.answer_ids.first
+
+        api_put api_step_url(tasked.task_step.id), @user_1_token, params: {
+          free_response: 'Ipsum lorem',
+          answer_id: answer_id.to_s,
+          attempt_number: tasked.attempt_number
+        }.to_json
+        expect(response).to have_http_status(:success)
+
+        expect(response.body_as_hash).to(
+          include(answer_id: answer_id.to_s, free_response: 'Ipsum lorem')
+        )
+
+        expect(tasked.reload.free_response).to eq 'Ipsum lorem'
+      end
+
+      it 'updates the selected answer of an exercise' do
+        tasked.free_response = 'Ipsum lorem'
+        tasked.save!
+        answer_id = tasked.answer_ids.first
+
+        expect do
+          api_put api_step_url(tasked.task_step.id), @user_1_token,
+                  params: { answer_id: answer_id.to_s }.to_json
+        end.to  change { tasked.reload.answer_id }
+           .and change { tasked.attempt_number }.from(0).to(1)
 
         expect(response).to have_http_status(:success)
+
+        expect(tasked.reload.answer_id).to eq answer_id
+        task_step = tasked.task_step
+        expect(task_step.first_completed_at).not_to be_nil
+        expect(task_step.last_completed_at).not_to be_nil
+      end
+
+      it 'updates last_completed_at and creates a PreviousAttempt if multiple attempts is on' do
+        # Need at least 4 answers for multiple attempts
+        tasked.answer_ids += [ '-3', '-4' ]
+        expect(tasked.answer_ids.size).to eq 4
+        incorrect_answer_ids = tasked.answer_ids - [ tasked.correct_answer_id ]
+
+        tasked.attempt_number = 1
+        tasked.free_response = 'Ipsum Lorem'
+        tasked.answer_id = incorrect_answer_ids.first
+        tasked.save!
+        task_step = tasked.task_step
+        completed_at = Time.current - 1.second
+        task_step.complete! completed_at: completed_at
+        expect(task_step.first_completed_at).to eq completed_at
+        expect(task_step.last_completed_at).to eq completed_at
+        task_step.task.task_plan.grading_template.update_columns(
+          auto_grading_feedback_on: :answer,
+          allow_auto_graded_multiple_attempts: true
+        )
+
+        expect do
+          api_put api_step_url(tasked.task_step.id), @user_1_token,
+                  params: { answer_id: tasked.correct_answer_id }.to_json
+        end.to  change { tasked.reload.answer_id }
+           .and change { tasked.attempt_number }.from(1).to(2)
+           .and change { tasked.previous_attempts.count }.by(1)
+        expect(response).to have_http_status(:success)
+
+        task_step.reload
+        expect(task_step.last_completed_at).not_to be_nil
+        expect(task_step.last_completed_at).not_to eq completed_at
+        expect(tasked.answer_id).to eq tasked.correct_answer_id
+        expect(tasked.free_response).to eq 'Ipsum Lorem'
+
+        previous_attempt = tasked.previous_attempts.order(:number).last
+        expect(previous_attempt.number).to eq tasked.attempt_number - 1
+        expect(previous_attempt.free_response).to eq 'Ipsum Lorem'
+        expect(previous_attempt.answer_id).to eq incorrect_answer_ids.first
+        expect(previous_attempt.attempted_at).to be_within(1e-6).of(completed_at)
+      end
+
+      it 'calls MarkTaskStepCompleted when setting only the free_response' do
+        completed_task_step = tasked.task_step
+        expect(MarkTaskStepCompleted).to(
+          receive(:call).and_wrap_original do |method, task_step:, lock_task:|
+            expect(task_step).to eq completed_task_step
+            expect(lock_task).to eq true
+
+            method.call task_step: task_step, lock_task: lock_task
+          end
+        )
+
+        api_put api_step_url(tasked.task_step.id), @user_1_token,
+                params: { free_response: 'Ipsum Lorem' }.to_json
+      end
+
+      it 'calls MarkTaskStepCompleted when setting the answer_id' do
+        completed_task_step = tasked.task_step
+        expect(MarkTaskStepCompleted).to(
+          receive(:call).and_wrap_original do |method, task_step:, lock_task:|
+            expect(task_step).to eq completed_task_step
+            expect(lock_task).to eq true
+
+            method.call task_step: task_step, lock_task: lock_task
+          end
+        )
+
+        api_put api_step_url(tasked.task_step.id), @user_1_token,
+                params: { free_response: 'Ipsum Lorem', answer_id: tasked.answer_ids.last }.to_json
+      end
+
+      it 'updates the answer order of the exercise' do
+        tasked.free_response = 'Ipsum lorem'
+        tasked.answer_ids = ['1', '2', '3', '4']
+        tasked.save!
+        answer_id = tasked.answer_ids.first
+        original_order = tasked.answer_ids
+        new_order = tasked.answer_ids.reverse
+
+        expect do
+          api_put api_step_url(tasked.task_step.id), @user_1_token,
+                  params: { answer_id: answer_id.to_s, answer_id_order: new_order }.to_json
+        end.to change { tasked.reload.answer_ids }.from(original_order).to(new_order)
+
+        expect(response).to have_http_status(:success)
+
+        # Does not update after the first attempt
+        expect do
+          api_put api_step_url(tasked.task_step.id), @user_1_token,
+                  params: { answer_id: answer_id.to_s, answer_id_order: new_order.reverse }.to_json
+        end.not_to change { tasked.reload.answer_ids }
+
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context 'reading' do
+      let(:tasked) do
+        FactoryBot.create(:tasks_tasked_reading).tap do |tasked|
+          FactoryBot.create :tasks_tasking, role: @user_1_role, task: tasked.task_step.task
+        end
+      end
+
+      it "422's if needs to pay" do
+        make_payment_required_and_expect_422(course: @course, user: @user_1) {
+          api_put api_step_url(tasked.task_step.id), @user_1_token,
+                  params: { free_response: 'Ipsum lorem' }.to_json
+        }
+      end
+
+      it 'calls MarkTaskStepCompleted' do
+        completed_task_step = tasked.task_step
+        expect(MarkTaskStepCompleted).to(
+          receive(:call).and_wrap_original do |method, task_step:, lock_task:|
+            expect(task_step).to eq completed_task_step
+            expect(lock_task).to eq true
+
+            method.call task_step: task_step, lock_task: lock_task
+          end
+        )
+
+        api_put api_step_url(tasked.task_step.id), @user_1_token
       end
     end
 
@@ -316,6 +392,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
     before do
       tasking_plan.update_attribute :target, @period
 
+      tasked.attempt_number = 1
       tasked.answer_ids = []
       tasked.free_response = 'A sentence explaining all the things!'
       tasked.save!
@@ -346,6 +423,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
            .and not_change { tasking_plan.ungraded_step_count }
            .and not_change { task_plan.reload.gradable_step_count }
            .and not_change { task_plan.reload.ungraded_step_count }
+           .and not_change { tasked.attempt_number }
       end
     end
 
@@ -361,8 +439,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
         it 'updates the grader fields, published fields, gradable step counts and scores' do
           expect do
-            api_put grade_api_step_url(task_step.id), @teacher_user_token,
-                    params: { grader_points: 42.0, grader_comments: 'Test' }.to_json
+            api_put(
+              grade_api_step_url(task_step.id), @teacher_user_token, params: {
+                attempt_number: 1, grader_points: 42.0, grader_comments: 'Test'
+              }.to_json
+            )
           end.to  change     { tasked.reload.grader_points }.from(nil).to(42.0)
              .and change     { tasked.grader_comments }.from(nil).to('Test')
              .and change     { tasked.last_graded_at }.from(nil)
@@ -377,6 +458,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
              .and change     { tasking_plan.ungraded_step_count }.by(-1)
              .and not_change { task_plan.reload.gradable_step_count }
              .and change     { task_plan.ungraded_step_count }.by(-1)
+             .and not_change { tasked.attempt_number }
           expect(response).to have_http_status(:success)
 
           expect(response.body_as_hash).to include(grader_points: 42.0, grader_comments: 'Test')
@@ -398,6 +480,40 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
           expect(task_step.reload.task.manual_grading_complete?).to eq true
         end
+
+        it 'errors if attempt_number does not match' do
+          expect do
+            api_put(
+              grade_api_step_url(task_step.id), @teacher_user_token, params: {
+                attempt_number: 0, grader_points: 42.0, grader_comments: 'Test'
+              }.to_json
+            )
+          end.to  not_change { tasked.reload.grader_points }
+             .and not_change { tasked.grader_comments }
+             .and not_change { tasked.last_graded_at }
+             .and not_change { tasked.published_grader_points }
+             .and not_change { tasked.published_points_without_lateness }
+             .and not_change { tasked.published_points }
+             .and not_change { tasked.published_comments }
+             .and not_change { task.reload.gradable_step_count }
+             .and not_change { task.ungraded_step_count }
+             .and not_change { task.published_points }
+             .and not_change { tasking_plan.reload.gradable_step_count }
+             .and not_change { tasking_plan.ungraded_step_count }
+             .and not_change { task_plan.reload.gradable_step_count }
+             .and not_change { task_plan.ungraded_step_count }
+             .and not_change { tasked.attempt_number }
+          expect(response).to have_http_status(:unprocessable_entity)
+
+          expect(response.body_as_hash).to include(
+            errors: [
+              {
+                code: 'invalid_attempt_number_graded',
+                message: 'A new response has been submitted, please reload your browser.'
+              }
+            ]
+          )
+        end
       end
 
       context "manual_grading_feedback_on == 'publish'" do
@@ -405,8 +521,11 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
         it 'updates the grader fields and gradable step counts' do
           expect do
-            api_put grade_api_step_url(task_step.id), @teacher_user_token,
-                    params: { grader_points: 42.0, grader_comments: 'Test' }.to_json
+            api_put(
+              grade_api_step_url(task_step.id), @teacher_user_token, params: {
+                attempt_number: 1, grader_points: 42.0, grader_comments: 'Test'
+              }.to_json
+            )
           end.to  change     { tasked.reload.grader_points }.from(nil).to(42.0)
              .and change     { tasked.grader_comments }.from(nil).to('Test')
              .and change     { tasked.last_graded_at }.from(nil)
@@ -421,6 +540,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
              .and change     { tasking_plan.ungraded_step_count }.by(-1)
              .and not_change { task_plan.reload.gradable_step_count }
              .and change     { task_plan.ungraded_step_count }.by(-1)
+             .and not_change { tasked.attempt_number }
           expect(response).to have_http_status(:success)
 
           expect(response.body_as_hash).to include(grader_points: 42.0, grader_comments: 'Test')
@@ -436,6 +556,40 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
           expect(task_step.reload.task.manual_grading_complete?).to eq false
         end
+
+        it 'errors if attempt_number does not match' do
+          expect do
+            api_put(
+              grade_api_step_url(task_step.id), @teacher_user_token, params: {
+                attempt_number: 0, grader_points: 42.0, grader_comments: 'Test'
+              }.to_json
+            )
+          end.to  not_change { tasked.reload.grader_points }
+             .and not_change { tasked.grader_comments }
+             .and not_change { tasked.last_graded_at }
+             .and not_change { tasked.published_grader_points }
+             .and not_change { tasked.published_points_without_lateness }
+             .and not_change { tasked.published_points }
+             .and not_change { tasked.published_comments }
+             .and not_change { task.reload.gradable_step_count }
+             .and not_change { task.ungraded_step_count }
+             .and not_change { task.published_points }
+             .and not_change { tasking_plan.reload.gradable_step_count }
+             .and not_change { tasking_plan.ungraded_step_count }
+             .and not_change { task_plan.reload.gradable_step_count }
+             .and not_change { task_plan.ungraded_step_count }
+             .and not_change { tasked.attempt_number }
+          expect(response).to have_http_status(:unprocessable_entity)
+
+          expect(response.body_as_hash).to include(
+            errors: [
+              {
+                code: 'invalid_attempt_number_graded',
+                message: 'A new response has been submitted, please reload your browser.'
+              }
+            ]
+          )
+        end
       end
     end
   end
@@ -449,7 +603,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       @tasked_exercise.task_step.task.update_attribute :opens_at, Time.current.yesterday - 1.day
     end
 
-    it 'only shows feedback and correct answer id after completed and feedback available' do
+    it 'only shows feedback and correct answer id after completed and solution available' do
       api_get(api_step_url(@tasked_exercise.task_step.id), @user_1_token)
 
       expect(response.body_as_hash).not_to have_key(:solution)
@@ -467,6 +621,7 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
 
       correct_answer_id = @tasked_exercise.correct_answer_id
       @tasked_exercise.answer_id = correct_answer_id
+      @tasked_exercise.attempt_number = 1
       @tasked_exercise.save!
 
       api_get(api_step_url(@tasked_exercise.task_step.id), @user_1_token)
@@ -488,26 +643,28 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(response.body_as_hash).not_to have_key(:feedback_html)
       expect(response.body_as_hash).not_to have_key(:correct_answer_id)
 
-      # Get it again after feedback is available
-      @tasked_exercise.task_step.task.update_attribute :due_at, Time.current.yesterday
+      # Get it again after solution is available
+      yesterday = Time.current.yesterday
+      @tasked_exercise.task_step.task.update_attributes(
+        due_at: yesterday, closes_at: yesterday
+      )
 
       api_get(api_step_url(@tasked_exercise.task_step.id), @user_1_token)
 
       expect(response.body_as_hash).to include(solution: { content_html: 'The first one.' })
       expect(response.body_as_hash).to include(feedback_html: 'Right!')
-
       expect(response.body_as_hash).to include(correct_answer_id: correct_answer_id)
     end
 
-    it 'does not allow the answer to be changed after completed and feedback is available' do
+    it 'does not allow the answer to be changed after completed and solution available' do
       # Initial submission of multiple choice and free response
-      answer_id = @tasked_exercise.answer_ids.first
+      first_answer_id = @tasked_exercise.answer_ids.first
       api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,
-              params: { free_response: 'My first answer', answer_id: answer_id }.to_json)
+              params: { free_response: 'My first answer', answer_id: first_answer_id }.to_json)
       expect(response).to have_http_status(:success)
 
       @tasked_exercise.reload
-      expect(@tasked_exercise.answer_id).to eq answer_id
+      expect(@tasked_exercise.answer_id).to eq first_answer_id
       expect(@tasked_exercise.free_response).to eq 'My first answer'
 
       # No feedback yet because feedback date has not been reached
@@ -518,9 +675,17 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       @tasked_exercise.reload
       expect(@tasked_exercise.completed?).to eq true
 
-      # Feedback date has not passed, so the answer can still be updated
+      # Free response cannot be changed after a multiple choice answer is selected
       api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,
               params: { free_response: 'Something else!' }.to_json)
+      expect(response).to have_http_status(:unprocessable_entity)
+
+      second_answer_id = @tasked_exercise.answer_ids.last
+      expect(second_answer_id).not_to eq first_answer_id
+
+      # Feedback date has not passed, so the answer can still be updated
+      api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,
+              params: { answer_id: second_answer_id }.to_json)
       expect(response).to have_http_status(:success)
 
       # The feedback date arrives
@@ -532,18 +697,15 @@ RSpec.describe Api::V1::TaskStepsController, type: :request, api: true, version:
       expect(response).to have_http_status(:unprocessable_entity)
 
       @tasked_exercise.reload
-      expect(@tasked_exercise.free_response).to eq 'Something else!'
+      expect(@tasked_exercise.free_response).to eq 'My first answer'
 
       # Multiple choice cannot be changed
-      new_answer_id = @tasked_exercise.answer_ids.last
-      expect(new_answer_id).not_to eq @tasked_exercise.answer_id
-
       api_put(api_step_url(@tasked_exercise.task_step.id), @user_1_token,
-              params: { answer_id: new_answer_id }.to_json)
+              params: { answer_id: first_answer_id }.to_json)
       expect(response).to have_http_status(:unprocessable_entity)
 
       @tasked_exercise.reload
-      expect(@tasked_exercise.answer_id).to eq answer_id
+      expect(@tasked_exercise.answer_id).to eq second_answer_id
     end
   end
 end

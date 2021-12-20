@@ -34,6 +34,7 @@ class Preview::AnswerExercise
 
     tasked.free_response = free_response
     tasked.answer_id = answer_id
+    tasked.attempt_number = is_completed ? tasked.attempt_number + 1 : 1
     tasked.save! if save && is_completed
 
     run(

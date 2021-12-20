@@ -1,6 +1,5 @@
 module Api::V1
   class CourseRepresenter < Roar::Decorator
-
     include Roar::JSON
     include Representable::Coercion
 
@@ -237,30 +236,53 @@ module Api::V1
                readable: true,
                writeable: false
 
-    collection :students,
-               readable: true,
-               writeable: false,
-               extend: Api::V1::StudentRepresenter
-
-    collection :teachers,
-               readable: true,
-               writeable: false,
-               extend: Api::V1::TeacherRepresenter
-
     collection :roles,
                extend: Api::V1::RoleRepresenter,
                readable: true,
                writeable: false,
-               if: ->(*) { respond_to?(:roles) }
+               if: ->(*) { respond_to?(:roles) },
+               schema_info: { description: "The user's own roles in the course" }
 
-    property :related_teacher_profile_ids,
+    # TODO: Remove when no longer used
+    collection :teachers,
+               readable: true,
+               writeable: false,
+               extend: Api::V1::TeacherRepresenter,
+               schema_info: { description: "The user's own teacher records in the course" }
+
+    property :teacher_record,
+             extend: Api::V1::TeacherRepresenter,
              readable: true,
-             writeable: false
+             writeable: false,
+             schema_info: { description: "The user's own teacher record in the course" }
+
+    # TODO: Remove when no longer used
+    collection :students,
+               readable: true,
+               writeable: false,
+               extend: Api::V1::StudentRepresenter,
+               schema_info: { description: "The user's own student records in the course" }
+
+    property :student_record,
+             extend: Api::V1::StudentRepresenter,
+             readable: true,
+             writeable: false,
+             schema_info: { description: "The user's own student record in the course" }
+
+    collection :teacher_student_records,
+               extend: Api::V1::TeacherStudentRepresenter,
+               readable: true,
+               writeable: false,
+               schema_info: { description: "The user's own teacher_student records in the course" }
 
     collection :teacher_profiles,
               extend: Api::V1::UserProfileRepresenter,
               readable: true,
               writeable: false
+
+    property :related_teacher_profile_ids,
+             readable: true,
+             writeable: false
 
     property :spy_info,
              type: Object,
@@ -271,6 +293,5 @@ module Api::V1
              type: String,
              readable: true,
              writeable: true
-
   end
 end

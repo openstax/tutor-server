@@ -107,11 +107,21 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
     expect(task.reload.is_shared?).to eq true
   end
 
+  it 'defaults shuffle_answer_choices to true' do
+    task.grading_template.shuffle_answer_choices = true
+    expect(task.shuffle_answer_choices).to eq true
+
+    task.grading_template.shuffle_answer_choices = false
+    expect(task.shuffle_answer_choices).to eq false
+
+    task_plan.grading_template = nil
+    expect(task.shuffle_answer_choices).to eq true
+  end
+
   context 'with research cohort' do
     let(:student)  { role.student }
     let(:study)    { FactoryBot.create :research_study }
     let!(:cohort)  { FactoryBot.create :research_cohort, study: study }
-    let!(:brain)   { FactoryBot.create :research_modified_tasked, study: study }
     before(:each)  {
       study.activate!
       Research::Models::CohortMember.create!(student: student, cohort: cohort)
@@ -122,7 +132,6 @@ RSpec.describe Tasks::Models::Task, type: :model, speed: :medium do
       expect(task.roles).to eq [role]
       expect(task.students).to eq [student]
       expect(task.research_cohorts).to eq [cohort]
-      expect(task.research_study_brains).to eq [Research::Models::StudyBrain.find(brain.id)]
     end
   end
 

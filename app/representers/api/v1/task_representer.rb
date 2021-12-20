@@ -87,6 +87,20 @@ module Api::V1
                DESCRIPTION
              }
 
+    property :allow_auto_graded_multiple_attempts,
+            readable: true,
+            writeable: false,
+            schema_info: {
+              type: 'boolean'
+            }
+
+    property :shuffle_answer_choices,
+             readable: true,
+             writeable: false,
+             schema_info: {
+               type: 'boolean'
+             }
+
     property :completion_weight,
              type: Float,
              readable: true,

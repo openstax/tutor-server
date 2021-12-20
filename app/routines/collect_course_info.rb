@@ -13,8 +13,9 @@ class CollectCourseInfo
     outputs.courses = courses.map do |course|
       offering = course.offering
       roles = roles_by_course_id.fetch(course.id, [])
-      students = roles.map(&:student).compact
       teachers = roles.map(&:teacher).compact
+      students = roles.map(&:student).compact
+      teacher_students = roles.map(&:teacher_student).compact
 
       # If the user is an active teacher, return all course periods
       # Otherwise, return only the periods the user is in
@@ -58,11 +59,14 @@ class CollectCourseInfo
         ecosystem: course.ecosystem,
         should_reuse_preview?: course.should_reuse_preview?,
         periods: periods,
-        students: students,
-        teachers: teachers,
         roles: roles,
-        related_teacher_profile_ids: course.related_teacher_profile_ids,
+        teachers: teachers, # TODO: Remove
+        teacher_record: teachers.sort_by(&:created_at).last,
+        students: students, # TODO: Remove
+        student_record: students.sort_by(&:created_at).last,
+        teacher_student_records: teacher_students,
         teacher_profiles: course.teacher_profiles,
+        related_teacher_profile_ids: course.related_teacher_profile_ids,
         spy_info: course.spy_info,
         code: course.code.nil? ? "" : course.code,
       )
@@ -72,7 +76,14 @@ class CollectCourseInfo
   def get_courses(courses:, user:)
     return [courses].flatten unless courses.nil?
 
-    preloads = [ :offering, :studies, periods: :students, course_ecosystems: { ecosystem: :books } ]
+    preloads = [
+      :offering,
+      :studies,
+      :cloned_from,
+      periods: :students,
+      teachers: { role: :profile },
+      course_ecosystems: { ecosystem: :books }
+    ]
     return run(:get_user_courses, user: user, preload: preloads).outputs.courses unless user.nil?
 
     CourseProfile::Models::Course.preload(*preloads)

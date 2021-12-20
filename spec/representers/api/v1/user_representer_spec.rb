@@ -18,7 +18,7 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
     expect(representation['viewed_tour_stats']).to eq []
     expect(representation['available_terms']).to eq []
     expect(representation['profile_url']).to eq Addressable::URI.join(
-      OpenStax::Accounts.configuration.openstax_accounts_url, '/profile'
+      OpenStax::Accounts.configuration.openstax_accounts_url, 'profile'
     ).to_s
   end
 

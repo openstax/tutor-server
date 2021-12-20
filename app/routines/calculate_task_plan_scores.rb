@@ -107,6 +107,7 @@ class CalculateTaskPlanScores
               question_id: tasked.question_id,
               is_completed: task_step.completed?,
               is_correct: tasked.is_correct?,
+              attempt_number: tasked.attempt_number,
               selected_answer_id: tasked.answer_id,
               points: points,
               late_work_point_penalty: tasked.late_work_point_penalty,
@@ -174,28 +175,16 @@ class CalculateTaskPlanScores
           type = step.fixed_group? && step.exercise? ? (
             step.tasked.can_be_auto_graded? ? 'MCQ' : 'WRQ'
           ) : 'Tutor'
-          # TODO: Combine logic when exercise_id, question_id are removed
-          if type != 'Tutor'
-            {
-              title: title,
-              type: type,
-              points_without_dropping: points_without_dropping,
-              points: points,
-              exercise_ids: step_exercise_ids[index].uniq.sort,
-              question_ids: question_ids,
-              exercise_id: step.tasked.content_exercise_id,
-              question_id: step.tasked.question_id
-            }
-          else
-            {
-              title: title,
-              type: type,
-              points_without_dropping: points_without_dropping,
-              points: points,
-              exercise_ids: step_exercise_ids[index].uniq.sort,
-              question_ids: step_question_ids[index].uniq.sort
-            }
-          end
+
+          {
+            title: title,
+            type: type,
+            points_without_dropping: points_without_dropping,
+            points: points,
+            exercise_ids: step_exercise_ids[index].uniq.sort,
+            question_ids: question_ids,
+            group_type: step.group_type,
+          }
         end
       end
 

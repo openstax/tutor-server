@@ -102,17 +102,10 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                points_without_dropping: 1.0,
                points: 1.0,
                type: ts.is_core? ? 'MCQ' : 'Tutor',
-              }.merge(
-                ts.is_core? ? {
-                  exercise_ids: step_exercise_ids[index].uniq.sort,
-                  question_ids: step_question_ids[index].uniq.sort,
-                  exercise_id: ts.tasked.content_exercise_id.to_i,
-                  question_id:  ts.tasked.question_id.to_i
-                } : {
-                  exercise_ids: step_exercise_ids[index].uniq.sort,
-                  question_ids: step_question_ids[index].uniq.sort
-                }
-              )
+               exercise_ids: step_exercise_ids[index].uniq.sort,
+               question_ids: step_question_ids[index].uniq.sort,
+               group_type: ts.group_type
+              }
             end,
             late_work_fraction_penalty: late_work_penalty,
             students: a_collection_including(
@@ -134,6 +127,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: true,
                     is_correct: true,
+                    attempt_number: 0,
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
                     points: 1.0,
@@ -147,6 +141,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: false,
                     is_correct: false,
+                    attempt_number: 0,
                     needs_grading: false,
                     submitted_late: false,
                     late_work_point_penalty: 0.0
@@ -172,6 +167,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: true,
                     is_correct: false,
+                    attempt_number: 0,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
                     points: student_tasks.second.completion_weight,
@@ -185,6 +181,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: false,
                     is_correct: false,
+                    attempt_number: 0,
                     needs_grading: false,
                     submitted_late: false,
                     late_work_point_penalty: 0.0
@@ -267,17 +264,10 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                points_without_dropping: 1.0,
                points: 1.0,
                type: ts.is_core? ? 'MCQ' : 'Tutor',
-              }.merge(
-                ts.is_core? ? {
-                  exercise_ids: step_exercise_ids[index].uniq.sort,
-                  question_ids: step_question_ids[index].uniq.sort,
-                  exercise_id: ts.tasked.content_exercise_id.to_i,
-                  question_id:  ts.tasked.question_id.to_i
-                } : {
-                  exercise_ids: step_exercise_ids[index].uniq.sort,
-                  question_ids: step_question_ids[index].uniq.sort
-                }
-              )
+               exercise_ids: step_exercise_ids[index].uniq.sort,
+               question_ids: step_question_ids[index].uniq.sort,
+               group_type: ts.group_type
+              }
             end,
             late_work_fraction_penalty: late_work_penalty,
             students: a_collection_including(
@@ -299,6 +289,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: true,
                     is_correct: true,
+                    attempt_number: 0,
                     free_response: 'a sentence explaining all the things',
                     selected_answer_id: kind_of(String),
                     points: 1.0,
@@ -313,6 +304,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: false,
                     is_correct: false,
+                    attempt_number: 0,
                     points: 0.0,
                     late_work_point_penalty: 0.0,
                     needs_grading: false,
@@ -346,6 +338,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: true,
                     is_correct: false,
+                    attempt_number: 0,
                     free_response: 'a sentence not explaining anything',
                     selected_answer_id: kind_of(String),
                     points: student_tasks.second.completion_weight,
@@ -361,6 +354,7 @@ RSpec.describe Api::V1::TaskPlan::Scores::Representer, type: :representer do
                     question_id: kind_of(String),
                     is_completed: false,
                     is_correct: false,
+                    attempt_number: 0,
                     points: 0.0,
                     late_work_point_penalty: 0.0,
                     needs_grading: false,
