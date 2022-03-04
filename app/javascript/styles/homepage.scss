@@ -281,7 +281,6 @@
 
     .wrapper {
       min-height: 100vh;
-      padding-right: var(--wrapper-padding);
 
       &:not([data-carousel=true]) {
         max-width: 640px;
@@ -289,7 +288,7 @@
       }
     }
 
-    .content-header, .content, :not([data-carousel=true] .content-footer) {
+    .content-header, .content, [data-carousel=false] .content-footer {
       margin-left: var(--wrapper-padding);
 
       &.content-footer .links {
@@ -334,7 +333,6 @@
     [data-carousel=true] .content-footer {
       max-width: none;
       width: initial;
-      margin: 2.4rem calc(-1 * var(--wrapper-padding)) 0 calc(-1 * var(--wrapper-padding));
 
       .carousel {
         display: block;
