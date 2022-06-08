@@ -353,7 +353,7 @@ GEM
       simple_oauth (~> 0.3.1)
     ipaddress (0.8.3)
     jaro_winkler (1.5.2)
-    jmespath (1.4.0)
+    jmespath (1.6.1)
     jobba (1.8.0)
       oj (~> 3.7.6)
       redis (~> 3.2)
