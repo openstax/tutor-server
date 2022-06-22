@@ -28,6 +28,9 @@ TermYear = Struct.new(:term, :year) do
 
   const_set 'VISIBLE_TERMS', [:spring, :summer, :fall, :winter]
 
+  SUNSET_YEAR = 2023
+  SUNSET_YEAR_VISIBLE_TERMS = [:spring]
+
   attr_reader :starts_at, :ends_at
 
   def initialize(term, year)
@@ -45,14 +48,19 @@ TermYear = Struct.new(:term, :year) do
     @ends_at   = end_proc.call(year) - 1.second
   end
 
+  def self.visible_terms(year)
+    return [] if year > SUNSET_YEAR
+    year == SUNSET_YEAR ? SUNSET_YEAR_VISIBLE_TERMS : TermYear::VISIBLE_TERMS
+  end
+
   def self.visible_term_years(current_time = Time.current)
     current_year = current_time.year
 
-    current_year_visible_term_years = TermYear::VISIBLE_TERMS.map do |term|
+    current_year_visible_term_years = visible_terms(current_year).map do |term|
       TermYear.new(term, current_year)
     end.select { |term_year| term_year.ends_at > current_time }
 
-    next_year_visible_term_years = TermYear::VISIBLE_TERMS.map do |term|
+    next_year_visible_term_years = visible_terms(current_year + 1).map do |term|
       TermYear.new(term, current_year + 1)
     end.select { |term_year| term_year.ends_at <= current_time + 1.year }
 

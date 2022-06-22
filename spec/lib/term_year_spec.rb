@@ -128,6 +128,7 @@ RSpec.describe TermYear, type: :lib do
   end
 
   it 'returns the correct visible_term_years' do
+    stub_const('SUNSET_YEAR', 2999)
     current_year = Time.current.year
 
     spring_date_time        = DateTime.parse("March 1st, #{current_year}"   )
@@ -155,5 +156,32 @@ RSpec.describe TermYear, type: :lib do
       TermYear.new(:fall,   current_year    ), TermYear.new(:winter, current_year ),
       TermYear.new(:spring, current_year + 1), TermYear.new(:summer, current_year + 1),
     ]
+
+    stub_const('SUNSET_YEAR', 2023)
+
+    summer_fall_date_time   = DateTime.parse("July 1st, 2022"    )
+    fall_date_time          = DateTime.parse("November 1st, 2022")
+    spring_date_time        = DateTime.parse("March 1st, 2023"   )
+    spring_summer_date_time = DateTime.parse("June 1st, 2023"    )
+
+    expect(TermYear.visible_term_years(summer_fall_date_time)).to eq [
+      TermYear.new(:summer, 2022), TermYear.new(:fall,   2022),
+      TermYear.new(:winter, 2022), TermYear.new(:spring, 2023)
+    ]
+
+    expect(TermYear.visible_term_years(fall_date_time)).to eq [
+      TermYear.new(:fall,   2022), TermYear.new(:winter, 2022),
+      TermYear.new(:spring, 2023),
+    ]
+
+    expect(TermYear.visible_term_years(spring_date_time)).to eq [
+      TermYear.new(:spring, 2023)
+    ]
+
+    expect(TermYear.visible_term_years(spring_summer_date_time)).to eq [
+      TermYear.new(:spring, 2023)
+    ]
+
+     expect(TermYear.visible_term_years(DateTime.parse("July 1st, 2023"))).to eq []
   end
 end
