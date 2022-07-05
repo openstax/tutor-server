@@ -53,7 +53,7 @@ gem 'puma'
 gem 'puma_worker_killer'
 
 # Rails 5 HTML sanitizer
-gem 'rails-html-sanitizer', '~> 1.0'
+gem 'rails-html-sanitizer', '~> 1.4'
 
 # URI replacement
 gem 'addressable'
