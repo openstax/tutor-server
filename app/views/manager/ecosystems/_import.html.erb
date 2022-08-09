@@ -16,10 +16,10 @@
   </div>
 
   <div class="form-group">
-    <%= form.label :collection_id, 'Collection' %>
+    <%= form.label :repository_name, 'Collection' %>
     <%= select_tag(
-      :collection_id,
-      options_for_select(@collections, @collection_id),
+      :repository_name,
+      options_for_select(@collections, @repository_name),
       class: 'form-control',
       'data-turbolinks-reload': true
     ) %>

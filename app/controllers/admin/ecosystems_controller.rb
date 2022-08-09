@@ -19,51 +19,52 @@ class Admin::EcosystemsController < Admin::BaseController
       @pipeline_version = params[:pipeline_version] || ''
     end
 
-    approved_versions_by_collection_id = Hash.new { |hash, key| hash[key] = [] }
-    abl.approved_versions.filter do |version|
-      version[:min_code_version] <= @pipeline_version
-    end.each do |version|
-      approved_versions_by_collection_id[version[:collection_id]] << \
-        version[:content_version].sub(/\A1./, '')
-    end
+    collections_by_repository_name = abl.approved_books.filter do |collection|
+      collection[:versions].any? do |version|
+        books = version[:commit_metadata][:books]
+        !s3.bucket_configured? || books.all? do |book|
+          available_versions = available_versions_by_uuid[book[:uuid]] || []
 
-    collections_by_id = {}
-    versions_by_collection_id = {}
-    abl.approved_books.each do |collection|
-      collection_id = collection[:collection_id]
-      next unless approved_versions_by_collection_id.has_key? collection_id
-      next unless reading_processing_instructions_by_style.has_key? collection[:style]
-
-      books = collection[:books]
-      next if s3.bucket_configured? && !books.all? do |book|
-        available_versions_by_uuid.has_key? book[:uuid]
+          available_versions.include?(version[:commit_sha].first(7)) &&
+          reading_processing_instructions_by_style.has_key?(book[:style])
+        end
       end
-
-      # Books inside the same collection must use the same versions otherwise
-      # the structure of approved_versions would need to change
-      versions = available_versions_by_uuid[books.first[:uuid]] &
-                 approved_versions_by_collection_id[collection_id]
-
-      collections_by_id[collection_id] = collection
-      versions_by_collection_id[collection_id] = versions.sort_by do |version|
-        version.split('.').map(&:to_i)
-      end.reverse
+    end.index_by do |collection|
+      collection[:repository_name]
     end
 
-    @collections = collections_by_id.map do |id, collection|
-      name = collection[:books].map { |book| book[:slug].underscore.humanize }.join('; ')
+    @collections = collections_by_repository_name.map do |repository_name, collection|
+      latest_version = collection[:versions].sort_by { |version| version[:committed_at] }.last
+      name = latest_version[:commit_metadata][:books].map do |book|
+        book[:slug].underscore.humanize
+      end.join('; ')
 
-      [ "#{name} - #{id}", id ]
+      [ "#{name} - #{repository_name}", repository_name ]
     end.sort
-    @collection_id = params[:collection_id] || @collections.first&.second || ''
-    collection = collections_by_id[@collection_id]
+    @repository_name = params[:repository_name] || @collections.first&.second || ''
 
-    style = collection[:style] unless collection.nil?
+    collection = collections_by_repository_name[@repository_name]
+    if collection.nil?
+      style = nil
+      @content_versions = []
+    else
+      versions = collection[:versions].filter do |version|
+        books = version[:commit_metadata][:books]
+        !s3.bucket_configured? || books.all? do |book|
+          available_versions = available_versions_by_uuid[book[:uuid]] || []
+
+          available_versions.include?(version[:commit_sha].first(7)) &&
+          reading_processing_instructions_by_style.has_key?(book[:style])
+        end
+      end.sort_by { |version| version[:committed_at] }.reverse
+      latest_version = versions.first
+      style = latest_version[:commit_metadata][:books].first[:style]
+      @content_versions = versions.map { |version| version[:commit_sha].first(7) } || []
+    end
+
     @reading_processing_instructions = params[:reading_processing_instructions] ||
                                        reading_processing_instructions_by_style[style]&.to_yaml ||
                                        ''
-
-    @content_versions = versions_by_collection_id[@collection_id]
 
     @content_version = params[:content_version] || @content_versions&.first || ''
   end
@@ -72,7 +73,7 @@ class Admin::EcosystemsController < Admin::BaseController
     OSU::AccessPolicy.require_action_allowed!(:create, current_user, Content::Models::Ecosystem)
 
     collection = abl.approved_books.detect do |collection|
-      collection[:collection_id] == params[:collection_id]
+      collection[:repository_name] == params[:repository_name]
     end
     return head(:not_found) if collection.nil?
 
