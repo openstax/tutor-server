@@ -140,7 +140,7 @@ class Ratings::UpdateRoleBookParts
 
     used_tasked_exercise_ids = Set.new role_book_part.tasked_exercise_ids
     new_tasked_exercises = tasked_exercises.reject do |tasked_exercise|
-      used_tasked_exercise_ids.include? tasked_exercise.id
+      used_tasked_exercise_ids.include?(tasked_exercise.id) || tasked_exercise.correctness.nan?
     end
 
     result_by_group_uuid = {}

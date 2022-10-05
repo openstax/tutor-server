@@ -55,6 +55,25 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
     ).tap { |task_plan| DistributeTasks.call task_plan: task_plan }
   end
   let(:task)                      { task_plan.tasks.first }
+
+  let(:nan_task_plan) do
+    task_plan.dup.tap do |nan_task_plan|
+      nan_task_plan.tasking_plans = task_plan.tasking_plans.map(&:dup)
+      nan_task_plan.grading_template.update_column :manual_grading_feedback_on, 0
+      exercise_settings = nan_task_plan.settings['exercises'].second
+      exercise_settings['points'] = [ 0.0 ] * exercise_settings['points'].size
+      nan_task_plan.save!
+      DistributeTasks.call task_plan: nan_task_plan
+    end
+  end
+  let(:nan_task)      do
+    nan_task_plan.tasks.first.tap do |task|
+      tasked_exercise = task.task_steps.second.tasked
+      tasked_exercise.answer_ids = []
+      tasked_exercise.save!
+    end
+  end
+
   let(:is_page)                   { true }
 
   let(:expected_sigma)            {  0.05999 }
@@ -96,6 +115,38 @@ RSpec.describe Ratings::UpdateRoleBookParts, type: :routine do
         maximum: 1.0,
         is_real: true
       )
+    end
+
+    it 'ignores tasked_exercises with NaN correctness' do
+      expect do
+        Preview::WorkTask.call task: nan_task, is_correct: ->(_, index) { responses[index] }
+      end.to  change { role_book_part.reload.num_results }.from(0).to(2)
+         .and change { exercise_group_book_parts.first.reload.num_results }.from(0).to(1)
+         .and not_change { exercise_group_book_parts.second.reload.num_results }
+         .and change { exercise_group_book_parts.third.reload.num_results }.from(0).to(1)
+         .and change { exercise_group_book_parts.first.glicko_sigma }
+         .and not_change { exercise_group_book_parts.second.glicko_sigma }
+         .and change { exercise_group_book_parts.third.glicko_sigma }
+         .and change { exercise_group_book_parts.first.glicko_phi }
+         .and not_change { exercise_group_book_parts.second.glicko_phi }
+         .and change { exercise_group_book_parts.third.glicko_phi }
+         .and change { exercise_group_book_parts.first.glicko_mu }
+         .and not_change { exercise_group_book_parts.second.glicko_mu }
+         .and change { exercise_group_book_parts.third.glicko_mu }
+
+      tasked_exercise = nan_task.task_steps.second.tasked
+      expect(tasked_exercise).to be_completed
+      expect(tasked_exercise).to be_solution_available
+      expect(tasked_exercise.correctness).to be_nan
+
+      expect(role_book_part.glicko_sigma).not_to be_nan
+      expect(role_book_part.glicko_phi).not_to be_nan
+      expect(role_book_part.glicko_mu).not_to be_nan
+      expect(role_book_part.clue['most_likely']).not_to be_nil
+
+      expect(exercise_group_book_parts.second.glicko_sigma).not_to be_nan
+      expect(exercise_group_book_parts.second.glicko_phi).not_to be_nan
+      expect(exercise_group_book_parts.second.glicko_mu).not_to be_nan
     end
 
     it "requeues itself if run_at_due and the task's due_at changed" do
