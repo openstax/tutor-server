@@ -29,7 +29,7 @@ TermYear = Struct.new(:term, :year) do
   const_set 'VISIBLE_TERMS', [:spring, :summer, :fall, :winter]
 
   SUNSET_YEAR = 2023
-  SUNSET_YEAR_VISIBLE_TERMS = [:spring, :summer]
+  SUNSET_YEAR_VISIBLE_TERMS = [:spring, :summer, :fall]
 
   attr_reader :starts_at, :ends_at
 
