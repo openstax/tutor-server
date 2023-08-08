@@ -233,14 +233,14 @@ RSpec.feature 'Admin editing a course', truncation: true, speed: :slow do
 
     expect(student_1.reload).not_to be_is_comped
     expect(student_2.reload).to be_is_comped
-    expect(page).to have_content(/Paid\?.*Comped\?.*Yes.*No.*No.*Yes/)
+    expect(page).to have_content(/Paid\?.*Comped\?.*Yes.*No.*No.*Yes/m)
 
     find('#best_in_place_course_membership_models_student_1_is_comped').click
     wait_for_ajax
 
     expect(student_1.reload).to be_is_comped
     expect(student_2.reload).to be_is_comped
-    expect(page).to have_content(/Paid\?.*Comped\?.*Yes.*Yes.*No.*Yes/)
+    expect(page).to have_content(/Paid\?.*Comped\?.*Yes.*Yes.*No.*Yes/m)
 
     first('#students tbody tr').click_link("11:59:59")
     wait_for_ajax
