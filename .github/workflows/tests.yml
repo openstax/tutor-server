@@ -45,6 +45,7 @@ jobs:
       - name: Test
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          NODE_OPTIONS: --openssl-legacy-provider
           OXT_DB_USER: postgres
           OXT_DB_PASS: postgres
           RAILS_ENV: test
