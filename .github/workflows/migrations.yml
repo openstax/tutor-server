@@ -58,6 +58,7 @@ jobs:
 
       - name: Install gems from base commit and create data to be migrated
         env:
+          NODE_OPTIONS: --openssl-legacy-provider
           OXT_DB_USER: postgres
           OXT_DB_PASS: postgres
         run: |
