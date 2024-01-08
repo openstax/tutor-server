@@ -434,7 +434,7 @@ GEM
     net-smtp (0.4.0)
       net-protocol
     nifty-generators (0.4.6)
-    nio4r (2.5.9)
+    nio4r (2.7.0)
     nokogiri (1.15.4)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
@@ -531,7 +531,7 @@ GEM
       slop (~> 3.4)
     psych (3.1.0)
     public_suffix (5.0.3)
-    puma (5.6.7)
+    puma (5.6.8)
       nio4r (~> 2.0)
     puma_worker_killer (0.3.1)
       get_process_mem (~> 0.2)
